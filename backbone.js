@@ -250,36 +250,30 @@
       return 'Model ' + this.id;
     },
 
+    // Return the URL used to {save,delete}
+    url : function() {
+      if (!this.id) throw new Error(this.toString() + " has no id.");
+      return this.collection.url() + '/' + this.id;
+    },
+
     // Set a hash of model attributes, and sync the model to the server.
     save : function(attrs, options) {
-      if (!this.resource) throw new Error(this.toString() + " cannot be saved without a resource.");
       options || (options = {});
       this.set(attrs, options);
       var model = this;
-      $.ajax({
-        url       : this.resource,
-        type      : 'PUT',
-        data      : {model : JSON.stringify(this.attributes())},
-        dataType  : 'json',
-        success   : function(resp) {
-          model.set(resp.model);
-          if (options.success) options.success(model, resp);
-        },
-        error     : function(resp) { if (options.error) options.error(model, resp); }
-      });
+      var success = function(resp) {
+        model.set(resp.model);
+        if (options.success) options.success(model, resp);
+      };
+      Backbone.request('PUT', this, success, options.error);
+      return this;
     },
 
     // Destroy this model on the server.
     destroy : function(options) {
       if (this.collection) this.collection.remove(this);
-      $.ajax({
-        url       : this.resource,
-        type      : 'DELETE',
-        data      : {},
-        dataType  : 'json',
-        success   : function(resp) { if (options.success) options.success(model, resp); },
-        error     : function(resp) { if (options.error) options.error(model, resp); }
-      });
+      Backbone.request('DELETE', this, options.success, options.error);
+      return this;
     }
 
   });
@@ -528,5 +522,17 @@
     child.extend = extend;
     return child;
   };
+
+  Backbone.request = function(type, model, success, error) {
+    
+    $.ajax({
+      url       : model.url(),
+      type      : type,
+      data      : {model : JSON.stringify(model.attributes())},
+      dataType  : 'json',
+      success   : success,
+      error     : error
+    });
+  }
 
 })();
