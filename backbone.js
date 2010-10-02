@@ -271,7 +271,6 @@
 
     // Destroy this model on the server.
     destroy : function(options) {
-      if (this.collection) this.collection.remove(this);
       Backbone.request('DELETE', this, options.success, options.error);
       return this;
     }
