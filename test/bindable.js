@@ -1,28 +1,21 @@
 $(document).ready(function() {
 
-  module("Bindable");
+  module("Backbone bindable");
 
-  test("bind and trigger", function() {
-      var obj = { counter: 0 }
-      _.extend(obj,Backbone.Bindable);
-      obj.bind('foo',function() { obj.counter += 1; });
-      obj.trigger('foo');
-    equals(obj.counter,1,'counter should be incremented.');
-  });
-  
-  test("repeated trigger", function()         {
+    test("bindable: bind and trigger", function() {
         var obj = { counter: 0 }
         _.extend(obj,Backbone.Bindable);
         obj.bind('foo',function() { obj.counter += 1; });
         obj.trigger('foo');
+        equals(obj.counter,1,'counter should be incremented.');
         obj.trigger('foo');
         obj.trigger('foo');
         obj.trigger('foo');
         obj.trigger('foo');
         equals(obj.counter,5,'counter should be incremented five times.');
     });
-
-    test("bind, then unbind all functions", function() {
+  
+    test("bindable: bind, then unbind all functions", function() {
         var obj = { counter: 0 }
         _.extend(obj,Backbone.Bindable);
         var callback = function() { obj.counter += 1; }
@@ -32,8 +25,8 @@ $(document).ready(function() {
         obj.trigger('foo');
         equals(obj.counter,1,'counter should have only been incremented once.')
     });
-    
-    test("bind two callbacks, unbind only one", function() {
+
+    test("bindable: bind two callbacks, unbind only one", function() {
         var obj = { counterA: 0, counterB: 0 }
         _.extend(obj,Backbone.Bindable);
         var callback = function() { obj.counterA += 1; };
