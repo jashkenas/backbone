@@ -96,7 +96,6 @@
   Backbone.Model = function(attributes) {
     this._attributes = {};
     attributes = attributes || {};
-    attributes.id = attributes.id || -_.uniqueId();
     this.set(attributes, true);
     this.cid = _.uniqueId('c');
     this._formerAttributes = this.attributes();
@@ -147,7 +146,7 @@
     // A model is new if it has never been saved to the server, and has a negative
     // ID.
     isNew : function() {
-      return this.id < 0;
+      return !this.id;
     },
 
     // Call this method to fire manually fire a `changed` event for this model.
