@@ -236,6 +236,20 @@
       return value;
     },
 
+    // Return a copy of the model's attributes.
+    attributes : function() {
+      return _.clone(this._attributes);
+    },
+
+    // Bind all methods in the list to the model.
+    bindAll : function() {
+      _.bindAll.apply(_, [this].concat(arguments));
+    },
+
+    toString : function() {
+      return 'Model ' + this.id;
+    },
+
     // Set a hash of model attributes, and sync the model to the server.
     save : function(attrs, options) {
       if (!this.resource) throw new Error(this.toString() + " cannot be saved without a resource.");
@@ -253,20 +267,6 @@
         },
         error     : function(resp) { if (options.error) options.error(model, resp); }
       });
-    },
-
-    // Return a copy of the model's attributes.
-    attributes : function() {
-      return _.clone(this._attributes);
-    },
-
-    // Bind all methods in the list to the model.
-    bindAll : function() {
-      _.bindAll.apply(_, [this].concat(arguments));
-    },
-
-    toString : function() {
-      return 'Model ' + this.id;
     },
 
     // Destroy this model on the server.
