@@ -200,11 +200,6 @@
       if (!attrs) return this;
       attrs = attrs._attributes || attrs;
       var now = this._attributes;
-      if (attrs.collection) {
-        this.collection = attrs.collection;
-        delete attrs.collection;
-        this.resource = this.collection.resource + '/' + this.id;
-      }
       if (attrs.id) {
         this.id = attrs.id;
         if (this.collection) this.resource = this.collection.resource + '/' + this.id;
