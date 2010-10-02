@@ -6,7 +6,8 @@
 
 (function(){
 
-  // ------------------------- Initial Setup ----------------------------------
+  // Initial Setup
+  // -------------
 
   // The top-level namespace.
   var Backbone = {};
@@ -33,7 +34,8 @@
     return child;
   };
 
-  // ------------------------ Backbone.Bindable -------------------------------
+  // Backbone.Bindable
+  // -----------------
 
   // A module that can be mixed in to any object in order to provide it with
   // custom events.
@@ -86,7 +88,8 @@
 
   };
 
-  // ------------------------- Backbone.Model ---------------------------------
+  // Backbone.Model
+  // --------------
 
   // Create a new model, with defined attributes.
   // If you do not specify the id, a negative id will be assigned for you.
@@ -281,7 +284,8 @@
 
   });
 
-  // ----------------------- Backbone.Collection ------------------------------
+  // Backbone.Collection
+  // -------------------
 
   // Provides a standard collection class for our sets of models, ordered
   // or unordered. If a `comparator` is specified, the Collection will maintain
@@ -427,7 +431,8 @@
     };
   });
 
-  // -------------------------- Backbone View ---------------------------------
+  // Backbone View
+  // -------------
 
   Backbone.View = function(options) {
     this.modes = {};
