@@ -431,7 +431,7 @@
     };
   });
 
-  // Backbone View
+  // Backbone.View
   // -------------
 
   Backbone.View = function(options) {
