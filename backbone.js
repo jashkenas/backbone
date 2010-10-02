@@ -57,7 +57,7 @@
       var calls;
       if (!ev) {
         this._callbacks = {};
-      } else if (calls = this.callbacks) {
+      } else if (calls = this._callbacks) {
         if (!callback) {
           calls[ev] = [];
         } else {
@@ -96,7 +96,6 @@
   Backbone.Model = function(attributes) {
     this._attributes = {};
     attributes = attributes || {};
-    attributes.id = attributes.id || -_.uniqueId();
     this.set(attributes, true);
     this.cid = _.uniqueId('c');
     this._formerAttributes = this.attributes();
@@ -147,7 +146,7 @@
     // A model is new if it has never been saved to the server, and has a negative
     // ID.
     isNew : function() {
-      return this.id < 0;
+      return !this.id;
     },
 
     // Call this method to fire manually fire a `changed` event for this model.
@@ -200,11 +199,6 @@
       if (!attrs) return this;
       attrs = attrs._attributes || attrs;
       var now = this._attributes;
-      if (attrs.collection) {
-        this.collection = attrs.collection;
-        delete attrs.collection;
-        this.resource = this.collection.resource + '/' + this.id;
-      }
       if (attrs.id) {
         this.id = attrs.id;
         if (this.collection) this.resource = this.collection.resource + '/' + this.id;
