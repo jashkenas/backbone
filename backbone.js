@@ -284,9 +284,16 @@
   // Provides a standard collection class for our sets of models, ordered
   // or unordered. If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
-  Backbone.Collection = function(options) {
+  Backbone.Collection = function(models,options) {
+    if (options && options.comparator) {
+      this.comparator = options.comparator;
+      delete options.comparator;
+    }
     this._boundOnModelEvent = _.bind(this._onModelEvent, this);
     this._initialize();
+    if (models) {
+      this.refresh(models,true);
+    }
   };
 
   // Define the Collection's inheritable methods.
@@ -340,7 +347,7 @@
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
-      var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length - 1;
+      var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length;
       this.models.splice(index, 0, model);
       model.bind('all', this._boundOnModelEvent);
       this.length++;
@@ -375,10 +382,9 @@
     refresh : function(models, silent) {
       models = models || [];
       if (models[0] && !(models[0] instanceof Backbone.Model)) {
-        for (var i = 0, l = models.length; i < l; i++) {
-          models[i].collection = this;
-          models[i] = new this.model(models[i]);
-        }
+        _.each(models, _.bind(function(model,i) {
+          model.collection = this;
+        }, this));
       }
       this._initialize();
       this.add(models, true);
