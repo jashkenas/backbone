@@ -18,12 +18,11 @@
   (typeof exports !== 'undefined' ? exports : this).Backbone = Backbone;
 
   // Helper function to correctly set up the prototype chain, for subclasses.
+  // Similar to `goog.inherits`, but uses a hash of prototype properties and
+  // static properties to be extended.
   var inherits = function(parent, protoProps, classProps) {
-    if (protoProps.hasOwnProperty('constructor')) {
-      child = protoProps.constructor;
-    } else {
-      child = function(){ return parent.apply(this, arguments); };
-    }
+    var child = protoProps.hasOwnProperty('constructor') ? protoProps.constructor :
+                function(){ return parent.apply(this, arguments); };
     var ctor = function(){};
     ctor.prototype = parent.prototype;
     child.prototype = new ctor();
@@ -379,10 +378,13 @@
     // any `added` or `removed` events. Fires `refreshed` when finished.
     refresh : function(models, silent) {
       models = models || [];
+      var collection = this;
       if (models[0] && !(models[0] instanceof Backbone.Model)) {
-        _.each(models, _.bind(function(model,i) {
+        models = _.map(models, function(attrs, i) {
+          var model = new collection.model(attrs);
           model.collection = this;
-        }, this));
+          return model;
+        });
       }
       this._initialize();
       this.add(models, true);
