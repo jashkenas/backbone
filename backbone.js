@@ -516,8 +516,8 @@
     return child;
   };
 
+  // `Backbone.request`...
   Backbone.request = function(type, model, success, error) {
-    
     $.ajax({
       url       : model.url(),
       type      : type,
@@ -526,6 +526,6 @@
       success   : success,
       error     : error
     });
-  }
+  };
 
 })();
