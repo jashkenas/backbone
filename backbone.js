@@ -1,8 +1,7 @@
-// Backbone.js
-// (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
-// Backbone may be freely distributed under the terms of the MIT license.
-// For all details and documentation:
-// http://documentcloud.github.com/backbone
+//    (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
+//    Backbone may be freely distributed under the terms of the MIT license.
+//    For all details and documentation:
+//    http://documentcloud.github.com/backbone
 
 (function(){
 
@@ -38,7 +37,13 @@
   // -----------------
 
   // A module that can be mixed in to any object in order to provide it with
-  // custom events.
+  // custom events. You may `bind` or `unbind` a callback function to an event;
+  // `trigger`-ing an event fires all callbacks in succession.
+  //
+  //    _.extend(object, Backbone.Bindable);
+  //    object.bind('expand', function(){ alert('expanded'); });
+  //    object.trigger('expand');
+  //
   Backbone.Bindable = {
 
     // Bind an event, specified by a string name, `ev`, to a `callback` function.
@@ -73,7 +78,7 @@
       return this;
     },
 
-    // Trigger an event, firing all bound callbacks
+    // Trigger an event, firing all bound callbacks.
     trigger : function(ev) {
       var calls = this._callbacks;
       for (var i = 0; i < 2; i++) {
