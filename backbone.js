@@ -6,7 +6,8 @@
 
 (function(){
 
-  // ------------------------- Initial Setup ----------------------------------
+  // Initial Setup
+  // -------------
 
   // The top-level namespace.
   var Backbone = {};
@@ -33,7 +34,8 @@
     return child;
   };
 
-  // ------------------------ Backbone.Bindable -------------------------------
+  // Backbone.Bindable
+  // -----------------
 
   // A module that can be mixed in to any object in order to provide it with
   // custom events.
@@ -55,7 +57,7 @@
       var calls;
       if (!ev) {
         this._callbacks = {};
-      } else if (calls = this.callbacks) {
+      } else if (calls = this._callbacks) {
         if (!callback) {
           calls[ev] = [];
         } else {
@@ -86,14 +88,14 @@
 
   };
 
-  // ------------------------- Backbone.Model ---------------------------------
+  // Backbone.Model
+  // --------------
 
   // Create a new model, with defined attributes.
   // If you do not specify the id, a negative id will be assigned for you.
   Backbone.Model = function(attributes) {
     this._attributes = {};
     attributes = attributes || {};
-    attributes.id = attributes.id || -_.uniqueId();
     this.set(attributes, true);
     this.cid = _.uniqueId('c');
     this._formerAttributes = this.attributes();
@@ -144,7 +146,7 @@
     // A model is new if it has never been saved to the server, and has a negative
     // ID.
     isNew : function() {
-      return this.id < 0;
+      return !this.id;
     },
 
     // Call this method to fire manually fire a `changed` event for this model.
@@ -197,11 +199,6 @@
       if (!attrs) return this;
       attrs = attrs._attributes || attrs;
       var now = this._attributes;
-      if (attrs.collection) {
-        this.collection = attrs.collection;
-        delete attrs.collection;
-        this.resource = this.collection.resource + '/' + this.id;
-      }
       if (attrs.id) {
         this.id = attrs.id;
         if (this.collection) this.resource = this.collection.resource + '/' + this.id;
@@ -233,25 +230,6 @@
       return value;
     },
 
-    // Set a hash of model attributes, and sync the model to the server.
-    save : function(attrs, options) {
-      if (!this.resource) throw new Error(this.toString() + " cannot be saved without a resource.");
-      options || (options = {});
-      this.set(attrs, options);
-      var model = this;
-      $.ajax({
-        url       : this.resource,
-        type      : 'PUT',
-        data      : {model : JSON.stringify(this.attributes())},
-        dataType  : 'json',
-        success   : function(resp) {
-          model.set(resp.model);
-          if (options.success) options.success(model, resp);
-        },
-        error     : function(resp) { if (options.error) options.error(model, resp); }
-      });
-    },
-
     // Return a copy of the model's attributes.
     attributes : function() {
       return _.clone(this._attributes);
@@ -266,22 +244,35 @@
       return 'Model ' + this.id;
     },
 
+    // Return the URL used to {save,delete}
+    url : function() {
+      if (!this.id) throw new Error(this.toString() + " has no id.");
+      return this.collection.url() + '/' + this.id;
+    },
+
+    // Set a hash of model attributes, and sync the model to the server.
+    save : function(attrs, options) {
+      options || (options = {});
+      this.set(attrs, options);
+      var model = this;
+      var success = function(resp) {
+        model.set(resp.model);
+        if (options.success) options.success(model, resp);
+      };
+      Backbone.request('PUT', this, success, options.error);
+      return this;
+    },
+
     // Destroy this model on the server.
     destroy : function(options) {
-      if (this.collection) this.collection.remove(this);
-      $.ajax({
-        url       : this.resource,
-        type      : 'DELETE',
-        data      : {},
-        dataType  : 'json',
-        success   : function(resp) { if (options.success) options.success(model, resp); },
-        error     : function(resp) { if (options.error) options.error(model, resp); }
-      });
+      Backbone.request('DELETE', this, options.success, options.error);
+      return this;
     }
 
   });
 
-  // ----------------------- Backbone.Collection ------------------------------
+  // Backbone.Collection
+  // -------------------
 
   // Provides a standard collection class for our sets of models, ordered
   // or unordered. If a `comparator` is specified, the Collection will maintain
@@ -427,7 +418,8 @@
     };
   });
 
-  // -------------------------- Backbone View ---------------------------------
+  // Backbone.View
+  // -------------
 
   Backbone.View = function(options) {
     this.modes = {};
@@ -523,5 +515,17 @@
     child.extend = extend;
     return child;
   };
+
+  Backbone.request = function(type, model, success, error) {
+    
+    $.ajax({
+      url       : model.url(),
+      type      : type,
+      data      : {model : JSON.stringify(model.attributes())},
+      dataType  : 'json',
+      success   : success,
+      error     : error
+    });
+  }
 
 })();
