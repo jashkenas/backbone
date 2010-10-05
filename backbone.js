@@ -66,6 +66,7 @@
           calls[ev] = [];
         } else {
           var list = calls[ev];
+          if (!list) return this;
           for (var i = 0, l = list.length; i < l; i++) {
             if (callback === list[i]) {
               list.splice(i, 1);
@@ -265,16 +266,14 @@
   // Provides a standard collection class for our sets of models, ordered
   // or unordered. If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
-  Backbone.Collection = function(models,options) {
+  Backbone.Collection = function(models, options) {
     if (options && options.comparator) {
       this.comparator = options.comparator;
       delete options.comparator;
     }
     this._boundOnModelEvent = _.bind(this._onModelEvent, this);
     this._initialize();
-    if (models) {
-      this.refresh(models,true);
-    }
+    if (models) this.refresh(models,true);
   };
 
   // Define the Collection's inheritable methods.
@@ -373,6 +372,18 @@
       this._initialize();
       this.add(models, true);
       if (!silent) this.trigger('refresh');
+    },
+
+    // Fetch the default set of models for this collection, refreshing the
+    // collection.
+    fetch : function(options) {
+      options || (options = {});
+      var collection = this;
+      var success = function(resp) {
+        collection.refresh(resp.models);
+        if (options.success) options.success(collection, resp);
+      };
+      Backbone.request('GET', this, success, options.error);
     },
 
     // Create a new instance of a model in this collection.
@@ -527,10 +538,11 @@
 
   // `Backbone.request`...
   Backbone.request = function(type, model, success, error) {
+    var data = model.attributes ? {model : JSON.stringify(model.attributes())} : {};
     $.ajax({
       url       : model.url(),
       type      : type,
-      data      : {model : JSON.stringify(model.attributes())},
+      data      : data,
       dataType  : 'json',
       success   : success,
       error     : error
