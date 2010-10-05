@@ -449,7 +449,7 @@
 
   Backbone.View = function(options) {
     this.modes = {};
-    this.configure(options || {});
+    this.configure(options);
     if (this.options.el) {
       this.el = this.options.el;
     } else {
@@ -474,6 +474,7 @@
     tagName   : 'div',
 
     configure : function(options) {
+      options || (options = {});
       if (this.options) options = _.extend({}, this.options, options);
       if (options.model)      this.model      = options.model;
       if (options.collection) this.collection = options.collection;
