@@ -105,28 +105,6 @@
     this._formerAttributes = this.attributes();
   };
 
-  // Create a model on the server and add it to the set.
-  // When the server returns a JSON representation of the model, we update it
-  // on the client.
-  Backbone.Model.create = function(attributes, options) {
-    options || (options = {});
-    var model = new this(attributes);
-    $.ajax({
-      url       : model.set.resource,
-      type      : 'POST',
-      data      : {model : JSON.stringify(model.attributes())},
-      dataType  : 'json',
-      success   : function(resp) {
-        model.set(resp.model);
-        if (options.success) return options.success(model, resp);
-      },
-      error     : function(resp) {
-        if (options.error) options.error(model, resp);
-      }
-    });
-    return model;
-  };
-
   // Attach all inheritable methods to the Model prototype.
   _.extend(Backbone.Model.prototype, Backbone.Bindable, {
 
@@ -211,8 +189,11 @@
         var val = attrs[attr];
         if (val === '') val = null;
         if (!_.isEqual(now[attr], val)) {
-          if (!options.silent) this._changed = true;
           now[attr] = val;
+          if (!options.silent) {
+            this._changed = true;
+            this.trigger('change:' + attr);
+          }
         }
       }
       if (!options.silent && this._changed) this.changed();
@@ -248,14 +229,16 @@
       return 'Model ' + this.id;
     },
 
-    // Return the URL used to {save,delete}
+    // The URL of the model's representation on the server.
     url : function() {
-      if (!this.id) throw new Error(this.toString() + " has no id.");
-      return this.collection.url() + '/' + this.id;
+      var base = this.collection.url();
+      if (this.isNew()) return base;
+      return base + '/' + this.id;
     },
 
     // Set a hash of model attributes, and sync the model to the server.
     save : function(attrs, options) {
+      attrs   || (attrs = {});
       options || (options = {});
       this.set(attrs, options);
       var model = this;
@@ -263,7 +246,8 @@
         model.set(resp.model);
         if (options.success) options.success(model, resp);
       };
-      Backbone.request('PUT', this, success, options.error);
+      var method = this.isNew() ? 'POST' : 'PUT';
+      Backbone.request(method, this, success, options.error);
       return this;
     },
 
@@ -344,6 +328,7 @@
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
+      model.collection = this;
       var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length;
       this.models.splice(index, 0, model);
       model.bind('all', this._boundOnModelEvent);
@@ -366,6 +351,7 @@
       if (!model) return null;
       delete this._byId[model.id];
       delete this._byCid[model.cid];
+      delete model.collection;
       this.models.splice(this.indexOf(model), 1);
       model.unbind('all', this._boundOnModelEvent);
       this.length--;
@@ -381,14 +367,24 @@
       var collection = this;
       if (models[0] && !(models[0] instanceof Backbone.Model)) {
         models = _.map(models, function(attrs, i) {
-          var model = new collection.model(attrs);
-          model.collection = this;
-          return model;
+          return new collection.model(attrs);
         });
       }
       this._initialize();
       this.add(models, true);
       if (!silent) this.trigger('refresh');
+    },
+
+    // Create a new instance of a model in this collection.
+    create : function(model, options) {
+      options || (options = {});
+      if (!(model instanceof Backbone.Model)) model = new this.model(model);
+      model.collection = this;
+      var success = function(model, resp) {
+        model.collection.add(model);
+        if (options.success) options.success(model, resp);
+      };
+      model.save(null, {success : success, error : options.error});
     },
 
     // Force the set to re-sort itself. You don't need to call this under normal
