@@ -254,7 +254,13 @@
 
     // Destroy this model on the server.
     destroy : function(options) {
-      Backbone.request('DELETE', this, options.success, options.error);
+      options || (options = {});
+      var model = this;
+      var success = function(resp) {
+        if (model.collection) model.collection.remove(model);
+        if (options.success) options.success(model, resp);
+      };
+      Backbone.request('DELETE', this, success, options.error);
       return this;
     }
 
