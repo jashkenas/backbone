@@ -85,7 +85,7 @@
         var list = calls && calls[i ? 'all' : ev];
         if (!list) continue;
         for (var j = 0, l = list.length; j < l; j++) {
-          list[j].apply(this, arguments);
+          list[j].apply(this, _.rest(arguments));
         }
       }
       return this;
@@ -164,7 +164,7 @@
       if (!attrs) return this;
       attrs = attrs._attributes || attrs;
       var now = this._attributes;
-      if (attrs.id) {
+      if ('id' in attrs) {
         this.id = attrs.id;
         if (this.collection) this.resource = this.collection.resource + '/' + this.id;
       }
@@ -280,7 +280,7 @@
       this.comparator = options.comparator;
       delete options.comparator;
     }
-    this._boundOnModelEvent = _.bind(this._onModelEvent, this);
+    this._boundOnModelChange = _.bind(this._onModelChange, this);
     this._initialize();
     if (models) this.refresh(models,true);
   };
@@ -339,7 +339,7 @@
       model.collection = this;
       var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length;
       this.models.splice(index, 0, model);
-      model.bind('all', this._boundOnModelEvent);
+      model.bind('change', this._boundOnModelChange);
       this.length++;
       if (!silent) this.trigger('add', model);
       return model;
@@ -361,7 +361,7 @@
       delete this._byCid[model.cid];
       delete model.collection;
       this.models.splice(this.indexOf(model), 1);
-      model.unbind('all', this._boundOnModelEvent);
+      model.unbind('change', this._boundOnModelChange);
       this.length--;
       if (!silent) this.trigger('remove', model);
       return model;
@@ -418,14 +418,12 @@
 
     // Internal method called every time a model in the set fires an event.
     // Sets need to update their indexes when models change ids.
-    _onModelEvent : function(ev, model) {
-      if (ev == 'change') {
-        if (model.hasChanged('id')) {
-          delete this._byId[model.formerValue('id')];
-          this._byId[model.id] = model;
-        }
-        this.trigger('change', model);
+    _onModelChange : function(model) {
+      if (model.hasChanged('id')) {
+        delete this._byId[model.formerValue('id')];
+        this._byId[model.id] = model;
       }
+      this.trigger('change', model);
     },
 
     // Inspect.
