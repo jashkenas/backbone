@@ -291,13 +291,9 @@
 
     model : Backbone.Model,
 
-    // Initialize or re-initialize all internal state. Called when the
-    // collection is refreshed.
-    _initialize : function(options) {
-      this.length = 0;
-      this.models = [];
-      this._byId = {};
-      this._byCid = {};
+    // Override this function to get convenient logging in the console.
+    toString : function() {
+      return 'Collection (' + this.length + " models)";
     },
 
     // Get a model from the set by id.
@@ -372,6 +368,16 @@
       return model;
     },
 
+    // Force the set to re-sort itself. You don't need to call this under normal
+    // circumstances, as the set will maintain sort order as each item is added.
+    sort : function(options) {
+      options || (options = {});
+      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
+      this.models = this.sortBy(this.comparator);
+      if (!options.silent) this.trigger('refresh');
+      return this;
+    },
+
     // When you have more items than you want to add or remove individually,
     // you can refresh the entire set with a new list of models, without firing
     // any `added` or `removed` events. Fires `refreshed` when finished.
@@ -416,14 +422,13 @@
       return model.save(null, {success : success, error : options.error});
     },
 
-    // Force the set to re-sort itself. You don't need to call this under normal
-    // circumstances, as the set will maintain sort order as each item is added.
-    sort : function(options) {
-      options || (options = {});
-      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
-      this.models = this.sortBy(this.comparator);
-      if (!options.silent) this.trigger('refresh');
-      return this;
+    // Initialize or re-initialize all internal state. Called when the
+    // collection is refreshed.
+    _initialize : function(options) {
+      this.length = 0;
+      this.models = [];
+      this._byId = {};
+      this._byCid = {};
     },
 
     // Internal method called every time a model in the set fires an event.
@@ -434,11 +439,6 @@
         this._byId[model.id] = model;
       }
       this.trigger('change', model);
-    },
-
-    // Inspect.
-    toString : function() {
-      return 'Set (' + this.length + " models)";
     }
 
   });

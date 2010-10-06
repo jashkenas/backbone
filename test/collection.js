@@ -15,7 +15,7 @@ $(document).ready(function() {
   var e = null;
   var col = window.col = new Backbone.Collection([a,b,c,d]);
 
-  test("collections: simple and sorted", function() {
+  test("collections: new and sort", function() {
     equals(col.first(), a, "a should be first");
     equals(col.last(), d, "d should be last");
     col.comparator = function(model) { return model.id; };
@@ -23,6 +23,10 @@ $(document).ready(function() {
     equals(col.first(), d, "d should be first");
     equals(col.last(), a, "a should be last");
     equals(col.length, 4);
+  });
+
+  test("collections: toString", function() {
+    equals(col.toString(), 'Collection (4 models)');
   });
 
   test("collections: get, getByCid", function() {
