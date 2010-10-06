@@ -398,6 +398,7 @@
       if (!(model instanceof Backbone.Model)) model = new this.model(model);
       model.collection = this;
       var success = function(model, resp) {
+        model.set(resp.model);
         model.collection.add(model);
         if (options.success) options.success(model, resp);
       };
