@@ -306,6 +306,11 @@
       return cid && this._byCid[cid.cid || cid];
     },
 
+    // Get the model at the given index.
+    at: function(index) {
+      return this.models[index];
+    },
+
     // What are the ids for every model in the set?
     getIds : function() {
       return _.keys(this._byId);
@@ -316,9 +321,9 @@
       return _.keys(this._byCid);
     },
 
-    // Get the model at the given index.
-    at: function(index) {
-      return this.models[index];
+    // Pluck an attribute from each model in the collection.
+    pluck : function(attr) {
+      return _.map(this.models, function(model){ return model.get(attr); });
     },
 
     // Add a model, or list of models to the set. Pass **silent** to avoid
@@ -445,7 +450,7 @@
 
   // Underscore methods that we want to implement on the Collection.
   var methods = ['each', 'map', 'reduce', 'reduceRight', 'detect', 'select',
-    'reject', 'all', 'any', 'include', 'invoke', 'pluck', 'max', 'min', 'sortBy',
+    'reject', 'all', 'any', 'include', 'invoke', 'max', 'min', 'sortBy',
     'sortedIndex', 'toArray', 'size', 'first', 'rest', 'last', 'without',
     'indexOf', 'lastIndexOf', 'isEmpty'];
 

@@ -44,6 +44,10 @@ $(document).ready(function() {
     equals(col.at(2), b);
   });
 
+  test("collections: pluck", function() {
+    equals(col.pluck('label').join(' '), 'd c b a');
+  });
+
   test("collections: add", function() {
     var added = null;
     col.bind('add', function(model){ added = model.get('label'); });
@@ -89,6 +93,21 @@ $(document).ready(function() {
     equals(lastRequest[1], model);
     equals(model.get('label'), 'f');
     equals(model.collection, col);
+  });
+
+  test("collections: Underscore methods", function() {
+    equals(col.map(function(model){ return model.get('label'); }).join(' '), 'd c b a');
+    equals(col.any(function(model){ return model.id === 100; }), false);
+    equals(col.any(function(model){ return model.id === 1; }), true);
+    equals(col.indexOf(b), 2);
+    equals(col.size(), 4);
+    equals(col.rest().length, 3);
+    ok(!_.include(col.rest()), a);
+    ok(!_.include(col.rest()), d);
+    ok(!col.isEmpty());
+    ok(!_.include(col.without(d)), d);
+    equals(col.max(function(model){ return model.id; }).id, 4);
+    equals(col.min(function(model){ return model.id; }).id, 1);
   });
 
 });
