@@ -382,8 +382,9 @@
         });
       }
       this._initialize();
-      this.add(models, true);
+      this.add(models, {silent: true});
       if (!options.silent) this.trigger('refresh');
+      return this;
     },
 
     // Fetch the default set of models for this collection, refreshing the
@@ -396,6 +397,7 @@
         if (options.success) options.success(collection, resp);
       };
       Backbone.request('GET', this, success, options.error);
+      return this;
     },
 
     // Create a new instance of a model in this collection.
@@ -408,7 +410,7 @@
         model.collection.add(model);
         if (options.success) options.success(model, resp);
       };
-      model.save(null, {success : success, error : options.error});
+      return model.save(null, {success : success, error : options.error});
     },
 
     // Force the set to re-sort itself. You don't need to call this under normal
@@ -418,6 +420,7 @@
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
       this.models = this.sortBy(this.comparator);
       if (!options.silent) this.trigger('refresh');
+      return this;
     },
 
     // Internal method called every time a model in the set fires an event.

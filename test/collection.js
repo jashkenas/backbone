@@ -2,6 +2,12 @@ $(document).ready(function() {
 
   module("Backbone collections");
 
+  window.lastRequest = null;
+
+  Backbone.request = function() {
+    lastRequest = _.toArray(arguments);
+  };
+
   var a = new Backbone.Model({id: 4, label: 'a'});
   var b = new Backbone.Model({id: 3, label: 'b'});
   var c = new Backbone.Model({id: 2, label: 'c'});
@@ -51,6 +57,26 @@ $(document).ready(function() {
     equals(removed, 'e');
     equals(col.length, 4);
     equals(col.first(), d);
+  });
+
+  test("collections: refresh", function() {
+    var refreshed = 0;
+    var models = col.models;
+    col.bind('refresh', function() { refreshed += 1; });
+    col.refresh([]);
+    equals(refreshed, 1);
+    equals(col.length, 0);
+    equals(col.last(), null);
+    col.refresh(models);
+    equals(refreshed, 2);
+    equals(col.length, 4);
+    equals(col.last(), a);
+  });
+
+  test("collections: fetch", function() {
+    col.fetch();
+    equals(lastRequest[0], 'GET');
+    equals(lastRequest[1], col);
   });
 
 });

@@ -3,7 +3,7 @@ $(document).ready(function() {
   module("Backbone model");
 
   // Variable to catch the last request.
-  var lastRequest = null;
+  window.lastRequest = null;
 
   // Stub out Backbone.request...
   Backbone.request = function() {
