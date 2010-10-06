@@ -79,4 +79,12 @@ $(document).ready(function() {
     equals(lastRequest[1], col);
   });
 
+  test("collections: create", function() {
+    var model = col.create({label: 'f'});
+    equals(lastRequest[0], 'POST');
+    equals(lastRequest[1], model);
+    equals(model.get('label'), 'f');
+    equals(model.collection, col);
+  });
+
 });

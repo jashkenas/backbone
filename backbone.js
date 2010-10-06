@@ -276,7 +276,8 @@
   // or unordered. If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
   Backbone.Collection = function(models, options) {
-    if (options && options.comparator) {
+    options || (options = {});
+    if (options.comparator) {
       this.comparator = options.comparator;
       delete options.comparator;
     }
@@ -288,9 +289,11 @@
   // Define the Collection's inheritable methods.
   _.extend(Backbone.Collection.prototype, Backbone.Bindable, {
 
+    model : Backbone.Model,
+
     // Initialize or re-initialize all internal state. Called when the
     // collection is refreshed.
-    _initialize : function() {
+    _initialize : function(options) {
       this.length = 0;
       this.models = [];
       this._byId = {};
