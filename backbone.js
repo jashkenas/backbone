@@ -101,7 +101,7 @@
   Backbone.Model = function(attributes) {
     this._attributes = {};
     attributes = attributes || {};
-    this.set(attributes, true);
+    this.set(attributes, {silent : true});
     this.cid = _.uniqueId('c');
     this._formerAttributes = this.attributes();
   };
@@ -115,6 +115,26 @@
 
     // Has the item been changed since the last `changed` event?
     _changed : false,
+
+    // Return a copy of the model's `attributes` object.
+    attributes : function() {
+      return _.clone(this._attributes);
+    },
+
+    // Default URL for the model's representation on the server -- if you're
+    // using Backbone's restful methods, override this to change the endpoint
+    // that will be called.
+    url : function() {
+      var base = this.collection.url();
+      if (this.isNew()) return base;
+      return base + '/' + this.id;
+    },
+
+    // String representation of the model. Override this to provide a nice way
+    // to print models to the console.
+    toString : function() {
+      return 'Model ' + this.id;
+    },
 
     // Create a new model with identical attributes to this one.
     clone : function() {
@@ -132,47 +152,9 @@
       return !this.id;
     },
 
-    // Call this method to fire manually fire a `changed` event for this model.
-    // Calling this will cause all objects observing the model to update.
-    changed : function() {
-      this.trigger('change', this);
-      this._formerAttributes = this.attributes();
-      this._changed = false;
-    },
-
-    // Determine if the model has changed since the last `changed` event.
-    // If you specify an attribute name, determine if that attribute has changed.
-    hasChanged : function(attr) {
-      if (attr) return this._formerAttributes[attr] != this._attributes[attr];
-      return this._changed;
-    },
-
-    // Get the previous value of an attribute, recorded at the time the last
-    // `changed` event was fired.
-    formerValue : function(attr) {
-      if (!attr || !this._formerAttributes) return null;
-      return this._formerAttributes[attr];
-    },
-
-    // Get all of the attributes of the model at the time of the previous
-    // `changed` event.
-    formerAttributes : function() {
-      return this._formerAttributes;
-    },
-
-    // Return an object containing all the attributes that have changed, or false
-    // if there are no changed attributes. Useful for determining what parts of a
-    // view need to be updated and/or what attributes need to be persisted to
-    // the server.
-    changedAttributes : function(now) {
-      var old = this.formerAttributes(), now = now || this.attributes(), changed = false;
-      for (var attr in now) {
-        if (!_.isEqual(old[attr], now[attr])) {
-          changed = changed || {};
-          changed[attr] = now[attr];
-        }
-      }
-      return changed;
+    // Get the value of an attribute.
+    get : function(attr) {
+      return this._attributes[attr];
     },
 
     // Set a hash of model attributes on the object, firing `changed` unless you
@@ -201,40 +183,61 @@
       return this;
     },
 
-    // Get the value of an attribute.
-    get : function(attr) {
-      return this._attributes[attr];
-    },
-
     // Remove an attribute from the model, firing `changed` unless you choose to
     // silence it.
     unset : function(attr, options) {
       options || (options = {});
       var value = this._attributes[attr];
       delete this._attributes[attr];
-      if (!options.silent) this.changed();
+      if (!options.silent) {
+        this._changed = true;
+        this.trigger('change:' + attr);
+        this.changed();
+      }
       return value;
     },
 
-    // Return a copy of the model's attributes.
-    attributes : function() {
-      return _.clone(this._attributes);
+    // Call this method to fire manually fire a `changed` event for this model.
+    // Calling this will cause all objects observing the model to update.
+    changed : function() {
+      this.trigger('change', this);
+      this._formerAttributes = this.attributes();
+      this._changed = false;
     },
 
-    // Bind all methods in the list to the model.
-    bindAll : function() {
-      _.bindAll.apply(_, [this].concat(arguments));
+    // Determine if the model has changed since the last `changed` event.
+    // If you specify an attribute name, determine if that attribute has changed.
+    hasChanged : function(attr) {
+      if (attr) return this._formerAttributes[attr] != this._attributes[attr];
+      return this._changed;
     },
 
-    toString : function() {
-      return 'Model ' + this.id;
+    // Return an object containing all the attributes that have changed, or false
+    // if there are no changed attributes. Useful for determining what parts of a
+    // view need to be updated and/or what attributes need to be persisted to
+    // the server.
+    changedAttributes : function(now) {
+      var old = this.formerAttributes(), now = now || this.attributes(), changed = false;
+      for (var attr in now) {
+        if (!_.isEqual(old[attr], now[attr])) {
+          changed = changed || {};
+          changed[attr] = now[attr];
+        }
+      }
+      return changed;
     },
 
-    // The URL of the model's representation on the server.
-    url : function() {
-      var base = this.collection.url();
-      if (this.isNew()) return base;
-      return base + '/' + this.id;
+    // Get the previous value of an attribute, recorded at the time the last
+    // `changed` event was fired.
+    formerValue : function(attr) {
+      if (!attr || !this._formerAttributes) return null;
+      return this._formerAttributes[attr];
+    },
+
+    // Get all of the attributes of the model at the time of the previous
+    // `changed` event.
+    formerAttributes : function() {
+      return this._formerAttributes;
     },
 
     // Set a hash of model attributes, and sync the model to the server.
