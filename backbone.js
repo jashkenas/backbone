@@ -180,7 +180,7 @@
           }
         }
       }
-      if (!options.silent && this._changed) this.changed();
+      if (!options.silent && this._changed) this.change();
       return this;
     },
 
@@ -193,14 +193,14 @@
       if (!options.silent) {
         this._changed = true;
         this.trigger('change:' + attr);
-        this.changed();
+        this.change();
       }
       return value;
     },
 
-    // Call this method to fire manually fire a `changed` event for this model.
+    // Call this method to fire manually fire a `change` event for this model.
     // Calling this will cause all objects observing the model to update.
-    changed : function() {
+    change : function() {
       this.trigger('change', this);
       this._formerAttributes = this.attributes();
       this._changed = false;

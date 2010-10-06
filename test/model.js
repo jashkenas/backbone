@@ -103,7 +103,7 @@ $(document).ready(function() {
       ok(_.isEqual(model.formerAttributes(), {name : "Tim", age : 10}), 'formerAttributes is correct');
     });
     model.set({name : 'Rob'}, {silent : true});
-    model.changed();
+    model.change();
     equals(model.get('name'), 'Rob');
   });
 
