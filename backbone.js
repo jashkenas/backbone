@@ -299,7 +299,7 @@
 
     // Get a model from the set by id.
     get : function(id) {
-      return id && this._byId[id.id || id];
+      return id && this._byId[id.id != null ? id.id : id];
     },
 
     // Get a model from the set by client id.
@@ -322,16 +322,17 @@
       return this.models[index];
     },
 
-    // Add a model, or list of models to the set. Pass silent to avoid firing
-    // the `added` event for every new model.
-    add : function(models, silent) {
-      if (!_.isArray(models)) return this._add(models, silent);
-      for (var i=0; i<models.length; i++) this._add(models[i], silent);
+    // Add a model, or list of models to the set. Pass **silent** to avoid
+    // firing the `added` event for every new model.
+    add : function(models, options) {
+      if (!_.isArray(models)) return this._add(models, options);
+      for (var i=0; i<models.length; i++) this._add(models[i], options);
       return models;
     },
 
     // Internal implementation of adding a single model to the set.
-    _add : function(model, silent) {
+    _add : function(model, options) {
+      options || (options = {});
       var already = this.get(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
@@ -341,20 +342,21 @@
       this.models.splice(index, 0, model);
       model.bind('change', this._boundOnModelChange);
       this.length++;
-      if (!silent) this.trigger('add', model);
+      if (!options.silent) this.trigger('add', model);
       return model;
     },
 
     // Remove a model, or a list of models from the set. Pass silent to avoid
     // firing the `removed` event for every model removed.
-    remove : function(models, silent) {
-      if (!_.isArray(models)) return this._remove(models, silent);
-      for (var i=0; i<models.length; i++) this._remove(models[i], silent);
+    remove : function(models, options) {
+      if (!_.isArray(models)) return this._remove(models, options);
+      for (var i=0; i<models.length; i++) this._remove(models[i], options);
       return models;
     },
 
     // Internal implementation of removing a single model from the set.
-    _remove : function(model, silent) {
+    _remove : function(model, options) {
+      options || (options = {});
       model = this.get(model);
       if (!model) return null;
       delete this._byId[model.id];
@@ -363,14 +365,15 @@
       this.models.splice(this.indexOf(model), 1);
       model.unbind('change', this._boundOnModelChange);
       this.length--;
-      if (!silent) this.trigger('remove', model);
+      if (!options.silent) this.trigger('remove', model);
       return model;
     },
 
     // When you have more items than you want to add or remove individually,
     // you can refresh the entire set with a new list of models, without firing
     // any `added` or `removed` events. Fires `refreshed` when finished.
-    refresh : function(models, silent) {
+    refresh : function(models, options) {
+      options || (options = {});
       models = models || [];
       var collection = this;
       if (models[0] && !(models[0] instanceof Backbone.Model)) {
@@ -380,7 +383,7 @@
       }
       this._initialize();
       this.add(models, true);
-      if (!silent) this.trigger('refresh');
+      if (!options.silent) this.trigger('refresh');
     },
 
     // Fetch the default set of models for this collection, refreshing the
@@ -410,10 +413,11 @@
 
     // Force the set to re-sort itself. You don't need to call this under normal
     // circumstances, as the set will maintain sort order as each item is added.
-    sort : function(silent) {
+    sort : function(options) {
+      options || (options = {});
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
       this.models = this.sortBy(this.comparator);
-      if (!silent) this.trigger('refresh');
+      if (!options.silent) this.trigger('refresh');
     },
 
     // Internal method called every time a model in the set fires an event.
