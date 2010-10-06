@@ -464,52 +464,51 @@
   // Backbone.View
   // -------------
 
+  // Creating a Backbone.View creates its intial element outside of the DOM,
+  // if an existing element is not provided...
   Backbone.View = function(options) {
     this.modes = {};
-    this.configure(options);
+    this._initialize(options || {});
     if (this.options.el) {
       this.el = this.options.el;
     } else {
       var attrs = {};
       if (this.id) attrs.id = this.id;
-      if (this.className) attrs['class'] = this.className;
+      if (this.className) attrs.className = this.className;
       this.el = this.make(this.tagName, attrs);
     }
     return this;
   };
 
-  // Set up all interitable view properties and methods.
+  // jQuery lookup, scoped to DOM elements within the current view.
+  // This should be prefered to global jQuery lookups, if you're dealing with
+  // a specific view.
+  var jQueryScoped = function(selector) {
+    return $(selector, this.el);
+  };
+
+  // Set up all interitable **Backbone.View** properties and methods.
   _.extend(Backbone.View.prototype, {
 
-    el        : null,
-    model     : null,
-    modes     : null,
-    id        : null,
-    className : null,
-    callbacks : null,
-    options   : null,
-    tagName   : 'div',
+    // The default tagName of a View's element is "div".
+    tagName : 'div',
 
-    configure : function(options) {
-      options || (options = {});
-      if (this.options) options = _.extend({}, this.options, options);
-      if (options.model)      this.model      = options.model;
-      if (options.collection) this.collection = options.collection;
-      if (options.id)         this.id         = options.id;
-      if (options.className)  this.className  = options.className;
-      this.options = options;
-    },
+    // Attach the jQuery function as the `$` and `jQuery` properties.
+    $       : jQueryScoped,
+    jQuery  : jQueryScoped,
 
+    // **render** is the core function that your view should override, in order
+    // to populate its element (`this.el`), with the appropriate HTML. The
+    // convention is for **render** to always return `this`.
     render : function() {
       return this;
     },
 
-    // jQuery lookup, scoped to the current view.
-    $ : function(selector) {
-      return $(selector, this.el);
-    },
-
-    // Quick-create a dom element with attributes.
+    // For small amounts of DOM Elements, where a full-blown template isn't
+    // needed, use **make** to manufacture elements, one at a time.
+    //
+    //    var el = this.make('li', {'class': 'row'}, this.model.get('title'));
+    //
     make : function(tagName, attributes, content) {
       var el = document.createElement(tagName);
       if (attributes) $(el).attr(attributes);
@@ -519,8 +518,8 @@
 
     // Makes the view enter a mode. Modes have both a 'mode' and a 'group',
     // and are mutually exclusive with any other modes in the same group.
-    // Setting will update the view's modes hash, as well as set an HTML className
-    // of [mode]_[group] on the view's element. Convenient way to swap styles
+    // Setting will update the view's modes hash, as well as set an HTML class
+    // of *[mode]_[group]* on the view's element. Convenient way to swap styles
     // and behavior.
     setMode : function(mode, group) {
       if (this.modes[group] == mode) return;
@@ -530,10 +529,11 @@
 
     // Set callbacks, where this.callbacks is a hash of
     //   {selector.event_name, callback_name}
-    // pairs. Callbacks will be bound to the view, with 'this' set properly.
-    // Passing a selector of 'el' binds to the view's root element.
-    // Change events are not delegated through the view because IE does not bubble
-    // change events at all.
+    // pairs. Callbacks will be bound to the view, with `this` set properly.
+    // Uses jQuery event delegation for efficiency.
+    // Passing a selector of `el` binds to the view's root element.
+    // Change events are not delegated through the view because IE does not
+    // bubble change events at all.
     setCallbacks : function(callbacks) {
       $(this.el).unbind();
       if (!(callbacks || (callbacks = this.callbacks))) return this;
@@ -549,6 +549,18 @@
         }
       }
       return this;
+    },
+
+    // Performs the initial configuration of a View with a set of options.
+    // Keys with special meaning *(model, collection, id, className)*, are
+    // attatched directly to the view.
+    _initialize : function(options) {
+      if (this.options) options = _.extend({}, this.options, options);
+      if (options.model)      this.model      = options.model;
+      if (options.collection) this.collection = options.collection;
+      if (options.id)         this.id         = options.id;
+      if (options.className)  this.className  = options.className;
+      this.options = options;
     }
 
   });
@@ -560,7 +572,15 @@
     return child;
   };
 
-  // `Backbone.request`...
+  // Override this function to change the manner in which Backbone persists
+  // models to the server. You will be passed the type of request, and the
+  // model in question. By default, uses jQuery to make a RESTful Ajax request
+  // to the model's `url()`. Some possible customizations could be:
+  //
+  // * Use `setTimeout` to batch rapid-fire updates into a single request.
+  // * Send up the models as XML instead of JSON.
+  // * Persist models via WebSockets instead of Ajax.
+  //
   Backbone.request = function(type, model, success, error) {
     var data = model.attributes ? {model : JSON.stringify(model.attributes())} : {};
     $.ajax({
