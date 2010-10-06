@@ -1,7 +1,7 @@
-//    (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
-//    Backbone may be freely distributed under the terms of the MIT license.
-//    For all details and documentation:
-//    http://documentcloud.github.com/backbone
+//     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
+//     Backbone may be freely distributed under the terms of the MIT license.
+//     For all details and documentation:
+//     http://documentcloud.github.com/backbone
 
 (function(){
 
@@ -39,9 +39,9 @@
   // custom events. You may `bind` or `unbind` a callback function to an event;
   // `trigger`-ing an event fires all callbacks in succession.
   //
-  //    _.extend(object, Backbone.Bindable);
-  //    object.bind('expand', function(){ alert('expanded'); });
-  //    object.trigger('expand');
+  //     _.extend(object, Backbone.Bindable);
+  //     object.bind('expand', function(){ alert('expanded'); });
+  //     object.trigger('expand');
   //
   Backbone.Bindable = {
 
@@ -507,7 +507,7 @@
     // For small amounts of DOM Elements, where a full-blown template isn't
     // needed, use **make** to manufacture elements, one at a time.
     //
-    //    var el = this.make('li', {'class': 'row'}, this.model.get('title'));
+    //     var el = this.make('li', {'class': 'row'}, this.model.get('title'));
     //
     make : function(tagName, attributes, content) {
       var el = document.createElement(tagName);
@@ -528,7 +528,14 @@
     },
 
     // Set callbacks, where this.callbacks is a hash of
-    //   {selector.event_name, callback_name}
+    //
+    // *{selector.event_name: callback_name}*
+    //
+    //     {
+    //       '.icon.pencil.mousedown':  'edit',
+    //       '.button.click':           'save'
+    //     }
+    //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
     // Uses jQuery event delegation for efficiency.
     // Passing a selector of `el` binds to the view's root element.
