@@ -78,7 +78,8 @@
       return this;
     },
 
-    // Trigger an event, firing all bound callbacks.
+    // Trigger an event, firing all bound callbacks. Callbacks are passed the
+    // same arguments as `trigger` is, apart from the event name.
     trigger : function(ev) {
       var calls = this._callbacks;
       for (var i = 0; i < 2; i++) {
