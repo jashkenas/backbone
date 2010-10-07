@@ -1,0 +1,311 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <title>Backbone: ...</title>
+  <style>
+    body {
+      font-size: 14px;
+      line-height: 20px;
+      font-family: Helvetica Neue, Helvetica, Arial;
+      background: #f4f4f4 url(docs/background.png);
+    }
+    .interface {
+      font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif !important;
+    }
+    div.toc {
+      background: #fff;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 180px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 15px 0 0 30px;
+      border-right: 1px solid #ddd;
+      box-shadow: 0 0 10px 000; -webkit-box-shadow: 0 0 25px #ddd; -moz-box-shadow: ;
+    }
+      a.toc_title, a.toc_title:visited {
+        display: block;
+        color: black;
+        font-weight: bold;
+        margin-top: 15px;
+      }
+        div.toc_title:hover {
+          text-decoration: underline;
+        }
+      ul.toc_section {
+        font-size: 11px;
+        line-height: 14px;
+        margin: 5px 0 0 0;
+        padding-left: 0px;
+        list-style-type: none;
+        font-family: Lucida Grande;
+      }
+        .toc_section li {
+          cursor: pointer;
+          margin: 0 0 3px 0;
+        }
+          .toc_section li a {
+            color: black;
+          }
+    div.container {
+      width: 720px;
+      margin: 40px 0 50px 240px;
+    }
+    p, li {
+      margin: 16px 0 16px 0;
+      width: 550px;
+    }
+    a, a:visited {
+      color: #444;
+      text-decoration: none;
+    }
+    a:active, a:hover {
+      color: #000;
+      text-decoration: underline;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      padding-top: 20px;
+    }
+      h2 {
+        font-size: 20px;
+      }
+    b.header {
+      font-size: 18px;
+    }
+    span.alias {
+      font-size: 14px;
+      font-style: italic;
+      margin-left: 20px;
+    }
+    table {
+      margin: 15px 0 0; padding: 0;
+    }
+      tr, td {
+        margin: 0; padding: 0;
+      }
+        td {
+          padding: 0px 15px 5px 0;
+        }
+    code, pre, tt {
+      font-family: Monaco, Consolas, "Lucida Console", monospace;
+      font-size: 12px;
+      line-height: 18px;
+    }
+      code {
+        margin-left: 20px;
+      }
+      pre {
+        font-size: 12px;
+        padding: 2px 0 2px 15px;
+        border-left: 2px solid #bbb;
+        margin: 0px 0 30px;
+      }
+    #diagram {
+      margin: 20px 0 0 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toc interface">
+    <a class="toc_title" href="#Introduction">
+      Introduction
+    </a>
+    <a class="toc_title" href="#Events">
+      Events
+    </a>
+    <ul class="toc_section">
+      <li>– <a href="#Events-bind">bind</a></li>
+      <li>– <a href="#Events-unbind">unbind</a></li>
+      <li>– <a href="#Events-trigger">trigger</a></li>
+    </ul>
+    <a class="toc_title" href="#Model">
+      Model
+    </a>
+    <ul class="toc_section">
+      <li>– <a href="#Model-get">get</a></li>
+      <li>– <a href="#Model-set">set</a></li>
+      <li>– <a href="#Model-unset">unset</a></li>
+      <li>– <a href="#Model-attributes">attributes</a></li>
+      <li>– <a href="#Model-save">save</a></li>
+      <li>– <a href="#Model-destroy">destroy</a></li>
+      <li>– <a href="#Model-validate">validate</a></li>
+      <li>– <a href="#Model-url">url</a></li>
+      <li>– <a href="#Model-clone">clone</a></li>
+      <li>– <a href="#Model-toString">toString</a></li>
+      <li>– <a href="#Model-isEqual">isEqual</a></li>
+      <li>– <a href="#Model-isNew">isNew</a></li>
+      <li>– <a href="#Model-change">change</a></li>
+      <li>– <a href="#Model-hasChanged">hasChanged</a></li>
+      <li>– <a href="#Model-changedAttributes">changedAttributes</a></li>
+      <li>– <a href="#Model-formerValue">formerValue</a></li>
+      <li>– <a href="#Model-formerAttributes">formerAttributes</a></li>
+    </ul>
+    <a class="toc_title" href="#Collection">
+      Collection
+    </a>
+    <ul class="toc_section">
+      <li>– <a href="#Collection-add">add</a></li>
+      <li>– <a href="#Collection-remove">remove</a></li>
+      <li>– <a href="#Collection-get">get</a></li>
+      <li>– <a href="#Collection-getIds">getIds</a></li>
+      <li>– <a href="#Collection-at">at</a></li>
+      <li>– <a href="#Collection-sort">sort</a></li>
+      <li>– <a href="#Collection-refresh">refresh</a></li>
+      <li>– <a href="#Collection-fetch">fetch</a></li>
+      <li>– <a href="#Collection-create">create</a></li>
+      <li>– <a href="#Collection-getByCid">getByCid</a></li>
+      <li>– <a href="#Collection-getCids">getCids</a></li>
+      <li>– <a href="#Collection-toString">toString</a></li>
+      <li>– <a href="#Collection-pluck">pluck</a></li>
+      <li>– <a href="#Collection-Underscore-Methods">Underscore Methods (24)</a></li>
+    </ul>
+    <a class="toc_title" href="#Request">
+      Request
+    </a>
+    <ul class="toc_section">
+      <li>– <a href="#Request">Backbone.request</a></li>
+    </ul>
+    <a class="toc_title" href="#View">
+      View
+    </a>
+    <ul class="toc_section">
+      <li>– <a href="View-jQuery">$ (jQuery)</a></li>
+      <li>– <a href="View-render">render</a></li>
+      <li>– <a href="View-make">make</a></li>
+      <li>– <a href="View-setMode">setMode</a></li>
+      <li>– <a href="View-setCallbacks">setCallbacks</a></li>
+    </ul>
+  </div>
+
+  <div class="container">
+
+    <p>
+      <img src="docs/backbone.png" alt="Backbone.js" />
+    </p>
+
+    <p>
+      <a href="http://github.com/documentcloud/backbone/">Backbone</a> gives
+      structure to JavaScript applications by providing models with
+      key-value binding, collections with rich enumerable functions,
+      views with declarative callbacks, and connects to your existing webapp
+      over a RESTful JSON interface.
+    </p>
+
+    <p>
+      The project is <a href="http://github.com/documentcloud/backbone/">hosted on GitHub</a>,
+      and the <a href="docs/backbone.html">annotated source code</a> is available,
+      as well as an online <a href="test/test.html">test suite</a>.
+    </p>
+
+    <p>
+      <i>
+        Backbone is an open-source component of
+        <a href="http://documentcloud.org/">DocumentCloud</a>.
+      </i>
+    </p>
+
+    <h2 id="downloads">
+      Downloads &amp; Dependencies
+      <span style="padding-left: 7px; font-size:11px; font-weight: normal;" class="interface">(Right-click, and use "Save As")</span>
+    </h2>
+
+    <table>
+      <tr>
+        <td><a href="underscore.js">Development Version (0.1.0)</a></td>
+        <td><i>22kb, Uncompressed with Comments</i></td>
+      </tr>
+      <tr>
+        <td><a href="underscore-min.js">Production Version (0.1.0)</a></td>
+        <td><i>2kb, Packed and Gzipped</i></td>
+      </tr>
+    </table>
+
+    <p>
+      Backbone's only hard dependency is
+      <a href="http://documentcloud.github.com/underscore/">Underscore.js</a>.
+      For RESTful persistence, and DOM manipulation with
+      <a href="#View">Backbone.View</a>,
+      it's highly recommended to include <a href="http://jquery.com">jQuery</a>,
+      and <a href="http://www.json.org/json2.js">json2.js</a>
+      (which you probably already have).
+    </p>
+
+    <h2 id="Introduction">Introduction</h2>
+
+    <p>
+      The core idea behind Backbone is to avoid tying your data to the DOM. It's
+      too easy to create JavaScript applications that end up as tangled piles of
+      jQuery selectors and callbacks, all trying frantically to keep data in
+      sync between the UI, your JavaScript logic, and the database on your
+      server. For rich client-side applications, a more structured approach
+      is helpful.
+    </p>
+
+    <p>
+      With Backbone, you represent your data as
+      <a href="#Model">Models</a>, which can be created, validated, destroyed,
+      and saved to the server. Whenever a UI action causes an attribute of
+      a model to change, the model triggers a <i>change</i> event, and all
+      the <a href="#View">Views</a> that are displaying the model's data are
+      notified, causing them to re-render. You don't have to write the glue 
+      code that looks into the DOM to find an element with a specific <i>id</i>,
+      and update the HTML contents 
+      &mdash; when the model changes, the views simply update themselves.
+    </p>
+    
+    <p>
+      <i>How is this different than 
+        <a href="http://www.sproutcore.com/">SproutCore</a> or 
+        <a href="http://cappuccino.org/">Cappuccino</a>?
+      </i>
+    </p>
+    
+    <p>
+      This question is frequently asked, and all three projects apply general 
+      <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
+      principles to JavaScript applications. However, there isn't much basis
+      for comparsion. SproutCore and Cappuccino provide rich UI widgets, vast 
+      core libraries, and determine the structure of your HTML for you.
+      Loading the "Hello World" of SproutCore includes <i>2.5 megabytes</i> of JavaScript on the
+      page; the "Hello World" of Cappuccino includes <i>1.7 megabytes</i> of JS and images. 
+      Backbone is a mere <i>2 kilobyte</i> include that provides the core concepts of
+      models, events (key-value observing), collections, views, and persistence.
+    </p>
+
+    <h2 id="Events">Backbone.Events</h2>
+
+    <p>
+      <b>Events</b> is a module that can be mixed in to any object, giving the
+      object the ability to bind and trigger custom events. For example:
+    </p>
+
+<pre>
+javascripts:
+  workspace:
+    - app/views/accounts/badge.jst
+    - app/views/common/dialog.jst
+    - app/views/common/menu.jst</pre>
+
+    <h2 id="changes">Change Log</h2>
+
+    <p>
+      <b class="header">0.1.0</b><br />
+      Initial Backbone release.
+    </p>
+
+    <p>
+      <br />
+      <a href="http://documentcloud.org/" title="A DocumentCloud Project" style="background:none;">
+        <img src="http://jashkenas.s3.amazonaws.com/images/a_documentcloud_project.png" alt="A DocumentCloud Project" style="position:relative;left:-10px;" />
+      </a>
+    </p>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

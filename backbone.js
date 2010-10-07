@@ -1,8 +1,7 @@
-// Backbone.js
-// (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
-// Backbone may be freely distributed under the terms of the MIT license.
-// For all details and documentation:
-// http://documentcloud.github.com/backbone
+//     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
+//     Backbone may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://documentcloud.github.com/backbone
 
 (function(){
 
@@ -19,12 +18,11 @@
   (typeof exports !== 'undefined' ? exports : this).Backbone = Backbone;
 
   // Helper function to correctly set up the prototype chain, for subclasses.
+  // Similar to `goog.inherits`, but uses a hash of prototype properties and
+  // static properties to be extended.
   var inherits = function(parent, protoProps, classProps) {
-    if (protoProps.hasOwnProperty('constructor')) {
-      child = protoProps.constructor;
-    } else {
-      child = function(){ return parent.apply(this, arguments); };
-    }
+    var child = protoProps.hasOwnProperty('constructor') ? protoProps.constructor :
+                function(){ return parent.apply(this, arguments); };
     var ctor = function(){};
     ctor.prototype = parent.prototype;
     child.prototype = new ctor();
@@ -34,12 +32,19 @@
     return child;
   };
 
-  // Backbone.Bindable
+  // Backbone.Events
   // -----------------
 
-  // A module that can be mixed in to any object in order to provide it with
-  // custom events.
-  Backbone.Bindable = {
+  // A module that can be mixed in to *any object* in order to provide it with
+  // custom events. You may `bind` or `unbind` a callback function to an event;
+  // `trigger`-ing an event fires all callbacks in succession.
+  //
+  //     var object = {};
+  //     _.extend(object, Backbone.Events);
+  //     object.bind('expand', function(){ alert('expanded'); });
+  //     object.trigger('expand');
+  //
+  Backbone.Events = {
 
     // Bind an event, specified by a string name, `ev`, to a `callback` function.
     // Passing `"all"` will bind the callback to all events fired.
@@ -62,6 +67,7 @@
           calls[ev] = [];
         } else {
           var list = calls[ev];
+          if (!list) return this;
           for (var i = 0, l = list.length; i < l; i++) {
             if (callback === list[i]) {
               list.splice(i, 1);
@@ -73,14 +79,21 @@
       return this;
     },
 
-    // Trigger an event, firing all bound callbacks
+    // Trigger an event, firing all bound callbacks. Callbacks are passed the
+    // same arguments as `trigger` is, apart from the event name.
+    // Listening for `"all"` passes the true event name as the first argument.
     trigger : function(ev) {
+      var list, calls, i, l;
       var calls = this._callbacks;
-      for (var i = 0; i < 2; i++) {
-        var list = calls && calls[i ? 'all' : ev];
-        if (!list) continue;
-        for (var j = 0, l = list.length; j < l; j++) {
-          list[j].apply(this, arguments);
+      if (!(calls = this._callbacks)) return this;
+      if (list = calls[ev]) {
+        for (i = 0, l = list.length; i < l; i++) {
+          list[i].apply(this, _.rest(arguments));
+        }
+      }
+      if (list = calls['all']) {
+        for (i = 0, l = list.length; i < l; i++) {
+          list[i].apply(this, arguments);
         }
       }
       return this;
@@ -95,36 +108,13 @@
   // If you do not specify the id, a negative id will be assigned for you.
   Backbone.Model = function(attributes) {
     this._attributes = {};
-    attributes = attributes || {};
-    this.set(attributes, true);
     this.cid = _.uniqueId('c');
+    this.set(attributes || {}, {silent : true});
     this._formerAttributes = this.attributes();
   };
 
-  // Create a model on the server and add it to the set.
-  // When the server returns a JSON representation of the model, we update it
-  // on the client.
-  Backbone.Model.create = function(attributes, options) {
-    options || (options = {});
-    var model = new this(attributes);
-    $.ajax({
-      url       : model.set.resource,
-      type      : 'POST',
-      data      : {model : JSON.stringify(model.attributes())},
-      dataType  : 'json',
-      success   : function(resp) {
-        model.set(resp.model);
-        if (options.success) return options.success(model, resp);
-      },
-      error     : function(resp) {
-        if (options.error) options.error(model, resp);
-      }
-    });
-    return model;
-  };
-
   // Attach all inheritable methods to the Model prototype.
-  _.extend(Backbone.Model.prototype, Backbone.Bindable, {
+  _.extend(Backbone.Model.prototype, Backbone.Events, {
 
     // A snapshot of the model's previous attributes, taken immediately
     // after the last `changed` event was fired.
@@ -132,6 +122,26 @@
 
     // Has the item been changed since the last `changed` event?
     _changed : false,
+
+    // Return a copy of the model's `attributes` object.
+    attributes : function() {
+      return _.clone(this._attributes);
+    },
+
+    // Default URL for the model's representation on the server -- if you're
+    // using Backbone's restful methods, override this to change the endpoint
+    // that will be called.
+    url : function() {
+      var base = this.collection.url();
+      if (this.isNew()) return base;
+      return base + '/' + this.id;
+    },
+
+    // String representation of the model. Override this to provide a nice way
+    // to print models to the console.
+    toString : function() {
+      return 'Model ' + this.id;
+    },
 
     // Create a new model with identical attributes to this one.
     clone : function() {
@@ -149,9 +159,68 @@
       return !this.id;
     },
 
-    // Call this method to fire manually fire a `changed` event for this model.
+    // Get the value of an attribute.
+    get : function(attr) {
+      return this._attributes[attr];
+    },
+
+    // Set a hash of model attributes on the object, firing `changed` unless you
+    // choose to silence it.
+    set : function(attrs, options) {
+
+      // Extract attributes and options.
+      options || (options = {});
+      if (!attrs) return this;
+      attrs = attrs._attributes || attrs;
+      var now = this._attributes;
+
+      // Run validation if `validate` is defined.
+      if (this.validate) {
+        var error = this.validate(attrs);
+        if (error) {
+          this.trigger('error', this, error);
+          return false;
+        }
+      }
+
+      // Check for changes of `id`.
+      if ('id' in attrs) this.id = attrs.id;
+
+      // Update attributes.
+      for (var attr in attrs) {
+        var val = attrs[attr];
+        if (val === '') val = null;
+        if (!_.isEqual(now[attr], val)) {
+          now[attr] = val;
+          if (!options.silent) {
+            this._changed = true;
+            this.trigger('change:' + attr, this);
+          }
+        }
+      }
+
+      // Fire the `change` event, if the model has been changed.
+      if (!options.silent && this._changed) this.change();
+      return this;
+    },
+
+    // Remove an attribute from the model, firing `changed` unless you choose to
+    // silence it.
+    unset : function(attr, options) {
+      options || (options = {});
+      var value = this._attributes[attr];
+      delete this._attributes[attr];
+      if (!options.silent) {
+        this._changed = true;
+        this.trigger('change:' + attr, this);
+        this.change();
+      }
+      return value;
+    },
+
+    // Call this method to fire manually fire a `change` event for this model.
     // Calling this will cause all objects observing the model to update.
-    changed : function() {
+    change : function() {
       this.trigger('change', this);
       this._formerAttributes = this.attributes();
       this._changed = false;
@@ -162,19 +231,6 @@
     hasChanged : function(attr) {
       if (attr) return this._formerAttributes[attr] != this._attributes[attr];
       return this._changed;
-    },
-
-    // Get the previous value of an attribute, recorded at the time the last
-    // `changed` event was fired.
-    formerValue : function(attr) {
-      if (!attr || !this._formerAttributes) return null;
-      return this._formerAttributes[attr];
-    },
-
-    // Get all of the attributes of the model at the time of the previous
-    // `changed` event.
-    formerAttributes : function() {
-      return this._formerAttributes;
     },
 
     // Return an object containing all the attributes that have changed, or false
@@ -192,80 +248,43 @@
       return changed;
     },
 
-    // Set a hash of model attributes on the object, firing `changed` unless you
-    // choose to silence it.
-    set : function(attrs, options) {
-      options || (options = {});
-      if (!attrs) return this;
-      attrs = attrs._attributes || attrs;
-      var now = this._attributes;
-      if (attrs.id) {
-        this.id = attrs.id;
-        if (this.collection) this.resource = this.collection.resource + '/' + this.id;
-      }
-      for (var attr in attrs) {
-        var val = attrs[attr];
-        if (val === '') val = null;
-        if (!_.isEqual(now[attr], val)) {
-          if (!options.silent) this._changed = true;
-          now[attr] = val;
-        }
-      }
-      if (!options.silent && this._changed) this.changed();
-      return this;
+    // Get the previous value of an attribute, recorded at the time the last
+    // `changed` event was fired.
+    formerValue : function(attr) {
+      if (!attr || !this._formerAttributes) return null;
+      return this._formerAttributes[attr];
     },
 
-    // Get the value of an attribute.
-    get : function(attr) {
-      return this._attributes[attr];
-    },
-
-    // Remove an attribute from the model, firing `changed` unless you choose to
-    // silence it.
-    unset : function(attr, options) {
-      options || (options = {});
-      var value = this._attributes[attr];
-      delete this._attributes[attr];
-      if (!options.silent) this.changed();
-      return value;
-    },
-
-    // Return a copy of the model's attributes.
-    attributes : function() {
-      return _.clone(this._attributes);
-    },
-
-    // Bind all methods in the list to the model.
-    bindAll : function() {
-      _.bindAll.apply(_, [this].concat(arguments));
-    },
-
-    toString : function() {
-      return 'Model ' + this.id;
-    },
-
-    // Return the URL used to {save,delete}
-    url : function() {
-      if (!this.id) throw new Error(this.toString() + " has no id.");
-      return this.collection.url() + '/' + this.id;
+    // Get all of the attributes of the model at the time of the previous
+    // `changed` event.
+    formerAttributes : function() {
+      return this._formerAttributes;
     },
 
     // Set a hash of model attributes, and sync the model to the server.
     save : function(attrs, options) {
+      attrs   || (attrs = {});
       options || (options = {});
-      this.set(attrs, options);
+      if (!this.set(attrs, options)) return false;
       var model = this;
       var success = function(resp) {
-        model.set(resp.model);
+        if (!model.set(resp.model)) return false;
         if (options.success) options.success(model, resp);
       };
-      Backbone.request('PUT', this, success, options.error);
+      var method = this.isNew() ? 'POST' : 'PUT';
+      Backbone.request(method, this, success, options.error);
       return this;
     },
 
     // Destroy this model on the server.
     destroy : function(options) {
-      Backbone.request('DELETE', this, options.success, options.error);
+      options || (options = {});
+      var model = this;
+      var success = function(resp) {
+        if (model.collection) model.collection.remove(model);
+        if (options.success) options.success(model, resp);
+      };
+      Backbone.request('DELETE', this, success, options.error);
       return this;
     }
 
@@ -277,31 +296,40 @@
   // Provides a standard collection class for our sets of models, ordered
   // or unordered. If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
-  Backbone.Collection = function(options) {
+  Backbone.Collection = function(models, options) {
+    options || (options = {});
+    if (options.comparator) {
+      this.comparator = options.comparator;
+      delete options.comparator;
+    }
     this._boundOnModelEvent = _.bind(this._onModelEvent, this);
     this._initialize();
+    if (models) this.refresh(models,true);
   };
 
   // Define the Collection's inheritable methods.
-  _.extend(Backbone.Collection.prototype, Backbone.Bindable, {
+  _.extend(Backbone.Collection.prototype, Backbone.Events, {
 
-    // Initialize or re-initialize all internal state. Called when the
-    // collection is refreshed.
-    _initialize : function() {
-      this.length = 0;
-      this.models = [];
-      this._byId = {};
-      this._byCid = {};
+    model : Backbone.Model,
+
+    // Override this function to get convenient logging in the console.
+    toString : function() {
+      return 'Collection (' + this.length + " models)";
     },
 
     // Get a model from the set by id.
     get : function(id) {
-      return id && this._byId[id.id || id];
+      return id && this._byId[id.id != null ? id.id : id];
     },
 
     // Get a model from the set by client id.
     getByCid : function(cid) {
       return cid && this._byCid[cid.cid || cid];
+    },
+
+    // Get the model at the given index.
+    at: function(index) {
+      return this.models[index];
     },
 
     // What are the ids for every model in the set?
@@ -314,100 +342,142 @@
       return _.keys(this._byCid);
     },
 
-    // Get the model at the given index.
-    at: function(index) {
-      return this.models[index];
+    // Pluck an attribute from each model in the collection.
+    pluck : function(attr) {
+      return _.map(this.models, function(model){ return model.get(attr); });
     },
 
-    // Add a model, or list of models to the set. Pass silent to avoid firing
-    // the `added` event for every new model.
-    add : function(models, silent) {
-      if (!_.isArray(models)) return this._add(models, silent);
-      for (var i=0; i<models.length; i++) this._add(models[i], silent);
+    // Add a model, or list of models to the set. Pass **silent** to avoid
+    // firing the `added` event for every new model.
+    add : function(models, options) {
+      if (!_.isArray(models)) return this._add(models, options);
+      for (var i=0; i<models.length; i++) this._add(models[i], options);
       return models;
     },
 
     // Internal implementation of adding a single model to the set.
-    _add : function(model, silent) {
+    _add : function(model, options) {
+      options || (options = {});
       var already = this.get(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
-      var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length - 1;
+      model.collection = this;
+      var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length;
       this.models.splice(index, 0, model);
       model.bind('all', this._boundOnModelEvent);
       this.length++;
-      if (!silent) this.trigger('add', model);
+      if (!options.silent) this.trigger('add', model);
       return model;
     },
 
     // Remove a model, or a list of models from the set. Pass silent to avoid
     // firing the `removed` event for every model removed.
-    remove : function(models, silent) {
-      if (!_.isArray(models)) return this._remove(models, silent);
-      for (var i=0; i<models.length; i++) this._remove(models[i], silent);
+    remove : function(models, options) {
+      if (!_.isArray(models)) return this._remove(models, options);
+      for (var i=0; i<models.length; i++) this._remove(models[i], options);
       return models;
     },
 
     // Internal implementation of removing a single model from the set.
-    _remove : function(model, silent) {
+    _remove : function(model, options) {
+      options || (options = {});
       model = this.get(model);
       if (!model) return null;
       delete this._byId[model.id];
       delete this._byCid[model.cid];
+      delete model.collection;
       this.models.splice(this.indexOf(model), 1);
       model.unbind('all', this._boundOnModelEvent);
       this.length--;
-      if (!silent) this.trigger('remove', model);
+      if (!options.silent) this.trigger('remove', model);
       return model;
+    },
+
+    // Force the set to re-sort itself. You don't need to call this under normal
+    // circumstances, as the set will maintain sort order as each item is added.
+    sort : function(options) {
+      options || (options = {});
+      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
+      this.models = this.sortBy(this.comparator);
+      if (!options.silent) this.trigger('refresh', this);
+      return this;
     },
 
     // When you have more items than you want to add or remove individually,
     // you can refresh the entire set with a new list of models, without firing
     // any `added` or `removed` events. Fires `refreshed` when finished.
-    refresh : function(models, silent) {
+    refresh : function(models, options) {
+      options || (options = {});
       models = models || [];
+      var collection = this;
       if (models[0] && !(models[0] instanceof Backbone.Model)) {
-        for (var i = 0, l = models.length; i < l; i++) {
-          models[i].collection = this;
-          models[i] = new this.model(models[i]);
-        }
+        models = _.map(models, function(attrs, i) {
+          return new collection.model(attrs);
+        });
       }
       this._initialize();
-      this.add(models, true);
-      if (!silent) this.trigger('refresh');
+      this.add(models, {silent: true});
+      if (!options.silent) this.trigger('refresh', this);
+      return this;
     },
 
-    // Force the set to re-sort itself. You don't need to call this under normal
-    // circumstances, as the set will maintain sort order as each item is added.
-    sort : function(silent) {
-      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
-      this.models = this.sortBy(this.comparator);
-      if (!silent) this.trigger('refresh');
+    // Fetch the default set of models for this collection, refreshing the
+    // collection.
+    fetch : function(options) {
+      options || (options = {});
+      var collection = this;
+      var success = function(resp) {
+        collection.refresh(resp.models);
+        if (options.success) options.success(collection, resp);
+      };
+      Backbone.request('GET', this, success, options.error);
+      return this;
+    },
+
+    // Create a new instance of a model in this collection.
+    create : function(model, options) {
+      options || (options = {});
+      if (!(model instanceof Backbone.Model)) model = new this.model(model);
+      model.collection = this;
+      var success = function(model, resp) {
+        if (!model.set(resp.model)) return false;
+        model.collection.add(model);
+        if (options.success) options.success(model, resp);
+      };
+      return model.save(null, {success : success, error : options.error});
+    },
+
+    // Initialize or re-initialize all internal state. Called when the
+    // collection is refreshed.
+    _initialize : function(options) {
+      this.length = 0;
+      this.models = [];
+      this._byId = {};
+      this._byCid = {};
     },
 
     // Internal method called every time a model in the set fires an event.
     // Sets need to update their indexes when models change ids.
-    _onModelEvent : function(ev, model) {
-      if (ev == 'change') {
-        if (model.hasChanged('id')) {
-          delete this._byId[model.formerValue('id')];
-          this._byId[model.id] = model;
-        }
-        this.trigger('change', model);
+    _onModelEvent : function(ev, model, error) {
+      switch (ev) {
+        case 'change':
+          if (model.hasChanged('id')) {
+            delete this._byId[model.formerValue('id')];
+            this._byId[model.id] = model;
+          }
+          this.trigger('change', model);
+          break;
+        case 'error':
+          this.trigger('error', model, error);
       }
-    },
-
-    // Inspect.
-    toString : function() {
-      return 'Set (' + this.length + " models)";
     }
 
   });
 
   // Underscore methods that we want to implement on the Collection.
   var methods = ['each', 'map', 'reduce', 'reduceRight', 'detect', 'select',
-    'reject', 'all', 'any', 'include', 'invoke', 'pluck', 'max', 'min', 'sortBy',
+    'reject', 'all', 'any', 'include', 'invoke', 'max', 'min', 'sortBy',
     'sortedIndex', 'toArray', 'size', 'first', 'rest', 'last', 'without',
     'indexOf', 'lastIndexOf', 'isEmpty'];
 
@@ -421,51 +491,51 @@
   // Backbone.View
   // -------------
 
+  // Creating a Backbone.View creates its intial element outside of the DOM,
+  // if an existing element is not provided...
   Backbone.View = function(options) {
     this.modes = {};
-    this.configure(options || {});
+    this._initialize(options || {});
     if (this.options.el) {
       this.el = this.options.el;
     } else {
       var attrs = {};
       if (this.id) attrs.id = this.id;
-      if (this.className) attrs['class'] = this.className;
+      if (this.className) attrs.className = this.className;
       this.el = this.make(this.tagName, attrs);
     }
     return this;
   };
 
-  // Set up all interitable view properties and methods.
+  // jQuery lookup, scoped to DOM elements within the current view.
+  // This should be prefered to global jQuery lookups, if you're dealing with
+  // a specific view.
+  var jQueryDelegate = function(selector) {
+    return $(selector, this.el);
+  };
+
+  // Set up all interitable **Backbone.View** properties and methods.
   _.extend(Backbone.View.prototype, {
 
-    el        : null,
-    model     : null,
-    modes     : null,
-    id        : null,
-    className : null,
-    callbacks : null,
-    options   : null,
-    tagName   : 'div',
+    // The default tagName of a View's element is "div".
+    tagName : 'div',
 
-    configure : function(options) {
-      if (this.options) options = _.extend({}, this.options, options);
-      if (options.model)      this.model      = options.model;
-      if (options.collection) this.collection = options.collection;
-      if (options.id)         this.id         = options.id;
-      if (options.className)  this.className  = options.className;
-      this.options = options;
-    },
+    // Attach the jQuery function as the `$` and `jQuery` properties.
+    $       : jQueryDelegate,
+    jQuery  : jQueryDelegate,
 
+    // **render** is the core function that your view should override, in order
+    // to populate its element (`this.el`), with the appropriate HTML. The
+    // convention is for **render** to always return `this`.
     render : function() {
       return this;
     },
 
-    // jQuery lookup, scoped to the current view.
-    $ : function(selector) {
-      return $(selector, this.el);
-    },
-
-    // Quick-create a dom element with attributes.
+    // For small amounts of DOM Elements, where a full-blown template isn't
+    // needed, use **make** to manufacture elements, one at a time.
+    //
+    //     var el = this.make('li', {'class': 'row'}, this.model.get('title'));
+    //
     make : function(tagName, attributes, content) {
       var el = document.createElement(tagName);
       if (attributes) $(el).attr(attributes);
@@ -475,21 +545,29 @@
 
     // Makes the view enter a mode. Modes have both a 'mode' and a 'group',
     // and are mutually exclusive with any other modes in the same group.
-    // Setting will update the view's modes hash, as well as set an HTML className
-    // of [mode]_[group] on the view's element. Convenient way to swap styles
+    // Setting will update the view's modes hash, as well as set an HTML class
+    // of *[mode]_[group]* on the view's element. Convenient way to swap styles
     // and behavior.
     setMode : function(mode, group) {
-      if (this.modes[group] == mode) return;
+      if (this.modes[group] === mode) return;
       $(this.el).setMode(mode, group);
       this.modes[group] = mode;
     },
 
     // Set callbacks, where this.callbacks is a hash of
-    //   {selector.event_name, callback_name}
-    // pairs. Callbacks will be bound to the view, with 'this' set properly.
-    // Passing a selector of 'el' binds to the view's root element.
-    // Change events are not delegated through the view because IE does not bubble
-    // change events at all.
+    //
+    // *{selector.event_name: callback_name}*
+    //
+    //     {
+    //       '.icon.pencil.mousedown':  'edit',
+    //       '.button.click':           'save'
+    //     }
+    //
+    // pairs. Callbacks will be bound to the view, with `this` set properly.
+    // Uses jQuery event delegation for efficiency.
+    // Passing a selector of `el` binds to the view's root element.
+    // Change events are not delegated through the view because IE does not
+    // bubble change events at all.
     setCallbacks : function(callbacks) {
       $(this.el).unbind();
       if (!(callbacks || (callbacks = this.callbacks))) return this;
@@ -505,6 +583,18 @@
         }
       }
       return this;
+    },
+
+    // Performs the initial configuration of a View with a set of options.
+    // Keys with special meaning *(model, collection, id, className)*, are
+    // attatched directly to the view.
+    _initialize : function(options) {
+      if (this.options) options = _.extend({}, this.options, options);
+      if (options.model)      this.model      = options.model;
+      if (options.collection) this.collection = options.collection;
+      if (options.id)         this.id         = options.id;
+      if (options.className)  this.className  = options.className;
+      this.options = options;
     }
 
   });
@@ -516,16 +606,25 @@
     return child;
   };
 
+  // Override this function to change the manner in which Backbone persists
+  // models to the server. You will be passed the type of request, and the
+  // model in question. By default, uses jQuery to make a RESTful Ajax request
+  // to the model's `url()`. Some possible customizations could be:
+  //
+  // * Use `setTimeout` to batch rapid-fire updates into a single request.
+  // * Send up the models as XML instead of JSON.
+  // * Persist models via WebSockets instead of Ajax.
+  //
   Backbone.request = function(type, model, success, error) {
-    
+    var data = model.attributes ? {model : JSON.stringify(model.attributes())} : {};
     $.ajax({
       url       : model.url(),
       type      : type,
-      data      : {model : JSON.stringify(model.attributes())},
+      data      : data,
       dataType  : 'json',
       success   : success,
       error     : error
     });
-  }
+  };
 
 })();
