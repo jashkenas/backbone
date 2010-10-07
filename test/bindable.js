@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   test("bindable: bind and trigger", function() {
     var obj = { counter: 0 };
-    _.extend(obj,Backbone.Bindable);
+    _.extend(obj,Backbone.Events);
     obj.bind('event', function() { obj.counter += 1; });
     obj.trigger('event');
     equals(obj.counter,1,'counter should be incremented.');
@@ -17,7 +17,7 @@ $(document).ready(function() {
 
   test("bindable: bind, then unbind all functions", function() {
     var obj = { counter: 0 };
-    _.extend(obj,Backbone.Bindable);
+    _.extend(obj,Backbone.Events);
     var callback = function() { obj.counter += 1; };
     obj.bind('event', callback);
     obj.trigger('event');
@@ -28,7 +28,7 @@ $(document).ready(function() {
 
   test("bindable: bind two callbacks, unbind only one", function() {
     var obj = { counterA: 0, counterB: 0 };
-    _.extend(obj,Backbone.Bindable);
+    _.extend(obj,Backbone.Events);
     var callback = function() { obj.counterA += 1; };
     obj.bind('event', callback);
     obj.bind('event', function() { obj.counterB += 1; });

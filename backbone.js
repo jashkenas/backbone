@@ -32,7 +32,7 @@
     return child;
   };
 
-  // Backbone.Bindable
+  // Backbone.Events
   // -----------------
 
   // A module that can be mixed in to *any object* in order to provide it with
@@ -40,11 +40,11 @@
   // `trigger`-ing an event fires all callbacks in succession.
   //
   //     var object = {};
-  //     _.extend(object, Backbone.Bindable);
+  //     _.extend(object, Backbone.Events);
   //     object.bind('expand', function(){ alert('expanded'); });
   //     object.trigger('expand');
   //
-  Backbone.Bindable = {
+  Backbone.Events = {
 
     // Bind an event, specified by a string name, `ev`, to a `callback` function.
     // Passing `"all"` will bind the callback to all events fired.
@@ -114,7 +114,7 @@
   };
 
   // Attach all inheritable methods to the Model prototype.
-  _.extend(Backbone.Model.prototype, Backbone.Bindable, {
+  _.extend(Backbone.Model.prototype, Backbone.Events, {
 
     // A snapshot of the model's previous attributes, taken immediately
     // after the last `changed` event was fired.
@@ -308,7 +308,7 @@
   };
 
   // Define the Collection's inheritable methods.
-  _.extend(Backbone.Collection.prototype, Backbone.Bindable, {
+  _.extend(Backbone.Collection.prototype, Backbone.Events, {
 
     model : Backbone.Model,
 

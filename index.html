@@ -98,8 +98,8 @@
       }
       pre {
         font-size: 12px;
-        padding: 2px 0 2px 12px;
-        border-left: 6px solid black;
+        padding: 2px 0 2px 15px;
+        border-left: 2px solid #bbb;
         margin: 0px 0 30px;
       }
     #diagram {
@@ -111,7 +111,7 @@
 
   <div class="toc interface">
     <div class="toc_title">
-      Bindable
+      Events
     </div>
     <ul class="toc_section">
       <li>– <span>bind</span></li>
@@ -128,6 +128,7 @@
       <li>– <span>attributes</span></li>
       <li>– <span>save</span></li>
       <li>– <span>destroy</span></li>
+      <li>– <span>validate</span></li>
       <li>– <span>url</span></li>
       <li>– <span>clone</span></li>
       <li>– <span>toString</span></li>
@@ -742,130 +743,8 @@ JST['common/menu']</pre>
     <h2 id="changes">Change Log</h2>
 
     <p>
-      <b class="header">0.5.3</b><br />
-      You can now embed <b>WOFF</b>-formatted fonts.
-      Jammit warnings avoid use of <tt>Rails.logger</tt>.
-      Bugfixes for Ruby 1.9.2 with asset files containing Unicode characters.
-    </p>
-
-    <p>
-      <b class="header">0.5.1</b><br />
-      Included missing <tt>rails/routes.rb</tt> file in the Gem manifest for Rails 3.
-    </p>
-
-    <p>
-      <b class="header">0.5.0</b><br />
-      The Jammit gem is now compatible with Rails 3. JST template packages are
-      no longer specified separately. This is a backwards-incompatible change,
-      and you'll have to update your <tt>assets.yml</tt> file to simply include
-      the JST in your existing JavaScript packages, as shown above. Alongside
-      this change, template names are now better namespaced &mdash; see the
-      section on <b>JavaScript Templates</b> for the details.
-      Bugfix for IE8 and Data-URIs slightly under 32kb in size, as well as
-      for MHTML in IE7-mode in Vista.
-    </p>
-
-    <p>
-      <b class="header">0.4.4</b><br />
-      Jammit will now add the <tt>RAILS_ASSET_ID</tt> timestamp to image URLs
-      within your CSS packages, if configured, for better cache-busting.
-      <a href="http://github.com/ghazel/">Greg Hazel</a> contributed a series
-      of Jammit/Windows bug fixes.
-    </p>
-
-    <p>
-      <b class="header">0.4.3</b><br />
-      Bugfix for building on Windows with drive-letter absolute paths.
-    </p>
-
-    <p>
-      <b class="header">0.4.2</b><br />
-      Added a logged warning when you have rules in <b>assets.yml</b> that don't
-      match any files.
-    </p>
-
-    <p>
-      <b class="header">0.4.1</b><br />
-      Jammit is now able to embed <tt>@font-face</tt> web fonts in <b>TTF</b> and
-      <b>OTF</b> formats. The <b>embed_images</b> option has been renamed to
-      <b>embed_assets</b> for this change. The <b>assets.yml</b> file is now
-      passed through ERB before being loaded, so you can configure
-      environment-specific settings, just like you would with <b>database.yml</b>.
-    </p>
-
-    <p>
-      <b class="header">0.3.3</b><br />
-      Added <tt>css_compressor_options</tt> to assets.yml, so you can
-      set <tt>charset</tt> and <tt>line_break</tt> for the YUI CSS Compressor.
-    </p>
-
-    <p>
-      <b class="header">0.3.2</b><br />
-      If Java isn't available on your machine, Jammit will now run in a graceful
-      degraded mode, where assets are packaged but not compressed. You can now
-      pass <tt>:embed_assets => false</tt> to the <tt>include_stylesheets</tt>
-      helper to disable image embedding on a per-package basis.
-    </p>
-
-    <p>
-      <b class="header">0.2.8</b><br />
-      Jammit now correctly rewrites relative image URLs within CSS, for easier
-      integration with partial Rails apps deployed on sub-paths.
-    </p>
-
-    <p>
-      <b class="header">0.2.7</b><br />
-      The <tt>jammit</tt> command has been enhanced to check the modification times of
-      your packages &mdash; if no source files have changed, the package isn't
-      rebuilt.
-    </p>
-
-    <p>
-      <b class="header">0.2.6</b><br />
-      Jammit now raises an exception if Java isn't installed, or if the Java
-      version is unsupported by your JavaScript compressor of choice.
-    </p>
-
-    <p>
-      <b class="header">0.2.5</b><br />
-      When specifying your asset packages as directory globs, absolute globs are
-      now absolute, and relative globs are relative to RAILS_ROOT.
-    </p>
-
-    <p>
-      <b class="header">0.2.4</b><br />
-      Jammit now throws a <tt>ConfigurationNotFound</tt> error when attempting to load
-      a nonexistent configuration file. Resolved an issue with asset caching from
-      daemonized mongrels.
-    </p>
-
-    <p>
-      <b class="header">0.2.1</b><br />
-      The <tt>include_stylesheets</tt> helper now takes the same options as the
-      Rails <tt>stylesheet_link_tag</tt> helper (such as <tt>:media => 'print'</tt>).
-    </p>
-
-    <p>
-      <b class="header">0.2.0</b><br />
-      Jammit now supports the <b>Google Closure Compiler</b> as an alternative
-      to the YUI compressor.
-    </p>
-
-    <p>
-      <b class="header">0.1.3</b><br />
-      Fixed a bug that conflicted with other plugins trying to alter
-      ApplicationController in development.
-    </p>
-
-    <p>
-      <b class="header">0.1.1</b><br />
-      Added support for embedding images with stylesheet-relative paths.
-      Shortened the MHTML identifiers.
-    </p>
-
-    <p>
       <b class="header">0.1.0</b><br />
-      Initial Jammit release.
+      Initial Backbone release.
     </p>
 
     <p>

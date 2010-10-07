@@ -125,7 +125,7 @@ $(document).ready(function() {
     model.validate = function(attrs) {
       if (attrs.admin) return "Can't change admin status.";
     };
-    model.bind('error', function(error) {
+    model.bind('error', function(model, error) {
       lastError = error;
     });
     var result = model.set({a: 100});
