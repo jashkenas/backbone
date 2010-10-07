@@ -9,12 +9,12 @@
       font-size: 14px;
       line-height: 20px;
       font-family: Helvetica Neue, Helvetica, Arial;
-      background: #f4f4f4 url(docs/background.png);
+      background: #f4f4f4 url(docs/images/background.png);
     }
     .interface {
       font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif !important;
     }
-    div.toc {
+    div#sidebar {
       background: #fff;
       position: fixed;
       top: 0; left: 0; bottom: 0;
@@ -50,9 +50,19 @@
             color: black;
           }
     div.container {
-      width: 720px;
+      position: relative;
+      width: 550px;
       margin: 40px 0 50px 240px;
     }
+    div.run {
+      position: absolute;
+      right: 15px;
+      width: 26px; height: 18px;
+      background: url('docs/images/arrows.png') no-repeat -26px 0;
+    }
+      div.run:active {
+        background-position: -51px 0;
+      }
     p, li {
       margin: 16px 0 16px 0;
       width: 550px;
@@ -73,6 +83,7 @@
       }
     b.header {
       font-size: 18px;
+      line-height: 30px;
     }
     span.alias {
       font-size: 14px;
@@ -93,23 +104,25 @@
       font-size: 12px;
       line-height: 18px;
     }
+      tt {
+        padding: 0px 3px;
+        background: #fff;
+        border: 1px solid #ddd;
+      }
       code {
         margin-left: 20px;
       }
       pre {
         font-size: 12px;
         padding: 2px 0 2px 15px;
-        border-left: 2px solid #bbb;
+        border: 4px solid #bbb; border-top: 0; border-bottom: 0;
         margin: 0px 0 30px;
       }
-    #diagram {
-      margin: 20px 0 0 0;
-    }
   </style>
 </head>
 <body>
 
-  <div class="toc interface">
+  <div id="sidebar" class="interface">
     <a class="toc_title" href="#Introduction">
       Introduction
     </a>
@@ -125,6 +138,7 @@
       Model
     </a>
     <ul class="toc_section">
+      <li>– <a href="#Model-extend">extend</a></li>
       <li>– <a href="#Model-get">get</a></li>
       <li>– <a href="#Model-set">set</a></li>
       <li>– <a href="#Model-unset">unset</a></li>
@@ -183,7 +197,7 @@
   <div class="container">
 
     <p>
-      <img src="docs/backbone.png" alt="Backbone.js" />
+      <img src="docs/images/backbone.png" alt="Backbone.js" />
     </p>
 
     <p>
@@ -250,28 +264,28 @@
       and saved to the server. Whenever a UI action causes an attribute of
       a model to change, the model triggers a <i>change</i> event, and all
       the <a href="#View">Views</a> that are displaying the model's data are
-      notified, causing them to re-render. You don't have to write the glue 
+      notified, causing them to re-render. You don't have to write the glue
       code that looks into the DOM to find an element with a specific <i>id</i>,
-      and update the HTML contents 
+      and update the HTML contents
       &mdash; when the model changes, the views simply update themselves.
     </p>
-    
+
     <p>
-      <i>How is this different than 
-        <a href="http://www.sproutcore.com/">SproutCore</a> or 
+      <i>How is this different than
+        <a href="http://www.sproutcore.com/">SproutCore</a> or
         <a href="http://cappuccino.org/">Cappuccino</a>?
       </i>
     </p>
-    
+
     <p>
-      This question is frequently asked, and all three projects apply general 
+      This question is frequently asked, and all three projects apply general
       <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
       principles to JavaScript applications. However, there isn't much basis
-      for comparsion. SproutCore and Cappuccino provide rich UI widgets, vast 
+      for comparsion. SproutCore and Cappuccino provide rich UI widgets, vast
       core libraries, and determine the structure of your HTML for you.
       Loading the "Hello World" of SproutCore includes <i>2.5 megabytes</i> of JavaScript on the
-      page; the "Hello World" of Cappuccino includes <i>1.7 megabytes</i> of JS and images. 
-      Backbone is a mere <i>2 kilobyte</i> include that provides the core concepts of
+      page; the "Hello World" of Cappuccino includes <i>1.7 megabytes</i> of JS and images.
+      Backbone is a <i>2 kilobyte</i> include that provides the core concepts of
       models, events (key-value observing), collections, views, and persistence.
     </p>
 
@@ -279,15 +293,79 @@
 
     <p>
       <b>Events</b> is a module that can be mixed in to any object, giving the
-      object the ability to bind and trigger custom events. For example:
+      object the ability to bind and trigger custom named events. Events do not
+      have to be declared before they are bound, and may take passed arguments.
+      For example:
     </p>
 
-<pre>
-javascripts:
-  workspace:
-    - app/views/accounts/badge.jst
-    - app/views/common/dialog.jst
-    - app/views/common/menu.jst</pre>
+<pre class="runnable">
+var obj = {};
+_.extend(obj, Backbone.Events);
+obj.bind("alert", function(msg){ alert("Triggered " + msg); });
+obj.trigger("alert", "an event");</pre>
+
+    <p id="Events-bind">
+      <b class="header">bind</b><code>object.bind(event, callback)</code>
+      <br />
+      Bind a <b>callback</b> function to an object. The callback will be invoked
+      whenever the <b>event</b> (specified by a string identifier) is fired.
+      If you have many events on a page, the convention is to use colons to
+      namespace them: <tt>"poll:start"</tt>. Callbacks bound to the special
+      <tt>"all"</tt> event will be triggered when any event occurs, and are passed
+      the name of the event as the first argument.
+    </p>
+
+    <p id="Events-unbind">
+      <b class="header">unbind</b><code>object.unbind([event], [callback])</code>
+      <br />
+      Remove a previously-bound <b>callback</b> function from an object. If no
+      callback is specified, all callbacks for the <b>event</b> will be
+      removed. If no event is specified, all bound callbacks on the object
+      will be removed.
+    </p>
+
+    <p id="Events-trigger">
+      <b class="header">trigger</b><code>object.trigger(event, [*args])</code>
+      <br />
+      Trigger all callbacks for the given <b>event</b>. All subsequent arguments to
+      <b>trigger</b> will be passed along.
+    </p>
+
+    <h2 id="Model">Backbone.Model</h2>
+
+    <p>
+      <b>Models</b> are the heart of any JavaScript application, containing
+      the interactive data as well as a large part of the logic surrounding it:
+      conversions, validations, computed properties, and access control. You
+      extend <tt>Backbone.Model</tt> with your domain-specific methods, and
+      <b>Model</b> provides a basic set of functionality for managing changes.
+    </p>
+    
+    <p>
+      The following is a contrived example, but it demonstrates defining a model
+      with a custom method, setting an attribute, and firing an event when the
+      model changes. After running this code once, <tt>sidebar</tt> will be
+      available in your browser's console, so you can play around with it.
+    </p>
+
+<pre class="runnable">
+var Sidebar = Backbone.Model.extend({
+  promptColor : function() {
+    var cssColor = prompt("Please enter a CSS color:");
+    this.set({color: cssColor});
+  }
+});
+
+window.sidebar = new Sidebar;
+
+sidebar.bind('change:color', function(model, color) {
+  $('#sidebar').css({background : color});
+});
+
+sidebar.set({color: 'white'});
+
+sidebar.promptColor();</pre>
+
 
     <h2 id="changes">Change Log</h2>
 
@@ -303,9 +381,23 @@ javascripts:
       </a>
     </p>
 
-    </div>
-
   </div>
+
+  <script src="test/vendor/underscore-1.1.0.js"></script>
+  <script src="test/vendor/jquery-1.4.2.js"></script>
+  <script src="backbone.js"></script>
+
+  <script>
+    $(function() {
+      $('.runnable').each(function() {
+        var code = this;
+        var button = $('<div class="run" title="Run"></div>');
+        $(button).insertBefore(code).bind('click', function(){
+          eval($(code).html());
+        });
+      });
+    });
+  </script>
 
 </body>
 </html>

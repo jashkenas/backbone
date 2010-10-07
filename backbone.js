@@ -194,7 +194,7 @@
           now[attr] = val;
           if (!options.silent) {
             this._changed = true;
-            this.trigger('change:' + attr, this);
+            this.trigger('change:' + attr, this, val);
           }
         }
       }
