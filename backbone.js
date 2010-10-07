@@ -35,10 +35,11 @@
   // Backbone.Bindable
   // -----------------
 
-  // A module that can be mixed in to any object in order to provide it with
+  // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may `bind` or `unbind` a callback function to an event;
   // `trigger`-ing an event fires all callbacks in succession.
   //
+  //     var object = {};
   //     _.extend(object, Backbone.Bindable);
   //     object.bind('expand', function(){ alert('expanded'); });
   //     object.trigger('expand');
@@ -160,14 +161,26 @@
     // Set a hash of model attributes on the object, firing `changed` unless you
     // choose to silence it.
     set : function(attrs, options) {
+
+      // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
       attrs = attrs._attributes || attrs;
       var now = this._attributes;
-      if ('id' in attrs) {
-        this.id = attrs.id;
-        if (this.collection) this.resource = this.collection.resource + '/' + this.id;
+
+      // Run validation if `validate` is defined.
+      if (this.validate) {
+        var error = this.validate(attrs);
+        if (error) {
+          this.trigger('error', error);
+          return false;
+        }
       }
+
+      // Check for changes of `id`.
+      if ('id' in attrs) this.id = attrs.id;
+
+      // Update attributes.
       for (var attr in attrs) {
         var val = attrs[attr];
         if (val === '') val = null;
@@ -179,6 +192,8 @@
           }
         }
       }
+
+      // Fire the `change` event, if the model has been changed.
       if (!options.silent && this._changed) this.change();
       return this;
     },
@@ -244,10 +259,10 @@
     save : function(attrs, options) {
       attrs   || (attrs = {});
       options || (options = {});
-      this.set(attrs, options);
+      if (!this.set(attrs, options)) return false;
       var model = this;
       var success = function(resp) {
-        model.set(resp.model);
+        if (!model.set(resp.model)) return false;
         if (options.success) options.success(model, resp);
       };
       var method = this.isNew() ? 'POST' : 'PUT';
@@ -420,7 +435,7 @@
       if (!(model instanceof Backbone.Model)) model = new this.model(model);
       model.collection = this;
       var success = function(model, resp) {
-        model.set(resp.model);
+        if (!model.set(resp.model)) return false;
         model.collection.add(model);
         if (options.success) options.success(model, resp);
       };
