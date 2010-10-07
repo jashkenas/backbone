@@ -514,7 +514,7 @@
     return $(selector, this.el);
   };
 
-  // Set up all interitable **Backbone.View** properties and methods.
+  // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(Backbone.View.prototype, {
 
     // The default tagName of a View's element is "div".
