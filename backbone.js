@@ -510,7 +510,7 @@
   // jQuery lookup, scoped to DOM elements within the current view.
   // This should be prefered to global jQuery lookups, if you're dealing with
   // a specific view.
-  var jQueryScoped = function(selector) {
+  var jQueryDelegate = function(selector) {
     return $(selector, this.el);
   };
 
@@ -521,8 +521,8 @@
     tagName : 'div',
 
     // Attach the jQuery function as the `$` and `jQuery` properties.
-    $       : jQueryScoped,
-    jQuery  : jQueryScoped,
+    $       : jQueryDelegate,
+    jQuery  : jQueryDelegate,
 
     // **render** is the core function that your view should override, in order
     // to populate its element (`this.el`), with the appropriate HTML. The
