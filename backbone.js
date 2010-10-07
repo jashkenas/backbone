@@ -101,9 +101,8 @@
   // If you do not specify the id, a negative id will be assigned for you.
   Backbone.Model = function(attributes) {
     this._attributes = {};
-    attributes = attributes || {};
-    this.set(attributes, {silent : true});
     this.cid = _.uniqueId('c');
+    this.set(attributes || {}, {silent : true});
     this._formerAttributes = this.attributes();
   };
 
