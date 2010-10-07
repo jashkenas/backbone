@@ -1,5 +1,5 @@
 //     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
-//     Backbone may be freely distributed under the terms of the MIT license.
+//     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://documentcloud.github.com/backbone
 
