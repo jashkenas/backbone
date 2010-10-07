@@ -81,13 +81,19 @@
 
     // Trigger an event, firing all bound callbacks. Callbacks are passed the
     // same arguments as `trigger` is, apart from the event name.
+    // Listening for `"all"` passes the true event name as the first argument.
     trigger : function(ev) {
+      var list, calls, i, l;
       var calls = this._callbacks;
-      for (var i = 0; i < 2; i++) {
-        var list = calls && calls[i ? 'all' : ev];
-        if (!list) continue;
-        for (var j = 0, l = list.length; j < l; j++) {
-          list[j].apply(this, _.rest(arguments));
+      if (!(calls = this._callbacks)) return this;
+      if (list = calls[ev]) {
+        for (i = 0, l = list.length; i < l; i++) {
+          list[i].apply(this, _.rest(arguments));
+        }
+      }
+      if (list = calls['all']) {
+        for (i = 0, l = list.length; i < l; i++) {
+          list[i].apply(this, arguments);
         }
       }
       return this;
@@ -172,7 +178,7 @@
       if (this.validate) {
         var error = this.validate(attrs);
         if (error) {
-          this.trigger('error', error);
+          this.trigger('error', this, error);
           return false;
         }
       }
@@ -188,7 +194,7 @@
           now[attr] = val;
           if (!options.silent) {
             this._changed = true;
-            this.trigger('change:' + attr);
+            this.trigger('change:' + attr, this);
           }
         }
       }
@@ -206,7 +212,7 @@
       delete this._attributes[attr];
       if (!options.silent) {
         this._changed = true;
-        this.trigger('change:' + attr);
+        this.trigger('change:' + attr, this);
         this.change();
       }
       return value;
@@ -296,7 +302,7 @@
       this.comparator = options.comparator;
       delete options.comparator;
     }
-    this._boundOnModelChange = _.bind(this._onModelChange, this);
+    this._boundOnModelEvent = _.bind(this._onModelEvent, this);
     this._initialize();
     if (models) this.refresh(models,true);
   };
@@ -359,7 +365,7 @@
       model.collection = this;
       var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length;
       this.models.splice(index, 0, model);
-      model.bind('change', this._boundOnModelChange);
+      model.bind('all', this._boundOnModelEvent);
       this.length++;
       if (!options.silent) this.trigger('add', model);
       return model;
@@ -382,7 +388,7 @@
       delete this._byCid[model.cid];
       delete model.collection;
       this.models.splice(this.indexOf(model), 1);
-      model.unbind('change', this._boundOnModelChange);
+      model.unbind('all', this._boundOnModelEvent);
       this.length--;
       if (!options.silent) this.trigger('remove', model);
       return model;
@@ -394,7 +400,7 @@
       options || (options = {});
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
       this.models = this.sortBy(this.comparator);
-      if (!options.silent) this.trigger('refresh');
+      if (!options.silent) this.trigger('refresh', this);
       return this;
     },
 
@@ -412,7 +418,7 @@
       }
       this._initialize();
       this.add(models, {silent: true});
-      if (!options.silent) this.trigger('refresh');
+      if (!options.silent) this.trigger('refresh', this);
       return this;
     },
 
@@ -453,12 +459,18 @@
 
     // Internal method called every time a model in the set fires an event.
     // Sets need to update their indexes when models change ids.
-    _onModelChange : function(model) {
-      if (model.hasChanged('id')) {
-        delete this._byId[model.formerValue('id')];
-        this._byId[model.id] = model;
+    _onModelEvent : function(ev, model, error) {
+      switch (ev) {
+        case 'change':
+          if (model.hasChanged('id')) {
+            delete this._byId[model.formerValue('id')];
+            this._byId[model.id] = model;
+          }
+          this.trigger('change', model);
+          break;
+        case 'error':
+          this.trigger('error', model, error);
       }
-      this.trigger('change', model);
     }
 
   });
@@ -537,7 +549,7 @@
     // of *[mode]_[group]* on the view's element. Convenient way to swap styles
     // and behavior.
     setMode : function(mode, group) {
-      if (this.modes[group] == mode) return;
+      if (this.modes[group] === mode) return;
       $(this.el).setMode(mode, group);
       this.modes[group] = mode;
     },
