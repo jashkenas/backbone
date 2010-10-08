@@ -4,11 +4,12 @@ $(document).ready(function() {
   var View = Backbone.View.extend({
     className : "view",
     render : function(){
-      $(body).append(this.el);
+      $('body').append(this.el);
     }
   });
   
   var view = new View();
+  view.render();
   
   test("view: setMode", function(){
     view.setMode("active", "test");
