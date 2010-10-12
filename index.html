@@ -154,7 +154,6 @@
       <li>– <a href="#Model-url">url</a></li>
       <li>– <a href="#Model-clone">clone</a></li>
       <li>– <a href="#Model-toString">toString</a></li>
-      <li>– <a href="#Model-isEqual">isEqual</a></li>
       <li>– <a href="#Model-isNew">isNew</a></li>
       <li>– <a href="#Model-change">change</a></li>
       <li>– <a href="#Model-hasChanged">hasChanged</a></li>
@@ -166,19 +165,18 @@
       Collection
     </a>
     <ul class="toc_section">
+      <li>– <a href="#Collection-extend">extend</a></li>
       <li>– <a href="#Collection-Underscore-Methods">Underscore Methods (24)</a></li>
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
       <li>– <a href="#Collection-get">get</a></li>
-      <li>– <a href="#Collection-getIds">getIds</a></li>
+      <li>– <a href="#Collection-getByCid">getByCid</a></li>
       <li>– <a href="#Collection-at">at</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
       <li>– <a href="#Model-url">url</a></li>
       <li>– <a href="#Collection-refresh">refresh</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
       <li>– <a href="#Collection-create">create</a></li>
-      <li>– <a href="#Collection-getByCid">getByCid</a></li>
-      <li>– <a href="#Collection-getCids">getCids</a></li>
       <li>– <a href="#Collection-toString">toString</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
     </ul>
@@ -203,7 +201,7 @@
   <div class="container">
 
     <p>
-      <img src="docs/images/backbone.png" alt="Backbone.js" />
+      <img style="width: 385px; height: 126px;" src="docs/images/backbone.png" alt="Backbone.js" />
     </p>
 
     <p>
@@ -383,7 +381,7 @@ sidebar.promptColor();
       <b class="header">extend</b><code>Backbone.Model.extend(properties, [staticProperties])</code>
       <br />
       To create a <b>Model</b> class of your own, you extend <b>Backbone.Model</b>
-      and provide instance <b>properties</b>, as well as optional properties to be attatched
+      and provide instance <b>properties</b>, as well as optional properties to be attached
       directly to the constructor function.
     </p>
 
@@ -535,6 +533,13 @@ one.set({
       <br />
       Create a new instance of a model with identical attributes.
     </p>
+    
+    <p id="Model-toString">
+      <b class="header">toString</b><code>model.toString()</code>
+      <br />
+      By default, just returns <tt>"Model [id]"</tt> &mdash; Override <b>toString</b> 
+      to get convenient logging in the console for your models.
+    </p>
 
     <p id="Model-isNew">
       <b class="header">isNew</b><code>model.isNew()</code>
@@ -613,13 +618,21 @@ bill.set({name : "Bill Jones"});
       <a href="http://documentcloud.github.com/underscore">Underscore.js</a>
       functions.
     </p>
+    
+    <p id="Collection-extend">
+      <b class="header">extend</b><code>Backbone.Collection.extend(properties, [staticProperties])</code>
+      <br />
+      To create a <b>Collection</b> class of your own, extend <b>Backbone.Collection</b>,
+      providing instance <b>properties</b>, as well as optional properties to be attached
+      directly to the collection constructor function.
+    </p>
 
     <p id="Collection-Underscore-Methods">
       <b class="header">Underscore Methods (24)</b>
       <br />
       Backbone proxies to <b>Underscore.js</b> to provide 24 iteration functions
       on <b>Backbone.Collection</b>. They aren't all documented here, but
-      see the Underscore documentation for the full details&hellip;
+      you can take a look at the Underscore documentation for the full details&hellip;
     </p>
 
     <ul>
@@ -666,6 +679,65 @@ var alphabetical = Books.sortBy(function(book) {
   return book.author.get("name").toLowerCase();
 });
 </pre>
+
+    <p id="Collection-add">
+      <b class="header">add</b><code>collection.add(models, [options])</code>
+      <br />
+      Add a model (or an array of models) to the collection. Fires an <tt>"add"</tt>
+      event, which you can pass <tt>{silent: true}</tt> to suppress.
+    </p>
+    
+<pre class="runnable">
+var ships = new Backbone.Collection();
+
+ships.bind("add", function(ship) {
+  alert("Ahoy " + ship.get("name") + "!");
+});
+
+var Ship = Backbone.Model.extend({});
+
+ships.add([
+  new Ship({name: "Flying Dutchman"}),
+  new Ship({name: "Black Pearl"})
+]);
+</pre>
+
+    <p id="Collection-remove">
+      <b class="header">remove</b><code>collection.remove(models, [options])</code>
+      <br />
+      Remove a model (or an array of models) from the collection. Fires a
+      <tt>"remove"</tt> event, which you can pass <tt>{silent: true}</tt>
+      to suppress.
+    </p>
+    
+    <p id="Collection-get">
+      <b class="header">get</b><code>collection.get(id)</code>
+      <br />
+      Get a model from a collection, specified by <b>id</b>.
+    </p>
+    
+    <p id="Collection-getByCid">
+      <b class="header">getByCid</b><code>collection.getByCid(cid)</code>
+      <br />
+      Get a model from a collection, specified by client id. The client id
+      is the <tt>.cid</tt> property of the model, automatically assigned whenever
+      a model is created. Useful for models which have not yet been saved to
+      the server, and do not yet have true ids.
+    </p>
+    
+    <p id="Collection-at">
+      <b class="header">at</b><code>collection.at(index)</code>
+      <br />
+      Get a model from a collection, specified by index. Useful if your collection
+      is sorted, and if your collection isn't sorted, <b>at</b> will still
+      retrieve models in insertion order.
+    </p>
+
+
+
+
+
+
 
 
 

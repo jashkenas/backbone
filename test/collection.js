@@ -35,11 +35,6 @@ $(document).ready(function() {
     equals(col.getByCid(col.first().cid), col.first());
   });
 
-  test("collections: getIds, getCids", function() {
-    equals(col.getIds().sort().join(' '), '1 2 3 4');
-    equals(col.getCids().sort().join(' '), 'c1 c2 c3 c4');
-  });
-
   test("collections: at", function() {
     equals(col.at(2), b);
   });

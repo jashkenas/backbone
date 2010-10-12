@@ -336,16 +336,6 @@
       return this.models[index];
     },
 
-    // What are the ids for every model in the set?
-    getIds : function() {
-      return _.keys(this._byId);
-    },
-
-    // What are the client ids for every model in the set?
-    getCids : function() {
-      return _.keys(this._byCid);
-    },
-
     // Pluck an attribute from each model in the collection.
     pluck : function(attr) {
       return _.map(this.models, function(model){ return model.get(attr); });
