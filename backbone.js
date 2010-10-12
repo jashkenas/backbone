@@ -113,6 +113,11 @@
     this._formerAttributes = this.attributes();
   };
 
+  // `attributes` is aliased as `toJSON`, for use with `JSON.stringify`.
+  var toJSON = function() {
+    return _.clone(this._attributes);
+  };
+
   // Attach all inheritable methods to the Model prototype.
   _.extend(Backbone.Model.prototype, Backbone.Events, {
 
@@ -124,9 +129,8 @@
     _changed : false,
 
     // Return a copy of the model's `attributes` object.
-    attributes : function() {
-      return _.clone(this._attributes);
-    },
+    toJSON     : toJSON,
+    attributes : toJSON,
 
     // Default URL for the model's representation on the server -- if you're
     // using Backbone's restful methods, override this to change the endpoint
@@ -272,7 +276,7 @@
         if (options.success) options.success(model, resp);
       };
       var method = this.isNew() ? 'POST' : 'PUT';
-      Backbone.request(method, this, success, options.error);
+      Backbone.sync(method, this, success, options.error);
       return this;
     },
 
@@ -284,7 +288,7 @@
         if (model.collection) model.collection.remove(model);
         if (options.success) options.success(model, resp);
       };
-      Backbone.request('DELETE', this, success, options.error);
+      Backbone.sync('DELETE', this, success, options.error);
       return this;
     }
 
@@ -431,7 +435,7 @@
         collection.refresh(resp.models);
         if (options.success) options.success(collection, resp);
       };
-      Backbone.request('GET', this, success, options.error);
+      Backbone.sync('GET', this, success, options.error);
       return this;
     },
 
@@ -615,12 +619,11 @@
   // * Send up the models as XML instead of JSON.
   // * Persist models via WebSockets instead of Ajax.
   //
-  Backbone.request = function(type, model, success, error) {
-    var data = model.attributes ? {model : JSON.stringify(model.attributes())} : {};
+  Backbone.sync = function(type, model, success, error) {
     $.ajax({
       url       : model.url(),
       type      : type,
-      data      : data,
+      data      : {model : model},
       dataType  : 'json',
       success   : success,
       error     : error

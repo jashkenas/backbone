@@ -6,7 +6,7 @@ $(document).ready(function() {
   window.lastRequest = null;
 
   // Stub out Backbone.request...
-  Backbone.request = function() {
+  Backbone.sync = function() {
     lastRequest = _.toArray(arguments);
   };
 

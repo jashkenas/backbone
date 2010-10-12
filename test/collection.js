@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   window.lastRequest = null;
 
-  Backbone.request = function() {
+  Backbone.sync = function() {
     lastRequest = _.toArray(arguments);
   };
 

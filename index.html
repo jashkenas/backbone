@@ -7,7 +7,7 @@
   <style>
     body {
       font-size: 14px;
-      line-height: 20px;
+      line-height: 22px;
       font-family: Helvetica Neue, Helvetica, Arial;
       background: #f4f4f4 url(docs/images/background.png);
     }
@@ -176,11 +176,11 @@
       <li>– <a href="#Collection-pluck">pluck</a></li>
       <li>– <a href="#Collection-Underscore-Methods">Underscore Methods (24)</a></li>
     </ul>
-    <a class="toc_title" href="#Request">
-      Request
+    <a class="toc_title" href="#Sync">
+      Sync
     </a>
     <ul class="toc_section">
-      <li>– <a href="#Request">Backbone.request</a></li>
+      <li>– <a href="#Sync">Backbone.sync</a></li>
     </ul>
     <a class="toc_title" href="#View">
       View
@@ -396,6 +396,11 @@ sidebar.promptColor();
       <tt>silent</tt> is passed as an option.
     </p>
 
+    <p>
+      If the model has a <tt>validate</tt> method, it will be validated before
+      the attributes are set, and no changes will occur if the validation fails.
+    </p>
+
 <pre>
 note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
 
@@ -413,17 +418,70 @@ note.set({title: "October 31"}, {silent: true});
       <b class="header">attributes</b><code>model.attributes()</code>
       <br />
       Return a copy of the model's attributes. This can be used for persistence,
-      serialization, or for augmentation before being handed off to a view. 
+      serialization, or for augmentation before being handed off to a view.
     </p>
-    
+
 <pre class="runnable">
-var lisa = new Backbone.Model({
-  firstName: "Lisa",
-  lastName: "Roberts"
+var artist = new Backbone.Model({
+  firstName: "Wassily",
+  lastName: "Kandinsky"
 });
 
-alert(JSON.stringify(lisa.attributes()));
+artist.set({birthday: "December 16, 1866"});
+
+alert(JSON.stringify(artist.attributes()));
 </pre>
+
+    <p id="Model-save">
+      <b class="header">save</b><code>model.save(attributes, [options])</code>
+      <br />
+      Save a model to your database (or alternative persistence layer),
+      by delegating to <tt>Backbone.sync</tt>. If the model has a <tt>validate</tt>
+      method, and validation fails, the model will not be saved. If the model
+      <tt>isNew()</tt>, the save will be an HTTP <tt>POST</tt>, if the model already
+      exists on the server, the save will be a <tt>PUT</tt>. Accepts 
+      <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
+    </p>
+
+<pre class="runnable">
+Backbone.sync = function(type, model) {
+  alert(type + " " + JSON.stringify(model));
+};
+
+var book = new Backbone.Model({
+  title: "The Rough Riders",
+  author: "Theodore Roosevelt"
+});
+
+book.save();
+</pre>
+
+    <p id="Model-destroy">
+      <b class="header">destroy</b><code>model.destroy([options])</code>
+      <br />
+      Destroys the model on the server by delegating an HTTP <tt>DELETE</tt>
+      request to <tt>Backbone.sync</tt>. Accepts 
+      <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
+    </p>
+    
+<pre>
+book.destroy({
+  success: function(model, response) {
+    ...
+  }
+});
+</pre>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     <h2 id="changes">Change Log</h2>
 
