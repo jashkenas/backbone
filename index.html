@@ -63,10 +63,15 @@
       div.run:active {
         background-position: -51px 0;
       }
-    p, li {
+    p, div.container ul {
       margin: 20px 0;
       width: 550px;
     }
+      div.container ul {
+        list-style: circle;
+        font-size: 12px;
+        padding-left: 15px;
+      }
     a, a:visited {
       color: #444;
       text-decoration: none;
@@ -82,7 +87,7 @@
         font-size: 20px;
       }
     b.header {
-      font-size: 18px;
+      font-size: 16px;
       line-height: 30px;
     }
     span.alias {
@@ -161,6 +166,7 @@
       Collection
     </a>
     <ul class="toc_section">
+      <li>– <a href="#Collection-Underscore-Methods">Underscore Methods (24)</a></li>
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
       <li>– <a href="#Collection-get">get</a></li>
@@ -175,7 +181,6 @@
       <li>– <a href="#Collection-getCids">getCids</a></li>
       <li>– <a href="#Collection-toString">toString</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
-      <li>– <a href="#Collection-Underscore-Methods">Underscore Methods (24)</a></li>
     </ul>
     <a class="toc_title" href="#Sync">
       Sync
@@ -517,27 +522,27 @@ one.set({
       Returns the relative URL where the model's resource would be located on
       the server. If your models are located somewhere else, override this method
       with the correct logic. Generates URLs of the form: <tt>"/[collection]/[id]"</tt>.
-    </p>  
-    
+    </p>
+
     <p>
-      A model with an id of <tt>101</tt>, stored in a 
-      <tt>Bindable.Collection</tt> with a <tt>url</tt> of <tt>"/notes"</tt>, 
+      A model with an id of <tt>101</tt>, stored in a
+      <tt>Bindable.Collection</tt> with a <tt>url</tt> of <tt>"/notes"</tt>,
       would have this URL: <tt>"/notes/101"</tt>
     </p>
-    
+
     <p id="Model-clone">
       <b class="header">clone</b><code>model.clone()</code>
       <br />
       Create a new instance of a model with identical attributes.
     </p>
-    
+
     <p id="Model-isNew">
       <b class="header">isNew</b><code>model.isNew()</code>
       <br />
       Has this model been saved to the server yet? If the model does not yet have
       an <tt>id</tt>, it is considered to be new.
     </p>
-    
+
     <p id="Model-change">
       <b class="header">change</b><code>model.change()</code>
       <br />
@@ -545,14 +550,14 @@ one.set({
       aggregate rapid changes to a model, you'll want to fire the <tt>"change"</tt>
       event when you're finished. Call <tt>model.change()</tt> to trigger it.
     </p>
-    
+
     <p id="Model-hasChanged">
       <b class="header">hasChanged</b><code>model.hasChanged([attribute])</code>
       <br />
       Has the model changed since the last <tt>"change"</tt> event? If an <b>attribute</b>
       is passed, returns <tt>true</tt> if that specific attribute has changed.
     </p>
-    
+
 <pre>
 book.bind("change", function() {
   if (book.hasChanged("title")) {
@@ -570,14 +575,14 @@ book.bind("change", function() {
       to figure out which portions of a view should be updated, or what calls
       need to be made to sync the changes to the server.
     </p>
-    
+
     <p id="Model-previous">
       <b class="header">previous</b><code>model.previous(attribute)</code>
       <br />
-      During a <tt>"change"</tt> event, this method can be used to get the 
+      During a <tt>"change"</tt> event, this method can be used to get the
       previous value of a changed attribute.
     </p>
-    
+
 <pre class="runnable">
 var bill = new Backbone.Model({
   name: "Bill Smith"
@@ -593,12 +598,74 @@ bill.set({name : "Bill Jones"});
     <p id="Model-previousAttributes">
       <b class="header">previousAttributes</b><code>model.previousAttributes()</code>
       <br />
-      Return a copy of the model's previous attributes. Useful for getting a 
-      diff between versions of a model, or for recovering from a failed validation.
+      Return a copy of the model's previous attributes. Useful for getting a
+      diff between versions of a model, or getting back to a valid state after
+      an error occurs.
     </p>
 
+    <h2 id="Collection">Backbone.Collection</h2>
 
+    <p>
+      Collections are ordered sets of models. You can bind callbacks to be notified
+      when any model in the collection is changed, listen for <tt>"add"</tt> and
+      <tt>"remove"</tt> events, <tt>fetch</tt> the collection from the server,
+      and use a full suite of
+      <a href="http://documentcloud.github.com/underscore">Underscore.js</a>
+      functions.
+    </p>
 
+    <p id="Collection-Underscore-Methods">
+      <b class="header">Underscore Methods (24)</b>
+      <br />
+      Backbone proxies to <b>Underscore.js</b> to provide 24 iteration functions
+      on <b>Backbone.Collection</b>. They aren't all documented here, but
+      see the Underscore documentation for the full details&hellip;
+    </p>
+
+    <ul>
+      <li><a href="http://documentcloud.github.com/underscore/#each">forEach (each)</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#map">map</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#reduce">reduce (foldl, inject)</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#reduceRight">reduceRight (foldr)</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#detect">find (detect)</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#select">filter (select)</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#reject">reject</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#all">every (all)</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#any">some (any)</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#include">include</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#invoke">invoke</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#max">max</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#min">min</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#sortBy">sortBy</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#sortedIndex">sortedIndex</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#toArray">toArray</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#size">size</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#first">first</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#rest">rest</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#last">last</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#without">without</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#indexOf">indexOf</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#lastIndexOf">lastIndexOf</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#isEmpty">isEmpty</a></li>
+    </ul>
+
+<pre>
+Books.each(function(book) {
+  book.publish();
+});
+
+var titles = Books.map(function(book) {
+  return book.get("title");
+});
+
+var publishedBooks = Books.filter(function(book) {
+  return book.get("published") === true;
+});
+
+var alphabetical = Books.sortBy(function(book) {
+  return book.author.get("name").toLowerCase();
+});
+</pre>
 
 
 
