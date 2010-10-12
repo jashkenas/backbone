@@ -356,7 +356,7 @@ obj.trigger("alert", "an event");
 
 <pre class="runnable">
 var Sidebar = Backbone.Model.extend({
-  promptColor : function() {
+  promptColor: function() {
     var cssColor = prompt("Please enter a CSS color:");
     this.set({color: cssColor});
   }
@@ -365,7 +365,7 @@ var Sidebar = Backbone.Model.extend({
 window.sidebar = new Sidebar;
 
 sidebar.bind('change:color', function(model, color) {
-  $('#sidebar').css({background : color});
+  $('#sidebar').css({background: color});
 });
 
 sidebar.set({color: 'white'});
@@ -377,7 +377,7 @@ sidebar.promptColor();
       <b class="header">extend</b><code>Backbone.Model.extend(properties, [staticProperties])</code>
       <br />
       To create a <b>Model</b> class of your own, you extend <b>Backbone.Model</b>
-      and provide instance properties, as well as optional properties to be attatched
+      and provide instance <b>properties</b>, as well as optional properties to be attatched
       directly to the constructor function.
     </p>
 
@@ -417,7 +417,7 @@ note.set({title: "October 31"}, {silent: true});
     <p id="Model-attributes">
       <b class="header">attributes</b><code>model.attributes()</code>
       <br />
-      Return a copy of the model's attributes. This can be used for persistence,
+      Return a copy of the model's <b>attributes</b>. This can be used for persistence,
       serialization, or for augmentation before being handed off to a view.
     </p>
 
@@ -439,7 +439,7 @@ alert(JSON.stringify(artist.attributes()));
       by delegating to <tt>Backbone.sync</tt>. If the model has a <tt>validate</tt>
       method, and validation fails, the model will not be saved. If the model
       <tt>isNew()</tt>, the save will be an HTTP <tt>POST</tt>, if the model already
-      exists on the server, the save will be a <tt>PUT</tt>. Accepts 
+      exists on the server, the save will be a <tt>PUT</tt>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
     </p>
 
@@ -460,10 +460,10 @@ book.save();
       <b class="header">destroy</b><code>model.destroy([options])</code>
       <br />
       Destroys the model on the server by delegating an HTTP <tt>DELETE</tt>
-      request to <tt>Backbone.sync</tt>. Accepts 
+      request to <tt>Backbone.sync</tt>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
     </p>
-    
+
 <pre>
 book.destroy({
   success: function(model, response) {
@@ -471,17 +471,53 @@ book.destroy({
   }
 });
 </pre>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+    <p id="Model-validate">
+      <b class="header">validate</b><code>model.validate(attributes)</code>
+      <br />
+      This method is left undefined, and you're encouraged to override it with
+      your custom validation logic, if you have any that can be performed
+      in JavaScript. <b>validate</b> is called before <tt>set</tt> and
+      <tt>save</tt>, and is passed the attributes that are about to be updated.
+      If the model and attributes are valid, don't return anything from <b>validate</b>;
+      if the attributes are invalid, return an error of your choosing. It
+      can be as simple as a string error message to be displayed, or a complete
+      error object that describes the error programmatically. <tt>set</tt> and
+      <tt>save</tt> will not continue if <b>validate</b> returns an error.
+      Failed validations trigger an <tt>"error"</tt> event.
+    </p>
+
+<pre class="runnable">
+var Chapter = Backbone.Model.extend({
+  validate: function(attrs) {
+    if (attrs.end < attrs.start) {
+      return "can't end before it starts";
+    }
+  }
+});
+
+var one = new Chapter({
+  title : "Chapter One: The Beginning"
+});
+
+one.bind("error", function(model, error) {
+  alert(model.get("title") + " " + error);
+});
+
+one.set({
+  start: 15,
+  end:   10
+});
+</pre>
+
+
+
+
+
+
+
+
+
 
     <h2 id="changes">Change Log</h2>
 
@@ -510,7 +546,7 @@ book.destroy({
         var code = this;
         var button = $('<div class="run" title="Run"></div>');
         $(button).insertBefore(code).bind('click', function(){
-          eval($(code).html());
+          eval($(code).text());
         });
       });
     });
