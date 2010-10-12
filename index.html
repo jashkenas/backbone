@@ -307,7 +307,8 @@ obj.bind("alert", function(msg) {
   alert("Triggered " + msg);
 });
 
-obj.trigger("alert", "an event");</pre>
+obj.trigger("alert", "an event");
+</pre>
 
     <p id="Events-bind">
       <b class="header">bind</b><code>object.bind(event, callback)</code>
@@ -369,13 +370,60 @@ sidebar.bind('change:color', function(model, color) {
 
 sidebar.set({color: 'white'});
 
-sidebar.promptColor();</pre>
+sidebar.promptColor();
+</pre>
 
     <p id="Model-extend">
-      <b class="header">extend</b><code>Backbone.Model.extend(protoProps, [classProps])</code>
+      <b class="header">extend</b><code>Backbone.Model.extend(properties, [staticProperties])</code>
       <br />
-      Create a Model class by extending Backbone.Model.
+      To create a <b>Model</b> class of your own, you extend <b>Backbone.Model</b>
+      and provide instance properties, as well as optional properties to be attatched
+      directly to the constructor function.
     </p>
+
+    <p id="Model-get">
+      <b class="header">get</b><code>model.get(attribute)</code>
+      <br />
+      Get the current value of an attribute from the model. For example:
+      <tt>note.get("title")</tt>
+    </p>
+
+    <p id="Model-set">
+      <b class="header">set</b><code>model.set(attributes, [options])</code>
+      <br />
+      Set a hash of attributes (one or many) on the model. If any of the attributes
+      change the models state, a <tt>"change"</tt> event will be fired, unless
+      <tt>silent</tt> is passed as an option.
+    </p>
+
+<pre>
+note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
+
+note.set({title: "October 31"}, {silent: true});
+</pre>
+
+    <p id="Model-unset">
+      <b class="header">unset</b><code>model.unset(attribute, [options])</code>
+      <br />
+      Remove an attribute by deleting it from the internal attributes hash.
+      Fires a <tt>"change"</tt> event unless <tt>silent</tt> is passed as an option.
+    </p>
+
+    <p id="Model-attributes">
+      <b class="header">attributes</b><code>model.attributes()</code>
+      <br />
+      Return a copy of the model's attributes. This can be used for persistence,
+      serialization, or for augmentation before being handed off to a view. 
+    </p>
+    
+<pre class="runnable">
+var lisa = new Backbone.Model({
+  firstName: "Lisa",
+  lastName: "Roberts"
+});
+
+alert(JSON.stringify(lisa.attributes()));
+</pre>
 
     <h2 id="changes">Change Log</h2>
 
@@ -395,6 +443,7 @@ sidebar.promptColor();</pre>
 
   <script src="test/vendor/underscore-1.1.0.js"></script>
   <script src="test/vendor/jquery-1.4.2.js"></script>
+  <script src="test/vendor/json2.js"></script>
   <script src="backbone.js"></script>
 
   <script>
