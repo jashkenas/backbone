@@ -128,6 +128,9 @@
 <body>
 
   <div id="sidebar" class="interface">
+    <a class="toc_title" href="#">
+      Backbone.js
+    </a>
     <a class="toc_title" href="#Introduction">
       Introduction
     </a>
@@ -190,6 +193,7 @@
       View
     </a>
     <ul class="toc_section">
+      <li>– <a href="View-el">el</a></li>
       <li>– <a href="View-jQuery">$ (jQuery)</a></li>
       <li>– <a href="View-render">render</a></li>
       <li>– <a href="View-make">make</a></li>
@@ -828,13 +832,15 @@ var Notes = Backbone.Collection.extend({
     </p>
     
 <pre class="runnable">
-var list = new Backbone.Collection([
-  new Backbone.Model({name: "Moe"}),
+var stooges = new Backbone.Collection([
   new Backbone.Model({name: "Curly"}),
-  new Backbone.Model({name: "Larry"})
+  new Backbone.Model({name: "Larry"}),
+  new Backbone.Model({name: "Moe"})
 ]);
 
-alert(JSON.stringify(list.pluck("name")));
+var names = stooges.pluck("name");
+
+alert(JSON.stringify(names));
 </pre>
     
     <h2 id="Sync">Backbone.sync</h2>
@@ -858,7 +864,70 @@ alert(JSON.stringify(list.pluck("name")));
       <li><b>error({model: ...})</b> – a callback that should be fired if the request fails</li>
     </ul>
     
+    <h2 id="View">Backbone.View</h2>
+    
+    <p>
+      Backbone views are almost more convention than they are code.
+      The general idea is to organize your interface into logical sections, 
+      backed by models, each of which can be updated independently when the 
+      model changes. Instead of digging into a JSON object and looking up an
+      element in the DOM, and updating the HTML by hand, it should look more like:
+      <tt>model.bind('change', view.render)</tt> &mdash; and now everywhere that
+      model data is displayed in the UI, it is always immediately up to date.
+    </p>
+    
+    <p id="View-el">
+      <b class="header">el</b><code>view.el</code>
+      <br />
+      All views have a DOM element at all times (the <b>el</b> property), 
+      whether they've already been inserted into the page or not. In this 
+      fashion, views can be rendered at any time, and inserted into the DOM all 
+      at once, in order to get high-performance UI rendering with as few 
+      reflows and repaints as possible.
+    </p>
+    
+    <p id="View-jQuery">
+      <b class="header">$ (jQuery)</b><code>view.$(selector)</code>
+      <br />
+      If jQuery is included on the page, each view has a <b>$</b> or <b>jQuery</b>
+      function that runs queries scoped within the view's element. If you use this
+      scoped jQuery function, you don't have to use model ids as part of your query
+      to pull out specific elements in a list, and can rely much more on HTML class
+      attributes. It's equivalent to running: <tt>$(selector, this.el)</tt>
+    </p>
 
+<pre>
+ui.Chapter = Backbone.View.extend({
+  serialize : function() {
+    return {
+      title: this.$(".title").text(),
+      start: this.$(".start-page").text(),
+      end:   this.$(".end-page").text()
+    };
+  }s
+});
+</pre>
+
+    <p id="View-render">
+      <b class="header">render</b><code>view.render()</code>
+      <br />
+      The default implementation of <b>render</b> is a no-op. Override this 
+      function with your code that renders the view template from model data,
+      and updates <tt>this.el</tt> with the new HTML. You can use any flavor of
+      JavaScript templating or DOM-building you prefer. Because <b>Underscore.js</b>
+      is already on the page, <tt>_.template</tt> is available. The convention is to 
+      <tt>return this</tt> at the end of <b>render</b> to enable chaining.
+    </p>
+    
+<pre>
+ui.Chapter = Backbone.View.extend({
+  render : function() {
+    var data = this.model.attributes();
+    $(this.el).html(this.template.render(data));
+    return this;
+  }
+});
+</pre>
 
 
     <h2 id="changes">Change Log</h2>
