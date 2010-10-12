@@ -54,15 +54,6 @@ $(document).ready(function() {
     equals(b.get('foo'), 1, "Changing a parent attribute does not change the clone.");
   });
 
-  test("model: isEqual", function() {
-    attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
-    a = new Backbone.Model(attrs);
-    b = new Backbone.Model(attrs);
-    ok(a.isEqual(b), "a should equal b");
-    c = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3, 'qux': 4});
-    ok(!a.isEqual(c), "a should not equal c");
-  });
-
   test("model: isNew", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);

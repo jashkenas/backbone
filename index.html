@@ -167,6 +167,7 @@
       <li>– <a href="#Collection-getIds">getIds</a></li>
       <li>– <a href="#Collection-at">at</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
+      <li>– <a href="#Model-url">url</a></li>
       <li>– <a href="#Collection-refresh">refresh</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
       <li>– <a href="#Collection-create">create</a></li>
@@ -510,8 +511,26 @@ one.set({
 });
 </pre>
 
-
-
+    <p id="Model-url">
+      <b class="header">url</b><code>model.url()</code>
+      <br />
+      Returns the relative URL where the model's resource would be located on
+      the server. If your models are located somewhere else, override this method
+      with the correct logic. Generates URLs of the form: <tt>"/[collection]/[id]"</tt>.
+    </p>  
+    
+    <p>
+      A model with an id of <tt>101</tt>, stored in a 
+      <tt>Bindable.Collection</tt> with a <tt>url</tt> of <tt>"/notes"</tt>, 
+      would have this URL: <tt>"/notes/101"</tt>
+    </p>
+    
+    <p id="Model-clone">
+      <b class="header">clone</b><code>model.clone()</code>
+      <br />
+      Create a new instance of a model with identical attributes.
+    </p>
+    
 
 
 

@@ -32,6 +32,11 @@
     return child;
   };
 
+  // Get a url as a property or as a function.
+  var getUrl = function(object) {
+    return _.isFunction(object.url) ? object.url() : object.url;
+  };
+
   // Backbone.Events
   // -----------------
 
@@ -136,7 +141,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url : function() {
-      var base = this.collection.url();
+      var base = getUrl(this.collection);
       if (this.isNew()) return base;
       return base + '/' + this.id;
     },
@@ -150,11 +155,6 @@
     // Create a new model with identical attributes to this one.
     clone : function() {
       return new (this.constructor)(this.attributes());
-    },
-
-    // Are this model's attributes identical to another model?
-    isEqual : function(other) {
-      return other && _.isEqual(this._attributes, other._attributes);
     },
 
     // A model is new if it has never been saved to the server, and has a negative
@@ -621,7 +621,7 @@
   //
   Backbone.sync = function(type, model, success, error) {
     $.ajax({
-      url       : model.url(),
+      url       : getUrl(model),
       type      : type,
       data      : {model : model},
       dataType  : 'json',
