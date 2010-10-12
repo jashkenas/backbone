@@ -115,7 +115,7 @@
     this._attributes = {};
     this.cid = _.uniqueId('c');
     this.set(attributes || {}, {silent : true});
-    this._formerAttributes = this.attributes();
+    this._previousAttributes = this.attributes();
   };
 
   // `attributes` is aliased as `toJSON`, for use with `JSON.stringify`.
@@ -128,7 +128,7 @@
 
     // A snapshot of the model's previous attributes, taken immediately
     // after the last `changed` event was fired.
-    _formerAttributes : null,
+    _previousAttributes : null,
 
     // Has the item been changed since the last `changed` event?
     _changed : false,
@@ -226,14 +226,14 @@
     // Calling this will cause all objects observing the model to update.
     change : function() {
       this.trigger('change', this);
-      this._formerAttributes = this.attributes();
+      this._previousAttributes = this.attributes();
       this._changed = false;
     },
 
     // Determine if the model has changed since the last `changed` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged : function(attr) {
-      if (attr) return this._formerAttributes[attr] != this._attributes[attr];
+      if (attr) return this._previousAttributes[attr] != this._attributes[attr];
       return this._changed;
     },
 
@@ -242,7 +242,7 @@
     // view need to be updated and/or what attributes need to be persisted to
     // the server.
     changedAttributes : function(now) {
-      var old = this.formerAttributes(), now = now || this.attributes(), changed = false;
+      var old = this._previousAttributes, now = now || this.attributes(), changed = false;
       for (var attr in now) {
         if (!_.isEqual(old[attr], now[attr])) {
           changed = changed || {};
@@ -254,15 +254,15 @@
 
     // Get the previous value of an attribute, recorded at the time the last
     // `changed` event was fired.
-    formerValue : function(attr) {
-      if (!attr || !this._formerAttributes) return null;
-      return this._formerAttributes[attr];
+    previous : function(attr) {
+      if (!attr || !this._previousAttributes) return null;
+      return this._previousAttributes[attr];
     },
 
     // Get all of the attributes of the model at the time of the previous
     // `changed` event.
-    formerAttributes : function() {
-      return this._formerAttributes;
+    previousAttributes : function() {
+      return _.clone(this._previousAttributes);
     },
 
     // Set a hash of model attributes, and sync the model to the server.
@@ -467,7 +467,7 @@
       switch (ev) {
         case 'change':
           if (model.hasChanged('id')) {
-            delete this._byId[model.formerValue('id')];
+            delete this._byId[model.previous('id')];
             this._byId[model.id] = model;
           }
           this.trigger('change', model);

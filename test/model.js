@@ -84,14 +84,14 @@ $(document).ready(function() {
     ok(changeCount == 2, "Change count should have incremented for unset.");
   });
 
-  test("model: changed, hasChanged, changedAttributes, formerValue, formerAttributes", function() {
+  test("model: changed, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
     model.bind('change', function() {
       ok(model.hasChanged('name'), 'name changed');
       ok(!model.hasChanged('age'), 'age did not');
       ok(_.isEqual(model.changedAttributes(), {name : 'Rob'}), 'changedAttributes returns the changed attrs');
-      equals(model.formerValue('name'), 'Tim');
-      ok(_.isEqual(model.formerAttributes(), {name : "Tim", age : 10}), 'formerAttributes is correct');
+      equals(model.previous('name'), 'Tim');
+      ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}), 'previousAttributes is correct');
     });
     model.set({name : 'Rob'}, {silent : true});
     model.change();
