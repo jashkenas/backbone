@@ -18,7 +18,7 @@
       background: #fff;
       position: fixed;
       top: 0; left: 0; bottom: 0;
-      width: 180px;
+      width: 190px;
       overflow-y: auto;
       overflow-x: hidden;
       padding: 15px 0 30px 30px;
@@ -52,7 +52,7 @@
     div.container {
       position: relative;
       width: 550px;
-      margin: 40px 0 50px 240px;
+      margin: 40px 0 50px 250px;
     }
     div.run {
       position: absolute;
@@ -169,7 +169,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Collection-extend">extend</a></li>
-      <li>– <a href="#Collection-Underscore-Methods">Underscore Methods (24)</a></li>
+      <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (24)</b></a></li>
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
       <li>– <a href="#Collection-get">get</a></li>
@@ -211,7 +211,7 @@
       <a href="http://github.com/documentcloud/backbone/">Backbone</a>
       supplies structure to JavaScript-heavy applications by providing <b>models</b> with
       key-value binding and custom events, <b>collections</b> with a rich API of enumerable functions,
-      <b>views</b> with declarative event handling, and connects it all to your 
+      <b>views</b> with declarative event handling, and connects it all to your
       existing application over a RESTful JSON interface.
     </p>
 
@@ -451,8 +451,8 @@ alert(JSON.stringify(artist.attributes()));
     </p>
 
 <pre class="runnable">
-Backbone.sync = function(type, model) {
-  alert(type + " " + JSON.stringify(model));
+Backbone.sync = function(method, model) {
+  alert(method + ": " + JSON.stringify(model));
 };
 
 var book = new Backbone.Model({
@@ -603,7 +603,7 @@ bill.set({name : "Bill Jones"});
       diff between versions of a model, or getting back to a valid state after
       an error occurs.
     </p>
-    
+
     <p id="Model-toString">
       <b class="header">toString</b><code>model.toString()</code>
       <br />
@@ -745,7 +745,7 @@ ships.add([
       collection's <tt>"refresh"</tt> event, unless silenced by passing
       <tt>{silent: true}</tt>
     </p>
-    
+
     <p id="Collection-pluck">
       <b class="header">pluck</b><code>collection.pluck(attribute)</code>
       <br />
