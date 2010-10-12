@@ -732,12 +732,132 @@ ships.add([
       is sorted, and if your collection isn't sorted, <b>at</b> will still
       retrieve models in insertion order.
     </p>
+    
+    <p id="Collection-sort">
+      <b class="header">sort</b><code>collection.sort([options])</code>
+      <br />
+      Force a collection to re-sort itself. You don't need to call this under
+      normal circumstances, as a collection with a <tt>comparator</tt> function
+      will maintain itself in proper sort order at all times. Triggers the 
+      collection's <tt>"refresh"</tt> event, unless silenced by passing
+      <tt>{silent: true}</tt>
+    </p>
+    
+    <p id="Collection-url">
+      <b class="header">url</b><code>collection.url or collection.url()</code>
+      <br />
+      Set the <b>url</b> property (or function) on a collection to reference 
+      its location on the server. Models within the collection will use <b>url</b>
+      to construct URLs of their own.
+    </p>
 
+<pre>
+var Notes = Backbone.Collection.extend({
+  url: '/notes'
+});
 
+// Or, something more sophisticated:
 
+var Notes = Backbone.Collection.extend({
+  url: function() {
+    return this.document.url() + '/notes';
+  }
+});
+</pre>
 
+    <p id="Collection-refresh">
+      <b class="header">refresh</b><code>collection.refresh(models, [options])</code>
+      <br />
+      Adding and removing models one at a time is all well and good, but sometimes
+      you have so many models to change that you'd rather just update the collection
+      in bulk. Use <b>refresh</b> to replace a collection with a new list
+      of models (or attribute hashes), triggering a single <tt>"refresh"</tt> event
+      at the end. Pass <tt>{silent: true}</tt> to suppress the <tt>"refresh"</tt> event.
+    </p>
 
+    <p id="Collection-fetch">
+      <b class="header">fetch</b><code>collection.fetch([options])</code>
+      <br />
+      Fetch the default set of models for this collection from the server,
+      refreshing the collection when they arrive. The <b>options</b> hash takes
+      <tt>success(collection, response)</tt> and <tt>error(collection, response)</tt> 
+      callbacks. Delegates to <tt>Backbone.sync</tt>
+      under the covers, for custom persistence strategies.
+    </p>
+    
+    <p>
+      The server handler for <b>fetch</b> requests should return a JSON list of
+      models, namespaced under "models": <tt>{"models": [...]}</tt> &mdash; and
+      additional information can be returned under different keys.
+    </p>
+    
+    <p>
+      Note that <b>fetch</b> should not be used to populate collections on 
+      page load &mdash; all models needed at load time should already be 
+      bootstrapped in to place. <b>fetch</b> is intended for lazily-loading models
+      for interfaces that are not needed immediately: for example, documents 
+      with collections of notes that may be toggled open and closed. 
+    </p>
+    
+    <p id="Collection-create">
+      <b class="header">create</b><code>collection.create(attributes, [options])</code>
+      <br />
+      Convenience to create a new instance of a model within a collection.
+      Equivalent to instantiating a model with a hash of attributes, 
+      saving the model to the server, and adding the model to the set after being
+      successfully created. Returns
+      the model, or <tt>false</tt> if a validation error prevented the
+      model from being created. In order for this to work, your collection
+      must have a <tt>model</tt> property, referencing the type of model that 
+      the collection contains.
+    </p>
 
+    
+    <p id="Collection-toString">
+      <b class="header">toString</b><code>collection.toString()</code>
+      <br />
+      By default, just returns <tt>"Collection ([size] models)"</tt> &mdash; 
+      Override <b>toString</b> to get convenient logging in the console for the collection.
+    </p>
+    
+    <p id="Collection-pluck">
+      <b class="header">pluck</b><code>collection.pluck(attribute)</code>
+      <br />
+      Pluck an attribute from each model in the collection. Equivalent to calling
+      <tt>map</tt>, and returning a single attribute from the iterator.
+    </p>
+    
+<pre class="runnable">
+var list = new Backbone.Collection([
+  new Backbone.Model({name: "Moe"}),
+  new Backbone.Model({name: "Curly"}),
+  new Backbone.Model({name: "Larry"})
+]);
+
+alert(JSON.stringify(list.pluck("name")));
+</pre>
+    
+    <h2 id="Sync">Backbone.sync</h2>
+    
+    <p>
+      <b>Backbone.sync</b> is the function the Backbone calls every time it 
+      attempts to read or save a model to the server. By default, it uses 
+      <tt>jQuery.ajax</tt> to make a RESTful JSON request. You can override
+      it in order to use a different persistence strategy, such as WebSockets,
+      XML transport, or Local Storage.
+    </p>
+    
+    <p>
+      The method signature of <b>Backbone.sync</b> is <tt>sync(method, model, success, error)</tt>
+    </p>
+    
+    <ul>
+      <li><b>method</b> – the CRUD method (<tt>"create"</tt>, <tt>"read"</tt>, <tt>"update"</tt>, or <tt>"delete"</tt>)</li>
+      <li><b>model</b> – the model to be saved (or collection to be read)</li>
+      <li><b>success({model: ...})</b> – a callback that should be fired if the request works</li>
+      <li><b>error({model: ...})</b> – a callback that should be fired if the request fails</li>
+    </ul>
+    
 
 
 

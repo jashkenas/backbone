@@ -275,7 +275,7 @@
         if (!model.set(resp.model)) return false;
         if (options.success) options.success(model, resp);
       };
-      var method = this.isNew() ? 'POST' : 'PUT';
+      var method = this.isNew() ? 'create' : 'update';
       Backbone.sync(method, this, success, options.error);
       return this;
     },
@@ -288,7 +288,7 @@
         if (model.collection) model.collection.remove(model);
         if (options.success) options.success(model, resp);
       };
-      Backbone.sync('DELETE', this, success, options.error);
+      Backbone.sync('delete', this, success, options.error);
       return this;
     }
 
@@ -388,7 +388,7 @@
       return model;
     },
 
-    // Force the set to re-sort itself. You don't need to call this under normal
+    // Force the collection to re-sort itself. You don't need to call this under normal
     // circumstances, as the set will maintain sort order as each item is added.
     sort : function(options) {
       options || (options = {});
@@ -425,7 +425,7 @@
         collection.refresh(resp.models);
         if (options.success) options.success(collection, resp);
       };
-      Backbone.sync('GET', this, success, options.error);
+      Backbone.sync('read', this, success, options.error);
       return this;
     },
 
@@ -434,7 +434,7 @@
       options || (options = {});
       if (!(model instanceof Backbone.Model)) model = new this.model(model);
       model.collection = this;
-      var success = function(model, resp) {
+      var success = function(resp) {
         if (!model.set(resp.model)) return false;
         model.collection.add(model);
         if (options.success) options.success(model, resp);
@@ -600,6 +600,14 @@
     return child;
   };
 
+  // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
+  var methodMap = {
+    'create': 'POST',
+    'update': 'PUT',
+    'delete': 'DELETE',
+    'read'  : 'GET'
+  };
+
   // Override this function to change the manner in which Backbone persists
   // models to the server. You will be passed the type of request, and the
   // model in question. By default, uses jQuery to make a RESTful Ajax request
@@ -609,11 +617,11 @@
   // * Send up the models as XML instead of JSON.
   // * Persist models via WebSockets instead of Ajax.
   //
-  Backbone.sync = function(type, model, success, error) {
+  Backbone.sync = function(method, model, success, error) {
     $.ajax({
       url       : getUrl(model),
-      type      : type,
-      data      : {model : model},
+      type      : methodMap[method],
+      data      : {model : JSON.stringify(model)},
       dataType  : 'json',
       success   : success,
       error     : error
