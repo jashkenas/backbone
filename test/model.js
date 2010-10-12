@@ -100,13 +100,13 @@ $(document).ready(function() {
 
   test("model: save", function() {
     doc.save({title : "Henry V"});
-    equals(lastRequest[0], 'PUT');
+    equals(lastRequest[0], 'update');
     ok(_.isEqual(lastRequest[1], doc));
   });
 
   test("model: destroy", function() {
     doc.destroy();
-    equals(lastRequest[0], 'DELETE');
+    equals(lastRequest[0], 'delete');
     ok(_.isEqual(lastRequest[1], doc));
   });
 

@@ -78,13 +78,13 @@ $(document).ready(function() {
 
   test("collections: fetch", function() {
     col.fetch();
-    equals(lastRequest[0], 'GET');
+    equals(lastRequest[0], 'read');
     equals(lastRequest[1], col);
   });
 
   test("collections: create", function() {
     var model = col.create({label: 'f'});
-    equals(lastRequest[0], 'POST');
+    equals(lastRequest[0], 'create');
     equals(lastRequest[1], model);
     equals(model.get('label'), 'f');
     equals(model.collection, col);
