@@ -23,7 +23,7 @@
       overflow-x: hidden;
       padding: 15px 0 0 30px;
       border-right: 1px solid #ddd;
-      box-shadow: 0 0 10px 000; -webkit-box-shadow: 0 0 25px #ddd; -moz-box-shadow: ;
+      box-shadow: 0 0 20px #ccc; -webkit-box-shadow: 0 0 20px #ccc; -moz-box-shadow: 0 0 20px #ccc;
     }
       a.toc_title, a.toc_title:visited {
         display: block;
@@ -64,7 +64,7 @@
         background-position: -51px 0;
       }
     p, li {
-      margin: 16px 0 16px 0;
+      margin: 20px 0;
       width: 550px;
     }
     a, a:visited {
@@ -300,8 +300,13 @@
 
 <pre class="runnable">
 var obj = {};
+
 _.extend(obj, Backbone.Events);
-obj.bind("alert", function(msg){ alert("Triggered " + msg); });
+
+obj.bind("alert", function(msg) {
+  alert("Triggered " + msg);
+});
+
 obj.trigger("alert", "an event");</pre>
 
     <p id="Events-bind">
@@ -340,7 +345,7 @@ obj.trigger("alert", "an event");</pre>
       extend <tt>Backbone.Model</tt> with your domain-specific methods, and
       <b>Model</b> provides a basic set of functionality for managing changes.
     </p>
-    
+
     <p>
       The following is a contrived example, but it demonstrates defining a model
       with a custom method, setting an attribute, and firing an event when the
@@ -366,6 +371,11 @@ sidebar.set({color: 'white'});
 
 sidebar.promptColor();</pre>
 
+    <p id="Model-extend">
+      <b class="header">extend</b><code>Backbone.Model.extend(protoProps, [classProps])</code>
+      <br />
+      Create a Model class by extending Backbone.Model.
+    </p>
 
     <h2 id="changes">Change Log</h2>
 
