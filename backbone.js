@@ -488,7 +488,6 @@
   // Creating a Backbone.View creates its intial element outside of the DOM,
   // if an existing element is not provided...
   Backbone.View = function(options) {
-    this.modes = {};
     this._initialize(options || {});
     if (this.options.el) {
       this.el = this.options.el;
@@ -551,7 +550,7 @@
     // Passing a selector of `el` binds to the view's root element.
     // Change events are not delegated through the view because IE does not
     // bubble change events at all.
-    bindCallbacks : function(callbacks) {
+    handleEvents : function(callbacks) {
       $(this.el).unbind();
       if (!(callbacks || (callbacks = this.callbacks))) return this;
       for (key in callbacks) {

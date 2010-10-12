@@ -695,7 +695,7 @@ QUnit.equiv = function () {
     }
 
     // Call the o related callback with the given arguments.
-    function bindCallbacks(o, callbacks, args) {
+    function handleEvents(o, callbacks, args) {
         var prop = hoozit(o);
         if (prop) {
             if (hoozit(callbacks[prop]) === "function") {
@@ -819,7 +819,7 @@ QUnit.equiv = function () {
             } else if (a === null || b === null || typeof a === "undefined" || typeof b === "undefined" || hoozit(a) !== hoozit(b)) {
                 return false; // don't lose time with error prone cases
             } else {
-                return bindCallbacks(a, callbacks, [b, a]);
+                return handleEvents(a, callbacks, [b, a]);
             }
 
         // apply transition with (1..n) arguments

@@ -193,11 +193,11 @@
       View
     </a>
     <ul class="toc_section">
-      <li>– <a href="View-el">el</a></li>
-      <li>– <a href="View-jQuery">$ (jQuery)</a></li>
-      <li>– <a href="View-render">render</a></li>
-      <li>– <a href="View-make">make</a></li>
-      <li>– <a href="View-bindCallbacks">bindCallbacks</a></li>
+      <li>– <a href="#View-el">el</a></li>
+      <li>– <a href="#View-jQuery">$ (jQuery)</a></li>
+      <li>– <a href="#View-render">render</a></li>
+      <li>– <a href="#View-make">make</a></li>
+      <li>– <a href="#View-handleEvents">handleEvents</a></li>
     </ul>
   </div>
 
@@ -937,7 +937,41 @@ ui.Chapter = Backbone.View.extend({
       initial <tt>view.el</tt>.
     </p>
     
+    <p id="View-handleEvents">
+      <b class="header">handleEvents</b><code>handleEvents([events])</code>
+      <br />
+      Uses jQuery's <tt>delegate</tt> function to provide declarative callbacks
+      for DOM events within a view.
+      If an <b>events</b> hash is not passed directly, uses <tt>this.events</tt>
+      as the source. Events are written in the format <tt>{selector.event: callback}</tt>
+    </p>
     
+    <p>
+      For example, a view that displays a document in a search result might look
+      something like this:
+    </p>
+    
+<pre>
+var DocumentView = Backbone.View.extend({
+  
+  events: {
+    ".title.click"            : "select",
+    ".title.dblclick"         : "open",
+    ".icon.doc.contextmenu"   : "showMenu",
+    ".show_notes.click"       : "toggleNotes",
+    ".title .lock.click"      : "editAccessLevel",
+    ".title .date.mouseover"  : "showTooltip"
+  },
+  
+  render: {
+    var data = this.document.attributes();
+    this.el.html(this.template.render(data));
+    this.handleEvents();
+    return this;
+  }
+  
+});
+</pre>
     
     
     
