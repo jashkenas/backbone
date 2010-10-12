@@ -537,17 +537,6 @@
       return el;
     },
 
-    // Makes the view enter a mode. Modes have both a 'mode' and a 'group',
-    // and are mutually exclusive with any other modes in the same group.
-    // Setting will update the view's modes hash, as well as set an HTML class
-    // of *[mode]_[group]* on the view's element. Convenient way to swap styles
-    // and behavior.
-    setMode : function(mode, group) {
-      if (this.modes[group] === mode) return;
-      $(this.el).setMode(mode, group);
-      this.modes[group] = mode;
-    },
-
     // Set callbacks, where this.callbacks is a hash of
     //
     // *{selector.event_name: callback_name}*
@@ -562,7 +551,7 @@
     // Passing a selector of `el` binds to the view's root element.
     // Change events are not delegated through the view because IE does not
     // bubble change events at all.
-    setCallbacks : function(callbacks) {
+    bindCallbacks : function(callbacks) {
       $(this.el).unbind();
       if (!(callbacks || (callbacks = this.callbacks))) return this;
       for (key in callbacks) {

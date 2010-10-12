@@ -197,8 +197,7 @@
       <li>– <a href="View-jQuery">$ (jQuery)</a></li>
       <li>– <a href="View-render">render</a></li>
       <li>– <a href="View-make">make</a></li>
-      <li>– <a href="View-setMode">setMode</a></li>
-      <li>– <a href="View-setCallbacks">setCallbacks</a></li>
+      <li>– <a href="View-bindCallbacks">bindCallbacks</a></li>
     </ul>
   </div>
 
@@ -915,19 +914,34 @@ ui.Chapter = Backbone.View.extend({
       function with your code that renders the view template from model data,
       and updates <tt>this.el</tt> with the new HTML. You can use any flavor of
       JavaScript templating or DOM-building you prefer. Because <b>Underscore.js</b>
-      is already on the page, <tt>_.template</tt> is available. The convention is to 
-      <tt>return this</tt> at the end of <b>render</b> to enable chaining.
+      is already on the page, <tt>_.template</tt> is already available. A good 
+      convention is to <tt>return this</tt> at the end of <b>render</b> to 
+      enable chained calls.
     </p>
     
 <pre>
 ui.Chapter = Backbone.View.extend({
-  render : function() {
+  render: function() {
     var data = this.model.attributes();
     $(this.el).html(this.template.render(data));
     return this;
   }
 });
 </pre>
+
+    <p id="View-make">
+      <b class="header">make</b><code>view.make(tagName, [attributes], [content])</code>
+      <br />
+      Convenience function for creating a DOM element of the given type (<b>tagName</b>),
+      with optional attributes and HTML content. Used internally to create the
+      initial <tt>view.el</tt>.
+    </p>
+    
+    
+    
+    
+    
+    
 
 
     <h2 id="changes">Change Log</h2>

@@ -364,7 +364,7 @@ and behavior.</p>             </td>             <td class="code">               
 Uses jQuery event delegation for efficiency.
 Passing a selector of <code>el</code> binds to the view's root element.
 Change events are not delegated through the view because IE does not
-bubble change events at all.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">setCallbacks</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callbacks</span><span class="p">)</span> <span class="p">{</span>
+bubble change events at all.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">bindCallbacks</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">callbacks</span><span class="p">)</span> <span class="p">{</span>
       <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">unbind</span><span class="p">();</span>
       <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">callbacks</span> <span class="o">||</span> <span class="p">(</span><span class="nx">callbacks</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">)))</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
       <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">callbacks</span><span class="p">)</span> <span class="p">{</span>
