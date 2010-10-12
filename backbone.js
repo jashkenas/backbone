@@ -137,32 +137,6 @@
     toJSON     : toJSON,
     attributes : toJSON,
 
-    // Default URL for the model's representation on the server -- if you're
-    // using Backbone's restful methods, override this to change the endpoint
-    // that will be called.
-    url : function() {
-      var base = getUrl(this.collection);
-      if (this.isNew()) return base;
-      return base + '/' + this.id;
-    },
-
-    // String representation of the model. Override this to provide a nice way
-    // to print models to the console.
-    toString : function() {
-      return 'Model ' + this.id;
-    },
-
-    // Create a new model with identical attributes to this one.
-    clone : function() {
-      return new (this.constructor)(this.attributes());
-    },
-
-    // A model is new if it has never been saved to the server, and has a negative
-    // ID.
-    isNew : function() {
-      return !this.id;
-    },
-
     // Get the value of an attribute.
     get : function(attr) {
       return this._attributes[attr];
@@ -222,6 +196,53 @@
       return value;
     },
 
+    // Set a hash of model attributes, and sync the model to the server.
+    save : function(attrs, options) {
+      attrs   || (attrs = {});
+      options || (options = {});
+      if (!this.set(attrs, options)) return false;
+      var model = this;
+      var success = function(resp) {
+        if (!model.set(resp.model)) return false;
+        if (options.success) options.success(model, resp);
+      };
+      var method = this.isNew() ? 'create' : 'update';
+      Backbone.sync(method, this, success, options.error);
+      return this;
+    },
+
+    // Destroy this model on the server.
+    destroy : function(options) {
+      options || (options = {});
+      var model = this;
+      var success = function(resp) {
+        if (model.collection) model.collection.remove(model);
+        if (options.success) options.success(model, resp);
+      };
+      Backbone.sync('delete', this, success, options.error);
+      return this;
+    },
+
+    // Default URL for the model's representation on the server -- if you're
+    // using Backbone's restful methods, override this to change the endpoint
+    // that will be called.
+    url : function() {
+      var base = getUrl(this.collection);
+      if (this.isNew()) return base;
+      return base + '/' + this.id;
+    },
+
+    // Create a new model with identical attributes to this one.
+    clone : function() {
+      return new (this.constructor)(this.attributes());
+    },
+
+    // A model is new if it has never been saved to the server, and has a negative
+    // ID.
+    isNew : function() {
+      return !this.id;
+    },
+
     // Call this method to fire manually fire a `change` event for this model.
     // Calling this will cause all objects observing the model to update.
     change : function() {
@@ -265,31 +286,10 @@
       return _.clone(this._previousAttributes);
     },
 
-    // Set a hash of model attributes, and sync the model to the server.
-    save : function(attrs, options) {
-      attrs   || (attrs = {});
-      options || (options = {});
-      if (!this.set(attrs, options)) return false;
-      var model = this;
-      var success = function(resp) {
-        if (!model.set(resp.model)) return false;
-        if (options.success) options.success(model, resp);
-      };
-      var method = this.isNew() ? 'create' : 'update';
-      Backbone.sync(method, this, success, options.error);
-      return this;
-    },
-
-    // Destroy this model on the server.
-    destroy : function(options) {
-      options || (options = {});
-      var model = this;
-      var success = function(resp) {
-        if (model.collection) model.collection.remove(model);
-        if (options.success) options.success(model, resp);
-      };
-      Backbone.sync('delete', this, success, options.error);
-      return this;
+    // String representation of the model. Override this to provide a nice way
+    // to print models to the console.
+    toString : function() {
+      return 'Model ' + this.id;
     }
 
   });
@@ -316,9 +316,20 @@
 
     model : Backbone.Model,
 
-    // Override this function to get convenient logging in the console.
-    toString : function() {
-      return 'Collection (' + this.length + " models)";
+    // Add a model, or list of models to the set. Pass **silent** to avoid
+    // firing the `added` event for every new model.
+    add : function(models, options) {
+      if (!_.isArray(models)) return this._add(models, options);
+      for (var i=0; i<models.length; i++) this._add(models[i], options);
+      return models;
+    },
+
+    // Remove a model, or a list of models from the set. Pass silent to avoid
+    // firing the `removed` event for every model removed.
+    remove : function(models, options) {
+      if (!_.isArray(models)) return this._remove(models, options);
+      for (var i=0; i<models.length; i++) this._remove(models[i], options);
+      return models;
     },
 
     // Get a model from the set by id.
@@ -336,58 +347,6 @@
       return this.models[index];
     },
 
-    // Pluck an attribute from each model in the collection.
-    pluck : function(attr) {
-      return _.map(this.models, function(model){ return model.get(attr); });
-    },
-
-    // Add a model, or list of models to the set. Pass **silent** to avoid
-    // firing the `added` event for every new model.
-    add : function(models, options) {
-      if (!_.isArray(models)) return this._add(models, options);
-      for (var i=0; i<models.length; i++) this._add(models[i], options);
-      return models;
-    },
-
-    // Internal implementation of adding a single model to the set.
-    _add : function(model, options) {
-      options || (options = {});
-      var already = this.get(model);
-      if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
-      this._byId[model.id] = model;
-      this._byCid[model.cid] = model;
-      model.collection = this;
-      var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length;
-      this.models.splice(index, 0, model);
-      model.bind('all', this._boundOnModelEvent);
-      this.length++;
-      if (!options.silent) this.trigger('add', model);
-      return model;
-    },
-
-    // Remove a model, or a list of models from the set. Pass silent to avoid
-    // firing the `removed` event for every model removed.
-    remove : function(models, options) {
-      if (!_.isArray(models)) return this._remove(models, options);
-      for (var i=0; i<models.length; i++) this._remove(models[i], options);
-      return models;
-    },
-
-    // Internal implementation of removing a single model from the set.
-    _remove : function(model, options) {
-      options || (options = {});
-      model = this.get(model);
-      if (!model) return null;
-      delete this._byId[model.id];
-      delete this._byCid[model.cid];
-      delete model.collection;
-      this.models.splice(this.indexOf(model), 1);
-      model.unbind('all', this._boundOnModelEvent);
-      this.length--;
-      if (!options.silent) this.trigger('remove', model);
-      return model;
-    },
-
     // Force the collection to re-sort itself. You don't need to call this under normal
     // circumstances, as the set will maintain sort order as each item is added.
     sort : function(options) {
@@ -396,6 +355,11 @@
       this.models = this.sortBy(this.comparator);
       if (!options.silent) this.trigger('refresh', this);
       return this;
+    },
+
+    // Pluck an attribute from each model in the collection.
+    pluck : function(attr) {
+      return _.map(this.models, function(model){ return model.get(attr); });
     },
 
     // When you have more items than you want to add or remove individually,
@@ -442,6 +406,11 @@
       return model.save(null, {success : success, error : options.error});
     },
 
+    // Override this function to get convenient logging in the console.
+    toString : function() {
+      return 'Collection (' + this.length + " models)";
+    },
+
     // Initialize or re-initialize all internal state. Called when the
     // collection is refreshed.
     _initialize : function(options) {
@@ -449,6 +418,37 @@
       this.models = [];
       this._byId  = {};
       this._byCid = {};
+    },
+
+    // Internal implementation of adding a single model to the set.
+    _add : function(model, options) {
+      options || (options = {});
+      var already = this.get(model);
+      if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
+      this._byId[model.id] = model;
+      this._byCid[model.cid] = model;
+      model.collection = this;
+      var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length;
+      this.models.splice(index, 0, model);
+      model.bind('all', this._boundOnModelEvent);
+      this.length++;
+      if (!options.silent) this.trigger('add', model);
+      return model;
+    },
+
+    // Internal implementation of removing a single model from the set.
+    _remove : function(model, options) {
+      options || (options = {});
+      model = this.get(model);
+      if (!model) return null;
+      delete this._byId[model.id];
+      delete this._byCid[model.cid];
+      delete model.collection;
+      this.models.splice(this.indexOf(model), 1);
+      model.unbind('all', this._boundOnModelEvent);
+      this.length--;
+      if (!options.silent) this.trigger('remove', model);
+      return model;
     },
 
     // Internal method called every time a model in the set fires an event.
