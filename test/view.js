@@ -32,7 +32,7 @@ $(document).ready(function() {
     view.increment = function() {
       return ++counter;
     };
-    var events = {"#qunit-banner.click": "increment"};
+    var events = {"click #qunit-banner": "increment"};
     view.handleEvents(events);
     $('#qunit-banner').trigger('click');
     equals(counter, 1);

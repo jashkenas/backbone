@@ -507,6 +507,9 @@
     return $(selector, this.el);
   };
 
+  // Cached regex to split keys for `handleEvents`.
+  var eventSplitter = /^(\w+)\s+(.*)$/;
+
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(Backbone.View.prototype, {
 
@@ -538,11 +541,11 @@
 
     // Set callbacks, where this.callbacks is a hash of
     //
-    // *{selector.event_name: callback_name}*
+    // *{"event selector": "callback"}*
     //
     //     {
-    //       '.icon.pencil.mousedown':  'edit',
-    //       '.button.click':           'save'
+    //       'mousedown .title':  'edit',
+    //       'click .button':     'save'
     //     }
     //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
@@ -550,13 +553,13 @@
     // Passing a selector of `el` binds to the view's root element.
     // Change events are not delegated through the view because IE does not
     // bubble change events at all.
-    handleEvents : function(callbacks) {
+    handleEvents : function(events) {
       $(this.el).unbind();
-      if (!(callbacks || (callbacks = this.callbacks))) return this;
-      for (key in callbacks) {
-        var methodName = callbacks[key];
-        key = key.split(/\.(?!.*\.)/);
-        var selector = key[0], eventName = key[1];
+      if (!(events || (events = this.events))) return this;
+      for (key in events) {
+        var methodName = events[key];
+        var match = key.match(eventSplitter);
+        var eventName = match[1], selector = match[2];
         var method = _.bind(this[methodName], this);
         if (selector === '' || eventName == 'change') {
           $(this.el).bind(eventName, method);

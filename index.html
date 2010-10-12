@@ -943,11 +943,21 @@ ui.Chapter = Backbone.View.extend({
       Uses jQuery's <tt>delegate</tt> function to provide declarative callbacks
       for DOM events within a view.
       If an <b>events</b> hash is not passed directly, uses <tt>this.events</tt>
-      as the source. Events are written in the format <tt>{selector.event: callback}</tt>
+      as the source. Events are written in the format <tt>{"event selector": "callback"}</tt>.
     </p>
     
     <p>
-      For example, a view that displays a document in a search result might look
+      Using <b>handleEvents</b> provides a number of advantages over manually
+      binding events to child elements within <tt>render</tt>. All attached
+      callbacks are bound to the view before being handed off to jQuery, so when
+      the callbacks are invoked, <tt>this</tt> continues to refer to the view object. When 
+      <b>handleEvents</b> is run again, perhaps with a different <tt>events</tt>
+      hash, all callbacks are removed and delegated afresh &mdash; useful for 
+      views which need to behave differently when in different modes.
+    </p>
+    
+    <p>
+      A view that displays a document in a search result might look
       something like this:
     </p>
     
@@ -955,12 +965,12 @@ ui.Chapter = Backbone.View.extend({
 var DocumentView = Backbone.View.extend({
   
   events: {
-    ".title.click"            : "select",
-    ".title.dblclick"         : "open",
-    ".icon.doc.contextmenu"   : "showMenu",
-    ".show_notes.click"       : "toggleNotes",
-    ".title .lock.click"      : "editAccessLevel",
-    ".title .date.mouseover"  : "showTooltip"
+    "click .title"            : "select",
+    "dblclick .title"         : "open",
+    "contextmenu .icon.doc"   : "showMenu",
+    "click .show_notes"       : "toggleNotes",
+    "click .title .lock"      : "editAccessLevel",
+    "mouseover .title .date"  : "showTooltip"
   },
   
   render: {
