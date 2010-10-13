@@ -26,6 +26,16 @@ $(document).ready(function() {
     equals($(div).text(), 'one two three');
   });
 
+  test("view: initialize", function() {
+    var View = Backbone.View.extend({
+      initialize: function() {
+        this.one = 1;
+      }
+    });
+    var view = new View;
+    equals(view.one, 1);
+  });
+
   test("view: handleEvents", function() {
     var counter = 0;
     view.el = document.body;

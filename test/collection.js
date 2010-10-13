@@ -86,6 +86,16 @@ $(document).ready(function() {
     equals(model.collection, col);
   });
 
+  test("collection: initialize", function() {
+    var Collection = Backbone.Collection.extend({
+      initialize: function() {
+        this.one = 1;
+      }
+    });
+    var coll = new Collection;
+    equals(coll.one, 1);
+  });
+
   test("collections: Underscore methods", function() {
     equals(col.map(function(model){ return model.get('label'); }).join(' '), 'd c b a');
     equals(col.any(function(model){ return model.id === 100; }), false);

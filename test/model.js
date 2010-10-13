@@ -26,6 +26,16 @@ $(document).ready(function() {
   var collection = new klass();
   collection.add(doc);
 
+  test("model: initialize", function() {
+    var Model = Backbone.Model.extend({
+      initialize: function() {
+        this.one = 1;
+      }
+    });
+    var model = new Model;
+    equals(model.one, 1);
+  });
+
   test("model: url", function() {
     equals(doc.url(), '/collection/1-the-tempest');
   });
