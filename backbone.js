@@ -572,7 +572,7 @@
 
     // Performs the initial configuration of a View with a set of options.
     // Keys with special meaning *(model, collection, id, className)*, are
-    // attatched directly to the view.
+    // attached directly to the view.
     _initialize : function(options) {
       if (this.options) options = _.extend({}, this.options, options);
       if (options.model)      this.model      = options.model;
