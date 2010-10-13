@@ -147,6 +147,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Model-extend">extend</a></li>
+      <li>– <a href="#Model-constructor">constructor</a></li>
       <li>– <a href="#Model-get">get</a></li>
       <li>– <a href="#Model-set">set</a></li>
       <li>– <a href="#Model-unset">unset</a></li>
@@ -172,6 +173,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Collection-extend">extend</a></li>
+      <li>– <a href="#Collection-constructor">constructor</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (24)</b></a></li>
       <li>– <a href="#Collection-add">add</a></li>
@@ -199,6 +201,8 @@
       View
     </a>
     <ul class="toc_section">
+      <li>– <a href="#View-extend">extend</a></li>
+      <li>– <a href="#View-constructor">constructor</a></li>
       <li>– <a href="#View-el">el</a></li>
       <li>– <a href="#View-jQuery">$ (jQuery)</a></li>
       <li>– <a href="#View-render">render</a></li>
@@ -440,6 +444,21 @@ var Note = Backbone.Model.extend({
   
   coordinates: function() { ... }
   
+});
+</pre>
+
+    <p id="Model-constructor">
+      <b class="header">constructor</b><code>new Model([attributes])</code>
+      <br />
+      When creating an instance of a model, you can pass in the initial values
+      of the <b>attributes</b>, which will be <a href="#Model-set">set</a> on the
+      model.
+    </p>
+    
+<pre>
+new Book({
+  title: "One Thousand and One Nights",
+  author: "Scheherazade"
 });
 </pre>
 
@@ -718,6 +737,18 @@ bill.set({name : "Bill Jones"});
       providing instance <b>properties</b>, as well as optional <b>classProperties</b> to be attached
       directly to the collection's constructor function.
     </p>
+    
+    <p id="Collection-constructor">
+      <b class="header">constructor</b><code>new Collection([models], [options])</code>
+      <br />
+      When creating a Collection, you may choose to pass in the initial array of <b>models</b>.
+      The collection's <a href="#Collection-comparator">comparator</a> function
+      may be included as an option.
+    </p>
+    
+<pre>
+window.Tabs = new TabSet([tab1, tab2, tab3]);
+</pre>
     
     <p id="Collection-models">
       <b class="header">models</b><code>collection.models</code>
@@ -1064,6 +1095,55 @@ end
       <tt>model.bind('change', view.render)</tt> &mdash; and now everywhere that
       model data is displayed in the UI, it is always immediately up to date.
     </p>
+    
+    <p id="View-extend">
+      <b class="header">extend</b><code>Backbone.View.extend(properties, [classProperties])</code>
+      <br />
+      Get started with views by creating a custom view class. You'll want to
+      override the <a href="#View-render">render</a> function, specify your
+      declarative <a href="#View-handleEvents">events</a>, and perhaps the
+      <tt>tagName</tt>, <tt>className</tt>, or <tt>id</tt> of the View's root 
+      element.
+    </p>
+    
+<pre>
+var DocumentRow = Backbone.View.extend({
+  
+  tagName: "li",
+  
+  className: "document-row",
+  
+  events: {
+    "click .icon":          "open",
+    "click .button.edit":   "openEditDialog",
+    "click .button.delete": "destroy"
+  },
+  
+  render: function() {
+    ...
+  }
+  
+});
+</pre>
+    
+    <p id="View-constructor">
+      <b class="header">constructor</b><code>new View([options])</code>
+      <br />
+      When creating a new View, the options you pass are attached to the view 
+      as <tt>this.options</tt>, for future reference. There are several special
+      options that, if passed, will be attached directly to the view: 
+      <tt>model</tt>, <tt>collection</tt>,
+      <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, and <tt>tagName</tt>.
+    </p>
+    
+<pre>
+var doc = Documents.first();
+
+new DocumentRow({
+  model: doc,
+  id: "document-row-" + doc.id
+});
+</pre>
 
     <p id="View-el">
       <b class="header">el</b><code>view.el</code>
@@ -1073,6 +1153,11 @@ end
       fashion, views can be rendered at any time, and inserted into the DOM all
       at once, in order to get high-performance UI rendering with as few
       reflows and repaints as possible.
+    </p>
+    
+    <p>
+      <tt>this.el</tt> is created from the view's <tt>tagName</tt>, <tt>className</tt>,
+      and <tt>id</tt> properties, if specified. If not, <b>el</b> is an empty <tt>div</tt>.
     </p>
 
     <p id="View-jQuery">
