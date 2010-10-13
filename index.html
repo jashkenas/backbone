@@ -151,7 +151,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Model-extend">extend</a></li>
-      <li>– <a href="#Model-constructor">constructor</a></li>
+      <li>– <a href="#Model-constructor">constructor / initialize</a></li>
       <li>– <a href="#Model-get">get</a></li>
       <li>– <a href="#Model-set">set</a></li>
       <li>– <a href="#Model-unset">unset</a></li>
@@ -176,7 +176,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Collection-extend">extend</a></li>
-      <li>– <a href="#Collection-constructor">constructor</a></li>
+      <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (24)</b></a></li>
       <li>– <a href="#Collection-add">add</a></li>
@@ -204,7 +204,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#View-extend">extend</a></li>
-      <li>– <a href="#View-constructor">constructor</a></li>
+      <li>– <a href="#View-constructor">constructor / initialize</a></li>
       <li>– <a href="#View-el">el</a></li>
       <li>– <a href="#View-jQuery">$ (jQuery)</a></li>
       <li>– <a href="#View-render">render</a></li>
@@ -439,6 +439,8 @@ sidebar.promptColor();
 
 <pre>
 var Note = Backbone.Model.extend({
+  
+  initialize: function() { ... },
 
   author: function() { ... },
 
@@ -450,11 +452,12 @@ var Note = Backbone.Model.extend({
 </pre>
 
     <p id="Model-constructor">
-      <b class="header">constructor</b><code>new Model([attributes])</code>
+      <b class="header">constructor / initialize</b><code>new Model([attributes])</code>
       <br />
       When creating an instance of a model, you can pass in the initial values
       of the <b>attributes</b>, which will be <a href="#Model-set">set</a> on the
-      model.
+      model. If you define an <b>initialize</b> function, it will be invoked when
+      the model is created.
     </p>
 
 <pre>
@@ -736,15 +739,16 @@ bill.set({name : "Bill Jones"});
     </p>
 
     <p id="Collection-constructor">
-      <b class="header">constructor</b><code>new Collection([models], [options])</code>
+      <b class="header">constructor / initialize</b><code>new Collection([models], [options])</code>
       <br />
       When creating a Collection, you may choose to pass in the initial array of <b>models</b>.
       The collection's <a href="#Collection-comparator">comparator</a> function
-      may be included as an option.
+      may be included as an option. If you define an <b>initialize</b> function, it will be
+      invoked when the collection is created.
     </p>
 
 <pre>
-window.Tabs = new TabSet([tab1, tab2, tab3]);
+var tabs = new TabSet([tab1, tab2, tab3]);
 </pre>
 
     <p id="Collection-models">
@@ -1108,6 +1112,10 @@ var DocumentRow = Backbone.View.extend({
     "click .button.edit":   "openEditDialog",
     "click .button.delete": "destroy"
   },
+  
+  initialize: function() {
+    _.bindAll(this, "render");
+  },
 
   render: function() {
     ...
@@ -1117,13 +1125,15 @@ var DocumentRow = Backbone.View.extend({
 </pre>
 
     <p id="View-constructor">
-      <b class="header">constructor</b><code>new View([options])</code>
+      <b class="header">constructor / initialize</b><code>new View([options])</code>
       <br />
       When creating a new View, the options you pass are attached to the view
       as <tt>this.options</tt>, for future reference. There are several special
       options that, if passed, will be attached directly to the view:
       <tt>model</tt>, <tt>collection</tt>,
       <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, and <tt>tagName</tt>.
+      If the view defines an <b>initialize</b> function, it will be called when 
+      the view is first created.
     </p>
 
 <pre>
