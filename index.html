@@ -526,11 +526,13 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
     </p>
 
     <p id="Model-toJSON">
-      <b class="header">toJSON</b><code>model.toJSON</code>
+      <b class="header">toJSON</b><code>model.toJSON()</code>
       <br />
       Return a copy of the model's <a href="#Model-attributes">attributes</a> for JSON stringification.
       This can be used for persistence, serialization, or for augmentation before
-      being handed off to a view.
+      being handed off to a view. The name of this method is a bit confusing, as
+      it doesn't actually return a JSON string &mdash; but I'm afraid that it's 
+      the way that the <a href="https://developer.mozilla.org/en/JSON#toJSON()_method">JavaScript API for <b>JSON.stringify</b> works</a>.
     </p>
 
 <pre class="runnable">
