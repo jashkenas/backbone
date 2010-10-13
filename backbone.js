@@ -3,7 +3,7 @@
 //     For all details and documentation:
 //     http://documentcloud.github.com/backbone
 
-(function(){
+(function($, undefined){
 
   // Initial Setup
   // -------------
@@ -616,4 +616,4 @@
     });
   };
 
-})();
+})(jQuery);
