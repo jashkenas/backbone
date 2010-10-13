@@ -305,7 +305,7 @@
       delete options.comparator;
     }
     this._boundOnModelEvent = _.bind(this._onModelEvent, this);
-    this._initialize();
+    this._reset();
     if (models) this.refresh(models,true);
   };
 
@@ -372,7 +372,7 @@
           return new collection.model(attrs);
         });
       }
-      this._initialize();
+      this._reset();
       this.add(models, {silent: true});
       if (!options.silent) this.trigger('refresh', this);
       return this;
@@ -405,9 +405,8 @@
       return model.save(null, {success : success, error : options.error});
     },
 
-    // Initialize or re-initialize all internal state. Called when the
-    // collection is refreshed.
-    _initialize : function(options) {
+    // Reset all internal state. Called when the collection is refreshed.
+    _reset : function(options) {
       this.length = 0;
       this.models = [];
       this._byId  = {};
@@ -484,7 +483,7 @@
   // Creating a Backbone.View creates its intial element outside of the DOM,
   // if an existing element is not provided...
   Backbone.View = function(options) {
-    this._initialize(options || {});
+    this._reset(options || {});
     if (this.options.el) {
       this.el = this.options.el;
     } else {
@@ -569,7 +568,7 @@
     // Performs the initial configuration of a View with a set of options.
     // Keys with special meaning *(model, collection, id, className)*, are
     // attached directly to the view.
-    _initialize : function(options) {
+    _reset : function(options) {
       if (this.options) options = _.extend({}, this.options, options);
       if (options.model)      this.model      = options.model;
       if (options.collection) this.collection = options.collection;
