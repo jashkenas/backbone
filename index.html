@@ -179,6 +179,7 @@
       <li>– <a href="#Collection-get">get</a></li>
       <li>– <a href="#Collection-getByCid">getByCid</a></li>
       <li>– <a href="#Collection-at">at</a></li>
+      <li>– <a href="#Collection-length">length</a></li>
       <li>– <a href="#Collection-comparator">comparator</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
@@ -834,6 +835,13 @@ var book = Library.get(110);
       Get a model from a collection, specified by index. Useful if your collection
       is sorted, and if your collection isn't sorted, <b>at</b> will still
       retrieve models in insertion order.
+    </p>
+    
+    <p id="Collection-length">
+      <b class="header">length</b><code>collection.length</code>
+      <br />
+      Like an array, a Collection maintains a <tt>length</tt> property, counting
+      the number of models it contains.
     </p>
     
     <p id="Collection-comparator">

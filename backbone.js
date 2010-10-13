@@ -11,19 +11,19 @@
   // The top-level namespace.
   var Backbone = {};
 
-  // Keep the version in sync with `package.json`.
+  // Keep the version here in sync with `package.json`.
   Backbone.VERSION = '0.1.0';
 
-  // Export for both CommonJS and the Browser.
+  // Export for both CommonJS and the browser.
   (typeof exports !== 'undefined' ? exports : this).Backbone = Backbone;
 
-  // Require Underscore, if we're on the server.
+  // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;
   if (!_ && (typeof require !== 'undefined')) _ = require("underscore")._;
 
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
-  // static properties to be extended.
+  // class properties to be extended.
   var inherits = function(parent, protoProps, classProps) {
     var child = protoProps.hasOwnProperty('constructor') ? protoProps.constructor :
                 function(){ return parent.apply(this, arguments); };
@@ -36,7 +36,8 @@
     return child;
   };
 
-  // Get a url as a property or as a function.
+  // Helper function to get a URL from a Model or Collection as a property
+  // or as a function.
   var getUrl = function(object) {
     return _.isFunction(object.url) ? object.url() : object.url;
   };
@@ -113,8 +114,8 @@
   // Backbone.Model
   // --------------
 
-  // Create a new model, with defined attributes.
-  // If you do not specify the id, a negative id will be assigned for you.
+  // Create a new model, with defined attributes. A client id (`cid`)
+  // is automatically generated and assigned for you.
   Backbone.Model = function(attributes) {
     this.attributes = {};
     this.cid = _.uniqueId('c');
@@ -197,6 +198,8 @@
     },
 
     // Set a hash of model attributes, and sync the model to the server.
+    // If the server returns an attributes hash that differs, the model's
+    // state will be `set` again.
     save : function(attrs, options) {
       attrs   || (attrs = {});
       options || (options = {});
@@ -211,7 +214,8 @@
       return this;
     },
 
-    // Destroy this model on the server.
+    // Destroy this model on the server. Upon success, the model is removed
+    // from its collection, if it has one.
     destroy : function(options) {
       options || (options = {});
       var model = this;
@@ -364,7 +368,7 @@
 
     // When you have more items than you want to add or remove individually,
     // you can refresh the entire set with a new list of models, without firing
-    // any `added` or `removed` events. Fires `refreshed` when finished.
+    // any `added` or `removed` events. Fires `refresh` when finished.
     refresh : function(models, options) {
       options || (options = {});
       models = models || [];
@@ -381,7 +385,7 @@
     },
 
     // Fetch the default set of models for this collection, refreshing the
-    // collection.
+    // collection when they arrive.
     fetch : function(options) {
       options || (options = {});
       var collection = this;
@@ -393,7 +397,8 @@
       return this;
     },
 
-    // Create a new instance of a model in this collection.
+    // Create a new instance of a model in this collection. After the model
+    // has been created on the server, it will be added to the collection.
     create : function(model, options) {
       options || (options = {});
       if (!(model instanceof Backbone.Model)) model = new this.model(model);
@@ -420,7 +425,8 @@
       this._byCid = {};
     },
 
-    // Internal implementation of adding a single model to the set.
+    // Internal implementation of adding a single model to the set, updating
+    // hash indexes for `id` and `cid` lookups.
     _add : function(model, options) {
       options || (options = {});
       var already = this.get(model);
@@ -436,7 +442,8 @@
       return model;
     },
 
-    // Internal implementation of removing a single model from the set.
+    // Internal implementation of removing a single model from the set, updating
+    // hash indexes for `id` and `cid` lookups.
     _remove : function(model, options) {
       options || (options = {});
       model = this.get(model);
@@ -513,7 +520,7 @@
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(Backbone.View.prototype, {
 
-    // The default tagName of a View's element is "div".
+    // The default `tagName` of a View's element is `"div"`.
     tagName : 'div',
 
     // Attach the jQuery function as the `$` and `jQuery` properties.
