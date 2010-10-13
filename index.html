@@ -1145,6 +1145,8 @@ $("#make-demo").append(el);
       for DOM events within a view.
       If an <b>events</b> hash is not passed directly, uses <tt>this.events</tt>
       as the source. Events are written in the format <tt>{"event selector": "callback"}</tt>.
+      Omitting the <tt>selector</tt> causes the event to be bound to the view's
+      root element (<tt>this.el</tt>).
     </p>
 
     <p>
@@ -1166,8 +1168,8 @@ $("#make-demo").append(el);
 var DocumentView = Backbone.View.extend({
 
   events: {
-    "click .title"            : "select",
-    "dblclick .title"         : "open",
+    "dblclick"                : "open",
+    "click .icon.doc"         : "select",
     "contextmenu .icon.doc"   : "showMenu",
     "click .show_notes"       : "toggleNotes",
     "click .title .lock"      : "editAccessLevel",

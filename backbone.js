@@ -515,7 +515,7 @@
   };
 
   // Cached regex to split keys for `handleEvents`.
-  var eventSplitter = /^(\w+)\s+(.*)$/;
+  var eventSplitter = /^(\w+)\s*(.*)$/;
 
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(Backbone.View.prototype, {
@@ -557,8 +557,8 @@
     //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
     // Uses jQuery event delegation for efficiency.
-    // Passing a selector of `el` binds to the view's root element.
-    // Change events are not delegated through the view because IE does not
+    // Omitting the selector binds the event to `this.el`.
+    // `"change"` events are not delegated through the view because IE does not
     // bubble change events at all.
     handleEvents : function(events) {
       $(this.el).unbind();
