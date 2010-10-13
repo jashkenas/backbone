@@ -707,16 +707,15 @@ bill.set({name : "Bill Jones"});
       when any model in the collection is changed, listen for <tt>"add"</tt> and
       <tt>"remove"</tt> events, <tt>fetch</tt> the collection from the server,
       and use a full suite of
-      <a href="http://documentcloud.github.com/underscore">Underscore.js</a>
-      functions.
+      <a href="#Collection-Underscore-Methods">Underscore.js methods</a>.
     </p>
 
     <p id="Collection-extend">
       <b class="header">extend</b><code>Backbone.Collection.extend(properties, [classProperties])</code>
       <br />
       To create a <b>Collection</b> class of your own, extend <b>Backbone.Collection</b>,
-      providing instance <b>properties</b>, as well as optional properties to be attached
-      directly to the collection constructor function.
+      providing instance <b>properties</b>, as well as optional <b>classProperties</b> to be attached
+      directly to the collection's constructor function.
     </p>
     
     <p id="Collection-models">
@@ -806,7 +805,7 @@ ships.add([
       <b class="header">remove</b><code>collection.remove(models, [options])</code>
       <br />
       Remove a model (or an array of models) from the collection. Fires a
-      <tt>"remove"</tt> event, which you can pass <tt>{silent: true}</tt>
+      <tt>"remove"</tt> event, which you can use <tt>silent</tt>
       to suppress.
     </p>
 
@@ -815,6 +814,10 @@ ships.add([
       <br />
       Get a model from a collection, specified by <b>id</b>.
     </p>
+    
+<pre>
+var book = Library.get(110);
+</pre>
 
     <p id="Collection-getByCid">
       <b class="header">getByCid</b><code>collection.getByCid(cid)</code>
@@ -837,7 +840,7 @@ ships.add([
       <b class="header">comparator</b><code>collection.comparator</code>
       <br />
       By default there is no <b>comparator</b> function on a collection.
-      If you define a comparator function, it will be used to always maintain 
+      If you define a comparator, it will be used to maintain 
       the collection in sorted order. This means that as models are added,
       they are inserted at the correct index in <tt>collection.models</tt>.
       Comparator functions take a model and return a numeric or string value
@@ -845,8 +848,8 @@ ships.add([
     </p>
     
     <p>
-      Note how all of the chapters in this example come out in the
-      proper order:
+      Note how even though all of the chapters in this example are added backwards,
+      they come out in the proper order:
     </p>
     
 <pre class="runnable">
@@ -868,7 +871,7 @@ alert(chapters.pluck('title'));
       <b class="header">sort</b><code>collection.sort([options])</code>
       <br />
       Force a collection to re-sort itself. You don't need to call this under
-      normal circumstances, as a collection with a <tt>comparator</tt> function
+      normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a> function
       will maintain itself in proper sort order at all times. Triggers the
       collection's <tt>"refresh"</tt> event, unless silenced by passing
       <tt>{silent: true}</tt>
