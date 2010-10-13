@@ -286,7 +286,7 @@
       <a href="#Model">Models</a>, which can be created, validated, destroyed,
       and saved to the server. Whenever a UI action causes an attribute of
       a model to change, the model triggers a <i>"change"</i> event; all
-      the <a href="#View">Views</a> that display the model's data receive the
+      the <a href="#View">Views</a> that display the model's data are notified of the
       event, causing them to re-render. You don't have to write the glue
       code that looks into the DOM to find an element with a specific <i>id</i>,
       and update the HTML manually
@@ -346,8 +346,8 @@ object.trigger("alert", "an event");
       <br />
       Bind a <b>callback</b> function to an object. The callback will be invoked
       whenever the <b>event</b> (specified by an arbitrary string identifier) is fired.
-      If you have many events on a page, the convention is to use colons to
-      namespace them: <tt>"poll:start"</tt>.
+      If you have a large number of different events on a page, the convention is to use colons to
+      namespace them: <tt>"poll:start"</tt>, or <tt>"change:selection"</tt>
     </p>
 
     <p>
@@ -368,7 +368,7 @@ proxy.bind("all", function(eventName) {
       <br />
       Remove a previously-bound <b>callback</b> function from an object. If no
       callback is specified, all callbacks for the <b>event</b> will be
-      removed. If no event is specified, all bound callbacks on the object
+      removed. If no event is specified, <i>all</i> event callbacks on the object
       will be removed.
     </p>
 
@@ -383,7 +383,7 @@ object.unbind();                    // Removes all callbacks on object.
     <p id="Events-trigger">
       <b class="header">trigger</b><code>object.trigger(event, [*args])</code>
       <br />
-      Trigger all callbacks for the given <b>event</b>. All subsequent arguments to
+      Trigger callbacks for the given <b>event</b>. Subsequent arguments to
       <b>trigger</b> will be passed along to the event callbacks.
     </p>
 
@@ -531,7 +531,7 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
       Return a copy of the model's <a href="#Model-attributes">attributes</a> for JSON stringification.
       This can be used for persistence, serialization, or for augmentation before
       being handed off to a view. The name of this method is a bit confusing, as
-      it doesn't actually return a JSON string &mdash; but I'm afraid that it's 
+      it doesn't actually return a JSON string &mdash; but I'm afraid that it's
       the way that the <a href="https://developer.mozilla.org/en/JSON#toJSON()_method">JavaScript API for <b>JSON.stringify</b> works</a>.
     </p>
 
@@ -1270,11 +1270,6 @@ var DocumentView = Backbone.View.extend({
 });
 </pre>
 
-
-
-
-
-
     <h2 id="changelog">Change Log</h2>
 
     <p>
@@ -1297,6 +1292,7 @@ var DocumentView = Backbone.View.extend({
   <script src="backbone.js"></script>
 
   <script>
+    // Set up the "play" buttons for each runnable code example.
     $(function() {
       $('.runnable').each(function() {
         var code = this;
