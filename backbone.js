@@ -586,6 +586,7 @@
       if (options.collection) this.collection = options.collection;
       if (options.id)         this.id         = options.id;
       if (options.className)  this.className  = options.className;
+      if (options.tagName)    this.tagName    = options.tagName;
       this.options = options;
     }
 
