@@ -1082,7 +1082,7 @@ end
       model changes, without having to redraw the page. Instead of digging into
       a JSON object, looking up an element in the DOM, and updating the HTML by hand,
       it should look more like:
-      <tt>model.bind('change', view.render)</tt> &mdash; and now everywhere that
+      <tt>model.bind('change', renderView)</tt> &mdash; and now everywhere that
       model data is displayed in the UI, it is always immediately up to date.
     </p>
 
@@ -1251,7 +1251,7 @@ var DocumentView = Backbone.View.extend({
     "mouseover .title .date"  : "showTooltip"
   },
 
-  render: {
+  render: function() {
     $(this.el).html(this.template.render(this.model.toJSON()));
     this.handleEvents();
     return this;
