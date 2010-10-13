@@ -121,6 +121,7 @@
     this.cid = _.uniqueId('c');
     this.set(attributes || {}, {silent : true});
     this._previousAttributes = _.clone(this.attributes);
+    if (this.initialize) this.initialize(attributes);
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -306,7 +307,8 @@
     }
     this._boundOnModelEvent = _.bind(this._onModelEvent, this);
     this._reset();
-    if (models) this.refresh(models,true);
+    if (models) this.refresh(models, {silent: true});
+    if (this.initialize) this.initialize(models, options);
   };
 
   // Define the Collection's inheritable methods.
@@ -492,7 +494,7 @@
       if (this.className) attrs.className = this.className;
       this.el = this.make(this.tagName, attrs);
     }
-    return this;
+    if (this.initialize) this.initialize(options);
   };
 
   // jQuery lookup, scoped to DOM elements within the current view.
