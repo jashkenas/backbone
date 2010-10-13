@@ -18,7 +18,7 @@
       background: #fff;
       position: fixed;
       top: 0; left: 0; bottom: 0;
-      width: 190px;
+      width: 200px;
       overflow-y: auto;
       overflow-x: hidden;
       padding: 15px 0 30px 30px;
@@ -52,7 +52,7 @@
     div.container {
       position: relative;
       width: 550px;
-      margin: 40px 0 50px 250px;
+      margin: 40px 0 50px 260px;
     }
     div.run {
       position: absolute;
@@ -268,7 +268,7 @@
     <h2 id="Introduction">Introduction</h2>
 
     <p>
-      When working on a web application that involved a lot of JavaScript, one 
+      When working on a web application that involved a lot of JavaScript, one
       of the first things you learn is to stop tying your data to the DOM. It's all
       too easy to create JavaScript applications that end up as tangled piles of
       jQuery selectors and callbacks, all trying frantically to keep data in
@@ -305,12 +305,12 @@
       Loading the "Hello World" of SproutCore includes <i>2.5 megabytes</i> of JavaScript on the
       page; the "Hello World" of Cappuccino includes <i>1.7 megabytes</i> of JS and images,
       as measured with the Webkit inspector.
-      Backbone is a <i>2 kilobyte</i> include (packed, gzipped) that provides 
-      just the core concepts of models, events (key-value binding), collections, 
-      views, and persistence. A much closer relative to Backbone is 
+      Backbone is a <i>2 kilobyte</i> include (packed, gzipped) that provides
+      just the core concepts of models, events (key-value binding), collections,
+      views, and persistence. A much closer relative to Backbone is
       <a href="http://benpickles.github.com/js-model/">js-model</a>.
     </p>
-    
+
     <p>
       Many of the examples that follow are runnable. Click the <i>play</i> button
       to execute them.
@@ -345,14 +345,14 @@ object.trigger("alert", "an event");
       If you have many events on a page, the convention is to use colons to
       namespace them: <tt>"poll:start"</tt>.
     </p>
-    
+
     <p>
       Callbacks bound to the special
       <tt>"all"</tt> event will be triggered when any event occurs, and are passed
       the name of the event as the first argument. For example, to proxy all events
       from one object to another:
     </p>
-    
+
 <pre>
 proxy.bind("all", function(eventName) {
   object.trigger(eventName);
@@ -367,7 +367,7 @@ proxy.bind("all", function(eventName) {
       removed. If no event is specified, all bound callbacks on the object
       will be removed.
     </p>
-    
+
 <pre>
 object.unbind("change", onChange);  // Removes just the onChange callback.
 
@@ -424,24 +424,24 @@ sidebar.promptColor();
       <b class="header">extend</b><code>Backbone.Model.extend(properties, [classProperties])</code>
       <br />
       To create a <b>Model</b> class of your own, you extend <b>Backbone.Model</b>
-      and provide instance <b>properties</b>, as well as optional 
+      and provide instance <b>properties</b>, as well as optional
       <b>classProperties</b> to be attached directly to the constructor function.
     </p>
-    
+
     <p>
       <b>extend</b> correctly sets up the prototype chain, so subclasses created
       with <b>extend</b> can be further extended and subclassed as far as you like.
     </p>
-    
+
 <pre>
 var Note = Backbone.Model.extend({
-  
+
   author: function() { ... },
-  
+
   allowedToEdit: function(account) { ... },
-  
+
   coordinates: function() { ... }
-  
+
 });
 </pre>
 
@@ -452,7 +452,7 @@ var Note = Backbone.Model.extend({
       of the <b>attributes</b>, which will be <a href="#Model-set">set</a> on the
       model.
     </p>
-    
+
 <pre>
 new Book({
   title: "One Thousand and One Nights",
@@ -476,8 +476,8 @@ new Book({
     </p>
 
     <p>
-      If the model has a <a href="#Model-validate">validate</a> method, 
-      it will be validated before the attributes are set, and no changes will 
+      If the model has a <a href="#Model-validate">validate</a> method,
+      it will be validated before the attributes are set, and no changes will
       occur if the validation fails.
     </p>
 
@@ -491,24 +491,24 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
       Remove an attribute by deleting it from the internal attributes hash.
       Fires a <tt>"change"</tt> event unless <tt>silent</tt> is passed as an option.
     </p>
-    
+
     <p id="Model-id">
       <b class="header">id</b><code>model.id</code>
       <br />
       A special property of models, the <b>id</b> is an arbitrary string
       (integer id or UUID). If you set the <b>id</b> in the
-      attributes hash, it will be copied onto the model as a direct property. 
+      attributes hash, it will be copied onto the model as a direct property.
       Models can be retrieved by id from collections, and the id is used to generate
       model URLs by default.
     </p>
-    
+
     <p id="Model-cid">
       <b class="header">cid</b><code>model.cid</code>
       <br />
       A special property of models, the <b>cid</b> or client id is a unique identifier
       automatically assigned to all models when they're first created. Client ids
       are handy when the model has not yet been saved to the server, and does not
-      yet have its eventual true <b>id</b>, but already needs to be visible in the UI. 
+      yet have its eventual true <b>id</b>, but already needs to be visible in the UI.
       Client ids take the form: <tt>c1, c2, c3 ...</tt>
     </p>
 
@@ -520,12 +520,12 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
       them directly. If you'd like to retrieve and munge a copy of the model's
       attributes, use <a href="#Model-toJSON">toJSON</a> instead.
     </p>
-    
+
     <p id="Model-toJSON">
       <b class="header">toJSON</b><code>model.toJSON</code>
       <br />
-      Return a copy of the model's <a href="#Model-attributes">attributes</a> for JSON stringification. 
-      This can be used for persistence, serialization, or for augmentation before 
+      Return a copy of the model's <a href="#Model-attributes">attributes</a> for JSON stringification.
+      This can be used for persistence, serialization, or for augmentation before
       being handed off to a view.
     </p>
 
@@ -546,13 +546,13 @@ alert(JSON.stringify(artist));
       Save a model to your database (or alternative persistence layer),
       by delegating to <a href="#Sync">Backbone.sync</a>. If the model has a <a href="#Model-validate">validate</a>
       method, and validation fails, the model will not be saved. If the model
-      <a href="#Model-isNew">isNew</a>, the save will be a <tt>"create"</tt> 
+      <a href="#Model-isNew">isNew</a>, the save will be a <tt>"create"</tt>
       (HTTP <tt>POST</tt>), if the model already
       exists on the server, the save will be an <tt>"update"</tt> (HTTP <tt>PUT</tt>). Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
       are passed <tt>(model, response)</tt> as arguments.
     </p>
-    
+
     <p>
       In the following example, notice how because the model has never been
       saved previously, our overridden version of <tt>Backbone.sync</tt> receives a <tt>"create"</tt> request.
@@ -728,7 +728,7 @@ bill.set({name : "Bill Jones"});
       providing instance <b>properties</b>, as well as optional <b>classProperties</b> to be attached
       directly to the collection's constructor function.
     </p>
-    
+
     <p id="Collection-constructor">
       <b class="header">constructor</b><code>new Collection([models], [options])</code>
       <br />
@@ -736,11 +736,11 @@ bill.set({name : "Bill Jones"});
       The collection's <a href="#Collection-comparator">comparator</a> function
       may be included as an option.
     </p>
-    
+
 <pre>
 window.Tabs = new TabSet([tab1, tab2, tab3]);
 </pre>
-    
+
     <p id="Collection-models">
       <b class="header">models</b><code>collection.models</code>
       <br />
@@ -837,7 +837,7 @@ ships.add([
       <br />
       Get a model from a collection, specified by <b>id</b>.
     </p>
-    
+
 <pre>
 var book = Library.get(110);
 </pre>
@@ -858,30 +858,30 @@ var book = Library.get(110);
       is sorted, and if your collection isn't sorted, <b>at</b> will still
       retrieve models in insertion order.
     </p>
-    
+
     <p id="Collection-length">
       <b class="header">length</b><code>collection.length</code>
       <br />
       Like an array, a Collection maintains a <tt>length</tt> property, counting
       the number of models it contains.
     </p>
-    
+
     <p id="Collection-comparator">
       <b class="header">comparator</b><code>collection.comparator</code>
       <br />
       By default there is no <b>comparator</b> function on a collection.
-      If you define a comparator, it will be used to maintain 
+      If you define a comparator, it will be used to maintain
       the collection in sorted order. This means that as models are added,
       they are inserted at the correct index in <tt>collection.models</tt>.
       Comparator functions take a model and return a numeric or string value
       by which the model should be ordered relative to others.
     </p>
-    
+
     <p>
       Note how even though all of the chapters in this example are added backwards,
       they come out in the proper order:
     </p>
-    
+
 <pre class="runnable">
 var Chapter  = Backbone.Model;
 var chapters = new Backbone.Collection;
@@ -964,7 +964,7 @@ var Notes = Backbone.Collection.extend({
       Fetch the default set of models for this collection from the server,
       refreshing the collection when they arrive. The <b>options</b> hash takes
       <tt>success</tt> and <tt>error</tt>
-      callbacks which will be passed <tt>(collection, response)</tt> as arguments. 
+      callbacks which will be passed <tt>(collection, response)</tt> as arguments.
       Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers, for custom persistence strategies.
     </p>
@@ -974,7 +974,7 @@ var Notes = Backbone.Collection.extend({
       models, namespaced under "models": <tt>{"models": [...]}</tt> &mdash;
       additional information can be returned with the response under different keys.
     </p>
-    
+
 <pre class="runnable">
 Backbone.sync = function(method, model) {
   alert(method + ": " + model.url);
@@ -1006,7 +1006,7 @@ accounts.fetch();
       must have a <tt>model</tt> property, referencing the type of model that
       the collection contains.
     </p>
-    
+
 <pre>
 var Library = Backbone.Collection.extend({
   model: Book
@@ -1040,23 +1040,23 @@ var othello = NYPL.create({
       <li><b>success({model: ...})</b> – a callback that should be fired if the request works</li>
       <li><b>error({model: ...})</b> – a callback that should be fired if the request fails</li>
     </ul>
-    
+
     <p>
-      When formulating server responses for <b>Backbone.sync</b> requests, 
+      When formulating server responses for <b>Backbone.sync</b> requests,
       model attributes will be sent up, serialized as JSON, under the <tt>model</tt>
       parameter. When returning a JSON response, send down the model's representation
       under the <tt>model</tt> key, and other keys can be used for additional out-of-band
       information. When responding to a <tt>"read"</tt> request from a collection,
       send down the array of model attribute hashes under the <tt>models</tt> key.
     </p>
-    
+
     <p>
       For example, a Rails handler responding to an <tt>"update"</tt> call from
       <b>Backbone.sync</b> would look like this: <i>(In real code, never use
       </i><tt>update_attributes</tt><i> blindly, and always whitelist the attributes
       you allow to be changed.)</i>
     </p>
-    
+
 <pre>
 def update
   account = Account.find(params[:id])
@@ -1068,58 +1068,58 @@ end
     <h2 id="View">Backbone.View</h2>
 
     <p>
-      Backbone views are almost more convention than they are code &mdash; they 
-      don't determine anything about your HTML or CSS for you, and can be used 
+      Backbone views are almost more convention than they are code &mdash; they
+      don't determine anything about your HTML or CSS for you, and can be used
       with any JavaScript templating library.
       The general idea is to organize your interface into logical views,
       backed by models, each of which can be updated independently when the
-      model changes, without having to redraw the page. Instead of digging into 
-      a JSON object, looking up an element in the DOM, and updating the HTML by hand, 
+      model changes, without having to redraw the page. Instead of digging into
+      a JSON object, looking up an element in the DOM, and updating the HTML by hand,
       it should look more like:
       <tt>model.bind('change', view.render)</tt> &mdash; and now everywhere that
       model data is displayed in the UI, it is always immediately up to date.
     </p>
-    
+
     <p id="View-extend">
       <b class="header">extend</b><code>Backbone.View.extend(properties, [classProperties])</code>
       <br />
       Get started with views by creating a custom view class. You'll want to
       override the <a href="#View-render">render</a> function, specify your
       declarative <a href="#View-handleEvents">events</a>, and perhaps the
-      <tt>tagName</tt>, <tt>className</tt>, or <tt>id</tt> of the View's root 
+      <tt>tagName</tt>, <tt>className</tt>, or <tt>id</tt> of the View's root
       element.
     </p>
-    
+
 <pre>
 var DocumentRow = Backbone.View.extend({
-  
+
   tagName: "li",
-  
+
   className: "document-row",
-  
+
   events: {
     "click .icon":          "open",
     "click .button.edit":   "openEditDialog",
     "click .button.delete": "destroy"
   },
-  
+
   render: function() {
     ...
   }
-  
+
 });
 </pre>
-    
+
     <p id="View-constructor">
       <b class="header">constructor</b><code>new View([options])</code>
       <br />
-      When creating a new View, the options you pass are attached to the view 
+      When creating a new View, the options you pass are attached to the view
       as <tt>this.options</tt>, for future reference. There are several special
-      options that, if passed, will be attached directly to the view: 
+      options that, if passed, will be attached directly to the view:
       <tt>model</tt>, <tt>collection</tt>,
       <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, and <tt>tagName</tt>.
     </p>
-    
+
 <pre>
 var doc = Documents.first();
 
@@ -1138,7 +1138,7 @@ new DocumentRow({
       at once, in order to get high-performance UI rendering with as few
       reflows and repaints as possible.
     </p>
-    
+
     <p>
       <tt>this.el</tt> is created from the view's <tt>tagName</tt>, <tt>className</tt>,
       and <tt>id</tt> properties, if specified. If not, <b>el</b> is an empty <tt>div</tt>.
@@ -1173,8 +1173,8 @@ ui.Chapter = Backbone.View.extend({
       function with your code that renders the view template from model data,
       and updates <tt>this.el</tt> with the new HTML. You can use any flavor of
       JavaScript templating or DOM-building you prefer. Because <b>Underscore.js</b>
-      is already on the page, 
-      <a href="http://documentcloud.github.com/underscore/#template">_.template</a> 
+      is already on the page,
+      <a href="http://documentcloud.github.com/underscore/#template">_.template</a>
       is already available. A good
       convention is to <tt>return this</tt> at the end of <b>render</b> to
       enable chained calls.
@@ -1196,7 +1196,7 @@ var Bookmark = Backbone.View.extend({
       with optional attributes and HTML content. Used internally to create the
       initial <tt>view.el</tt>.
     </p>
-        
+
 <pre class="runnable">
 var view = new Backbone.View;
 
@@ -1250,15 +1250,15 @@ var DocumentView = Backbone.View.extend({
     this.handleEvents();
     return this;
   },
-  
+
   open: function() {
     window.open(this.model.get("viewer_url"));
   },
-  
+
   select: function() {
     this.model.set({selected: true});
   },
-  
+
   ...
 
 });
