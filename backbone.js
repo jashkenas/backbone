@@ -17,6 +17,10 @@
   // Export for both CommonJS and the Browser.
   (typeof exports !== 'undefined' ? exports : this).Backbone = Backbone;
 
+  // Require Underscore, if we're on the server.
+  var _ = this._;
+  if (!_ && (typeof require !== 'undefined')) _ = require("underscore")._;
+
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // static properties to be extended.

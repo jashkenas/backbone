@@ -232,9 +232,7 @@
     <p>
       <i>
         Backbone is an open-source component of
-        <a href="http://documentcloud.org/">DocumentCloud</a>.<br />
-        Special thanks to <a href="http://github.com/broofa">Robert Kieffer</a> 
-        for inspiring the ideas behind this library.
+        <a href="http://documentcloud.org/">DocumentCloud</a>.
       </i>
     </p>
 
@@ -246,7 +244,7 @@
     <table>
       <tr>
         <td><a href="backbone.js">Development Version (0.1.0)</a></td>
-        <td><i>22kb, Uncompressed with Comments</i></td>
+        <td><i>21kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
         <td><a href="backbone-min.js">Production Version (0.1.0)</a></td>
@@ -267,8 +265,8 @@
     <h2 id="Introduction">Introduction</h2>
 
     <p>
-      When working on a heavy-duty JavaScript application, one of the first things
-      you learn is to stop tying your data to the DOM. It's all
+      When working on a web application that involved a lot of JavaScript, one 
+      of the first things you learn is to stop tying your data to the DOM. It's all
       too easy to create JavaScript applications that end up as tangled piles of
       jQuery selectors and callbacks, all trying frantically to keep data in
       sync between the HTML UI, your JavaScript logic, and the database on your
@@ -281,7 +279,7 @@
       <a href="#Model">Models</a>, which can be created, validated, destroyed,
       and saved to the server. Whenever a UI action causes an attribute of
       a model to change, the model triggers a <i>"change"</i> event; all
-      the <a href="#View">Views</a> that reference the model's data receive the
+      the <a href="#View">Views</a> that display the model's data receive the
       event, causing them to re-render. You don't have to write the glue
       code that looks into the DOM to find an element with a specific <i>id</i>,
       and update the HTML manually
@@ -353,8 +351,8 @@ object.trigger("alert", "an event");
     </p>
     
 <pre>
-object.bind("all", function(eventName) {
-  proxy.trigger(eventName);
+proxy.bind("all", function(eventName) {
+  object.trigger(eventName);
 });
 </pre>
 
@@ -379,7 +377,7 @@ object.unbind();                    // Removes all callbacks on object.
       <b class="header">trigger</b><code>object.trigger(event, [*args])</code>
       <br />
       Trigger all callbacks for the given <b>event</b>. All subsequent arguments to
-      <b>trigger</b> will be passed along.
+      <b>trigger</b> will be passed along to the event callbacks.
     </p>
 
     <h2 id="Model">Backbone.Model</h2>
@@ -394,8 +392,8 @@ object.unbind();                    // Removes all callbacks on object.
 
     <p>
       The following is a contrived example, but it demonstrates defining a model
-      with a custom method, setting an attribute, and firing an event when a
-      specific property of the model changes.
+      with a custom method, setting an attribute, and firing an event keyed
+      to changes in that specific attribute.
       After running this code once, <tt>sidebar</tt> will be
       available in your browser's console, so you can play around with it.
     </p>
@@ -420,11 +418,11 @@ sidebar.promptColor();
 </pre>
 
     <p id="Model-extend">
-      <b class="header">extend</b><code>Backbone.Model.extend(properties, [staticProperties])</code>
+      <b class="header">extend</b><code>Backbone.Model.extend(properties, [classProperties])</code>
       <br />
       To create a <b>Model</b> class of your own, you extend <b>Backbone.Model</b>
-      and provide instance <b>properties</b>, as well as optional properties to be attached
-      directly to the constructor function.
+      and provide instance <b>properties</b>, as well as optional 
+      <b>classProperties</b> to be attached directly to the constructor function.
     </p>
     
     <p>
@@ -456,18 +454,17 @@ var Note = Backbone.Model.extend({
       <br />
       Set a hash of attributes (one or many) on the model. If any of the attributes
       change the models state, a <tt>"change"</tt> event will be fired, unless
-      <tt>silent</tt> is passed as an option.
+      <tt>{silent: true}</tt> is passed as an option.
     </p>
 
     <p>
-      If the model has a <tt>validate</tt> method, it will be validated before
-      the attributes are set, and no changes will occur if the validation fails.
+      If the model has a <a href="#Model-validate">validate</a> method, 
+      it will be validated before the attributes are set, and no changes will 
+      occur if the validation fails.
     </p>
 
 <pre>
 note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
-
-note.set({title: "October 31"}, {silent: true});
 </pre>
 
     <p id="Model-unset">
@@ -501,15 +498,15 @@ note.set({title: "October 31"}, {silent: true});
       <b class="header">attributes</b><code>model.attributes</code>
       <br />
       The <b>attributes</b> property is the internal hash containing the model's
-      state. Please use <tt>set</tt> to update the attributes instead of modifying
+      state. Please use <a href="#Model-set">set</a> to update the attributes instead of modifying
       them directly. If you'd like to retrieve and munge a copy of the model's
-      attributes, use <tt>toJSON</tt> instead.
+      attributes, use <a href="#Model-toJSON">toJSON</a> instead.
     </p>
     
     <p id="Model-toJSON">
       <b class="header">toJSON</b><code>model.toJSON</code>
       <br />
-      Return a copy of the model's <b>attributes</b> for JSON stringification. 
+      Return a copy of the model's <a href="#Model-attributes">attributes</a> for JSON stringification. 
       This can be used for persistence, serialization, or for augmentation before 
       being handed off to a view.
     </p>
@@ -529,16 +526,18 @@ alert(JSON.stringify(artist));
       <b class="header">save</b><code>model.save(attributes, [options])</code>
       <br />
       Save a model to your database (or alternative persistence layer),
-      by delegating to <tt>Backbone.sync</tt>. If the model has a <tt>validate</tt>
+      by delegating to <a href="#Sync">Backbone.sync</a>. If the model has a <a href="#Model-validate">validate</a>
       method, and validation fails, the model will not be saved. If the model
-      <tt>isNew()</tt>, the save will be an HTTP <tt>POST</tt>, if the model already
-      exists on the server, the save will be a <tt>PUT</tt>. Accepts
-      <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
+      <a href="#Model-isNew">isNew</a>, the save will be a <tt>"create"</tt> 
+      (HTTP <tt>POST</tt>), if the model already
+      exists on the server, the save will be an <tt>"update"</tt> (HTTP <tt>PUT</tt>). Accepts
+      <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
+      are passed <tt>(model, response)</tt> as arguments.
     </p>
     
     <p>
       In the following example, notice how because the model has never been
-      saved previously, <tt>Backbone.sync</tt> receives a <tt>"create"</tt> request.
+      saved previously, our overridden version of <tt>Backbone.sync</tt> receives a <tt>"create"</tt> request.
     </p>
 
 <pre class="runnable">
@@ -558,7 +557,7 @@ book.save();
       <b class="header">destroy</b><code>model.destroy([options])</code>
       <br />
       Destroys the model on the server by delegating an HTTP <tt>DELETE</tt>
-      request to <tt>Backbone.sync</tt>. Accepts
+      request to <a href="#Sync">Backbone.sync</a>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
     </p>
 
@@ -616,14 +615,14 @@ one.set({
 
     <p>
       A model with an id of <tt>101</tt>, stored in a
-      <b>Backbone.Collection</b> with a <tt>url</tt> of <tt>"/notes"</tt>,
+      <a href="#Collection">Backbone.Collection</a> with a <tt>url</tt> of <tt>"/notes"</tt>,
       would have this URL: <tt>"/notes/101"</tt>
     </p>
 
     <p id="Model-clone">
       <b class="header">clone</b><code>model.clone()</code>
       <br />
-      Create a new instance of a model with identical attributes.
+      Returns a new instance of the model with identical attributes.
     </p>
 
     <p id="Model-isNew">
@@ -636,9 +635,10 @@ one.set({
     <p id="Model-change">
       <b class="header">change</b><code>model.change()</code>
       <br />
-      If you've been passing <tt>{silent: true}</tt> to <tt>set</tt> in order to
-      aggregate rapid changes to a model, you'll want to fire the <tt>"change"</tt>
-      event when you're finished. Call <tt>model.change()</tt> to trigger it.
+      Manually trigger the <tt>"change"</tt> event.
+      If you've been passing <tt>{silent: true}</tt> to the <a href="#Model-set">set</a> function in order to
+      aggregate rapid changes to a model, you'll want to call <tt>model.change()</tt>
+      when you're all finished.
     </p>
 
     <p id="Model-hasChanged">
@@ -712,7 +712,7 @@ bill.set({name : "Bill Jones"});
     </p>
 
     <p id="Collection-extend">
-      <b class="header">extend</b><code>Backbone.Collection.extend(properties, [staticProperties])</code>
+      <b class="header">extend</b><code>Backbone.Collection.extend(properties, [classProperties])</code>
       <br />
       To create a <b>Collection</b> class of your own, extend <b>Backbone.Collection</b>,
       providing instance <b>properties</b>, as well as optional properties to be attached
