@@ -153,6 +153,7 @@
       <li>– <a href="#Model-id">id</a></li>
       <li>– <a href="#Model-cid">cid</a></li>
       <li>– <a href="#Model-attributes">attributes</a></li>
+      <li>- <a href="#Model-toJSON">toJSON</a></li>
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
@@ -171,12 +172,14 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Collection-extend">extend</a></li>
+      <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (24)</b></a></li>
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
       <li>– <a href="#Collection-get">get</a></li>
       <li>– <a href="#Collection-getByCid">getByCid</a></li>
       <li>– <a href="#Collection-at">at</a></li>
+      <li>– <a href="#Collection-comparator">comparator</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
       <li>– <a href="#Model-url">url</a></li>
@@ -201,6 +204,9 @@
       <li>– <a href="#View-make">make</a></li>
       <li>– <a href="#View-handleEvents">handleEvents</a></li>
     </ul>
+    <a class="toc_title" href="#changelog">
+      Change Log
+    </a>
   </div>
 
   <div class="container">
@@ -492,10 +498,20 @@ note.set({title: "October 31"}, {silent: true});
     </p>
 
     <p id="Model-attributes">
-      <b class="header">attributes</b><code>model.attributes()</code>
+      <b class="header">attributes</b><code>model.attributes</code>
       <br />
-      Return a copy of the model's <b>attributes</b>. This can be used for persistence,
-      serialization, or for augmentation before being handed off to a view.
+      The <b>attributes</b> property is the internal hash containing the model's
+      state. Please use <tt>set</tt> to update the attributes instead of modifying
+      them directly. If you'd like to retrieve and munge a copy of the model's
+      attributes, use <tt>toJSON</tt> instead.
+    </p>
+    
+    <p id="Model-toJSON">
+      <b class="header">toJSON</b><code>model.toJSON</code>
+      <br />
+      Return a copy of the model's <b>attributes</b> for JSON stringification. 
+      This can be used for persistence, serialization, or for augmentation before 
+      being handed off to a view.
     </p>
 
 <pre class="runnable">
@@ -506,7 +522,7 @@ var artist = new Backbone.Model({
 
 artist.set({birthday: "December 16, 1866"});
 
-alert(JSON.stringify(artist.attributes()));
+alert(JSON.stringify(artist));
 </pre>
 
     <p id="Model-save">
@@ -518,6 +534,11 @@ alert(JSON.stringify(artist.attributes()));
       <tt>isNew()</tt>, the save will be an HTTP <tt>POST</tt>, if the model already
       exists on the server, the save will be a <tt>PUT</tt>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
+    </p>
+    
+    <p>
+      In the following example, notice how because the model has never been
+      saved previously, <tt>Backbone.sync</tt> receives a <tt>"create"</tt> request.
     </p>
 
 <pre class="runnable">
@@ -542,11 +563,9 @@ book.save();
     </p>
 
 <pre>
-book.destroy({
-  success: function(model, response) {
-    ...
-  }
-});
+book.destroy({success: function(model, response) {
+  ...
+}});
 </pre>
 
     <p id="Model-validate">
@@ -699,6 +718,15 @@ bill.set({name : "Bill Jones"});
       providing instance <b>properties</b>, as well as optional properties to be attached
       directly to the collection constructor function.
     </p>
+    
+    <p id="Collection-models">
+      <b class="header">models</b><code>collection.models</code>
+      <br />
+      Raw access to the JavaScript array of models inside of the collection. Usually you'll
+      want to use <tt>get</tt>, <tt>at</tt>, or the <b>Underscore methods</b>
+      to access model objects, but occasionally a direct reference to the array
+      is desired.
+    </p>
 
     <p id="Collection-Underscore-Methods">
       <b class="header">Underscore Methods (24)</b>
@@ -761,13 +789,12 @@ var alphabetical = Books.sortBy(function(book) {
     </p>
 
 <pre class="runnable">
+var Ship  = Backbone.Model;
 var ships = new Backbone.Collection();
 
 ships.bind("add", function(ship) {
   alert("Ahoy " + ship.get("name") + "!");
 });
-
-var Ship = Backbone.Model.extend({});
 
 ships.add([
   new Ship({name: "Flying Dutchman"}),
@@ -805,6 +832,37 @@ ships.add([
       is sorted, and if your collection isn't sorted, <b>at</b> will still
       retrieve models in insertion order.
     </p>
+    
+    <p id="Collection-comparator">
+      <b class="header">comparator</b><code>collection.comparator</code>
+      <br />
+      By default there is no <b>comparator</b> function on a collection.
+      If you define a comparator function, it will be used to always maintain 
+      the collection in sorted order. This means that as models are added,
+      they are inserted at the correct index in <tt>collection.models</tt>.
+      Comparator functions take a model and return a numeric or string value
+      by which the model should be ordered relative to others.
+    </p>
+    
+    <p>
+      Note how all of the chapters in this example come out in the
+      proper order:
+    </p>
+    
+<pre class="runnable">
+var Chapter  = Backbone.Model;
+var chapters = new Backbone.Collection();
+
+chapters.comparator = function(chapter) {
+  return chapter.get("page");
+};
+
+chapters.add(new Chapter({page: 9, title: "The End"}));
+chapters.add(new Chapter({page: 5, title: "The Middle"}));
+chapters.add(new Chapter({page: 1, title: "The Beginning"}));
+
+alert(chapters.pluck('title'));
+</pre>
 
     <p id="Collection-sort">
       <b class="header">sort</b><code>collection.sort([options])</code>
@@ -991,8 +1049,7 @@ ui.Chapter = Backbone.View.extend({
 <pre>
 ui.Chapter = Backbone.View.extend({
   render: function() {
-    var data = this.model.attributes();
-    $(this.el).html(this.template.render(data));
+    $(this.el).html(this.template.render(this.model.toJSON()));
     return this;
   }
 });
@@ -1043,8 +1100,7 @@ var DocumentView = Backbone.View.extend({
   },
 
   render: {
-    var data = this.document.attributes();
-    this.el.html(this.template.render(data));
+    $(this.el).html(this.template.render(this.model.toJSON()));
     this.handleEvents();
     return this;
   }
@@ -1057,7 +1113,7 @@ var DocumentView = Backbone.View.extend({
 
 
 
-    <h2 id="changes">Change Log</h2>
+    <h2 id="changelog">Change Log</h2>
 
     <p>
       <b class="header">0.1.0</b><br />

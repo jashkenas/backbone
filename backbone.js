@@ -112,15 +112,10 @@
   // Create a new model, with defined attributes.
   // If you do not specify the id, a negative id will be assigned for you.
   Backbone.Model = function(attributes) {
-    this._attributes = {};
+    this.attributes = {};
     this.cid = _.uniqueId('c');
     this.set(attributes || {}, {silent : true});
-    this._previousAttributes = this.attributes();
-  };
-
-  // `attributes` is aliased as `toJSON`, for use with `JSON.stringify`.
-  var toJSON = function() {
-    return _.clone(this._attributes);
+    this._previousAttributes = _.clone(this.attributes);
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -134,12 +129,13 @@
     _changed : false,
 
     // Return a copy of the model's `attributes` object.
-    toJSON     : toJSON,
-    attributes : toJSON,
+    toJSON : function() {
+      return _.clone(this.attributes);
+    },
 
     // Get the value of an attribute.
     get : function(attr) {
-      return this._attributes[attr];
+      return this.attributes[attr];
     },
 
     // Set a hash of model attributes on the object, firing `changed` unless you
@@ -149,8 +145,8 @@
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
-      attrs = attrs._attributes || attrs;
-      var now = this._attributes;
+      attrs = attrs.attributes || attrs;
+      var now = this.attributes;
 
       // Run validation if `validate` is defined.
       if (this.validate) {
@@ -186,8 +182,8 @@
     // silence it.
     unset : function(attr, options) {
       options || (options = {});
-      var value = this._attributes[attr];
-      delete this._attributes[attr];
+      var value = this.attributes[attr];
+      delete this.attributes[attr];
       if (!options.silent) {
         this._changed = true;
         this.trigger('change:' + attr, this);
@@ -234,7 +230,7 @@
 
     // Create a new model with identical attributes to this one.
     clone : function() {
-      return new (this.constructor)(this.attributes());
+      return new this.constructor(this);
     },
 
     // A model is new if it has never been saved to the server, and has a negative
@@ -247,14 +243,14 @@
     // Calling this will cause all objects observing the model to update.
     change : function() {
       this.trigger('change', this);
-      this._previousAttributes = this.attributes();
+      this._previousAttributes = _.clone(this.attributes);
       this._changed = false;
     },
 
     // Determine if the model has changed since the last `changed` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged : function(attr) {
-      if (attr) return this._previousAttributes[attr] != this._attributes[attr];
+      if (attr) return this._previousAttributes[attr] != this.attributes[attr];
       return this._changed;
     },
 
@@ -263,7 +259,7 @@
     // view need to be updated and/or what attributes need to be persisted to
     // the server.
     changedAttributes : function(now) {
-      var old = this._previousAttributes, now = now || this.attributes(), changed = false;
+      var old = this._previousAttributes, now = now || this.attributes, changed = false;
       for (var attr in now) {
         if (!_.isEqual(old[attr], now[attr])) {
           changed = changed || {};
