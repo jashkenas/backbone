@@ -30,10 +30,6 @@ $(document).ready(function() {
     equals(doc.url(), '/collection/1-the-tempest');
   });
 
-  test("model: toString", function() {
-    equals(doc.toString(), 'Model 1-the-tempest');
-  });
-
   test("model: clone", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);

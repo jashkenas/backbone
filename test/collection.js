@@ -25,10 +25,6 @@ $(document).ready(function() {
     equals(col.length, 4);
   });
 
-  test("collections: toString", function() {
-    equals(col.toString(), 'Collection (4 models)');
-  });
-
   test("collections: get, getByCid", function() {
     equals(col.get(1), d);
     equals(col.get(3), b);

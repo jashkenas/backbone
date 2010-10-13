@@ -166,7 +166,6 @@
       <li>– <a href="#Model-changedAttributes">changedAttributes</a></li>
       <li>– <a href="#Model-previous">previous</a></li>
       <li>– <a href="#Model-previousAttributes">previousAttributes</a></li>
-      <li>– <a href="#Model-toString">toString</a></li>
     </ul>
     <a class="toc_title" href="#Collection">
       Collection
@@ -189,7 +188,6 @@
       <li>– <a href="#Collection-refresh">refresh</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
       <li>– <a href="#Collection-create">create</a></li>
-      <li>– <a href="#Collection-toString">toString</a></li>
     </ul>
     <a class="toc_title" href="#Sync">
       Sync
@@ -713,13 +711,6 @@ bill.set({name : "Bill Jones"});
       an error occurs.
     </p>
 
-    <p id="Model-toString">
-      <b class="header">toString</b><code>model.toString()</code>
-      <br />
-      By default, just returns <tt>"Model [id]"</tt> &mdash; Override <b>toString</b>
-      to get convenient logging in the console for your models.
-    </p>
-
     <h2 id="Collection">Backbone.Collection</h2>
 
     <p>
@@ -1028,13 +1019,6 @@ var othello = NYPL.create({
   author: "William Shakespeare"
 });
 </pre>
-
-    <p id="Collection-toString">
-      <b class="header">toString</b><code>collection.toString()</code>
-      <br />
-      By default, just returns <tt>"Collection ([size] models)"</tt> &mdash;
-      Override <b>toString</b> to get convenient logging in the console for the collection.
-    </p>
 
     <h2 id="Sync">Backbone.sync</h2>
 

@@ -288,12 +288,6 @@
     // `changed` event.
     previousAttributes : function() {
       return _.clone(this._previousAttributes);
-    },
-
-    // String representation of the model. Override this to provide a nice way
-    // to print models to the console.
-    toString : function() {
-      return 'Model ' + this.id;
     }
 
   });
@@ -409,11 +403,6 @@
         if (options.success) options.success(model, resp);
       };
       return model.save(null, {success : success, error : options.error});
-    },
-
-    // Override this function to get convenient logging in the console.
-    toString : function() {
-      return 'Collection (' + this.length + " models)";
     },
 
     // Initialize or re-initialize all internal state. Called when the
