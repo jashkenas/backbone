@@ -26,11 +26,6 @@ $(document).ready(function() {
   var collection = new klass();
   collection.add(doc);
 
-  test("model: attributes", function() {
-    ok(doc.attributes() !== attrs, "Attributes are different objects.");
-    ok(_.isEqual(doc.attributes(), attrs), "but with identical contents.");
-  });
-
   test("model: url", function() {
     equals(doc.url(), '/collection/1-the-tempest');
   });
