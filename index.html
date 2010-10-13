@@ -789,7 +789,7 @@ var alphabetical = Books.sortBy(function(book) {
 
 <pre class="runnable">
 var Ship  = Backbone.Model;
-var ships = new Backbone.Collection();
+var ships = new Backbone.Collection;
 
 ships.bind("add", function(ship) {
   alert("Ahoy " + ship.get("name") + "!");
@@ -854,7 +854,7 @@ var book = Library.get(110);
     
 <pre class="runnable">
 var Chapter  = Backbone.Model;
-var chapters = new Backbone.Collection();
+var chapters = new Backbone.Collection;
 
 chapters.comparator = function(chapter) {
   return chapter.get("page");
@@ -933,16 +933,28 @@ var Notes = Backbone.Collection.extend({
       <br />
       Fetch the default set of models for this collection from the server,
       refreshing the collection when they arrive. The <b>options</b> hash takes
-      <tt>success(collection, response)</tt> and <tt>error(collection, response)</tt>
-      callbacks. Delegates to <tt>Backbone.sync</tt>
+      <tt>success</tt> and <tt>error</tt>
+      callbacks which will be passed <tt>(collection, response)</tt> as arguments. 
+      Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers, for custom persistence strategies.
     </p>
 
     <p>
       The server handler for <b>fetch</b> requests should return a JSON list of
-      models, namespaced under "models": <tt>{"models": [...]}</tt> &mdash; and
-      additional information can be returned under different keys.
+      models, namespaced under "models": <tt>{"models": [...]}</tt> &mdash;
+      additional information can be returned with the response under different keys.
     </p>
+    
+<pre class="runnable">
+Backbone.sync = function(method, model) {
+  alert(method + ": " + model.url);
+};
+
+var accounts = new Backbone.Collection;
+accounts.url = '/accounts';
+
+accounts.fetch();
+</pre>
 
     <p>
       Note that <b>fetch</b> should not be used to populate collections on
@@ -964,6 +976,19 @@ var Notes = Backbone.Collection.extend({
       must have a <tt>model</tt> property, referencing the type of model that
       the collection contains.
     </p>
+    
+<pre>
+var Library = Backbone.Collection.extend({
+  model: Book
+});
+
+var NYPL = new Library;
+
+var othello = NYPL.create({
+  title: "Othello",
+  author: "William Shakespeare"
+});
+</pre>
 
     <p id="Collection-toString">
       <b class="header">toString</b><code>collection.toString()</code>
@@ -992,15 +1017,42 @@ var Notes = Backbone.Collection.extend({
       <li><b>success({model: ...})</b> – a callback that should be fired if the request works</li>
       <li><b>error({model: ...})</b> – a callback that should be fired if the request fails</li>
     </ul>
+    
+    <p>
+      When formulating server responses for <b>Backbone.sync</b> requests, 
+      model attributes will be sent up, serialized as JSON, under the <tt>model</tt>
+      parameter. When returning a JSON response, send down the model's representation
+      under the <tt>model</tt> key, and other keys can be used for additional out-of-band
+      information. When responding to a <tt>"read"</tt> request from a collection,
+      send down the array of model attribute hashes under the <tt>models</tt> key.
+    </p>
+    
+    <p>
+      For example, a Rails handler responding to an <tt>"update"</tt> call from
+      <b>Backbone.sync</b> would look like this: <i>(In real code, never use
+      </i><tt>update_attributes</tt><i> blindly, and always whitelist the attributes
+      you allow to be changed.)</i>
+    </p>
+    
+<pre>
+def update
+  account = Account.find(params[:id])
+  account.update_attributes JSON.parse params[:model]
+  render :json => {:model => account}
+end
+</pre>
 
     <h2 id="View">Backbone.View</h2>
 
     <p>
-      Backbone views are almost more convention than they are code.
-      The general idea is to organize your interface into logical sections,
+      Backbone views are almost more convention than they are code &mdash; they 
+      don't determine anything about your HTML or CSS for you, and can be used 
+      with any JavaScript templating library.
+      The general idea is to organize your interface into logical views,
       backed by models, each of which can be updated independently when the
-      model changes. Instead of digging into a JSON object and looking up an
-      element in the DOM, and updating the HTML by hand, it should look more like:
+      model changes, without having to redraw the page. Instead of digging into 
+      a JSON object, looking up an element in the DOM, and updating the HTML by hand, 
+      it should look more like:
       <tt>model.bind('change', view.render)</tt> &mdash; and now everywhere that
       model data is displayed in the UI, it is always immediately up to date.
     </p>
@@ -1044,13 +1096,15 @@ ui.Chapter = Backbone.View.extend({
       function with your code that renders the view template from model data,
       and updates <tt>this.el</tt> with the new HTML. You can use any flavor of
       JavaScript templating or DOM-building you prefer. Because <b>Underscore.js</b>
-      is already on the page, <tt>_.template</tt> is already available. A good
+      is already on the page, 
+      <a href="http://documentcloud.github.com/underscore/#template">_.template</a> 
+      is already available. A good
       convention is to <tt>return this</tt> at the end of <b>render</b> to
       enable chained calls.
     </p>
 
 <pre>
-ui.Chapter = Backbone.View.extend({
+var Bookmark = Backbone.View.extend({
   render: function() {
     $(this.el).html(this.template.render(this.model.toJSON()));
     return this;
@@ -1065,6 +1119,16 @@ ui.Chapter = Backbone.View.extend({
       with optional attributes and HTML content. Used internally to create the
       initial <tt>view.el</tt>.
     </p>
+        
+<pre class="runnable">
+var view = new Backbone.View;
+
+var el = view.make("b", {className: "bold"}, "Bold! ");
+
+$("#make-demo").append(el);
+</pre>
+
+<div id="make-demo"></div>
 
     <p id="View-handleEvents">
       <b class="header">handleEvents</b><code>handleEvents([events])</code>
@@ -1077,7 +1141,7 @@ ui.Chapter = Backbone.View.extend({
 
     <p>
       Using <b>handleEvents</b> provides a number of advantages over manually
-      binding events to child elements within <tt>render</tt>. All attached
+      using jQuery to bind events to child elements during <a href="#View-render">render</a>. All attached
       callbacks are bound to the view before being handed off to jQuery, so when
       the callbacks are invoked, <tt>this</tt> continues to refer to the view object. When
       <b>handleEvents</b> is run again, perhaps with a different <tt>events</tt>
@@ -1106,7 +1170,17 @@ var DocumentView = Backbone.View.extend({
     $(this.el).html(this.template.render(this.model.toJSON()));
     this.handleEvents();
     return this;
-  }
+  },
+  
+  open: function() {
+    window.open(this.model.get("viewer_url"));
+  },
+  
+  select: function() {
+    this.model.set({selected: true});
+  },
+  
+  ...
 
 });
 </pre>
