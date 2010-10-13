@@ -546,7 +546,7 @@
       return el;
     },
 
-    // Set callbacks, where this.callbacks is a hash of
+    // Set callbacks, where `this.callbacks` is a hash of
     //
     // *{"event selector": "callback"}*
     //
