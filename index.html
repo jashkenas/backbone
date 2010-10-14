@@ -310,9 +310,7 @@
       gzipped, and megabytes of JavaScript, CSS, and images when loaded in the browser
       &mdash; there's a lot of room underneath for libraries of a more moderate scope.
       Backbone is a <i>2 kilobyte</i> include that provides
-      just the core concepts of models, events (key-value binding), collections,
-      views, and persistence. A much closer relative to Backbone is
-      <a href="http://benpickles.github.com/js-model/">js-model</a>.
+      just the core concepts of models, events, collections, views, and persistence.
     </p>
 
     <p>
@@ -448,6 +446,25 @@ var Note = Backbone.Model.extend({
 
   coordinates: function() { ... }
 
+});
+</pre>
+
+    <p>
+      <i>
+        Brief aside on </i><tt>super</tt>: <i>JavaScript does not provide
+        a simple way to call super &mdash; the function of the same name defined
+        higher on the prototype chain. If you override a core function like
+        </i><tt>set</tt>,<i> or </i><tt>save</tt>, <i>and you want to invoke the
+        parent object's implementation, you'll have to explicitly call it, along these lines:
+      </i>
+    </p>
+    
+<pre>
+var Note = Backbone.Model.extend({
+  set: function(attributes, options) {
+    Backbone.Model.prototype.set.call(this, attributes, options);
+    ...
+  },
 });
 </pre>
 
