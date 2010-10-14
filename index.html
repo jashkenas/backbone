@@ -942,13 +942,21 @@ chapters.add(new Chapter({page: 1, title: "The Beginning"}));
 alert(chapters.pluck('title'));
 </pre>
 
+    <p>
+      <i>
+        Brief aside: This comparator function is different than JavaScript's regular
+        "sort", which must return </i><tt>0</tt>, <tt>1</tt>, or <tt>-1</tt>,<i>
+        and is more similar to a </i><tt>sortBy</tt><i> &mdash; a much nicer API.
+      </i>
+    </p>
+
     <p id="Collection-sort">
       <b class="header">sort</b><code>collection.sort([options])</code>
       <br />
       Force a collection to re-sort itself. You don't need to call this under
       normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a> function
-      will maintain itself in proper sort order at all times. Triggers the
-      collection's <tt>"refresh"</tt> event, unless silenced by passing
+      will maintain itself in proper sort order at all times. Calling <b>sort</b> 
+      triggers the collection's <tt>"refresh"</tt> event, unless silenced by passing
       <tt>{silent: true}</tt>
     </p>
 
