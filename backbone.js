@@ -482,7 +482,7 @@
   // Backbone.View
   // -------------
 
-  // Creating a Backbone.View creates its intial element outside of the DOM,
+  // Creating a Backbone.View creates its initial element outside of the DOM,
   // if an existing element is not provided...
   Backbone.View = function(options) {
     this._reset(options || {});
