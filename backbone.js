@@ -8,21 +8,24 @@
   // Initial Setup
   // -------------
 
-  // The top-level namespace.
-  var Backbone = {};
+  // The top-level namespace. All public Backbone classes and modules will
+  // be attached to this. Exported for both CommonJS and the browser.
+  var Backbone;
+  if (typeof exports !== 'undefined') {
+    Backbone = exports;
+  } else {
+    Backbone = this.Backbone = {};
+  }
 
-  // Keep the version here in sync with `package.json`.
+  // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '0.1.1';
-
-  // Export for both CommonJS and the browser.
-  (typeof exports !== 'undefined' ? exports : this).Backbone = Backbone;
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;
   if (!_ && (typeof require !== 'undefined')) _ = require("underscore")._;
 
   // For Backbone's purposes, jQuery owns the `$` variable.
-  var $ = this.$;
+  var $ = this.jQuery;
 
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
