@@ -28,8 +28,12 @@
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
   var inherits = function(parent, protoProps, classProps) {
-    var child = protoProps.hasOwnProperty('constructor') ? protoProps.constructor :
-                function(){ return parent.apply(this, arguments); };
+    var child = protoProps.hasOwnProperty('constructor') ?
+      protoProps.constructor : function () {
+        if ( ! (this instanceof arguments.callee) )
+          throw new TypeError("Must use 'new' with constructors.");
+        return parent.apply(this, arguments);
+      };
     var ctor = function(){};
     ctor.prototype = parent.prototype;
     child.prototype = new ctor();
@@ -120,6 +124,8 @@
   // Create a new model, with defined attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
   Backbone.Model = function(attributes) {
+    if ( ! (this instanceof arguments.callee) )
+      throw new TypeError("Must use 'new' with model constructors.");
     this.attributes = {};
     this.cid = _.uniqueId('c');
     this.set(attributes || {}, {silent : true});
@@ -303,6 +309,8 @@
   // or unordered. If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
   Backbone.Collection = function(models, options) {
+    if ( ! (this instanceof arguments.callee) )
+      throw new TypeError("Must use 'new' with collection constructors.");
     options || (options = {});
     if (options.comparator) {
       this.comparator = options.comparator;
@@ -488,6 +496,8 @@
   // Creating a Backbone.View creates its initial element outside of the DOM,
   // if an existing element is not provided...
   Backbone.View = function(options) {
+    if ( ! (this instanceof arguments.callee) )
+      throw new TypeError("Must use 'new' with view constructors.");
     this._configure(options || {});
     if (this.options.el) {
       this.el = this.options.el;

@@ -53,4 +53,23 @@ $(document).ready(function() {
     equals(counter, 3);
   });
 
+  test("view: Constructors without 'new' throw a TypeError", 2, function () {
+    try {
+      Backbone.View();
+      ok(false, "Directly from Backbone.View");
+    } catch (err) {
+      ok(err instanceof TypeError,
+         "Directly from Backbone.View");
+    }
+
+    var Klass = Backbone.View.extend({ foo: 1 });
+    try {
+      Klass();
+      ok(false, "And also with 'subclasses' down the prototype chain.");
+    } catch (err) {
+      ok(err instanceof TypeError,
+         "And also with 'subclasses' down the prototype chain.");
+    }
+  });
+
 });

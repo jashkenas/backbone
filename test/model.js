@@ -130,4 +130,23 @@ $(document).ready(function() {
     equals(lastError, "Can't change admin status.");
   });
 
+  test("model: Constructors without 'new' throw a TypeError", 2, function () {
+    try {
+      Backbone.Model({ foo: 1 });
+      ok(false, "Directly from Backbone.Model");
+    } catch (err) {
+      ok(err instanceof TypeError,
+         "Directly from Backbone.Model");
+    }
+
+    var Klass = Backbone.Model.extend({ foo: 1 });
+    try {
+      Klass({ foo: 1 });
+      ok(false, "And also with 'subclasses' down the prototype chain.");
+    } catch (err) {
+      ok(err instanceof TypeError,
+         "And also with 'subclasses' down the prototype chain.");
+    }
+  });
+
 });

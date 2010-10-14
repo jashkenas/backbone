@@ -111,4 +111,23 @@ $(document).ready(function() {
     equals(col.min(function(model){ return model.id; }).id, 1);
   });
 
+  test("collections: Constructors without 'new' throw a TypeError", 2, function () {
+    try {
+      Backbone.Collection([]);
+      ok(false, "Directly from Backbone.Collection");
+    } catch (err) {
+      ok(err instanceof TypeError,
+         "Directly from Backbone.Collection");
+    }
+
+    var Klass = Backbone.Collection.extend({});
+    try {
+      Klass([]);
+      ok(false, "And also with 'subclasses' down the prototype chain.");
+    } catch (err) {
+      ok(err instanceof TypeError,
+         "And also with 'subclasses' down the prototype chain.");
+    }
+  });
+
 });
