@@ -189,8 +189,8 @@
       <li>– <a href="#Collection-sort">sort</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
       <li>– <a href="#Model-url">url</a></li>
-      <li>– <a href="#Collection-refresh">refresh</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
+      <li>– <a href="#Collection-refresh">refresh</a></li>
       <li>– <a href="#Collection-create">create</a></li>
     </ul>
     <a class="toc_title" href="#Sync">
@@ -975,16 +975,6 @@ var Notes = Backbone.Collection.extend({
 });
 </pre>
 
-    <p id="Collection-refresh">
-      <b class="header">refresh</b><code>collection.refresh(models, [options])</code>
-      <br />
-      Adding and removing models one at a time is all well and good, but sometimes
-      you have so many models to change that you'd rather just update the collection
-      in bulk. Use <b>refresh</b> to replace a collection with a new list
-      of models (or attribute hashes), triggering a single <tt>"refresh"</tt> event
-      at the end. Pass <tt>{silent: true}</tt> to suppress the <tt>"refresh"</tt> event.
-    </p>
-
     <p id="Collection-fetch">
       <b class="header">fetch</b><code>collection.fetch([options])</code>
       <br />
@@ -992,6 +982,8 @@ var Notes = Backbone.Collection.extend({
       refreshing the collection when they arrive. The <b>options</b> hash takes
       <tt>success</tt> and <tt>error</tt>
       callbacks which will be passed <tt>(collection, response)</tt> as arguments.
+      When the model data returns from the server, the collection will
+      <a href="#Collection-refresh">refresh</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers, for custom persistence strategies.
     </p>
@@ -1007,10 +999,10 @@ Backbone.sync = function(method, model) {
   alert(method + ": " + model.url);
 };
 
-var accounts = new Backbone.Collection;
-accounts.url = '/accounts';
+var Accounts = new Backbone.Collection;
+Accounts.url = '/accounts';
 
-accounts.fetch();
+Accounts.fetch();
 </pre>
 
     <p>
@@ -1020,6 +1012,27 @@ accounts.fetch();
       for interfaces that are not needed immediately: for example, documents
       with collections of notes that may be toggled open and closed.
     </p>
+    
+    <p id="Collection-refresh">
+      <b class="header">refresh</b><code>collection.refresh(models, [options])</code>
+      <br />
+      Adding and removing models one at a time is all well and good, but sometimes
+      you have so many models to change that you'd rather just update the collection
+      in bulk. Use <b>refresh</b> to replace a collection with a new list
+      of models (or attribute hashes), triggering a single <tt>"refresh"</tt> event
+      at the end. Pass <tt>{silent: true}</tt> to suppress the <tt>"refresh"</tt> event.
+    </p>
+    
+    <p>
+      Here's an example using <b>refresh</b> to bootstrap a collection during initial page load,
+      in a Rails application.
+    </p>
+    
+<pre>
+&lt;script&gt;
+  Accounts.refresh(&lt;%= @accounts.to_json %&gt;);
+&lt;/script&gt;
+</pre>
 
     <p id="Collection-create">
       <b class="header">create</b><code>collection.create(attributes, [options])</code>
@@ -1150,7 +1163,9 @@ var DocumentRow = Backbone.View.extend({
       <tt>model</tt>, <tt>collection</tt>,
       <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, and <tt>tagName</tt>.
       If the view defines an <b>initialize</b> function, it will be called when 
-      the view is first created.
+      the view is first created. If you'd like to create a view that references
+      an element already in the DOM, pass in the element as an option:
+      <tt>new View({el: existingElement})</tt>
     </p>
 
 <pre>
@@ -1204,11 +1219,7 @@ ui.Chapter = Backbone.View.extend({
       <br />
       The default implementation of <b>render</b> is a no-op. Override this
       function with your code that renders the view template from model data,
-      and updates <tt>this.el</tt> with the new HTML. You can use any flavor of
-      JavaScript templating or DOM-building you prefer. Because <b>Underscore.js</b>
-      is already on the page,
-      <a href="http://documentcloud.github.com/underscore/#template">_.template</a>
-      is already available. A good
+      and updates <tt>this.el</tt> with the new HTML. A good
       convention is to <tt>return this</tt> at the end of <b>render</b> to
       enable chained calls.
     </p>
@@ -1216,11 +1227,33 @@ ui.Chapter = Backbone.View.extend({
 <pre>
 var Bookmark = Backbone.View.extend({
   render: function() {
-    $(this.el).html(this.template.render(this.model.toJSON()));
+    $(this.el).html(this.template(this.model.toJSON()));
     return this;
   }
 });
 </pre>
+
+    <p>
+      Backbone is agnostic with respect to your preferred method of HTML templating.
+      Your <b>render</b> function could even munge together an HTML string, or use
+      <tt>document.createElement</tt> to generate a DOM tree. However, we suggest
+      choosing a nice JavaScript templating library. 
+      <a href="http://github.com/janl/mustache.js">Mustache.js</a>, 
+      <a href="http://github.com/creationix/haml-js">Haml-js</a>, and
+      <a href="http://github.com/sstephenson/eco">Eco</a> are all fine alternatives. 
+      Because <a href="http://documentcloud.github.com/underscore/">Underscore.js</a> is already on the page,
+      <a href="http://documentcloud.github.com/underscore/#template">_.template</a>
+      is available, and is an excellent choice if you've already XSS-sanitized
+      your interpolated data.
+    </p>
+    
+    <p>
+      Whatever templating strategy you end up with, it's nice if you <i>never</i> 
+      have to put strings of HTML in your JavaScript. At DocumentCloud, we
+      use <a href="http://documentcloud.github.com/jammit/">Jammit</a> in order
+      to package up JavaScript templates stored in <tt>/app/views</tt> as part
+      of our main <tt>core.js</tt> asset package.
+    </p>
 
     <p id="View-make">
       <b class="header">make</b><code>view.make(tagName, [attributes], [content])</code>
@@ -1279,7 +1312,7 @@ var DocumentView = Backbone.View.extend({
   },
 
   render: function() {
-    $(this.el).html(this.template.render(this.model.toJSON()));
+    $(this.el).html(this.template(this.model.toJSON()));
     this.handleEvents();
     return this;
   },

@@ -322,17 +322,27 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `added` event for every new model.
     add : function(models, options) {
-      if (!_.isArray(models)) return this._add(models, options);
-      for (var i=0; i<models.length; i++) this._add(models[i], options);
-      return models;
+      if (_.isArray(models)) {
+        for (var i = 0, l = models.length; i < l; i++) {
+          this._add(models[i], options);
+        }
+      } else {
+        this._add(models, options);
+      }
+      return this;
     },
 
     // Remove a model, or a list of models from the set. Pass silent to avoid
     // firing the `removed` event for every model removed.
     remove : function(models, options) {
-      if (!_.isArray(models)) return this._remove(models, options);
-      for (var i=0; i<models.length; i++) this._remove(models[i], options);
-      return models;
+      if (_.isArray(models)) {
+        for (var i = 0, l = models.length; i < l; i++) {
+          this._remove(models[i], options);
+        }
+      } else {
+        this._remove(models, options);
+      }
+      return this;
     },
 
     // Get a model from the set by id.
@@ -369,14 +379,8 @@
     // you can refresh the entire set with a new list of models, without firing
     // any `added` or `removed` events. Fires `refresh` when finished.
     refresh : function(models, options) {
+      models  || (models = []);
       options || (options = {});
-      models = models || [];
-      var collection = this;
-      if (models[0] && !(models[0] instanceof Backbone.Model)) {
-        models = _.map(models, function(attrs, i) {
-          return new collection.model(attrs);
-        });
-      }
       this._reset();
       this.add(models, {silent: true});
       if (!options.silent) this.trigger('refresh', this);
@@ -422,6 +426,9 @@
     // hash indexes for `id` and `cid` lookups.
     _add : function(model, options) {
       options || (options = {});
+      if (!(model instanceof Backbone.Model)) {
+        model = new this.model(model);
+      }
       var already = this.getByCid(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
@@ -432,7 +439,6 @@
       model.bind('all', this._boundOnModelEvent);
       this.length++;
       if (!options.silent) this.trigger('add', model);
-      return model;
     },
 
     // Internal implementation of removing a single model from the set, updating
@@ -448,7 +454,6 @@
       model.unbind('all', this._boundOnModelEvent);
       this.length--;
       if (!options.silent) this.trigger('remove', model);
-      return model;
     },
 
     // Internal method called every time a model in the set fires an event.
