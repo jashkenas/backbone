@@ -488,7 +488,7 @@
   // Creating a Backbone.View creates its initial element outside of the DOM,
   // if an existing element is not provided...
   Backbone.View = function(options) {
-    this._reset(options || {});
+    this._configure(options || {});
     if (this.options.el) {
       this.el = this.options.el;
     } else {
@@ -573,7 +573,7 @@
     // Performs the initial configuration of a View with a set of options.
     // Keys with special meaning *(model, collection, id, className)*, are
     // attached directly to the view.
-    _reset : function(options) {
+    _configure : function(options) {
       if (this.options) options = _.extend({}, this.options, options);
       if (options.model)      this.model      = options.model;
       if (options.collection) this.collection = options.collection;
