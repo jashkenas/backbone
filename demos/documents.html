@@ -1,0 +1,350 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <title>Backbone.js Demo</title>
+  <style>
+  
+  /* ============ */
+  /* = Document = */
+  /* ============ */
+  
+  #document_list {
+    overflow: hidden;
+  }
+  .document {
+    float: left;
+    width: 140px;
+    height: 140px;
+    text-align: center;
+    margin: 0 12px 12px 0;
+  }
+  .document img {
+    -webkit-box-shadow: 2px 2px 0 #E0E0E0;
+    -moz-box-shadow: 2px 2px 0 #E0E0E0;
+    box-shadow: 2px 2px 0 #E0E0E0;
+    border: 1px solid #505050;
+  }
+  .document .document_title {
+    font: 11px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #F0F0F0;
+  }
+  .document:hover {
+    cursor: pointer;
+  }
+  .document:hover .document_title {
+    color: #101080;
+  }
+  .document:hover img {
+    -webkit-box-shadow: 2px 2px 0 #C0C0E0;
+    -moz-box-shadow: 2px 2px 0 #C0C0E0;
+    box-shadow: 2px 2px 0 #C0C0E0;
+  }
+  
+  /* =================== */
+  /* = Document Detail = */
+  /* =================== */
+  
+  #document_detail {
+    float: right;
+    width: 300px;
+    height: 160px;
+    text-align: left;
+    margin: 0 12px 12px 0;
+    padding-left: 80px;
+    position: relative;
+    font: 18px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+  }
+  .document_detail img {
+    -webkit-box-shadow: 2px 2px 0 #E0E0E0;
+    -moz-box-shadow: 2px 2px 0 #E0E0E0;
+    box-shadow: 2px 2px 0 #E0E0E0;
+    border: 1px solid #505050;
+    position: absolute;
+    left: 0;
+  }
+  .document_detail .document_title {
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #F0F0F0;
+  }
+  .document_detail .document_description {
+    font-size: 14px;
+    margin: 4px 0 0 0;
+  }
+  .document_detail .document_date {
+    font-size: 11px;
+    margin: 4px 0 0 0;
+    color: #A0A0A0;
+    text-transform: uppercase;
+  }
+  .document_detail .edit_icon {
+    width: 0;
+    height: 10px;
+    padding-right: 10px;
+    margin: 2px 0 0 4px;
+    display: inline;
+    vertical-align: text-bottom;
+    background-image: url("data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAqCAYAAACKnsqLAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIlJREFUeNrs1DEOwCAIBVDxepzX81E1wQiCOHRw0MUoLz+2IQARpZOV0+H6B5ZSKISMeAfrY+YkN9FCiAj5BInEHRowQh02pC/1WSRy0ULLGz3k/scLmuLBB9dmBYgnBaOxWx0+J7mJFqphclJ4SCTu0IAR6rAhfanPIpGLFuqm1XZJF0yKT4ABAJjKX31veUWhAAAAAElFTkSuQmCC");
+    background-position: center 0;
+    background-repeat: no-repeat;
+    cursor: pointer;
+  }
+  .document_detail .edit_icon:hover {
+    background-position: center -26px;
+  }
+  </style>
+</head>
+
+<body>
+  <div id="document_detail"></div>
+  <div id="document_list"></div>
+  
+  <script src="../test/vendor/underscore-1.1.0.js"></script>
+  <script src="../test/vendor/jquery-1.4.2.js"></script>
+  <script src="../test/vendor/json2.js"></script>
+  <script src="../backbone.js"></script>
+  
+  <script>
+  
+    window.TEMPLATES = {
+      documentView : '<div class="document">' +
+                     '  <img src="<%= doc.pageThumbnailURL(1) %>" />' +
+                     '  <div class="document_title"><%= doc.get("title") %></div>' +
+                     '</div>',
+      documentDetailView : '<div class="document_detail">' +
+                           '  <img src="<%= doc.pageThumbnailURL(1) %>" />' +
+                           '  <div class="document_title"><%= doc.get("title") %> <span class="edit_icon"></span></div>' +
+                           '  <div class="document_description"><%= doc.get("description") %></div>' +
+                           '  <div class="document_date"><%= doc.get("created_at") %></div>' +
+                           '</div>'
+    }
+    
+    /* Generated through:
+    var d = Documents.models.map(function(m) {
+      return {
+        'title': m.get('title'),
+        'created_at': m.get('created_at'),
+        'page_image_url': m.get('page_image_url'),
+        'document_viewer_url': m.get('document_viewer_url'),
+        'description': m.get('description')
+      };
+    });
+    JSON.stringify(d);
+    */
+    var documentsData = [
+      {
+        "title":"Brooklyn History",
+        "created_at":"Aug 11, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/236/pages/brooklyn-history-p{page}-{size}.gif?1281557493",
+        "document_viewer_url":"http://dev.dcloud.org/documents/236-brooklyn-history.html",
+        "description":"History of the great borough."
+      },
+      {
+        "title":"Bayesian Filtering Beyond Binary Classification",
+        "created_at":"Aug 10, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/217/pages/bayesian-filtering-beyond-binary-classification-p{page}-{size}.gif?1284663782",
+        "document_viewer_url":"http://dev.dcloud.org/documents/217-bayesian-filtering-beyond-binary-classification.html",
+        "description":"Filter, filter, filter..."
+      },
+      {
+        "title":"BigTable",
+        "created_at":"Aug 05, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/157/pages/bigtable-p{page}-{size}.gif?1281048012",
+        "document_viewer_url":"http://dev.dcloud.org/documents/157-bigtable.html",
+        "description":"Google's proprietary persistent and scalable database."
+      },
+      {
+        "title":"Bayesian Filtering: Binary Classification",
+        "created_at":"Jul 30, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/49/pages/bayesian-filtering-binary-classification-p{page}-{size}.gif?1281710719",
+        "document_viewer_url":"http://dev.dcloud.org/documents/49-bayesian-filtering-binary-classification.html",
+        "description":"Bayesian classifiers can be classified, too!"
+      },
+      {
+        "title":"History of the Brooklyn Brewery",
+        "created_at":"Jul 21, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/18/pages/history-of-the-brooklyn-brewery-p{page}-{size}.gif?1279747404",
+        "document_viewer_url":"http://dev.dcloud.org/documents/18-history-of-the-brooklyn-brewery.html",
+        "description":"Brews..."
+      },
+      {
+        "title":"Brooklyn Guide",
+        "created_at":"Jul 19, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/15/pages/brooklyn-guide-p{page}-{size}.gif?1279556444",
+        "document_viewer_url":"http://dev.dcloud.org/documents/15-brooklyn-guide.html",
+        "description":"It's a guide to Brooklyn."
+      },
+      {
+        "title":"NYC Guide",
+        "created_at":"Jul 19, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/14/pages/nyc-guide-p{page}-{size}.gif?1279556171",
+        "document_viewer_url":"http://dev.dcloud.org/documents/14-nyc-guide.html",
+        "description":"It's a guide to New York City."
+      },
+      {
+        "title":"NYC Crime in Parks",
+        "created_at":"Jul 19, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/13/pages/nyc-crime-in-parks-p{page}-{size}.gif?1279746795",
+        "document_viewer_url":"http://dev.dcloud.org/documents/13-nyc-crime-in-parks.html",
+        "description":"Lotsa crime, lotsa parks."
+      },
+      {
+        "title":"Web Scale k-means Clustering",
+        "created_at":"Jul 16, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/9/pages/web-scale-k-means-clusteirng-p{page}-{size}.gif?1280174544",
+        "document_viewer_url":"http://dev.dcloud.org/documents/9-web-scale-k-means-clusteirng.html",
+        "description":"Learn what k-means clustering on the big scale means."
+      },
+      {
+        "title":"K-Means Clustering",
+        "created_at":"Jul 16, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/8/pages/k-means-clustering-p{page}-{size}.gif?1280244348",
+        "document_viewer_url":"http://dev.dcloud.org/documents/8-k-means-clustering.html",
+        "description":"Aligning neighbors and weighing them against their closer neighbors."
+      },
+      {
+        "title":"History of NLP",
+        "created_at":"Jul 16, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/7/pages/history-of-nlp-p{page}-{size}.gif?1279310296",
+        "document_viewer_url":"http://dev.dcloud.org/documents/7-history-of-nlp.html",
+        "description":"Natural language Processing, an old technology hardly touched."
+      },
+      {
+        "title":"Intro to NLP",
+        "created_at":"Jul 16, 2010",
+        "page_image_url":"http://dev.dcloud.org/asset_store/documents/6/pages/intro-to-nlp-p{page}-{size}.gif?1279294973",
+        "document_viewer_url":"http://dev.dcloud.org/documents/6-intro-to-nlp.html",
+        "description":"The very basics to Natural Language Processing."
+      }
+    ];
+  </script>
+  
+  <script>
+  
+  window.dc = {
+    app        : {},
+    model      : {},
+    view       : {},
+    collection : {}
+  };
+  
+  dc.model.Document = Backbone.Model.extend({
+    
+    pageThumbnailURL : function(page) {
+      return this.get('page_image_url').replace('{size}', 'thumbnail').replace('{page}', page);
+    },
+    
+  });
+  
+  dc.collection.DocumentSet = Backbone.Collection.extend({
+    
+    model : dc.model.Document,
+    
+    constructor : function(options) {
+      Backbone.Collection.call(this, options);
+    },
+    
+    comparator : function(doc) {
+      return doc.get('index');
+    }
+    
+  });
+  
+  dc.view.Document = Backbone.View.extend({
+    
+    events : {
+      "click .document"    : "renderDetail",
+      "dblclick .document" : "openDocument"
+    },
+    
+    constructor : function(options) {
+      Backbone.View.call(this, options);
+      _.bindAll(this, 'render', 'renderDetail');
+      this.model.bind('change', this.render);
+    },
+    
+    render : function() {
+      $(this.el).html(_.template(TEMPLATES.documentView, {
+        doc : this.model
+      }))
+      this.handleEvents();
+      return this;
+    },
+    
+    renderDetail : function() {
+      var $detail = (new dc.view.DocumentDetail({model : this.model})).render().el;
+      $('#document_detail').html($detail);
+    },
+    
+    openDocument : function() {
+      window.open(this.model.get('document_viewer_url'));
+    }
+    
+  });
+  
+  dc.view.DocumentDetail = dc.view.Document.extend({
+    
+    events : {
+      "click .edit_icon" : "editTitle"
+    },
+    
+    render : function() {
+      $(this.el).html(_.template(TEMPLATES.documentDetailView, {
+        doc : this.model
+      }))
+      this.handleEvents();
+      return this;
+    },
+    
+    editTitle : function() {
+      var newTitle = window.prompt("Change document title from \""+this.model.get('title')+"\" to:");
+      if (newTitle !== null) {
+        this.model.set({title : newTitle || "[Untitled]"});
+      }
+    }
+    
+  })
+  
+  dc.view.DocumentList = Backbone.View.extend({
+    
+    events : {
+      
+    },
+    
+    constructor : function(options) {
+      Backbone.View.call(this, options);
+      _.bindAll(this, 'refresh', '_removeDocument', '_addDocument');
+      dc.app.Documents.bind('refresh', this.refresh);
+      dc.app.Documents.bind('remove',  this._removeDocument);
+      dc.app.Documents.bind('add',     this._addDocument);
+    },
+    
+    refresh : function() {
+      this.views = dc.app.Documents.map(_.bind(function(doc){
+        return this._addDocument(doc);
+      }, this));
+    },
+    
+    _addDocument : function(doc) {
+      var view = new dc.view.Document({model : doc});
+      $(this.el).append(view.render().el);
+      return view;
+    },
+    
+    _removeDocument : function(doc) {
+      console.log(['views', this.views, doc]);
+    }
+    
+  });
+  
+  dc.app.Documents = new dc.collection.DocumentSet();
+  dc.app.DocumentList = new dc.view.DocumentList();
+  dc.app.Documents.refresh(documentsData);
+  
+  $('#document_list').append(dc.app.DocumentList.render().el);
+  
+  </script>
+</body>
+</html>
