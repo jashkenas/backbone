@@ -27,31 +27,6 @@
   // For Backbone's purposes, jQuery owns the `$` variable.
   var $ = this.jQuery;
 
-  // Helper function to correctly set up the prototype chain, for subclasses.
-  // Similar to `goog.inherits`, but uses a hash of prototype properties and
-  // class properties to be extended.
-  var inherits = function(parent, protoProps, classProps) {
-    var child;
-    if (protoProps.hasOwnProperty('constructor')) {
-      child = protoProps.constructor;
-    } else {
-      child = function(){ return parent.apply(this, arguments); };
-    }
-    var ctor = function(){};
-    ctor.prototype = parent.prototype;
-    child.prototype = new ctor();
-    _.extend(child.prototype, protoProps);
-    if (classProps) _.extend(child, classProps);
-    child.prototype.constructor = child;
-    return child;
-  };
-
-  // Helper function to get a URL from a Model or Collection as a property
-  // or as a function.
-  var getUrl = function(object) {
-    return _.isFunction(object.url) ? object.url() : object.url;
-  };
-
   // Backbone.Events
   // -----------------
 
@@ -616,6 +591,9 @@
     'read'  : 'GET'
   };
 
+  // Backbone.sync
+  // -------------
+
   // Override this function to change the manner in which Backbone persists
   // models to the server. You will be passed the type of request, and the
   // model in question. By default, uses jQuery to make a RESTful Ajax request
@@ -634,6 +612,34 @@
       success   : success,
       error     : error
     });
+  };
+
+  // Helpers
+  // -------
+
+  // Helper function to correctly set up the prototype chain, for subclasses.
+  // Similar to `goog.inherits`, but uses a hash of prototype properties and
+  // class properties to be extended.
+  var inherits = function(parent, protoProps, classProps) {
+    var child;
+    if (protoProps.hasOwnProperty('constructor')) {
+      child = protoProps.constructor;
+    } else {
+      child = function(){ return parent.apply(this, arguments); };
+    }
+    var ctor = function(){};
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor();
+    _.extend(child.prototype, protoProps);
+    if (classProps) _.extend(child, classProps);
+    child.prototype.constructor = child;
+    return child;
+  };
+
+  // Helper function to get a URL from a Model or Collection as a property
+  // or as a function.
+  var getUrl = function(object) {
+    return _.isFunction(object.url) ? object.url() : object.url;
   };
 
 })();
