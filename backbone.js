@@ -12,7 +12,7 @@
   var Backbone = {};
 
   // Keep the version here in sync with `package.json`.
-  Backbone.VERSION = '0.1.0';
+  Backbone.VERSION = '0.1.1';
 
   // Export for both CommonJS and the browser.
   (typeof exports !== 'undefined' ? exports : this).Backbone = Backbone;
