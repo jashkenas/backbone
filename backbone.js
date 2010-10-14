@@ -3,7 +3,7 @@
 //     For all details and documentation:
 //     http://documentcloud.github.com/backbone
 
-(function($, undefined){
+(function(){
 
   // Initial Setup
   // -------------
@@ -20,6 +20,9 @@
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;
   if (!_ && (typeof require !== 'undefined')) _ = require("underscore")._;
+
+  // For Backbone's purposes, jQuery owns the `$` variable.
+  var $ = this.$;
 
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
@@ -617,4 +620,4 @@
     });
   };
 
-})(jQuery);
+})();
