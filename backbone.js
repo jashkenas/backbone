@@ -135,7 +135,7 @@
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
-      attrs = attrs.attributes || attrs;
+      if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes;
 
       // Run validation if `validate` is defined.
