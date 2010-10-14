@@ -1,32 +1,33 @@
 $(document).ready(function() {
 
-  module("Backbone View");
+  module("Backbone.View");
 
   var view = new Backbone.View({
     id        : 'test-view',
     className : 'test-view'
   });
 
-  test("view: constructor", function() {
+  test("View: constructor", function() {
     equals(view.el.id, 'test-view');
     equals(view.el.className, 'test-view');
     equals(view.options.id, 'test-view');
     equals(view.options.className, 'test-view');
   });
 
-  test("view: jQuery", function() {
+  test("View: jQuery", function() {
     view.el = document.body;
-    equals(view.$('#qunit-header').text(), 'Backbone Test Suite');
+    equals(view.$('#qunit-header')[0].innerHTML, 'Backbone Test Suite');
+    equals(view.$('#qunit-header')[1].innerHTML, 'Backbone Speed Suite');
   });
 
-  test("view: make", function() {
+  test("View: make", function() {
     var div = view.make('div', {id: 'test-div'}, "one two three");
     equals(div.tagName.toLowerCase(), 'div');
     equals(div.id, 'test-div');
     equals($(div).text(), 'one two three');
   });
 
-  test("view: initialize", function() {
+  test("View: initialize", function() {
     var View = Backbone.View.extend({
       initialize: function() {
         this.one = 1;
@@ -36,7 +37,7 @@ $(document).ready(function() {
     equals(view.one, 1);
   });
 
-  test("view: handleEvents", function() {
+  test("View: handleEvents", function() {
     var counter = 0;
     view.el = document.body;
     view.increment = function() {

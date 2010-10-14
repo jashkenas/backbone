@@ -82,7 +82,7 @@
       if (!(calls = this._callbacks)) return this;
       if (list = calls[ev]) {
         for (i = 0, l = list.length; i < l; i++) {
-          list[i].apply(this, _.rest(arguments));
+          list[i].apply(this, Array.prototype.slice.call(arguments, 1));
         }
       }
       if (list = calls['all']) {

@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  module("Backbone model");
+  module("Backbone.Model");
 
   // Variable to catch the last request.
   window.lastRequest = null;
@@ -26,7 +26,7 @@ $(document).ready(function() {
   var collection = new klass();
   collection.add(doc);
 
-  test("model: initialize", function() {
+  test("Model: initialize", function() {
     var Model = Backbone.Model.extend({
       initialize: function() {
         this.one = 1;
@@ -36,11 +36,11 @@ $(document).ready(function() {
     equals(model.one, 1);
   });
 
-  test("model: url", function() {
+  test("Model: url", function() {
     equals(doc.url(), '/collection/1-the-tempest');
   });
 
-  test("model: clone", function() {
+  test("Model: clone", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
     b = a.clone();
@@ -55,7 +55,7 @@ $(document).ready(function() {
     equals(b.get('foo'), 1, "Changing a parent attribute does not change the clone.");
   });
 
-  test("model: isNew", function() {
+  test("Model: isNew", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
     ok(a.isNew(), "it should be new");
@@ -63,12 +63,12 @@ $(document).ready(function() {
     ok(a.isNew(), "any defined ID is legal, negative or positive");
   });
 
-  test("model: get", function() {
+  test("Model: get", function() {
     equals(doc.get('title'), 'The Tempest');
     equals(doc.get('author'), 'Bill Shakespeare');
   });
 
-  test("model: set and unset", function() {
+  test("Model: set and unset", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
     var changeCount = 0;
@@ -85,7 +85,7 @@ $(document).ready(function() {
     ok(changeCount == 2, "Change count should have incremented for unset.");
   });
 
-  test("model: changed, hasChanged, changedAttributes, previous, previousAttributes", function() {
+  test("Model: changed, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
     model.bind('change', function() {
       ok(model.hasChanged('name'), 'name changed');
@@ -99,19 +99,19 @@ $(document).ready(function() {
     equals(model.get('name'), 'Rob');
   });
 
-  test("model: save", function() {
+  test("Model: save", function() {
     doc.save({title : "Henry V"});
     equals(lastRequest[0], 'update');
     ok(_.isEqual(lastRequest[1], doc));
   });
 
-  test("model: destroy", function() {
+  test("Model: destroy", function() {
     doc.destroy();
     equals(lastRequest[0], 'delete');
     ok(_.isEqual(lastRequest[1], doc));
   });
 
-  test("model: validate", function() {
+  test("Model: validate", function() {
     var lastError;
     var model = new Backbone.Model();
     model.validate = function(attrs) {
