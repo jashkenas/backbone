@@ -565,14 +565,39 @@
     // attached directly to the view.
     _configure : function(options) {
       if (this.options) options = _.extend({}, this.options, options);
-      if (options.model)      this.model      = options.model;
-      if (options.collection) this.collection = options.collection;
+      if (options.model) {
+        this.model = options.model;
+        this.model.bind('all', _.bind(this._onModelEvent, this));
+      }
+      if (options.collection) {
+        this.collection = options.collection;
+        this.collection.bind('all', _.bind(this._onModelEvent, this));
+      }
       if (options.id)         this.id         = options.id;
       if (options.className)  this.className  = options.className;
       if (options.tagName)    this.tagName    = options.tagName;
       this.options = options;
-    }
+    },
 
+    // Provides declarative handling for model events. To take advantage of this
+    // just declare a method in your view using the convention on[EventName]
+    // e.g. onAdded, onChanged, onRemoved
+    // If you choose not to implement a conventional handler, the event will be
+    // ignored allowing you to process it manually if desired.
+    _onModelEvent : function(event) {
+      this._methodize = this._methodize || _.bind(function(eventName){
+        this._handlerCache = this._handlerCache || {};
+        if (this._handlerCache[eventName]) return this._handlerCache[eventName];
+        var capitalizedComponents = _.map(eventName.split(/:/), function(str) {
+          return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
+        });
+        return this._handlerCache[eventName] = 'on' + capitalizedComponents.join('');
+      }, this);
+      var handlerName = this._methodize(event);
+      if (_.isFunction(this[handlerName])) {
+        this[handlerName](_.rest(arguments));
+      }
+    }
   });
 
   // Set up inheritance for the model, collection, and view.

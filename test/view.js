@@ -54,4 +54,36 @@ $(document).ready(function() {
     equals(counter, 3);
   });
 
+  test("view: declarative event handling", function() {
+    var View = Backbone.View.extend({
+      onChangeFoo : function() {
+        this.fooChanged = true;
+      },
+      onAdd : function(item) {
+        this.itemAdded = true;
+      },
+      onRemove : function(item) {
+        this.itemRemoved = true;
+      }
+    });
+
+    var model = new Backbone.Model;
+    var col = new Backbone.Collection();
+    var view = new View({
+      model : model,
+      collection : col
+    });
+
+    model.set({'foo' : 'bar'});
+    equals(view.fooChanged, true);
+
+    var item = new Backbone.Model;
+    col.add(item);
+
+    equals(view.itemAdded, true);
+
+    col.remove(item);
+    equals(view.itemRemoved, true);
+  });
+
 });
