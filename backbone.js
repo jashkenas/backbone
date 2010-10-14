@@ -441,6 +441,7 @@
       model.bind('all', this._boundOnModelEvent);
       this.length++;
       if (!options.silent) this.trigger('add', model);
+      return model;
     },
 
     // Internal implementation of removing a single model from the set, updating
@@ -456,6 +457,7 @@
       model.unbind('all', this._boundOnModelEvent);
       this.length--;
       if (!options.silent) this.trigger('remove', model);
+      return model;
     },
 
     // Internal method called every time a model in the set fires an event.
