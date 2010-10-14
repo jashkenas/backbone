@@ -317,6 +317,8 @@
   // Define the Collection's inheritable methods.
   _.extend(Backbone.Collection.prototype, Backbone.Events, {
 
+    // The default model for a collection is just a **Backbone.Model**.
+    // This should be overridden in most cases.
     model : Backbone.Model,
 
     // Add a model, or list of models to the set. Pass **silent** to avoid

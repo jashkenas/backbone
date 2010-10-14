@@ -176,6 +176,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Collection-extend">extend</a></li>
+      <li>– <a href="#Collection-model">model</a></li>
       <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (24)</b></a></li>
@@ -754,6 +755,22 @@ bill.set({name : "Bill Jones"});
       providing instance <b>properties</b>, as well as optional <b>classProperties</b> to be attached
       directly to the collection's constructor function.
     </p>
+    
+    <p id="Collection-model">
+      <b class="header">model</b><code>collection.model</code>
+      <br />
+      Override this property to specify the model class that the collection 
+      contains. If defined, you can pass raw attributes objects (and arrays) to 
+      <a href="#Collection-add">add</a>, <a href="#Collection-create">create</a>,
+      and <a href="#Collection-refresh">refresh</a>, and the attributes will be
+      converted into a model of the proper type.
+    </p>
+    
+<pre>
+var Library = Backbone.Collection.extend({
+  model: Book
+});
+</pre>
 
     <p id="Collection-constructor">
       <b class="header">constructor / initialize</b><code>new Collection([models], [options])</code>
@@ -834,11 +851,12 @@ var alphabetical = Books.sortBy(function(book) {
       <b class="header">add</b><code>collection.add(models, [options])</code>
       <br />
       Add a model (or an array of models) to the collection. Fires an <tt>"add"</tt>
-      event, which you can pass <tt>{silent: true}</tt> to suppress.
+      event, which you can pass <tt>{silent: true}</tt> to suppress. If a
+      <a href="#Collection-model">model</a> property is defined, you may also pass
+      raw attributes objects.
     </p>
 
 <pre class="runnable">
-var Ship  = Backbone.Model;
 var ships = new Backbone.Collection;
 
 ships.bind("add", function(ship) {
@@ -846,8 +864,8 @@ ships.bind("add", function(ship) {
 });
 
 ships.add([
-  new Ship({name: "Flying Dutchman"}),
-  new Ship({name: "Black Pearl"})
+  {name: "Flying Dutchman"},
+  {name: "Black Pearl"}
 ]);
 </pre>
 
@@ -1042,9 +1060,8 @@ Accounts.fetch();
       saving the model to the server, and adding the model to the set after being
       successfully created. Returns
       the model, or <tt>false</tt> if a validation error prevented the
-      model from being created. In order for this to work, your collection
-      must have a <tt>model</tt> property, referencing the type of model that
-      the collection contains.
+      model from being created. In order for this to work, your should set the
+      <a href="#Collection-model">model</a> property of the collection.
     </p>
 
 <pre>
@@ -1164,7 +1181,7 @@ var DocumentRow = Backbone.View.extend({
       <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, and <tt>tagName</tt>.
       If the view defines an <b>initialize</b> function, it will be called when 
       the view is first created. If you'd like to create a view that references
-      an element already in the DOM, pass in the element as an option:
+      an element <i>already</i> in the DOM, pass in the element as an option:
       <tt>new View({el: existingElement})</tt>
     </p>
 
