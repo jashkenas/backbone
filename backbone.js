@@ -422,7 +422,7 @@
     // hash indexes for `id` and `cid` lookups.
     _add : function(model, options) {
       options || (options = {});
-      var already = this.get(model);
+      var already = this.getByCid(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
@@ -439,7 +439,7 @@
     // hash indexes for `id` and `cid` lookups.
     _remove : function(model, options) {
       options || (options = {});
-      model = this.get(model);
+      model = this.getByCid(model);
       if (!model) return null;
       delete this._byId[model.id];
       delete this._byCid[model.cid];
