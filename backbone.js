@@ -31,8 +31,12 @@
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
   var inherits = function(parent, protoProps, classProps) {
-    var child = protoProps.hasOwnProperty('constructor') ? protoProps.constructor :
-                function(){ return parent.apply(this, arguments); };
+    var child;
+    if (protoProps.hasOwnProperty('constructor')) {
+      child = protoProps.constructor;
+    } else {
+      child = function(){ return parent.apply(this, arguments); };
+    }
     var ctor = function(){};
     ctor.prototype = parent.prototype;
     child.prototype = new ctor();
