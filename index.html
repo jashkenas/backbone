@@ -1017,7 +1017,10 @@ var Notes = Backbone.Collection.extend({
     <p>
       The server handler for <b>fetch</b> requests should return a JSON list of
       models, namespaced under "models": <tt>{"models": [...]}</tt> &mdash;
-      additional information can be returned with the response under different keys.
+      instead of returning the 
+      array directly, we ask you to namespace your models like this by default, 
+      so that it's possible to send down out-of-band information 
+      for things like pagination or error states.
     </p>
 
 <pre class="runnable">
