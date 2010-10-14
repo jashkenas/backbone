@@ -79,7 +79,6 @@
     // Listening for `"all"` passes the true event name as the first argument.
     trigger : function(ev) {
       var list, calls, i, l;
-      var calls = this._callbacks;
       if (!(calls = this._callbacks)) return this;
       if (list = calls[ev]) {
         for (i = 0, l = list.length; i < l; i++) {
