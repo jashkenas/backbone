@@ -98,10 +98,10 @@
   // Backbone.Brace
   // --------------
 
-  // This module provides automatic routing events to callbacks.
+  // This module provides automatic of routing events to callbacks.
   //
   // Once this module is mixed in, you can call `configureBindings` with an
-  // object to bind to an optional router function and an option routing hash.
+  // object to bind to and an optional router function and or routing hash.
   // _brace will then be bound to all events emitted by the target object
   // and the object will be stored in the braces registry so that it can be
   // released properly later as needed.
@@ -111,7 +111,7 @@
   // and prefixes it with `on`. e.g. the event car:parked would resolve to
   // a method labeled *onCarParked*.
   //
-  // Additionally a routes hash can be passed in with configure bindings. This
+  // Additionally a routes hash can be passed in to configureBindings. This
   // hash will be checked first prior to resolving the route via the router
   // function. If no matching route is found in the routes hash. The router
   // function will run and the result will be stored in the routes hash for
