@@ -54,17 +54,29 @@ $(document).ready(function() {
     equals(counter, 3);
   });
 
-  test("view: declarative event handling", function() {
+  test("view: Backbone.Brace event handling", function() {
     var View = Backbone.View.extend({
-      onChangeFoo : function() {
+
+      braceRoutes : {
+        'change:shape' : 'mutate'
+      },
+
+      onChangeFoo : function(obj, newValue) {
         this.fooChanged = true;
       },
+
       onAdd : function(item) {
         this.itemAdded = true;
       },
+
       onRemove : function(item) {
         this.itemRemoved = true;
+      },
+
+      mutate : function(obj, newValue) {
+        this.mutated = true;
       }
+
     });
 
     var model = new Backbone.Model;
@@ -84,6 +96,9 @@ $(document).ready(function() {
 
     col.remove(item);
     equals(view.itemRemoved, true);
+
+    model.set({'shape' : 'trapezoid'});
+    equals(view.mutated, true);
   });
 
 });

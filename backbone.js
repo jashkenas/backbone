@@ -95,6 +95,71 @@
 
   };
 
+  // Backbone.Brace
+  // --------------
+
+  // This module provides automatic routing events to callbacks.
+  //
+  // Once this module is mixed in, you can call `configureBindings` with an
+  // object to bind to an optional router function and an option routing hash.
+  // _brace will then be bound to all events emitted by the target object
+  // and the object will be stored in the braces registry so that it can be
+  // released properly later as needed.
+  //
+  // If you do not specify a router or a routes hash, the _defaultRouter will
+  // be used which splits the event signature on delimiters, camelcases it,
+  // and prefixes it with `on`. e.g. the event car:parked would resolve to
+  // a method labeled *onCarParked*.
+  //
+  // Additionally a routes hash can be passed in with configure bindings. This
+  // hash will be checked first prior to resolving the route via the router
+  // function. If no matching route is found in the routes hash. The router
+  // function will run and the result will be stored in the routes hash for
+  // future reference.
+
+  Backbone.Brace = {
+
+    // a registry of the objects that are currently bound, their router
+    // and routes hash
+    _braces : {},
+
+    // bind to an object with the specified routes or defaults
+    configureBindings : function(obj, router, routes) {
+      this.releaseBindings(obj);
+      this._braces[obj] = {
+        handler : _.bind(this._brace, this, obj),
+        router  : router || _.bind(this._defaultRouter, this),
+        routes  : routes || {}
+      };
+      obj.bind('all',this._braces[obj].handler);
+    },
+
+    // release an object from the bindings
+    releaseBindings : function(obj) {
+      if (!this._braces[obj]) return;
+      obj.unbind('all', this._braces[obj].handler);
+      delete this._braces[obj];
+    },
+
+    // generic handler used to route events
+    _brace : function(obj, event) {
+      var config = this._braces[obj];
+      var resolution = config.routes[event];
+      if (!resolution) resolution = config.routes[event] = config.router(event);
+      if (_.isFunction(this[resolution])) {
+        this[resolution].apply(this, Array.prototype.slice.call(arguments,2));
+      }
+    },
+
+    // the default router used if no other router is specified
+    _defaultRouter : function(event){
+      var parts = _.map(event.toLowerCase().split(/[:_\s,\/]/), function(str) {
+        return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
+      });
+      return 'on' + parts.join('');
+    }
+  };
+
   // Backbone.Model
   // --------------
 
@@ -501,7 +566,7 @@
   var eventSplitter = /^(\w+)\s*(.*)$/;
 
   // Set up all inheritable **Backbone.View** properties and methods.
-  _.extend(Backbone.View.prototype, {
+  _.extend(Backbone.View.prototype, Backbone.Brace, {
 
     // The default `tagName` of a View's element is `"div"`.
     tagName : 'div',
@@ -567,37 +632,18 @@
       if (this.options) options = _.extend({}, this.options, options);
       if (options.model) {
         this.model = options.model;
-        this.model.bind('all', _.bind(this._onModelEvent, this));
+        this.configureBindings(this.model, this.braceRouter, this.braceRoutes);
       }
       if (options.collection) {
         this.collection = options.collection;
-        this.collection.bind('all', _.bind(this._onModelEvent, this));
+        this.configureBindings(this.collection, this.braceRouter, this.braceRoutes);
       }
       if (options.id)         this.id         = options.id;
       if (options.className)  this.className  = options.className;
       if (options.tagName)    this.tagName    = options.tagName;
       this.options = options;
-    },
-
-    // Provides declarative handling for model events. To take advantage of this
-    // just declare a method in your view using the convention on[EventName]
-    // e.g. onAdded, onChanged, onRemoved
-    // If you choose not to implement a conventional handler, the event will be
-    // ignored allowing you to process it manually if desired.
-    _onModelEvent : function(event) {
-      this._methodize = this._methodize || _.bind(function(eventName){
-        this._handlerCache = this._handlerCache || {};
-        if (this._handlerCache[eventName]) return this._handlerCache[eventName];
-        var capitalizedComponents = _.map(eventName.split(/:/), function(str) {
-          return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
-        });
-        return this._handlerCache[eventName] = 'on' + capitalizedComponents.join('');
-      }, this);
-      var handlerName = this._methodize(event);
-      if (_.isFunction(this[handlerName])) {
-        this[handlerName](_.rest(arguments));
-      }
     }
+
   });
 
   // Set up inheritance for the model, collection, and view.
