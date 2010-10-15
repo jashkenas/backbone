@@ -130,4 +130,26 @@ $(document).ready(function() {
     equals(lastError, "Can't change admin status.");
   });
 
+  // The automatic get/set is available when extending Collections and Views
+  // too, but this seemed like the most appropriate place to put these tests...
+  test("model: automatic get/set", function () {
+    var Model = Backbone.Model.extend({
+      getSet : ["foobar"]
+    });
+    var obj = new Model({
+      foobar : "hello"
+    })
+    equals(obj.foobar(), "hello");
+    equals(obj.foobar("hey").foobar(), "hey");
+
+    var hasChanged = false;
+    obj.bind("change", function () {
+      hasChanged = true;
+    });
+    obj.foobar("don't trigger", { silent : true });
+    equals(hasChanged, false);
+    obj.foobar("do trigger");
+    equals(hasChanged, true);
+  });
+
 });

@@ -589,6 +589,27 @@
   var extend = Backbone.Model.extend = Backbone.Collection.extend = Backbone.View.extend = function (protoProps, classProps) {
     var child = inherits(this, protoProps, classProps);
     child.extend = extend;
+
+    // Provide automatic get/set functions. An alternative implementation might
+    // not require explicit getters and setters via the `getSet` property, but
+    // would iterate over keys in `protoProps` and implicitly create them for
+    // any property that is not a function. Another idea is to use `accessors`
+    // instead of `getSet` kind of like Ruby.
+    _(protoProps.getSet || [])
+      .chain()
+      .reject(function (k) {
+        return k in child.prototype;
+      })
+      .each(function (k) {
+        child.prototype[k] = function (val, opts) {
+          var newVals = {};
+          newVals[k] = val;
+          return arguments.length > 0
+            ? this.set(newVals, opts)
+            : this.get(k);
+        };
+      });
+
     return child;
   };
 
