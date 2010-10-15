@@ -55,10 +55,17 @@ $(document).ready(function() {
   });
 
   test("view: Backbone.Brace event handling", function() {
+    var model = new Backbone.Model;
+    var col = new Backbone.Collection();
+
     var View = Backbone.View.extend({
 
-      braceRoutes : {
+      modelBraceRoutes : {
         'change:shape' : 'mutate'
+      },
+
+      collectionBraceRoutes : {
+        'col:sort' : 'sortCollection',
       },
 
       onChangeFoo : function(obj, newValue) {
@@ -75,12 +82,14 @@ $(document).ready(function() {
 
       mutate : function(obj, newValue) {
         this.mutated = true;
+      },
+
+      sortCollection : function() {
+        this.sorted = true;
       }
 
     });
 
-    var model = new Backbone.Model;
-    var col = new Backbone.Collection();
     var view = new View({
       model : model,
       collection : col
@@ -99,6 +108,9 @@ $(document).ready(function() {
 
     model.set({'shape' : 'trapezoid'});
     equals(view.mutated, true);
+
+    col.trigger('col:sort');
+    equals(view.sorted, true);
   });
 
 });

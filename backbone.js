@@ -125,25 +125,26 @@
 
     // bind to an object with the specified routes or defaults
     configureBindings : function(obj, router, routes) {
+      if (!obj._bid) obj._bid = _.uniqueId('b');
       this.releaseBindings(obj);
-      this._braces[obj] = {
+      this._braces[obj._bid] = {
         handler : _.bind(this._brace, this, obj),
         router  : router || _.bind(this._defaultRouter, this),
         routes  : routes || {}
       };
-      obj.bind('all',this._braces[obj].handler);
+      obj.bind('all',this._braces[obj._bid].handler);
     },
 
     // release an object from the bindings
     releaseBindings : function(obj) {
-      if (!this._braces[obj]) return;
+      if (!this._braces[obj._bid]) return;
       obj.unbind('all', this._braces[obj].handler);
       delete this._braces[obj];
     },
 
     // generic handler used to route events
     _brace : function(obj, event) {
-      var config = this._braces[obj];
+      var config = this._braces[obj._bid];
       var resolution = config.routes[event];
       if (!resolution) resolution = config.routes[event] = config.router(event);
       if (_.isFunction(this[resolution])) {
@@ -632,11 +633,19 @@
       if (this.options) options = _.extend({}, this.options, options);
       if (options.model) {
         this.model = options.model;
-        this.configureBindings(this.model, this.braceRouter, this.braceRoutes);
+        this.configureBindings(
+          this.model,
+          this.braceRouter,
+          this.modelBraceRoutes
+        );
       }
       if (options.collection) {
         this.collection = options.collection;
-        this.configureBindings(this.collection, this.braceRouter, this.braceRoutes);
+        this.configureBindings(
+          this.collection,
+          this.braceRouter,
+          this.collectionBraceRoutes
+        );
       }
       if (options.id)         this.id         = options.id;
       if (options.className)  this.className  = options.className;
