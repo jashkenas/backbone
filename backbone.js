@@ -28,7 +28,7 @@
   var $ = this.jQuery;
   
   // Are we actually sending PUT and DELETE requests
-  Backbone.USE_METHOD_HACK = true;
+  Backbone.USE_METHOD_HACK = false;
 
   // Backbone.Events
   // -----------------
