@@ -8,42 +8,24 @@
   // Initial Setup
   // -------------
 
-  // The top-level namespace.
-  var Backbone = {};
+  // The top-level namespace. All public Backbone classes and modules will
+  // be attached to this. Exported for both CommonJS and the browser.
+  var Backbone;
+  if (typeof exports !== 'undefined') {
+    Backbone = exports;
+  } else {
+    Backbone = this.Backbone = {};
+  }
 
-  // Keep the version here in sync with `package.json`.
+  // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '0.1.1';
-
-  // Export for both CommonJS and the browser.
-  (typeof exports !== 'undefined' ? exports : this).Backbone = Backbone;
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;
   if (!_ && (typeof require !== 'undefined')) _ = require("underscore")._;
 
   // For Backbone's purposes, jQuery owns the `$` variable.
-  var $ = this.$;
-
-  // Helper function to correctly set up the prototype chain, for subclasses.
-  // Similar to `goog.inherits`, but uses a hash of prototype properties and
-  // class properties to be extended.
-  var inherits = function(parent, protoProps, classProps) {
-    var child = protoProps.hasOwnProperty('constructor') ? protoProps.constructor :
-                function(){ return parent.apply(this, arguments); };
-    var ctor = function(){};
-    ctor.prototype = parent.prototype;
-    child.prototype = new ctor();
-    _.extend(child.prototype, protoProps);
-    if (classProps) _.extend(child, classProps);
-    child.prototype.constructor = child;
-    return child;
-  };
-
-  // Helper function to get a URL from a Model or Collection as a property
-  // or as a function.
-  var getUrl = function(object) {
-    return _.isFunction(object.url) ? object.url() : object.url;
-  };
+  var $ = this.jQuery;
 
   // Backbone.Events
   // -----------------
@@ -97,11 +79,10 @@
     // Listening for `"all"` passes the true event name as the first argument.
     trigger : function(ev) {
       var list, calls, i, l;
-      var calls = this._callbacks;
       if (!(calls = this._callbacks)) return this;
       if (list = calls[ev]) {
         for (i = 0, l = list.length; i < l; i++) {
-          list[i].apply(this, _.rest(arguments));
+          list[i].apply(this, Array.prototype.slice.call(arguments, 1));
         }
       }
       if (list = calls['all']) {
@@ -154,7 +135,7 @@
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
-      attrs = attrs.attributes || attrs;
+      if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes;
 
       // Run validation if `validate` is defined.
@@ -441,6 +422,7 @@
       model.bind('all', this._boundOnModelEvent);
       this.length++;
       if (!options.silent) this.trigger('add', model);
+      return model;
     },
 
     // Internal implementation of removing a single model from the set, updating
@@ -456,6 +438,7 @@
       model.unbind('all', this._boundOnModelEvent);
       this.length--;
       if (!options.silent) this.trigger('remove', model);
+      return model;
     },
 
     // Internal method called every time a model in the set fires an event.
@@ -607,6 +590,9 @@
     'read'  : 'GET'
   };
 
+  // Backbone.sync
+  // -------------
+
   // Override this function to change the manner in which Backbone persists
   // models to the server. You will be passed the type of request, and the
   // model in question. By default, uses jQuery to make a RESTful Ajax request
@@ -625,6 +611,34 @@
       success   : success,
       error     : error
     });
+  };
+
+  // Helpers
+  // -------
+
+  // Helper function to correctly set up the prototype chain, for subclasses.
+  // Similar to `goog.inherits`, but uses a hash of prototype properties and
+  // class properties to be extended.
+  var inherits = function(parent, protoProps, classProps) {
+    var child;
+    if (protoProps.hasOwnProperty('constructor')) {
+      child = protoProps.constructor;
+    } else {
+      child = function(){ return parent.apply(this, arguments); };
+    }
+    var ctor = function(){};
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor();
+    _.extend(child.prototype, protoProps);
+    if (classProps) _.extend(child, classProps);
+    child.prototype.constructor = child;
+    return child;
+  };
+
+  // Helper function to get a URL from a Model or Collection as a property
+  // or as a function.
+  var getUrl = function(object) {
+    return _.isFunction(object.url) ? object.url() : object.url;
   };
 
 })();

@@ -1,8 +1,8 @@
 $(document).ready(function() {
 
-  module("Backbone bindable");
+  module("Backbone.Events");
 
-  test("bindable: bind and trigger", function() {
+  test("Events: bind and trigger", function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
     obj.bind('event', function() { obj.counter += 1; });
@@ -15,7 +15,7 @@ $(document).ready(function() {
     equals(obj.counter, 5, 'counter should be incremented five times.');
   });
 
-  test("bindable: bind, then unbind all functions", function() {
+  test("Events: bind, then unbind all functions", function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
     var callback = function() { obj.counter += 1; };
@@ -26,7 +26,7 @@ $(document).ready(function() {
     equals(obj.counter, 1, 'counter should have only been incremented once.');
   });
 
-  test("bindable: bind two callbacks, unbind only one", function() {
+  test("Events: bind two callbacks, unbind only one", function() {
     var obj = { counterA: 0, counterB: 0 };
     _.extend(obj,Backbone.Events);
     var callback = function() { obj.counterA += 1; };
