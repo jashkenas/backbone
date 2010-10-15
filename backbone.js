@@ -622,7 +622,7 @@
     $.ajax({
       url           : getUrl(model),
       type        : type,
-     data         : data,
+      data         : data,
       dataType : 'json',
       success  : success,
       error        : error
