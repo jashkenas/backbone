@@ -18,7 +18,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.1.1';
+  Backbone.VERSION = '0.1.2';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;
@@ -26,6 +26,9 @@
 
   // For Backbone's purposes, jQuery owns the `$` variable.
   var $ = this.jQuery;
+  
+  // Are we actually sending PUT and DELETE requests
+  Backbone.USE_METHOD_HACK = true;
 
   // Backbone.Events
   // -----------------
@@ -602,14 +605,27 @@
   // * Send up the models as XML instead of JSON.
   // * Persist models via WebSockets instead of Ajax.
   //
+  // The USE_METHOD_HACK setting denotes whether or not Backbone will send
+  // PUT and DELETE methods which are unsupported by some environments that don't
+  // follow specs.  See Sinatra's documentations for details of the workaround.
+  // (http://sinatra-book.gittr.com/#the_put_and_delete_methods)
   Backbone.sync = function(method, model, success, error) {
+    var type = methodMap[method];
+    var data = {model : JSON.stringify(model)};
+	 
+    if(Backbone.USE_METHOD_HACK) {
+      if(/GET|POST/.test(type)) var _method = type;
+      if(method != 'GET') method = 'POST';
+      if(_method) data._method = _method;
+    }
+
     $.ajax({
-      url       : getUrl(model),
-      type      : methodMap[method],
-      data      : {model : JSON.stringify(model)},
-      dataType  : 'json',
-      success   : success,
-      error     : error
+      url           : getUrl(model),
+      type        : type,
+     data         : data,
+      dataType : 'json',
+      success  : success,
+      error        : error
     });
   };
 
