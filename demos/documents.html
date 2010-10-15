@@ -144,7 +144,7 @@
       {
         "title":"Bayesian Filtering Beyond Binary Classification",
         "created_at":"Aug 10, 2010",
-        "page_image_url":"http://dev.dcloud.org/asset_store/documents/217/pages/bayesian-filtering-beyond-binary-classification-p{page}-{size}.gif?1284663782",
+        "page_image_url":"http://s3.documentcloud.org/documents/217/pages/bayesian-filtering-beyond-binary-classification-p{page}-{size}.gif?1284663782",
         "document_viewer_url":"http://dev.dcloud.org/documents/217-bayesian-filtering-beyond-binary-classification.html",
         "description":"Filter, filter, filter..."
       },
@@ -259,8 +259,7 @@
       "dblclick .document" : "openDocument"
     },
     
-    constructor : function(options) {
-      Backbone.View.call(this, options);
+    initialize : function(options) {
       _.bindAll(this, 'render', 'renderDetail');
       this.model.bind('change', this.render);
     },
@@ -305,7 +304,7 @@
       }
     }
     
-  })
+  });
   
   dc.view.DocumentList = Backbone.View.extend({
     
@@ -313,8 +312,7 @@
       
     },
     
-    constructor : function(options) {
-      Backbone.View.call(this, options);
+    initialize : function(options) {
       _.bindAll(this, 'refresh', '_removeDocument', '_addDocument');
       dc.app.Documents.bind('refresh', this.refresh);
       dc.app.Documents.bind('remove',  this._removeDocument);
