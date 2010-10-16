@@ -72,7 +72,7 @@ $(document).ready(function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
     var changeCount = 0;
-    a.bind("change:foo", function() { changeCount += 1; });
+    a.bind("model:change:foo", function() { changeCount += 1; });
     a.set({'foo': 2});
     ok(a.get('foo')== 2, "Foo should have changed.");
     ok(changeCount == 1, "Change count should have incremented.");
@@ -117,7 +117,7 @@ $(document).ready(function() {
     model.validate = function(attrs) {
       if (attrs.admin) return "Can't change admin status.";
     };
-    model.bind('error', function(model, error) {
+    model.bind('model:error', function(model, error) {
       lastError = error;
     });
     var result = model.set({a: 100});

@@ -61,22 +61,22 @@ $(document).ready(function() {
     var View = Backbone.View.extend({
 
       modelBraceRoutes : {
-        'change:shape' : 'mutate'
+        'model:change:shape' : 'mutate'
       },
 
       collectionBraceRoutes : {
         'col:sort' : 'sortCollection',
       },
 
-      onChangeFoo : function(obj, newValue) {
+      onModelChangeFoo : function(obj, newValue) {
         this.fooChanged = true;
       },
 
-      onAdd : function(item) {
+      onCollectionAdd : function(item) {
         this.itemAdded = true;
       },
 
-      onRemove : function(item) {
+      onCollectionRemove : function(item) {
         this.itemRemoved = true;
       },
 
@@ -96,21 +96,21 @@ $(document).ready(function() {
     });
 
     model.set({'foo' : 'bar'});
-    equals(view.fooChanged, true);
+    ok(view.fooChanged, 'model change property event not handled properly');
 
     var item = new Backbone.Model;
     col.add(item);
 
-    equals(view.itemAdded, true);
+    ok(view.itemAdded, 'collection add item event not handled properly');
 
     col.remove(item);
-    equals(view.itemRemoved, true);
+    ok(view.itemRemoved, 'collection remove item not handled properly');
 
     model.set({'shape' : 'trapezoid'});
-    equals(view.mutated, true);
+    ok(view.mutated, 'model declared event route not handled properly');
 
     col.trigger('col:sort');
-    equals(view.sorted, true);
+    ok(view.sorted, 'collection declared event route not handled properly');
   });
 
 });

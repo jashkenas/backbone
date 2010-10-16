@@ -208,7 +208,7 @@
       if (this.validate) {
         var error = this.validate(attrs);
         if (error) {
-          this.trigger('error', this, error);
+          this.trigger('model:error', this, error);
           return false;
         }
       }
@@ -224,7 +224,7 @@
           now[attr] = val;
           if (!options.silent) {
             this._changed = true;
-            this.trigger('change:' + attr, this, val);
+            this.trigger('model:change:' + attr, this, val);
           }
         }
       }
@@ -242,7 +242,7 @@
       delete this.attributes[attr];
       if (!options.silent) {
         this._changed = true;
-        this.trigger('change:' + attr, this);
+        this.trigger('model:change:' + attr, this);
         this.change();
       }
       return value;
@@ -301,7 +301,7 @@
     // Call this method to fire manually fire a `change` event for this model.
     // Calling this will cause all objects observing the model to update.
     change : function() {
-      this.trigger('change', this);
+      this.trigger('model:change', this);
       this._previousAttributes = _.clone(this.attributes);
       this._changed = false;
     },
@@ -415,7 +415,7 @@
       options || (options = {});
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
       this.models = this.sortBy(this.comparator);
-      if (!options.silent) this.trigger('refresh', this);
+      if (!options.silent) this.trigger('collection:refresh', this);
       return this;
     },
 
@@ -432,7 +432,7 @@
       options || (options = {});
       this._reset();
       this.add(models, {silent: true});
-      if (!options.silent) this.trigger('refresh', this);
+      if (!options.silent) this.trigger('collection:refresh', this);
       return this;
     },
 
@@ -487,7 +487,7 @@
       this.models.splice(index, 0, model);
       model.bind('all', this._boundOnModelEvent);
       this.length++;
-      if (!options.silent) this.trigger('add', model);
+      if (!options.silent) this.trigger('collection:add', model);
       return model;
     },
 
@@ -503,7 +503,7 @@
       this.models.splice(this.indexOf(model), 1);
       model.unbind('all', this._boundOnModelEvent);
       this.length--;
-      if (!options.silent) this.trigger('remove', model);
+      if (!options.silent) this.trigger('collection:remove', model);
       return model;
     },
 
@@ -516,10 +516,10 @@
             delete this._byId[model.previous('id')];
             this._byId[model.id] = model;
           }
-          this.trigger('change', model);
+          this.trigger('collection:model:change', model);
           break;
         case 'error':
-          this.trigger('error', model, error);
+          this.trigger('collection:model:error', model, error);
       }
     }
 

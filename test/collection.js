@@ -41,7 +41,7 @@ $(document).ready(function() {
 
   test("Collection: add", function() {
     var added = null;
-    col.bind('add', function(model){ added = model.get('label'); });
+    col.bind('collection:add', function(model){ added = model.get('label'); });
     e = new Backbone.Model({id: 0, label : 'e'});
     col.add(e);
     equals(added, 'e');
@@ -51,7 +51,7 @@ $(document).ready(function() {
 
   test("Collection: remove", function() {
     var removed = null;
-    col.bind('remove', function(model){ removed = model.get('label'); });
+    col.bind('collection:remove', function(model){ removed = model.get('label'); });
     col.remove(e);
     equals(removed, 'e');
     equals(col.length, 4);
@@ -100,7 +100,7 @@ $(document).ready(function() {
   test("Collection: refresh", function() {
     var refreshed = 0;
     var models = col.models;
-    col.bind('refresh', function() { refreshed += 1; });
+    col.bind('collection:refresh', function() { refreshed += 1; });
     col.refresh([]);
     equals(refreshed, 1);
     equals(col.length, 0);
