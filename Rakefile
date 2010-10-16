@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'closure-compiler'
 
+task :default => []
+
 desc "rebuild the backbone-min.js files for distribution"
 task :build do
   source = File.read 'backbone.js'
