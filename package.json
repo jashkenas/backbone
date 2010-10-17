@@ -1,0 +1,12 @@
+{
+  "name"          : "backbone",
+  "description"   : "Give your JS App some Backbone with Models, Views, Collections, and Events.",
+  "url"           : "http://documentcloud.github.com/backbone/",
+  "keywords"      : ["util", "functional", "server", "client", "browser"],
+  "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
+  "contributors"  : [],
+  "dependencies"  : [],
+  "lib"           : ".",
+  "main"          : "backbone.js",
+  "version"       : "0.1.1"
+}
