@@ -5,6 +5,8 @@ $(document).ready(function() {
   // Variable to catch the last request.
   window.lastRequest = null;
 
+  window.originalSync = Backbone.sync;
+
   // Stub out Backbone.request...
   Backbone.sync = function() {
     lastRequest = _.toArray(arguments);

@@ -27,6 +27,10 @@
   // For Backbone's purposes, jQuery owns the `$` variable.
   var $ = this.jQuery;
 
+  // Turn on `emulateHttp` to fake `"PUT"` and `"DELETE"` requests via
+  // the `_method` parameter.
+  Backbone.emulateHttp = false;
+
   // Backbone.Events
   // -----------------
 
@@ -602,12 +606,21 @@
   // * Send up the models as XML instead of JSON.
   // * Persist models via WebSockets instead of Ajax.
   //
+  // Turn on `Backbone.emulateHttp` in order to send `PUT` and `DELETE` requests
+  // as `POST`, with an `_method` parameter containing the true HTTP method.
+  // Useful when interfacing with server-side languages like **PHP** that make
+  // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, success, error) {
     var sendModel = method === 'create' || method === 'update';
     var data = sendModel ? {model : JSON.stringify(model)} : {};
+    var type = methodMap[method];
+    if (Backbone.emulateHttp && (type === 'PUT' || type === 'DELETE')) {
+      data._method = type;
+      type = 'POST';
+    }
     $.ajax({
       url       : getUrl(model),
-      type      : methodMap[method],
+      type      : type,
       data      : data,
       dataType  : 'json',
       success   : success,
