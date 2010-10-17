@@ -19,8 +19,8 @@
     <script id="accountTemplate" type="text/x-jquery-tmpl">
       <div class="account">
         <div class="name">${ account.get("name") }</div>
-        <div class="location">${ account.get("location") }</div>
-        <div class="blog">${ account.get("blog") }</div>
+        <div class="location">${ account.get("location") || "" }</div>
+        <div class="blog">${ account.get("blog") || "" }</div>
       </div>
     </script>
 
