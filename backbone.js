@@ -550,7 +550,7 @@
     handleEvents : function(events) {
       $(this.el).unbind();
       if (!(events || (events = this.events))) return this;
-      for (key in events) {
+      for (var key in events) {
         var methodName = events[key];
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
