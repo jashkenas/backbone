@@ -24,9 +24,14 @@ var GistApp = Backbone.View.extend({
 var GithubAccount = Backbone.Model.extend({
 
   initialize : function() {
-    $.getJSON(this.url(), {}, _.bind(function(resp) {
-      this.set(resp.user);
-    }, this));
+    var me = this;
+    $.ajax({
+      url : me.url(),
+      dataType : "jsonp",
+      success : function (data, status, xhr) {
+        me.set(data.user);
+      }
+    });
   },
 
   url : function() {
@@ -45,7 +50,6 @@ var AccountView = Backbone.View.extend({
   },
 
   render : function() {
-    console.log(this.model);
     var ui = $('#accountTemplate').tmpl({account : this.model});
     $(this.el).html(ui);
   }
