@@ -1197,8 +1197,8 @@ end
       backed by models, each of which can be updated independently when the
       model changes, without having to redraw the page. Instead of digging into
       a JSON object, looking up an element in the DOM, and updating the HTML by hand,
-      it should look more like:
-      <tt>model.bind('change', renderView)</tt> &mdash; and now everywhere that
+      you can bind your view's <tt>render</tt> function to the model's <tt>"change"</tt>
+      event &mdash; and now everywhere that
       model data is displayed in the UI, it is always immediately up to date.
     </p>
 
