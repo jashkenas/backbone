@@ -83,10 +83,10 @@ $(document).ready(function() {
   });
 
   test("Collection: Underscore methods", function() {
-    equals(col.map(function(model){ return model.get('label'); }).join(' '), 'd c b a');
+    equals(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equals(col.any(function(model){ return model.id === 100; }), false);
     equals(col.any(function(model){ return model.id === 1; }), true);
-    equals(col.indexOf(b), 2);
+    equals(col.indexOf(b), 1);
     equals(col.size(), 4);
     equals(col.rest().length, 3);
     ok(!_.include(col.rest()), a);
