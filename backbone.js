@@ -256,7 +256,9 @@
     // view need to be updated and/or what attributes need to be persisted to
     // the server.
     changedAttributes : function(now) {
-      var old = this._previousAttributes, now = now || this.attributes, changed = false;
+      now || (now = this.attributes);
+      var old = this._previousAttributes;
+      var changed = false;
       for (var attr in now) {
         if (!_.isEqual(old[attr], now[attr])) {
           changed = changed || {};
@@ -458,6 +460,7 @@
           break;
         case 'error':
           this.trigger('error', model, error);
+          break;
       }
     }
 
