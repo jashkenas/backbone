@@ -18,7 +18,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.1.1';
+  Backbone.VERSION = '0.1.2';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;
@@ -26,6 +26,10 @@
 
   // For Backbone's purposes, jQuery owns the `$` variable.
   var $ = this.jQuery;
+
+  // Turn on `emulateHttp` to fake `"PUT"` and `"DELETE"` requests via
+  // the `_method` parameter.
+  Backbone.emulateHttp = false;
 
   // Backbone.Events
   // -----------------
@@ -112,10 +116,10 @@
   _.extend(Backbone.Model.prototype, Backbone.Events, {
 
     // A snapshot of the model's previous attributes, taken immediately
-    // after the last `changed` event was fired.
+    // after the last `"change"` event was fired.
     _previousAttributes : null,
 
-    // Has the item been changed since the last `changed` event?
+    // Has the item been changed since the last `"change"` event?
     _changed : false,
 
     // Return a copy of the model's `attributes` object.
@@ -128,7 +132,7 @@
       return this.attributes[attr];
     },
 
-    // Set a hash of model attributes on the object, firing `changed` unless you
+    // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
 
@@ -138,11 +142,16 @@
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes;
 
-      // Run validation if `validate` is defined.
+      // Run validation if `validate` is defined. If a specific `error` callback
+      // has been passed, call that instead of firing the general `"error"` event.
       if (this.validate) {
         var error = this.validate(attrs);
         if (error) {
-          this.trigger('error', this, error);
+          if (options.error) {
+            options.error(this, error);
+          } else {
+            this.trigger('error', this, error);
+          }
           return false;
         }
       }
@@ -163,12 +172,12 @@
         }
       }
 
-      // Fire the `change` event, if the model has been changed.
+      // Fire the `"change"` event, if the model has been changed.
       if (!options.silent && this._changed) this.change();
       return this;
     },
 
-    // Remove an attribute from the model, firing `changed` unless you choose to
+    // Remove an attribute from the model, firing `"change"` unless you choose to
     // silence it.
     unset : function(attr, options) {
       options || (options = {});
@@ -182,6 +191,21 @@
       return value;
     },
 
+    // Fetch the model from the server. If the server's representation of the
+    // model differs from its current attributes, they will be overriden,
+    // triggering a `"change"` event.
+    fetch : function(options) {
+      options || (options = {});
+      var model = this;
+      var success = function(resp) {
+        if (!model.set(resp.model, options)) return false;
+        if (options.success) options.success(model, resp);
+      };
+      var error = options.error && _.bind(options.error, null, model);
+      Backbone.sync('read', this, success, error);
+      return this;
+    },
+
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
@@ -191,11 +215,12 @@
       if (!this.set(attrs, options)) return false;
       var model = this;
       var success = function(resp) {
-        if (!model.set(resp.model)) return false;
+        if (!model.set(resp.model, options)) return false;
         if (options.success) options.success(model, resp);
       };
+      var error = options.error && _.bind(options.error, null, model);
       var method = this.isNew() ? 'create' : 'update';
-      Backbone.sync(method, this, success, options.error);
+      Backbone.sync(method, this, success, error);
       return this;
     },
 
@@ -208,7 +233,8 @@
         if (model.collection) model.collection.remove(model);
         if (options.success) options.success(model, resp);
       };
-      Backbone.sync('delete', this, success, options.error);
+      var error = options.error && _.bind(options.error, null, model);
+      Backbone.sync('delete', this, success, error);
       return this;
     },
 
@@ -240,7 +266,7 @@
       this._changed = false;
     },
 
-    // Determine if the model has changed since the last `changed` event.
+    // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged : function(attr) {
       if (attr) return this._previousAttributes[attr] != this.attributes[attr];
@@ -252,7 +278,9 @@
     // view need to be updated and/or what attributes need to be persisted to
     // the server.
     changedAttributes : function(now) {
-      var old = this._previousAttributes, now = now || this.attributes, changed = false;
+      now || (now = this.attributes);
+      var old = this._previousAttributes;
+      var changed = false;
       for (var attr in now) {
         if (!_.isEqual(old[attr], now[attr])) {
           changed = changed || {};
@@ -263,14 +291,14 @@
     },
 
     // Get the previous value of an attribute, recorded at the time the last
-    // `changed` event was fired.
+    // `"change"` event was fired.
     previous : function(attr) {
       if (!attr || !this._previousAttributes) return null;
       return this._previousAttributes[attr];
     },
 
     // Get all of the attributes of the model at the time of the previous
-    // `changed` event.
+    // `"change"` event.
     previousAttributes : function() {
       return _.clone(this._previousAttributes);
     }
@@ -379,7 +407,8 @@
         collection.refresh(resp.models);
         if (options.success) options.success(collection, resp);
       };
-      Backbone.sync('read', this, success, options.error);
+      var error = options.error && _.bind(options.error, null, collection);
+      Backbone.sync('read', this, success, error);
       return this;
     },
 
@@ -390,7 +419,6 @@
       if (!(model instanceof Backbone.Model)) model = new this.model(model);
       model.collection = this;
       var success = function(resp) {
-        if (!model.set(resp.model)) return false;
         model.collection.add(model);
         if (options.success) options.success(model, resp);
       };
@@ -454,6 +482,7 @@
           break;
         case 'error':
           this.trigger('error', model, error);
+          break;
       }
     }
 
@@ -546,7 +575,7 @@
     handleEvents : function(events) {
       $(this.el).unbind();
       if (!(events || (events = this.events))) return this;
-      for (key in events) {
+      for (var key in events) {
         var methodName = events[key];
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
@@ -602,11 +631,21 @@
   // * Send up the models as XML instead of JSON.
   // * Persist models via WebSockets instead of Ajax.
   //
+  // Turn on `Backbone.emulateHttp` in order to send `PUT` and `DELETE` requests
+  // as `POST`, with an `_method` parameter containing the true HTTP method.
+  // Useful when interfacing with server-side languages like **PHP** that make
+  // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, success, error) {
-    var data = method === 'read' ? {} : {model : JSON.stringify(model)};
+    var sendModel = method === 'create' || method === 'update';
+    var data = sendModel ? {model : JSON.stringify(model)} : {};
+    var type = methodMap[method];
+    if (Backbone.emulateHttp && (type === 'PUT' || type === 'DELETE')) {
+      data._method = type;
+      type = 'POST';
+    }
     $.ajax({
       url       : getUrl(model),
-      type      : methodMap[method],
+      type      : type,
       data      : data,
       dataType  : 'json',
       success   : success,
@@ -639,6 +678,7 @@
   // Helper function to get a URL from a Model or Collection as a property
   // or as a function.
   var getUrl = function(object) {
+    if (!(object && object.url)) throw new Error("A 'url' property or function must be specified");
     return _.isFunction(object.url) ? object.url() : object.url;
   };
 

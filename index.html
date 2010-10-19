@@ -159,6 +159,7 @@
       <li>– <a href="#Model-cid">cid</a></li>
       <li>– <a href="#Model-attributes">attributes</a></li>
       <li>- <a href="#Model-toJSON">toJSON</a></li>
+      <li>– <a href="#Model-fetch">fetch</a></li>
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
@@ -189,7 +190,7 @@
       <li>– <a href="#Collection-comparator">comparator</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
-      <li>– <a href="#Model-url">url</a></li>
+      <li>– <a href="#Collection-url">url</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
       <li>– <a href="#Collection-refresh">refresh</a></li>
       <li>– <a href="#Collection-create">create</a></li>
@@ -251,12 +252,12 @@
 
     <table>
       <tr>
-        <td><a href="backbone.js">Development Version (0.1.1)</a></td>
-        <td><i>21kb, Uncompressed with Comments</i></td>
+        <td><a href="backbone.js">Development Version (0.1.2)</a></td>
+        <td><i>23.8kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="backbone-min.js">Production Version (0.1.1)</a></td>
-        <td><i>2kb, Packed and Gzipped</i></td>
+        <td><a href="backbone-min.js">Production Version (0.1.2)</a></td>
+        <td><i>2.6kb, Packed and Gzipped</i></td>
       </tr>
     </table>
 
@@ -438,7 +439,7 @@ sidebar.promptColor();
 
 <pre>
 var Note = Backbone.Model.extend({
-  
+
   initialize: function() { ... },
 
   author: function() { ... },
@@ -459,7 +460,7 @@ var Note = Backbone.Model.extend({
         parent object's implementation, you'll have to explicitly call it, along these lines:
       </i>
     </p>
-    
+
 <pre>
 var Note = Backbone.Model.extend({
   set: function(attributes, options) {
@@ -499,16 +500,19 @@ new Book({
       change the models state, a <tt>"change"</tt> event will be fired, unless
       <tt>{silent: true}</tt> is passed as an option.
     </p>
-
-    <p>
-      If the model has a <a href="#Model-validate">validate</a> method,
-      it will be validated before the attributes are set, and no changes will
-      occur if the validation fails.
-    </p>
-
+    
 <pre>
 note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
 </pre>
+
+    <p>
+      If the model has a <a href="#Model-validate">validate</a> method,
+      it will be validated before the attributes are set, no changes will
+      occur if the validation fails, and <b>set</b> will return <tt>false</tt>. 
+      You may also pass an <tt>error</tt> 
+      callback in the options, which will be invoked instead of triggering an 
+      <tt>"error"</tt> event, should validation fail.
+    </p>
 
     <p id="Model-unset">
       <b class="header">unset</b><code>model.unset(attribute, [options])</code>
@@ -567,6 +571,33 @@ artist.set({birthday: "December 16, 1866"});
 alert(JSON.stringify(artist));
 </pre>
 
+    <p id="Model-fetch">
+      <b class="header">fetch</b><code>model.fetch([options])</code>
+      <br />
+      Refreshes the model's state from the server. Useful if the model has never
+      been populated with data, or if you'd like to ensure that you have the
+      latest server state. A <tt>"change"</tt> event will be triggered if the
+      server's state differs from the current attributes. Accepts
+      <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
+      are passed <tt>(model, response)</tt> as arguments.
+    </p>
+
+<pre>
+// Poll every 10 seconds to keep the channel model up-to-date.
+setInterval(function() {
+  channel.fetch();
+}, 10000);
+</pre>
+
+    <p>
+      <i>
+        <b>Cautionary Note:</b> When fetching or saving a model, make sure that the model is part of 
+        a collection with a <a href="#Collection-url">url</a> property specified,
+        or that the model itself has a complete <a href="#Model-url">url</a> function
+        of its own, so that the request knows where to go.
+      </i>
+    </p>
+
     <p id="Model-save">
       <b class="header">save</b><code>model.save(attributes, [options])</code>
       <br />
@@ -577,7 +608,8 @@ alert(JSON.stringify(artist));
       (HTTP <tt>POST</tt>), if the model already
       exists on the server, the save will be an <tt>"update"</tt> (HTTP <tt>PUT</tt>). Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response)</tt> as arguments.
+      are passed <tt>(model, response)</tt> as arguments. The <tt>error</tt> callback will
+      also be invoked if the model has a <tt>validate</tt> method, and validation fails.
     </p>
 
     <p>
@@ -650,6 +682,21 @@ one.set({
 });
 </pre>
 
+    <p>
+      <tt>"error"</tt> events are useful for providing coarse-grained error 
+      messages at the model or collection level, but if you have a specific view
+      that can better handle the error, you may override and suppress the event 
+      by passing an <tt>error</tt> callback directly:
+    </p>
+    
+<pre>
+account.set({access: "unlimited"}, {
+  error: function(model, error) {
+    alert(error);
+  }
+});
+</pre>
+
     <p id="Model-url">
       <b class="header">url</b><code>model.url()</code>
       <br />
@@ -659,6 +706,8 @@ one.set({
     </p>
 
     <p>
+      Delegates to <a href="#Collection-url">Collection#url</a> to generate the
+      URL, so make sure that you have it defined.
       A model with an id of <tt>101</tt>, stored in a
       <a href="#Collection">Backbone.Collection</a> with a <tt>url</tt> of <tt>"/notes"</tt>,
       would have this URL: <tt>"/notes/101"</tt>
@@ -755,17 +804,17 @@ bill.set({name : "Bill Jones"});
       providing instance <b>properties</b>, as well as optional <b>classProperties</b> to be attached
       directly to the collection's constructor function.
     </p>
-    
+
     <p id="Collection-model">
       <b class="header">model</b><code>collection.model</code>
       <br />
-      Override this property to specify the model class that the collection 
-      contains. If defined, you can pass raw attributes objects (and arrays) to 
+      Override this property to specify the model class that the collection
+      contains. If defined, you can pass raw attributes objects (and arrays) to
       <a href="#Collection-add">add</a>, <a href="#Collection-create">create</a>,
       and <a href="#Collection-refresh">refresh</a>, and the attributes will be
       converted into a model of the proper type.
     </p>
-    
+
 <pre>
 var Library = Backbone.Collection.extend({
   model: Book
@@ -955,7 +1004,7 @@ alert(chapters.pluck('title'));
       <br />
       Force a collection to re-sort itself. You don't need to call this under
       normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a> function
-      will maintain itself in proper sort order at all times. Calling <b>sort</b> 
+      will maintain itself in proper sort order at all times. Calling <b>sort</b>
       triggers the collection's <tt>"refresh"</tt> event, unless silenced by passing
       <tt>{silent: true}</tt>
     </p>
@@ -1017,9 +1066,9 @@ var Notes = Backbone.Collection.extend({
     <p>
       The server handler for <b>fetch</b> requests should return a JSON list of
       models, namespaced under "models": <tt>{"models": [...]}</tt> &mdash;
-      instead of returning the 
-      array directly, we ask you to namespace your models like this by default, 
-      so that it's possible to send down out-of-band information 
+      instead of returning the
+      array directly, we ask you to namespace your models like this by default,
+      so that it's possible to send down out-of-band information
       for things like pagination or error states.
     </p>
 
@@ -1041,7 +1090,7 @@ Accounts.fetch();
       for interfaces that are not needed immediately: for example, documents
       with collections of notes that may be toggled open and closed.
     </p>
-    
+
     <p id="Collection-refresh">
       <b class="header">refresh</b><code>collection.refresh(models, [options])</code>
       <br />
@@ -1051,12 +1100,12 @@ Accounts.fetch();
       of models (or attribute hashes), triggering a single <tt>"refresh"</tt> event
       at the end. Pass <tt>{silent: true}</tt> to suppress the <tt>"refresh"</tt> event.
     </p>
-    
+
     <p>
       Here's an example using <b>refresh</b> to bootstrap a collection during initial page load,
       in a Rails application.
     </p>
-    
+
 <pre>
 &lt;script&gt;
   Accounts.refresh(&lt;%= @accounts.to_json %&gt;);
@@ -1119,8 +1168,32 @@ var othello = NYPL.create({
     </p>
 
     <p>
-      For example, a Rails handler responding to an <tt>"update"</tt> call from
-      <b>Backbone.sync</b> would look like this: <i>(In real code, never use
+      The default <b>sync</b> handler maps CRUD to REST like so:
+    </p>
+
+    <ul>
+      <li><b>create &rarr; POST &nbsp; </b><tt>/collection</tt></li>
+      <li><b>read &rarr; GET &nbsp; </b><tt>/collection[/id]</tt></li>
+      <li><b>update &rarr; PUT &nbsp; </b><tt>/collection/id</tt></li>
+      <li><b>delete &rarr; DELETE &nbsp; </b><tt>/collection/id</tt></li>
+    </ul>
+
+    <p>
+      If your web server makes it difficult to work with real <tt>PUT</tt> and
+      <tt>DELETE</tt> requests, you may choose to emulate them instead, using
+      HTTP <tt>POST</tt>, and passing them under the <tt>_method</tt> parameter
+      instead, by turning on <tt>Backbone.emulateHttp</tt>:
+    </p>
+    
+<pre>
+Backbone.emulateHttp = true;
+
+model.save();  // Sends a POST to "/collection/id", with "_method=PUT"
+</pre>
+
+    <p>
+      As an example, a Rails handler responding to an <tt>"update"</tt> call from
+      <b>Backbone.sync</b> might look like this: <i>(In real code, never use
       </i><tt>update_attributes</tt><i> blindly, and always whitelist the attributes
       you allow to be changed.)</i>
     </p>
@@ -1143,8 +1216,8 @@ end
       backed by models, each of which can be updated independently when the
       model changes, without having to redraw the page. Instead of digging into
       a JSON object, looking up an element in the DOM, and updating the HTML by hand,
-      it should look more like:
-      <tt>model.bind('change', renderView)</tt> &mdash; and now everywhere that
+      you can bind your view's <tt>render</tt> function to the model's <tt>"change"</tt>
+      event &mdash; and now everywhere that
       model data is displayed in the UI, it is always immediately up to date.
     </p>
 
@@ -1170,7 +1243,7 @@ var DocumentRow = Backbone.View.extend({
     "click .button.edit":   "openEditDialog",
     "click .button.delete": "destroy"
   },
-  
+
   initialize: function() {
     _.bindAll(this, "render");
   },
@@ -1190,7 +1263,7 @@ var DocumentRow = Backbone.View.extend({
       options that, if passed, will be attached directly to the view:
       <tt>model</tt>, <tt>collection</tt>,
       <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, and <tt>tagName</tt>.
-      If the view defines an <b>initialize</b> function, it will be called when 
+      If the view defines an <b>initialize</b> function, it will be called when
       the view is first created. If you'd like to create a view that references
       an element <i>already</i> in the DOM, pass in the element as an option:
       <tt>new View({el: existingElement})</tt>
@@ -1265,18 +1338,18 @@ var Bookmark = Backbone.View.extend({
       Backbone is agnostic with respect to your preferred method of HTML templating.
       Your <b>render</b> function could even munge together an HTML string, or use
       <tt>document.createElement</tt> to generate a DOM tree. However, we suggest
-      choosing a nice JavaScript templating library. 
-      <a href="http://github.com/janl/mustache.js">Mustache.js</a>, 
+      choosing a nice JavaScript templating library.
+      <a href="http://github.com/janl/mustache.js">Mustache.js</a>,
       <a href="http://github.com/creationix/haml-js">Haml-js</a>, and
-      <a href="http://github.com/sstephenson/eco">Eco</a> are all fine alternatives. 
+      <a href="http://github.com/sstephenson/eco">Eco</a> are all fine alternatives.
       Because <a href="http://documentcloud.github.com/underscore/">Underscore.js</a> is already on the page,
       <a href="http://documentcloud.github.com/underscore/#template">_.template</a>
       is available, and is an excellent choice if you've already XSS-sanitized
       your interpolated data.
     </p>
-    
+
     <p>
-      Whatever templating strategy you end up with, it's nice if you <i>never</i> 
+      Whatever templating strategy you end up with, it's nice if you <i>never</i>
       have to put strings of HTML in your JavaScript. At DocumentCloud, we
       use <a href="http://documentcloud.github.com/jammit/">Jammit</a> in order
       to package up JavaScript templates stored in <tt>/app/views</tt> as part
@@ -1360,6 +1433,20 @@ var DocumentView = Backbone.View.extend({
 
     <h2 id="changelog">Change Log</h2>
     
+    <p>
+      <b class="header">0.1.2</b> &mdash; <small><i>Oct 19, 2010</i></small><br />
+      Added a <a href="#Model-fetch">Model#fetch</a> method for refreshing the
+      attributes of single model from the server.
+      An <tt>error</tt> callback may now be passed to <tt>set</tt> and <tt>save</tt>
+      as an option, which will be invoked if validation fails, overriding the 
+      <tt>"error"</tt> event.
+      You can now tell backbone to use the <tt>_method</tt> hack instead of HTTP
+      methods by setting <tt>Backbone.emulateHttp = true</tt>.
+      Existing Model and Collection data is no longer sent up unnecessarily with 
+      <tt>GET</tt> and <tt>DELETE</tt> requests. Added a <tt>rake lint</tt> task.
+      Backbone is now published as an <a href="http://npmjs.org">NPM</a> module.
+    </p>
+
     <p>
       <b class="header">0.1.1</b> &mdash; <small><i>Oct 14, 2010</i></small><br />
       Added a convention for <tt>initialize</tt> functions to be called

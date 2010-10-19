@@ -5,6 +5,8 @@ $(document).ready(function() {
   // Variable to catch the last request.
   window.lastRequest = null;
 
+  window.originalSync = Backbone.sync;
+
   // Stub out Backbone.request...
   Backbone.sync = function() {
     lastRequest = _.toArray(arguments);
@@ -38,6 +40,15 @@ $(document).ready(function() {
 
   test("Model: url", function() {
     equals(doc.url(), '/collection/1-the-tempest');
+    doc.collection = null;
+    var failed = false;
+    try {
+      doc.url();
+    } catch (e) {
+      failed = true;
+    }
+    equals(failed, true);
+    doc.collection = collection;
   });
 
   test("Model: clone", function() {
@@ -105,6 +116,12 @@ $(document).ready(function() {
     ok(_.isEqual(lastRequest[1], doc));
   });
 
+  test("Model: fetch", function() {
+    doc.fetch();
+    ok(lastRequest[0], 'read');
+    ok(_.isEqual(lastRequest[1], doc));
+  });
+
   test("Model: destroy", function() {
     doc.destroy();
     equals(lastRequest[0], 'delete');
@@ -128,6 +145,30 @@ $(document).ready(function() {
     equals(result, false);
     equals(model.get('a'), 100);
     equals(lastError, "Can't change admin status.");
+  });
+
+  test("Model: validate with error callback", function() {
+    var lastError, boundError;
+    var model = new Backbone.Model();
+    model.validate = function(attrs) {
+      if (attrs.admin) return "Can't change admin status.";
+    };
+    var callback = function(model, error) {
+      lastError = error;
+    };
+    model.bind('error', function(model, error) {
+      boundError = true;
+    });
+    var result = model.set({a: 100}, {error: callback});
+    equals(result, model);
+    equals(model.get('a'), 100);
+    equals(lastError, undefined);
+    equals(boundError, undefined);
+    result = model.set({a: 200, admin: true}, {error: callback});
+    equals(result, false);
+    equals(model.get('a'), 100);
+    equals(lastError, "Can't change admin status.");
+    equals(boundError, undefined);
   });
 
 });

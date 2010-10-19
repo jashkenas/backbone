@@ -9,5 +9,10 @@ end
 
 desc "build the docco documentation"
 task :doc do
-   system "docco backbone.js"
+  system "docco backbone.js"
+end
+
+desc "run JavaScriptLint on the source"
+task :lint do
+  system "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
 end
