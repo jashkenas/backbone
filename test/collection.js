@@ -99,7 +99,7 @@ $(document).ready(function() {
             .filter(function(o){ return o.id % 2 === 0; })
             .map(function(o){ return o.id * 2; })
             .value(),
-         [8, 4]);
+         [4, 8]);
   });
 
   test("Collection: refresh", function() {
