@@ -18,7 +18,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.1.1';
+  Backbone.VERSION = '0.1.2';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;
@@ -116,10 +116,10 @@
   _.extend(Backbone.Model.prototype, Backbone.Events, {
 
     // A snapshot of the model's previous attributes, taken immediately
-    // after the last `changed` event was fired.
+    // after the last `"change"` event was fired.
     _previousAttributes : null,
 
-    // Has the item been changed since the last `changed` event?
+    // Has the item been changed since the last `"change"` event?
     _changed : false,
 
     // Return a copy of the model's `attributes` object.
@@ -132,7 +132,7 @@
       return this.attributes[attr];
     },
 
-    // Set a hash of model attributes on the object, firing `changed` unless you
+    // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
 
@@ -167,12 +167,12 @@
         }
       }
 
-      // Fire the `change` event, if the model has been changed.
+      // Fire the `"change"` event, if the model has been changed.
       if (!options.silent && this._changed) this.change();
       return this;
     },
 
-    // Remove an attribute from the model, firing `changed` unless you choose to
+    // Remove an attribute from the model, firing `"change"` unless you choose to
     // silence it.
     unset : function(attr, options) {
       options || (options = {});
@@ -258,7 +258,7 @@
       this._changed = false;
     },
 
-    // Determine if the model has changed since the last `changed` event.
+    // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged : function(attr) {
       if (attr) return this._previousAttributes[attr] != this.attributes[attr];
@@ -283,14 +283,14 @@
     },
 
     // Get the previous value of an attribute, recorded at the time the last
-    // `changed` event was fired.
+    // `"change"` event was fired.
     previous : function(attr) {
       if (!attr || !this._previousAttributes) return null;
       return this._previousAttributes[attr];
     },
 
     // Get all of the attributes of the model at the time of the previous
-    // `changed` event.
+    // `"change"` event.
     previousAttributes : function() {
       return _.clone(this._previousAttributes);
     }
