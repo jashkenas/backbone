@@ -4,10 +4,10 @@
 
   // Our main model. It is simple enough that it doesn't need any prototype
   // methods.
-  var Task = Backbone.Model.extend({});
+  window.Task = Backbone.Model.extend({});
 
   // A Collection wrapper for Task instances.
-  var TaskCollection = Backbone.Collection.extend({
+  window.TaskCollection = Backbone.Collection.extend({
     model: Task
   });
 
@@ -16,9 +16,15 @@
   // The TaskView is a View that handles the rendering and events of a single
   // Task instance. You can double click on the task's text to edit it's content
   // in a text box and tick the checkbox on or off to mark whether it is
-  // completed or not.
-  var TaskView = Backbone.View.extend({
+  // complete or not.
+  window.TaskView = Backbone.View.extend({
+
     tagName: "li",
+
+    className: "todo",
+
+    template: _.template($('#todo-template').html()),
+
     events: {
       "dblclick span": "edit",
       "click input[type=checkbox]": "toggle",
@@ -26,28 +32,21 @@
     },
 
     initialize: function (opts) {
+      _.bindAll(this, 'setComplete');
+      this.model.bind('change:complete', this.setComplete);
       this.handleEvents(); // Bind the event delegators.
-      this.model = opts.model;
     },
 
-    // Render (or empty and re-render) this view. If this task is completed,
+    // Render (or empty and re-render) this view. If this task is complete,
     // make the text have strike through.
     render: function () {
-      this.$(this.el)
-        .empty()
-        .append(this.make("input", {
-          type: "checkbox",
-          checked: this.model.get("completed")
-        }))
-        .append(
-          this.$(this.make("span"))
-            .text(this.model.get("content"))
-            .css("text-decoration",
-                 this.model.get("completed")
-                 ? "line-through"
-                 : "none")
-        );
+      $(this.el).html(this.template({model: this.model}));
+      this.setComplete();
       return this;
+    },
+
+    setComplete: function() {
+      $(this.el).toggleClass('complete', this.model.get('complete'));
     },
 
     // Switch this view from display mode in to edit mode. Provide a text input
@@ -79,21 +78,21 @@
     },
 
     // Event handler for ticking the checkbox. Just toggle whether the task is
-    // completed or not and let render() take care of strike-through.
+    // complete or not and let render() take care of strike-through.
     toggle: function () {
-      this.model.set({ completed: !this.model.get("completed") });
-      this.render();
+      this.model.set({ complete: !this.model.get("complete") });
     }
   });
 
   // The TodoListApp is the main view for this application. It handles creation
-  // of new Tasks, clearing completed tasks, and supervises the individual
+  // of new Tasks, clearing complete tasks, and supervises the individual
   // TaskViews.
-  var TodoListApp = Backbone.View.extend({
+  window.TodoListApp = Backbone.View.extend({
     tagName: "div",
     events: {
-      "click input.new-task" : "create",
-      "click input.clear"    : "clear"
+      "keypress input.new-task-input" : "maybeCreate",
+      "click input.new-task"          : "create",
+      "click input.clear"             : "clear"
     },
 
     initialize: function (opts) {
@@ -106,6 +105,7 @@
       me.$(me.el)
         .empty()
         .append(me.make("input", {
+          className: "new-task-input",
           type: "text",
           placeholder: "New task..."
         }))
@@ -138,18 +138,22 @@
     create: function () {
       var task = new Task({
         content: this.$("input[type=text]").val(),
-        completed: false
+        complete: false
       });
       this.children.add(task);
       this.render();
     },
 
-    // Clear out all of the completed tasks and let render() handle removing
+    maybeCreate: function(e) {
+      if (e.keyCode == 13) this.create();
+    },
+
+    // Clear out all of the complete tasks and let render() handle removing
     // them from the page.
     clear: function () {
       var toBeRemoved = this.children
         .filter(function (task) {
-          return task.get("completed");
+          return task.get("complete");
         });
 
       var me = this;
@@ -165,11 +169,11 @@
 
   $(document).ready(function () {
 
-    var tasks = new TaskCollection;
-    var app = new TodoListApp({
-      children: tasks
+    window.Tasks = new TaskCollection;
+    window.App = new TodoListApp({
+      children: Tasks
     });
-    $("body").append(app.render().el);
+    $("body").append(App.render().el);
 
   });
 

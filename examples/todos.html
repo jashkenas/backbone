@@ -1,10 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Backbone Demo: Task Manager</title>
+    <title>Backbone Demo: Todo List</title>
+
+    <style>
+      .todo.complete .todo-content {
+        text-decoration: line-through;
+      }
+    </style>
+
     <script src="../test/vendor/underscore-1.1.0.js"></script>
     <script src="../test/vendor/jquery-1.4.2.js"></script>
     <script src="../backbone.js"></script>
+
+    <script id="todo-template" type="x-ejs">
+      <input type="checkbox" <%= model.get('completed') ? 'checked' : '' %> />
+      <span class="todo-content"><%= model.get('content') %></span>
+    </script>
 
     <script src="todos.js"></script>
   </head>
