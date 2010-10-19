@@ -1,15 +1,32 @@
-(function () {
+(function() {
 
   // ### Models
 
   // Our main model. It is simple enough that it doesn't need any prototype
   // methods.
-  window.Task = Backbone.Model.extend({});
+  window.Task = Backbone.Model.extend({
+
+    htmlId : function() {
+      return "task-" + this.cid;
+    }
+
+  });
 
   // A Collection wrapper for Task instances.
   window.TaskCollection = Backbone.Collection.extend({
-    model: Task
+
+    model: Task,
+
+    // Return the list of tasks which are already complete.
+    complete: function() {
+      return this.filter(function(task) {
+        return task.get('complete');
+      });
+    }
+
   });
+
+  window.Tasks = new TaskCollection;
 
   // ### Views
 
@@ -32,7 +49,7 @@
       "click input.update": "changed"
     },
 
-    initialize: function (opts) {
+    initialize: function(opts) {
       _.bindAll(this, 'setComplete');
       this.model.bind('change:complete', this.setComplete);
       this.handleEvents(); // Bind the event delegators.
@@ -40,8 +57,9 @@
 
     // Render (or empty and re-render) this view. If this task is complete,
     // make the text have strike through.
-    render: function () {
+    render: function() {
       $(this.el).html(this.displayTemplate({model: this.model}));
+      this.el.id = this.model.htmlId();
       this.setComplete();
       return this;
     },
@@ -53,13 +71,13 @@
     // Switch this view from display mode in to edit mode. Provide a text input
     // to edit this task's content and a submit button to click to save the
     // updates.
-    edit: function () {
+    edit: function() {
       $(this.el).html(this.editTemplate({model : this.model}));
     },
 
     // Switch back to display mode after being in edit mode. Save the new
     // content for the model in the process.
-    changed: function () {
+    changed: function() {
       this.model.set({
         content: this.$("input[type=text]").val()
       });
@@ -68,7 +86,7 @@
 
     // Event handler for ticking the checkbox. Just toggle whether the task is
     // complete or not and let render() take care of strike-through.
-    toggle: function () {
+    toggle: function() {
       this.model.set({ complete: !this.model.get("complete") });
     }
   });
@@ -77,60 +95,47 @@
   // of new Tasks, clearing complete tasks, and supervises the individual
   // TaskViews.
   window.TodoListApp = Backbone.View.extend({
-    tagName: "div",
+
+    template: _.template($('#app-template').html()),
+
     events: {
       "keypress input.new-task-input" : "maybeCreate",
       "click input.new-task"          : "create",
       "click input.clear"             : "clear"
     },
 
-    initialize: function (opts) {
+    initialize: function() {
+      _.bindAll(this, 'addTask', 'removeTask');
       this.handleEvents();
-      this.children = opts.children;
+      Tasks.bind('add', this.addTask);
+      Tasks.bind('remove', this.removeTask);
     },
 
-    render: function () {
-      var me = this;
-      me.$(me.el)
-        .empty()
-        .append(me.make("input", {
-          className: "new-task-input",
-          type: "text",
-          placeholder: "New task..."
-        }))
-        .append(me.make("input", {
-          className: "new-task",
-          type: "submit",
-          value: "Add"
-        }))
-        .append(me.make("ul"))
-        .append(me.make("input", {
-          type: "submit",
-          value: "Clear Completed Tasks",
-          className: "clear"
-        }));
-
-      // Add a TaskView for each of out tasks.
-      var list = me.$("ul");
-      me.children
-        .each(function (task) {
-          var view = new TaskView({
-            model: task
-          });
-          list.append(view.render().el);
-        });
+    render: function() {
+      $(this.el).html(this.template());
+      this._list  = this.$('.task-list');
+      this._input = this.$(".new-task-input");
       return this;
+    },
+
+    addTask: function(task) {
+      var view = new TaskView({model : task});
+      this._list.append(view.render().el);
+    },
+
+    removeTask: function(task) {
+      this.$('#' + task.htmlId()).remove();
     },
 
     // Create a new task, add it to the children, and let render() handle
     // creating a TaskView for it and displaying it.
-    create: function () {
+    create: function() {
       var task = new Task({
-        content: this.$("input[type=text]").val(),
+        content: this._input.val(),
         complete: false
       });
-      this.children.add(task);
-      this.render();
+      Tasks.add(task);
+      this._input.val('');
     },
 
     maybeCreate: function(e) {
@@ -139,31 +144,17 @@
 
     // Clear out all of the complete tasks and let render() handle removing
     // them from the page.
-    clear: function () {
-      var toBeRemoved = this.children
-        .filter(function (task) {
-          return task.get("complete");
-        });
-
-      var me = this;
-      _(toBeRemoved).each(function (task) {
-        me.children.remove(task);
-      });
-
-      this.render();
+    clear: function() {
+      Tasks.remove(Tasks.complete());
     }
   });
 
+  window.App = new TodoListApp;
+
   // Initialize the app on document ready.
 
-  $(document).ready(function () {
-
-    window.Tasks = new TaskCollection;
-    window.App = new TodoListApp({
-      children: Tasks
-    });
+  $(document).ready(function() {
     $("body").append(App.render().el);
-
   });
 
 }());
