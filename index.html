@@ -253,11 +253,11 @@
     <table>
       <tr>
         <td><a href="backbone.js">Development Version (0.1.2)</a></td>
-        <td><i>21kb, Uncompressed with Comments</i></td>
+        <td><i>23.8kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
         <td><a href="backbone-min.js">Production Version (0.1.2)</a></td>
-        <td><i>2kb, Packed and Gzipped</i></td>
+        <td><i>2.6kb, Packed and Gzipped</i></td>
       </tr>
     </table>
 
@@ -1432,6 +1432,20 @@ var DocumentView = Backbone.View.extend({
 </pre>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <p>
+      <b class="header">0.1.2</b> &mdash; <small><i>Oct 19, 2010</i></small><br />
+      Added a <a href="#Model-fetch">Model#fetch</a> method for refreshing the
+      attributes of single model from the server.
+      An <tt>error</tt> callback may now be passed to <tt>set</tt> and <tt>save</tt>
+      as an option, which will be invoked if validation fails, overriding the 
+      <tt>"error"</tt> event.
+      You can now tell backbone to use the <tt>_method</tt> hack instead of HTTP
+      methods by setting <tt>Backbone.emulateHttp = true</tt>.
+      Existing Model and Collection data is no longer sent up unnecessarily with 
+      <tt>GET</tt> and <tt>DELETE</tt> requests. Added a <tt>rake lint</tt> task.
+      Backbone is now published as an <a href="http://npmjs.org">NPM</a> module.
+    </p>
 
     <p>
       <b class="header">0.1.1</b> &mdash; <small><i>Oct 14, 2010</i></small><br />
