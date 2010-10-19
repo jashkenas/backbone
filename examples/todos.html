@@ -18,6 +18,11 @@
       <span class="todo-content"><%= model.get('content') %></span>
     </script>
 
+    <script id="edit-template" type="x-ejs">
+      <input type="text" value="<%= model.get('content') %>" />
+      <input type="submit" class="update" value="Update" />
+    </script>
+
     <script src="todos.js"></script>
   </head>
   <body>

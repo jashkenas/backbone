@@ -23,7 +23,8 @@
 
     className: "todo",
 
-    template: _.template($('#todo-template').html()),
+    displayTemplate:  _.template($('#todo-template').html()),
+    editTemplate:     _.template($('#edit-template').html()),
 
     events: {
       "dblclick span": "edit",
@@ -40,7 +41,7 @@
     // Render (or empty and re-render) this view. If this task is complete,
     // make the text have strike through.
     render: function () {
-      $(this.el).html(this.template({model: this.model}));
+      $(this.el).html(this.displayTemplate({model: this.model}));
       this.setComplete();
       return this;
     },
@@ -53,19 +54,7 @@
     // to edit this task's content and a submit button to click to save the
     // updates.
     edit: function () {
-      var input = this.$(this.make("input", {
-        type: "text",
-        value: this.$(this.el).text()
-      }));
-      var submit = this.$(this.make("input", {
-        type: "submit",
-        className: "update",
-        value: "Update"
-      }));
-      this.$(this.el)
-        .empty()
-        .append(input)
-        .append(submit);
+      $(this.el).html(this.editTemplate({model : this.model}));
     },
 
     // Switch back to display mode after being in edit mode. Save the new
