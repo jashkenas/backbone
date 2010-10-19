@@ -500,16 +500,19 @@ new Book({
       change the models state, a <tt>"change"</tt> event will be fired, unless
       <tt>{silent: true}</tt> is passed as an option.
     </p>
-
-    <p>
-      If the model has a <a href="#Model-validate">validate</a> method,
-      it will be validated before the attributes are set, and no changes will
-      occur if the validation fails.
-    </p>
-
+    
 <pre>
 note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
 </pre>
+
+    <p>
+      If the model has a <a href="#Model-validate">validate</a> method,
+      it will be validated before the attributes are set, no changes will
+      occur if the validation fails, and <b>set</b> will return <tt>false</tt>. 
+      You may also pass an <tt>error</tt> 
+      callback in the options, which will be invoked instead of triggering an 
+      <tt>"error"</tt> event, should validation fail.
+    </p>
 
     <p id="Model-unset">
       <b class="header">unset</b><code>model.unset(attribute, [options])</code>
@@ -605,7 +608,8 @@ setInterval(function() {
       (HTTP <tt>POST</tt>), if the model already
       exists on the server, the save will be an <tt>"update"</tt> (HTTP <tt>PUT</tt>). Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response)</tt> as arguments.
+      are passed <tt>(model, response)</tt> as arguments. The <tt>error</tt> callback will
+      also be invoked if the model has a <tt>validate</tt> method, and validation fails.
     </p>
 
     <p>
@@ -675,6 +679,21 @@ one.bind("error", function(model, error) {
 one.set({
   start: 15,
   end:   10
+});
+</pre>
+
+    <p>
+      <tt>"error"</tt> events are useful for providing coarse-grained error 
+      messages at the model or collection level, but if you have a specific view
+      that can better handle the error, you may override and suppress the event 
+      by passing an <tt>error</tt> callback directly:
+    </p>
+    
+<pre>
+account.set({access: "unlimited"}, {
+  error: function(model, error) {
+    alert(error);
+  }
 });
 </pre>
 
