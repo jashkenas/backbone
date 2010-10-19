@@ -186,6 +186,20 @@
       return value;
     },
 
+    // Fetch the model from the server. If the server's representation of the
+    // model differs from its current attributes, they will be overriden,
+    // triggering a `"change"` event.
+    fetch : function(options) {
+      options || (options = {});
+      var model = this;
+      var success = function(resp) {
+        if (!model.set(resp.model)) return false;
+        if (options.success) options.success(model, resp);
+      };
+      Backbone.sync('read', this, success, options.error);
+      return this;
+    },
+
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.

@@ -107,6 +107,12 @@ $(document).ready(function() {
     ok(_.isEqual(lastRequest[1], doc));
   });
 
+  test("Model: fetch", function() {
+    doc.fetch();
+    ok(lastRequest[0], 'read');
+    ok(_.isEqual(lastRequest[1], doc));
+  });
+
   test("Model: destroy", function() {
     doc.destroy();
     equals(lastRequest[0], 'delete');

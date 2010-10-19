@@ -68,6 +68,13 @@ $(document).ready(function() {
     equals(data.length, 123);
   });
 
+  test("sync: read model", function() {
+    library.first().fetch();
+    equals(lastRequest.url, '/library/2-the-tempest');
+    equals(lastRequest.type, 'GET');
+    ok(_.isEmpty(lastRequest.data));
+  });
+
   test("sync: destroy", function() {
     Backbone.emulateHttp = false;
     library.first().destroy();
