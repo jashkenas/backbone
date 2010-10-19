@@ -190,7 +190,7 @@
       <li>– <a href="#Collection-comparator">comparator</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
-      <li>– <a href="#Model-url">url</a></li>
+      <li>– <a href="#Collection-url">url</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
       <li>– <a href="#Collection-refresh">refresh</a></li>
       <li>– <a href="#Collection-create">create</a></li>
@@ -586,6 +586,15 @@ setInterval(function() {
 }, 10000);
 </pre>
 
+    <p>
+      <i>
+        <b>Cautionary Note:</b> When fetching or saving a model, make sure that the model is part of 
+        a collection with a <a href="#Collection-url">url</a> property specified,
+        or that the model itself has a complete <a href="#Model-url">url</a> function
+        of its own, so that the request knows where to go.
+      </i>
+    </p>
+
     <p id="Model-save">
       <b class="header">save</b><code>model.save(attributes, [options])</code>
       <br />
@@ -678,6 +687,8 @@ one.set({
     </p>
 
     <p>
+      Delegates to <a href="#Collection-url">Collection#url</a> to generate the
+      URL, so make sure that you have it defined.
       A model with an id of <tt>101</tt>, stored in a
       <a href="#Collection">Backbone.Collection</a> with a <tt>url</tt> of <tt>"/notes"</tt>,
       would have this URL: <tt>"/notes/101"</tt>
