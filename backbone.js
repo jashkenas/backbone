@@ -425,6 +425,13 @@
       return model.save(null, {success : success, error : options.error});
     },
 
+    // Proxy to _'s chain. Can't be proxied the same way the rest of the
+    // underscore methods are proxied because it relies on the underscore
+    // constructor.
+    chain: function () {
+      return _(this.models).chain();
+    },
+
     // Reset all internal state. Called when the collection is refreshed.
     _reset : function(options) {
       this.length = 0;

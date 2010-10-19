@@ -95,6 +95,11 @@ $(document).ready(function() {
     ok(!_.include(col.without(d)), d);
     equals(col.max(function(model){ return model.id; }).id, 4);
     equals(col.min(function(model){ return model.id; }).id, 1);
+    same(col.chain()
+            .filter(function(o){ return o.id % 2 === 0; })
+            .map(function(o){ return o.id * 2; })
+            .value(),
+         [8, 4]);
   });
 
   test("Collection: refresh", function() {
