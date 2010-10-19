@@ -142,11 +142,16 @@
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes;
 
-      // Run validation if `validate` is defined.
+      // Run validation if `validate` is defined. If a specific `error` callback
+      // has been passed, call that instead of firing the general `"error"` event.
       if (this.validate) {
         var error = this.validate(attrs);
         if (error) {
-          this.trigger('error', this, error);
+          if (options.error) {
+            options.error(this, error);
+          } else {
+            this.trigger('error', this, error);
+          }
           return false;
         }
       }
@@ -193,10 +198,11 @@
       options || (options = {});
       var model = this;
       var success = function(resp) {
-        if (!model.set(resp.model)) return false;
+        if (!model.set(resp.model, options)) return false;
         if (options.success) options.success(model, resp);
       };
-      Backbone.sync('read', this, success, options.error);
+      var error = options.error && _.bind(options.error, null, model);
+      Backbone.sync('read', this, success, error);
       return this;
     },
 
@@ -209,11 +215,12 @@
       if (!this.set(attrs, options)) return false;
       var model = this;
       var success = function(resp) {
-        if (!model.set(resp.model)) return false;
+        if (!model.set(resp.model, options)) return false;
         if (options.success) options.success(model, resp);
       };
+      var error = options.error && _.bind(options.error, null, model);
       var method = this.isNew() ? 'create' : 'update';
-      Backbone.sync(method, this, success, options.error);
+      Backbone.sync(method, this, success, error);
       return this;
     },
 
@@ -226,7 +233,8 @@
         if (model.collection) model.collection.remove(model);
         if (options.success) options.success(model, resp);
       };
-      Backbone.sync('delete', this, success, options.error);
+      var error = options.error && _.bind(options.error, null, model);
+      Backbone.sync('delete', this, success, error);
       return this;
     },
 
@@ -399,7 +407,8 @@
         collection.refresh(resp.models);
         if (options.success) options.success(collection, resp);
       };
-      Backbone.sync('read', this, success, options.error);
+      var error = options.error && _.bind(options.error, null, collection);
+      Backbone.sync('read', this, success, error);
       return this;
     },
 
@@ -410,7 +419,6 @@
       if (!(model instanceof Backbone.Model)) model = new this.model(model);
       model.collection = this;
       var success = function(resp) {
-        if (!model.set(resp.model)) return false;
         model.collection.add(model);
         if (options.success) options.success(model, resp);
       };
