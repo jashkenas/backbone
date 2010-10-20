@@ -515,14 +515,7 @@
   // if an existing element is not provided...
   Backbone.View = function(options) {
     this._configure(options || {});
-    if (this.options.el) {
-      this.el = this.options.el;
-    } else {
-      var attrs = {};
-      if (this.id) attrs.id = this.id;
-      if (this.className) attrs.className = this.className;
-      this.el = this.make(this.tagName, attrs);
-    }
+    this._ensureElement();
     if (this.initialize) this.initialize(options);
   };
 
@@ -603,10 +596,20 @@
       if (this.options) options = _.extend({}, this.options, options);
       if (options.model)      this.model      = options.model;
       if (options.collection) this.collection = options.collection;
+      if (options.el)         this.el         = options.el;
       if (options.id)         this.id         = options.id;
       if (options.className)  this.className  = options.className;
       if (options.tagName)    this.tagName    = options.tagName;
       this.options = options;
+    },
+
+    // Ensure that the View has a DOM element to render into.
+    _ensureElement : function() {
+      if (this.el) return;
+      var attrs = {};
+      if (this.id) attrs.id = this.id;
+      if (this.className) attrs.className = this.className;
+      this.el = this.make(this.tagName, attrs);
     }
 
   });
