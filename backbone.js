@@ -417,10 +417,10 @@
     create : function(model, options) {
       options || (options = {});
       if (!(model instanceof Backbone.Model)) model = new this.model(model);
-      model.collection = this;
-      var success = function(resp) {
-        model.collection.add(model);
-        if (options.success) options.success(model, resp);
+      var coll = model.collection = this;
+      var success = function(nextModel, resp) {
+        coll.add(nextModel);
+        if (options.success) options.success(nextModel, resp);
       };
       return model.save(null, {success : success, error : options.error});
     },
