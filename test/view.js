@@ -54,4 +54,12 @@ $(document).ready(function() {
     equals(counter, 3);
   });
 
+  test("View: _ensureElement", function() {
+    var ViewClass = Backbone.View.extend({
+      el: document.body
+    });
+    var view = new ViewClass;
+    equals(view.el, document.body);
+  });
+
 });
