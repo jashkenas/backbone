@@ -82,6 +82,10 @@ $(document).ready(function() {
     equals(coll.one, 1);
   });
 
+  test("Collection: toJSON", function() {
+    equals(JSON.stringify(col), '[{"id":1,"label":"d"},{"id":2,"label":"c"},{"id":3,"label":"b"},{"id":4,"label":"a"}]');
+  });
+
   test("Collection: Underscore methods", function() {
     equals(col.map(function(model){ return model.get('label'); }).join(' '), 'd c b a');
     equals(col.any(function(model){ return model.id === 100; }), false);

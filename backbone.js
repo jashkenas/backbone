@@ -329,10 +329,11 @@
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
     model : Backbone.Model,
-    
-    // Return a array containing each model's toJSON result.
+
+    // The JSON representation of a Collection is an array of the
+    // models' attributes.
     toJSON : function() {
-      return this.models.map(function(model){ return model.toJSON(); })
+      return this.map(function(model){ return model.toJSON(); });
     },
 
     // Add a model, or list of models to the set. Pass **silent** to avoid

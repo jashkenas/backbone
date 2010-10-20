@@ -180,6 +180,7 @@
       <li>– <a href="#Collection-model">model</a></li>
       <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
       <li>– <a href="#Collection-models">models</a></li>
+      <li>– <a href="#Collection-toJSON">toJSON</a></li>
       <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (25)</b></a></li>
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
@@ -849,6 +850,26 @@ var tabs = new TabSet([tab1, tab2, tab3]);
       to access model objects, but occasionally a direct reference to the array
       is desired.
     </p>
+    
+    <p id="Collection-toJSON">
+      <b class="header">toJSON</b><code>collection.toJSON()</code>
+      <br />
+      Return an array containing the attributes hash of each model in the
+      collection. This can be used to serialize and persist the 
+      collection as a whole. The name of this method is a bit confusing, because
+      it conforms to 
+      <a href="https://developer.mozilla.org/en/JSON#toJSON()_method">JavaScript's JSON API</a>.
+    </p>
+    
+<pre class="runnable">
+var collection = new Backbone.Collection([
+  {name: "Tim", age: 5},
+  {name: "Ida", age: 26},
+  {name: "Rob", age: 55}
+]);  
+  
+alert(JSON.stringify(collection));
+</pre>
 
     <p id="Collection-Underscore-Methods">
       <b class="header">Underscore Methods (25)</b>
