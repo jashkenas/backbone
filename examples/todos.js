@@ -1,3 +1,8 @@
+// DISCLAIMER: This example is not yet complete, and probably isn't *too*
+// helpful for getting a sense of a real-world Backbone application just yet.
+// Contributions to it are welcome, but be careful of trying to use it as a
+// model.
+
 (function() {
 
   // ### Models
