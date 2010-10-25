@@ -118,20 +118,16 @@ $(function(){
     },
 
     initialize: function() {
-      _.bindAll(this, 'addTodo', 'clearCompleted', 'showTooltip', 'createIfEnter', 'render');
+      _.bindAll(this, 'addOne', 'addAll', 'clearCompleted', 'showTooltip',
+        'createIfEnter', 'render');
 
-      this.list       = $("#todo-list");
-      this.newInput   = $("#new-todo");
-      this.tooltip    = this.$(".ui-tooltip-top");
+      this.input    = this.$("#new-todo");
 
-      Todos.bind('add', this.addTodo);
-      Todos.bind('all', this.render);
+      Todos.bind('add',     this.addOne);
+      Todos.bind('refresh', this.addAll);
+      Todos.bind('all',     this.render);
 
-      Todos.fetch({
-        success: _.bind(function(coll) {
-          _.each(coll.models, this.addTodo);
-        }, this)
-      });
+      Todos.fetch();
     },
 
     render: function() {
@@ -143,32 +139,34 @@ $(function(){
       }));
     },
 
-    addTodo: function(todo) {
+    addOne: function(todo) {
       var view = new TodoView({model: todo});
-      this.list.append(view.render().el);
+      this.$("#todo-list").append(view.render().el);
+    },
+
+    addAll: function() {
+      Todos.each(this.addOne);
     },
 
     createIfEnter: function(e) {
-      if (e.keyCode == 13) {
-        Todos.create({
-          content: this.newInput.val(),
-          order:   Todos.nextOrder(),
-          done:    false
-        });
-        this.newInput.val('');
-      }
+      if (e.keyCode != 13) return;
+      Todos.create({
+        content: this.input.val(),
+        order:   Todos.nextOrder(),
+        done:    false
+      });
+      this.input.val('');
     },
 
     showTooltip: function(e) {
-      this.tooltip.fadeOut();
+      var tooltip = this.$(".ui-tooltip-top");
+      tooltip.fadeOut();
 
       if (this.tooltipTimeout) clearTimeout(this.tooltipTimeout);
 
-      var tt = this.tooltip;
-
-      if (this.newInput.val() !== "" && this.newInput.val() !== this.newInput.attr('placeholder')) {
+      if (this.input.val() !== "" && this.input.val() !== this.input.attr('placeholder')) {
         this.tooltipTimeout = setTimeout(function(){
-          tt.show().fadeIn();
+          tooltip.show().fadeIn();
         }, 1000);
       }
     },
