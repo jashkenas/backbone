@@ -22,8 +22,13 @@ $(function(){
       });
     },
 
+    nextOrder: function() {
+      if (!this.length) return 1;
+      return this.last().get('order') + 1;
+    },
+
     comparator: function(todo) {
-      return todo.id;
+      return todo.get('order');
     },
 
     parse: function(resp) {
@@ -162,7 +167,8 @@ $(function(){
       if (e.keyCode == 13) {
         Todos.create({
           content: this.newInput.val(),
-          done: false
+          order:   Todos.nextOrder(),
+          done:    false
         });
         this.newInput.val('');
       }
@@ -177,7 +183,7 @@ $(function(){
 
       if (this.newInput.val() !== "" && this.newInput.val() !== this.newInput.attr('placeholder')) {
         this.tooltipTimeout = setTimeout(function(){
-          tt.fadeIn();
+          tt.show().fadeIn();
         }, 1000);
       }
     },

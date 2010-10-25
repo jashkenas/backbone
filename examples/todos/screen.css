@@ -76,13 +76,13 @@ body {
 /* line 17 */
 #todoapp {
   width: 480px;
-  margin: 40px auto;
+  margin: 0 auto 40px;
   background: white;
   padding: 20px;
-  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 2px 4px 0;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 2px 4px 0;
-  -o-box-shadow: rgba(0, 0, 0, 0.3) 0 2px 4px 0;
-  box-shadow: rgba(0, 0, 0, 0.3) 0 2px 4px 0;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 5px 6px 0;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 5px 6px 0;
+  -o-box-shadow: rgba(0, 0, 0, 0.2) 0 5px 6px 0;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 5px 6px 0;
 }
 /* line 24 */
 #todoapp .title h1 {
@@ -122,7 +122,6 @@ body {
   width: 170px;
   left: 50%;
   margin-left: -85px;
-  opacity: 0;
 }
 /* line 54 */
 #todoapp .content ul#todo-list {
@@ -249,11 +248,11 @@ body {
 #credits {
   width: 520px;
   margin: 30px auto;
-  color: #777777;
+  color: #999;
   text-shadow: rgba(255, 255, 255, 0.8) 0 1px 0;
   text-align: center;
 }
 /* line 133 */
 #credits a {
-  color: #336699;
+  color: #888;
 }
