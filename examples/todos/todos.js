@@ -1,28 +1,34 @@
+// Example Backbone App contributed by Jérôme Gravel-Niquet.
+
+// Load the application once the DOM is ready:
 $(function(){
 
-  // Todo
+  // Our basic **Todo** model. Has `content`, `order`, and `done` attributes.
   window.Todo = Backbone.Model.extend({
 
+    toggle: function() {
+      this.save({done: !this.get("done")});
+    },
+
+    // Pull out the model's attributes from the the *localStorage* representation.
     parse: function(resp) {
       return resp.model;
     },
 
-    htmlId: function() {
-      return "todo-" + this.id;
-    },
-
-    remove: function() {
+    // Remove this Todo from *localStorage*, deleting its view.
+    clear: function() {
       this.destroy();
       $(this.view.el).remove();
     }
 
   });
 
-  // Todo List
+  // The collection of Todos. Backed by *localStorage* instead of a remote
+  // server.
   window.TodoList = Backbone.Collection.extend({
 
     model: Todo,
-    localStore: new Store("tasks"),
+    localStore: new Store("todos"),
 
     // Returns all done todos.
     done: function() {
@@ -61,14 +67,13 @@ $(function(){
     events: {
       "click .check"              : "toggleDone",
       "dblclick div.todo-content" : "edit",
-      "click span.todo-destroy"   : "remove",
-      "keypress .todo-input"      : "changed"
+      "click span.todo-destroy"   : "clear",
+      "keypress .todo-input"      : "updateOnEnter"
     },
 
     initialize: function() {
       _.bindAll(this, 'render');
       this.model.bind('change', this.render);
-      this.el.id = this.model.htmlId();
       this.model.view = this;
     },
 
@@ -85,22 +90,21 @@ $(function(){
     },
 
     toggleDone: function() {
-      this.model.save({done: !this.model.get("done")});
+      this.model.toggle();
     },
 
     edit: function() {
       $(this.el).addClass("editing");
     },
 
-    changed: function(e) {
-      if (e.keyCode == 13) {
-        this.model.save({content: this.$(".todo-input").val()});
-        $(this.el).removeClass("editing");
-      }
+    updateOnEnter: function(e) {
+      if (e.keyCode != 13) return;
+      this.model.save({content: this.$(".todo-input").val()});
+      $(this.el).removeClass("editing");
     },
 
-    remove: function() {
-      this.model.remove();
+    clear: function() {
+      this.model.clear();
     }
 
   });
@@ -112,14 +116,13 @@ $(function(){
     template: _.template($('#stats-template').html()),
 
     events: {
-      "keypress #new-todo":  "createIfEnter",
+      "keypress #new-todo":  "createOnEnter",
       "keyup #new-todo":     "showTooltip",
       "click .todo-clear a": "clearCompleted"
     },
 
     initialize: function() {
-      _.bindAll(this, 'addOne', 'addAll', 'clearCompleted', 'showTooltip',
-        'createIfEnter', 'render');
+      _.bindAll(this, 'addOne', 'addAll', 'render');
 
       this.input    = this.$("#new-todo");
 
@@ -148,7 +151,7 @@ $(function(){
       Todos.each(this.addOne);
     },
 
-    createIfEnter: function(e) {
+    createOnEnter: function(e) {
       if (e.keyCode != 13) return;
       Todos.create({
         content: this.input.val(),
@@ -172,7 +175,7 @@ $(function(){
     },
 
     clearCompleted: function() {
-      _.each(Todos.done(), function(todo){ todo.remove(); });
+      _.each(Todos.done(), function(todo){ todo.clear(); });
       return false;
     }
 
