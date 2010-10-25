@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <title>Backbone Demo: Todos</title>
-    <link href="screen.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="todos.css" media="all" rel="stylesheet" type="text/css"/>
     <script src="../../test/vendor/jquery-1.4.2.js"></script>
     <script src="../../test/vendor/underscore-1.1.0.js"></script>
     <script src="../../backbone.js"></script>
-    <script src="javascripts/backbone.localStorage.js"></script>
-    <script src="javascripts/todos.js"></script>
+    <script src="../../test/vendor/backbone.localStorage.js"></script>
+    <script src="todos.js"></script>
   </head>
+
   <body>
 
-    <div id='todoapp'>
+    <div id="todoapp">
 
-      <div class='title'>
+      <div class="title">
         <h1>Todos</h1>
       </div>
 
-      <div class='content'>
+      <div class="content">
 
-        <div id='create-todo'>
-          <input id='new-todo' placeholder='What needs to be done?' type='text' />
-          <span class='ui-tooltip-top' style='display:none;'>Press Enter to add this task</span>
+        <div id="create-todo">
+          <input id="new-todo" placeholder="What needs to be done?" type="text" />
+          <span class="ui-tooltip-top" style="display:none;">Press Enter to save this task</span>
         </div>
 
-        <div id='todos'>
-          <ul id='todo-list'></ul>
+        <div id="todos">
+          <ul id="todo-list"></ul>
         </div>
 
-        <div id='todo-stats'>
-          <span class='todo-count'>
-            <span class='number'>0</span>
-            <span class='word'>todos</span>.
+        <div id="todo-stats">
+          <span class="todo-count">
+            <span class="number">0</span>
+            <span class="word">items</span> left.
           </span>
-          <span class='todo-clear'>
-            <a href='#'>Clear completed</a>
+          <span class="todo-clear">
+            <a href="#">Clear completed</a>
           </span>
         </div>
 
@@ -42,15 +44,30 @@
 
     </div>
 
-    <ul id='instructions'>
+    <ul id="instructions">
       <li>Double-click to edit a todo.</li>
+      <li><a href="../../docs/todos.html">View the annotated source.</a></li>
     </ul>
 
-    <div id='credits'>
+    <div id="credits">
       Created by
       <br />
-      <a href='http://jgn.me/'>J&eacute;r&ocirc;me Gravel-Niquet</a>
+      <a href="http://jgn.me/">J&eacute;r&ocirc;me Gravel-Niquet</a>
     </div>
 
+    <script type="text-template" id="item-template">
+      <div class="todo <%= done ? 'done' : '' %>">
+        <div class="display">
+          <input type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+          <div class="todo-content"></div>
+          <span class="todo-destroy"></span>
+        </div>
+        <div class="edit">
+          <input class="todo-input" type="text" value="" />
+        </div>
+      </div>
+    </script>
+
   </body>
+
 </html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>  <html> <head>   <title>todos.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               todos.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="nx">$</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Todo</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nb">window</span><span class="p">.</span><span class="nx">Todo</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+
+    <span class="nx">parse</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">model</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">htmlId</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="s2">&quot;todo-&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Todo List</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nb">window</span><span class="p">.</span><span class="nx">TodoList</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+
+    <span class="nx">model</span><span class="o">:</span> <span class="nx">Todo</span><span class="p">,</span>
+    <span class="nx">localStore</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Store</span><span class="p">(</span><span class="s2">&quot;tasks&quot;</span><span class="p">),</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Returns all done todos.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">done</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">select</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">todo</span><span class="p">){</span>
+        <span class="k">return</span> <span class="nx">todo</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">nextOrder</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">last</span><span class="p">().</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;order&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">comparator</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">todo</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">todo</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;order&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">parse</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">models</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="p">});</span>
+
+  <span class="nb">window</span><span class="p">.</span><span class="nx">Todos</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TodoList</span><span class="p">;</span>
+
+  <span class="nb">window</span><span class="p">.</span><span class="nx">TodoView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+
+    <span class="nx">tagName</span><span class="o">:</span>    <span class="s2">&quot;li&quot;</span><span class="p">,</span>
+
+    <span class="nx">template</span><span class="o">:</span>   <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#item-template&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">()),</span>
+
+    <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;click input[type=checkbox]&quot;</span><span class="o">:</span> <span class="s2">&quot;markAsDone&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;dblclick div.todo-content&quot;</span> <span class="o">:</span> <span class="s2">&quot;edit&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;click span.todo-destroy&quot;</span>   <span class="o">:</span> <span class="s2">&quot;destroy&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;keypress .todo-input&quot;</span>      <span class="o">:</span> <span class="s2">&quot;changed&quot;</span>
+    <span class="p">},</span>
+
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">bindAll</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;render&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">htmlId</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()));</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">setContent</span><span class="p">();</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">setContent</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.todo-content&#39;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.todo-input&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">markAsDone</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">save</span><span class="p">({</span> <span class="nx">done</span><span class="o">:</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span> <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">edit</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.todo&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s2">&quot;editing&quot;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">updateInput</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;input[type=text]&quot;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">changed</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">==</span> <span class="mi">13</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">save</span><span class="p">({</span><span class="nx">content</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">updateInput</span><span class="p">.</span><span class="nx">val</span><span class="p">()});</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">thisView</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">destroy</span><span class="p">({</span>
+        <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+          <span class="nx">$</span><span class="p">(</span><span class="nx">thisView</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+
+  <span class="p">});</span>
+
+  <span class="nb">window</span><span class="p">.</span><span class="nx">AppView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+
+    <span class="nx">el</span><span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#todoapp&quot;</span><span class="p">),</span>
+
+    <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;keypress input#new-todo&quot;</span><span class="o">:</span>  <span class="s2">&quot;createIfEnter&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;keyup input#new-todo&quot;</span><span class="o">:</span>     <span class="s2">&quot;showTooltip&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;click span.todo-clear&quot;</span><span class="o">:</span>    <span class="s2">&quot;clearCompleted&quot;</span>
+    <span class="p">},</span>
+
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">bindAll</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;addTodo&#39;</span><span class="p">,</span> <span class="s1">&#39;clearCompleted&#39;</span><span class="p">,</span> <span class="s1">&#39;showTooltip&#39;</span><span class="p">,</span> <span class="s1">&#39;createIfEnter&#39;</span><span class="p">,</span> <span class="s1">&#39;analyzeTodos&#39;</span><span class="p">);</span>
+
+      <span class="nx">Todos</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">addTodo</span><span class="p">);</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">list</span>       <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#todo-list&quot;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">newInput</span>   <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#new-todo&quot;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">tooltip</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.ui-tooltip-top&quot;</span><span class="p">);</span>
+
+      <span class="nx">Todos</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span>
+        <span class="nx">success</span><span class="o">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">coll</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">coll</span><span class="p">.</span><span class="nx">models</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">addTodo</span><span class="p">);</span>
+        <span class="p">},</span> <span class="k">this</span><span class="p">)</span>
+      <span class="p">});</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">analyzeTodos</span><span class="p">();</span>
+
+      <span class="nx">Todos</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">analyzeTodos</span><span class="p">);</span>
+      <span class="nx">Todos</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;remove&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">analyzeTodos</span><span class="p">);</span>
+      <span class="nx">Todos</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">analyzeTodos</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">analyzeTodos</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">doneCount</span> <span class="o">=</span> <span class="nx">Todos</span><span class="p">.</span><span class="nx">done</span><span class="p">().</span><span class="nx">length</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">todoCount</span> <span class="o">=</span> <span class="nx">Todos</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">totalCount</span> <span class="o">=</span> <span class="nx">todoCount</span> <span class="o">-</span> <span class="nx">doneCount</span><span class="p">;</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.number&quot;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="nx">totalCount</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;.word&quot;</span><span class="p">).</span><span class="nx">text</span><span class="p">(</span><span class="nx">totalCount</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">?</span> <span class="s1">&#39;item&#39;</span> <span class="o">:</span> <span class="s1">&#39;items&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;span.todo-count&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">({</span><span class="nx">display</span><span class="o">:</span> <span class="nx">todoCount</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="s2">&quot;inline&quot;</span> <span class="o">:</span> <span class="s2">&quot;none&quot;</span><span class="p">});</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;span.todo-clear&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">({</span><span class="nx">display</span><span class="o">:</span> <span class="nx">doneCount</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="s2">&quot;inline&quot;</span> <span class="o">:</span> <span class="s2">&quot;none&quot;</span><span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">addTodo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">todo</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TodoView</span><span class="p">({</span><span class="nx">model</span><span class="o">:</span> <span class="nx">todo</span><span class="p">});</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">list</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">createIfEnter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span> <span class="o">==</span> <span class="mi">13</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Todos</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+          <span class="nx">content</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">newInput</span><span class="p">.</span><span class="nx">val</span><span class="p">(),</span>
+          <span class="nx">order</span><span class="o">:</span>   <span class="nx">Todos</span><span class="p">.</span><span class="nx">nextOrder</span><span class="p">(),</span>
+          <span class="nx">done</span><span class="o">:</span>    <span class="kc">false</span>
+        <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">newInput</span><span class="p">.</span><span class="nx">val</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">showTooltip</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">tooltip</span><span class="p">.</span><span class="nx">fadeOut</span><span class="p">();</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">tooltipTimeout</span><span class="p">)</span> <span class="nx">clearTimeout</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">tooltipTimeout</span><span class="p">);</span>
+
+      <span class="kd">var</span> <span class="nx">tt</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">tooltip</span><span class="p">;</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">newInput</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">!==</span> <span class="s2">&quot;&quot;</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">newInput</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span> <span class="o">!==</span> <span class="k">this</span><span class="p">.</span><span class="nx">newInput</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;placeholder&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">tooltipTimeout</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+          <span class="nx">tt</span><span class="p">.</span><span class="nx">show</span><span class="p">().</span><span class="nx">fadeIn</span><span class="p">();</span>
+        <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="nx">clearCompleted</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">thisView</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">Todos</span><span class="p">.</span><span class="nx">done</span><span class="p">(),</span> <span class="kd">function</span><span class="p">(</span><span class="nx">todo</span><span class="p">){</span>
+        <span class="nx">todo</span><span class="p">.</span><span class="nx">destroy</span><span class="p">({</span><span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">todo</span><span class="p">){</span>
+          <span class="nx">thisView</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#todo-&quot;</span><span class="o">+</span><span class="nx">todo</span><span class="p">.</span><span class="nx">id</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+        <span class="p">}});</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+
+  <span class="p">});</span>
+
+  <span class="nb">window</span><span class="p">.</span><span class="nx">App</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AppView</span><span class="p">;</span>
+
+<span class="p">});</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

@@ -128,15 +128,14 @@ body {
   margin-top: 10px;
 }
 /* line 56 */
-#todoapp .content ul#todo-list li {
+#todo-list .todo {
   padding: 15px 20px 15px 0;
   position: relative;
   font-size: 24px;
   border-bottom: 1px solid #cccccc;
-  *zoom: 1;
 }
-/* line 22, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
-#todoapp .content ul#todo-list li:after {
+
+#todoapp .content ul#todo-list .todo:after {
   content: "\0020";
   display: block;
   height: 0;
@@ -145,19 +144,27 @@ body {
   visibility: hidden;
 }
 /* line 62 */
-#todoapp .content ul#todo-list li.editing {
+#todo-list .editing {
   padding: 0;
   border-bottom: 0;
 }
+#todo-list .editing .display,
+#todo-list .edit {
+  display: none;
+}
+  #todo-list .editing .edit {
+    display: block;
+  }
 /* line 65 */
-#todoapp .content ul#todo-list li.editing input {
+#todoapp .content ul#todo-list .editing input {
   width: 466px;
   font-size: 24px;
   font-family: inherit;
+  margin: 0;
   line-height: 1.4em;
   border: 0;
   outline: none;
-  padding: 6px;
+  padding: 7px 7px 8px;
   border: 1px solid #999999;
   -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
@@ -172,7 +179,7 @@ body {
   float: left;
 }
 /* line 82 */
-#todoapp .content ul#todo-list li.done .todo-content {
+#todo-list .done .todo-content {
   text-decoration: line-through;
   color: #777777;
 }
@@ -243,6 +250,9 @@ body {
   text-shadow: rgba(255, 255, 255, 0.8) 0 1px 0;
   text-align: center;
 }
+  #instructions a {
+    color: #336699;
+  }
 
 /* line 127 */
 #credits {

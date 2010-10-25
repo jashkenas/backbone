@@ -5,6 +5,10 @@ $(function(){
 
     parse: function(resp) {
       return resp.model;
+    },
+
+    htmlId: function() {
+      return "todo-" + this.id;
     }
 
   });
@@ -41,40 +45,33 @@ $(function(){
 
   window.TodoView = Backbone.View.extend({
 
-    tagName: "li",
-    className: "todo",
+    tagName:    "li",
 
-    template: _.template("<input type='checkbox' /><div class='todo-content'><%= content %></div><span class='todo-destroy'></span>"),
-    editTemplate: _.template("<input type='text' value='<%= content %>' />"),
+    template:   _.template($('#item-template').html()),
 
     events: {
       "click input[type=checkbox]": "markAsDone",
       "dblclick div.todo-content" : "edit",
       "click span.todo-destroy"   : "destroy",
-      "keypress input[type=text]" : "changed"
+      "keypress .todo-input"      : "changed"
     },
 
     initialize: function() {
-      _.bindAll(this, 'toggleDone');
-      this.model.bind('change:done', this.toggleDone);
+      _.bindAll(this, 'render');
+      this.model.bind('change', this.render);
+      this.el.id = this.model.htmlId();
     },
 
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
-      $(this.el).attr({id : "todo-"+this.model.get("id")});
-      this.checkbox = this.$("input[type=checkbox]");
-      this.toggleDone();
+      this.setContent();
       return this;
     },
 
-    toggleDone: function() {
-      if (this.model.get('done')) {
-        $(this.el).addClass("done");
-        this.checkbox.attr({checked: "checked"});
-      } else {
-        $(this.el).removeClass("done");
-        this.checkbox.attr({checked: null});
-      }
+    setContent: function() {
+      var content = this.model.get('content');
+      this.$('.todo-content').text(content);
+      this.$('.todo-input').val(content);
     },
 
     markAsDone: function() {
@@ -82,25 +79,13 @@ $(function(){
     },
 
     edit: function() {
-      $(this.el).html(this.editTemplate(this.model.toJSON()));
-      $(this.el).addClass("editing");
+      this.$('.todo').addClass("editing");
       this.updateInput = this.$("input[type=text]");
     },
 
     changed: function(e) {
-      if (e.code == 13) {
-        var thisView = this;
-        this.model.save(
-          {
-            content: this.updateInput.val()
-          },
-          {
-            success: function(todo) {
-              thisView.render();
-              $(thisView.el).removeClass("editing");
-            }
-          }
-        );
+      if (e.keyCode == 13) {
+        this.model.save({content: this.updateInput.val()});
       }
     },
 
@@ -153,7 +138,7 @@ $(function(){
       var totalCount = todoCount - doneCount;
 
       this.$(".number").text(totalCount);
-      this.$(".word").text(totalCount == 1 ? 'todo' : 'todos');
+      this.$(".word").text(totalCount == 1 ? 'item' : 'items');
       this.$("span.todo-count").css({display: todoCount > 0 ? "inline" : "none"});
       this.$("span.todo-clear").css({display: doneCount > 0 ? "inline" : "none"});
     },
