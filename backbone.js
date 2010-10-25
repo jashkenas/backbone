@@ -18,7 +18,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.1.2';
+  Backbone.VERSION = '0.2.0';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;

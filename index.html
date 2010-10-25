@@ -34,6 +34,10 @@
         div.toc_title:hover {
           text-decoration: underline;
         }
+        #sidebar .version {
+          font-size: 10px;
+          font-weight: normal;
+        }
       ul.toc_section {
         font-size: 11px;
         line-height: 14px;
@@ -133,7 +137,7 @@
 
   <div id="sidebar" class="interface">
     <a class="toc_title" href="#">
-      Backbone.js
+      Backbone.js <span class="version">(0.2.0)</span>
     </a>
     <a class="toc_title" href="#Introduction">
       Introduction
@@ -243,12 +247,12 @@
       and the <a href="docs/backbone.html">annotated source code</a> is available,
       as well as an online <a href="test/test.html">test suite</a>.
     </p>
-    
+
     <p>
-      You can report bugs and discuss features on the 
+      You can report bugs and discuss features on the
       <a href="http://github.com/documentcloud/backbone/issues">issues page</a>,
-      on Freenode in the <tt>#documentcloud</tt> channel, 
-      or send tweets to <a href="http://twitter.com/documentcloud">@documentcloud</a>. 
+      on Freenode in the <tt>#documentcloud</tt> channel,
+      or send tweets to <a href="http://twitter.com/documentcloud">@documentcloud</a>.
     </p>
 
     <p>
@@ -265,11 +269,11 @@
 
     <table>
       <tr>
-        <td><a href="backbone.js">Development Version (0.1.2)</a></td>
-        <td><i>23.8kb, Uncompressed with Comments</i></td>
+        <td><a href="backbone.js">Development Version (0.2.0)</a></td>
+        <td><i>24.8kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="backbone-min.js">Production Version (0.1.2)</a></td>
+        <td><a href="backbone-min.js">Production Version (0.2.0)</a></td>
         <td><i>2.6kb, Packed and Gzipped</i></td>
       </tr>
     </table>
@@ -511,11 +515,11 @@ new Book({
       <br />
       Set a hash of attributes (one or many) on the model. If any of the attributes
       change the models state, a <tt>"change"</tt> event will be triggered, unless
-      <tt>{silent: true}</tt> is passed as an option. Change events for specific 
-      attributes are also triggered, and you can bind to those as well, for example: 
+      <tt>{silent: true}</tt> is passed as an option. Change events for specific
+      attributes are also triggered, and you can bind to those as well, for example:
       <tt>change:title</tt>, and <tt>change:content</tt>.
     </p>
-    
+
 <pre>
 note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
 </pre>
@@ -523,9 +527,9 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
     <p>
       If the model has a <a href="#Model-validate">validate</a> method,
       it will be validated before the attributes are set, no changes will
-      occur if the validation fails, and <b>set</b> will return <tt>false</tt>. 
-      You may also pass an <tt>error</tt> 
-      callback in the options, which will be invoked instead of triggering an 
+      occur if the validation fails, and <b>set</b> will return <tt>false</tt>.
+      You may also pass an <tt>error</tt>
+      callback in the options, which will be invoked instead of triggering an
       <tt>"error"</tt> event, should validation fail.
     </p>
 
@@ -606,7 +610,7 @@ setInterval(function() {
 
     <p>
       <i>
-        <b>Cautionary Note:</b> When fetching or saving a model, make sure that the model is part of 
+        <b>Cautionary Note:</b> When fetching or saving a model, make sure that the model is part of
         a collection with a <a href="#Collection-url">url</a> property specified,
         or that the model itself has a complete <a href="#Model-url">url</a> function
         of its own, so that the request knows where to go.
@@ -698,12 +702,12 @@ one.set({
 </pre>
 
     <p>
-      <tt>"error"</tt> events are useful for providing coarse-grained error 
+      <tt>"error"</tt> events are useful for providing coarse-grained error
       messages at the model or collection level, but if you have a specific view
-      that can better handle the error, you may override and suppress the event 
+      that can better handle the error, you may override and suppress the event
       by passing an <tt>error</tt> callback directly:
     </p>
-    
+
 <pre>
 account.set({access: "unlimited"}, {
   error: function(model, error) {
@@ -719,7 +723,7 @@ account.set({access: "unlimited"}, {
       the server. If your models are located somewhere else, override this method
       with the correct logic. Generates URLs of the form: <tt>"/[collection]/[id]"</tt>.
     </p>
-    
+
     <p>
       Delegates to <a href="#Collection-url">Collection#url</a> to generate the
       URL, so make sure that you have it defined.
@@ -727,14 +731,14 @@ account.set({access: "unlimited"}, {
       <a href="#Collection">Backbone.Collection</a> with a <tt>url</tt> of <tt>"/notes"</tt>,
       would have this URL: <tt>"/notes/101"</tt>
     </p>
-    
+
     <p id="Model-parse">
       <b class="header">parse</b><code>model.parse(response)</code>
       <br />
-      <b>parse</b> is called whenever a model's data is returned by the 
+      <b>parse</b> is called whenever a model's data is returned by the
       server, in <a href="#Model-fetch">fetch</a>, and <a href="#Model-save">save</a>.
       The function is passed the raw <tt>response</tt> object, and should return
-      the attributes hash to be <a href="#Model-set">set</a> on the model. The 
+      the attributes hash to be <a href="#Model-set">set</a> on the model. The
       default implementation is a no-op, simply passing through the JSON response.
       Override this if you need to work with a preexisting API, or better namespace
       your responses.
@@ -818,12 +822,12 @@ bill.set({name : "Bill Jones"});
 
     <p>
       Collections are ordered sets of models. You can to bind <tt>"change"</tt> events
-      to be notified when any model in the collection has been modified, 
+      to be notified when any model in the collection has been modified,
       listen for <tt>"add"</tt> and <tt>"remove"</tt> events, <tt>fetch</tt>
       the collection from the server, and use a full suite of
       <a href="#Collection-Underscore-Methods">Underscore.js methods</a>.
     </p>
-    
+
     <p>
       Collections may also listen for changes to specific attributes in their
       models, for example: <tt>Documents.bind("change:selected", ...)</tt>
@@ -874,24 +878,24 @@ var tabs = new TabSet([tab1, tab2, tab3]);
       to access model objects, but occasionally a direct reference to the array
       is desired.
     </p>
-    
+
     <p id="Collection-toJSON">
       <b class="header">toJSON</b><code>collection.toJSON()</code>
       <br />
       Return an array containing the attributes hash of each model in the
-      collection. This can be used to serialize and persist the 
+      collection. This can be used to serialize and persist the
       collection as a whole. The name of this method is a bit confusing, because
-      it conforms to 
+      it conforms to
       <a href="https://developer.mozilla.org/en/JSON#toJSON()_method">JavaScript's JSON API</a>.
     </p>
-    
+
 <pre class="runnable">
 var collection = new Backbone.Collection([
   {name: "Tim", age: 5},
   {name: "Ida", age: 26},
   {name: "Rob", age: 55}
-]);  
-  
+]);
+
 alert(JSON.stringify(collection));
 </pre>
 
@@ -1106,15 +1110,15 @@ var Notes = Backbone.Collection.extend({
     <p id="Collection-parse">
       <b class="header">parse</b><code>collection.parse(response)</code>
       <br />
-      <b>parse</b> is called by Backbone whenever a collection's models are 
+      <b>parse</b> is called by Backbone whenever a collection's models are
       returned by the server, in <a href="#Collection-fetch">fetch</a>.
       The function is passed the raw <tt>response</tt> object, and should return
-      the array of model attributes to be <a href="#Collection-add">added</a> 
-      to the collection. The default implementation is a no-op, simply passing 
-      through the JSON response. Override this if you need to work with a 
+      the array of model attributes to be <a href="#Collection-add">added</a>
+      to the collection. The default implementation is a no-op, simply passing
+      through the JSON response. Override this if you need to work with a
       preexisting API, or better namespace your responses.
     </p>
-    
+
 <pre>
 var Tweets = Backbone.Collection.extend({
   // The Twitter Search API returns tweets under "results".
@@ -1251,7 +1255,7 @@ var othello = NYPL.create({
       HTTP <tt>POST</tt>, and passing them under the <tt>_method</tt> parameter
       instead, by turning on <tt>Backbone.emulateHttp</tt>:
     </p>
-    
+
 <pre>
 Backbone.emulateHttp = true;
 
@@ -1449,9 +1453,10 @@ $("#make-demo").append(el);
       If an <b>events</b> hash is not passed directly, uses <tt>this.events</tt>
       as the source. Events are written in the format <tt>{"event selector": "callback"}</tt>.
       Omitting the <tt>selector</tt> causes the event to be bound to the view's
-      root element (<tt>this.el</tt>). By default <tt>delegateEvents</tt> is called
-      within the View's constructor for you, so if you have a simple <tt>events</tt> 
-      hash, all of your DOM events will always already be connected.
+      root element (<tt>this.el</tt>). By default, <tt>delegateEvents</tt> is called
+      within the View's constructor for you, so if you have a simple <tt>events</tt>
+      hash, all of your DOM events will always already be connected, and you will
+      never have to call this function yourself.
     </p>
 
     <p>
@@ -1500,17 +1505,17 @@ var DocumentView = Backbone.View.extend({
 </pre>
 
     <h2 id="examples">Examples</h2>
-    
+
     <p>
-      As a quick example to help get an idea of how Backbone can be used in a 
-      real-world project, here are the method signatures (beyond the built-in 
+      As a quick example to help get an idea of how Backbone can be used in a
+      real-world project, here are the method signatures (beyond the built-in
       methods that Backbone provides) of the <b>Document</b>
-      model, and the <b>DocumentSet</b> collection, as used in 
+      model, and the <b>DocumentSet</b> collection, as used in
       <a href="http://www.documentcloud.org">DocumentCloud</a>. In the workspace,
-      these classes work together with many others: <b>Project</b>, <b>Note</b>, 
+      these classes work together with many others: <b>Project</b>, <b>Note</b>,
       <b>Account</b>, <b>Entity</b>, <b>Organization</b>...
     </p>
-    
+
 <pre>
 dc.model.Document = Backbone.Model.extend({
 
@@ -1552,7 +1557,7 @@ dc.model.DocumentSet = Backbone.Collection.extend({
   initialize(options): ...
 
   comparator(document): ...
-  
+
   selectAll: ...
   deselectAll: ...
   selectedIds: ...
@@ -1579,17 +1584,29 @@ dc.model.DocumentSet = Backbone.Collection.extend({
 </pre>
 
     <h2 id="changelog">Change Log</h2>
-    
+
+    <p>
+      <b class="header">0.2.0</b> &mdash; <small><i>Oct 25, 2010</i></small><br />
+      Instead of requiring server responses to be namespaced under a <tt>model</tt>
+      key, now you can define your own <a href="#Model-parse">parse</a> method
+      to convert responses into attributes for Models and Collections.
+      The old <tt>handleEvents</tt> function is now named
+      <a href="#View-delegateEvents">delegateEvents</a>, and is automatically
+      called as part of the View's constructor.
+      Added a <a href="#Collection-toJSON">toJSON</a> function to Collections.
+      Added <a href="#Collection-chain">Underscore's chain</a> to Collections.
+    </p>
+
     <p>
       <b class="header">0.1.2</b> &mdash; <small><i>Oct 19, 2010</i></small><br />
       Added a <a href="#Model-fetch">Model#fetch</a> method for refreshing the
       attributes of single model from the server.
       An <tt>error</tt> callback may now be passed to <tt>set</tt> and <tt>save</tt>
-      as an option, which will be invoked if validation fails, overriding the 
+      as an option, which will be invoked if validation fails, overriding the
       <tt>"error"</tt> event.
       You can now tell backbone to use the <tt>_method</tt> hack instead of HTTP
       methods by setting <tt>Backbone.emulateHttp = true</tt>.
-      Existing Model and Collection data is no longer sent up unnecessarily with 
+      Existing Model and Collection data is no longer sent up unnecessarily with
       <tt>GET</tt> and <tt>DELETE</tt> requests. Added a <tt>rake lint</tt> task.
       Backbone is now published as an <a href="http://npmjs.org">NPM</a> module.
     </p>
