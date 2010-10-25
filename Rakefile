@@ -9,7 +9,7 @@ end
 
 desc "build the docco documentation"
 task :doc do
-  system "docco backbone.js examples/todos/todos.js"
+  system "docco backbone.js && docco examples/todos/todos.js"
 end
 
 desc "run JavaScriptLint on the source"
