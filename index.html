@@ -71,6 +71,11 @@
       margin: 20px 0;
       width: 550px;
     }
+      p.warning {
+        font-size: 12px;
+        line-height: 18px;
+        font-style: italic;
+      }
       div.container ul {
         list-style: circle;
         font-size: 12px;
@@ -115,6 +120,7 @@
       font-family: Monaco, Consolas, "Lucida Console", monospace;
       font-size: 12px;
       line-height: 18px;
+      font-style: normal;
     }
       tt {
         padding: 0px 3px;
@@ -468,14 +474,12 @@ var Note = Backbone.Model.extend({
 });
 </pre>
 
-    <p>
-      <i>
-        Brief aside on </i><tt>super</tt>: <i>JavaScript does not provide
+    <p class="warning">
+        Brief aside on <tt>super</tt>: JavaScript does not provide
         a simple way to call super &mdash; the function of the same name defined
         higher on the prototype chain. If you override a core function like
-        </i><tt>set</tt>,<i> or </i><tt>save</tt>, <i>and you want to invoke the
+        <tt>set</tt>, or <tt>save</tt>, and you want to invoke the
         parent object's implementation, you'll have to explicitly call it, along these lines:
-      </i>
     </p>
 
 <pre>
@@ -608,13 +612,11 @@ setInterval(function() {
 }, 10000);
 </pre>
 
-    <p>
-      <i>
-        <b>Cautionary Note:</b> When fetching or saving a model, make sure that the model is part of
-        a collection with a <a href="#Collection-url">url</a> property specified,
-        or that the model itself has a complete <a href="#Model-url">url</a> function
-        of its own, so that the request knows where to go.
-      </i>
+    <p class="warning">
+      <b>Cautionary Note:</b> When fetching or saving a model, make sure that the model is part of
+      a collection with a <a href="#Collection-url">url</a> property specified,
+      or that the model itself has a complete <a href="#Model-url">url</a> function
+      of its own, so that the request knows where to go.
     </p>
 
     <p id="Model-save">
@@ -1048,12 +1050,10 @@ chapters.add(new Chapter({page: 1, title: "The Beginning"}));
 alert(chapters.pluck('title'));
 </pre>
 
-    <p>
-      <i>
-        Brief aside: This comparator function is different than JavaScript's regular
-        "sort", which must return </i><tt>0</tt>, <tt>1</tt>, or <tt>-1</tt>,<i>
-        and is more similar to a </i><tt>sortBy</tt><i> &mdash; a much nicer API.
-      </i>
+    <p class="warning">
+      Brief aside: This comparator function is different than JavaScript's regular
+      "sort", which must return <tt>0</tt>, <tt>1</tt>, or <tt>-1</tt>,
+      and is more similar to a <tt>sortBy</tt><i> &mdash; a much nicer API.
     </p>
 
     <p id="Collection-sort">
@@ -1503,6 +1503,13 @@ var DocumentView = Backbone.View.extend({
 
 });
 </pre>
+
+    <p class="warning">
+      <b>Cautionary Note:</b> The "delegateEvents" function is
+      limited to events that work with delegation. "focus" and "blur" do not
+      bubble, and cannot be delegated, and "change", "submit", and "reset"
+      events do not bubble in current versions of Internet Explorer.
+    </p>
 
     <h2 id="examples">Examples</h2>
 
