@@ -31,6 +31,19 @@ $(document).ready(function() {
     equals(col.getByCid(col.first().cid), col.first());
   });
 
+  test("Collection: update index when id changes", function() {
+    var col = new Backbone.Collection();
+    col.add([
+      {id : 1, name : 'one'},
+      {id : 2, name : 'two'}
+    ]);
+    var one = col.get(1);
+    equals(one.get('name'), 'one');
+    one.set({id : 101});
+    equals(col.get(1), null);
+    equals(col.get(101).get('name'), 'one');
+  });
+
   test("Collection: at", function() {
     equals(col.at(2), b);
   });

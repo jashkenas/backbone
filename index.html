@@ -34,6 +34,10 @@
         div.toc_title:hover {
           text-decoration: underline;
         }
+        #sidebar .version {
+          font-size: 10px;
+          font-weight: normal;
+        }
       ul.toc_section {
         font-size: 11px;
         line-height: 14px;
@@ -67,6 +71,11 @@
       margin: 20px 0;
       width: 550px;
     }
+      p.warning {
+        font-size: 12px;
+        line-height: 18px;
+        font-style: italic;
+      }
       div.container ul {
         list-style: circle;
         font-size: 12px;
@@ -111,6 +120,7 @@
       font-family: Monaco, Consolas, "Lucida Console", monospace;
       font-size: 12px;
       line-height: 18px;
+      font-style: normal;
     }
       tt {
         padding: 0px 3px;
@@ -133,7 +143,7 @@
 
   <div id="sidebar" class="interface">
     <a class="toc_title" href="#">
-      Backbone.js
+      Backbone.js <span class="version">(0.2.0)</span>
     </a>
     <a class="toc_title" href="#Introduction">
       Introduction
@@ -164,6 +174,7 @@
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
       <li>– <a href="#Model-url">url</a></li>
+      <li>– <a href="#Model-parse">parse</a></li>
       <li>– <a href="#Model-clone">clone</a></li>
       <li>– <a href="#Model-isNew">isNew</a></li>
       <li>– <a href="#Model-change">change</a></li>
@@ -192,6 +203,7 @@
       <li>– <a href="#Collection-sort">sort</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
       <li>– <a href="#Collection-url">url</a></li>
+      <li>– <a href="#Collection-parse">parse</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
       <li>– <a href="#Collection-refresh">refresh</a></li>
       <li>– <a href="#Collection-create">create</a></li>
@@ -212,8 +224,11 @@
       <li>– <a href="#View-jQuery">$ (jQuery)</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-make">make</a></li>
-      <li>– <a href="#View-handleEvents">handleEvents</a></li>
+      <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
     </ul>
+    <a class="toc_title" href="#examples">
+      Examples
+    </a>
     <a class="toc_title" href="#changelog">
       Change Log
     </a>
@@ -238,12 +253,12 @@
       and the <a href="docs/backbone.html">annotated source code</a> is available,
       as well as an online <a href="test/test.html">test suite</a>.
     </p>
-    
+
     <p>
-      You can report bugs and discuss features on the 
+      You can report bugs and discuss features on the
       <a href="http://github.com/documentcloud/backbone/issues">issues page</a>,
-      on Freenode in the <tt>#documentcloud</tt> channel, 
-      or send tweets to <a href="http://twitter.com/documentcloud">@documentcloud</a>. 
+      on Freenode in the <tt>#documentcloud</tt> channel,
+      or send tweets to <a href="http://twitter.com/documentcloud">@documentcloud</a>.
     </p>
 
     <p>
@@ -260,11 +275,11 @@
 
     <table>
       <tr>
-        <td><a href="backbone.js">Development Version (0.1.2)</a></td>
-        <td><i>23.8kb, Uncompressed with Comments</i></td>
+        <td><a href="backbone.js">Development Version (0.2.0)</a></td>
+        <td><i>24.8kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="backbone-min.js">Production Version (0.1.2)</a></td>
+        <td><a href="backbone-min.js">Production Version (0.2.0)</a></td>
         <td><i>2.6kb, Packed and Gzipped</i></td>
       </tr>
     </table>
@@ -459,14 +474,12 @@ var Note = Backbone.Model.extend({
 });
 </pre>
 
-    <p>
-      <i>
-        Brief aside on </i><tt>super</tt>: <i>JavaScript does not provide
+    <p class="warning">
+        Brief aside on <tt>super</tt>: JavaScript does not provide
         a simple way to call super &mdash; the function of the same name defined
         higher on the prototype chain. If you override a core function like
-        </i><tt>set</tt>,<i> or </i><tt>save</tt>, <i>and you want to invoke the
+        <tt>set</tt>, or <tt>save</tt>, and you want to invoke the
         parent object's implementation, you'll have to explicitly call it, along these lines:
-      </i>
     </p>
 
 <pre>
@@ -505,10 +518,12 @@ new Book({
       <b class="header">set</b><code>model.set(attributes, [options])</code>
       <br />
       Set a hash of attributes (one or many) on the model. If any of the attributes
-      change the models state, a <tt>"change"</tt> event will be fired, unless
-      <tt>{silent: true}</tt> is passed as an option.
+      change the models state, a <tt>"change"</tt> event will be triggered, unless
+      <tt>{silent: true}</tt> is passed as an option. Change events for specific
+      attributes are also triggered, and you can bind to those as well, for example:
+      <tt>change:title</tt>, and <tt>change:content</tt>.
     </p>
-    
+
 <pre>
 note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
 </pre>
@@ -516,9 +531,9 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
     <p>
       If the model has a <a href="#Model-validate">validate</a> method,
       it will be validated before the attributes are set, no changes will
-      occur if the validation fails, and <b>set</b> will return <tt>false</tt>. 
-      You may also pass an <tt>error</tt> 
-      callback in the options, which will be invoked instead of triggering an 
+      occur if the validation fails, and <b>set</b> will return <tt>false</tt>.
+      You may also pass an <tt>error</tt>
+      callback in the options, which will be invoked instead of triggering an
       <tt>"error"</tt> event, should validation fail.
     </p>
 
@@ -597,13 +612,11 @@ setInterval(function() {
 }, 10000);
 </pre>
 
-    <p>
-      <i>
-        <b>Cautionary Note:</b> When fetching or saving a model, make sure that the model is part of 
-        a collection with a <a href="#Collection-url">url</a> property specified,
-        or that the model itself has a complete <a href="#Model-url">url</a> function
-        of its own, so that the request knows where to go.
-      </i>
+    <p class="warning">
+      <b>Cautionary Note:</b> When fetching or saving a model, make sure that the model is part of
+      a collection with a <a href="#Collection-url">url</a> property specified,
+      or that the model itself has a complete <a href="#Model-url">url</a> function
+      of its own, so that the request knows where to go.
     </p>
 
     <p id="Model-save">
@@ -691,12 +704,12 @@ one.set({
 </pre>
 
     <p>
-      <tt>"error"</tt> events are useful for providing coarse-grained error 
+      <tt>"error"</tt> events are useful for providing coarse-grained error
       messages at the model or collection level, but if you have a specific view
-      that can better handle the error, you may override and suppress the event 
+      that can better handle the error, you may override and suppress the event
       by passing an <tt>error</tt> callback directly:
     </p>
-    
+
 <pre>
 account.set({access: "unlimited"}, {
   error: function(model, error) {
@@ -719,6 +732,18 @@ account.set({access: "unlimited"}, {
       A model with an id of <tt>101</tt>, stored in a
       <a href="#Collection">Backbone.Collection</a> with a <tt>url</tt> of <tt>"/notes"</tt>,
       would have this URL: <tt>"/notes/101"</tt>
+    </p>
+
+    <p id="Model-parse">
+      <b class="header">parse</b><code>model.parse(response)</code>
+      <br />
+      <b>parse</b> is called whenever a model's data is returned by the
+      server, in <a href="#Model-fetch">fetch</a>, and <a href="#Model-save">save</a>.
+      The function is passed the raw <tt>response</tt> object, and should return
+      the attributes hash to be <a href="#Model-set">set</a> on the model. The
+      default implementation is a no-op, simply passing through the JSON response.
+      Override this if you need to work with a preexisting API, or better namespace
+      your responses.
     </p>
 
     <p id="Model-clone">
@@ -798,11 +823,16 @@ bill.set({name : "Bill Jones"});
     <h2 id="Collection">Backbone.Collection</h2>
 
     <p>
-      Collections are ordered sets of models. You can bind callbacks to be notified
-      when any model in the collection is changed, listen for <tt>"add"</tt> and
-      <tt>"remove"</tt> events, <tt>fetch</tt> the collection from the server,
-      and use a full suite of
+      Collections are ordered sets of models. You can to bind <tt>"change"</tt> events
+      to be notified when any model in the collection has been modified,
+      listen for <tt>"add"</tt> and <tt>"remove"</tt> events, <tt>fetch</tt>
+      the collection from the server, and use a full suite of
       <a href="#Collection-Underscore-Methods">Underscore.js methods</a>.
+    </p>
+
+    <p>
+      Collections may also listen for changes to specific attributes in their
+      models, for example: <tt>Documents.bind("change:selected", ...)</tt>
     </p>
 
     <p id="Collection-extend">
@@ -850,24 +880,24 @@ var tabs = new TabSet([tab1, tab2, tab3]);
       to access model objects, but occasionally a direct reference to the array
       is desired.
     </p>
-    
+
     <p id="Collection-toJSON">
       <b class="header">toJSON</b><code>collection.toJSON()</code>
       <br />
       Return an array containing the attributes hash of each model in the
-      collection. This can be used to serialize and persist the 
+      collection. This can be used to serialize and persist the
       collection as a whole. The name of this method is a bit confusing, because
-      it conforms to 
+      it conforms to
       <a href="https://developer.mozilla.org/en/JSON#toJSON()_method">JavaScript's JSON API</a>.
     </p>
-    
+
 <pre class="runnable">
 var collection = new Backbone.Collection([
   {name: "Tim", age: 5},
   {name: "Ida", age: 26},
   {name: "Rob", age: 55}
-]);  
-  
+]);
+
 alert(JSON.stringify(collection));
 </pre>
 
@@ -1020,12 +1050,10 @@ chapters.add(new Chapter({page: 1, title: "The Beginning"}));
 alert(chapters.pluck('title'));
 </pre>
 
-    <p>
-      <i>
-        Brief aside: This comparator function is different than JavaScript's regular
-        "sort", which must return </i><tt>0</tt>, <tt>1</tt>, or <tt>-1</tt>,<i>
-        and is more similar to a </i><tt>sortBy</tt><i> &mdash; a much nicer API.
-      </i>
+    <p class="warning">
+      Brief aside: This comparator function is different than JavaScript's regular
+      "sort", which must return <tt>0</tt>, <tt>1</tt>, or <tt>-1</tt>,
+      and is more similar to a <tt>sortBy</tt> &mdash; a much nicer API.
     </p>
 
     <p id="Collection-sort">
@@ -1079,6 +1107,27 @@ var Notes = Backbone.Collection.extend({
 });
 </pre>
 
+    <p id="Collection-parse">
+      <b class="header">parse</b><code>collection.parse(response)</code>
+      <br />
+      <b>parse</b> is called by Backbone whenever a collection's models are
+      returned by the server, in <a href="#Collection-fetch">fetch</a>.
+      The function is passed the raw <tt>response</tt> object, and should return
+      the array of model attributes to be <a href="#Collection-add">added</a>
+      to the collection. The default implementation is a no-op, simply passing
+      through the JSON response. Override this if you need to work with a
+      preexisting API, or better namespace your responses.
+    </p>
+
+<pre>
+var Tweets = Backbone.Collection.extend({
+  // The Twitter Search API returns tweets under "results".
+  parse: function(response) {
+    return response.results;
+  }
+});
+</pre>
+
     <p id="Collection-fetch">
       <b class="header">fetch</b><code>collection.fetch([options])</code>
       <br />
@@ -1090,15 +1139,8 @@ var Notes = Backbone.Collection.extend({
       <a href="#Collection-refresh">refresh</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers, for custom persistence strategies.
-    </p>
-
-    <p>
-      The server handler for <b>fetch</b> requests should return a JSON list of
-      models, namespaced under "models": <tt>{"models": [...]}</tt> &mdash;
-      instead of returning the
-      array directly, we ask you to namespace your models like this by default,
-      so that it's possible to send down out-of-band information
-      for things like pagination or error states.
+      The server handler for <b>fetch</b> requests should return a JSON array of
+      models.
     </p>
 
 <pre class="runnable">
@@ -1213,7 +1255,7 @@ var othello = NYPL.create({
       HTTP <tt>POST</tt>, and passing them under the <tt>_method</tt> parameter
       instead, by turning on <tt>Backbone.emulateHttp</tt>:
     </p>
-    
+
 <pre>
 Backbone.emulateHttp = true;
 
@@ -1255,7 +1297,7 @@ end
       <br />
       Get started with views by creating a custom view class. You'll want to
       override the <a href="#View-render">render</a> function, specify your
-      declarative <a href="#View-handleEvents">events</a>, and perhaps the
+      declarative <a href="#View-delegateEvents">events</a>, and perhaps the
       <tt>tagName</tt>, <tt>className</tt>, or <tt>id</tt> of the View's root
       element.
     </p>
@@ -1403,23 +1445,26 @@ $("#make-demo").append(el);
 
 <div id="make-demo"></div>
 
-    <p id="View-handleEvents">
-      <b class="header">handleEvents</b><code>handleEvents([events])</code>
+    <p id="View-delegateEvents">
+      <b class="header">delegateEvents</b><code>delegateEvents([events])</code>
       <br />
       Uses jQuery's <tt>delegate</tt> function to provide declarative callbacks
       for DOM events within a view.
       If an <b>events</b> hash is not passed directly, uses <tt>this.events</tt>
       as the source. Events are written in the format <tt>{"event selector": "callback"}</tt>.
       Omitting the <tt>selector</tt> causes the event to be bound to the view's
-      root element (<tt>this.el</tt>).
+      root element (<tt>this.el</tt>). By default, <tt>delegateEvents</tt> is called
+      within the View's constructor for you, so if you have a simple <tt>events</tt>
+      hash, all of your DOM events will always already be connected, and you will
+      never have to call this function yourself.
     </p>
 
     <p>
-      Using <b>handleEvents</b> provides a number of advantages over manually
+      Using <b>delegateEvents</b> provides a number of advantages over manually
       using jQuery to bind events to child elements during <a href="#View-render">render</a>. All attached
       callbacks are bound to the view before being handed off to jQuery, so when
       the callbacks are invoked, <tt>this</tt> continues to refer to the view object. When
-      <b>handleEvents</b> is run again, perhaps with a different <tt>events</tt>
+      <b>delegateEvents</b> is run again, perhaps with a different <tt>events</tt>
       hash, all callbacks are removed and delegated afresh &mdash; useful for
       views which need to behave differently when in different modes.
     </p>
@@ -1443,7 +1488,6 @@ var DocumentView = Backbone.View.extend({
 
   render: function() {
     $(this.el).html(this.template(this.model.toJSON()));
-    this.handleEvents();
     return this;
   },
 
@@ -1460,18 +1504,116 @@ var DocumentView = Backbone.View.extend({
 });
 </pre>
 
+    <p class="warning">
+      <b>Cautionary Note:</b> The "delegateEvents" function is
+      limited to events that work with delegation. "focus" and "blur" do not
+      bubble, and cannot be delegated, and "change", "submit", and "reset"
+      events do not bubble in current versions of Internet Explorer.
+    </p>
+
+    <h2 id="examples">Examples</h2>
+
+    <p>
+      As a quick example to help get an idea of how Backbone can be used in a
+      real-world project, here are the method signatures (beyond the built-in
+      methods that Backbone provides) of the <b>Document</b>
+      model, and the <b>DocumentSet</b> collection, as used in
+      <a href="http://www.documentcloud.org">DocumentCloud</a>. In the workspace,
+      these classes work together with many others: <b>Project</b>, <b>Note</b>,
+      <b>Account</b>, <b>Entity</b>, <b>Organization</b>...
+    </p>
+
+<pre>
+dc.model.Document = Backbone.Model.extend({
+
+  initialize(attributes): ...
+
+  canonicalId: ...
+
+  url: ...
+  viewerUrl: ...
+  publishedUrl: ...
+  pageThumbnailURL(page): ...
+
+  openViewer: ...
+  openPublishedViewer: ...
+  openText: ...
+  openPDF: ...
+
+  allowedToEdit: ...
+  checkAllowedToEdit(errorMessage): ...
+  checkBusy: ...
+
+  uniquePageEntities: ...
+
+  isPending: ...
+  isPublic: ...
+  isPublished: ...
+
+  toString: ...
+
+});
+
+
+dc.model.DocumentSet = Backbone.Collection.extend({
+
+  model: dc.model.Document,
+
+  url: '/documents',
+
+  initialize(options): ...
+
+  comparator(document): ...
+
+  selectAll: ...
+  deselectAll: ...
+  selectedIds: ...
+
+  filterPending: ...
+  filterSelected: ...
+
+  getCommonAttribute(documents, attribute): ...
+
+  allowedToEdit(documents, errorMessage): ...
+  editAccess(documents): ...
+
+  downloadSelectedViewers: ...
+  downloadSelectedPDFs: ...
+  downloadSelectedTexts: ...
+
+  poll: ...
+  startPolling: ...
+  stopPolling: ...
+
+  verifyDestroy(documents): ...
+
+});
+</pre>
+
     <h2 id="changelog">Change Log</h2>
-    
+
+    <p>
+      <b class="header">0.2.0</b> &mdash; <small><i>Oct 25, 2010</i></small><br />
+      Instead of requiring server responses to be namespaced under a <tt>model</tt>
+      key, now you can define your own <a href="#Model-parse">parse</a> method
+      to convert responses into attributes for Models and Collections.
+      The old <tt>handleEvents</tt> function is now named
+      <a href="#View-delegateEvents">delegateEvents</a>, and is automatically
+      called as part of the View's constructor.
+      Added a <a href="#Collection-toJSON">toJSON</a> function to Collections.
+      Added <a href="#Collection-chain">Underscore's chain</a> to Collections.
+    </p>
+
     <p>
       <b class="header">0.1.2</b> &mdash; <small><i>Oct 19, 2010</i></small><br />
       Added a <a href="#Model-fetch">Model#fetch</a> method for refreshing the
       attributes of single model from the server.
       An <tt>error</tt> callback may now be passed to <tt>set</tt> and <tt>save</tt>
-      as an option, which will be invoked if validation fails, overriding the 
+      as an option, which will be invoked if validation fails, overriding the
       <tt>"error"</tt> event.
       You can now tell backbone to use the <tt>_method</tt> hack instead of HTTP
       methods by setting <tt>Backbone.emulateHttp = true</tt>.
-      Existing Model and Collection data is no longer sent up unnecessarily with 
+      Existing Model and Collection data is no longer sent up unnecessarily with
       <tt>GET</tt> and <tt>DELETE</tt> requests. Added a <tt>rake lint</tt> task.
       Backbone is now published as an <a href="http://npmjs.org">NPM</a> module.
     </p>

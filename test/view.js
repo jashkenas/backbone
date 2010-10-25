@@ -37,19 +37,19 @@ $(document).ready(function() {
     equals(view.one, 1);
   });
 
-  test("View: handleEvents", function() {
+  test("View: delegateEvents", function() {
     var counter = 0;
     view.el = document.body;
     view.increment = function() {
       return ++counter;
     };
     var events = {"click #qunit-banner": "increment"};
-    view.handleEvents(events);
+    view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
     equals(counter, 1);
     $('#qunit-banner').trigger('click');
     equals(counter, 2);
-    view.handleEvents(events);
+    view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
     equals(counter, 3);
   });
