@@ -164,7 +164,7 @@ $(function(){
           content: this.newInput.val(),
           done: false
         });
-        this.newInput.setProperty("value", "");
+        this.newInput.val('');
       }
     },
 
