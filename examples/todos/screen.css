@@ -1,0 +1,259 @@
+@import url(tooltip.css);
+/* line 14, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+}
+
+/* line 17, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+body {
+  line-height: 1;
+  color: black;
+  background: white;
+}
+
+/* line 19, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 21, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  vertical-align: middle;
+}
+
+/* line 23, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 25, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: "" "";
+}
+/* line 96, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+}
+
+/* line 27, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 6 */
+html {
+  background: #eeeeee;
+}
+
+/* line 9 */
+body {
+  font-family: "Helvetica Neue", helvetica, arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4em;
+  background: #eeeeee;
+  color: #333333;
+}
+
+/* line 17 */
+#todoapp {
+  width: 480px;
+  margin: 40px auto;
+  background: white;
+  padding: 20px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 2px 4px 0;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 2px 4px 0;
+  -o-box-shadow: rgba(0, 0, 0, 0.3) 0 2px 4px 0;
+  box-shadow: rgba(0, 0, 0, 0.3) 0 2px 4px 0;
+}
+/* line 24 */
+#todoapp .title h1 {
+  font-size: 36px;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px 0 30px 0;
+  line-height: 1;
+}
+/* line 31 */
+#todoapp .content #create-todo {
+  position: relative;
+}
+/* line 33 */
+#todoapp .content #create-todo input {
+  width: 466px;
+  font-size: 24px;
+  font-family: inherit;
+  line-height: 1.4em;
+  border: 0;
+  outline: none;
+  padding: 6px;
+  border: 1px solid #999999;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -o-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+}
+/* line 44 */
+#todoapp .content #create-todo input::-webkit-input-placeholder {
+  font-style: italic;
+}
+/* line 46 */
+#todoapp .content #create-todo span {
+  position: absolute;
+  z-index: 999;
+  width: 170px;
+  left: 50%;
+  margin-left: -85px;
+  opacity: 0;
+}
+/* line 54 */
+#todoapp .content ul#todo-list {
+  margin-top: 10px;
+}
+/* line 56 */
+#todoapp .content ul#todo-list li {
+  padding: 15px 20px 15px 0;
+  position: relative;
+  font-size: 24px;
+  border-bottom: 1px solid #cccccc;
+  *zoom: 1;
+}
+/* line 22, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+#todoapp .content ul#todo-list li:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+/* line 62 */
+#todoapp .content ul#todo-list li.editing {
+  padding: 0;
+  border-bottom: 0;
+}
+/* line 65 */
+#todoapp .content ul#todo-list li.editing input {
+  width: 466px;
+  font-size: 24px;
+  font-family: inherit;
+  line-height: 1.4em;
+  border: 0;
+  outline: none;
+  padding: 6px;
+  border: 1px solid #999999;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  -o-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
+}
+/* line 76 */
+#todoapp .content ul#todo-list li input[type=checkbox] {
+  position: relative;
+  top: 6px;
+  margin: 0 10px 0 7px;
+  float: left;
+}
+/* line 82 */
+#todoapp .content ul#todo-list li.done .todo-content {
+  text-decoration: line-through;
+  color: #777777;
+}
+/* line 85 */
+#todoapp .content ul#todo-list li .todo-destroy {
+  position: absolute;
+  right: 0px;
+  top: 16px;
+  display: none;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background: url(destroy.png) no-repeat center center;
+}
+/* line 95 */
+#todoapp .content ul#todo-list li:hover .todo-destroy {
+  display: block;
+}
+/* line 98 */
+#todoapp .content #todo-stats {
+  *zoom: 1;
+  margin-top: 10px;
+  color: #777777;
+}
+/* line 22, /opt/ree/lib/ruby/gems/1.8/gems/compass-0.10.5/frameworks/compass/stylesheets/compass/utilities/general/_clearfix.scss */
+#todoapp .content #todo-stats:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  clear: both;
+  overflow: hidden;
+  visibility: hidden;
+}
+/* line 102 */
+#todoapp .content #todo-stats .todo-count {
+  display: none;
+  float: left;
+}
+/* line 105 */
+#todoapp .content #todo-stats .todo-count .number {
+  font-weight: bold;
+  color: #333333;
+}
+/* line 108 */
+#todoapp .content #todo-stats .todo-clear {
+  float: right;
+  display: none;
+}
+/* line 111 */
+#todoapp .content #todo-stats .todo-clear a {
+  color: #777777;
+  font-size: 12px;
+}
+/* line 114 */
+#todoapp .content #todo-stats .todo-clear a:visited {
+  color: #777777;
+}
+/* line 116 */
+#todoapp .content #todo-stats .todo-clear a:hover {
+  color: #336699;
+}
+
+/* line 120 */
+#instructions {
+  width: 520px;
+  margin: 10px auto;
+  color: #777777;
+  text-shadow: rgba(255, 255, 255, 0.8) 0 1px 0;
+  text-align: center;
+}
+
+/* line 127 */
+#credits {
+  width: 520px;
+  margin: 30px auto;
+  color: #777777;
+  text-shadow: rgba(255, 255, 255, 0.8) 0 1px 0;
+  text-align: center;
+}
+/* line 133 */
+#credits a {
+  color: #336699;
+}

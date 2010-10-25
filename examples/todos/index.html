@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Backbone Demo: Todos</title>
+    <link href="screen.css" media="all" rel="stylesheet" type="text/css"/>
+    <script src="../../test/vendor/jquery-1.4.2.js"></script>
+    <script src="../../test/vendor/underscore-1.1.0.js"></script>
+    <script src="../../backbone.js"></script>
+    <script src="javascripts/backbone.localStorage.js"></script>
+    <script src="javascripts/todos.js"></script>
+  </head>
+  <body>
+
+    <div id='todoapp'>
+
+      <div class='title'>
+        <h1>Todos</h1>
+      </div>
+
+      <div class='content'>
+
+        <div id='create-todo'>
+          <input id='new-todo' placeholder='What needs to be done?' type='text' />
+          <span class='ui-tooltip-top'>Press Enter to create this task</span>
+        </div>
+
+        <div id='todos'>
+          <ul id='todo-list'></ul>
+        </div>
+
+        <div id='todo-stats'>
+          <span class='todo-count'>
+            <span class='number'>0</span>
+            <span class='word'>todos</span>.
+          </span>
+          <span class='todo-clear'>
+            <a href='#'>Clear completed</a>
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <ul id='instructions'>
+      <li>Double-click to edit a todo.</li>
+    </ul>
+
+    <div id='credits'>
+      Created by
+      <br />
+      <a href='http://jgn.me/'>J&eacute;r&ocirc;me Gravel-Niquet</a>
+    </div>
+
+  </body>
+</html>
