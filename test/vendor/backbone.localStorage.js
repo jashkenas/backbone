@@ -9,18 +9,18 @@ function guid() {
 
 Storage.prototype.setObject = function(key, value) {
   this.setItem(key, JSON.stringify(value));
-}
+};
 
 Storage.prototype.getObject = function(key) {
   return this.getItem(key) && JSON.parse(this.getItem(key));
-}
+};
 
 var Store = function(name) {
   this.name = name;
 };
 
 _.extend(Store.prototype, {
-  
+
   create: function(model) {
     this.data = localStorage.getObject(this.name);
 
@@ -29,14 +29,14 @@ _.extend(Store.prototype, {
     }
 
     if (!model.id) model.attributes.id = guid();
-    
+
     this.data.push(model);
 
     localStorage.setObject(this.name, this.data);
 
     return {model: model, status: "success"};
   },
-  
+
   update: function(model) {
     var newData = [];
     var succeeded = false;
@@ -50,21 +50,21 @@ _.extend(Store.prototype, {
     newData = _.map(this.data, function(i) {
       if (i.id == model.id) {
         succeeded = true;
-        return model
+        return model;
       } else {
-        return i
+        return i;
       }
     });
-    
+
     if (!succeeded) {
-      this.create(model)
+      this.create(model);
     } else {
       localStorage.setObject(this.name, newData);
     }
 
     return {model: model, status: "success"};
   },
-  
+
   find: function(model) {
     var record;
 
@@ -87,17 +87,17 @@ _.extend(Store.prototype, {
       return {error: "Record Not Found.", status: "error"};
     }
   },
-  
+
   findAll: function() {
     this.data = localStorage.getObject(this.name);
-    
+
     if (!this.data) {
       this.data = [];
     }
-    
+
     return {models: this.data, status: "success"};
   },
-  
+
   destroy: function(model) {
     var newData = [];
     var recordKey;
@@ -116,7 +116,7 @@ _.extend(Store.prototype, {
         _.breakLoop();
       }
     });
-    
+
     if (succeeded) this.data.splice(recordKey, 1);
 
     localStorage.setObject(this.name, this.data);
@@ -124,27 +124,24 @@ _.extend(Store.prototype, {
     if (succeeded) {
       return {model: model, status: "success"};
     } else {
-      return {error: "Record Not Found.", status: "error"}
+      return {error: "Record Not Found.", status: "error"};
     }
   }
-  
+
 });
 
 Backbone.sync = function(method, model, success, error) {
-  
+
   var resp;
   var store = model.localStore ? model.localStore : model.collection.localStore;
-  
-  if (method === "read") {
-    resp = model.id ? store.find(model) : store.findAll();
-  } else if (method === "create") {
-    resp = store.create(model);
-  } else if (method === "update") {
-    resp = store.update(model);
-  } else if (method === "delete") {
-    resp = store.destroy(model);
+
+  switch (method) {
+    case "read":    resp = model.id ? store.find(model) : store.findAll(); break;
+    case "create":  resp = store.create(model);                            break;
+    case "update":  resp = store.update(model);                            break;
+    case "delete":  resp = store.destroy(model);                           break;
   }
-  
+
   if (resp.status == "success") {
     success(resp);
   } else if (resp.status == "error" && error) {

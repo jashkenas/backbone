@@ -128,14 +128,14 @@ body {
   margin-top: 10px;
 }
 /* line 56 */
-#todo-list .todo {
+#todo-list li {
   padding: 15px 20px 15px 0;
   position: relative;
   font-size: 24px;
   border-bottom: 1px solid #cccccc;
 }
 
-#todoapp .content ul#todo-list .todo:after {
+#todoapp .content ul#todo-list li:after {
   content: "\0020";
   display: block;
   height: 0;
@@ -144,7 +144,7 @@ body {
   visibility: hidden;
 }
 /* line 62 */
-#todo-list .editing {
+#todo-list li.editing {
   padding: 0;
   border-bottom: 0;
 }
@@ -157,14 +157,14 @@ body {
   }
 /* line 65 */
 #todoapp .content ul#todo-list .editing input {
-  width: 466px;
+  width: 444px;
   font-size: 24px;
   font-family: inherit;
   margin: 0;
-  line-height: 1.4em;
+  line-height: 1.6em;
   border: 0;
   outline: none;
-  padding: 7px 7px 8px;
+  padding: 10px 7px 0px 27px;
   border: 1px solid #999999;
   -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px 0 inset;
@@ -215,7 +215,6 @@ body {
 }
 /* line 102 */
 #todoapp .content #todo-stats .todo-count {
-  display: none;
   float: left;
 }
 /* line 105 */
@@ -226,7 +225,6 @@ body {
 /* line 108 */
 #todoapp .content #todo-stats .todo-clear {
   float: right;
-  display: none;
 }
 /* line 111 */
 #todoapp .content #todo-stats .todo-clear a {

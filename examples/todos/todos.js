@@ -9,6 +9,11 @@ $(function(){
 
     htmlId: function() {
       return "todo-" + this.id;
+    },
+
+    remove: function() {
+      this.destroy();
+      $(this.view.el).remove();
     }
 
   });
@@ -21,7 +26,7 @@ $(function(){
 
     // Returns all done todos.
     done: function() {
-      return this.select(function(todo){
+      return this.filter(function(todo){
         return todo.get('done');
       });
     },
@@ -37,6 +42,10 @@ $(function(){
 
     parse: function(resp) {
       return resp.models;
+    },
+
+    pluralize: function(count) {
+      return count == 1 ? 'item' : 'items';
     }
 
   });
@@ -45,14 +54,14 @@ $(function(){
 
   window.TodoView = Backbone.View.extend({
 
-    tagName:    "li",
+    tagName:  "li",
 
-    template:   _.template($('#item-template').html()),
+    template: _.template($('#item-template').html()),
 
     events: {
-      "click input[type=checkbox]": "markAsDone",
+      "click .check"              : "toggleDone",
       "dblclick div.todo-content" : "edit",
-      "click span.todo-destroy"   : "destroy",
+      "click span.todo-destroy"   : "remove",
       "keypress .todo-input"      : "changed"
     },
 
@@ -60,6 +69,7 @@ $(function(){
       _.bindAll(this, 'render');
       this.model.bind('change', this.render);
       this.el.id = this.model.htmlId();
+      this.model.view = this;
     },
 
     render: function() {
@@ -74,28 +84,23 @@ $(function(){
       this.$('.todo-input').val(content);
     },
 
-    markAsDone: function() {
-      this.model.save({ done: !this.model.get("done") });
+    toggleDone: function() {
+      this.model.save({done: !this.model.get("done")});
     },
 
     edit: function() {
-      this.$('.todo').addClass("editing");
-      this.updateInput = this.$("input[type=text]");
+      $(this.el).addClass("editing");
     },
 
     changed: function(e) {
       if (e.keyCode == 13) {
-        this.model.save({content: this.updateInput.val()});
+        this.model.save({content: this.$(".todo-input").val()});
+        $(this.el).removeClass("editing");
       }
     },
 
-    destroy: function() {
-      var thisView = this;
-      this.model.destroy({
-        success: function(){
-          $(thisView.el).remove();
-        }
-      });
+    remove: function() {
+      this.model.remove();
     }
 
   });
@@ -104,43 +109,38 @@ $(function(){
 
     el: $("#todoapp"),
 
+    template: _.template($('#stats-template').html()),
+
     events: {
-      "keypress input#new-todo":  "createIfEnter",
-      "keyup input#new-todo":     "showTooltip",
-      "click span.todo-clear":    "clearCompleted"
+      "keypress #new-todo":  "createIfEnter",
+      "keyup #new-todo":     "showTooltip",
+      "click .todo-clear a": "clearCompleted"
     },
 
     initialize: function() {
-      _.bindAll(this, 'addTodo', 'clearCompleted', 'showTooltip', 'createIfEnter', 'analyzeTodos');
-
-      Todos.bind('add', this.addTodo);
+      _.bindAll(this, 'addTodo', 'clearCompleted', 'showTooltip', 'createIfEnter', 'render');
 
       this.list       = $("#todo-list");
       this.newInput   = $("#new-todo");
       this.tooltip    = this.$(".ui-tooltip-top");
+
+      Todos.bind('add', this.addTodo);
+      Todos.bind('all', this.render);
 
       Todos.fetch({
         success: _.bind(function(coll) {
           _.each(coll.models, this.addTodo);
         }, this)
       });
-
-      this.analyzeTodos();
-
-      Todos.bind("add", this.analyzeTodos);
-      Todos.bind("remove", this.analyzeTodos);
-      Todos.bind("change", this.analyzeTodos);
     },
 
-    analyzeTodos: function() {
-      var doneCount = Todos.done().length;
-      var todoCount = Todos.length;
-      var totalCount = todoCount - doneCount;
-
-      this.$(".number").text(totalCount);
-      this.$(".word").text(totalCount == 1 ? 'item' : 'items');
-      this.$("span.todo-count").css({display: todoCount > 0 ? "inline" : "none"});
-      this.$("span.todo-clear").css({display: doneCount > 0 ? "inline" : "none"});
+    render: function() {
+      var done = Todos.done().length;
+      this.$('#todo-stats').html(this.template({
+        done:       done,
+        total:      Todos.length,
+        remaining:  Todos.length - done
+      }));
     },
 
     addTodo: function(todo) {
@@ -174,12 +174,8 @@ $(function(){
     },
 
     clearCompleted: function() {
-      thisView = this;
-      _.each(Todos.done(), function(todo){
-        todo.destroy({success: function(todo){
-          thisView.$("#todo-"+todo.id).remove();
-        }});
-      });
+      _.each(Todos.done(), function(todo){ todo.remove(); });
+      return false;
     }
 
   });

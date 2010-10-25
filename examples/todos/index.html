@@ -30,15 +30,7 @@
           <ul id="todo-list"></ul>
         </div>
 
-        <div id="todo-stats">
-          <span class="todo-count">
-            <span class="number">0</span>
-            <span class="word">items</span> left.
-          </span>
-          <span class="todo-clear">
-            <a href="#">Clear completed</a>
-          </span>
-        </div>
+        <div id="todo-stats"></div>
 
       </div>
 
@@ -55,10 +47,10 @@
       <a href="http://jgn.me/">J&eacute;r&ocirc;me Gravel-Niquet</a>
     </div>
 
-    <script type="text-template" id="item-template">
+    <script type="text/template" id="item-template">
       <div class="todo <%= done ? 'done' : '' %>">
         <div class="display">
-          <input type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+          <input class="check" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
           <div class="todo-content"></div>
           <span class="todo-destroy"></span>
         </div>
@@ -66,6 +58,23 @@
           <input class="todo-input" type="text" value="" />
         </div>
       </div>
+    </script>
+
+    <script type="text/template" id="stats-template">
+      <% if (total) { %>
+        <span class="todo-count">
+          <span class="number"><%= remaining %></span>
+          <span class="word"><%= Todos.pluralize(remaining) %></span> left.
+        </span>
+      <% } %>
+      <% if (done) { %>
+        <span class="todo-clear">
+          <a href="#">
+            Clear <span class="number-done"><%= done %></span>
+            completed <span class="word-done"><%= Todos.pluralize(done) %></span>
+          </a>
+        </span>
+      <% } %>
     </script>
 
   </body>
