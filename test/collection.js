@@ -31,6 +31,19 @@ $(document).ready(function() {
     equals(col.getByCid(col.first().cid), col.first());
   });
 
+  test("Collection: update index when id changes", function() {
+    var col = new Backbone.Collection();
+    col.add([
+      {id : 1, name : 'one'},
+      {id : 2, name : 'two'}
+    ]);
+    var one = col.get(1);
+    equals(one.get('name'), 'one');
+    one.set({id : 101});
+    equals(col.get(1), null);
+    equals(col.get(101).get('name'), 'one');
+  });
+
   test("Collection: at", function() {
     equals(col.at(2), b);
   });
@@ -82,6 +95,10 @@ $(document).ready(function() {
     equals(coll.one, 1);
   });
 
+  test("Collection: toJSON", function() {
+    equals(JSON.stringify(col), '[{"id":1,"label":"d"},{"id":2,"label":"c"},{"id":3,"label":"b"},{"id":4,"label":"a"}]');
+  });
+
   test("Collection: Underscore methods", function() {
     equals(col.map(function(model){ return model.get('label'); }).join(' '), 'd c b a');
     equals(col.any(function(model){ return model.id === 100; }), false);
@@ -95,6 +112,11 @@ $(document).ready(function() {
     ok(!_.include(col.without(d)), d);
     equals(col.max(function(model){ return model.id; }).id, 4);
     equals(col.min(function(model){ return model.id; }).id, 1);
+    same(col.chain()
+            .filter(function(o){ return o.id % 2 === 0; })
+            .map(function(o){ return o.id * 2; })
+            .value(),
+         [4, 8]);
   });
 
   test("Collection: refresh", function() {

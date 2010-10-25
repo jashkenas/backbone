@@ -18,7 +18,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.1.2';
+  Backbone.VERSION = '0.2.0';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;
@@ -198,7 +198,7 @@
       options || (options = {});
       var model = this;
       var success = function(resp) {
-        if (!model.set(resp.model, options)) return false;
+        if (!model.set(model.parse(resp), options)) return false;
         if (options.success) options.success(model, resp);
       };
       var error = options.error && _.bind(options.error, null, model);
@@ -215,7 +215,7 @@
       if (!this.set(attrs, options)) return false;
       var model = this;
       var success = function(resp) {
-        if (!model.set(resp.model, options)) return false;
+        if (!model.set(model.parse(resp), options)) return false;
         if (options.success) options.success(model, resp);
       };
       var error = options.error && _.bind(options.error, null, model);
@@ -245,6 +245,12 @@
       var base = getUrl(this.collection);
       if (this.isNew()) return base;
       return base + '/' + this.id;
+    },
+
+    // **parse** converts a response into the hash of attributes to be `set` on
+    // the model. The default implementation is just to pass the response along.
+    parse : function(resp) {
+      return resp;
     },
 
     // Create a new model with identical attributes to this one.
@@ -330,6 +336,12 @@
     // This should be overridden in most cases.
     model : Backbone.Model,
 
+    // The JSON representation of a Collection is an array of the
+    // models' attributes.
+    toJSON : function() {
+      return this.map(function(model){ return model.toJSON(); });
+    },
+
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `added` event for every new model.
     add : function(models, options) {
@@ -404,7 +416,7 @@
       options || (options = {});
       var collection = this;
       var success = function(resp) {
-        collection.refresh(resp.models);
+        collection.refresh(collection.parse(resp));
         if (options.success) options.success(collection, resp);
       };
       var error = options.error && _.bind(options.error, null, collection);
@@ -417,12 +429,25 @@
     create : function(model, options) {
       options || (options = {});
       if (!(model instanceof Backbone.Model)) model = new this.model(model);
-      model.collection = this;
-      var success = function(resp) {
-        model.collection.add(model);
-        if (options.success) options.success(model, resp);
+      var coll = model.collection = this;
+      var success = function(nextModel, resp) {
+        coll.add(nextModel);
+        if (options.success) options.success(nextModel, resp);
       };
       return model.save(null, {success : success, error : options.error});
+    },
+
+    // **parse** converts a response into a list of models to be added to the
+    // collection. The default implementation is just to pass it through.
+    parse : function(resp) {
+      return resp;
+    },
+
+    // Proxy to _'s chain. Can't be proxied the same way the rest of the
+    // underscore methods are proxied because it relies on the underscore
+    // constructor.
+    chain: function () {
+      return _(this.models).chain();
     },
 
     // Reset all internal state. Called when the collection is refreshed.
@@ -470,20 +495,14 @@
     },
 
     // Internal method called every time a model in the set fires an event.
-    // Sets need to update their indexes when models change ids.
-    _onModelEvent : function(ev, model, error) {
-      switch (ev) {
-        case 'change':
-          if (model.hasChanged('id')) {
-            delete this._byId[model.previous('id')];
-            this._byId[model.id] = model;
-          }
-          this.trigger('change', model);
-          break;
-        case 'error':
-          this.trigger('error', model, error);
-          break;
+    // Sets need to update their indexes when models change ids. All other
+    // events simply proxy through.
+    _onModelEvent : function(ev, model) {
+      if (ev === 'change:id') {
+        delete this._byId[model.previous('id')];
+        this._byId[model.id] = model;
       }
+      this.trigger.apply(this, arguments);
     }
 
   });
@@ -508,14 +527,8 @@
   // if an existing element is not provided...
   Backbone.View = function(options) {
     this._configure(options || {});
-    if (this.options.el) {
-      this.el = this.options.el;
-    } else {
-      var attrs = {};
-      if (this.id) attrs.id = this.id;
-      if (this.className) attrs.className = this.className;
-      this.el = this.make(this.tagName, attrs);
-    }
+    this._ensureElement();
+    this.delegateEvents();
     if (this.initialize) this.initialize(options);
   };
 
@@ -526,7 +539,7 @@
     return $(selector, this.el);
   };
 
-  // Cached regex to split keys for `handleEvents`.
+  // Cached regex to split keys for `delegate`.
   var eventSplitter = /^(\w+)\s*(.*)$/;
 
   // Set up all inheritable **Backbone.View** properties and methods.
@@ -570,17 +583,17 @@
     // pairs. Callbacks will be bound to the view, with `this` set properly.
     // Uses jQuery event delegation for efficiency.
     // Omitting the selector binds the event to `this.el`.
-    // `"change"` events are not delegated through the view because IE does not
-    // bubble change events at all.
-    handleEvents : function(events) {
-      $(this.el).unbind();
+    // This only works for delegate-able events: not `focus`, `blur`, and
+    // not `change`, `submit`, and `reset` in Internet Explorer.
+    delegateEvents : function(events) {
       if (!(events || (events = this.events))) return this;
+      $(this.el).unbind();
       for (var key in events) {
         var methodName = events[key];
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
         var method = _.bind(this[methodName], this);
-        if (selector === '' || eventName == 'change') {
+        if (selector === '') {
           $(this.el).bind(eventName, method);
         } else {
           $(this.el).delegate(selector, eventName, method);
@@ -596,10 +609,20 @@
       if (this.options) options = _.extend({}, this.options, options);
       if (options.model)      this.model      = options.model;
       if (options.collection) this.collection = options.collection;
+      if (options.el)         this.el         = options.el;
       if (options.id)         this.id         = options.id;
       if (options.className)  this.className  = options.className;
       if (options.tagName)    this.tagName    = options.tagName;
       this.options = options;
+    },
+
+    // Ensure that the View has a DOM element to render into.
+    _ensureElement : function() {
+      if (this.el) return;
+      var attrs = {};
+      if (this.id) attrs.id = this.id;
+      if (this.className) attrs.className = this.className;
+      this.el = this.make(this.tagName, attrs);
     }
 
   });
