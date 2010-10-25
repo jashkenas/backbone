@@ -198,7 +198,7 @@
       options || (options = {});
       var model = this;
       var success = function(resp) {
-        if (!model.set(resp.model, options)) return false;
+        if (!model.set(model.parse(resp), options)) return false;
         if (options.success) options.success(model, resp);
       };
       var error = options.error && _.bind(options.error, null, model);
@@ -215,7 +215,7 @@
       if (!this.set(attrs, options)) return false;
       var model = this;
       var success = function(resp) {
-        if (!model.set(resp.model, options)) return false;
+        if (!model.set(model.parse(resp), options)) return false;
         if (options.success) options.success(model, resp);
       };
       var error = options.error && _.bind(options.error, null, model);
@@ -245,6 +245,12 @@
       var base = getUrl(this.collection);
       if (this.isNew()) return base;
       return base + '/' + this.id;
+    },
+
+    // **parse** converts a response into the hash of attributes to be `set` on
+    // the model. The default implementation is just to pass the response along.
+    parse : function(resp) {
+      return resp;
     },
 
     // Create a new model with identical attributes to this one.
@@ -410,7 +416,7 @@
       options || (options = {});
       var collection = this;
       var success = function(resp) {
-        collection.refresh(resp.models);
+        collection.refresh(collection.parse(resp));
         if (options.success) options.success(collection, resp);
       };
       var error = options.error && _.bind(options.error, null, collection);
@@ -429,6 +435,12 @@
         if (options.success) options.success(nextModel, resp);
       };
       return model.save(null, {success : success, error : options.error});
+    },
+
+    // **parse** converts a response into a list of models to be added to the
+    // collection. The default implementation is just to pass it through.
+    parse : function(resp) {
+      return resp;
     },
 
     // Proxy to _'s chain. Can't be proxied the same way the rest of the
