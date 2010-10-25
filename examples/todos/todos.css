@@ -89,9 +89,10 @@ html {
   margin-top: 10px;
 }
   #todo-list li {
-    padding: 15px 20px 15px 0;
+    padding: 12px 20px 11px 0;
     position: relative;
     font-size: 24px;
+    line-height: 1.1em;
     border-bottom: 1px solid #cccccc;
   }
     #todo-list li:after {
@@ -130,7 +131,7 @@ html {
     }
   #todo-list .check {
     position: relative;
-    top: 6px;
+    top: 9px;
     margin: 0 10px 0 7px;
     float: left;
   }
@@ -140,8 +141,8 @@ html {
   }
   #todo-list .todo-destroy {
     position: absolute;
-    right: 0px;
-    top: 16px;
+    right: 5px;
+    top: 14px;
     display: none;
     cursor: pointer;
     width: 20px;

@@ -23,14 +23,15 @@ $(function(){
   // server.
   window.TodoList = Backbone.Collection.extend({
 
-    model:      Todo,
+    // Reference to this collection's model.
+    model: Todo,
+
+    // Save all of the todo items under the `"todos"` namespace.
     localStore: "todos",
 
     // Filter down the list of all todo items that are finished.
     done: function() {
-      return this.filter(function(todo){
-        return todo.get('done');
-      });
+      return this.filter(function(todo){ return todo.get('done'); });
     },
 
     // We keep the Todos in sequential order, despite being saved by unordered
@@ -40,25 +41,26 @@ $(function(){
       return this.last().get('order') + 1;
     },
 
-    // Todos are sorted by their original order.
+    // Todos are sorted by their original insertion order.
     comparator: function(todo) {
       return todo.get('order');
-    },
-
-    pluralize: function(count) {
-      return count == 1 ? 'item' : 'items';
     }
 
   });
 
+  // Create our global collection of **Todos**.
   window.Todos = new TodoList;
 
+  // The view for a single Todo item...
   window.TodoView = Backbone.View.extend({
 
+    //... is a list tag.
     tagName:  "li",
 
+    // Cache the template function for a single todo.
     template: _.template($('#item-template').html()),
 
+    // The DOM events specific to a todo item.
     events: {
       "click .check"              : "toggleDone",
       "dblclick div.todo-content" : "edit",
@@ -66,32 +68,41 @@ $(function(){
       "keypress .todo-input"      : "updateOnEnter"
     },
 
+    // The TodoView listens for changes to its model, re-rendering. Since there's
+    // a one-to-one correspondence between a **Todo** and a **TodoView** in this
+    // app, we set a direct reference on the model for convenience.
     initialize: function() {
       _.bindAll(this, 'render');
       this.model.bind('change', this.render);
       this.model.view = this;
     },
 
+    // Re-render the contents of the todo item.
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
       this.setContent();
       return this;
     },
 
+    // To avoid XSS (not that it would be harmful in this particular app),
+    // we use `jQuery.text` to set the contents of the todo item.
     setContent: function() {
       var content = this.model.get('content');
       this.$('.todo-content').text(content);
       this.$('.todo-input').val(content);
     },
 
+    // Toggle the `"done"` state of the model.
     toggleDone: function() {
       this.model.toggle();
     },
 
+    // Switch this view into `"editing"` mode, displaying the input field.
     edit: function() {
       $(this.el).addClass("editing");
     },
 
+    // If you hit enter, submit the changes to the todo item.
     updateOnEnter: function(e) {
       if (e.keyCode != 13) return;
       this.model.save({content: this.$(".todo-input").val()});
