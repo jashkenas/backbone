@@ -95,7 +95,7 @@ _.extend(Store.prototype, {
       this.data = [];
     }
 
-    return {models: this.data, status: "success"};
+    return {model: this.data, status: "success"};
   },
 
   destroy: function(model) {
@@ -133,7 +133,7 @@ _.extend(Store.prototype, {
 Backbone.sync = function(method, model, success, error) {
 
   var resp;
-  var store = model.localStore ? model.localStore : model.collection.localStore;
+  var store = new Store(model.localStore ? model.localStore : model.collection.localStore);
 
   switch (method) {
     case "read":    resp = model.id ? store.find(model) : store.findAll(); break;
@@ -143,7 +143,7 @@ Backbone.sync = function(method, model, success, error) {
   }
 
   if (resp.status == "success") {
-    success(resp);
+    success(resp.model);
   } else if (resp.status == "error" && error) {
     error(resp);
   }

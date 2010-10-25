@@ -6,13 +6,9 @@ $(function(){
   // Our basic **Todo** model. Has `content`, `order`, and `done` attributes.
   window.Todo = Backbone.Model.extend({
 
+    // Toggle the `done` state of this todo item.
     toggle: function() {
       this.save({done: !this.get("done")});
-    },
-
-    // Pull out the model's attributes from the the *localStorage* representation.
-    parse: function(resp) {
-      return resp.model;
     },
 
     // Remove this Todo from *localStorage*, deleting its view.
@@ -27,27 +23,26 @@ $(function(){
   // server.
   window.TodoList = Backbone.Collection.extend({
 
-    model: Todo,
-    localStore: new Store("todos"),
+    model:      Todo,
+    localStore: "todos",
 
-    // Returns all done todos.
+    // Filter down the list of all todo items that are finished.
     done: function() {
       return this.filter(function(todo){
         return todo.get('done');
       });
     },
 
+    // We keep the Todos in sequential order, despite being saved by unordered
+    // GUID in the database. This generates the next order number for new items.
     nextOrder: function() {
       if (!this.length) return 1;
       return this.last().get('order') + 1;
     },
 
+    // Todos are sorted by their original order.
     comparator: function(todo) {
       return todo.get('order');
-    },
-
-    parse: function(resp) {
-      return resp.models;
     },
 
     pluralize: function(count) {
