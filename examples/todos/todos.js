@@ -5,7 +5,12 @@ $(function(){
 
   // Our basic **Todo** model. Has `content`, `order`, and `done` attributes.
   window.Todo = Backbone.Model.extend({
-
+    
+    // Ensure each todo is created with the content field filled in.
+    initialize : function(){
+      if(!this.get("content")) this.set({"content": "New Todo"}, {silent:true})
+    },
+    
     // Toggle the `done` state of this todo item.
     toggle: function() {
       this.save({done: !this.get("done")});
