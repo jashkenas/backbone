@@ -1,6 +1,6 @@
 // An example Backbone application contributed by
 // [Jérôme Gravel-Niquet](http://jgn.me/). This demo uses a simple
-// [LocalStorage adapter](http://github.com/jeromegn/Backbone.localStorage)
+// [LocalStorage adapter](backbone.localstorage.html)
 // to persist Backbone models within your browser.
 
 // Load the application once the DOM is ready, using `jQuery.ready`:
@@ -46,7 +46,7 @@ $(function(){
     model: Todo,
 
     // Save all of the todo items under the `"todos"` namespace.
-    localStore: "todos",
+    localStorage: new Store("todos"),
 
     // Filter down the list of all todo items that are finished.
     done: function() {
