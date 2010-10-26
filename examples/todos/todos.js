@@ -126,14 +126,21 @@ $(function(){
 
     // Switch this view into `"editing"` mode, displaying the input field.
     edit: function() {
+      if (App.openItem) App.openItem.closeEdit();
       $(this.el).addClass("editing");
+      App.openItem = this;
     },
 
-    // If you hit enter, submit the changes to the todo item's `content`.
-    updateOnEnter: function(e) {
-      if (e.keyCode != 13) return;
+    // Close the `"editing"` mode, saving changes to the todo.
+    closeEdit: function() {
       this.model.save({content: this.$(".todo-input").val()});
       $(this.el).removeClass("editing");
+      delete App.openItem;
+    },
+
+    // If you hit `enter`, we're through editing the item.
+    updateOnEnter: function(e) {
+      if (e.keyCode == 13) this.closeEdit();
     },
 
     // Remove the item, destroy the model.
