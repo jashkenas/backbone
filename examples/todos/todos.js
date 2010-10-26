@@ -1,4 +1,7 @@
-// Example Backbone App contributed by [Jérôme Gravel-Niquet](http://jgn.me/).
+// An example Backbone application contributed by
+// [Jérôme Gravel-Niquet](http://jgn.me/). This demo uses a simple
+// [LocalStorage adapter](http://github.com/jeromegn/Backbone.localStorage)
+// to persist Backbone models within your browser.
 
 // Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
@@ -9,10 +12,10 @@ $(function(){
   // Our basic **Todo** model has `content`, `order`, and `done` attributes.
   window.Todo = Backbone.Model.extend({
 
+    // If you don't provide a todo, one will be provided for you.
     EMPTY: "empty todo...",
 
-    // Ensure that each todo is created with the `content` field filled in, if
-    // nothing has been specified.
+    // Ensure that each todo created has `content`.
     initialize: function() {
       if (!this.get("content")) {
         this.set({"content": this.EMPTY});
@@ -151,7 +154,7 @@ $(function(){
     el: $("#todoapp"),
 
     // Our template for the line of statistics at the bottom of the app.
-    template: _.template($('#stats-template').html()),
+    statsTemplate: _.template($('#stats-template').html()),
 
     // Delegated events for creating new items, and clearing completed ones.
     events: {
@@ -179,7 +182,7 @@ $(function(){
     // of the app doesn't change.
     render: function() {
       var done = Todos.done().length;
-      this.$('#todo-stats').html(this.template({
+      this.$('#todo-stats').html(this.statsTemplate({
         total:      Todos.length,
         done:       Todos.done().length,
         remaining:  Todos.remaining().length
