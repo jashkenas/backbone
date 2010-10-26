@@ -11,7 +11,7 @@ desc "build the docco documentation"
 task :doc do
   system [
     'docco backbone.js',
-    'docco examples/todos/todos.js examples/backbone.localstorage.js'
+    'docco examples/todos/todos.js examples/backbone-localstorage.js'
   ].join(' && ')
 end
 
