@@ -695,6 +695,7 @@
     _.extend(child.prototype, protoProps);
     if (classProps) _.extend(child, classProps);
     child.prototype.constructor = child;
+    child.__super__ = parent.prototype;
     return child;
   };
 

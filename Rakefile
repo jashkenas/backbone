@@ -19,3 +19,8 @@ desc "run JavaScriptLint on the source"
 task :lint do
   system "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
 end
+
+desc "test the CoffeeScript integration"
+task :test do
+  system "coffee test/*.coffee"
+end
