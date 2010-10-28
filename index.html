@@ -1275,7 +1275,7 @@ model.save();  // Sends a POST to "/collection/id", with "_method=PUT"
 def update
   account = Account.find(params[:id])
   account.update_attributes JSON.parse params[:model]
-  render :json => {:model => account}
+  render :json => account
 end
 </pre>
 
