@@ -1231,12 +1231,13 @@ var othello = NYPL.create({
     </ul>
 
     <p>
-      When formulating server responses for <b>Backbone.sync</b> requests,
-      model attributes will be sent up, serialized as JSON, under the <tt>model</tt>
-      parameter. When returning a JSON response, send down the model's representation
-      under the <tt>model</tt> key, and other keys can be used for additional out-of-band
-      information. When responding to a <tt>"read"</tt> request from a collection,
-      send down the array of model attribute hashes under the <tt>models</tt> key.
+      With the default implementation, when <b>Backbone.sync</b> sends up a request to save 
+      a model, its attributes will be passed, serialized as JSON, under the <tt>model</tt>
+      parameter. When returning a JSON response, send down the attributes of the
+      model that have been changed by the server, and need to be updated on the
+      client. When responding to a <tt>"read"</tt> request from a collection
+      (<a href="#Collection#fetch">Collection#fetch</a>), send down an array
+      of model attribute objects.
     </p>
 
     <p>
