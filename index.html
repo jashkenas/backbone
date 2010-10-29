@@ -1232,10 +1232,10 @@ var othello = NYPL.create({
 
     <p>
       With the default implementation, when <b>Backbone.sync</b> sends up a request to save 
-      a model, its attributes will be passed, serialized as JSON, under the <tt>model</tt>
-      parameter. When returning a JSON response, send down the attributes of the
-      model that have been changed by the server, and need to be updated on the
-      client. When responding to a <tt>"read"</tt> request from a collection
+      a model, its attributes will be passed, serialized as JSON, and sent in the HTTP body
+      with content-type <tt>application/json</tt>. When returning a JSON response, 
+      send down the attributes of the  model that have been changed by the server, and need 
+      to be updated on the client. When responding to a <tt>"read"</tt> request from a collection
       (<a href="#Collection#fetch">Collection#fetch</a>), send down an array
       of model attribute objects.
     </p>
@@ -1255,15 +1255,26 @@ var othello = NYPL.create({
       If your web server makes it difficult to work with real <tt>PUT</tt> and
       <tt>DELETE</tt> requests, you may choose to emulate them instead, using
       HTTP <tt>POST</tt>, and passing them under the <tt>_method</tt> parameter
-      instead, by turning on <tt>Backbone.emulateHttp</tt>:
+      instead, by turning on <tt>Backbone.emulateHTTP</tt>:
     </p>
 
 <pre>
-Backbone.emulateHttp = true;
+Backbone.emulateHTTP = true;
 
 model.save();  // Sends a POST to "/collection/id", with "_method=PUT"
 </pre>
 
+     <p>
+       Also you can choose to send the body with content-type 
+       <tt>application/x-www-form-urlencoded</tt> and the model in a JSON
+       string param called <tt>model</tt> by turning on <tt>Backbone.emulateJSON</tt>:
+    </p>
+          
+<pre>
+Backbone.emulateJSON = true;
+
+model.save();  //sends data as application/x-www-form-urlencoded
+</pre>
     <p>
       As an example, a Rails handler responding to an <tt>"update"</tt> call from
       <b>Backbone.sync</b> might look like this: <i>(In real code, never use
@@ -1557,7 +1568,7 @@ var DocumentView = Backbone.View.extend({
       as an option, which will be invoked if validation fails, overriding the
       <tt>"error"</tt> event.
       You can now tell backbone to use the <tt>_method</tt> hack instead of HTTP
-      methods by setting <tt>Backbone.emulateHttp = true</tt>.
+      methods by setting <tt>Backbone.emulateHTTP = true</tt>.
       Existing Model and Collection data is no longer sent up unnecessarily with
       <tt>GET</tt> and <tt>DELETE</tt> requests. Added a <tt>rake lint</tt> task.
       Backbone is now published as an <a href="http://npmjs.org">NPM</a> module.

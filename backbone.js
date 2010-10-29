@@ -27,9 +27,14 @@
   // For Backbone's purposes, jQuery owns the `$` variable.
   var $ = this.jQuery;
 
-  // Turn on `emulateHttp` to fake `"PUT"` and `"DELETE"` requests via
+  // Turn on `emulateHTTP` to fake `"PUT"` and `"DELETE"` requests via
   // the `_method` parameter.
-  Backbone.emulateHttp = false;
+  Backbone.emulateHTTP = false;
+
+  // Turn on `emulateJSON` to encode the body as 
+  // `application/x-www-form-urlencoded` instead of `application/json`
+  // with the model as a JSON string in the param `model`
+  Backbone.emulateJSON = false;
 
   // Backbone.Events
   // -----------------
@@ -654,25 +659,37 @@
   // * Send up the models as XML instead of JSON.
   // * Persist models via WebSockets instead of Ajax.
   //
-  // Turn on `Backbone.emulateHttp` in order to send `PUT` and `DELETE` requests
+  // Turn on `Backbone.emulateHTTP` in order to send `PUT` and `DELETE` requests
   // as `POST`, with an `_method` parameter containing the true HTTP method.
   // Useful when interfacing with server-side languages like **PHP** that make
-  // it difficult to read the body of `PUT` requests.
+  // it difficult to read the body of `PUT` requests.  Also, turn on Backbone.emulateJSON
+  // to send the body as `application/x-www-form-urlencoded` instead of 
+  // `application/json`, with the model in a JSON string param named `model`,
   Backbone.sync = function(method, model, success, error) {
     var sendModel = method === 'create' || method === 'update';
-    var data = sendModel ? {model : JSON.stringify(model)} : {};
+    var data = sendModel ? model : {};
     var type = methodMap[method];
-    if (Backbone.emulateHttp && (type === 'PUT' || type === 'DELETE')) {
+    if (Backbone.emulateHTTP && (type === 'PUT' || type === 'DELETE')) {
       data._method = type;
       type = 'POST';
-    }
+    } 
+
+
+	if (sendModel && Backbone.emulateJSON) data.model = JSON.stringify(model);
+	if (sendModel && !(Backbone.emulateHTTP || Backbone.emulateJSON)) data = JSON.stringify(data);
+	
+    processData = Backbone.emulateJSON ? true : false;
+    contentType = Backbone.emulateJSON ? "application/x-www-form-urlencoded" : "application/json";
+
     $.ajax({
-      url       : getUrl(model),
-      type      : type,
-      data      : data,
-      dataType  : 'json',
-      success   : success,
-      error     : error
+      url             : getUrl(model),
+      type            : type,
+      data            : data,
+      processData     : processData,
+      contentType     : contentType,
+      dataType        : 'json',
+      success         : success,
+      error           : error
     });
   };
 
