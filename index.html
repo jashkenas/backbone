@@ -1252,10 +1252,12 @@ var othello = NYPL.create({
     </ul>
 
     <p>
-      If your web server makes it difficult to work with real <tt>PUT</tt> and
-      <tt>DELETE</tt> requests, you may choose to emulate them instead, using
-      HTTP <tt>POST</tt>, and passing them under the <tt>_method</tt> parameter
-      instead, by turning on <tt>Backbone.emulateHTTP</tt>:
+      If you want to work with a legacy web server that doesn't support Backbones's
+      default JSON centric approach, you may choose to turn on <tt>Backbone.emulateHttp</tt>.
+      Setting this option will emulate <tt>PUT</tt> and <tt>DELETE</tt> requests with
+      a HTTP <tt>POST</tt>, and passing them under the <tt>_method</tt> parameter. Setting this option
+      will also send the model under a <tt>model</tt> param and use <tt>application/x-www-form-urlencoded</tt>
+      instead of the default <tt>application/json</tt> as the content-type for data sent. 
     </p>
 
 <pre>
@@ -1264,20 +1266,9 @@ Backbone.emulateHTTP = true;
 model.save();  // Sends a POST to "/collection/id", with "_method=PUT"
 </pre>
 
-     <p>
-       Also you can choose to send the body with content-type 
-       <tt>application/x-www-form-urlencoded</tt> and the model in a JSON
-       string param called <tt>model</tt> by turning on <tt>Backbone.emulateJSON</tt>:
-    </p>
-          
-<pre>
-Backbone.emulateJSON = true;
-
-model.save();  //sends data as application/x-www-form-urlencoded
-</pre>
     <p>
       As an example, a Rails handler responding to an <tt>"update"</tt> call from
-      <b>Backbone.sync</b> might look like this: <i>(In real code, never use
+      <tt>Backbone</tt> might look like this: <i>(In real code, never use
       </i><tt>update_attributes</tt><i> blindly, and always whitelist the attributes
       you allow to be changed.)</i>
     </p>

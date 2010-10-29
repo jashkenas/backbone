@@ -27,14 +27,11 @@
   // For Backbone's purposes, jQuery owns the `$` variable.
   var $ = this.jQuery;
 
-  // Turn on `emulateHTTP` to fake `"PUT"` and `"DELETE"` requests via
-  // the `_method` parameter.
-  Backbone.emulateHTTP = false;
-
-  // Turn on `emulateJSON` to encode the body as 
-  // `application/x-www-form-urlencoded` instead of `application/json`
-  // with the model as a JSON string in the param `model`
-  Backbone.emulateJSON = false;
+  // Turn on `emulateHttp` to use support legacy HTTP servers. Setting this option will
+  // fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and set a
+  // `X-Http-Method-Override` header, will  encode the body as`application/x-www-form-urlencoded` 
+  // instead of `application/json` and will send the model in a param named `model`.
+  Backbone.emulateHttp = false;
 
   // Backbone.Events
   // -----------------
@@ -659,38 +656,42 @@
   // * Send up the models as XML instead of JSON.
   // * Persist models via WebSockets instead of Ajax.
   //
-  // Turn on `Backbone.emulateHTTP` in order to send `PUT` and `DELETE` requests
-  // as `POST`, with an `_method` parameter containing the true HTTP method.
+  // Turn on `Backbone.emulateHttp` in order to send `PUT` and `DELETE` requests
+  // as `POST`, with a `_method` parameter containing the true HTTP method,
+  // as well as all requests with the body as `application/x-www-form-urlencoded` instead of 
+  // `application/json` with the model in a param named `model`.
   // Useful when interfacing with server-side languages like **PHP** that make
-  // it difficult to read the body of `PUT` requests.  Also, turn on Backbone.emulateJSON
-  // to send the body as `application/x-www-form-urlencoded` instead of 
-  // `application/json`, with the model in a JSON string param named `model`,
+  // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, success, error) {
     var sendModel = method === 'create' || method === 'update';
-    var data = sendModel ? model : {};
     var type = methodMap[method];
-    if (Backbone.emulateHTTP && (type === 'PUT' || type === 'DELETE')) {
-      data._method = type;
-      type = 'POST';
-    } 
+    var ajaxParams = {};
 
+    if (Backbone.emulateHttp) {
+        ajaxParams.contentType = "application/x-www-form-urlencoded";
+        ajaxParams.processData = true;
+        ajaxParams.data = {};
+        if (sendModel) ajaxParams.data.model = model.toJSON();
+        if (type === 'PUT' || type === 'DELETE') {
+            ajaxParams.data._method = type;
+            type = 'POST';
+            ajaxParams.beforeSend = function(xhr) {
+                xhr.setRequestHeader("X-Http-Method-Override", "PUT");
+            }
+        }
+    } else {
+        ajaxParams.contentType = "application/json";
+        ajaxParams.processData = false;
+        ajaxParams.data = sendModel ? JSON.stringify(model.toJSON()) : {};
+    }   
+    
+    ajaxParams.url = getUrl(model);
+    ajaxParams.type = type;
+    ajaxParams.dataType = "json";
+    ajaxParams.success = success;
+    ajaxParams.error = error;
 
-	if (sendModel && Backbone.emulateJSON) data.model = JSON.stringify(model);
-	if (sendModel && !(Backbone.emulateHTTP || Backbone.emulateJSON)) data = JSON.stringify(data);
-	
-    processData = Backbone.emulateJSON ? true : false;
-    contentType = Backbone.emulateJSON ? "application/x-www-form-urlencoded" : "application/json";
-
-    $.ajax({
-      url             : getUrl(model),
-      type            : type,
-      data            : data,
-      processData     : processData,
-      contentType     : contentType,
-      dataType        : 'json',
-      success         : success,
-      error           : error
-    });
+    $.ajax(ajaxParams);
   };
 
   // Helpers
