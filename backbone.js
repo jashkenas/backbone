@@ -189,6 +189,22 @@
       }
       return value;
     },
+    
+    // Clears all attributes from the model, firing `"change"` unless you 
+    // choose to silence it.
+    clear : function(options) {
+      options || (options = {});
+      var old = this.attributes;
+      this.attributes = {};
+      if (!options.silent) {
+        this._changed = true;
+        for (attr in old) {
+          this.trigger('change:' + attr, this);
+        }
+        this.change();
+      }
+      return old;
+    },
 
     // Fetch the model from the server. If the server's representation of the
     // model differs from its current attributes, they will be overriden,
