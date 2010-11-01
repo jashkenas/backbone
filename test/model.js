@@ -96,6 +96,12 @@ $(document).ready(function() {
     ok(changeCount == 2, "Change count should have incremented for unset.");
   });
 
+  test("Model: set an empty string", function() {
+    var model = new Backbone.Model({name : "Model"});
+    model.set({name : ''});
+    equals(model.get('name'), '');
+  });
+
   test("Model: changed, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
     model.bind('change', function() {

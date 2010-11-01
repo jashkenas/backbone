@@ -162,7 +162,6 @@
       // Update attributes.
       for (var attr in attrs) {
         var val = attrs[attr];
-        if (val === '') val = null;
         if (!_.isEqual(now[attr], val)) {
           now[attr] = val;
           if (!options.silent) {
