@@ -27,10 +27,9 @@ $(function(){
       this.save({done: !this.get("done")});
     },
 
-    // Remove this Todo from *localStorage* and delete its view.
+    // Remove this Todo from *localStorage*.
     clear: function() {
       this.destroy();
-      this.view.remove();
     }
 
   });
@@ -143,13 +142,9 @@ $(function(){
       if (e.keyCode == 13) this.close();
     },
 
-    // Remove this view from the DOM.
-    remove: function() {
-      $(this.el).remove();
-    },
-
-    // Remove the item, destroy the model.
+    // Remove the item from the DOM, destroy the model.
     clear: function() {
+      $(this.el).remove();
       this.model.clear();
     }
 
@@ -230,9 +225,9 @@ $(function(){
       this.input.val('');
     },
 
-    // Clear all done todo items, destroying their models.
+    // Clear all done todo items, destroying their views and models.
     clearCompleted: function() {
-      _.each(Todos.done(), function(todo){ todo.clear(); });
+      _.each(Todos.done(), function(todo){ todo.view.clear(); });
       return false;
     },
 
