@@ -27,10 +27,10 @@ $(function(){
       this.save({done: !this.get("done")});
     },
 
-    // Remove this Todo from *localStorage*, deleting its view.
+    // Remove this Todo from *localStorage* and delete its view.
     clear: function() {
       this.destroy();
-      $(this.view.el).remove();
+      this.view.remove();
     }
 
   });
@@ -141,6 +141,11 @@ $(function(){
     // If you hit `enter`, we're through editing the item.
     updateOnEnter: function(e) {
       if (e.keyCode == 13) this.close();
+    },
+
+    // Remove this view from the DOM
+    remove: function() {
+      $(this.el).remove();
     },
 
     // Remove the item, destroy the model.
