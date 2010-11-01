@@ -142,19 +142,8 @@
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes;
 
-      // Run validation if `validate` is defined. If a specific `error` callback
-      // has been passed, call that instead of firing the general `"error"` event.
-      if (this.validate) {
-        var error = this.validate(attrs);
-        if (error) {
-          if (options.error) {
-            options.error(this, error);
-          } else {
-            this.trigger('error', this, error);
-          }
-          return false;
-        }
-      }
+      // Run validation.
+      if (this.validate && !this._performValidation(attrs, options)) return false;
 
       // Check for changes of `id`.
       if ('id' in attrs) this.id = attrs.id;
@@ -176,25 +165,38 @@
       return this;
     },
 
-    // Remove an attribute from the model, firing `"change"` unless you choose to
-    // silence it.
+    // Remove an attribute from the model, firing `"change"` unless you choose
+    // to silence it.
     unset : function(attr, options) {
       options || (options = {});
       var value = this.attributes[attr];
+
+      // Run validation.
+      var validObj = {};
+      validObj[attr] = void 0;
+      if (this.validate && !this._performValidation(validObj, options)) return false;
+
+      // Remove the attribute.
       delete this.attributes[attr];
       if (!options.silent) {
         this._changed = true;
         this.trigger('change:' + attr, this);
         this.change();
       }
-      return value;
+      return this;
     },
-    
-    // Clears all attributes from the model, firing `"change"` unless you 
-    // choose to silence it.
+
+    // Clear all attributes on the model, firing `"change"` unless you choose
+    // to silence it.
     clear : function(options) {
       options || (options = {});
       var old = this.attributes;
+
+      // Run validation.
+      var validObj = {};
+      for (attr in old) validObj[attr] = void 0;
+      if (this.validate && !this._performValidation(validObj, options)) return false;
+
       this.attributes = {};
       if (!options.silent) {
         this._changed = true;
@@ -203,7 +205,7 @@
         }
         this.change();
       }
-      return old;
+      return this;
     },
 
     // Fetch the model from the server. If the server's representation of the
@@ -322,6 +324,22 @@
     // `"change"` event.
     previousAttributes : function() {
       return _.clone(this._previousAttributes);
+    },
+
+    // Run validation against a set of incoming attributes, returning `true`
+    // if all is well. If a specific `error` callback has been passed,
+    // call that instead of firing the general `"error"` event.
+    _performValidation : function(attrs, options) {
+      var error = this.validate(attrs);
+      if (error) {
+        if (options.error) {
+          options.error(this, error);
+        } else {
+          this.trigger('error', this, error);
+        }
+        return false;
+      }
+      return true;
     }
 
   });

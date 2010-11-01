@@ -102,6 +102,15 @@ $(document).ready(function() {
     equals(model.get('name'), '');
   });
 
+  test("Model: clear", function() {
+    var changed;
+    var model = new Backbone.Model({name : "Model"});
+    model.bind("change:name", function(){ changed = true; });
+    model.clear();
+    equals(changed, true);
+    equals(model.get('name'), undefined);
+  });
+
   test("Model: changed, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
     model.bind('change', function() {
@@ -151,6 +160,30 @@ $(document).ready(function() {
     equals(result, false);
     equals(model.get('a'), 100);
     equals(lastError, "Can't change admin status.");
+  });
+
+  test("Model: validate on unset and clear", function() {
+    var error;
+    var model = new Backbone.Model({name: "One"});
+    model.validate = function(attrs) {
+      if ("name" in attrs) {
+        if (!attrs.name) {
+          error = true;
+          return "No thanks.";
+        }
+      }
+    };
+    model.set({name: "Two"});
+    equals(model.get('name'), 'Two');
+    equals(error, undefined);
+    model.unset('name');
+    equals(error, true);
+    equals(model.get('name'), 'Two');
+    model.clear();
+    equals(model.get('name'), 'Two');
+    delete model.validate;
+    model.clear();
+    equals(model.get('name'), undefined);
   });
 
   test("Model: validate with error callback", function() {
