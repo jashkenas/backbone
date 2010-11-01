@@ -143,7 +143,7 @@ $(function(){
       if (e.keyCode == 13) this.close();
     },
 
-    // Remove this view from the DOM
+    // Remove this view from the DOM.
     remove: function() {
       $(this.el).remove();
     },
