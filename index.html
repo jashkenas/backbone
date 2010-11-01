@@ -1232,10 +1232,10 @@ var othello = NYPL.create({
 
     <p>
       With the default implementation, when <b>Backbone.sync</b> sends up a request to save 
-      a model, its attributes will be passed, serialized as JSON, under the <tt>model</tt>
-      parameter. When returning a JSON response, send down the attributes of the
-      model that have been changed by the server, and need to be updated on the
-      client. When responding to a <tt>"read"</tt> request from a collection
+      a model, its attributes will be passed, serialized as JSON, and sent in the HTTP body
+      with content-type <tt>application/json</tt>. When returning a JSON response, 
+      send down the attributes of the  model that have been changed by the server, and need 
+      to be updated on the client. When responding to a <tt>"read"</tt> request from a collection
       (<a href="#Collection#fetch">Collection#fetch</a>), send down an array
       of model attribute objects.
     </p>
@@ -1252,21 +1252,23 @@ var othello = NYPL.create({
     </ul>
 
     <p>
-      If your web server makes it difficult to work with real <tt>PUT</tt> and
-      <tt>DELETE</tt> requests, you may choose to emulate them instead, using
-      HTTP <tt>POST</tt>, and passing them under the <tt>_method</tt> parameter
-      instead, by turning on <tt>Backbone.emulateHttp</tt>:
+      If you want to work with a legacy web server that doesn't support Backbones's
+      default JSON centric approach, you may choose to turn on <tt>Backbone.emulateHttp</tt>.
+      Setting this option will emulate <tt>PUT</tt> and <tt>DELETE</tt> requests with
+      a HTTP <tt>POST</tt>, and passing them under the <tt>_method</tt> parameter. Setting this option
+      will also send the model under a <tt>model</tt> param and use <tt>application/x-www-form-urlencoded</tt>
+      instead of the default <tt>application/json</tt> as the content-type for data sent. 
     </p>
 
 <pre>
-Backbone.emulateHttp = true;
+Backbone.emulateHTTP = true;
 
 model.save();  // Sends a POST to "/collection/id", with "_method=PUT"
 </pre>
 
     <p>
       As an example, a Rails handler responding to an <tt>"update"</tt> call from
-      <b>Backbone.sync</b> might look like this: <i>(In real code, never use
+      <tt>Backbone</tt> might look like this: <i>(In real code, never use
       </i><tt>update_attributes</tt><i> blindly, and always whitelist the attributes
       you allow to be changed.)</i>
     </p>
@@ -1557,7 +1559,7 @@ var DocumentView = Backbone.View.extend({
       as an option, which will be invoked if validation fails, overriding the
       <tt>"error"</tt> event.
       You can now tell backbone to use the <tt>_method</tt> hack instead of HTTP
-      methods by setting <tt>Backbone.emulateHttp = true</tt>.
+      methods by setting <tt>Backbone.emulateHTTP = true</tt>.
       Existing Model and Collection data is no longer sent up unnecessarily with
       <tt>GET</tt> and <tt>DELETE</tt> requests. Added a <tt>rake lint</tt> task.
       Backbone is now published as an <a href="http://npmjs.org">NPM</a> module.
