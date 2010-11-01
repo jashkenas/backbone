@@ -62,7 +62,7 @@ $(document).ready(function() {
     equals(lastRequest.type, 'POST');
     equals(lastRequest.dataType, 'json');
     equals(lastRequest.data._method, 'PUT');
-    var data = lastRequest.data.model;
+    var data = JSON.parse(lastRequest.data.model);
     equals(data.id, '2-the-tempest');
     equals(data.author, 'Tim Shakespeare');
     equals(data.length, 123);
