@@ -706,7 +706,7 @@
       url:          getUrl(model),
       type:         type,
       contentType:  'application/json',
-      data:         sendModel ? modelJSON : {},
+      data:         sendModel ? modelJSON : null,
       dataType:     'json',
       processData:  false,
       success:      success,

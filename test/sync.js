@@ -80,7 +80,7 @@ $(document).ready(function() {
     library.first().destroy();
     equals(lastRequest.url, '/library/2-the-tempest');
     equals(lastRequest.type, 'DELETE');
-    ok(_.isEmpty(lastRequest.data));
+    equals(lastRequest.data, null);
   });
 
   test("sync: destroy with emulateHttp", function() {
