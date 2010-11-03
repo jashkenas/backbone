@@ -38,6 +38,16 @@ $(document).ready(function() {
     equals(model.one, 1);
   });
 
+  test("Model: initialize with attributes and options", function() {
+    var Model = Backbone.Model.extend({
+      initialize: function(attributes, options) {
+        this.one = options.one;
+      }
+    });
+    var model = new Model({}, {one: 1});
+    equals(model.one, 1);
+  });
+
   test("Model: url", function() {
     equals(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;

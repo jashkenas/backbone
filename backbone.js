@@ -107,12 +107,12 @@
 
   // Create a new model, with defined attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
-  Backbone.Model = function(attributes) {
+  Backbone.Model = function(attributes, options) {
     this.attributes = {};
     this.cid = _.uniqueId('c');
     this.set(attributes || {}, {silent : true});
     this._previousAttributes = _.clone(this.attributes);
-    if (this.initialize) this.initialize(attributes);
+    if (this.initialize) this.initialize(attributes, options);
   };
 
   // Attach all inheritable methods to the Model prototype.
