@@ -737,20 +737,43 @@
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
-  var inherits = function(parent, protoProps, classProps) {
-    var child;
-    if (protoProps.hasOwnProperty('constructor')) {
+  var inherits = function(parent, protoProps, childProps) {
+    var child,
+        emptyConstructor = function() {},
+        __super__ = parent.constructor;
+
+    // Create a constructor based on protoProps.constructor or parent.
+    // Has the effect of telescoping back to the main serialization
+    // and initialization functions of Backbone.Model/Collection/View
+    // if no custom constructor is supplied by protoProps.
+    if (protoProps && protoProps.hasOwnProperty('constructor')) {
       child = protoProps.constructor;
+      // Remove the function from protoProps so it isn't mixed in below.
+      delete protoProps.constructor;
     } else {
-      child = function(){ return parent.apply(this, arguments); };
+      child = function() {
+        return parent.apply(this, arguments);
+      };
     }
-    var ctor = function(){};
-    ctor.prototype = parent.prototype;
-    child.prototype = new ctor();
-    _.extend(child.prototype, protoProps);
-    if (classProps) _.extend(child, classProps);
+
+    // Create a new level of inheritance without triggering parent().
+    emptyConstructor.prototype = __super__;
+    child.prototype = new emptyConstructor();
+
+    // Extend the child and child prototype if the arguments were supplied.
+    if (protoProps) {
+      _.extend(child.prototype, protoProps);
+    }
+    if (childProps) {
+      _.extend(child, childProps);
+    }
+
+    // Correctly set child's prototype.constructor back to child, instead of parent.
     child.prototype.constructor = child;
-    child.__super__ = parent.prototype;
+    
+    // Set a convenience property in case the parent's prototype is needed later.
+    child.__super__ = __super__;
+
     return child;
   };
 
