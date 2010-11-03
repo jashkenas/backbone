@@ -734,45 +734,40 @@
   // Helpers
   // -------
 
+  // Shared empty constructor function to aid in prototype-chain creation.
+  var ctor = function(){};
+
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
-  var inherits = function(parent, protoProps, childProps) {
-    var child,
-        emptyConstructor = function() {},
-        __super__ = parent.constructor;
+  var inherits = function(parent, protoProps, staticProps) {
+    var child;
 
-    // Create a constructor based on protoProps.constructor or parent.
-    // Has the effect of telescoping back to the main serialization
-    // and initialization functions of Backbone.Model/Collection/View
-    // if no custom constructor is supplied by protoProps.
-    if (protoProps && protoProps.hasOwnProperty('constructor')) {
+    // The constructor function for the new subclass is either defined by you
+    // (the "constructor" property in your `extend` definition), or defaulted
+    // by us to simply call `super()`.
+    if (protoProps.hasOwnProperty('constructor')) {
       child = protoProps.constructor;
-      // Remove the function from protoProps so it isn't mixed in below.
-      delete protoProps.constructor;
     } else {
-      child = function() {
-        return parent.apply(this, arguments);
-      };
+      child = function(){ return parent.apply(this, arguments); };
     }
 
-    // Create a new level of inheritance without triggering parent().
-    emptyConstructor.prototype = __super__;
-    child.prototype = new emptyConstructor();
+    // Set the prototype chain to inherit from `parent`, without calling
+    // `parent`'s constructor function.
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor();
 
-    // Extend the child and child prototype if the arguments were supplied.
-    if (protoProps) {
-      _.extend(child.prototype, protoProps);
-    }
-    if (childProps) {
-      _.extend(child, childProps);
-    }
+    // Add prototype properties (instance properties) to the subclass.
+    _.extend(child.prototype, protoProps);
 
-    // Correctly set child's prototype.constructor back to child, instead of parent.
+    // Add static properties to the constructor function, if supplied.
+    if (staticProps) _.extend(child, staticProps);
+
+    // Correctly set child's `prototype.constructor`, for `instanceof`.
     child.prototype.constructor = child;
-    
+
     // Set a convenience property in case the parent's prototype is needed later.
-    child.__super__ = __super__;
+    child.__super__ = parent.prototype;
 
     return child;
   };
