@@ -160,6 +160,11 @@ $(document).ready(function() {
     equals(result, false);
     equals(model.get('a'), 100);
     equals(lastError, "Can't change admin status.");
+    lastError = undefined;
+    result = model.set({a: 200, admin: true}, {force: true});
+    equals(result, model);
+    equals(model.get('admin'), true);
+    equals(lastError, undefined);
   });
 
   test("Model: validate on unset and clear", function() {
