@@ -32,6 +32,7 @@ $(document).ready(function() {
     var Model = Backbone.Model.extend({
       initialize: function() {
         this.one = 1;
+        equals(this.collection, collection);
       }
     });
     var model = new Model({}, {collection: collection});

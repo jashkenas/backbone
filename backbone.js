@@ -464,9 +464,13 @@
     // Create a new instance of a model in this collection. After the model
     // has been created on the server, it will be added to the collection.
     create : function(model, options) {
+      var coll = this;
       options || (options = {});
-      if (!(model instanceof Backbone.Model)) model = new this.model(model);
-      var coll = model.collection = this;
+      if (!(model instanceof Backbone.Model)) {
+        model = new this.model(model, {collection: coll});
+      } else {
+        model.collection = coll;
+      }
       var success = function(nextModel, resp) {
         coll.add(nextModel);
         if (options.success) options.success(nextModel, resp);
@@ -500,7 +504,7 @@
     _add : function(model, options) {
       options || (options = {});
       if (!(model instanceof Backbone.Model)) {
-        model = new this.model(model);
+        model = new this.model(model, {collection: this});
       }
       var already = this.getByCid(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
