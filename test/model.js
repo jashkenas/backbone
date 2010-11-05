@@ -34,8 +34,9 @@ $(document).ready(function() {
         this.one = 1;
       }
     });
-    var model = new Model;
+    var model = new Model({}, {collection: collection});
     equals(model.one, 1);
+    equals(model.collection, collection);
   });
 
   test("Model: initialize with attributes and options", function() {

@@ -112,6 +112,7 @@
     this.cid = _.uniqueId('c');
     this.set(attributes || {}, {silent : true});
     this._previousAttributes = _.clone(this.attributes);
+    if (options && options.collection) this.collection = options.collection;
     if (this.initialize) this.initialize(attributes, options);
   };
 
