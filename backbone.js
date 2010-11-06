@@ -721,6 +721,7 @@
     // For older servers, emulate JSON/HTTP by encoding the request into
     // HTML-form-style, and mimicking the HTTP method with `_method`
     if (Backbone.emulateHttp) {
+      params.processData = true;
       params.contentType = "application/x-www-form-urlencoded";
       params.data        = sendModel ? {model : modelJSON} : {};
       if (type === 'PUT' || type === 'DELETE') {
