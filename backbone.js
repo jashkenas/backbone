@@ -285,7 +285,7 @@
       return !this.id;
     },
 
-    // Call this method to fire manually fire a `change` event for this model.
+    // Call this method to manually fire a `change` event for this model.
     // Calling this will cause all objects observing the model to update.
     change : function() {
       this.trigger('change', this);
