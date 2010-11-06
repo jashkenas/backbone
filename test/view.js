@@ -54,6 +54,70 @@ $(document).ready(function() {
     equals(counter, 3);
   });
 
+  test("View: handleBindings", function() {
+    var ViewClass = Backbone.View.extend({
+        initialize: function () {
+          this.el = $('<div class="classic"><h1 class="title blue">something</h1><p class="content">the content</p></div>');
+          this.handleBindings();
+        },
+        
+        contentBindings: {
+          title: '.title',
+          body: ''
+        },
+        
+        classBindings: {
+          open: '.title',
+          color: '.title',
+          focused: '',
+          status: ''
+        }
+      }),
+      ModelClass = Backbone.Model.extend({
+        initialize: function () {
+          // set some initial values
+          this.set({
+            title: 'something',
+            open: false,
+            color: 'blue',
+            focused: false,
+            status: 'classic'
+          });
+        }
+      }),
+      model = new ModelClass(),
+      view = new ViewClass({model: model});
+      
+      equals(view.el.find('.title').text(), 'something');
+      
+      // change everything
+      model.set({
+        title: 'something else',
+        open: true,
+        color: 'green',
+        focused: true,
+        status: 'old'
+      });
+      // make sure our content updated
+      equals(view.el.find('.title').text(), 'something else');
+      
+      // make sure our boolean added active class
+      ok(view.el.find('.title').hasClass('active'), "okay: now has class 'active'");
+      
+      // make sure our string added new class property & removed old
+      ok(view.el.find('.title').hasClass('green'), "okay: now has class 'green'");
+      equals(view.el.find('.title').hasClass('blue'), false);
+      
+      // make sure works on parent element too.
+      ok(view.el.hasClass('active'), "okay: parent el now has class 'active'");
+      ok(view.el.hasClass('old'), "okay: now has class 'green'");
+      equals(view.el.hasClass('classic'), false);
+      
+      // make sure content works on parent too
+      model.set({body: "different"});
+      equals(view.el.text(), "different");
+  });
+
   test("View: _ensureElement", function() {
     var ViewClass = Backbone.View.extend({
       el: document.body

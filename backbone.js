@@ -642,7 +642,74 @@
       }
       return this;
     },
-
+    
+    // Lets you directly bind model attributes to the UI.
+    // 
+    // Also allows for declarative binding of attributes to element classes.
+    // 
+    // Lets you create a hash as follows
+    // 
+    //   contentBindings: {
+    //     title: '.title',
+    //     body: '#content'
+    //   }
+    // 
+    // This would automatically make the content of the `this.$('.title')`
+    // always match the title attribute. This is done by jQuery's `text()`
+    // method to ensure the content is properly escaped.
+    //
+    // It also implements class bindings if they exist. Class bindings take 
+    // two forms they if they are boolean values or "stringable" values.
+    // 
+    // Booleans will automatically add/remove an 'active' class. Where string
+    // values will remove the previous string value and add a class that matches
+    // the new string.
+    // 
+    //   classBindings: {
+    //     selected: '.title',
+    //     expanded: '.content'
+    //   }
+    // 
+    // If the `expanded` model attribute is a boolean it will add/remove `active`
+    // as a class on the `this.$('.content')` element.
+    handleBindings: function () {
+      var that = this;
+      
+      // content bindings
+      if (this.contentBindings) {
+        _.each(this.contentBindings, function (selector, key) {
+          that.model.bind('change:' + key, function () {
+            var el = (selector.length > 0) ? that.$(selector) : $(that.el);
+            
+            el.text(that.model.get(key));
+          });
+        });
+      }
+      
+      // class bindings
+      if (this.classBindings) {
+        _.each(this.classBindings, function (selector, key) {
+          that.model.bind('change:' + key, function () {
+            var newValue = that.model.get(key),
+              el = (selector.length > 0) ? that.$(selector) : $(that.el);
+      
+            // if it's a boolean value, just add/remove 'active' class
+            if (_.isBoolean(newValue)) {
+              if (newValue) {
+                el.addClass('active');
+              } else {
+                el.removeClass('active');    
+              }
+            // otherwise remove the previous value and add the new one as a class.
+            } else {
+              el.removeClass(that.model.previous(key)).addClass(newValue);
+            }
+          });
+        });
+      }
+      return this;
+    },
+    
     // Performs the initial configuration of a View with a set of options.
     // Keys with special meaning *(model, collection, id, className)*, are
     // attached directly to the view.
