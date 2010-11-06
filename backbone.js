@@ -751,7 +751,7 @@
     // The constructor function for the new subclass is either defined by you
     // (the "constructor" property in your `extend` definition), or defaulted
     // by us to simply call `super()`.
-    if (protoProps.hasOwnProperty('constructor')) {
+    if (protoProps && protoProps.hasOwnProperty('constructor')) {
       child = protoProps.constructor;
     } else {
       child = function(){ return parent.apply(this, arguments); };
@@ -762,8 +762,9 @@
     ctor.prototype = parent.prototype;
     child.prototype = new ctor();
 
-    // Add prototype properties (instance properties) to the subclass.
-    _.extend(child.prototype, protoProps);
+    // Add prototype properties (instance properties) to the subclass,
+    // if supplied.
+    if (protoProps) _.extend(child.prototype, protoProps);
 
     // Add static properties to the constructor function, if supplied.
     if (staticProps) _.extend(child, staticProps);

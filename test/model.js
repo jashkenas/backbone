@@ -19,7 +19,8 @@ $(document).ready(function() {
     length : 123
   };
 
-  var doc = new Backbone.Model(attrs);
+  var proxy = Backbone.Model.extend();
+  var doc = new proxy(attrs);
 
   var klass = Backbone.Collection.extend({
     url : function() { return '/collection'; }
