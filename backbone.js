@@ -33,6 +33,10 @@
   // `application/x-www-form-urlencoded` instead of `application/json` and will
   // send the model in a param named `model`.
   Backbone.emulateHttp = false;
+  
+  // Turn off 'useJson' to send request data as 'application/x-www-form-urlencoded' instead of
+  // 'application/json'.
+  Backbone.useJson = true;
 
   // Backbone.Events
   // -----------------
@@ -710,22 +714,28 @@
     var params = {
       url:          getUrl(model),
       type:         type,
-      contentType:  'application/json',
-      data:         sendModel ? modelJSON : null,
       dataType:     'json',
-      processData:  false,
       success:      success,
       error:        error
     };
+    
+    if (Backbone.useJson){
+      processData        = false;
+      params.contentType = "application/json";
+      params.data        = sendModel ? modelJSON : null;
+    } else {
+      processData        = false;
+      params.contentType = "application/x-www-form-urlencoded";
+      params.data        = sendModel ? {model : modelJSON} : {};
+    }
 
     // For older servers, emulate JSON/HTTP by encoding the request into
     // HTML-form-style, and mimicking the HTTP method with `_method`
     if (Backbone.emulateHttp) {
-      params.processData = true;
-      params.contentType = "application/x-www-form-urlencoded";
-      params.data        = sendModel ? {model : modelJSON} : {};
       if (type === 'PUT' || type === 'DELETE') {
-        params.data._method = type;
+        if (!Backbone.useJson){
+          params.data._method = type;
+        }
         params.type = 'POST';
         params.beforeSend = function(xhr) {
           xhr.setRequestHeader("X-HTTP-Method-Override", type);
