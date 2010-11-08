@@ -565,7 +565,8 @@
   // Backbone.Controller
   // -------------------
 
-  // Creating a Backbone.Controller sets its `urls` hash, if not set statically.
+  // Controllers map faux-URLs to actions, and fire events when routes are
+  // matched. Creating a new one sets its `routes` hash, if not set statically.
   Backbone.Controller = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
@@ -573,12 +574,15 @@
     if (this.initialize) this.initialize(options);
   };
 
+  // Cached regular expressions for matching named param parts and splatted
+  // parts of route strings.
   var namedParam = /:([\w\d]+)/g;
   var splatParam = /\*([\w\d]+)/g;
 
   // Set up all inheritable **Backbone.Controller** properties and methods.
   _.extend(Backbone.Controller.prototype, Backbone.Events, {
 
+    // Bind all defined routes to `Backbone.history`.
     bindRoutes : function() {
       if (!this.routes) return;
       for (var route in this.routes) {
@@ -587,27 +591,37 @@
       }
     },
 
+    // Manually bind a single named route to a callback. For example:
+    //
+    //     this.route('search/:query/p:page', 'search', function(query, page) {
+    //       ...
+    //     });
+    //
     route : function(route, name, callback) {
       Backbone.history || (Backbone.history = new Backbone.History);
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       Backbone.history.route(route, _.bind(function(fragment) {
-        var args = this._extractArguments(route, fragment);
+        var args = this._extractParameters(route, fragment);
         callback.apply(this, args);
-        var cargs = ['route:' + (name || callback)].concat(args);
-        this.trigger.apply(this, args);
+        this.trigger.apply(this, ['route:' + name].concat(args));
       }, this));
     },
 
+    // Simply proxy to `Backbone.history` to save a fragment into the history.
     save : function(fragment) {
       Backbone.history.save(fragment);
     },
 
+    // Convert a route string into a regular expression, suitable for matching
+    // against `window.location.hash`.
     _routeToRegExp : function(route) {
       route = route.replace(namedParam, "([^\/]*)").replace(splatParam, "(.*?)");
       return new RegExp('^#' + route + '$');
     },
 
-    _extractArguments : function(route, fragment) {
+    // Given a route, and a URL fragment that it matches, return the array of
+    // extracted parameters.
+    _extractParameters : function(route, fragment) {
       return route.exec(fragment).slice(1);
     }
 
