@@ -630,17 +630,22 @@
   // Backbone.History
   // ----------------
 
-  // Base class for Backbone History handling.
-  Backbone.History = function(options) {
-    options || (options = {});
-    this.interval = options.interval || 100;
+  // Handles cross-browser history management, based on URL hashes. If the
+  // browser does not support `onhashchange`, falls back to polling.
+  Backbone.History = function() {
     this.handlers = [];
     this.fragment = window.location.hash;
     _.bindAll(this, 'checkUrl');
   };
 
+  // Set up all inheritable **Backbone.History** properties and methods.
   _.extend(Backbone.History.prototype, {
 
+    // The default interval to poll for hash changes in IE is ten times a second.
+    interval: 100,
+
+    // Start the hash change handling, returning true if the current URL matches
+    // an existing route, and false otherwise.
     start : function() {
       if ($.browser.msie && $.browser.version < 8) {
         this.iframe = $('<iframe src="javascript:0"/>').hide().appendTo('body')[0].contentWindow;
@@ -653,10 +658,14 @@
       return this.loadUrl();
     },
 
+    // Add a route to be tested when the hash changes. Routes are matched in the
+    // order they are added.
     route : function(route, callback) {
       this.handlers.push({route : route, callback : callback});
     },
 
+    // Checks the current URL to see if it has changed, and if it has,
+    // calls `loadUrl`.
     checkUrl : function() {
       var current = window.location.hash;
       if (current == this.fragment && this.iframe) {
@@ -672,6 +681,8 @@
       this.loadUrl();
     },
 
+    // Attempt to load the current URL fragment. If no defined route matches
+    // the fragment, returns `false`.
     loadUrl : function() {
       var fragment = this.fragment = window.location.hash;
       var matched = _.any(this.handlers, function(handler) {
@@ -683,6 +694,9 @@
       return matched;
     },
 
+    // Save a fragment into the hash history. You are responsible for properly
+    // URL-encoding the fragment in advance. This does not trigger
+    // a `hashchange` event.
     save : function(fragment) {
       fragment || (fragment = '');
       if (!(fragment.charAt(0) == '#')) fragment = '#' + fragment;
