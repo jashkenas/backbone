@@ -650,7 +650,8 @@
       if ($.browser.msie && $.browser.version < 8) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
       }
-      if ('onhashchange' in window) {
+      var docMode = document.documentMode;
+      if ('onhashchange' in window && (!docMode || docMode > 7)) {
         $(window).bind('hashchange', this.checkUrl);
       } else {
         setInterval(this.checkUrl, this.interval);
