@@ -648,7 +648,7 @@
     // an existing route, and false otherwise.
     start : function() {
       if ($.browser.msie && $.browser.version < 8) {
-        this.iframe = $('<iframe src="javascript:0"/>').hide().appendTo('body')[0].contentWindow;
+        this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
       }
       if ('onhashchange' in window) {
         $(window).bind('hashchange', this.checkUrl);
