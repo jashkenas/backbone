@@ -148,7 +148,7 @@
       var now = this.attributes;
 
       // Run validation.
-      if (this.validate && !this._performValidation(attrs, options)) return false;
+      if (!options.silent && this.validate && !this._performValidation(attrs, options)) return false;
 
       // Check for changes of `id`.
       if ('id' in attrs) this.id = attrs.id;
@@ -179,7 +179,7 @@
       // Run validation.
       var validObj = {};
       validObj[attr] = void 0;
-      if (this.validate && !this._performValidation(validObj, options)) return false;
+      if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
       // Remove the attribute.
       delete this.attributes[attr];
@@ -200,7 +200,7 @@
       // Run validation.
       var validObj = {};
       for (attr in old) validObj[attr] = void 0;
-      if (this.validate && !this._performValidation(validObj, options)) return false;
+      if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
       this.attributes = {};
       if (!options.silent) {

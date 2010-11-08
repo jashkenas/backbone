@@ -169,6 +169,9 @@ $(document).ready(function() {
     equals(result, model);
     equals(model.get('a'), 100);
     equals(lastError, undefined);
+    result = model.set({admin: true}, {silent: true});
+    equals(lastError, undefined);
+    equals(model.get('admin'), true);
     result = model.set({a: 200, admin: true});
     equals(result, false);
     equals(model.get('a'), 100);
