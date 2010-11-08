@@ -574,7 +574,7 @@
   };
 
   var namedParam = /:([\w\d]+)/g;
-  var paramMatch = "([^\/]+)";
+  var splatParam = /\*([\w\d]+)/g;
 
   // Set up all inheritable **Backbone.Controller** properties and methods.
   _.extend(Backbone.Controller.prototype, Backbone.Events, {
@@ -603,7 +603,8 @@
     },
 
     _routeToRegExp : function(route) {
-      return new RegExp('^#' + route.replace(namedParam, paramMatch) + '$');
+      route = route.replace(namedParam, "([^\/]*)").replace(splatParam, "(.*?)");
+      return new RegExp('^#' + route + '$');
     },
 
     _extractArguments : function(route, fragment) {
