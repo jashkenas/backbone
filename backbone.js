@@ -562,6 +562,125 @@
     };
   });
 
+  // Backbone.Controller
+  // -------------------
+
+  // Creating a Backbone.Controller sets its `urls` hash, if not set statically.
+  Backbone.Controller = function(options) {
+    options || (options = {});
+    if (options.routes) this.routes = options.routes;
+    this.bindRoutes();
+    if (this.initialize) this.initialize(options);
+  };
+
+  var namedParam = /:([\w\d]+)/g;
+  var paramMatch = "([^\/]+)";
+
+  // Set up all inheritable **Backbone.Controller** properties and methods.
+  _.extend(Backbone.Controller.prototype, Backbone.Events, {
+
+    bindRoutes : function() {
+      if (!this.routes) return;
+      for (var route in this.routes) {
+        var name = this.routes[route];
+        this.route(route, name, this[name]);
+      }
+    },
+
+    route : function(route, name, callback) {
+      Backbone.history || (Backbone.history = new Backbone.History);
+      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      Backbone.history.route(route, _.bind(function(fragment) {
+        var args = this._extractArguments(route, fragment);
+        callback.apply(this, args);
+        var cargs = ['route:' + (name || callback)].concat(args);
+        this.trigger.apply(this, args);
+      }, this));
+    },
+
+    save : function(fragment) {
+      Backbone.history.save(fragment);
+    },
+
+    _routeToRegExp : function(route) {
+      return new RegExp('^#' + route.replace(namedParam, paramMatch) + '$');
+    },
+
+    _extractArguments : function(route, fragment) {
+      return route.exec(fragment).slice(1);
+    }
+
+  });
+
+  // Backbone.History
+  // ----------------
+
+  // Base class for Backbone History handling.
+  Backbone.History = function(options) {
+    options || (options = {});
+    this.interval = options.interval || 100;
+    this.handlers = [];
+    this.fragment = window.location.hash;
+    _.bindAll(this, 'checkUrl');
+  };
+
+  _.extend(Backbone.History.prototype, {
+
+    start : function() {
+      if ($.browser.msie && $.browser.version < 8) {
+        this.iframe = $('<iframe src="javascript:0"/>').hide().appendTo('body')[0].contentWindow;
+      }
+      if ('onhashchange' in window) {
+        $(window).bind('hashchange', this.checkUrl);
+      } else {
+        setInterval(this.checkUrl, this.interval);
+      }
+      return this.loadUrl();
+    },
+
+    route : function(route, callback) {
+      this.handlers.push({route : route, callback : callback});
+    },
+
+    checkUrl : function() {
+      var current = window.location.hash;
+      if (current == this.fragment && this.iframe) {
+        current = this.iframe.location.hash;
+      }
+      if (!current ||
+          current == this.fragment ||
+          '#' + current == this.fragment ||
+          current == decodeURIComponent(this.fragment)) return false;
+      if (this.iframe) {
+        window.location.hash = this.iframe.location.hash = current;
+      }
+      this.loadUrl();
+    },
+
+    loadUrl : function() {
+      var fragment = this.fragment = window.location.hash;
+      var matched = _.any(this.handlers, function(handler) {
+        if (handler.route.test(fragment)) {
+          handler.callback(fragment);
+          return true;
+        }
+      });
+      return matched;
+    },
+
+    save : function(fragment) {
+      fragment || (fragment = '');
+      if (!(fragment.charAt(0) == '#')) fragment = '#' + fragment;
+      if (this.fragment == fragment) return;
+      window.location.hash = this.fragment = fragment;
+      if (this.iframe && (fragment != this.iframe.location.hash)) {
+        this.iframe.document.open().close();
+        this.iframe.location.hash = fragment;
+      }
+    }
+
+  });
+
   // Backbone.View
   // -------------
 
@@ -585,7 +704,7 @@
   var eventSplitter = /^(\w+)\s*(.*)$/;
 
   // Set up all inheritable **Backbone.View** properties and methods.
-  _.extend(Backbone.View.prototype, {
+  _.extend(Backbone.View.prototype, Backbone.Events, {
 
     // The default `tagName` of a View's element is `"div"`.
     tagName : 'div',
@@ -628,7 +747,7 @@
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents : function(events) {
-      if (!(events || (events = this.events))) return this;
+      if (!(events || (events = this.events))) return;
       $(this.el).unbind();
       for (var key in events) {
         var methodName = events[key];
@@ -641,7 +760,6 @@
           $(this.el).delegate(selector, eventName, method);
         }
       }
-      return this;
     },
 
     // Performs the initial configuration of a View with a set of options.
@@ -669,12 +787,16 @@
 
   });
 
-  // Set up inheritance for the model, collection, and view.
-  var extend = Backbone.Model.extend = Backbone.Collection.extend = Backbone.View.extend = function (protoProps, classProps) {
+  // The self-propagating extend function that Backbone classes use.
+  var extend = function (protoProps, classProps) {
     var child = inherits(this, protoProps, classProps);
     child.extend = extend;
     return child;
   };
+
+  // Set up inheritance for the model, collection, and view.
+  Backbone.Model.extend = Backbone.Collection.extend =
+    Backbone.Controller.extend = Backbone.View.extend = extend;
 
   // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
   var methodMap = {
