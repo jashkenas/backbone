@@ -641,8 +641,8 @@
   // Set up all inheritable **Backbone.History** properties and methods.
   _.extend(Backbone.History.prototype, {
 
-    // The default interval to poll for hash changes in IE is ten times a second.
-    interval: 100,
+    // The default interval to poll for hash changes in IE is twenty times a second.
+    interval: 50,
 
     // Start the hash change handling, returning true if the current URL matches
     // an existing route, and false otherwise.
