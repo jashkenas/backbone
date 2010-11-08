@@ -28,12 +28,16 @@
   // For Backbone's purposes, jQuery owns the `$` variable.
   var $ = this.jQuery;
 
-  // Turn on `emulateHttp` to use support legacy HTTP servers. Setting this option will
+  // Turn on `emulateHTTP` to use support legacy HTTP servers. Setting this option will
   // fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and set a
-  // `X-Http-Method-Override` header, will encode the body as
-  // `application/x-www-form-urlencoded` instead of `application/json` and will
-  // send the model in a param named `model`.
-  Backbone.emulateHttp = false;
+  // `X-Http-Method-Override` header.
+  Backbone.emulateHTTP = false;
+
+  // Turn on `emulateJSON` to support legacy servers that can't deal with direct
+  // `application/json` requests ... will encode the body as
+  // `application/x-www-form-urlencoded` instead and will send the model in a
+  // form param named `model`.
+  Backbone.emulateJSON = false;
 
   // Backbone.Events
   // -----------------
@@ -848,7 +852,7 @@
   // * Send up the models as XML instead of JSON.
   // * Persist models via WebSockets instead of Ajax.
   //
-  // Turn on `Backbone.emulateHttp` in order to send `PUT` and `DELETE` requests
+  // Turn on `Backbone.emulateHTTP` in order to send `PUT` and `DELETE` requests
   // as `POST`, with a `_method` parameter containing the true HTTP method,
   // as well as all requests with the body as `application/x-www-form-urlencoded` instead of
   // `application/json` with the model in a param named `model`.
@@ -871,14 +875,18 @@
       error:        error
     };
 
-    // For older servers, emulate JSON/HTTP by encoding the request into
-    // HTML-form-style, and mimicking the HTTP method with `_method`
-    if (Backbone.emulateHttp) {
+    // For older servers, emulate JSON by encoding the request into an HTML-form.
+    if (Backbone.emulateJSON) {
+      params.contentType = 'application/x-www-form-urlencoded';
       params.processData = true;
-      params.contentType = "application/x-www-form-urlencoded";
       params.data        = sendModel ? {model : modelJSON} : {};
+    }
+
+    // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
+    // And an `X-HTTP-Method-Override` header.
+    if (Backbone.emulateHTTP) {
       if (type === 'PUT' || type === 'DELETE') {
-        params.data._method = type;
+        if (Backbone.emulateJSON) params.data._method = type;
         params.type = 'POST';
         params.beforeSend = function(xhr) {
           xhr.setRequestHeader("X-HTTP-Method-Override", type);
