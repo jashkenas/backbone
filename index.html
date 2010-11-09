@@ -144,7 +144,7 @@
   <div id="sidebar" class="interface">
     
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.2.0)</span>
+      Backbone.js <span class="version">(0.3.0)</span>
     </a>
     
     <a class="toc_title" href="#Introduction">
@@ -169,6 +169,7 @@
       <li>– <a href="#Model-get">get</a></li>
       <li>– <a href="#Model-set">set</a></li>
       <li>– <a href="#Model-unset">unset</a></li>
+      <li>– <a href="#Model-clear">clear</a></li>
       <li>– <a href="#Model-id">id</a></li>
       <li>– <a href="#Model-cid">cid</a></li>
       <li>– <a href="#Model-attributes">attributes</a></li>
@@ -238,6 +239,8 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Sync">Backbone.sync</a></li>
+      <li>– <a href="#Sync-emulateHTTP">Backbone.emulateHTTP</a></li>
+      <li>– <a href="#Sync-emulateJSON">Backbone.emulateJSON</a></li>
     </ul>
     
     <a class="toc_title" href="#View">
@@ -305,12 +308,12 @@
 
     <table>
       <tr>
-        <td><a href="backbone.js">Development Version (0.2.0)</a></td>
-        <td><i>24.8kb, Uncompressed with Comments</i></td>
+        <td><a href="backbone.js">Development Version (0.3.0)</a></td>
+        <td><i>33kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="backbone-min.js">Production Version (0.2.0)</a></td>
-        <td><i>2.6kb, Packed and Gzipped</i></td>
+        <td><a href="backbone-min.js">Production Version (0.3.0)</a></td>
+        <td><i>3.7kb, Packed and Gzipped</i></td>
       </tr>
     </table>
 
@@ -572,6 +575,13 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
       <br />
       Remove an attribute by deleting it from the internal attributes hash.
       Fires a <tt>"change"</tt> event unless <tt>silent</tt> is passed as an option.
+    </p>
+    
+    <p id="Model-clear">
+      <b class="header">clear</b><code>model.clear([options])</code>
+      <br />
+      Removes all attributes from the model. Fires a <tt>"change"</tt> event unless
+      <tt>silent</tt> is passed as an option.
     </p>
 
     <p id="Model-id">
@@ -1241,17 +1251,24 @@ var othello = NYPL.create({
     <h2 id="Controller">Backbone.Controller</h2>
 
     <p>
-      In order to provide real URLs for a web application, that can be shared
-      and bookmarked, it's a common pattern to use hash-based URL fragments 
-      (<tt>#faux/url/part</tt>). <b>Backbone.Controller</b> provides functions
-      for routing client-side URL fragments, and hooking them up to actions
-      and events.
+      Web applications often choose to change their URL fragment (<tt>#fragment</tt>)
+      in order to provide shareable, bookmarkable URLs for an Ajax-heavy application.
+      <b>Backbone.Controller</b> provides methods for routing client-side URL
+      fragments, and connecting them to actions and events.
+    </p>
+    
+    <p class="warning">
+      Backbone controllers do not yet make use of HTML5 <b>pushState</b> and 
+      <b>replaceState</b>. Currently, <b>pushState</b> and <b>replaceState</b> 
+      need special handling on the server-side, cause you to mint duplicate URLs, 
+      and have an incomplete API. We may start supporting them in the future 
+      when these issues have been resolved.
     </p>
     
     <p id="Controller-extend">
       <b class="header">extend</b><code>Backbone.Controller.extend(properties, [classProperties])</code>
       <br />
-      Get started with controllers by creating a custom controller class. You'll 
+      Get started by creating a custom controller class. You'll 
       want to define actions that are triggered when certain URL fragments are
       matched, and provide a <a href="#Controller-routes">routes</a> hash
       that pairs routes to actions.
@@ -1261,9 +1278,9 @@ var othello = NYPL.create({
 var Workspace = Backbone.Controller.extend({
 
   routes: {
-    "help":                  "help"
-    "search/:query":         "search"
-    "search/:query/p:page":  "search"
+    "help":                 "help"     // #help
+    "search/:query":        "search"   // #search/kiwis
+    "search/:query/p:page": "search"   // #search/kiwis/p7
   },
   
   help: function() {
@@ -1427,21 +1444,6 @@ $(function(){
     </ul>
 
     <p>
-      If you want to work with a legacy web server that doesn't support Backbones's
-      default JSON centric approach, you may choose to turn on <tt>Backbone.emulateHTTP</tt>.
-      Setting this option will emulate <tt>PUT</tt> and <tt>DELETE</tt> requests with
-      a HTTP <tt>POST</tt>, and passing them under the <tt>_method</tt> parameter. Setting this option
-      will also send the model under a <tt>model</tt> param and use <tt>application/x-www-form-urlencoded</tt>
-      instead of the default <tt>application/json</tt> as the content-type for data sent. 
-    </p>
-
-<pre>
-Backbone.emulateHTTP = true;
-
-model.save();  // Sends a POST to "/collection/id", with "_method=PUT"
-</pre>
-
-    <p>
       As an example, a Rails handler responding to an <tt>"update"</tt> call from
       <tt>Backbone</tt> might look like this: <i>(In real code, never use
       </i><tt>update_attributes</tt><i> blindly, and always whitelist the attributes
@@ -1455,6 +1457,32 @@ def update
   render :json => account
 end
 </pre>
+
+    <p id="Sync-emulateHTTP">
+      <b class="header">emulateHTTP</b><code>Backbone.emulateHTTP = true</code>
+      <br />
+      If you want to work with a legacy web server that doesn't support Backbones's
+      default REST/HTTP approach, you may choose to turn on <tt>Backbone.emulateHTTP</tt>.
+      Setting this option will fake <tt>PUT</tt> and <tt>DELETE</tt> requests with
+      a HTTP <tt>POST</tt>, and pass them under the <tt>_method</tt> parameter. Setting this option
+      will also set an <tt>X-HTTP-Method-Override</tt> header with the true method.
+    </p>
+
+<pre>
+Backbone.emulateHTTP = true;
+
+model.save();  // POST to "/collection/id", with "_method=PUT" + header.
+</pre>
+
+    <p id="Sync-emulateJSON">
+      <b class="header">emulateJSON</b><code>Backbone.emulateJSON = true</code>
+      <br />
+      If you're working with a legacy web server that can't handle requests
+      encoded as <tt>application/json</tt>, setting <tt>Backbone.emulateJSON = true;</tt>
+      will cause the JSON to be serialized under a <tt>model</tt> parameter, and 
+      the request to be made with a <tt>application/x-www-form-urlencoded</tt> 
+      mime type, as if from an HTML form.
+    </p>
 
     <h2 id="View">Backbone.View</h2>
 
@@ -1713,6 +1741,20 @@ var DocumentView = Backbone.View.extend({
     </div>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <p>
+      <b class="header">0.3.0</b> &mdash; <small><i>Nov 9, 2010</i></small><br />
+      Backbone now has <a href="#Controller">Controllers</a> and 
+      <a href="#History">History</a>, for doing client-side routing based on 
+      URL fragments.  
+      Added <tt>emulateHTTP</tt> to provide support for legacy servers that don't
+      do <tt>PUT</tt> and <tt>DELETE</tt>.
+      Added <tt>emulateJSON</tt> for servers that can't accept <tt>application/json</tt>
+      encoded requests.
+      Added <a href="#Model-clear">Model#clear</a>, which removes all attributes
+      from a model.
+      All Backbone classes may now be seamlessly inherited by CoffeeScript classes.
+    </p>
 
     <p>
       <b class="header">0.2.0</b> &mdash; <small><i>Oct 25, 2010</i></small><br />
