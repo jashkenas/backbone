@@ -588,7 +588,7 @@
 
     // Manually bind a single named route to a callback. For example:
     //
-    //     this.route('search/:query/p:page', 'search', function(query, page) {
+    //     this.route('search/:query/p:num', 'search', function(query, num) {
     //       ...
     //     });
     //
@@ -602,7 +602,8 @@
       }, this));
     },
 
-    // Simply proxy to `Backbone.history` to save a fragment into the history.
+    // Simple proxy to `Backbone.history` to save a fragment into the history,
+    // without triggering routes.
     saveLocation : function(fragment) {
       Backbone.history.saveLocation(fragment);
     },
@@ -617,7 +618,7 @@
     },
 
     // Convert a route string into a regular expression, suitable for matching
-    // against the current hash state.
+    // against the current location fragment.
     _routeToRegExp : function(route) {
       route = route.replace(namedParam, "([^\/]*)").replace(splatParam, "(.*?)");
       return new RegExp('^' + route + '$');
@@ -648,7 +649,8 @@
   // Set up all inheritable **Backbone.History** properties and methods.
   _.extend(Backbone.History.prototype, {
 
-    // The default interval to poll for hash changes in IE is twenty times a second.
+    // The default interval to poll for hash changes, if necessary, is
+    // twenty times a second.
     interval: 50,
 
     // Get the cross-browser normalized URL fragment.
@@ -656,8 +658,8 @@
       return (loc || window.location).hash.replace(hashStrip, '');
     },
 
-    // Start the hash change handling, returning true if the current URL matches
-    // an existing route, and false otherwise.
+    // Start the hash change handling, returning `true` if the current URL matches
+    // an existing route, and `false` otherwise.
     start : function() {
       var docMode = document.documentMode;
       var oldIE = ($.browser.msie && docMode < 7);
@@ -679,7 +681,7 @@
     },
 
     // Checks the current URL to see if it has changed, and if it has,
-    // calls `loadUrl`.
+    // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl : function() {
       var current = this.getFragment();
       if (current == this.fragment && this.iframe) {
@@ -694,8 +696,9 @@
       this.loadUrl();
     },
 
-    // Attempt to load the current URL fragment. If no defined route matches
-    // the fragment, returns `false`.
+    // Attempt to load the current URL fragment. If a route succeeds with a
+    // match, returns `true`. If no defined routes matches the fragment,
+    // returns `false`.
     loadUrl : function() {
       var fragment = this.fragment = this.getFragment();
       var matched = _.any(this.handlers, function(handler) {
