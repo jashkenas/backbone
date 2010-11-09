@@ -603,8 +603,8 @@
     },
 
     // Simply proxy to `Backbone.history` to save a fragment into the history.
-    save : function(fragment) {
-      Backbone.history.save(fragment);
+    saveLocation : function(fragment) {
+      Backbone.history.saveLocation(fragment);
     },
 
     // Bind all defined routes to `Backbone.history`.
@@ -710,7 +710,7 @@
     // Save a fragment into the hash history. You are responsible for properly
     // URL-encoding the fragment in advance. This does not trigger
     // a `hashchange` event.
-    save : function(fragment) {
+    saveLocation : function(fragment) {
       fragment = (fragment || '').replace(hashStrip, '');
       if (this.fragment == fragment) return;
       window.location.hash = this.fragment = fragment;
