@@ -1364,8 +1364,9 @@ initialize: function(options) {
       <b class="header">saveLocation</b><code>controller.saveLocation(fragment)</code>
       <br />
       Whenever you reach a point in your application that you'd like to save
-      as a URL, call <b>saveLocation</b> in order to update the URL fragment 
-      (Delegates to <a href="#History-saveLocation">History#saveLocation</a>).
+      as a URL, call <b>saveLocation</b> in order to update the URL fragment
+      without triggering a <tt>hashchange</tt> event. (If you would prefer to
+      trigger the event and routing, you can just set the hash directly.)
     </p>
     
 <pre>
