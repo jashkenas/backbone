@@ -664,11 +664,12 @@
     // Start the hash change handling, returning true if the current URL matches
     // an existing route, and false otherwise.
     start : function() {
-      if ($.browser.msie && $.browser.version < 8) {
+      var docMode = document.documentMode;
+      var oldIE = ($.browser.msie && docMode < 7);
+      if (oldIE) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
       }
-      var docMode = document.documentMode;
-      if ('onhashchange' in window && (!docMode || docMode > 7)) {
+      if ('onhashchange' in window && !oldIE) {
         $(window).bind('hashchange', this.checkUrl);
       } else {
         setInterval(this.checkUrl, this.interval);
