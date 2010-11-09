@@ -574,7 +574,7 @@
   Backbone.Controller = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
-    this.bindRoutes();
+    this._bindRoutes();
     if (this.initialize) this.initialize(options);
   };
 
@@ -585,15 +585,6 @@
 
   // Set up all inheritable **Backbone.Controller** properties and methods.
   _.extend(Backbone.Controller.prototype, Backbone.Events, {
-
-    // Bind all defined routes to `Backbone.history`.
-    bindRoutes : function() {
-      if (!this.routes) return;
-      for (var route in this.routes) {
-        var name = this.routes[route];
-        this.route(route, name, this[name]);
-      }
-    },
 
     // Manually bind a single named route to a callback. For example:
     //
@@ -614,6 +605,15 @@
     // Simply proxy to `Backbone.history` to save a fragment into the history.
     save : function(fragment) {
       Backbone.history.save(fragment);
+    },
+
+    // Bind all defined routes to `Backbone.history`.
+    _bindRoutes : function() {
+      if (!this.routes) return;
+      for (var route in this.routes) {
+        var name = this.routes[route];
+        this.route(route, name, this[name]);
+      }
     },
 
     // Convert a route string into a regular expression, suitable for matching
@@ -652,13 +652,8 @@
     interval: 50,
 
     // Get the cross-browser normalized URL fragment.
-    getFragment : function() {
-      return window.location.hash.replace(hashStrip, '');
-    },
-
-    // Get the cross-browser normalized URL fragment from the iframe.
-    getIframeFragment : function() {
-      return this.iframe.location.hash.replace(hashStrip, '');
+    getFragment : function(loc) {
+      return (loc || window.location).hash.replace(hashStrip, '');
     },
 
     // Start the hash change handling, returning true if the current URL matches
@@ -688,7 +683,7 @@
     checkUrl : function() {
       var current = this.getFragment();
       if (current == this.fragment && this.iframe) {
-        current = this.getIframeFragment();
+        current = this.getFragment(this.iframe.location);
       }
       if (!current ||
           current == this.fragment ||
@@ -719,7 +714,7 @@
       fragment = (fragment || '').replace(hashStrip, '');
       if (this.fragment == fragment) return;
       window.location.hash = this.fragment = fragment;
-      if (this.iframe && (fragment != this.getIframeFragment())) {
+      if (this.iframe && (fragment != this.getFragment(this.iframe.location))) {
         this.iframe.document.open().close();
         this.iframe.location.hash = fragment;
       }
