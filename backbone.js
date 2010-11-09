@@ -617,10 +617,10 @@
     },
 
     // Convert a route string into a regular expression, suitable for matching
-    // against `window.location.hash`.
+    // against the current hash state.
     _routeToRegExp : function(route) {
       route = route.replace(namedParam, "([^\/]*)").replace(splatParam, "(.*?)");
-      return new RegExp('^#' + route + '$');
+      return new RegExp('^' + route + '$');
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
@@ -638,15 +638,29 @@
   // browser does not support `onhashchange`, falls back to polling.
   Backbone.History = function() {
     this.handlers = [];
-    this.fragment = window.location.hash;
+    this.fragment = this.getFragment();
+    this.hasState = 'onpopstate' in window;
     _.bindAll(this, 'checkUrl');
   };
+
+  // Cached regex for cleaning hashes.
+  var hashStrip = /^#*/;
 
   // Set up all inheritable **Backbone.History** properties and methods.
   _.extend(Backbone.History.prototype, {
 
     // The default interval to poll for hash changes in IE is twenty times a second.
     interval: 50,
+
+    // Get the cross-browser normalized URL fragment.
+    getFragment : function() {
+      return window.location.hash.replace(hashStrip, '');
+    },
+
+    // Get the cross-browser normalized URL fragment from the iframe.
+    getIframeFragment : function() {
+      return this.iframe.location.hash.replace(hashStrip, '');
+    },
 
     // Start the hash change handling, returning true if the current URL matches
     // an existing route, and false otherwise.
@@ -672,13 +686,12 @@
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`.
     checkUrl : function() {
-      var current = window.location.hash;
+      var current = this.getFragment();
       if (current == this.fragment && this.iframe) {
-        current = this.iframe.location.hash;
+        current = this.getIframeFragment();
       }
       if (!current ||
           current == this.fragment ||
-          '#' + current == this.fragment ||
           current == decodeURIComponent(this.fragment)) return false;
       if (this.iframe) {
         window.location.hash = this.iframe.location.hash = current;
@@ -689,7 +702,7 @@
     // Attempt to load the current URL fragment. If no defined route matches
     // the fragment, returns `false`.
     loadUrl : function() {
-      var fragment = this.fragment = window.location.hash;
+      var fragment = this.fragment = this.getFragment();
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
@@ -703,11 +716,10 @@
     // URL-encoding the fragment in advance. This does not trigger
     // a `hashchange` event.
     save : function(fragment) {
-      fragment || (fragment = '');
-      if (!(fragment.charAt(0) == '#')) fragment = '#' + fragment;
+      fragment = (fragment || '').replace(hashStrip, '');
       if (this.fragment == fragment) return;
       window.location.hash = this.fragment = fragment;
-      if (this.iframe && (fragment != this.iframe.location.hash)) {
+      if (this.iframe && (fragment != this.getIframeFragment())) {
         this.iframe.document.open().close();
         this.iframe.location.hash = fragment;
       }
