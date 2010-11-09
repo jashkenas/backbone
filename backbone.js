@@ -639,7 +639,6 @@
   Backbone.History = function() {
     this.handlers = [];
     this.fragment = this.getFragment();
-    this.hasState = 'onpopstate' in window;
     _.bindAll(this, 'checkUrl');
   };
 
