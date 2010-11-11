@@ -687,8 +687,7 @@
       if (current == this.fragment && this.iframe) {
         current = this.getFragment(this.iframe.location);
       }
-      if (!current ||
-          current == this.fragment ||
+      if (current == this.fragment ||
           current == decodeURIComponent(this.fragment)) return false;
       if (this.iframe) {
         window.location.hash = this.iframe.location.hash = current;
