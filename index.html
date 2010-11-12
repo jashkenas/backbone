@@ -1265,6 +1265,11 @@ var othello = NYPL.create({
       when these issues have been resolved.
     </p>
     
+    <p>
+      During page load, after your application has finished creating all of its controllers, 
+      be sure to call <tt>Backbone.history.start()</tt> to route the initial URL.
+    </p>
+    
     <p id="Controller-extend">
       <b class="header">extend</b><code>Backbone.Controller.extend(properties, [classProperties])</code>
       <br />
