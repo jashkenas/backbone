@@ -786,6 +786,16 @@ account.set({access: "unlimited"}, {
       Override this if you need to work with a preexisting API, or better namespace
       your responses.
     </p>
+    
+    <p>
+      If you're working with a Rails backend, you'll notice that Rails' default
+      <tt>to_json</tt> implementation includes a model's attributes under a
+      namespace. To disable this behavior for seamless Backbone integration, set:
+    </p>
+    
+<pre>
+ActiveRecord::Base.include_root_in_json = false
+</pre>
 
     <p id="Model-clone">
       <b class="header">clone</b><code>model.clone()</code>
@@ -1465,11 +1475,16 @@ $(function(){
 
 <pre>
 def update
-  account = Account.find(params[:id])
-  account.update_attributes JSON.parse params[:model]
+  account = Account.find params[:id]
+  account.update_attributes params
   render :json => account
 end
 </pre>
+
+    <p>
+      One more tip for Rails integration is to disable the default namespacing for
+      <tt>to_json</tt> calls on models by setting <tt>ActiveRecord::Base.include_root_in_json = false</tt>
+    </p>
 
     <p id="Sync-emulateHTTP">
       <b class="header">emulateHTTP</b><code>Backbone.emulateHTTP = true</code>
