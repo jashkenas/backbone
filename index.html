@@ -144,7 +144,7 @@
   <div id="sidebar" class="interface">
     
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.3.0)</span>
+      Backbone.js <span class="version">(0.3.1)</span>
     </a>
     
     <a class="toc_title" href="#Introduction">
@@ -252,6 +252,7 @@
       <li>– <a href="#View-el">el</a></li>
       <li>– <a href="#View-jQuery">$ (jQuery)</a></li>
       <li>– <a href="#View-render">render</a></li>
+      <li>– <a href="#View-remove">remove</a></li>
       <li>– <a href="#View-make">make</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
     </ul>
@@ -308,11 +309,11 @@
 
     <table>
       <tr>
-        <td><a href="backbone.js">Development Version (0.3.0)</a></td>
+        <td><a href="backbone.js">Development Version (0.3.1)</a></td>
         <td><i>33kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="backbone-min.js">Production Version (0.3.0)</a></td>
+        <td><a href="backbone-min.js">Production Version (0.3.1)</a></td>
         <td><i>3.7kb, Packed and Gzipped</i></td>
       </tr>
     </table>
@@ -1645,6 +1646,13 @@ var Bookmark = Backbone.View.extend({
       to package up JavaScript templates stored in <tt>/app/views</tt> as part
       of our main <tt>core.js</tt> asset package.
     </p>
+    
+    <p id="View-remove">
+      <b class="header">remove</b><code>view.remove()</code>
+      <br />
+      Convenience function for removing the view from the DOM. Equivalent to calling
+      <tt>$(view.el).remove();</tt>
+    </p>
 
     <p id="View-make">
       <b class="header">make</b><code>view.make(tagName, [attributes], [content])</code>
@@ -1746,6 +1754,14 @@ var DocumentView = Backbone.View.extend({
     </div>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <p>
+      <b class="header">0.3.1</b> &mdash; <small><i>Nov 15, 2010</i></small><br />
+      All <tt>"add"</tt> and <tt>"remove"</tt> events are now sent through the
+      model, so that views can listen for them without having to know about the
+      collection. Added a <tt>remove</tt> method to <a href="#View">Backbone.View</a>.
+      Backbone routes are now able to load empty URL fragments. 
+    </p>
     
     <p>
       <b class="header">0.3.0</b> &mdash; <small><i>Nov 9, 2010</i></small><br />
