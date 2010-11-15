@@ -38,6 +38,14 @@
   // `application/x-www-form-urlencoded` instead and will send the model in a
   // form param named `model`.
   Backbone.emulateJSON = false;
+  
+  // Enables sending a root node in serialized JSON.  If the model defines a `modelName`
+  // field, the value will be used as the root key, otherwise "model" will be used.
+  Backbone.model_include_root_in_json = false;
+  
+  // Expects to see a root node in JSON server responses, which will be discarded.
+  // Default value is set to the value of `Backbone.model_include_root_in_json`.
+  Backbone.model_expect_root_in_json = Backbone.model_include_root_in_json;
 
   // Backbone.Events
   // -----------------
@@ -274,8 +282,14 @@
     },
 
     // **parse** converts a response into the hash of attributes to be `set` on
-    // the model. The default implementation is just to pass the response along.
+    // the model. The default implementation is just to pass the response along
+    // (after accounting for Backbone.model_expect_root_in_json).
     parse : function(resp) {
+      if (Backbone.model_expect_root_in_json) {
+        // the return object should contain exactly one key/value pair
+        // possible enhancement: validate key against model.modelName
+        resp = _.values(resp)[0];
+      }
       return resp;
     },
 
@@ -877,14 +891,30 @@
   Backbone.sync = function(method, model, success, error) {
     var sendModel = method === 'create' || method === 'update';
     var type = methodMap[method];
-    var modelJSON = JSON.stringify(model.toJSON());
+    var modelJSON = null;
+    
+    if (sendModel) {
+      var attribs = model.toJSON();
+      var json_attribs = attribs;
+      
+      // if we should include a root, fix up the outbound object accordingly
+      if (Backbone.model_include_root_in_json) {
+        json_attribs = { }
+        var root_key = "model";
+        if (typeof model.modelName !== 'undefined') {
+          root_key = model.modelName;
+        }
+        json_attribs[root_key] = attribs;
+      }
+      modelJSON = JSON.stringify(json_attribs);
+    }
 
     // Default JSON-request options.
     var params = {
       url:          getUrl(model),
       type:         type,
       contentType:  'application/json',
-      data:         sendModel ? modelJSON : null,
+      data:         modelJSON,
       dataType:     'json',
       processData:  false,
       success:      success,
