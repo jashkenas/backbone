@@ -875,16 +875,16 @@
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, success, error) {
-    var sendModel = method === 'create' || method === 'update';
     var type = methodMap[method];
-    var modelJSON = JSON.stringify(model.toJSON());
+    var modelJSON = (method === 'create' || method === 'update') ?
+                    JSON.stringify(model.toJSON()) : null;
 
     // Default JSON-request options.
     var params = {
       url:          getUrl(model),
       type:         type,
       contentType:  'application/json',
-      data:         sendModel ? modelJSON : null,
+      data:         modelJSON,
       dataType:     'json',
       processData:  false,
       success:      success,
@@ -895,7 +895,7 @@
     if (Backbone.emulateJSON) {
       params.contentType = 'application/x-www-form-urlencoded';
       params.processData = true;
-      params.data        = sendModel ? {model : modelJSON} : {};
+      params.data        = modelJSON ? {model : modelJSON} : {};
     }
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`

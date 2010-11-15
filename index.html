@@ -1760,6 +1760,7 @@ var DocumentView = Backbone.View.extend({
       All <tt>"add"</tt> and <tt>"remove"</tt> events are now sent through the
       model, so that views can listen for them without having to know about the
       collection. Added a <tt>remove</tt> method to <a href="#View">Backbone.View</a>.
+      <tt>toJSON</tt> is no longer called at all for <tt>'read'</tt> and <tt>'delete'</tt> requests.
       Backbone routes are now able to load empty URL fragments. 
     </p>
     
