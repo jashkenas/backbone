@@ -118,7 +118,7 @@
     this.set(attributes || {}, {silent : true});
     this._previousAttributes = _.clone(this.attributes);
     if (options && options.collection) this.collection = options.collection;
-    if (this.initialize) this.initialize(attributes, options);
+    this.initialize(attributes, options);
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -130,6 +130,10 @@
 
     // Has the item been changed since the last `"change"` event?
     _changed : false,
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize : function(){},
 
     // Return a copy of the model's `attributes` object.
     toJSON : function() {
@@ -368,7 +372,7 @@
     this._boundOnModelEvent = _.bind(this._onModelEvent, this);
     this._reset();
     if (models) this.refresh(models, {silent: true});
-    if (this.initialize) this.initialize(models, options);
+    this.initialize(models, options);
   };
 
   // Define the Collection's inheritable methods.
@@ -377,6 +381,10 @@
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
     model : Backbone.Model,
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize : function(){},
 
     // The JSON representation of a Collection is an array of the
     // models' attributes.
@@ -575,7 +583,7 @@
     options || (options = {});
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
-    if (this.initialize) this.initialize(options);
+    this.initialize(options);
   };
 
   // Cached regular expressions for matching named param parts and splatted
@@ -585,6 +593,10 @@
 
   // Set up all inheritable **Backbone.Controller** properties and methods.
   _.extend(Backbone.Controller.prototype, Backbone.Events, {
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize : function(){},
 
     // Manually bind a single named route to a callback. For example:
     //
@@ -733,7 +745,7 @@
     this._configure(options || {});
     this._ensureElement();
     this.delegateEvents();
-    if (this.initialize) this.initialize(options);
+    this.initialize(options);
   };
 
   // jQuery lookup, scoped to DOM elements within the current view.
@@ -755,6 +767,10 @@
     // Attach the jQuery function as the `$` and `jQuery` properties.
     $       : jQueryDelegate,
     jQuery  : jQueryDelegate,
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize : function(){},
 
     // **render** is the core function that your view should override, in order
     // to populate its element (`this.el`), with the appropriate HTML. The
