@@ -274,7 +274,7 @@
     url : function() {
       var base = getUrl(this.collection);
       if (this.isNew()) return base;
-      return base + '/' + this.id;
+      return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id;
     },
 
     // **parse** converts a response into the hash of attributes to be `set` on

@@ -53,6 +53,8 @@ $(document).ready(function() {
 
   test("Model: url", function() {
     equals(doc.url(), '/collection/1-the-tempest');
+    doc.collection.url = '/collection/';
+    equals(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;
     var failed = false;
     try {
