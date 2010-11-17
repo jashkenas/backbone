@@ -536,7 +536,7 @@
     // hash indexes for `id` and `cid` lookups.
     _remove : function(model, options) {
       options || (options = {});
-      model = this.getByCid(model);
+      model = this.getByCid(model) || this.get(model);
       if (!model) return null;
       delete this._byId[model.id];
       delete this._byCid[model.cid];
