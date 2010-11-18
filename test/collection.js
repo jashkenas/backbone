@@ -8,10 +8,10 @@ $(document).ready(function() {
     lastRequest = _.toArray(arguments);
   };
 
-  var a = new Backbone.Model({id: 4, label: 'a'});
-  var b = new Backbone.Model({id: 3, label: 'b'});
-  var c = new Backbone.Model({id: 2, label: 'c'});
-  var d = new Backbone.Model({id: 1, label: 'd'});
+  var a = new Backbone.Model({id: 3, label: 'a'});
+  var b = new Backbone.Model({id: 2, label: 'b'});
+  var c = new Backbone.Model({id: 1, label: 'c'});
+  var d = new Backbone.Model({id: 0, label: 'd'});
   var e = null;
   var col = window.col = new Backbone.Collection([a,b,c,d]);
 
@@ -26,21 +26,21 @@ $(document).ready(function() {
   });
 
   test("Collection: get, getByCid", function() {
-    equals(col.get(1), d);
-    equals(col.get(3), b);
+    equals(col.get(0), d);
+    equals(col.get(2), b);
     equals(col.getByCid(col.first().cid), col.first());
   });
 
   test("Collection: update index when id changes", function() {
     var col = new Backbone.Collection();
     col.add([
-      {id : 1, name : 'one'},
-      {id : 2, name : 'two'}
+      {id : 0, name : 'one'},
+      {id : 1, name : 'two'}
     ]);
-    var one = col.get(1);
+    var one = col.get(0);
     equals(one.get('name'), 'one');
     one.set({id : 101});
-    equals(col.get(1), null);
+    equals(col.get(0), null);
     equals(col.get(101).get('name'), 'one');
   });
 
@@ -55,11 +55,11 @@ $(document).ready(function() {
   test("Collection: add", function() {
     var added = null;
     col.bind('add', function(model){ added = model.get('label'); });
-    e = new Backbone.Model({id: 0, label : 'e'});
+    e = new Backbone.Model({id: 10, label : 'e'});
     col.add(e);
     equals(added, 'e');
     equals(col.length, 5);
-    equals(col.first(), e);
+    equals(col.last(), e);
   });
 
   test("Collection: remove", function() {
@@ -96,13 +96,13 @@ $(document).ready(function() {
   });
 
   test("Collection: toJSON", function() {
-    equals(JSON.stringify(col), '[{"id":1,"label":"d"},{"id":2,"label":"c"},{"id":3,"label":"b"},{"id":4,"label":"a"}]');
+    equals(JSON.stringify(col), '[{"id":0,"label":"d"},{"id":1,"label":"c"},{"id":2,"label":"b"},{"id":3,"label":"a"}]');
   });
 
   test("Collection: Underscore methods", function() {
     equals(col.map(function(model){ return model.get('label'); }).join(' '), 'd c b a');
     equals(col.any(function(model){ return model.id === 100; }), false);
-    equals(col.any(function(model){ return model.id === 1; }), true);
+    equals(col.any(function(model){ return model.id === 0; }), true);
     equals(col.indexOf(b), 2);
     equals(col.size(), 4);
     equals(col.rest().length, 3);
@@ -110,13 +110,13 @@ $(document).ready(function() {
     ok(!_.include(col.rest()), d);
     ok(!col.isEmpty());
     ok(!_.include(col.without(d)), d);
-    equals(col.max(function(model){ return model.id; }).id, 4);
-    equals(col.min(function(model){ return model.id; }).id, 1);
+    equals(col.max(function(model){ return model.id; }).id, 3);
+    equals(col.min(function(model){ return model.id; }).id, 0);
     same(col.chain()
             .filter(function(o){ return o.id % 2 === 0; })
             .map(function(o){ return o.id * 2; })
             .value(),
-         [4, 8]);
+         [0, 4]);
   });
 
   test("Collection: refresh", function() {

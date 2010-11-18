@@ -420,7 +420,8 @@
 
     // Get a model from the set by id.
     get : function(id) {
-      return id && this._byId[id.id != null ? id.id : id];
+      if (id == null) return null;
+      return this._byId[id.id != null ? id.id : id];
     },
 
     // Get a model from the set by client id.
