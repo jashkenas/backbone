@@ -745,8 +745,8 @@
   Backbone.View = function(options) {
     this._configure(options || {});
     this._ensureElement();
-    this.delegateEvents();
     this.initialize(options);
+    this.delegateEvents();
   };
 
   // jQuery lookup, scoped to DOM elements within the current view.
