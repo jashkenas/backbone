@@ -15,6 +15,9 @@ $(function(){
     // If you don't provide a todo, one will be provided for you.
     EMPTY: "empty todo...",
 
+    // Use localSync instead of the default sync function
+    sync:Backbone.localSync,
+
     // Ensure that each todo created has `content`.
     initialize: function() {
       if (!this.get("content")) {
@@ -44,6 +47,9 @@ $(function(){
 
     // Reference to this collection's model.
     model: Todo,
+
+    // Use localSync instead of the default sync function
+    sync:Backbone.localSync,
 
     // Save all of the todo items under the `"todos"` namespace.
     localStorage: new Store("todos"),
