@@ -107,6 +107,73 @@
 
   };
 
+  // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
+  var methodMap = {
+    'create': 'POST',
+    'update': 'PUT',
+    'delete': 'DELETE',
+    'read'  : 'GET'
+  };
+
+  // Backbone.sync
+  // -------------
+
+  // Override this function to change the manner in which Backbone persists
+  // models to the server. You will be passed the type of request, and the
+  // model in question. By default, uses jQuery to make a RESTful Ajax request
+  // to the model's `url()`. Some possible customizations could be:
+  //
+  // * Use `setTimeout` to batch rapid-fire updates into a single request.
+  // * Send up the models as XML instead of JSON.
+  // * Persist models via WebSockets instead of Ajax.
+  //
+  // Turn on `Backbone.emulateHTTP` in order to send `PUT` and `DELETE` requests
+  // as `POST`, with a `_method` parameter containing the true HTTP method,
+  // as well as all requests with the body as `application/x-www-form-urlencoded` instead of
+  // `application/json` with the model in a param named `model`.
+  // Useful when interfacing with server-side languages like **PHP** that make
+  // it difficult to read the body of `PUT` requests.
+  Backbone.sync = function(method, model, success, error) {
+    var type = methodMap[method];
+    var modelJSON = (method === 'create' || method === 'update') ?
+                    JSON.stringify(model.toJSON()) : null;
+
+    // Default JSON-request options.
+    var params = {
+      url:          getUrl(model),
+      type:         type,
+      contentType:  'application/json',
+      data:         modelJSON,
+      dataType:     'json',
+      processData:  false,
+      success:      success,
+      error:        error
+    };
+
+    // For older servers, emulate JSON by encoding the request into an HTML-form.
+    if (Backbone.emulateJSON) {
+      params.contentType = 'application/x-www-form-urlencoded';
+      params.processData = true;
+      params.data        = modelJSON ? {model : modelJSON} : {};
+    }
+
+    // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
+    // And an `X-HTTP-Method-Override` header.
+    if (Backbone.emulateHTTP) {
+      if (type === 'PUT' || type === 'DELETE') {
+        if (Backbone.emulateJSON) params.data._method = type;
+        params.type = 'POST';
+        params.beforeSend = function(xhr) {
+          xhr.setRequestHeader("X-HTTP-Method-Override", type);
+        };
+      }
+    }
+
+    // Make the request.
+    $.ajax(params);
+  };
+
+
   // Backbone.Model
   // --------------
 
@@ -134,6 +201,9 @@
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize : function(){},
+    
+    // Copy of the Backbone.sync function
+    sync:Backbone.sync,
 
     // Return a copy of the model's `attributes` object.
     toJSON : function() {
@@ -232,7 +302,7 @@
         if (options.success) options.success(model, resp);
       };
       var error = options.error && _.bind(options.error, null, model);
-      Backbone.sync('read', this, success, error);
+      this.sync('read', this, success, error);
       return this;
     },
 
@@ -250,7 +320,7 @@
       };
       var error = options.error && _.bind(options.error, null, model);
       var method = this.isNew() ? 'create' : 'update';
-      Backbone.sync(method, this, success, error);
+      this.sync(method, this, success, error);
       return this;
     },
 
@@ -264,7 +334,7 @@
         if (options.success) options.success(model, resp);
       };
       var error = options.error && _.bind(options.error, null, model);
-      Backbone.sync('delete', this, success, error);
+      this.sync('delete', this, success, error);
       return this;
     },
 
@@ -382,6 +452,9 @@
     // This should be overridden in most cases.
     model : Backbone.Model,
 
+    // copy of Backbone.sync function
+    sync:Backbone.sync,
+
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize : function(){},
@@ -471,7 +544,7 @@
         if (options.success) options.success(collection, resp);
       };
       var error = options.error && _.bind(options.error, null, collection);
-      Backbone.sync('read', this, success, error);
+      this.sync('read', this, success, error);
       return this;
     },
 
@@ -865,71 +938,7 @@
   Backbone.Model.extend = Backbone.Collection.extend =
     Backbone.Controller.extend = Backbone.View.extend = extend;
 
-  // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
-  var methodMap = {
-    'create': 'POST',
-    'update': 'PUT',
-    'delete': 'DELETE',
-    'read'  : 'GET'
-  };
 
-  // Backbone.sync
-  // -------------
-
-  // Override this function to change the manner in which Backbone persists
-  // models to the server. You will be passed the type of request, and the
-  // model in question. By default, uses jQuery to make a RESTful Ajax request
-  // to the model's `url()`. Some possible customizations could be:
-  //
-  // * Use `setTimeout` to batch rapid-fire updates into a single request.
-  // * Send up the models as XML instead of JSON.
-  // * Persist models via WebSockets instead of Ajax.
-  //
-  // Turn on `Backbone.emulateHTTP` in order to send `PUT` and `DELETE` requests
-  // as `POST`, with a `_method` parameter containing the true HTTP method,
-  // as well as all requests with the body as `application/x-www-form-urlencoded` instead of
-  // `application/json` with the model in a param named `model`.
-  // Useful when interfacing with server-side languages like **PHP** that make
-  // it difficult to read the body of `PUT` requests.
-  Backbone.sync = function(method, model, success, error) {
-    var type = methodMap[method];
-    var modelJSON = (method === 'create' || method === 'update') ?
-                    JSON.stringify(model.toJSON()) : null;
-
-    // Default JSON-request options.
-    var params = {
-      url:          getUrl(model),
-      type:         type,
-      contentType:  'application/json',
-      data:         modelJSON,
-      dataType:     'json',
-      processData:  false,
-      success:      success,
-      error:        error
-    };
-
-    // For older servers, emulate JSON by encoding the request into an HTML-form.
-    if (Backbone.emulateJSON) {
-      params.contentType = 'application/x-www-form-urlencoded';
-      params.processData = true;
-      params.data        = modelJSON ? {model : modelJSON} : {};
-    }
-
-    // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
-    // And an `X-HTTP-Method-Override` header.
-    if (Backbone.emulateHTTP) {
-      if (type === 'PUT' || type === 'DELETE') {
-        if (Backbone.emulateJSON) params.data._method = type;
-        params.type = 'POST';
-        params.beforeSend = function(xhr) {
-          xhr.setRequestHeader("X-HTTP-Method-Override", type);
-        };
-      }
-    }
-
-    // Make the request.
-    $.ajax(params);
-  };
 
   // Helpers
   // -------
