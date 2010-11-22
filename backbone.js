@@ -679,7 +679,7 @@
       var docMode = document.documentMode;
       var oldIE = ($.browser.msie && (!docMode || docMode <= 7));
       if (oldIE) {
-        this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
+        this.iframe = $('<iframe src="about:blank" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
       }
       if ('onhashchange' in window && !oldIE) {
         $(window).bind('hashchange', this.checkUrl);
