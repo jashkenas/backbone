@@ -675,7 +675,7 @@
     // an existing route, and `false` otherwise.
     start : function() {
       var docMode = document.documentMode;
-      var oldIE = ($.browser.msie && docMode <= 7);
+      var oldIE = ($.browser.msie && (!docMode || docMode <= 7));
       if (oldIE) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
       }
