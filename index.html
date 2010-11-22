@@ -173,6 +173,7 @@
       <li>– <a href="#Model-id">id</a></li>
       <li>– <a href="#Model-cid">cid</a></li>
       <li>– <a href="#Model-attributes">attributes</a></li>
+      <li>– <a href="#Model-defaults">defaults</a></li>
       <li>- <a href="#Model-toJSON">toJSON</a></li>
       <li>– <a href="#Model-fetch">fetch</a></li>
       <li>– <a href="#Model-save">save</a></li>
@@ -613,6 +614,26 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
       them directly. If you'd like to retrieve and munge a copy of the model's
       attributes, use <a href="#Model-toJSON">toJSON</a> instead.
     </p>
+    
+    <p id="Model-defaults">
+      <b class="header">defaults</b><code>model.defaults</code>
+      <br />
+      The <b>defaults</b> hash can be used to specify the default attributes
+      for your model. When creating an instance of the model, any unspecified 
+      attributes will be set to their default value.
+    </p>
+    
+<pre class="runnable">
+var Meal = Backbone.Model.extend({
+  defaults: {
+    "appetizer":  "caesar salad",
+    "entree":     "ravioli",
+    "dessert":    "cheesecake"
+  }
+});
+
+alert("Dessert will be " + (new Meal).get('dessert'));
+</pre>
 
     <p id="Model-toJSON">
       <b class="header">toJSON</b><code>model.toJSON()</code>

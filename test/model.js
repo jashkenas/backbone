@@ -126,6 +126,18 @@ $(document).ready(function() {
     equals(model.get('name'), undefined);
   });
 
+  test("Model: defaults", function() {
+    var Defaulted = Backbone.Model.extend({
+      defaults: {
+        "one": 1,
+        "two": 2
+      }
+    });
+    var model = new Defaulted({two: null});
+    equals(model.get('one'), 1);
+    equals(model.get('two'), null);
+  });
+
   test("Model: changed, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
     model.bind('change', function() {
