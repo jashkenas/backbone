@@ -234,7 +234,7 @@
         if (options.success) options.success(model, resp);
       };
       var error = options.error && _.bind(options.error, null, model);
-      Backbone.sync('read', this, success, error);
+      (this.sync || Backbone.sync)('read', this, success, error);
       return this;
     },
 
@@ -252,7 +252,7 @@
       };
       var error = options.error && _.bind(options.error, null, model);
       var method = this.isNew() ? 'create' : 'update';
-      Backbone.sync(method, this, success, error);
+      (this.sync || Backbone.sync)(method, this, success, error);
       return this;
     },
 
@@ -266,7 +266,7 @@
         if (options.success) options.success(model, resp);
       };
       var error = options.error && _.bind(options.error, null, model);
-      Backbone.sync('delete', this, success, error);
+      (this.sync || Backbone.sync)('delete', this, success, error);
       return this;
     },
 
@@ -473,7 +473,7 @@
         if (options.success) options.success(collection, resp);
       };
       var error = options.error && _.bind(options.error, null, collection);
-      Backbone.sync('read', this, success, error);
+      (this.sync || Backbone.sync)('read', this, success, error);
       return this;
     },
 
