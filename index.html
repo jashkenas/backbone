@@ -144,7 +144,7 @@
   <div id="sidebar" class="interface">
     
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.3.1)</span>
+      Backbone.js <span class="version">(0.3.2)</span>
     </a>
     
     <a class="toc_title" href="#Introduction">
@@ -310,11 +310,11 @@
 
     <table>
       <tr>
-        <td><a href="backbone.js">Development Version (0.3.1)</a></td>
+        <td><a href="backbone.js">Development Version (0.3.2)</a></td>
         <td><i>33kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="backbone-min.js">Production Version (0.3.1)</a></td>
+        <td><a href="backbone-min.js">Production Version (0.3.2)</a></td>
         <td><i>3.7kb, Packed and Gzipped</i></td>
       </tr>
     </table>
@@ -1815,6 +1815,14 @@ var DocumentView = Backbone.View.extend({
     </div>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <p>
+      <b class="header">0.3.2</b> &mdash; <small><i>Nov 23, 2010</i></small><br />
+      Bugfix for IE7 + iframe-based "hashchange" events. <tt>sync</tt> may now be
+      overridden on a per-model, or per-collection basis. Fixed recursion error
+      when calling <tt>save</tt> with no changed attributes, within a 
+      <tt>"change"</tt> event.
+    </p>
     
     <p>
       <b class="header">0.3.1</b> &mdash; <small><i>Nov 15, 2010</i></small><br />
