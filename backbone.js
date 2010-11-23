@@ -242,9 +242,8 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save : function(attrs, options) {
-      attrs   || (attrs = {});
       options || (options = {});
-      if (!this.set(attrs, options)) return false;
+      if (attrs && !this.set(attrs, options)) return false;
       var model = this;
       var success = function(resp) {
         if (!model.set(model.parse(resp), options)) return false;

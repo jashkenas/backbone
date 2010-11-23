@@ -151,6 +151,15 @@ $(document).ready(function() {
     model.change();
     equals(model.get('name'), 'Rob');
   });
+  
+  test("Model: save within change event", function () {
+    var model = new Backbone.Model({firstName : "Taylor", lastName: "Swift"});
+    model.bind('change', function () {
+      model.save();
+      ok(_.isEqual(lastRequest[1], model));
+    });
+    model.set({lastName: 'Hicks'});
+  });
 
   test("Model: save", function() {
     doc.save({title : "Henry V"});
