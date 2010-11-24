@@ -1,10 +1,15 @@
 require 'rubygems'
-require 'closure-compiler'
 
 HEADER = /((^\s*\/\/.*\n)+)/
 
 desc "rebuild the backbone-min.js files for distribution"
 task :build do
+  begin
+    require 'closure-compiler'
+  rescue LoadError
+    puts %{closure-compiler not found.\nInstall it by running 'gem install closure-compiler'}
+    exit
+  end
   source = File.read 'backbone.js'
   header = source.match(HEADER)
   File.open('backbone-min.js', 'w+') do |file|
@@ -14,6 +19,8 @@ end
 
 desc "build the docco documentation"
 task :doc do
+  check('docco', 'docco', 'https://github.com/jashkenas/docco')
+
   system [
     'docco backbone.js',
     'docco examples/todos/todos.js examples/backbone-localstorage.js'
@@ -27,5 +34,15 @@ end
 
 desc "test the CoffeeScript integration"
 task :test do
+  check('coffee', 'CoffeeScript', 'https://github.com/jashkenas/coffee-script.git')
+
   system "coffee test/*.coffee"
+end
+
+
+def check(exec, name, url)
+  return unless `which #{exec}`.empty?
+
+  puts "#{name} not found.\nGet it from #{url}"
+  exit
 end
