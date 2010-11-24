@@ -107,6 +107,7 @@ $(document).ready(function() {
     equals(lastRequest.url, '/library/2-the-tempest');
     equals(lastRequest.type, 'DELETE');
     equals(lastRequest.data, null);
+    equals(lastRequest.dataType, null);
   });
 
   test("sync: destroy with emulateHTTP", function() {

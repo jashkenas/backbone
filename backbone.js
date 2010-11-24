@@ -903,7 +903,7 @@
       type:         type,
       contentType:  'application/json',
       data:         modelJSON,
-      dataType:     'json',
+      dataType:     (type === 'DELETE') ? null : 'json',
       processData:  false,
       success:      success,
       error:        error
