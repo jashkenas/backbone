@@ -233,7 +233,10 @@
         if (!model.set(model.parse(resp), options)) return false;
         if (options.success) options.success(model, resp);
       };
-      var error = options.error && _.bind(options.error, null, model);
+      var error = function(resp) {
+        model.trigger('error', model, resp);
+        if(options.error) _.bind(options.error, null, model);
+      };
       (this.sync || Backbone.sync)('read', this, success, error);
       return this;
     },
@@ -249,7 +252,10 @@
         if (!model.set(model.parse(resp), options)) return false;
         if (options.success) options.success(model, resp);
       };
-      var error = options.error && _.bind(options.error, null, model);
+      var error = function(resp) {
+        model.trigger('error', model, resp);
+        if(options.error) _.bind(options.error, null, model);
+      };
       var method = this.isNew() ? 'create' : 'update';
       (this.sync || Backbone.sync)(method, this, success, error);
       return this;
@@ -264,7 +270,10 @@
         if (model.collection) model.collection.remove(model);
         if (options.success) options.success(model, resp);
       };
-      var error = options.error && _.bind(options.error, null, model);
+      var error = function(resp) {
+        model.trigger('error', model, resp);
+        if(options.error) _.bind(options.error, null, model);
+      };
       (this.sync || Backbone.sync)('delete', this, success, error);
       return this;
     },
@@ -471,7 +480,10 @@
         collection.refresh(collection.parse(resp));
         if (options.success) options.success(collection, resp);
       };
-      var error = options.error && _.bind(options.error, null, collection);
+      var error = function(resp) {
+        collection.trigger('error', collection, resp);
+        if(options.error) _.bind(options.error, null, collection);
+      };
       (this.sync || Backbone.sync)('read', this, success, error);
       return this;
     },
@@ -490,7 +502,11 @@
         coll.add(nextModel);
         if (options.success) options.success(nextModel, resp);
       };
-      return model.save(null, {success : success, error : options.error});
+      var error = function(resp) {
+        coll.trigger('error', coll, resp);
+        if(options.error) _.bind(options.error, null, coll);
+      };
+      return model.save(null, {success : success, error : error});
     },
 
     // **parse** converts a response into a list of models to be added to the
