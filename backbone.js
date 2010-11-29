@@ -116,6 +116,7 @@
     attributes || (attributes = {});
     if (this.defaults) attributes = _.extend({}, this.defaults, attributes);
     this.attributes = {};
+    this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
     this.set(attributes, {silent : true});
     this._previousAttributes = _.clone(this.attributes);
@@ -147,6 +148,14 @@
       return this.attributes[attr];
     },
 
+    // Get the HTML-escaped value of an attribute.
+    escape : function(attr) {
+      var html;
+      if (html = this._escapedAttributes[attr]) return html;
+      var val = this.attributes[attr];
+      return this._escapedAttributes[attr] = escapeHTML(val == null ? '' : val);
+    },
+
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
@@ -155,7 +164,7 @@
       options || (options = {});
       if (!attrs) return this;
       if (attrs.attributes) attrs = attrs.attributes;
-      var now = this.attributes;
+      var now = this.attributes, escaped = this._escapedAttributes;
 
       // Run validation.
       if (!options.silent && this.validate && !this._performValidation(attrs, options)) return false;
@@ -168,6 +177,7 @@
         var val = attrs[attr];
         if (!_.isEqual(now[attr], val)) {
           now[attr] = val;
+          delete escaped[attr];
           if (!options.silent) {
             this._changed = true;
             this.trigger('change:' + attr, this, val);
@@ -193,6 +203,7 @@
 
       // Remove the attribute.
       delete this.attributes[attr];
+      delete this._escapedAttributes[attr];
       if (!options.silent) {
         this._changed = true;
         this.trigger('change:' + attr, this);
@@ -213,6 +224,7 @@
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
       this.attributes = {};
+      this._escapedAttributes = {};
       if (!options.silent) {
         this._changed = true;
         for (attr in old) {
@@ -979,6 +991,14 @@
   var getUrl = function(object) {
     if (!(object && object.url)) throw new Error("A 'url' property or function must be specified");
     return _.isFunction(object.url) ? object.url() : object.url;
+  };
+
+  // Helper function to escape a string for HTML rendering.
+  var escapeHTML = function(string) {
+    return string.replace(/&(?!\w+;)/g, '&amp;')
+                 .replace(/</g, '&lt;')
+                 .replace(/>/g, '&gt;')
+                 .replace(/"/g, '&quot;');
   };
 
 })();

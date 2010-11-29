@@ -94,6 +94,16 @@ $(document).ready(function() {
     equals(doc.get('author'), 'Bill Shakespeare');
   });
 
+  test("Model: escape", function() {
+    equals(doc.escape('title'), 'The Tempest');
+    doc.set({audience: 'Bill & Bob'});
+    equals(doc.escape('audience'), 'Bill &amp; Bob');
+    doc.set({audience: 'Tim > Joan'});
+    equals(doc.escape('audience'), 'Tim &gt; Joan');
+    doc.unset('audience');
+    equals(doc.escape('audience'), '');
+  });
+
   test("Model: set and unset", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
@@ -151,7 +161,7 @@ $(document).ready(function() {
     model.change();
     equals(model.get('name'), 'Rob');
   });
-  
+
   test("Model: save within change event", function () {
     var model = new Backbone.Model({firstName : "Taylor", lastName: "Swift"});
     model.bind('change', function () {
