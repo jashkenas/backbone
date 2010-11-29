@@ -245,7 +245,7 @@
         if (!model.set(model.parse(resp), options)) return false;
         if (options.success) options.success(model, resp);
       };
-      var error = options.error && _.bind(options.error, null, model);
+      var error = wrapError(options.error, model);
       (this.sync || Backbone.sync)('read', this, success, error);
       return this;
     },
@@ -261,7 +261,7 @@
         if (!model.set(model.parse(resp), options)) return false;
         if (options.success) options.success(model, resp);
       };
-      var error = options.error && _.bind(options.error, null, model);
+      var error = wrapError(options.error, model);
       var method = this.isNew() ? 'create' : 'update';
       (this.sync || Backbone.sync)(method, this, success, error);
       return this;
@@ -276,7 +276,7 @@
         if (model.collection) model.collection.remove(model);
         if (options.success) options.success(model, resp);
       };
-      var error = options.error && _.bind(options.error, null, model);
+      var error = wrapError(options.error, model);
       (this.sync || Backbone.sync)('delete', this, success, error);
       return this;
     },
@@ -483,7 +483,7 @@
         collection.refresh(collection.parse(resp));
         if (options.success) options.success(collection, resp);
       };
-      var error = options.error && _.bind(options.error, null, collection);
+      var error = wrapError(options.error, collection);
       (this.sync || Backbone.sync)('read', this, success, error);
       return this;
     },
@@ -991,6 +991,17 @@
   var getUrl = function(object) {
     if (!(object && object.url)) throw new Error("A 'url' property or function must be specified");
     return _.isFunction(object.url) ? object.url() : object.url;
+  };
+
+  // Wrap an optional error callback with a fallback error event.
+  var wrapError = function(onError, model) {
+    return function(resp) {
+      if (onError) {
+        onError(model, resp);
+      } else {
+        model.trigger('error', model, resp);
+      }
+    };
   };
 
   // Helper function to escape a string for HTML rendering.
