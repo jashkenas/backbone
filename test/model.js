@@ -148,7 +148,7 @@ $(document).ready(function() {
     equals(model.get('two'), null);
   });
 
-  test("Model: changed, hasChanged, changedAttributes, previous, previousAttributes", function() {
+  test("Model: change, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
     model.bind('change', function() {
       ok(model.hasChanged('name'), 'name changed');
@@ -160,6 +160,19 @@ $(document).ready(function() {
     model.set({name : 'Rob'}, {silent : true});
     model.change();
     equals(model.get('name'), 'Rob');
+  });
+
+  test("Model: change with options", function() {
+    var value;
+    var model = new Backbone.Model({name: 'Rob'});
+    model.bind('change', function(model, options) {
+      value = options.prefix + model.get('name');
+    });
+    model.set({name: 'Bob'}, {silent: true});
+    model.change({prefix: 'Mr. '});
+    equals(value, 'Mr. Bob');
+    model.set({name: 'Sue'}, {prefix: 'Ms. '});
+    equals(value, 'Ms. Sue');
   });
 
   test("Model: save within change event", function () {

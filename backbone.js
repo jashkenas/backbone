@@ -186,7 +186,7 @@
       }
 
       // Fire the `"change"` event, if the model has been changed.
-      if (!options.silent && this._changed) this.change();
+      if (!options.silent && this._changed) this.change(options);
       return this;
     },
 
@@ -207,7 +207,7 @@
       if (!options.silent) {
         this._changed = true;
         this.trigger('change:' + attr, this);
-        this.change();
+        this.change(options);
       }
       return this;
     },
@@ -230,7 +230,7 @@
         for (attr in old) {
           this.trigger('change:' + attr, this);
         }
-        this.change();
+        this.change(options);
       }
       return this;
     },
@@ -309,8 +309,8 @@
 
     // Call this method to manually fire a `change` event for this model.
     // Calling this will cause all objects observing the model to update.
-    change : function() {
-      this.trigger('change', this);
+    change : function(options) {
+      this.trigger('change', this, options);
       this._previousAttributes = _.clone(this.attributes);
       this._changed = false;
     },
