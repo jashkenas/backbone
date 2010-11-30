@@ -180,7 +180,7 @@
           delete escaped[attr];
           if (!options.silent) {
             this._changed = true;
-            this.trigger('change:' + attr, this, val);
+            this.trigger('change:' + attr, this, val, options);
           }
         }
       }
@@ -206,7 +206,7 @@
       delete this._escapedAttributes[attr];
       if (!options.silent) {
         this._changed = true;
-        this.trigger('change:' + attr, this);
+        this.trigger('change:' + attr, this, void 0, options);
         this.change(options);
       }
       return this;
@@ -228,7 +228,7 @@
       if (!options.silent) {
         this._changed = true;
         for (attr in old) {
-          this.trigger('change:' + attr, this);
+          this.trigger('change:' + attr, this, void 0, options);
         }
         this.change(options);
       }
@@ -245,7 +245,7 @@
         if (!model.set(model.parse(resp), options)) return false;
         if (options.success) options.success(model, resp);
       };
-      var error = wrapError(options.error, model);
+      var error = wrapError(options.error, model, options);
       (this.sync || Backbone.sync)('read', this, success, error);
       return this;
     },
@@ -261,7 +261,7 @@
         if (!model.set(model.parse(resp), options)) return false;
         if (options.success) options.success(model, resp);
       };
-      var error = wrapError(options.error, model);
+      var error = wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
       (this.sync || Backbone.sync)(method, this, success, error);
       return this;
@@ -276,7 +276,7 @@
         if (model.collection) model.collection.remove(model);
         if (options.success) options.success(model, resp);
       };
-      var error = wrapError(options.error, model);
+      var error = wrapError(options.error, model, options);
       (this.sync || Backbone.sync)('delete', this, success, error);
       return this;
     },
@@ -361,7 +361,7 @@
         if (options.error) {
           options.error(this, error);
         } else {
-          this.trigger('error', this, error);
+          this.trigger('error', this, error, options);
         }
         return false;
       }
@@ -453,7 +453,7 @@
       options || (options = {});
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
       this.models = this.sortBy(this.comparator);
-      if (!options.silent) this.trigger('refresh', this);
+      if (!options.silent) this.trigger('refresh', this, options);
       return this;
     },
 
@@ -470,7 +470,7 @@
       options || (options = {});
       this._reset();
       this.add(models, {silent: true});
-      if (!options.silent) this.trigger('refresh', this);
+      if (!options.silent) this.trigger('refresh', this, options);
       return this;
     },
 
@@ -483,7 +483,7 @@
         collection.refresh(collection.parse(resp));
         if (options.success) options.success(collection, resp);
       };
-      var error = wrapError(options.error, collection);
+      var error = wrapError(options.error, collection, options);
       (this.sync || Backbone.sync)('read', this, success, error);
       return this;
     },
@@ -542,7 +542,7 @@
       this.models.splice(index, 0, model);
       model.bind('all', this._boundOnModelEvent);
       this.length++;
-      if (!options.silent) model.trigger('add', model, this);
+      if (!options.silent) model.trigger('add', model, this, options);
       return model;
     },
 
@@ -557,7 +557,7 @@
       delete model.collection;
       this.models.splice(this.indexOf(model), 1);
       this.length--;
-      if (!options.silent) model.trigger('remove', model, this);
+      if (!options.silent) model.trigger('remove', model, this, options);
       model.unbind('all', this._boundOnModelEvent);
       return model;
     },
@@ -994,12 +994,12 @@
   };
 
   // Wrap an optional error callback with a fallback error event.
-  var wrapError = function(onError, model) {
+  var wrapError = function(onError, model, options) {
     return function(resp) {
       if (onError) {
         onError(model, resp);
       } else {
-        model.trigger('error', model, resp);
+        model.trigger('error', model, resp, options);
       }
     };
   };

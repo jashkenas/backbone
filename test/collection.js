@@ -53,13 +53,17 @@ $(document).ready(function() {
   });
 
   test("Collection: add", function() {
-    var added = null;
-    col.bind('add', function(model){ added = model.get('label'); });
+    var added = opts = null;
+    col.bind('add', function(model, collection, options){
+      added = model.get('label');
+      opts = options;
+    });
     e = new Backbone.Model({id: 10, label : 'e'});
-    col.add(e);
+    col.add(e, {amazing: true});
     equals(added, 'e');
     equals(col.length, 5);
     equals(col.last(), e);
+    ok(opts.amazing);
   });
 
   test("Collection: remove", function() {
@@ -70,7 +74,7 @@ $(document).ready(function() {
     equals(col.length, 4);
     equals(col.first(), d);
   });
-  
+
   test("Collection: remove in multiple collections", function() {
     var modelData = {
       id : 5,
