@@ -26,7 +26,7 @@
   if (!_ && (typeof require !== 'undefined')) _ = require("underscore")._;
 
   // For Backbone's purposes, jQuery owns the `$` variable.
-  var $ = this.jQuery;
+  var $ = this.jQuery || this.Zepto;
 
   // Turn on `emulateHTTP` to use support legacy HTTP servers. Setting this option will
   // fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and set a
@@ -861,7 +861,7 @@
       if (this.el) return;
       var attrs = {};
       if (this.id) attrs.id = this.id;
-      if (this.className) attrs.className = this.className;
+      if (this.className) attrs["class"] = this.className;
       this.el = this.make(this.tagName, attrs);
     }
 
