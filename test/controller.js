@@ -74,6 +74,7 @@ $(document).ready(function() {
       equals(controller.part, 'part');
       equals(controller.rest, 'four/five/six/seven');
       start();
+      window.location.hash = '';
     }, 10);
   });
 
