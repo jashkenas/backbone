@@ -1,4 +1,4 @@
-//     Backbone.js 0.3.2
+//     Backbone.js 0.3.3
 //     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -19,13 +19,13 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.3.2';
+  Backbone.VERSION = '0.3.3';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;
   if (!_ && (typeof require !== 'undefined')) _ = require("underscore")._;
 
-  // For Backbone's purposes, jQuery owns the `$` variable.
+  // For Backbone's purposes, either jQuery or Zepto owns the `$` variable.
   var $ = this.jQuery || this.Zepto;
 
   // Turn on `emulateHTTP` to use support legacy HTTP servers. Setting this option will
@@ -762,10 +762,10 @@
     this.initialize(options);
   };
 
-  // jQuery lookup, scoped to DOM elements within the current view.
-  // This should be prefered to global jQuery lookups, if you're dealing with
+  // Element lookup, scoped to DOM elements within the current view.
+  // This should be prefered to global lookups, if you're dealing with
   // a specific view.
-  var jQueryDelegate = function(selector) {
+  var selectorDelegate = function(selector) {
     return $(selector, this.el);
   };
 
@@ -778,9 +778,8 @@
     // The default `tagName` of a View's element is `"div"`.
     tagName : 'div',
 
-    // Attach the jQuery function as the `$` and `jQuery` properties.
-    $       : jQueryDelegate,
-    jQuery  : jQueryDelegate,
+    // Attach the `selectorDelegate` function as the `$` property.
+    $       : selectorDelegate,
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -822,7 +821,7 @@
     //     }
     //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
-    // Uses jQuery event delegation for efficiency.
+    // Uses event delegation for efficiency.
     // Omitting the selector binds the event to `this.el`.
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
@@ -891,7 +890,7 @@
 
   // Override this function to change the manner in which Backbone persists
   // models to the server. You will be passed the type of request, and the
-  // model in question. By default, uses jQuery to make a RESTful Ajax request
+  // model in question. By default, uses makes a RESTful Ajax request
   // to the model's `url()`. Some possible customizations could be:
   //
   // * Use `setTimeout` to batch rapid-fire updates into a single request.
@@ -1006,10 +1005,7 @@
 
   // Helper function to escape a string for HTML rendering.
   var escapeHTML = function(string) {
-    return string.replace(/&(?!\w+;)/g, '&amp;')
-                 .replace(/</g, '&lt;')
-                 .replace(/>/g, '&gt;')
-                 .replace(/"/g, '&quot;');
+    return string.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   };
 
 })();
