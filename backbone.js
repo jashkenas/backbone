@@ -563,14 +563,24 @@
     },
 
     // Internal method called every time a model in the set fires an event.
-    // Sets need to update their indexes when models change ids. All other
-    // events simply proxy through.
+    // Sets need to update their indexes when models change ids. 
+    // Other events simply proxy through, unless they refer to a different
+    // collection
     _onModelEvent : function(ev, model) {
+      var collectionAffected;
+
       if (ev === 'change:id') {
         delete this._byId[model.previous('id')];
         this._byId[model.id] = model;
       }
-      this.trigger.apply(this, arguments);
+
+      if (_(['add','remove']).include(ev)) {
+        collectionAffected = arguments[2];
+      }
+
+      if (!collectionAffected || this === collectionAffected) {
+        this.trigger.apply(this, arguments);
+      }
     }
 
   });
