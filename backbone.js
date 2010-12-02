@@ -92,12 +92,14 @@
     trigger : function(ev) {
       var list, calls, i, l;
       if (!(calls = this._callbacks)) return this;
-      if (list = calls[ev]) {
+      if (calls[ev]) {
+        list = calls[ev].slice(0);
         for (i = 0, l = list.length; i < l; i++) {
           list[i].apply(this, Array.prototype.slice.call(arguments, 1));
         }
       }
-      if (list = calls['all']) {
+      if (calls['all']) {
+        list = calls['all'].slice(0);
         for (i = 0, l = list.length; i < l; i++) {
           list[i].apply(this, arguments);
         }

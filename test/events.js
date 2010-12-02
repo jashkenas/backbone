@@ -39,4 +39,18 @@ $(document).ready(function() {
     equals(obj.counterB, 2, 'counterB should have been incremented twice.');
   });
 
+  test("Events: two binds that unbind themeselves", function() {
+    var obj = { counterA: 0, counterB: 0 };
+    _.extend(obj,Backbone.Events);
+    var incrA = function(){ obj.counterA += 1; obj.unbind('event', incrA); };
+    var incrB = function(){ obj.counterB += 1; obj.unbind('event', incrB); };
+    obj.bind('event', incrA);
+    obj.bind('event', incrB);
+    obj.trigger('event');
+    obj.trigger('event');
+    obj.trigger('event');
+    equals(obj.counterA, 1, 'counterA should have only been incremented once.');
+    equals(obj.counterB, 1, 'counterB should have only been incremented once.');
+  });
+
 });
