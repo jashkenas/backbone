@@ -564,8 +564,10 @@
 
     // Internal method called every time a model in the set fires an event.
     // Sets need to update their indexes when models change ids. All other
-    // events simply proxy through.
-    _onModelEvent : function(ev, model) {
+    // events simply proxy through. "add" and "remove" events that originate
+    // in other collections are ignored.
+    _onModelEvent : function(ev, model, collection) {
+      if ((ev == 'add' || ev == 'remove') && collection != this) return;
       if (ev === 'change:id') {
         delete this._byId[model.previous('id')];
         this._byId[model.id] = model;

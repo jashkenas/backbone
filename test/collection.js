@@ -8,12 +8,13 @@ $(document).ready(function() {
     lastRequest = _.toArray(arguments);
   };
 
-  var a = new Backbone.Model({id: 3, label: 'a'});
-  var b = new Backbone.Model({id: 2, label: 'b'});
-  var c = new Backbone.Model({id: 1, label: 'c'});
-  var d = new Backbone.Model({id: 0, label: 'd'});
-  var e = null;
-  var col = window.col = new Backbone.Collection([a,b,c,d]);
+  var a         = new Backbone.Model({id: 3, label: 'a'});
+  var b         = new Backbone.Model({id: 2, label: 'b'});
+  var c         = new Backbone.Model({id: 1, label: 'c'});
+  var d         = new Backbone.Model({id: 0, label: 'd'});
+  var e         = null;
+  var col       = new Backbone.Collection([a,b,c,d]);
+  var otherCol  = new Backbone.Collection();
 
   test("Collection: new and sort", function() {
     equals(col.first(), a, "a should be first");
@@ -53,26 +54,34 @@ $(document).ready(function() {
   });
 
   test("Collection: add", function() {
-    var added = opts = null;
+    var added = opts = secondAdded = null;
+    e = new Backbone.Model({id: 10, label : 'e'});
+    otherCol.add(e);
+    otherCol.bind('add', function() {
+      secondAdded = true;
+    });
     col.bind('add', function(model, collection, options){
       added = model.get('label');
       opts = options;
     });
-    e = new Backbone.Model({id: 10, label : 'e'});
     col.add(e, {amazing: true});
     equals(added, 'e');
     equals(col.length, 5);
     equals(col.last(), e);
+    equals(otherCol.length, 1);
+    equals(secondAdded, null);
     ok(opts.amazing);
   });
 
   test("Collection: remove", function() {
-    var removed = null;
+    var removed = otherRemoved = null;
     col.bind('remove', function(model){ removed = model.get('label'); });
+    otherCol.bind('remove', function(){ otherRemoved = true; });
     col.remove(e);
     equals(removed, 'e');
     equals(col.length, 4);
     equals(col.first(), d);
+    equals(otherRemoved, null);
   });
 
   test("Collection: remove in multiple collections", function() {
