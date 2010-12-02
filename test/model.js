@@ -65,6 +65,16 @@ $(document).ready(function() {
     equals(failed, true);
     doc.collection = collection;
   });
+  
+  test("Model: url when using urlBase", function() {
+    var Model = Backbone.Model.extend({
+      urlBase: '/collection'
+    });
+    var model = new Model();
+    equals(model.url(), '/collection');
+    model.set({id: '1'});
+    equals(model.url(), '/collection/1');
+  });
 
   test("Model: clone", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
