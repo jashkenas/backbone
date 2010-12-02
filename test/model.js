@@ -150,6 +150,7 @@ $(document).ready(function() {
 
   test("Model: change, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
+    equals(model.changedAttributes(), false);
     model.bind('change', function() {
       ok(model.hasChanged('name'), 'name changed');
       ok(!model.hasChanged('age'), 'age did not');
