@@ -466,9 +466,13 @@
       options || (options = {});
       var collection = this;
       var success = function(resp) {
-        collection.refresh(collection.parse(resp));
-        if (options.success) options.success(collection, resp);
-      };
+          if(options.append) {
+              collection.add(collection.parse(resp));
+          } else {
+              collection.refresh(collection.parse(resp));
+          }
+          if (options.success) options.success(collection, resp);
+        };
       var error = options.error && _.bind(options.error, null, collection);
       Backbone.sync('read', this, success, error);
       return this;
