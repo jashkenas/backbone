@@ -180,10 +180,8 @@
         if (!_.isEqual(now[attr], val)) {
           now[attr] = val;
           delete escaped[attr];
-          if (!options.silent) {
-            this._changed = true;
-            this.trigger('change:' + attr, this, val, options);
-          }
+          this._changed = true;
+          if (!options.silent) this.trigger('change:' + attr, this, val, options);
         }
       }
 
@@ -206,8 +204,8 @@
       // Remove the attribute.
       delete this.attributes[attr];
       delete this._escapedAttributes[attr];
+      this._changed = true;
       if (!options.silent) {
-        this._changed = true;
         this.trigger('change:' + attr, this, void 0, options);
         this.change(options);
       }
@@ -227,8 +225,8 @@
 
       this.attributes = {};
       this._escapedAttributes = {};
+      this._changed = true;
       if (!options.silent) {
-        this._changed = true;
         for (attr in old) {
           this.trigger('change:' + attr, this, void 0, options);
         }

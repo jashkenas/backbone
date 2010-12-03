@@ -159,6 +159,8 @@ $(document).ready(function() {
       ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}), 'previousAttributes is correct');
     });
     model.set({name : 'Rob'}, {silent : true});
+    equals(model.hasChanged(), true);
+    equals(model.hasChanged('name'), true);
     model.change();
     equals(model.get('name'), 'Rob');
   });
