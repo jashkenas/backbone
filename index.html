@@ -263,6 +263,17 @@
       Examples
     </a>
 
+    <a class="toc_title" href="#faq">
+      F.A.Q.
+    </a>
+    <ul class="toc_section">
+      <li>– <a href="#FAQ-events">Catalog of Events</a></li>
+      <li>– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
+      <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
+      <li>– <a href="#FAQ-this">Binding "this"</a></li>
+      <li>- <a href="#FAQ-rias">Other RIA Frameworks</a></li>
+    </ul>
+
     <a class="toc_title" href="#changelog">
       Change Log
     </a>
@@ -352,27 +363,6 @@
       code that looks into the DOM to find an element with a specific <i>id</i>,
       and update the HTML manually
       &mdash; when the model changes, the views simply update themselves.
-    </p>
-
-    <p>
-      <i>How is this different than
-        <a href="http://www.sproutcore.com/">SproutCore</a> or
-        <a href="http://cappuccino.org/">Cappuccino</a>?
-      </i>
-    </p>
-
-    <p>
-      This question is frequently asked, and all three projects apply general
-      <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
-      principles to JavaScript applications. However, there isn't much basis
-      for comparison. SproutCore and Cappuccino provide rich UI widgets, vast
-      core libraries, and determine the structure of your HTML for you.
-      Both frameworks measure in the hundreds of kilobytes when packed and
-      gzipped, and megabytes of JavaScript, CSS, and images when loaded in the browser
-      &mdash; there's a lot of room underneath for libraries of a more moderate scope.
-      Backbone is a <i>4 kilobyte</i> include that provides
-      just the core concepts of models, events, collections, views, controllers, 
-      and persistence.
     </p>
 
     <p>
@@ -550,16 +540,16 @@ new Book({
       Get the current value of an attribute from the model. For example:
       <tt>note.get("title")</tt>
     </p>
-    
+
     <p id="Model-escape">
       <b class="header">escape</b><code>model.escape(attribute)</code>
       <br />
       Similar to <a href="#Model-get">get</a>, but returns the HTML-escaped version
       of a model's attribute. If you're interpolating data from the model into
-      HTML, using <b>escape</b> to retrieve attributes will prevent 
+      HTML, using <b>escape</b> to retrieve attributes will prevent
       <a href="http://en.wikipedia.org/wiki/Cross-site_scripting">XSS</a> attacks.
     </p>
-    
+
 <pre class="runnable">
 var hacker = new Backbone.Model({
   name: "&lt;script&gt;alert('xss')&lt;/script&gt;"
@@ -1833,6 +1823,127 @@ var DocumentView = Backbone.View.extend({
       </a>
     </div>
 
+    <h2 id="faq">F.A.Q.</h2>
+
+    <p id="FAQ-events">
+      <b class="header">Catalog of Events</b>
+      <br />
+      Here's a list of all of the built-in events that Backbone.js can fire.
+      You're also free to trigger your own events on Models and Views as you
+      see fit.
+    </p>
+
+    <ul>
+      <li><b>"add"</b> (model, collection) &mdash; when a model is added to a collection. </li>
+      <li><b>"remove"</b> (model, collection) &mdash; when a model is removed from a collection. </li>
+      <li><b>"refresh"</b> (collection) &mdash; when the collection's entire contents have been replaced. </li>
+      <li><b>"change"</b> (model, collection) &mdash; when a model's attributes have changed. </li>
+      <li><b>"change:[attribute]"</b> (model, collection) &mdash; when a specific attribute has been updated. </li>
+      <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
+      <li><b>"route:[name]"</b> (controller) &mdash; when one of a controller's routes has matched. </li>
+      <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
+    </ul>
+
+    <p id="FAQ-nested">
+      <b class="header">Nested Models &amp; Collections</b>
+      <br />
+      It's common to nest collections inside of models with Backbone. For example,
+      consider a <tt>Mailbox</tt> model that contains many <tt>Message</tt> models.
+      One nice pattern for handling this is have a <tt>this.messages</tt> collection
+      for each mailbox, enabling the lazy-loading of messages, when the mailbox
+      is first opened ... perhaps with <tt>MessageList</tt> views listening for
+      <tt>"add"</tt> and <tt>"remove"</tt> events.
+    </p>
+
+<pre>
+var Mailbox = Backbone.Model.extend({
+
+  initialize: function() {
+    this.messages = new Messages;
+    this.messages.url = '/mailbox/' + this.id + '/messages';
+    this.messages.bind("refresh", this.updateCounts);
+  },
+
+  ...
+
+});
+
+var Inbox = new Mailbox;
+
+// And then, when the Inbox is opened:
+
+Inbox.messages.fetch();
+</pre>
+
+    <p id="FAQ-mvc">
+      <b class="header">How does Backbone relate to "traditional" MVC?</b>
+      <br />
+      Different implementations of the 
+      <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
+      pattern tend to disagree about the definition of a controller. If it helps any, in 
+      Backbone, the <a href="#View">View</a> class can also be thought of as a 
+      kind of controller, dispatching events that originate from the UI, with
+      the HTML template serving as the true view. We call it a View because it
+      represents a logical chunk of UI, responsible for the contents of a single 
+      DOM element.
+    </p>
+    
+    <p id="FAQ-this">
+      <b class="header">Binding "this"</b>
+      <br />
+      Perhaps the single most common JavaScript "gotcha" is the fact that when
+      you pass a function as a callback, it's value for <tt>this</tt> is lost. With
+      Backbone, when dealing with <a href="#Events">events</a> and callbacks,
+      you'll often find it useful to rely on
+      <a href="http://documentcloud.github.com/underscore/#bind">_.bind</a> and
+      <a href="http://documentcloud.github.com/underscore/#bindAll">_.bindAll</a>
+      from Underscore.js. <tt>_.bind</tt> takes a function and an object to be
+      used as <tt>this</tt>, any time the function is called in the future.
+      <tt>_.bindAll</tt> takes an object and a list of method names: each method
+      in the list will be bound to the object, so that it's <tt>this</tt> may
+      not change. For example, in a <a href="#View">View</a> that listens for
+      changes to a collection...
+    </p>
+
+<pre>
+var MessageList = Backbone.View.extend({
+
+  initialize: function() {
+    _.bindAll(this, "addMessage", "removeMessage", "render");
+
+    var messages = this.collection;
+    messages.bind("refresh", this.render);
+    messages.bind("add", this.addMessage);
+    messages.bind("remove", this.removeMessage);
+  }
+
+});
+
+// Later, in the app...
+
+Inbox.messages.add(newMessage);
+</pre>
+
+    <p id="FAQ-rias">
+      <b class="header">
+        How is Backbone different than
+        <a href="http://www.sproutcore.com/">SproutCore</a> or
+        <a href="http://cappuccino.org/">Cappuccino</a>?
+      </b>
+      <br />
+      This question is frequently asked, and all three projects apply general
+      <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
+      principles to JavaScript applications. However, there isn't much basis
+      for comparison. SproutCore and Cappuccino provide rich UI widgets, vast
+      core libraries, and determine the structure of your HTML for you.
+      Both frameworks measure in the hundreds of kilobytes when packed and
+      gzipped, and megabytes of JavaScript, CSS, and images when loaded in the browser
+      &mdash; there's a lot of room underneath for libraries of a more moderate scope.
+      Backbone is a <i>4 kilobyte</i> include that provides
+      just the core concepts of models, events, collections, views, controllers,
+      and persistence.
+    </p>
+
     <h2 id="changelog">Change Log</h2>
 
     <p>
@@ -1841,7 +1952,7 @@ var DocumentView = Backbone.View.extend({
       jQuery, as a framework for DOM manipulation and Ajax support.
       Implemented <a href="#Model-escape">Model#escape</a>, to efficiently handle
       attributes intended for HTML interpolation. When trying to persist a model,
-      failed requests will now trigger an <tt>"error"</tt> event. The 
+      failed requests will now trigger an <tt>"error"</tt> event. The
       ubiquitous <tt>options</tt> argument is now passed as the final argument
       to all <tt>"change"</tt> events.
     </p>
