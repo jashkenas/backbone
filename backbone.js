@@ -158,6 +158,11 @@
       return this._escapedAttributes[attr] = escapeHTML(val == null ? '' : val);
     },
 
+    // Returns true if the attribute evalutates to a truthy value. False otherwise.
+    is : function(attr) {
+      return !!this.attributes[attr] === true;
+    },
+
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {

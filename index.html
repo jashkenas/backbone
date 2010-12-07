@@ -168,6 +168,7 @@
       <li>– <a href="#Model-constructor">constructor / initialize</a></li>
       <li>– <a href="#Model-get">get</a></li>
       <li>– <a href="#Model-escape">escape</a></li>
+      <li>– <a href="#Model-is">is</a></li>
       <li>– <a href="#Model-set">set</a></li>
       <li>– <a href="#Model-unset">unset</a></li>
       <li>– <a href="#Model-clear">clear</a></li>
@@ -557,6 +558,13 @@ var hacker = new Backbone.Model({
 
 alert(hacker.escape('name'));
 </pre>
+
+    <p id="Model-is">
+      <b class="header">is</b><code>model.is(attribute)</code>
+      <br />
+      Returns whether an attribute is set to a truthy value or not. For example:
+      <tt>note.get("title")</tt>
+    </p>
 
     <p id="Model-set">
       <b class="header">set</b><code>model.set(attributes, [options])</code>

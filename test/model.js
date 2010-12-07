@@ -104,6 +104,21 @@ $(document).ready(function() {
     equals(doc.escape('audience'), '');
   });
 
+  test("Model: is", function() {
+    attrs = { 'foo': 1 };
+    a = new Backbone.Model(attrs);
+    // falsiness
+    _([false, null, undefined, '', 0]).each(function(value) {
+      a.set({'foo': value});
+      equals(a.is("foo"), false);
+    });
+    // truthiness
+    _([true, "Truth!", 1]).each(function(value) {
+      a.set({'foo': value});
+      equals(a.is("foo"), true);
+    });
+  });
+
   test("Model: set and unset", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
