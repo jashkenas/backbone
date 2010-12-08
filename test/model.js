@@ -104,18 +104,19 @@ $(document).ready(function() {
     equals(doc.escape('audience'), '');
   });
 
-  test("Model: is", function() {
-    attrs = { 'foo': 1 };
+  test("Model: has", function() {
+    attrs = {};
     a = new Backbone.Model(attrs);
-    // falsiness
-    _([false, null, undefined, '', 0]).each(function(value) {
-      a.set({'foo': value});
-      equals(a.is("foo"), false);
+    equals(a.has("name"), false);
+    _([true, "Truth!", 1, false, '', 0]).each(function(value) {
+      a.set({'name': value});
+      equals(a.has("name"), true);
     });
-    // truthiness
-    _([true, "Truth!", 1]).each(function(value) {
-      a.set({'foo': value});
-      equals(a.is("foo"), true);
+    a.unset('name');
+    equals(a.has('name'), false);
+    _([null, undefined]).each(function(value) {
+      a.set({'name': value});
+      equals(a.has("name"), false);
     });
   });
 
