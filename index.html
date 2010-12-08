@@ -269,6 +269,7 @@
     <ul class="toc_section">
       <li>– <a href="#FAQ-events">Catalog of Events</a></li>
       <li>– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
+      <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
       <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
       <li>– <a href="#FAQ-this">Binding "this"</a></li>
       <li>- <a href="#FAQ-rias">Other RIA Frameworks</a></li>
@@ -1873,6 +1874,26 @@ var Inbox = new Mailbox;
 // And then, when the Inbox is opened:
 
 Inbox.messages.fetch();
+</pre>
+
+    <p id="FAQ-bootstrap">
+      <b class="header">Loading Bootstrapped Models</b>
+      <br />
+      When your app first loads, it's common to have a set of initial models that
+      you know you're going to need, in order to render the page. Instead of 
+      firing an extra AJAX request to <a href="#Collection-fetch">fetch</a> them,
+      a nicer pattern is to have their data already bootstrapped into the page.
+      You can then use <a href="#Collection-refresh">refresh</a> to populate your
+      collections with the initial data. At DocumentCloud, in the 
+      <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the 
+      workspace, we do something along these lines:
+    </p>
+
+<pre>
+&lt;script&gt;
+  Accounts.refresh(&lt;%= @accounts.to_json %&gt;);
+  Projects.refresh(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
+&lt;/script&gt;
 </pre>
 
     <p id="FAQ-mvc">
