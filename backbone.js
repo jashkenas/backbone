@@ -388,7 +388,7 @@
       this.comparator = options.comparator;
       delete options.comparator;
     }
-    this._boundOnModelEvent = _.bind(this._onModelEvent, this);
+    _.bindAll(this, '_onModelEvent', '_removeReference');
     this._reset();
     if (models) this.refresh(models, {silent: true});
     this.initialize(models, options);
@@ -474,6 +474,7 @@
     refresh : function(models, options) {
       models  || (models = []);
       options || (options = {});
+      this.each(this._removeReference);
       this._reset();
       this.add(models, {silent: true});
       if (!options.silent) this.trigger('refresh', this, options);
@@ -547,7 +548,7 @@
       model.collection = this;
       var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length;
       this.models.splice(index, 0, model);
-      model.bind('all', this._boundOnModelEvent);
+      model.bind('all', this._onModelEvent);
       this.length++;
       if (!options.silent) model.trigger('add', model, this, options);
       return model;
@@ -561,12 +562,17 @@
       if (!model) return null;
       delete this._byId[model.id];
       delete this._byCid[model.cid];
-      delete model.collection;
       this.models.splice(this.indexOf(model), 1);
       this.length--;
       if (!options.silent) model.trigger('remove', model, this, options);
-      model.unbind('all', this._boundOnModelEvent);
+      this._removeReference(model);
       return model;
+    },
+
+    // Internal method to remove a model's ties to a collection.
+    _removeReference : function(model) {
+      delete model.collection;
+      model.unbind('all', this._onModelEvent);
     },
 
     // Internal method called every time a model in the set fires an event.

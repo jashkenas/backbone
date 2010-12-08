@@ -84,6 +84,19 @@ $(document).ready(function() {
     equals(otherRemoved, null);
   });
 
+  test("Collection: events are unbound on remove", function() {
+    var counter = 0;
+    var dj = new Backbone.Model();
+    var emcees = new Backbone.Collection([dj]);
+    emcees.bind('change', function(){ counter++; });
+    dj.set({name : 'Kool'});
+    equals(counter, 1);
+    emcees.refresh([]);
+    equals(dj.collection, undefined);
+    dj.set({name : 'Shadow'});
+    equals(counter, 1);
+  });
+
   test("Collection: remove in multiple collections", function() {
     var modelData = {
       id : 5,
