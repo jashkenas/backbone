@@ -1252,11 +1252,18 @@ Accounts.fetch();
 </pre>
 
     <p>
+      If you'd like to add the incoming models to the current collection, instead
+      of replacing the collection's contents, pass <tt>{add: true}</tt> as an
+      option to <b>fetch</b>.
+    </p>
+
+    <p>
       Note that <b>fetch</b> should not be used to populate collections on
       page load &mdash; all models needed at load time should already be
-      bootstrapped in to place. <b>fetch</b> is intended for lazily-loading models
-      for interfaces that are not needed immediately: for example, documents
-      with collections of notes that may be toggled open and closed.
+      <a href="#FAQ-bootstrap">bootstrapped</a> in to place. <b>fetch</b> is 
+      intended for lazily-loading models for interfaces that are not needed 
+      immediately: for example, documents with collections of notes that may be 
+      toggled open and closed.
     </p>
 
     <p id="Collection-refresh">

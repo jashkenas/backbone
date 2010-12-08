@@ -481,12 +481,13 @@
     },
 
     // Fetch the default set of models for this collection, refreshing the
-    // collection when they arrive.
+    // collection when they arrive. If `add: true` is passed, appends the
+    // models to the collection instead of refreshing.
     fetch : function(options) {
       options || (options = {});
       var collection = this;
       var success = function(resp) {
-        collection.refresh(collection.parse(resp));
+        collection[options.add ? 'add' : 'refresh'](collection.parse(resp));
         if (options.success) options.success(collection, resp);
       };
       var error = wrapError(options.error, collection, options);
