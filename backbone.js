@@ -468,16 +468,38 @@
       return _.map(this.models, function(model){ return model.get(attr); });
     },
 
-    // When you have more items than you want to add or remove individually,
-    // you can refresh the entire set with a new list of models, without firing
-    // any `added` or `removed` events. Fires `refresh` when finished.
+    // When you want change a significant amount of the models you can refresh the 
+    // entire set with a new list of models. By default, calling `refresh` won't fire 
+    // any add/remove events. It will just fire a `refresh` when done. However, if you 
+    // want all the `add` and `remove` events you just have to pass `{individual: true}`
+    // in the options hash. **note that generally speaking, if you're just using this for 
+    // dom manipulations you're typically better off using `refresh`.
     refresh : function(models, options) {
       models  || (models = []);
       options || (options = {});
-      this.each(this._removeReference);
-      this._reset();
-      this.add(models, {silent: true});
-      if (!options.silent) this.trigger('refresh', this, options);
+      var collection = this;
+      var removable = [];
+      if (options.individual) {
+        this.each(function (model) {
+          if (!_.detect(models, function (newModel) {return newModel.id == model.id})) {
+            removable.push(model);
+          }
+        });
+        this.remove(removable);
+        _(models).each(function(newModel) {
+          var model = collection.get(newModel.id);
+          if (model) {
+            model.set(newModel);
+          } else {
+            collection.add(newModel);
+          }
+        });
+      } else {
+        this.each(this._removeReference);
+        this._reset();
+        this.add(models, {silent: true});
+      }
+      if (!options.silent && !options.individual) this.trigger('refresh', this, options);
       return this;
     },
 
@@ -488,7 +510,11 @@
       options || (options = {});
       var collection = this;
       var success = function(resp) {
-        collection[options.add ? 'add' : 'refresh'](collection.parse(resp));
+        if (options.add) {
+          collection.add(collection.parse(resp));
+        } else {
+          collection.refresh(collection.parse(resp), options);
+        }
         if (options.success) options.success(collection, resp);
       };
       var error = wrapError(options.error, collection, options);

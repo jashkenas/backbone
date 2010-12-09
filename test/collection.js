@@ -188,4 +188,37 @@ $(document).ready(function() {
     ok(_.isEqual(col.last().attributes, a.attributes));
   });
 
+  test("Collection: refresh with `individual` option", function() {
+    var refreshed = 0;
+    var added = 0;
+    var removed = 0;
+    var changed = 0;
+    var models = _.clone(col.models);
+    col.bind('refresh', function() { refreshed += 1; });
+    col.bind('add', function() { added += 1; });
+    col.bind('remove', function() { removed += 1; });
+    col.bind('change', function() { changed += 1; });
+    col.refresh([], {individual: true});
+    equals(refreshed, 0);
+    equals(removed, 4);
+    equals(col.length, 0);
+    equals(col.last(), null);
+    added = 0;
+    removed = 0;
+    col.refresh(_.map(models, function(m){ return m.attributes; }), {individual: true});
+    equals(refreshed, 0);
+    equals(added, 4);
+    equals(removed, 0);
+    equals(col.length, 4);
+    added = 0;
+    removed = 0;
+    changed = 0;
+    col.refresh([{id: 1, label: 'c'}, {id: 0, label: 'x'}], {individual: true});
+    equals(refreshed, 0);
+    equals(added, 0);
+    equals(changed, 1);
+    equals(removed, 2);
+    equals(col.length, 2);
+  });
+
 });
