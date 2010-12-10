@@ -291,7 +291,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url : function() {
-      var base = this.urlRoot || getUrl(this.collection);
+      var base = getUrl(this.collection) || this.urlRoot || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id;
     },
@@ -926,7 +926,7 @@
 
     // Default JSON-request options.
     var params = {
-      url:          getUrl(model),
+      url:          getUrl(model) || urlError(),
       type:         type,
       contentType:  'application/json',
       data:         modelJSON,
@@ -1004,8 +1004,13 @@
   // Helper function to get a URL from a Model or Collection as a property
   // or as a function.
   var getUrl = function(object) {
-    if (!(object && object.url)) throw new Error("A 'url' property or function must be specified");
+    if (!(object && object.url)) return null;
     return _.isFunction(object.url) ? object.url() : object.url;
+  };
+
+  // Throw an error when a URL is needed, and none is supplied.
+  var urlError = function() {
+    throw new Error("A 'url' property or function must be specified");
   };
 
   // Wrap an optional error callback with a fallback error event.

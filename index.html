@@ -182,6 +182,7 @@
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
       <li>– <a href="#Model-url">url</a></li>
+      <li>– <a href="#Model-urlRoot">urlRoot</a></li>
       <li>– <a href="#Model-parse">parse</a></li>
       <li>– <a href="#Model-clone">clone</a></li>
       <li>– <a href="#Model-isNew">isNew</a></li>
@@ -699,13 +700,6 @@ setInterval(function() {
 }, 10000);
 </pre>
 
-    <p class="warning">
-      <b>Cautionary Note:</b> When fetching or saving a model, make sure that the model is part of
-      a collection with a <a href="#Collection-url">url</a> property specified,
-      or that the model itself has a complete <a href="#Model-url">url</a> function
-      of its own, so that the request knows where to go.
-    </p>
-
     <p id="Model-save">
       <b class="header">save</b><code>model.save(attributes, [options])</code>
       <br />
@@ -810,16 +804,34 @@ account.set({access: "unlimited"}, {
       <br />
       Returns the relative URL where the model's resource would be located on
       the server. If your models are located somewhere else, override this method
-      with the correct logic. Generates URLs of the form: <tt>"/[collection]/[id]"</tt>.
+      with the correct logic. Generates URLs of the form: <tt>"/[collection.url]/[id]"</tt>,
+      falling back to <tt>"/[urlRoot]/id"</tt> if the model is not part of a collection.
     </p>
 
     <p>
       Delegates to <a href="#Collection-url">Collection#url</a> to generate the
-      URL, so make sure that you have it defined.
+      URL, so make sure that you have it defined, or a <a href="#Model-urlRoot">urlRoot</a>
+      property, if all models of this class share a common root URL.
       A model with an id of <tt>101</tt>, stored in a
-      <a href="#Collection">Backbone.Collection</a> with a <tt>url</tt> of <tt>"/notes"</tt>,
-      would have this URL: <tt>"/notes/101"</tt>
+      <a href="#Collection">Backbone.Collection</a> with a <tt>url</tt> of <tt>"/documents/7/notes"</tt>,
+      would have this URL: <tt>"/documents/7/notes/101"</tt>
     </p>
+    
+    <p id="Model-urlRoot">
+      <b class="header">urlRoot</b><code>model.urlRoot</code>
+      <br />
+      Specify a <tt>urlRoot</tt> if you're using a model outside of a collection,
+      to enable the default <a href="#Model-url">url</a> function to generate
+      URLs based on the model id. <tt>"/[urlRoot]/id"</tt>
+    </p>
+    
+<pre class="runnable">
+var Book = Backbone.Model.extend({urlRoot : '/books'});
+
+var solaris = new Book({id: "1083-lem-solaris"});
+
+alert(solaris.url());
+</pre>
 
     <p id="Model-parse">
       <b class="header">parse</b><code>model.parse(response)</code>
