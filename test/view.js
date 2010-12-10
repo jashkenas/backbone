@@ -38,20 +38,22 @@ $(document).ready(function() {
   });
 
   test("View: delegateEvents", function() {
-    var counter = 0;
+    var counter = counter2 = 0;
     view.el = document.body;
-    view.increment = function() {
-      return ++counter;
-    };
+    view.increment = function(){ counter++; };
+    $(view.el).bind('click', function(){ counter2++; });
     var events = {"click #qunit-banner": "increment"};
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
     equals(counter, 1);
+    equals(counter2, 1);
     $('#qunit-banner').trigger('click');
     equals(counter, 2);
+    equals(counter2, 2);
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
     equals(counter, 3);
+    equals(counter2, 3);
   });
 
   test("View: _ensureElement", function() {

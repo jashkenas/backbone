@@ -842,12 +842,13 @@
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents : function(events) {
       if (!(events || (events = this.events))) return;
-      $(this.el).unbind();
+      $(this.el).unbind('.delegateEvents');
       for (var key in events) {
         var methodName = events[key];
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
         var method = _.bind(this[methodName], this);
+        eventName += '.delegateEvents';
         if (selector === '') {
           $(this.el).bind(eventName, method);
         } else {
