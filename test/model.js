@@ -204,6 +204,15 @@ $(document).ready(function() {
     equals(value, 'Ms. Sue');
   });
 
+  test("Model: change after initialize", function () {
+    var changed = 0;
+    var attrs = {id: 1, label: 'c'};
+    var obj = new Backbone.Model(attrs);
+    obj.bind('change', function() { changed += 1; });
+    obj.set(attrs);
+    equals(changed, 0);
+  });
+
   test("Model: save within change event", function () {
     var model = new Backbone.Model({firstName : "Taylor", lastName: "Swift"});
     model.bind('change', function () {
