@@ -65,10 +65,10 @@ $(document).ready(function() {
     equals(failed, true);
     doc.collection = collection;
   });
-  
-  test("Model: url when using urlBase", function() {
+
+  test("Model: url when using urlRoot", function() {
     var Model = Backbone.Model.extend({
-      urlBase: '/collection'
+      urlRoot: '/collection'
     });
     var model = new Model();
     equals(model.url(), '/collection');
