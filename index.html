@@ -1085,6 +1085,25 @@ ships.add([
   {name: "Black Pearl"}
 ]);
 </pre>
+    
+    <p>
+      You can explicitly specify the position in the
+      collection to add the models to by passing <tt>{index: position}</tt>.
+      <tt>position</tt> would be a number, like <tt>0</tt> or <tt>4</tt>.
+    </p>
+<pre class="runnable">
+var favoriteThings = new Backbone.Collection;
+
+favoriteThings.add([
+  {name: "whiskers on kittens"},
+  {name: "bright copper kettles "},
+  {name: "warm woolen mittens"}
+]);
+
+favoriteThings.add({name: "raindrops on roses"}, {index: 0});
+
+alert(favoriteThings.at(0).get("name"));
+</pre>
 
     <p id="Collection-remove">
       <b class="header">remove</b><code>collection.remove(models, [options])</code>

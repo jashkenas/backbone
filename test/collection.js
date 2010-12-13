@@ -73,6 +73,12 @@ $(document).ready(function() {
     ok(opts.amazing);
   });
 
+  test("Collection: add at specified index", function() {
+    var f = new Backbone.Model({id: 11, label: 'f'});
+    otherCol.add(f, {index: 0});
+    equals(otherCol.indexOf(f), 0);
+  });
+
   test("Collection: remove", function() {
     var removed = otherRemoved = null;
     col.bind('remove', function(model){ removed = model.get('label'); });
