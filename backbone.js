@@ -772,6 +772,7 @@
   // Creating a Backbone.View creates its initial element outside of the DOM,
   // if an existing element is not provided...
   Backbone.View = function(options) {
+    this.vid = _.uniqueId('v');
     this._configure(options || {});
     this._ensureElement();
     this.delegateEvents();
@@ -843,13 +844,13 @@
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents : function(events) {
       if (!(events || (events = this.events))) return;
-      $(this.el).unbind('.delegateEvents');
+      $(this.el).unbind('.delegateEvents' + this.vid);
       for (var key in events) {
         var methodName = events[key];
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
         var method = _.bind(this[methodName], this);
-        eventName += '.delegateEvents';
+        eventName += '.delegateEvents' + this.vid;
         if (selector === '') {
           $(this.el).bind(eventName, method);
         } else {

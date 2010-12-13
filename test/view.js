@@ -64,4 +64,27 @@ $(document).ready(function() {
     equals(view.el, document.body);
   });
 
+  test("View: multiple views per element", function() {
+    var count = 0, ViewClass = Backbone.View.extend({
+      el: $("body"),
+      events: {
+        "click": "click"
+      },
+      click: function() {
+        count++;
+      }
+    });
+
+    var view1 = new ViewClass;
+    $("body").trigger("click");
+    equals(1, count);
+
+    var view2 = new ViewClass;
+    $("body").trigger("click");
+    equals(3, count);
+
+    view1.delegateEvents();
+    $("body").trigger("click");
+    equals(5, count);
+  });
 });
