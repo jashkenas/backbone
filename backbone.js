@@ -248,12 +248,13 @@
     fetch : function(options) {
       options || (options = {});
       var model = this;
-      var success = function(resp) {
+      var success = options.success;
+      options.success = function(resp) {
         if (!model.set(model.parse(resp), options)) return false;
-        if (options.success) options.success(model, resp);
+        if (success) success(model, resp);
       };
-      var error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync)('read', this, success, error);
+      options.error = wrapError(options.error, model, options);
+      (this.sync || Backbone.sync)('read', this, options);
       return this;
     },
 
@@ -264,13 +265,14 @@
       options || (options = {});
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
-      var success = function(resp) {
+      var success = options.success;
+      options.success = function(resp) {
         if (!model.set(model.parse(resp), options)) return false;
-        if (options.success) options.success(model, resp);
+        if (success) success(model, resp);
       };
-      var error = wrapError(options.error, model, options);
+      options.error = wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
-      (this.sync || Backbone.sync)(method, this, success, error);
+      (this.sync || Backbone.sync)(method, this, options);
       return this;
     },
 
@@ -279,12 +281,13 @@
     destroy : function(options) {
       options || (options = {});
       var model = this;
-      var success = function(resp) {
+      var success = options.success;
+      options.success = function(resp) {
         if (model.collection) model.collection.remove(model);
-        if (options.success) options.success(model, resp);
+        if (success) success(model, resp);
       };
-      var error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync)('delete', this, success, error);
+      options.error = wrapError(options.error, model, options);
+      (this.sync || Backbone.sync)('delete', this, options);
       return this;
     },
 
@@ -488,12 +491,13 @@
     fetch : function(options) {
       options || (options = {});
       var collection = this;
-      var success = function(resp) {
+      var success = options.success;
+      options.success = function(resp) {
         collection[options.add ? 'add' : 'refresh'](collection.parse(resp));
-        if (options.success) options.success(collection, resp);
+        if (success) success(collection, resp);
       };
-      var error = wrapError(options.error, collection, options);
-      (this.sync || Backbone.sync)('read', this, success, error);
+      options.error = wrapError(options.error, collection, options);
+      (this.sync || Backbone.sync)('read', this, options);
       return this;
     },
 
@@ -507,11 +511,12 @@
       } else {
         model.collection = coll;
       }
-      var success = function(nextModel, resp) {
+      var success = options.success;
+      options.success = function(nextModel, resp) {
         coll.add(nextModel);
-        if (options.success) options.success(nextModel, resp);
+        if (success) success(nextModel, resp);
       };
-      return model.save(null, {success : success, error : options.error});
+      return model.save(null, options);
     },
 
     // **parse** converts a response into a list of models to be added to the
@@ -921,22 +926,20 @@
   // `application/json` with the model in a param named `model`.
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
-  Backbone.sync = function(method, model, success, error) {
+  Backbone.sync = function(method, model, options) {
     var type = methodMap[method];
     var modelJSON = (method === 'create' || method === 'update') ?
                     JSON.stringify(model.toJSON()) : null;
 
     // Default JSON-request options.
-    var params = {
+    var params = _.extend({
       url:          getUrl(model) || urlError(),
       type:         type,
       contentType:  'application/json',
       data:         modelJSON,
       dataType:     'json',
-      processData:  false,
-      success:      success,
-      error:        error
-    };
+      processData:  false
+    }, options);
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (Backbone.emulateJSON) {

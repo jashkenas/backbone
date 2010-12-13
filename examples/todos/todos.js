@@ -12,13 +12,16 @@ $(function(){
   // Our basic **Todo** model has `content`, `order`, and `done` attributes.
   window.Todo = Backbone.Model.extend({
 
-    // If you don't provide a todo, one will be provided for you.
-    EMPTY: "empty todo...",
+    // Default attributes for the todo.
+    defaults: {
+      content: "empty todo...",
+      done: false
+    },
 
     // Ensure that each todo created has `content`.
     initialize: function() {
       if (!this.get("content")) {
-        this.set({"content": this.EMPTY});
+        this.set({"content": this.defaults.content});
       }
     },
 
