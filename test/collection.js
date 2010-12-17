@@ -127,6 +127,13 @@ $(document).ready(function() {
     equals(lastRequest[1], col);
   });
 
+  test("Collection: build", function() {
+    var model = col.build({label: 'f'});
+    equals(model.isNew(), true);
+    equals(model.get('label'), 'f');
+    equals(model.collection, col);
+  });
+
   test("Collection: create", function() {
     var model = col.create({label: 'f'});
     equals(lastRequest[0], 'create');

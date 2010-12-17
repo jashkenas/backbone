@@ -501,22 +501,28 @@
       return this;
     },
 
-    // Create a new instance of a model in this collection. After the model
-    // has been created on the server, it will be added to the collection.
-    create : function(model, options) {
+    // Build a new instance of a model in this collection.
+    build : function(model) {
       var coll = this;
-      options || (options = {});
       if (!(model instanceof Backbone.Model)) {
         model = new this.model(model, {collection: coll});
       } else {
         model.collection = coll;
       }
+      return model;
+    },
+
+    // Create a new instance of a model in this collection. After the model
+    // has been created on the server, it will be added to the collection.
+    create : function(model, options) {
+      var coll = this;
+      options || (options = {});
       var success = options.success;
       options.success = function(nextModel, resp) {
         coll.add(nextModel);
         if (success) success(nextModel, resp);
       };
-      return model.save(null, options);
+      return coll.build(model).save(null, options);
     },
 
     // **parse** converts a response into a list of models to be added to the
