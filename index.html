@@ -940,8 +940,11 @@ bill.set({name : "Bill Jones"});
     </p>
 
     <p>
-      Collections may also listen for changes to specific attributes in their
-      models, for example: <tt>Documents.bind("change:selected", ...)</tt>
+      Any event that is triggered on a model in a collection will also be
+      triggered on the collection directly, for convenience.
+      This allows you to listen for changes to specific attributes in any
+      model in a collection, for example: 
+      <tt>Documents.bind("change:selected", ...)</tt> 
     </p>
 
     <p id="Collection-extend">
