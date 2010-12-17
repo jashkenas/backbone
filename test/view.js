@@ -56,12 +56,34 @@ $(document).ready(function() {
     equals(counter2, 3);
   });
 
-  test("View: _ensureElement", function() {
+  test("View: _ensureElement with DOM node el", function() {
     var ViewClass = Backbone.View.extend({
       el: document.body
     });
     var view = new ViewClass;
     equals(view.el, document.body);
+  });
+
+  test("View: _ensureElement with string el", function() {
+    var ViewClass = Backbone.View.extend({
+      el: "body"
+    });
+    var view = new ViewClass;
+    equals(view.el, document.body);
+
+    ViewClass = Backbone.View.extend({
+      el: "body > h2"
+    });
+    view = new ViewClass;
+    equals(view.el, $("#qunit-banner").get(0));
+
+    ViewClass = Backbone.View.extend({
+      el: "#nonexistent"
+    });
+    view = new ViewClass;
+    ok(view.el);
+    equals(view.el.tagName.toLowerCase(), "div");
+    equals(view.el.parentNode, null);
   });
 
   test("View: multiple views per element", function() {
