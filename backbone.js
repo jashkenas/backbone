@@ -493,7 +493,7 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp) {
-        collection[options.add ? 'add' : 'refresh'](collection.parse(resp));
+        collection[options.add ? 'add' : 'refresh'](collection.parse(resp), options);
         if (success) success(collection, resp);
       };
       options.error = wrapError(options.error, collection, options);
