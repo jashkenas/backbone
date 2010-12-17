@@ -1656,17 +1656,31 @@ new DocumentRow({
       whether they've already been inserted into the page or not. In this
       fashion, views can be rendered at any time, and inserted into the DOM all
       at once, in order to get high-performance UI rendering with as few
-      reflows and repaints as possible.
+      reflows and repaints as possible. <tt>this.el</tt> is created from the 
+      view's <tt>tagName</tt>, <tt>className</tt>, and <tt>id</tt> properties, 
+      if specified. If not, <b>el</b> is an empty <tt>div</tt>.
     </p>
 
     <p>
-      <tt>this.el</tt> is created from the view's <tt>tagName</tt>, <tt>className</tt>,
-      and <tt>id</tt> properties, if specified. If not, <b>el</b> is an empty <tt>div</tt>.
-      You may assign <b>el</b> directly in your view's 
-      <a href="View-constructor">initialize</a> function, if the view is being 
-      created for an element that already exists in the DOM. Make sure to assign
-      a real DOM element, and not a jQuery object.
+      You may assign <b>el</b> directly if the view is being 
+      created for an element that already exists in the DOM. Use either a 
+      reference to a real DOM element, or a css selector string.
     </p>
+    
+<pre class="runnable">
+var ItemView = Backbone.View.extend({
+  tagName: 'li'
+});
+
+var BodyView = Backbone.View.extend({
+  el: 'body'
+});
+
+var item = new ItemView();
+var body = new BodyView();
+
+alert(item.el + ' ' + body.el);
+</pre>
 
     <p id="View-dollar">
       <b class="header">$ (jQuery or Zepto)</b><code>view.$(selector)</code>

@@ -81,9 +81,7 @@ $(document).ready(function() {
       el: "#nonexistent"
     });
     view = new ViewClass;
-    ok(view.el);
-    equals(view.el.tagName.toLowerCase(), "div");
-    equals(view.el.parentNode, null);
+    ok(!view.el);
   });
 
   test("View: multiple views per element", function() {

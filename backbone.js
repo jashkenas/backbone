@@ -883,15 +883,13 @@
     // matching element, and re-assign it to `el`. Otherwise, create
     // an element from the `id`, `className` and `tagName` proeprties.
     _ensureElement : function() {
-      if (_.isString(this.el)) {
-        this.el = $(this.el).get(0);
-      }
-
       if (!this.el) {
         var attrs = {};
         if (this.id) attrs.id = this.id;
         if (this.className) attrs["class"] = this.className;
         this.el = this.make(this.tagName, attrs);
+      } else if (_.isString(this.el)) {
+        this.el = $(this.el).get(0);
       }
     }
 
