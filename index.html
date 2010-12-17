@@ -1662,6 +1662,10 @@ new DocumentRow({
     <p>
       <tt>this.el</tt> is created from the view's <tt>tagName</tt>, <tt>className</tt>,
       and <tt>id</tt> properties, if specified. If not, <b>el</b> is an empty <tt>div</tt>.
+      You may assign <b>el</b> directly in your view's 
+      <a href="View-constructor">initialize</a> function, if the view is being 
+      created for an element that already exists in the DOM. Make sure to assign
+      a real DOM element, and not a jQuery object.
     </p>
 
     <p id="View-dollar">
