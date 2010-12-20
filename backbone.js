@@ -623,8 +623,9 @@
 
   // Cached regular expressions for matching named param parts and splatted
   // parts of route strings.
-  var namedParam = /:([\w\d]+)/g;
-  var splatParam = /\*([\w\d]+)/g;
+  var namedParam    = /:([\w\d]+)/g;
+  var splatParam    = /\*([\w\d]+)/g;
+  var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Controller** properties and methods.
   _.extend(Backbone.Controller.prototype, Backbone.Events, {
@@ -667,7 +668,9 @@
     // Convert a route string into a regular expression, suitable for matching
     // against the current location fragment.
     _routeToRegExp : function(route) {
-      route = route.replace(namedParam, "([^\/]*)").replace(splatParam, "(.*?)");
+      route = route.replace(escapeRegExp, "\\$&")
+                   .replace(namedParam, "([^\/]*)")
+                   .replace(splatParam, "(.*?)");
       return new RegExp('^' + route + '$');
     },
 
