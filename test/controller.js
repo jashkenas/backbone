@@ -9,7 +9,7 @@ $(document).ready(function() {
       "search/:query/p:page":       "search",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
-      "query?*args":                "query"
+      ":entity?*args":              "query"
     },
 
     initialize : function(options) {
@@ -31,7 +31,8 @@ $(document).ready(function() {
       this.rest = rest;
     },
 
-    query : function(args) {
+    query : function(entity, args) {
+      this.entity    = entity;
       this.queryArgs = args;
     }
 
@@ -82,9 +83,10 @@ $(document).ready(function() {
     }, 10);
   });
 
-  asyncTest("Controller: routes (query)", function() {
-    window.location.hash = 'query?a=b&c=d';
+  asyncTest("Controller: routes (query)", 2, function() {
+    window.location.hash = 'mandel?a=b&c=d';
     setTimeout(function() {
+      equals(controller.entity, 'mandel');
       equals(controller.queryArgs, 'a=b&c=d');
       start();
       window.location.hash = '';
