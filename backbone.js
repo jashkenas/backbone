@@ -1031,7 +1031,7 @@
   var wrapError = function(onError, model, options) {
     return function(resp) {
       if (onError) {
-        onError(model, resp);
+        onError(model, resp, options);
       } else {
         model.trigger('error', model, resp, options);
       }
