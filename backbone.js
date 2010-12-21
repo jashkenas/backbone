@@ -115,8 +115,12 @@
   // Create a new model, with defined attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
   Backbone.Model = function(attributes, options) {
+    var defaults;
     attributes || (attributes = {});
-    if (this.defaults) attributes = _.extend({}, this.defaults, attributes);
+    if (defaults = this.defaults) {
+      if (_.isFunction(defaults)) defaults = defaults();
+      attributes = _.extend({}, defaults, attributes);
+    }
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');

@@ -642,11 +642,11 @@ if (note.has("title")) {
     </p>
 
     <p id="Model-defaults">
-      <b class="header">defaults</b><code>model.defaults</code>
+      <b class="header">defaults</b><code>model.defaults or model.defaults()</code>
       <br />
-      The <b>defaults</b> hash can be used to specify the default attributes
-      for your model. When creating an instance of the model, any unspecified
-      attributes will be set to their default value.
+      The <b>defaults</b> hash (or function) can be used to specify the default 
+      attributes for your model. When creating an instance of the model, 
+      any unspecified attributes will be set to their default value.
     </p>
 
 <pre class="runnable">

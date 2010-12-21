@@ -172,6 +172,17 @@ $(document).ready(function() {
     var model = new Defaulted({two: null});
     equals(model.get('one'), 1);
     equals(model.get('two'), null);
+    Defaulted = Backbone.Model.extend({
+      defaults: function() {
+        return {
+          "one": 3,
+          "two": 4
+        };
+      }
+    });
+    var model = new Defaulted({two: null});
+    equals(model.get('one'), 3);
+    equals(model.get('two'), null);
   });
 
   test("Model: change, hasChanged, changedAttributes, previous, previousAttributes", function() {
