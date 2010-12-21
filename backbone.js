@@ -946,7 +946,7 @@
 
     // Default JSON-request options.
     var params = _.extend({
-      url:          getUrl(model) || urlError(),
+      url:          getUrl(model),
       type:         type,
       contentType:  'application/json',
       data:         modelJSON,
@@ -954,11 +954,14 @@
       processData:  false
     }, options);
 
+    // Ensure that we have a URL.
+    if (!params.url) urlError();
+
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (Backbone.emulateJSON) {
       params.contentType = 'application/x-www-form-urlencoded';
       params.processData = true;
-      params.data        = modelJSON ? {model : modelJSON} : {};
+      params.data        = params.data ? {model : params.data} : {};
     }
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
