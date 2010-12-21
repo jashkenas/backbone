@@ -23,7 +23,7 @@
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = this._;
-  if (!_ && (typeof require !== 'undefined')) _ = require("underscore")._;
+  if (!_ && (typeof require !== 'undefined')) _ = require('underscore')._;
 
   // For Backbone's purposes, either jQuery or Zepto owns the `$` variable.
   var $ = this.jQuery || this.Zepto;
@@ -893,7 +893,7 @@
       if (!this.el) {
         var attrs = {};
         if (this.id) attrs.id = this.id;
-        if (this.className) attrs["class"] = this.className;
+        if (this.className) attrs['class'] = this.className;
         this.el = this.make(this.tagName, attrs);
       } else if (_.isString(this.el)) {
         this.el = $(this.el).get(0);
@@ -968,7 +968,7 @@
         if (Backbone.emulateJSON) params.data._method = type;
         params.type = 'POST';
         params.beforeSend = function(xhr) {
-          xhr.setRequestHeader("X-HTTP-Method-Override", type);
+          xhr.setRequestHeader('X-HTTP-Method-Override', type);
         };
       }
     }
