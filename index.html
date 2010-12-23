@@ -701,10 +701,13 @@ setInterval(function() {
 </pre>
 
     <p id="Model-save">
-      <b class="header">save</b><code>model.save(attributes, [options])</code>
+      <b class="header">save</b><code>model.save([attributes], [options])</code>
       <br />
       Save a model to your database (or alternative persistence layer),
-      by delegating to <a href="#Sync">Backbone.sync</a>. If the model has a <a href="#Model-validate">validate</a>
+      by delegating to <a href="#Sync">Backbone.sync</a>. The <b>attributes</b>
+      hash (as in <a href="#Model-set">set</a>) should contain the attributes 
+      you'd like to change -- keys that aren't mentioned won't be altered.
+      If the model has a <a href="#Model-validate">validate</a>
       method, and validation fails, the model will not be saved. If the model
       <a href="#Model-isNew">isNew</a>, the save will be a <tt>"create"</tt>
       (HTTP <tt>POST</tt>), if the model already
@@ -737,6 +740,10 @@ book.save();
       validation fails, return a non-<tt>200</tt> HTTP response code, along with 
       an error response in text or JSON.
     </p>
+    
+<pre>
+book.save({author: "F.D.R."}, {error: function(){ ... }});
+</pre>
 
     <p id="Model-destroy">
       <b class="header">destroy</b><code>model.destroy([options])</code>
