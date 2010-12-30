@@ -941,20 +941,24 @@
   // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, options) {
     var type = methodMap[method];
-    var modelJSON = (method === 'create' || method === 'update') ?
-                    JSON.stringify(model.toJSON()) : null;
 
     // Default JSON-request options.
     var params = _.extend({
       type:         type,
       contentType:  'application/json',
-      data:         modelJSON,
       dataType:     'json',
       processData:  false
     }, options);
 
     // Ensure that we have a URL.
-    params.url || (params.url = getUrl(model) || urlError());
+    if (!params.url) {
+      params.url = getUrl(model) || urlError();
+    }
+
+    // Ensure that we have the appropriate request data.
+    if (!params.data && model && (method == 'create' || method == 'update')) {
+      params.data = JSON.stringify(model.toJSON());
+    }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (Backbone.emulateJSON) {
