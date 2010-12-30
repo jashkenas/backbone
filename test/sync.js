@@ -124,4 +124,13 @@ $(document).ready(function() {
     Backbone.emulateHTTP = Backbone.emulateJSON = false;
   });
 
+  test("sync: urlError", function() {
+    model = new Backbone.Model();
+    raises(function() {
+      model.fetch();
+    });
+    model.fetch({url: '/one/two'});
+    equals(lastRequest.url, '/one/two');
+  });
+
 });

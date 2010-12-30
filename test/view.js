@@ -16,8 +16,8 @@ $(document).ready(function() {
 
   test("View: jQuery", function() {
     view.el = document.body;
-    equals(view.$('#qunit-header').get(0).innerHTML, 'Backbone Test Suite');
-    equals(view.$('#qunit-header').get(1).innerHTML, 'Backbone Speed Suite');
+    equals(view.$('#qunit-header a').get(0).innerHTML, ' Backbone Test Suite');
+    equals(view.$('#qunit-header a').get(1).innerHTML, 'Backbone Speed Suite');
   });
 
   test("View: make", function() {
