@@ -137,6 +137,9 @@
         border: 4px solid #bbb; border-top: 0; border-bottom: 0;
         margin: 0px 0 30px;
       }
+    img.example_image {
+      margin: 0px auto 30px;
+    }
   </style>
 </head>
 <body>
@@ -566,7 +569,7 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
       callback in the options, which will be invoked instead of triggering an
       <tt>"error"</tt> event, should validation fail.
     </p>
-    
+
     <p id="Model-escape">
       <b class="header">escape</b><code>model.escape(attribute)</code>
       <br />
@@ -593,7 +596,7 @@ alert(hacker.escape('name'));
 
 <pre>
 if (note.has("title")) {
-  ... 
+  ...
 }
 </pre>
 
@@ -643,8 +646,8 @@ if (note.has("title")) {
     <p id="Model-defaults">
       <b class="header">defaults</b><code>model.defaults or model.defaults()</code>
       <br />
-      The <b>defaults</b> hash (or function) can be used to specify the default 
-      attributes for your model. When creating an instance of the model, 
+      The <b>defaults</b> hash (or function) can be used to specify the default
+      attributes for your model. When creating an instance of the model,
       any unspecified attributes will be set to their default value.
     </p>
 
@@ -704,7 +707,7 @@ setInterval(function() {
       <br />
       Save a model to your database (or alternative persistence layer),
       by delegating to <a href="#Sync">Backbone.sync</a>. The <b>attributes</b>
-      hash (as in <a href="#Model-set">set</a>) should contain the attributes 
+      hash (as in <a href="#Model-set">set</a>) should contain the attributes
       you'd like to change -- keys that aren't mentioned won't be altered.
       If the model has a <a href="#Model-validate">validate</a>
       method, and validation fails, the model will not be saved. If the model
@@ -732,14 +735,14 @@ book.save();
 </pre>
 
     <p>
-      <b>save</b> accepts <tt>success</tt> and <tt>error</tt> callbacks in the 
-      options hash, which are passed <tt>(model, response)</tt> as arguments. 
-      The <tt>error</tt> callback will also be invoked if the model has a 
+      <b>save</b> accepts <tt>success</tt> and <tt>error</tt> callbacks in the
+      options hash, which are passed <tt>(model, response)</tt> as arguments.
+      The <tt>error</tt> callback will also be invoked if the model has a
       <tt>validate</tt> method, and validation fails. If a server-side
-      validation fails, return a non-<tt>200</tt> HTTP response code, along with 
+      validation fails, return a non-<tt>200</tt> HTTP response code, along with
       an error response in text or JSON.
     </p>
-    
+
 <pre>
 book.save({author: "F.D.R."}, {error: function(){ ... }});
 </pre>
@@ -828,7 +831,7 @@ account.set({access: "unlimited"}, {
       <a href="#Collection">Backbone.Collection</a> with a <tt>url</tt> of <tt>"/documents/7/notes"</tt>,
       would have this URL: <tt>"/documents/7/notes/101"</tt>
     </p>
-    
+
     <p id="Model-urlRoot">
       <b class="header">urlRoot</b><code>model.urlRoot</code>
       <br />
@@ -836,7 +839,7 @@ account.set({access: "unlimited"}, {
       to enable the default <a href="#Model-url">url</a> function to generate
       URLs based on the model id. <tt>"/[urlRoot]/id"</tt>
     </p>
-    
+
 <pre class="runnable">
 var Book = Backbone.Model.extend({urlRoot : '/books'});
 
@@ -955,8 +958,8 @@ bill.set({name : "Bill Jones"});
       Any event that is triggered on a model in a collection will also be
       triggered on the collection directly, for convenience.
       This allows you to listen for changes to specific attributes in any
-      model in a collection, for example: 
-      <tt>Documents.bind("change:selected", ...)</tt> 
+      model in a collection, for example:
+      <tt>Documents.bind("change:selected", ...)</tt>
     </p>
 
     <p id="Collection-extend">
@@ -1287,9 +1290,9 @@ Accounts.fetch();
     <p>
       Note that <b>fetch</b> should not be used to populate collections on
       page load &mdash; all models needed at load time should already be
-      <a href="#FAQ-bootstrap">bootstrapped</a> in to place. <b>fetch</b> is 
-      intended for lazily-loading models for interfaces that are not needed 
-      immediately: for example, documents with collections of notes that may be 
+      <a href="#FAQ-bootstrap">bootstrapped</a> in to place. <b>fetch</b> is
+      intended for lazily-loading models for interfaces that are not needed
+      immediately: for example, documents with collections of notes that may be
       toggled open and closed.
     </p>
 
@@ -1671,17 +1674,17 @@ new DocumentRow({
       whether they've already been inserted into the page or not. In this
       fashion, views can be rendered at any time, and inserted into the DOM all
       at once, in order to get high-performance UI rendering with as few
-      reflows and repaints as possible. <tt>this.el</tt> is created from the 
-      view's <tt>tagName</tt>, <tt>className</tt>, and <tt>id</tt> properties, 
+      reflows and repaints as possible. <tt>this.el</tt> is created from the
+      view's <tt>tagName</tt>, <tt>className</tt>, and <tt>id</tt> properties,
       if specified. If not, <b>el</b> is an empty <tt>div</tt>.
     </p>
 
     <p>
-      You may assign <b>el</b> directly if the view is being 
-      created for an element that already exists in the DOM. Use either a 
+      You may assign <b>el</b> directly if the view is being
+      created for an element that already exists in the DOM. Use either a
       reference to a real DOM element, or a css selector string.
     </p>
-    
+
 <pre class="runnable">
 var ItemView = Backbone.View.extend({
   tagName: 'li'
@@ -1862,7 +1865,7 @@ var DocumentView = Backbone.View.extend({
 
     <div style="text-align: center;">
       <a href="examples/todos/index.html">
-        <img src="docs/images/todos.png" alt="Todos" style="margin: 10px auto;" />
+        <img src="docs/images/todos.png" alt="Todos" class="example_image" />
       </a>
     </div>
 
@@ -1873,7 +1876,7 @@ var DocumentView = Backbone.View.extend({
     </p>
 
     <div style="text-align: center;">
-      <img src="docs/images/dc-workspace.png" alt="DocumentCloud Workspace" style="margin: 10px auto;" />
+      <img src="docs/images/dc-workspace.png" alt="DocumentCloud Workspace" class="example_image" />
     </div>
 
     <p>
@@ -1887,7 +1890,21 @@ var DocumentView = Backbone.View.extend({
 
     <div style="text-align: center;">
       <a href="http://bennolan.com/science/backbone-mobile/">
-        <img src="docs/images/backbone-mobile.png" alt="Backbone Mobile" style="margin: 10px auto;" />
+        <img src="docs/images/backbone-mobile.png" alt="Backbone Mobile" class="example_image" />
+      </a>
+    </div>
+
+    <p>
+      <a href="http://www.twitter.com/jamesjyu">James Yu</a> used Backbone.js to
+      create <a href="http://www.quietwrite.com/">QuietWrite</a>, an app
+      that gives writers a clean and quiet interface to concentrate on the text itself.
+      It also works great on the iPad. The editor relies on
+      Backbone to persist document data to the server.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://www.quietwrite.com/">
+        <img src="docs/images/quietwrite.png" alt="QuietWrite" class="example_image" />
       </a>
     </div>
 
@@ -1947,12 +1964,12 @@ Inbox.messages.fetch();
       <b class="header">Loading Bootstrapped Models</b>
       <br />
       When your app first loads, it's common to have a set of initial models that
-      you know you're going to need, in order to render the page. Instead of 
+      you know you're going to need, in order to render the page. Instead of
       firing an extra AJAX request to <a href="#Collection-fetch">fetch</a> them,
       a nicer pattern is to have their data already bootstrapped into the page.
       You can then use <a href="#Collection-refresh">refresh</a> to populate your
-      collections with the initial data. At DocumentCloud, in the 
-      <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the 
+      collections with the initial data. At DocumentCloud, in the
+      <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the
       workspace, we do something along these lines:
     </p>
 
@@ -1966,16 +1983,16 @@ Inbox.messages.fetch();
     <p id="FAQ-mvc">
       <b class="header">How does Backbone relate to "traditional" MVC?</b>
       <br />
-      Different implementations of the 
+      Different implementations of the
       <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
-      pattern tend to disagree about the definition of a controller. If it helps any, in 
-      Backbone, the <a href="#View">View</a> class can also be thought of as a 
+      pattern tend to disagree about the definition of a controller. If it helps any, in
+      Backbone, the <a href="#View">View</a> class can also be thought of as a
       kind of controller, dispatching events that originate from the UI, with
       the HTML template serving as the true view. We call it a View because it
-      represents a logical chunk of UI, responsible for the contents of a single 
+      represents a logical chunk of UI, responsible for the contents of a single
       DOM element.
     </p>
-    
+
     <p id="FAQ-this">
       <b class="header">Binding "this"</b>
       <br />
