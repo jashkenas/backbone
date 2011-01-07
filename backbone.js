@@ -380,9 +380,25 @@
         return false;
       }
       return true;
+    },
+    // link a collection to the named
+    // keys. I.E. 
+    //      this.setupAssociations({
+    //            'wheels': WheelList,
+    //            'seats' : SeatList });
+    // will create property wheels with an instance of  WheelList
+    // it will update the WheelList whenever set('wheels') is called      
+    setupAssociations:function(assoc){
+      for ( var key in assoc ) {
+         this[ key ] = new assoc[key]( this.get( key ),{ memberOf: this } );
+         this.bind( 'change:' + key , _.bind( this.setAssociated, this, key ) );
+      }
+    },
+    // is called whenever an associated key is updated      
+    setAssociated: function(name,self,val ){
+      this[ name ].refresh( val );
     }
-
-  });
+});
 
   // Backbone.Collection
   // -------------------
