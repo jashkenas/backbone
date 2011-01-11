@@ -322,5 +322,29 @@ $(document).ready(function() {
     equals(lastError, "Can't change admin status.");
     equals(boundError, undefined);
   });
+  
+  test("Model: Inherit class properties", function() {
+    var Parent = Backbone.Model.extend({
+      instancePropSame: function() {},
+      instancePropDiff: function() {}
+    }, {
+      classProp: function() {}
+    });
+    var Child = Parent.extend({
+      instancePropDiff: function() {}
+    });
+    
+    var adult = new Parent;
+    var kid   = new Child;
+
+    equals(Child.classProp, Parent.classProp);
+    notEqual(Child.classProp, undefined);
+
+    equals(kid.instancePropSame, adult.instancePropSame);
+    notEqual(kid.instancePropSame, undefined);
+
+    notEqual(Child.prototype.instancePropDiff, Parent.prototype.instancePropDiff);
+    notEqual(Child.prototype.instancePropDiff, undefined);
+  });
 
 });

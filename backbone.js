@@ -1004,6 +1004,9 @@
       child = function(){ return parent.apply(this, arguments); };
     }
 
+    // Inherit class (static) properties from parent.
+    _.extend(child, parent);
+
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
     ctor.prototype = parent.prototype;
