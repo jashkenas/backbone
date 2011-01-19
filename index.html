@@ -137,6 +137,9 @@
         border: 4px solid #bbb; border-top: 0; border-bottom: 0;
         margin: 0px 0 30px;
       }
+      img.example_image {
+        margin: 0px auto 30px;
+      }
   </style>
 </head>
 <body>
@@ -1795,7 +1798,7 @@ var DocumentView = Backbone.View.extend({
 
     <div style="text-align: center;">
       <a href="examples/todos/index.html">
-        <img src="docs/images/todos.png" alt="Todos" style="margin: 10px auto;" />
+        <img src="docs/images/todos.png" alt="Todos" class="example_image" />
       </a>
     </div>
 
@@ -1806,7 +1809,7 @@ var DocumentView = Backbone.View.extend({
     </p>
 
     <div style="text-align: center;">
-      <img src="docs/images/dc-workspace.png" alt="DocumentCloud Workspace" style="margin: 10px auto;" />
+      <img src="docs/images/dc-workspace.png" alt="DocumentCloud Workspace" class="example_image" />
     </div>
 
     <p>
@@ -1820,7 +1823,21 @@ var DocumentView = Backbone.View.extend({
 
     <div style="text-align: center;">
       <a href="http://bennolan.com/science/backbone-mobile/">
-        <img src="docs/images/backbone-mobile.png" alt="Backbone Mobile" style="margin: 10px auto;" />
+        <img src="docs/images/backbone-mobile.png" alt="Backbone Mobile" class="example_image" />
+      </a>
+    </div>
+    
+    <p>
+      <a href="http://www.twitter.com/jamesjyu">James Yu</a> used Backbone.js to
+      create <a href="http://www.quietwrite.com/">QuietWrite</a>, an app
+      that gives writers a clean and quiet interface to concentrate on the text itself.
+      It also works great on the iPad. The editor relies on
+      Backbone to persist document data to the server.
+    </p>
+    
+    <div style="text-align: center;">
+      <a href="http://www.quietwrite.com/">
+        <img src="docs/images/quietwrite.png" alt="QuietWrite" class="example_image" />
       </a>
     </div>
 
@@ -1880,12 +1897,12 @@ Inbox.messages.fetch();
       <b class="header">Loading Bootstrapped Models</b>
       <br />
       When your app first loads, it's common to have a set of initial models that
-      you know you're going to need, in order to render the page. Instead of 
+      you know you're going to need, in order to render the page. Instead of
       firing an extra AJAX request to <a href="#Collection-fetch">fetch</a> them,
       a nicer pattern is to have their data already bootstrapped into the page.
       You can then use <a href="#Collection-refresh">refresh</a> to populate your
-      collections with the initial data. At DocumentCloud, in the 
-      <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the 
+      collections with the initial data. At DocumentCloud, in the
+      <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the
       workspace, we do something along these lines:
     </p>
 
@@ -1899,16 +1916,16 @@ Inbox.messages.fetch();
     <p id="FAQ-mvc">
       <b class="header">How does Backbone relate to "traditional" MVC?</b>
       <br />
-      Different implementations of the 
+      Different implementations of the
       <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
-      pattern tend to disagree about the definition of a controller. If it helps any, in 
-      Backbone, the <a href="#View">View</a> class can also be thought of as a 
+      pattern tend to disagree about the definition of a controller. If it helps any, in
+      Backbone, the <a href="#View">View</a> class can also be thought of as a
       kind of controller, dispatching events that originate from the UI, with
       the HTML template serving as the true view. We call it a View because it
-      represents a logical chunk of UI, responsible for the contents of a single 
+      represents a logical chunk of UI, responsible for the contents of a single
       DOM element.
     </p>
-    
+
     <p id="FAQ-this">
       <b class="header">Binding "this"</b>
       <br />
