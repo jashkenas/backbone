@@ -137,9 +137,9 @@
         border: 4px solid #bbb; border-top: 0; border-bottom: 0;
         margin: 0px 0 30px;
       }
-    img.example_image {
-      margin: 0px auto 30px;
-    }
+      img.example_image {
+        margin: 0px auto 30px;
+      }
   </style>
 </head>
 <body>
@@ -546,6 +546,22 @@ new Book({
       <tt>note.get("title")</tt>
     </p>
 
+    <p id="Model-escape">
+      <b class="header">escape</b><code>model.escape(attribute)</code>
+      <br />
+      Similar to <a href="#Model-get">get</a>, but returns the HTML-escaped version
+      of a model's attribute. If you're interpolating data from the model into
+      HTML, using <b>escape</b> to retrieve attributes will prevent
+      <a href="http://en.wikipedia.org/wiki/Cross-site_scripting">XSS</a> attacks.
+    </p>
+
+<pre class="runnable">
+var hacker = new Backbone.Model({
+  name: "&lt;script&gt;alert('xss')&lt;/script&gt;"
+});
+
+alert(hacker.escape('name'));
+</pre>
 
     <p id="Model-set">
       <b class="header">set</b><code>model.set(attributes, [options])</code>
@@ -1893,7 +1909,30 @@ var DocumentView = Backbone.View.extend({
         <img src="docs/images/backbone-mobile.png" alt="Backbone Mobile" class="example_image" />
       </a>
     </div>
-
+    
+    <p>
+      <a href="http://twitter.com/evilchelu">Cristi Balan</a> and 
+      <a href="http://dira.ro">Irina Dumitrascu</a> created 
+      <a href="http://tzigla.com">Tzigla</a>, a collaborative drawing 
+      application where artists make tiles that connect to each other to 
+      create <a href="http://tzigla.com/boards/1">surreal drawings</a>.
+      Backbone models help organize the code, controllers provide 
+      <a href="http://tzigla.com/boards/1#!/tiles/2-2">bookmarkable deep links</a>, 
+      and the views are rendered with 
+      <a href="https://github.com/creationix/haml-js">haml.js</a> and 
+      <a href="http://zeptojs.com/">Zepto</a>.
+      Tzigla is written in Ruby (Rails) on the backend, and 
+      <a href="http://coffeescript.org">CoffeeScript</a> on the frontend, with
+      <a href="http://documentcloud.github.com/jammit/">Jammit</a> 
+      prepackaging the static assets.
+    </p>
+    
+    <div style="text-align: center;">
+      <a href="http://www.tzigla.com/">
+        <img src="docs/images/tzigla.png" alt="Tzigla" class="example_image" />
+      </a>
+    </div>
+    
     <p>
       <a href="http://www.twitter.com/jamesjyu">James Yu</a> used Backbone.js to
       create <a href="http://www.quietwrite.com/">QuietWrite</a>, an app
@@ -1901,7 +1940,7 @@ var DocumentView = Backbone.View.extend({
       It also works great on the iPad. The editor relies on
       Backbone to persist document data to the server.
     </p>
-
+    
     <div style="text-align: center;">
       <a href="http://www.quietwrite.com/">
         <img src="docs/images/quietwrite.png" alt="QuietWrite" class="example_image" />
