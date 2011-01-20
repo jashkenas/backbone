@@ -155,6 +155,19 @@ $(document).ready(function() {
     equals(model.get('name'), '');
   });
 
+  test("Model: merge", function() {
+      var complex = { dict: { one: 1, two: 2, three: 3 }, list: [1,2,3] };
+      var model = new Backbone.Model(complex);
+
+      var extra = { dict: { four: 4 }, list: [,,,4] };
+
+      model.merge(extra);
+
+      same(model.get('dict'), {one:1,two:2,three:3,four:4}, 'attribute MUST contain the merged hash elements');
+      same(model.get('list'), [1,2,3,4], 'attribute MUST contain the merged array elements');
+      same(model.toJSON(), {dict: {one:1,two:2,three:3,four:4}, list: [1,2,3,4]}, 'attributes MUST be merged');
+  });
+
   test("Model: clear", function() {
     var changed;
     var model = new Backbone.Model({name : "Model"});
