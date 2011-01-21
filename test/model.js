@@ -66,6 +66,16 @@ $(document).ready(function() {
     doc.collection = collection;
   });
 
+  test("Model: url when using urlRoot", function() {
+    var Model = Backbone.Model.extend({
+      urlRoot: '/collection'
+    });
+    var model = new Model();
+    equals(model.url(), '/collection');
+    model.set({id: '1'});
+    equals(model.url(), '/collection/1');
+  });
+
   test("Model: clone", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
@@ -100,6 +110,8 @@ $(document).ready(function() {
     equals(doc.escape('audience'), 'Bill &amp; Bob');
     doc.set({audience: 'Tim > Joan'});
     equals(doc.escape('audience'), 'Tim &gt; Joan');
+    doc.set({audience: 10101});
+    equals(doc.escape('audience'), '10101');
     doc.unset('audience');
     equals(doc.escape('audience'), '');
   });
@@ -162,6 +174,17 @@ $(document).ready(function() {
     var model = new Defaulted({two: null});
     equals(model.get('one'), 1);
     equals(model.get('two'), null);
+    Defaulted = Backbone.Model.extend({
+      defaults: function() {
+        return {
+          "one": 3,
+          "two": 4
+        };
+      }
+    });
+    var model = new Defaulted({two: null});
+    equals(model.get('one'), 3);
+    equals(model.get('two'), null);
   });
 
   test("Model: change, hasChanged, changedAttributes, previous, previousAttributes", function() {
@@ -192,6 +215,15 @@ $(document).ready(function() {
     equals(value, 'Mr. Bob');
     model.set({name: 'Sue'}, {prefix: 'Ms. '});
     equals(value, 'Ms. Sue');
+  });
+
+  test("Model: change after initialize", function () {
+    var changed = 0;
+    var attrs = {id: 1, label: 'c'};
+    var obj = new Backbone.Model(attrs);
+    obj.bind('change', function() { changed += 1; });
+    obj.set(attrs);
+    equals(changed, 0);
   });
 
   test("Model: save within change event", function () {
@@ -289,6 +321,30 @@ $(document).ready(function() {
     equals(model.get('a'), 100);
     equals(lastError, "Can't change admin status.");
     equals(boundError, undefined);
+  });
+  
+  test("Model: Inherit class properties", function() {
+    var Parent = Backbone.Model.extend({
+      instancePropSame: function() {},
+      instancePropDiff: function() {}
+    }, {
+      classProp: function() {}
+    });
+    var Child = Parent.extend({
+      instancePropDiff: function() {}
+    });
+    
+    var adult = new Parent;
+    var kid   = new Child;
+
+    equals(Child.classProp, Parent.classProp);
+    notEqual(Child.classProp, undefined);
+
+    equals(kid.instancePropSame, adult.instancePropSame);
+    notEqual(kid.instancePropSame, undefined);
+
+    notEqual(Child.prototype.instancePropDiff, Parent.prototype.instancePropDiff);
+    notEqual(Child.prototype.instancePropDiff, undefined);
   });
 
 });

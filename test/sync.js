@@ -31,6 +31,13 @@ $(document).ready(function() {
     ok(_.isEmpty(lastRequest.data));
   });
 
+  test("sync: passing data", function() {
+    library.fetch({data: {a: 'a', one: 1}});
+    equals(lastRequest.url, '/library');
+    equals(lastRequest.data.a, 'a');
+    equals(lastRequest.data.one, 1);
+  });
+
   test("sync: create", function() {
     library.add(library.create(attrs));
     equals(lastRequest.url, '/library');
@@ -41,7 +48,6 @@ $(document).ready(function() {
     equals(data.author, 'Bill Shakespeare');
     equals(data.length, 123);
   });
-
 
   test("sync: update", function() {
     library.first().save({id: '1-the-tempest', author: 'William Shakespeare'});
@@ -116,6 +122,15 @@ $(document).ready(function() {
     equals(lastRequest.type, 'POST');
     equals(JSON.stringify(lastRequest.data), '{"_method":"DELETE"}');
     Backbone.emulateHTTP = Backbone.emulateJSON = false;
+  });
+
+  test("sync: urlError", function() {
+    model = new Backbone.Model();
+    raises(function() {
+      model.fetch();
+    });
+    model.fetch({url: '/one/two'});
+    equals(lastRequest.url, '/one/two');
   });
 
 });

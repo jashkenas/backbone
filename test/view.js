@@ -16,8 +16,8 @@ $(document).ready(function() {
 
   test("View: jQuery", function() {
     view.el = document.body;
-    equals(view.$('#qunit-header').get(0).innerHTML, 'Backbone Test Suite');
-    equals(view.$('#qunit-header').get(1).innerHTML, 'Backbone Speed Suite');
+    equals(view.$('#qunit-header a').get(0).innerHTML, ' Backbone Test Suite');
+    equals(view.$('#qunit-header a').get(1).innerHTML, 'Backbone Speed Suite');
   });
 
   test("View: make", function() {
@@ -38,23 +38,25 @@ $(document).ready(function() {
   });
 
   test("View: delegateEvents", function() {
-    var counter = 0;
+    var counter = counter2 = 0;
     view.el = document.body;
-    view.increment = function() {
-      return ++counter;
-    };
+    view.increment = function(){ counter++; };
+    $(view.el).bind('click', function(){ counter2++; });
     var events = {"click #qunit-banner": "increment"};
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
     equals(counter, 1);
+    equals(counter2, 1);
     $('#qunit-banner').trigger('click');
     equals(counter, 2);
+    equals(counter2, 2);
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
     equals(counter, 3);
+    equals(counter2, 3);
   });
 
-  test("View: _ensureElement", function() {
+  test("View: _ensureElement with DOM node el", function() {
     var ViewClass = Backbone.View.extend({
       el: document.body
     });
@@ -62,4 +64,47 @@ $(document).ready(function() {
     equals(view.el, document.body);
   });
 
+  test("View: _ensureElement with string el", function() {
+    var ViewClass = Backbone.View.extend({
+      el: "body"
+    });
+    var view = new ViewClass;
+    equals(view.el, document.body);
+
+    ViewClass = Backbone.View.extend({
+      el: "body > h2"
+    });
+    view = new ViewClass;
+    equals(view.el, $("#qunit-banner").get(0));
+
+    ViewClass = Backbone.View.extend({
+      el: "#nonexistent"
+    });
+    view = new ViewClass;
+    ok(!view.el);
+  });
+
+  test("View: multiple views per element", function() {
+    var count = 0, ViewClass = Backbone.View.extend({
+      el: $("body"),
+      events: {
+        "click": "click"
+      },
+      click: function() {
+        count++;
+      }
+    });
+
+    var view1 = new ViewClass;
+    $("body").trigger("click");
+    equals(1, count);
+
+    var view2 = new ViewClass;
+    $("body").trigger("click");
+    equals(3, count);
+
+    view1.delegateEvents();
+    $("body").trigger("click");
+    equals(5, count);
+  });
 });

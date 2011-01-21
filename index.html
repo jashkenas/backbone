@@ -137,6 +137,9 @@
         border: 4px solid #bbb; border-top: 0; border-bottom: 0;
         margin: 0px 0 30px;
       }
+      img.example_image {
+        margin: 0px auto 30px;
+      }
   </style>
 </head>
 <body>
@@ -182,6 +185,7 @@
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
       <li>– <a href="#Model-url">url</a></li>
+      <li>– <a href="#Model-urlRoot">urlRoot</a></li>
       <li>– <a href="#Model-parse">parse</a></li>
       <li>– <a href="#Model-clone">clone</a></li>
       <li>– <a href="#Model-isNew">isNew</a></li>
@@ -234,7 +238,6 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#History-start">start</a></li>
-      <li>– <a href="#History-saveLocation">saveLocation</a></li>
     </ul>
 
     <a class="toc_title" href="#Sync">
@@ -339,7 +342,7 @@
       For RESTful persistence, and DOM manipulation with
       <a href="#View">Backbone.View</a>,
       it's highly recommended to include
-      <a href="http://www.json.org/json2.js">json2.js</a>, and either
+      <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
       <a href="http://jquery.com">jQuery</a> or <a href="http://zeptojs.com/">Zepto</a>.
     </p>
 
@@ -543,6 +546,22 @@ new Book({
       <tt>note.get("title")</tt>
     </p>
 
+    <p id="Model-escape">
+      <b class="header">escape</b><code>model.escape(attribute)</code>
+      <br />
+      Similar to <a href="#Model-get">get</a>, but returns the HTML-escaped version
+      of a model's attribute. If you're interpolating data from the model into
+      HTML, using <b>escape</b> to retrieve attributes will prevent
+      <a href="http://en.wikipedia.org/wiki/Cross-site_scripting">XSS</a> attacks.
+    </p>
+
+<pre class="runnable">
+var hacker = new Backbone.Model({
+  name: "&lt;script&gt;alert('xss')&lt;/script&gt;"
+});
+
+alert(hacker.escape('name'));
+</pre>
 
     <p id="Model-set">
       <b class="header">set</b><code>model.set(attributes, [options])</code>
@@ -566,7 +585,7 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
       callback in the options, which will be invoked instead of triggering an
       <tt>"error"</tt> event, should validation fail.
     </p>
-    
+
     <p id="Model-escape">
       <b class="header">escape</b><code>model.escape(attribute)</code>
       <br />
@@ -593,7 +612,7 @@ alert(hacker.escape('name'));
 
 <pre>
 if (note.has("title")) {
-  ... 
+  ...
 }
 </pre>
 
@@ -641,11 +660,11 @@ if (note.has("title")) {
     </p>
 
     <p id="Model-defaults">
-      <b class="header">defaults</b><code>model.defaults</code>
+      <b class="header">defaults</b><code>model.defaults or model.defaults()</code>
       <br />
-      The <b>defaults</b> hash can be used to specify the default attributes
-      for your model. When creating an instance of the model, any unspecified
-      attributes will be set to their default value.
+      The <b>defaults</b> hash (or function) can be used to specify the default
+      attributes for your model. When creating an instance of the model,
+      any unspecified attributes will be set to their default value.
     </p>
 
 <pre class="runnable">
@@ -699,25 +718,18 @@ setInterval(function() {
 }, 10000);
 </pre>
 
-    <p class="warning">
-      <b>Cautionary Note:</b> When fetching or saving a model, make sure that the model is part of
-      a collection with a <a href="#Collection-url">url</a> property specified,
-      or that the model itself has a complete <a href="#Model-url">url</a> function
-      of its own, so that the request knows where to go.
-    </p>
-
     <p id="Model-save">
-      <b class="header">save</b><code>model.save(attributes, [options])</code>
+      <b class="header">save</b><code>model.save([attributes], [options])</code>
       <br />
       Save a model to your database (or alternative persistence layer),
-      by delegating to <a href="#Sync">Backbone.sync</a>. If the model has a <a href="#Model-validate">validate</a>
+      by delegating to <a href="#Sync">Backbone.sync</a>. The <b>attributes</b>
+      hash (as in <a href="#Model-set">set</a>) should contain the attributes
+      you'd like to change -- keys that aren't mentioned won't be altered.
+      If the model has a <a href="#Model-validate">validate</a>
       method, and validation fails, the model will not be saved. If the model
       <a href="#Model-isNew">isNew</a>, the save will be a <tt>"create"</tt>
       (HTTP <tt>POST</tt>), if the model already
-      exists on the server, the save will be an <tt>"update"</tt> (HTTP <tt>PUT</tt>). Accepts
-      <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response)</tt> as arguments. The <tt>error</tt> callback will
-      also be invoked if the model has a <tt>validate</tt> method, and validation fails.
+      exists on the server, the save will be an <tt>"update"</tt> (HTTP <tt>PUT</tt>).
     </p>
 
     <p>
@@ -736,6 +748,19 @@ var book = new Backbone.Model({
 });
 
 book.save();
+</pre>
+
+    <p>
+      <b>save</b> accepts <tt>success</tt> and <tt>error</tt> callbacks in the
+      options hash, which are passed <tt>(model, response)</tt> as arguments.
+      The <tt>error</tt> callback will also be invoked if the model has a
+      <tt>validate</tt> method, and validation fails. If a server-side
+      validation fails, return a non-<tt>200</tt> HTTP response code, along with
+      an error response in text or JSON.
+    </p>
+
+<pre>
+book.save({author: "F.D.R."}, {error: function(){ ... }});
 </pre>
 
     <p id="Model-destroy">
@@ -810,16 +835,34 @@ account.set({access: "unlimited"}, {
       <br />
       Returns the relative URL where the model's resource would be located on
       the server. If your models are located somewhere else, override this method
-      with the correct logic. Generates URLs of the form: <tt>"/[collection]/[id]"</tt>.
+      with the correct logic. Generates URLs of the form: <tt>"/[collection.url]/[id]"</tt>,
+      falling back to <tt>"/[urlRoot]/id"</tt> if the model is not part of a collection.
     </p>
 
     <p>
       Delegates to <a href="#Collection-url">Collection#url</a> to generate the
-      URL, so make sure that you have it defined.
+      URL, so make sure that you have it defined, or a <a href="#Model-urlRoot">urlRoot</a>
+      property, if all models of this class share a common root URL.
       A model with an id of <tt>101</tt>, stored in a
-      <a href="#Collection">Backbone.Collection</a> with a <tt>url</tt> of <tt>"/notes"</tt>,
-      would have this URL: <tt>"/notes/101"</tt>
+      <a href="#Collection">Backbone.Collection</a> with a <tt>url</tt> of <tt>"/documents/7/notes"</tt>,
+      would have this URL: <tt>"/documents/7/notes/101"</tt>
     </p>
+
+    <p id="Model-urlRoot">
+      <b class="header">urlRoot</b><code>model.urlRoot</code>
+      <br />
+      Specify a <tt>urlRoot</tt> if you're using a model outside of a collection,
+      to enable the default <a href="#Model-url">url</a> function to generate
+      URLs based on the model id. <tt>"/[urlRoot]/id"</tt>
+    </p>
+
+<pre class="runnable">
+var Book = Backbone.Model.extend({urlRoot : '/books'});
+
+var solaris = new Book({id: "1083-lem-solaris"});
+
+alert(solaris.url());
+</pre>
 
     <p id="Model-parse">
       <b class="header">parse</b><code>model.parse(response)</code>
@@ -928,8 +971,11 @@ bill.set({name : "Bill Jones"});
     </p>
 
     <p>
-      Collections may also listen for changes to specific attributes in their
-      models, for example: <tt>Documents.bind("change:selected", ...)</tt>
+      Any event that is triggered on a model in a collection will also be
+      triggered on the collection directly, for convenience.
+      This allows you to listen for changes to specific attributes in any
+      model in a collection, for example:
+      <tt>Documents.bind("change:selected", ...)</tt>
     </p>
 
     <p id="Collection-extend">
@@ -1260,9 +1306,9 @@ Accounts.fetch();
     <p>
       Note that <b>fetch</b> should not be used to populate collections on
       page load &mdash; all models needed at load time should already be
-      <a href="#FAQ-bootstrap">bootstrapped</a> in to place. <b>fetch</b> is 
-      intended for lazily-loading models for interfaces that are not needed 
-      immediately: for example, documents with collections of notes that may be 
+      <a href="#FAQ-bootstrap">bootstrapped</a> in to place. <b>fetch</b> is
+      intended for lazily-loading models for interfaces that are not needed
+      immediately: for example, documents with collections of notes that may be
       toggled open and closed.
     </p>
 
@@ -1644,13 +1690,31 @@ new DocumentRow({
       whether they've already been inserted into the page or not. In this
       fashion, views can be rendered at any time, and inserted into the DOM all
       at once, in order to get high-performance UI rendering with as few
-      reflows and repaints as possible.
+      reflows and repaints as possible. <tt>this.el</tt> is created from the
+      view's <tt>tagName</tt>, <tt>className</tt>, and <tt>id</tt> properties,
+      if specified. If not, <b>el</b> is an empty <tt>div</tt>.
     </p>
 
     <p>
-      <tt>this.el</tt> is created from the view's <tt>tagName</tt>, <tt>className</tt>,
-      and <tt>id</tt> properties, if specified. If not, <b>el</b> is an empty <tt>div</tt>.
+      You may assign <b>el</b> directly if the view is being
+      created for an element that already exists in the DOM. Use either a
+      reference to a real DOM element, or a css selector string.
     </p>
+
+<pre class="runnable">
+var ItemView = Backbone.View.extend({
+  tagName: 'li'
+});
+
+var BodyView = Backbone.View.extend({
+  el: 'body'
+});
+
+var item = new ItemView();
+var body = new BodyView();
+
+alert(item.el + ' ' + body.el);
+</pre>
 
     <p id="View-dollar">
       <b class="header">$ (jQuery or Zepto)</b><code>view.$(selector)</code>
@@ -1817,7 +1881,7 @@ var DocumentView = Backbone.View.extend({
 
     <div style="text-align: center;">
       <a href="examples/todos/index.html">
-        <img src="docs/images/todos.png" alt="Todos" style="margin: 10px auto;" />
+        <img src="docs/images/todos.png" alt="Todos" class="example_image" />
       </a>
     </div>
 
@@ -1828,7 +1892,7 @@ var DocumentView = Backbone.View.extend({
     </p>
 
     <div style="text-align: center;">
-      <img src="docs/images/dc-workspace.png" alt="DocumentCloud Workspace" style="margin: 10px auto;" />
+      <img src="docs/images/dc-workspace.png" alt="DocumentCloud Workspace" class="example_image" />
     </div>
 
     <p>
@@ -1842,7 +1906,44 @@ var DocumentView = Backbone.View.extend({
 
     <div style="text-align: center;">
       <a href="http://bennolan.com/science/backbone-mobile/">
-        <img src="docs/images/backbone-mobile.png" alt="Backbone Mobile" style="margin: 10px auto;" />
+        <img src="docs/images/backbone-mobile.png" alt="Backbone Mobile" class="example_image" />
+      </a>
+    </div>
+    
+    <p>
+      <a href="http://twitter.com/evilchelu">Cristi Balan</a> and 
+      <a href="http://dira.ro">Irina Dumitrascu</a> created 
+      <a href="http://tzigla.com">Tzigla</a>, a collaborative drawing 
+      application where artists make tiles that connect to each other to 
+      create <a href="http://tzigla.com/boards/1">surreal drawings</a>.
+      Backbone models help organize the code, controllers provide 
+      <a href="http://tzigla.com/boards/1#!/tiles/2-2">bookmarkable deep links</a>, 
+      and the views are rendered with 
+      <a href="https://github.com/creationix/haml-js">haml.js</a> and 
+      <a href="http://zeptojs.com/">Zepto</a>.
+      Tzigla is written in Ruby (Rails) on the backend, and 
+      <a href="http://coffeescript.org">CoffeeScript</a> on the frontend, with
+      <a href="http://documentcloud.github.com/jammit/">Jammit</a> 
+      prepackaging the static assets.
+    </p>
+    
+    <div style="text-align: center;">
+      <a href="http://www.tzigla.com/">
+        <img src="docs/images/tzigla.png" alt="Tzigla" class="example_image" />
+      </a>
+    </div>
+    
+    <p>
+      <a href="http://www.twitter.com/jamesjyu">James Yu</a> used Backbone.js to
+      create <a href="http://www.quietwrite.com/">QuietWrite</a>, an app
+      that gives writers a clean and quiet interface to concentrate on the text itself.
+      It also works great on the iPad. The editor relies on
+      Backbone to persist document data to the server.
+    </p>
+    
+    <div style="text-align: center;">
+      <a href="http://www.quietwrite.com/">
+        <img src="docs/images/quietwrite.png" alt="QuietWrite" class="example_image" />
       </a>
     </div>
 
@@ -1902,12 +2003,12 @@ Inbox.messages.fetch();
       <b class="header">Loading Bootstrapped Models</b>
       <br />
       When your app first loads, it's common to have a set of initial models that
-      you know you're going to need, in order to render the page. Instead of 
+      you know you're going to need, in order to render the page. Instead of
       firing an extra AJAX request to <a href="#Collection-fetch">fetch</a> them,
       a nicer pattern is to have their data already bootstrapped into the page.
       You can then use <a href="#Collection-refresh">refresh</a> to populate your
-      collections with the initial data. At DocumentCloud, in the 
-      <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the 
+      collections with the initial data. At DocumentCloud, in the
+      <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the
       workspace, we do something along these lines:
     </p>
 
@@ -1921,16 +2022,16 @@ Inbox.messages.fetch();
     <p id="FAQ-mvc">
       <b class="header">How does Backbone relate to "traditional" MVC?</b>
       <br />
-      Different implementations of the 
+      Different implementations of the
       <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
-      pattern tend to disagree about the definition of a controller. If it helps any, in 
-      Backbone, the <a href="#View">View</a> class can also be thought of as a 
+      pattern tend to disagree about the definition of a controller. If it helps any, in
+      Backbone, the <a href="#View">View</a> class can also be thought of as a
       kind of controller, dispatching events that originate from the UI, with
       the HTML template serving as the true view. We call it a View because it
-      represents a logical chunk of UI, responsible for the contents of a single 
+      represents a logical chunk of UI, responsible for the contents of a single
       DOM element.
     </p>
-    
+
     <p id="FAQ-this">
       <b class="header">Binding "this"</b>
       <br />

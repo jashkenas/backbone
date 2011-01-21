@@ -8,7 +8,8 @@ $(document).ready(function() {
       "search/:query":              "search",
       "search/:query/p:page":       "search",
       "splat/*args/end":            "splat",
-      "*first/complex-:part/*rest": "complex"
+      "*first/complex-:part/*rest": "complex",
+      ":entity?*args":              "query"
     },
 
     initialize : function(options) {
@@ -28,6 +29,11 @@ $(document).ready(function() {
       this.first = first;
       this.part = part;
       this.rest = rest;
+    },
+
+    query : function(entity, args) {
+      this.entity    = entity;
+      this.queryArgs = args;
     }
 
   });
@@ -73,6 +79,15 @@ $(document).ready(function() {
       equals(controller.first, 'one/two/three');
       equals(controller.part, 'part');
       equals(controller.rest, 'four/five/six/seven');
+      start();
+    }, 10);
+  });
+
+  asyncTest("Controller: routes (query)", 2, function() {
+    window.location.hash = 'mandel?a=b&c=d';
+    setTimeout(function() {
+      equals(controller.entity, 'mandel');
+      equals(controller.queryArgs, 'a=b&c=d');
       start();
       window.location.hash = '';
     }, 10);
