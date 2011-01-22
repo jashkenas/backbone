@@ -769,6 +769,8 @@ book.save({author: "F.D.R."}, {error: function(){ ... }});
       Destroys the model on the server by delegating an HTTP <tt>DELETE</tt>
       request to <a href="#Sync">Backbone.sync</a>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
+      Triggers a <tt>"destroy"</tt> event on the model, which will bubble up 
+      through any collections that contain it.
     </p>
 
 <pre>
@@ -1963,6 +1965,7 @@ var DocumentView = Backbone.View.extend({
       <li><b>"refresh"</b> (collection) &mdash; when the collection's entire contents have been replaced. </li>
       <li><b>"change"</b> (model, collection) &mdash; when a model's attributes have changed. </li>
       <li><b>"change:[attribute]"</b> (model, collection) &mdash; when a specific attribute has been updated. </li>
+      <li><b>"destrooy"</b> (model, collection) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
       <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
       <li><b>"route:[name]"</b> (controller) &mdash; when one of a controller's routes has matched. </li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
