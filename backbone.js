@@ -253,9 +253,9 @@
       options || (options = {});
       var model = this;
       var success = options.success;
-      options.success = function(resp) {
-        if (!model.set(model.parse(resp), options)) return false;
-        if (success) success(model, resp);
+      options.success = function(resp, status, xhr) {
+        if (!model.set(model.parse(resp, xhr), options)) return false;
+        if (success) success(model, resp, xhr);
       };
       options.error = wrapError(options.error, model, options);
       (this.sync || Backbone.sync)('read', this, options);
@@ -270,9 +270,9 @@
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
       var success = options.success;
-      options.success = function(resp) {
-        if (!model.set(model.parse(resp), options)) return false;
-        if (success) success(model, resp);
+      options.success = function(resp, status, xhr ) {
+        if (!model.set(model.parse(resp, xhr), options)) return false;
+        if (success) success(model, resp, xhr);
       };
       options.error = wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
@@ -286,9 +286,9 @@
       options || (options = {});
       var model = this;
       var success = options.success;
-      options.success = function(resp) {
+      options.success = function(resp, status, xhr) {
         if (model.collection) model.collection.remove(model);
-        if (success) success(model, resp);
+        if (success) success(model, resp, xhr);
       };
       options.error = wrapError(options.error, model, options);
       (this.sync || Backbone.sync)('delete', this, options);
@@ -306,7 +306,7 @@
 
     // **parse** converts a response into the hash of attributes to be `set` on
     // the model. The default implementation is just to pass the response along.
-    parse : function(resp) {
+    parse : function(resp, xhr) {
       return resp;
     },
 
@@ -496,9 +496,9 @@
       options || (options = {});
       var collection = this;
       var success = options.success;
-      options.success = function(resp) {
-        collection[options.add ? 'add' : 'refresh'](collection.parse(resp), options);
-        if (success) success(collection, resp);
+      options.success = function(resp, status, xhr) {
+        collection[options.add ? 'add' : 'refresh'](collection.parse(resp, xhr), options);
+        if (success) success(collection, resp, xhr);
       };
       options.error = wrapError(options.error, collection, options);
       (this.sync || Backbone.sync)('read', this, options);
@@ -516,16 +516,16 @@
         model.collection = coll;
       }
       var success = options.success;
-      options.success = function(nextModel, resp) {
+        options.success = function(nextModel, resp, status, xhr) {
         coll.add(nextModel);
-        if (success) success(nextModel, resp);
+        if (success) success(nextModel, resp, xhr);
       };
       return model.save(null, options);
     },
 
     // **parse** converts a response into a list of models to be added to the
     // collection. The default implementation is just to pass it through.
-    parse : function(resp) {
+    parse : function(resp, xhr) {
       return resp;
     },
 
