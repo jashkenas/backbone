@@ -164,14 +164,14 @@
       var html = this._escapedAttributes[attr];
       if (html){ return html;}
       var val = this.attributes[attr];
-      this._escapedAttributes[attr] = escapeHTML(val === null ? '' : '' + val);
+      this._escapedAttributes[attr] = escapeHTML(val == null ? '' : '' + val);
       return this._escapedAttributes[attr];
     },
 
     // Returns `true` if the attribute contains a value that is not null
     // or undefined.
     has : function(attr) {
-      return this.attributes[attr] !== null;
+      return this.attributes[attr] != null;
     },
 
     // Set a hash of model attributes on the object, firing `"change"` unless you
@@ -452,8 +452,8 @@
 
     // Get a model from the set by id.
     get : function(id) {
-      if (id === null) {return null;}
-      return this._byId[id.id !== null ? id.id : id];
+      if (id == null) {return null;}
+      return this._byId[id.id != null ? id.id : id];
     },
 
     // Get a model from the set by client id.
@@ -641,7 +641,7 @@
   // parts of route strings.
   var namedParam    = /:([\w\d]+)/g;
   var splatParam    = /\*([\w\d]+)/g;
-  var escapeRegExp  = /[\-\[\]\{\}\(\)\+\?\.\,\\\^\$\|\#\s]/g;
+  var escapeRegExp  = /[\-\[\]\{\}\(\)\+\?\.\,\\\^\$\|#\s]/g;
 
   // Set up all inheritable **Backbone.Controller** properties and methods.
   _.extend(Backbone.Controller.prototype, Backbone.Events, {
