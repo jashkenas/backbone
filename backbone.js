@@ -214,7 +214,7 @@
 
       // Run validation.
       var validObj = {};
-      delete validObj[attr];
+      validObj[attr] = undefinedValue;
       if (!options.silent && this.validate && !this._performValidation(validObj, options)){ return false;}
 
       // Remove the attribute.
