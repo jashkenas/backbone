@@ -133,4 +133,16 @@ $(document).ready(function() {
     equals(lastRequest.url, '/one/two');
   });
 
+  test("sync: events", function() {
+    var sync, syncSuccess, syncError;
+    library.bind("sync", function() { sync = true; });
+    library.bind("sync:success", function() { syncSuccess = true; });
+    library.bind("sync:error", function() { syncError = true; });
+    library.fetch();
+    lastRequest.success();
+    equals(sync, true);
+    equals(syncSuccess, true);
+    equals(syncError, undefined);
+  });
+
 });

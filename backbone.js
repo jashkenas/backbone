@@ -957,6 +957,20 @@
       processData:  false
     }, options);
 
+    if (!options.silent) {
+      var success = params.success,
+            error = params.error;
+
+      params.success = function() {
+        if (success) success.apply(this, arguments);
+        model.trigger('sync:success', model, method, options);
+      };
+      params.error = function() {
+        if (error) error.apply(this, arguments);
+        model.trigger('sync:error', model, method, options);
+      };
+    }
+
     // Ensure that we have a URL.
     if (!params.url) {
       params.url = getUrl(model) || urlError();
@@ -988,6 +1002,8 @@
 
     // Make the request.
     $.ajax(params);
+
+    if (!options.silent) model.trigger('sync', model, method, options);
   };
 
   // Helpers
