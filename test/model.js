@@ -347,4 +347,22 @@ $(document).ready(function() {
     notEqual(Child.prototype.instancePropDiff, undefined);
   });
 
+  test("Model: override id attribute", function() {
+    var Model = Backbone.Model.extend({
+      idAttribute: '_id'
+    });
+
+    var model = new Model();
+
+    equals(model.isNew(), true);
+    equals(model.id, undefined);
+
+    model.set({
+      _id: 1
+    });
+
+    equals(model.isNew(), false);
+    equals(model.id, 1);
+  });
+
 });

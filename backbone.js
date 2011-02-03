@@ -141,6 +141,9 @@
     // Has the item been changed since the last `"change"` event?
     _changed : false,
 
+    // Attribute to use for the model's id
+    idAttribute : 'id',
+
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize : function(){},
@@ -183,7 +186,7 @@
       if (!options.silent && this.validate && !this._performValidation(attrs, options)) return false;
 
       // Check for changes of `id`.
-      if ('id' in attrs) this.id = attrs.id;
+      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
       // Update attributes.
       for (var attr in attrs) {
