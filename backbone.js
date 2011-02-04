@@ -258,7 +258,7 @@
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync)('read', this, options);
+      (this.sync || Backbone.sync).call(this, 'read', this, options);
       return this;
     },
 
@@ -276,7 +276,7 @@
       };
       options.error = wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
-      (this.sync || Backbone.sync)(method, this, options);
+      (this.sync || Backbone.sync).call(this, method, this, options);
       return this;
     },
 
@@ -291,7 +291,7 @@
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync)('delete', this, options);
+      (this.sync || Backbone.sync).call(this, 'delete', this, options);
       return this;
     },
 
@@ -501,7 +501,7 @@
         if (success) success(collection, resp);
       };
       options.error = wrapError(options.error, collection, options);
-      (this.sync || Backbone.sync)('read', this, options);
+      (this.sync || Backbone.sync).call(this, 'read', this, options);
       return this;
     },
 
