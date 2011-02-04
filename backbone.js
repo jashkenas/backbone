@@ -385,18 +385,26 @@
     // keys. I.E. 
     //      this.setupAssociations({
     //            'wheels': WheelList,
-    //            'seats' : SeatList });
+    //            'seats' : SeatList },'car');
     // will create property wheels with an instance of  WheelList
-    // it will update the WheelList whenever set('wheels') is called      
-    setupAssociations:function(assoc){
+    // the instance of WheelList will have a property name called car
+    // which will point back to this
+    // the wheels object update the WheelList whenever set('wheels') is called
+    // the name defaults to 'belongsTo' and args is passed along to the new object
+    setupAssociations:function( assoc, name, args ){
+      if ( _.isUndefined( args ) ) args = {};
+      if ( _.isUndefined( name ) ) name = 'belongsTo';
+      args[ name  ] = this;
       for ( var key in assoc ) {
-         this[ key ] = new assoc[key]( this.get( key ),{ memberOf: this } );
+         this[ key ] = new assoc[key]( this.get( key ), args );
+         this[ key ][ name ] = this;
          this.bind( 'change:' + key , _.bind( this.setAssociated, this, key ) );
       }
     },
     // is called whenever an associated key is updated      
     setAssociated: function(name,self,val ){
-      this[ name ].refresh( val );
+        var obj = this[ name ];
+            _.isFunction( obj.refresh ) ? obj.refresh(val) : obj.set( val );            
     }
 });
 
