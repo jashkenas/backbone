@@ -73,6 +73,34 @@ $(document).ready(function() {
     ok(opts.amazing);
   });
 
+  test("Collection: add model to multiple collections", function() {
+    var counter = 0;
+    var e = new Backbone.Model({id: 10, label : 'e'});
+    e.bind('add', function(model, collection) {
+      counter++;
+      equals(e, model);
+      if (counter > 1) {
+        equals(collection, colF);
+      } else {
+        equals(collection, colE);
+      }
+    });
+    var colE = new Backbone.Collection([]);
+    colE.bind('add', function(model, collection) {
+      equals(e, model);
+      equals(colE, collection);
+    });
+    var colF = new Backbone.Collection([]);
+    colF.bind('add', function(model, collection) {
+      equals(e, model);
+      equals(colF, collection);
+    });
+    colE.add(e);
+    equals(e.collection, colE);
+    colF.add(e);
+    equals(e.collection, colE);
+  });
+
   test("Collection: remove", function() {
     var removed = otherRemoved = null;
     col.bind('remove', function(model){ removed = model.get('label'); });
@@ -119,6 +147,51 @@ $(document).ready(function() {
     colF.remove(e);
     ok(colF.length == 0);
     equals(passed, true);
+  });
+
+  test("Collection: remove same model in multiple collection", function() {
+    var counter = 0;
+    var e = new Backbone.Model({id: 5, title: 'Othello'});
+    e.bind('remove', function(model, collection) {
+      counter++;
+      equals(e, model);
+      if (counter > 1) {
+        equals(collection, colE);
+      } else {
+        equals(collection, colF);
+      }
+    });
+    var colE = new Backbone.Collection([e]);
+    colE.bind('remove', function(model, collection) {
+      equals(e, model);
+      equals(colE, collection);
+    });
+    var colF = new Backbone.Collection([e]);
+    colF.bind('remove', function(model, collection) {
+      equals(e, model);
+      equals(colF, collection);
+    });
+    equals(colE, e.collection);
+    colF.remove(e);
+    ok(colF.length == 0);
+    ok(colE.length == 1);
+    equals(counter, 1);
+    equals(colE, e.collection);
+    colE.remove(e);
+    equals(null, e.collection);
+    ok(colE.length == 0);
+    equals(counter, 2);
+  });
+
+  test("Colllection: model destroy removes from all collections", function() {
+    var e = new Backbone.Model({id: 5, title: 'Othello'});
+    e.sync = function(method, model, options) { options.success({}); };
+    var colE = new Backbone.Collection([e]);
+    var colF = new Backbone.Collection([e]);
+    e.destroy();
+    ok(colE.length == 0);
+    ok(colF.length == 0);
+    equals(null, e.collection);
   });
 
   test("Collection: fetch", function() {

@@ -160,7 +160,7 @@
       var html;
       if (html = this._escapedAttributes[attr]) return html;
       var val = this.attributes[attr];
-      return this._escapedAttributes[attr] = escapeHTML(val == null ? '' : val);
+      return this._escapedAttributes[attr] = escapeHTML(val == null ? '' : '' + val);
     },
 
     // Returns `true` if the attribute contains a value that is not null
@@ -287,7 +287,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp) {
-        if (model.collection) model.collection.remove(model);
+        model.trigger('destroy', model, model.collection, options);
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
@@ -579,7 +579,9 @@
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
-      model.collection = this;
+      if (!model.collection) {
+        model.collection = this;
+      }
       var index = this.comparator ? this.sortedIndex(model, this.comparator) : this.length;
       this.models.splice(index, 0, model);
       model.bind('all', this._onModelEvent);
@@ -605,7 +607,9 @@
 
     // Internal method to remove a model's ties to a collection.
     _removeReference : function(model) {
-      delete model.collection;
+      if (this == model.collection) {
+        delete model.collection;
+      }
       model.unbind('all', this._onModelEvent);
     },
 
@@ -613,8 +617,11 @@
     // Sets need to update their indexes when models change ids. All other
     // events simply proxy through. "add" and "remove" events that originate
     // in other collections are ignored.
-    _onModelEvent : function(ev, model, collection) {
+    _onModelEvent : function(ev, model, collection, options) {
       if ((ev == 'add' || ev == 'remove') && collection != this) return;
+      if (ev == 'destroy') {
+        this._remove(model, options);
+      }
       if (ev === 'change:id') {
         delete this._byId[model.previous('id')];
         this._byId[model.id] = model;
