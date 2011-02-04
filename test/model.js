@@ -352,7 +352,7 @@ $(document).ready(function() {
       idAttribute: '_id'
     });
 
-    var model = new Model();
+    var model = new Model;
 
     equals(model.isNew(), true);
     equals(model.id, undefined);
@@ -363,6 +363,29 @@ $(document).ready(function() {
 
     equals(model.isNew(), false);
     equals(model.id, 1);
+
+    var Models = Backbone.Collection.extend({
+      model: Model
+    });
+
+    var models = new Models;
+    models.add(model);
+
+    var found = models.get(1);
+
+    equals(found, model);
+
+    model.set({
+      _id: 2
+    });
+
+    found = models.get(1);
+
+    equals(found, undefined);
+
+    found = models.get(2);
+
+    equals(found, model);
   });
 
 });
