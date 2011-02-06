@@ -511,7 +511,9 @@
       var coll = this;
       options || (options = {});
       if (!(model instanceof Backbone.Model)) {
-        model = new this.model(model, {collection: coll});
+        modelRef = model;
+        model = new this.model(null, {collection: coll});
+        if(!model.set(modelRef)) return false;
       } else {
         model.collection = coll;
       }
