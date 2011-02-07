@@ -32,6 +32,18 @@ $(document).ready(function() {
     equals(col.getByCid(col.first().cid), col.first());
   });
 
+  test("Collection: get with non-default ids", function() {
+    var col = new Backbone.Collection();
+    var MongoModel = Backbone.Model.extend({
+      idAttribute: '_id'
+    });
+    var model = new MongoModel({_id: 100});
+    col.add(model);
+    equals(col.get(100), model);
+    model.set({_id: 101});
+    equals(col.get(101), model);
+  });
+
   test("Collection: update index when id changes", function() {
     var col = new Backbone.Collection();
     col.add([
@@ -210,12 +222,12 @@ $(document).ready(function() {
 
   test("Collection: create enforces validation", function() {
     var ValidatingModel = Backbone.Model.extend({
-        validate: function(attrs) {
-                return "fail"
-        }
+      validate: function(attrs) {
+        return "fail";
+      }
     });
     var ValidatingCollection = Backbone.Collection.extend({
-        model: ValidatingModel
+      model: ValidatingModel
     });
     var col = new ValidatingCollection();
     equals(col.create({"foo":"bar"}),false);

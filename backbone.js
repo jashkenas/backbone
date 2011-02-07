@@ -606,7 +606,7 @@
       if (ev == 'destroy') {
         this._remove(model, options);
       }
-      if (ev === 'change:id') {
+      if (ev === 'change:' + model.idAttribute) {
         delete this._byId[model.previous(model.idAttribute)];
         this._byId[model.id] = model;
       }
