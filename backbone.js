@@ -607,7 +607,7 @@
         this._remove(model, options);
       }
       if (ev === 'change:id') {
-        delete this._byId[model.previous('id')];
+        delete this._byId[model.previous(model.idAttribute)];
         this._byId[model.id] = model;
       }
       this.trigger.apply(this, arguments);
