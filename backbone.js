@@ -490,7 +490,9 @@
       options || (options = {});
       this.each(this._removeReference);
       this._reset();
-      this.add(models, {silent: true});
+      for (var i = 0; i < models.length; i++) {
+				this.add(this.parse(models[i]), {silent: true});	
+			}
       if (!options.silent) this.trigger('refresh', this, options);
       return this;
     },
@@ -503,7 +505,7 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp) {
-        collection[options.add ? 'add' : 'refresh'](collection.parse(resp), options);
+        collection[options.add ? 'add' : 'refresh'](resp, options);
         if (success) success(collection, resp);
       };
       options.error = wrapError(options.error, collection, options);
