@@ -152,6 +152,15 @@ $(document).ready(function() {
     equals(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
+  test("Model: using a non-default id attribute.", function() {
+    var MongoModel = Backbone.Model.extend({idAttribute : '_id'});
+    var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
+    equals(model.get('id'), 'eye-dee');
+    equals(model.id, 25);
+    model.unset('_id');
+    equals(model.id, undefined);
+  });
+
   test("Model: set an empty string", function() {
     var model = new Backbone.Model({name : "Model"});
     model.set({name : ''});
