@@ -133,7 +133,7 @@ $(document).ready(function() {
   });
 
   test("Model: set and unset", function() {
-    attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
+    attrs = {id: 'id', foo: 1, bar: 2, baz: 3};
     a = new Backbone.Model(attrs);
     var changeCount = 0;
     a.bind("change:foo", function() { changeCount += 1; });
@@ -147,6 +147,9 @@ $(document).ready(function() {
     a.unset('foo');
     ok(a.get('foo')== null, "Foo should have changed");
     ok(changeCount == 2, "Change count should have incremented for unset.");
+
+    a.unset('id');
+    equals(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
   test("Model: set an empty string", function() {
@@ -322,7 +325,7 @@ $(document).ready(function() {
     equals(lastError, "Can't change admin status.");
     equals(boundError, undefined);
   });
-  
+
   test("Model: Inherit class properties", function() {
     var Parent = Backbone.Model.extend({
       instancePropSame: function() {},
@@ -333,7 +336,7 @@ $(document).ready(function() {
     var Child = Parent.extend({
       instancePropDiff: function() {}
     });
-    
+
     var adult = new Parent;
     var kid   = new Child;
 
