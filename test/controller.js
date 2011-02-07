@@ -100,7 +100,7 @@ $(document).ready(function() {
   asyncTest("Controller: routes (anything)", 1, function() {
     window.location.hash = 'doesnt-match-a-route';
     setTimeout(function() {
-      equals(controller.anything, 'doesnt-match-a-routea');
+      equals(controller.anything, 'doesnt-match-a-route');
       start();
       window.location.hash = '';
     }, 10);
