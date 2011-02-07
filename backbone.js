@@ -670,12 +670,17 @@
       Backbone.history.saveLocation(fragment);
     },
 
-    // Bind all defined routes to `Backbone.history`.
+    // Bind all defined routes to `Backbone.history`. We have to reverse the
+    // order of the routes here to support behavior where the most general
+    // routes can be defined at the bottom of the route map.
     _bindRoutes : function() {
       if (!this.routes) return;
+      var routes = [];
       for (var route in this.routes) {
-        var name = this.routes[route];
-        this.route(route, name, this[name]);
+        routes.unshift([route, this.route[route]]);
+      }
+      for (var i = 0, l = routes.length; i < l; i++) {
+        this.route(routes[0], routes[1], this[routes[1]]);
       }
     },
 
@@ -743,10 +748,10 @@
       return this.loadUrl();
     },
 
-    // Add a route to be tested when the hash changes. Routes are matched in the
-    // order they are added.
+    // Add a route to be tested when the hash changes. Routes added later may
+    // override previous routes.
     route : function(route, callback) {
-      this.handlers.push({route : route, callback : callback});
+      this.handlers.unshift({route : route, callback : callback});
     },
 
     // Checks the current URL to see if it has changed, and if it has,
