@@ -206,8 +206,9 @@
     },
 
     // Remove an attribute from the model, firing `"change"` unless you choose
-    // to silence it.
+    // to silence it. `unset` is a noop if the attribute doesn't exist.
     unset : function(attr, options) {
+      if (!(attr in this.attributes)) return this;
       options || (options = {});
       var value = this.attributes[attr];
 
