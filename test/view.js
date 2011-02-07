@@ -84,6 +84,12 @@ $(document).ready(function() {
     ok(!view.el);
   });
 
+  test("View: with attributes", function() {
+    var view = new Backbone.View({attributes : {'class': 'one', id: 'two'}});
+    equals(view.el.className, 'one');
+    equals(view.el.id, 'two');
+  });
+
   test("View: multiple views per element", function() {
     var count = 0, ViewClass = Backbone.View.extend({
       el: $("body"),
