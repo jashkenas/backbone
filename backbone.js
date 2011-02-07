@@ -215,6 +215,9 @@
       // Remove the attribute.
       delete this.attributes[attr];
       delete this._escapedAttributes[attr];
+      if (attr == 'id') {
+          delete this.id;
+      }
       this._changed = true;
       if (!options.silent) {
         this.trigger('change:' + attr, this, void 0, options);
