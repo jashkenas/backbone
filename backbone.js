@@ -709,6 +709,9 @@
   // Cached regex for cleaning hashes.
   var hashStrip = /^#*/;
 
+  // Has the history handling already been started?
+  var historyStarted = false;
+
   // Set up all inheritable **Backbone.History** properties and methods.
   _.extend(Backbone.History.prototype, {
 
@@ -724,6 +727,7 @@
     // Start the hash change handling, returning `true` if the current URL matches
     // an existing route, and `false` otherwise.
     start : function() {
+      if (historyStarted) throw new Error("Backbone.history has already been started.");
       var docMode = document.documentMode;
       var oldIE = ($.browser.msie && (!docMode || docMode <= 7));
       if (oldIE) {
@@ -734,6 +738,7 @@
       } else {
         setInterval(this.checkUrl, this.interval);
       }
+      historyStarted = true;
       return this.loadUrl();
     },
 
