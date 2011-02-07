@@ -727,7 +727,7 @@
     // Start the hash change handling, returning `true` if the current URL matches
     // an existing route, and `false` otherwise.
     start : function() {
-      if (historyStarted) throw new Error("Backbone.history has already been started.");
+      if (historyStarted) throw new Error("Backbone.history has already been started");
       var docMode = document.documentMode;
       var oldIE = ($.browser.msie && (!docMode || docMode <= 7));
       if (oldIE) {
