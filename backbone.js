@@ -892,7 +892,7 @@
               match = key.match(eventSplitter),
               eventName = match[1], 
               selector = match[2],
-              deferredLookup = function() { self[methodName].call(self) };
+              deferredLookup = function() { self[methodName].apply(self,arguments) };
           eventName += '.delegateEvents' + self.cid;
           if (selector === '') {
             $(self.el).bind(eventName,deferredLookup);
