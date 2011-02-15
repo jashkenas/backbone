@@ -276,6 +276,13 @@ $(document).ready(function() {
     ok(_.isEqual(lastRequest[1], doc));
   });
 
+  test("Model: non-persisted destroy", function() {
+    attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
+    a = new Backbone.Model(attrs);
+    a.sync = function(method, model, options) { throw "should not be called"; };
+    ok(a.destroy(), "non-persisted model should not call sync");
+  });
+
   test("Model: validate", function() {
     var lastError;
     var model = new Backbone.Model();

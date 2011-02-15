@@ -286,18 +286,22 @@
       return this;
     },
 
-    // Destroy this model on the server. Upon success, the model is removed
+    // Destroy this model on the server if it was already persisted. Upon success, the model is removed
     // from its collection, if it has one.
     destroy : function(options) {
       options || (options = {});
-      var model = this;
-      var success = options.success;
-      options.success = function(resp) {
-        model.trigger('destroy', model, model.collection, options);
-        if (success) success(model, resp);
-      };
-      options.error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync).call(this, 'delete', this, options);
+      if (this.isNew()) {
+        this.trigger('destroy', this, this.collection, options);
+      } else {
+        var model = this;
+        var success = options.success;
+        options.success = function(resp) {
+          model.trigger('destroy', model, model.collection, options);
+          if (success) success(model, resp);
+        };
+        options.error = wrapError(options.error, model, options);
+        (this.sync || Backbone.sync).call(this, 'delete', this, options);
+      }
       return this;
     },
 
