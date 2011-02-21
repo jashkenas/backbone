@@ -7,6 +7,7 @@ var Zepto = (function() {
 
   function classRE(name){ return new RegExp("(^|\\s)" + name + "(\\s|$)") }
   function compact(array){ return array.filter(function(item){ return item !== undefined && item !== null }) }
+  function flatten(array){ return array.reduce(function(a,b){ return a.concat(b) }, []) }
   function camelize(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
 
   fragmentRE = /^\s*<.+>/;
@@ -18,7 +19,11 @@ var Zepto = (function() {
     return result;
   }
 
-  function Z(dom, selector){ this.dom = dom || []; this.selector = selector || '' }
+  function Z(dom, selector){
+    this.dom = dom || [];
+    this.length = this.dom.length;
+    this.selector = selector || '';
+  }
 
   function $(selector, context){
     if (selector == document) return new Z;
@@ -27,12 +32,12 @@ var Zepto = (function() {
     else {
       var dom;
       if (selector instanceof Z) dom = selector.dom;
-      else if (selector instanceof Array) dom = selector;
+      else if (selector instanceof Array) dom = compact(selector);
       else if (selector instanceof Element || selector === window) dom = [selector];
       else if (fragmentRE.test(selector)) dom = fragment(selector);
       else dom = $$(document, selector);
 
-      return new Z(compact(dom), selector);
+      return new Z(dom, selector);
     }
   }
 
@@ -43,29 +48,55 @@ var Zepto = (function() {
     ready: function(callback){
       document.addEventListener('DOMContentLoaded', callback, false); return this;
     },
-    compact: function(){ this.dom = compact(this.dom); return this },
     get: function(idx){ return idx === undefined ? this.dom : this.dom[idx] },
-    remove: function(){
-      return this.each(function(el){ el.parentNode.removeChild(el) });
+    size: function(){ return this.length },
+    remove: function(){ return this.each(function(){ this.parentNode.removeChild(this) }) },
+    each: function(callback){
+      this.dom.forEach(function(el, idx){ callback.call(el, idx, el) });
+      return this;
     },
-    each: function(callback){ this.dom.forEach(callback); return this },
     filter: function(selector){
       return $(this.dom.filter(function(element){
         return $$(element.parentNode, selector).indexOf(element) >= 0;
       }));
     },
     is: function(selector){
-      return this.dom.length > 0 && $(this.dom[0]).filter(selector).dom.length > 0;
+      return this.length > 0 && $(this.dom[0]).filter(selector).length > 0;
     },
-    first: function(callback){ this.dom = compact([this.dom[0]]); return this },
-    last: function() { this.dom = compact([this.dom[this.dom.length - 1]]); return this },
+    eq: function(idx){ return $(this.get(idx)) },
+    first: function(){ return $(this.get(0)) },
+    last: function(){ return $(this.get(this.length - 1)) },
     find: function(selector){
-      return $(this.dom.map(function(el){ return $$(el, selector) }).reduce(function(a,b){ return a.concat(b) }, []));
+      var result;
+      if (this.length == 1) result = $$(this.get(0), selector);
+      else result = flatten(this.dom.map(function(el){ return $$(el, selector) }));
+      return $(result);
     },
-    closest: function(selector){
-      var node = this.dom[0].parentNode, nodes = $$(document, selector);
-      while(node && nodes.indexOf(node) < 0) node = node.parentNode;
-      return $(node && !(node === document) ? node : []);
+    closest: function(selector, context){
+      var node = this.dom[0], nodes = $$(context !== undefined ? context : document, selector);
+      if (nodes.length === 0) node = null;
+      while(node && node !== document && nodes.indexOf(node) < 0) node = node.parentNode;
+      return $(node);
+    },
+    parents: function(selector){
+      var ancestors = [], nodes = this.get();
+      while (nodes.length > 0)
+        nodes = compact(nodes.map(function(node){
+          if ((node = node.parentNode) && node !== document && ancestors.indexOf(node) < 0) {
+            ancestors.push(node);
+            return node;
+          }
+        }));
+      ancestors = $(ancestors);
+      return selector === undefined ? ancestors : ancestors.filter(selector);
+    },
+    parent: function(selector){
+      var node, nodes = [];
+      this.each(function(){
+        if ((node = this.parentNode) && nodes.indexOf(node) < 0) nodes.push(node);
+      });
+      nodes = $(nodes);
+      return selector === undefined ? nodes : nodes.filter(selector);
     },
     pluck: function(property){ return this.dom.map(function(element){ return element[property] }) },
     show: function(){ return this.css('display', 'block') },
@@ -74,21 +105,31 @@ var Zepto = (function() {
     next: function(){ return $(this.pluck('nextElementSibling')) },
     html: function(html){
       return html === undefined ?
-        (this.dom.length > 0 ? this.dom[0].innerHTML : null) :
-        this.each(function(element){ element.innerHTML = html });
+        (this.length > 0 ? this.dom[0].innerHTML : null) :
+        this.each(function(idx){ this.innerHTML = typeof html == 'function' ? html(idx, this.innerHTML) : html });
     },
     text: function(text){
       return text === undefined ?
-        (this.dom.length > 0 ? this.dom[0].innerText : null) :
-        this.each(function(element){ element.innerText = text });
+        (this.length > 0 ? this.dom[0].innerText : null) :
+        this.each(function(){ this.innerText = text });
     },
     attr: function(name, value){
       return (typeof name == 'string' && value === undefined) ?
-        (this.dom.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') ? (this.dom[0].value) :
-        (this.dom.length > 0 ? this.dom[0].getAttribute(name) || undefined : null) :
-        this.each(function(element){
-          if (typeof name == 'object') for (key in name) element.setAttribute(key, name[key])
-          else element.setAttribute(name, value);
+        (this.length > 0 && this.dom[0].nodeName === 'INPUT' && this.dom[0].type === 'text' && name === 'value') ? (this.val()) :
+        (this.length > 0 ? this.dom[0].getAttribute(name) || undefined : null) :
+        this.each(function(idx){
+          if (typeof name == 'object') for (key in name) this.setAttribute(key, name[key])
+          else this.setAttribute(name, typeof value == 'function' ? value(idx, this.getAttribute(name)) : value);
+        });
+    },
+    removeAttr: function(name) {
+      return this.each(function() { this.removeAttribute(name); });
+    },
+    val: function(value){
+      return (value === undefined) ?
+        (this.length > 0 ? this.dom[0].value : null) :
+        this.each(function(){
+          this.value = value;
         });
     },
     offset: function(){
@@ -105,7 +146,7 @@ var Zepto = (function() {
       css = "";
       for (key in property) css += key + ':' + property[key] + ';';
       if (typeof property == 'string') css = property + ":" + value;
-      return this.each(function(element) { element.style.cssText += ';' + css });
+      return this.each(function() { this.style.cssText += ';' + css });
     },
     index: function(element){
       return this.dom.indexOf($(element).get(0));
@@ -114,19 +155,19 @@ var Zepto = (function() {
       return classRE(name).test(this.dom[0].className);
     },
     addClass: function(name){
-      return this.each(function(element){
-        !$(element).hasClass(name) && (element.className += (element.className ? ' ' : '') + name)
+      return this.each(function(){
+        !$(this).hasClass(name) && (this.className += (this.className ? ' ' : '') + name)
       });
     },
     removeClass: function(name){
-      return this.each(function(element){
-        element.className = element.className.replace(classRE(name), ' ').trim()
+      return this.each(function(){
+        this.className = this.className.replace(classRE(name), ' ').trim()
       });
     },
     toggleClass: function(name, when){
-      return this.each(function(element){
-       ((when !== undefined && !when) || $(element).hasClass(name)) ?
-         $(element).removeClass(name) : $(element).addClass(name)
+      return this.each(function(){
+       ((when !== undefined && !when) || $(this).hasClass(name)) ?
+         $(this).removeClass(name) : $(this).addClass(name)
       });
     }
   };
@@ -141,8 +182,16 @@ var Zepto = (function() {
   for (key in adjacencyOperators)
     $.fn[key] = (function(operator) {
       return function(html){
-        return this.each(function(element){
-          element['insertAdjacent' + (html instanceof Element ? 'Element' : 'HTML')](operator, html);
+        return this.each(function(index, element){
+          if (html instanceof Z) {
+            dom = html.dom;
+            if (operator == "afterBegin" || operator == "afterEnd")
+              for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[dom.length-i-1]);
+            else
+              for (var i=0; i<dom.length; i++) element['insertAdjacentElement'](operator, dom[i]);
+          } else {
+            element['insertAdjacent'+(html instanceof Element ? 'Element' : 'HTML')](operator, html);
+          }
         });
       };
     })(adjacencyOperators[key]);
@@ -205,13 +254,13 @@ var Zepto = (function() {
   };
 
   $.fn.bind = function(event, callback){
-    return this.each(function(element){
-      add(element, event, callback);
+    return this.each(function(){
+      add(this, event, callback);
     });
   };
   $.fn.unbind = function(event, callback){
-    return this.each(function(element){
-      remove(element, event, callback);
+    return this.each(function(){
+      remove(this, event, callback);
     });
   };
 
@@ -225,7 +274,7 @@ var Zepto = (function() {
   }
 
   $.fn.delegate = function(selector, event, callback){
-    return this.each(function(element){
+    return this.each(function(i, element){
       add(element, event, callback, selector, function(e){
         var target = e.target, nodes = $$(element, selector);
         while (target && nodes.indexOf(target) < 0) target = target.parentNode;
@@ -238,8 +287,8 @@ var Zepto = (function() {
     });
   };
   $.fn.undelegate = function(selector, event, callback){
-    return this.each(function(element){
-      remove(element, event, callback, selector);
+    return this.each(function(){
+      remove(this, event, callback, selector);
     });
   }
 
@@ -253,9 +302,9 @@ var Zepto = (function() {
   };
 
   $.fn.trigger = function(event){
-    return this.each(function(element){
+    return this.each(function(){
       var e = document.createEvent('Events');
-      element.dispatchEvent(e, e.initEvent(event, true, false));
+      this.dispatchEvent(e, e.initEvent(event, true, false));
     });
   };
 })(Zepto);
@@ -265,11 +314,13 @@ var Zepto = (function() {
       android = ua.match(/(Android)\s+([\d.]+)/),
       iphone = ua.match(/(iPhone\sOS)\s([\d_]+)/),
       ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
-      webos = ua.match(/(webOS)\/([\d.]+)/);
+      webos = ua.match(/(webOS)\/([\d.]+)/),
+      blackberry = ua.match(/(BlackBerry).*Version\/([\d.]+)/);
     if (android) os.android = true, os.version = android[2];
     if (iphone) os.ios = true, os.version = iphone[2].replace(/_/g, '.'), os.iphone = true;
     if (ipad) os.ios = true, os.version = ipad[2].replace(/_/g, '.'), os.ipad = true;
     if (webos) os.webos = true, os.version = webos[2];
+    if (blackberry) os.blackberry = true, os.version = blackberry[2];
     return os;
   }
   $.os = detect(navigator.userAgent);
@@ -332,10 +383,27 @@ var Zepto = (function() {
   });
 })(Zepto);
 (function($){
+
+  var jsonpID = 0;
+
   function empty() {}
+
+  $.ajaxJSONP = function(options){
+    var jsonpString;
+    jsonpString = 'jsonp' + ++jsonpID;
+    window[jsonpString] = options.success;
+    var script = document.createElement('script');
+    $(script).attr({ src: options.url.replace(/callback=\?/, 'callback=' + jsonpString) });
+    $('head').append(script);
+  };
+
   $.ajax = function(options){
     // { type, url, data, success, dataType, contentType }
     options = options || {};
+
+    if (options.url && /callback=\?/.test(options.url))
+      return $.ajaxJSONP(options);
+
     var data = options.data,
         callback = options.success || empty,
         errback = options.error || empty,
