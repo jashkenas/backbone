@@ -640,11 +640,12 @@
     this.initialize(options);
   };
 
-  // Cached regular expressions for matching named param parts and splatted
-  // parts of route strings.
+  // Cached regular expressions for matching named param parts, splatted
+  // parts of route strings and arguments groups to make reverse URL
   var namedParam    = /:([\w\d]+)/g;
   var splatParam    = /\*([\w\d]+)/g;
   var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
+  var parenMatch    = /(\([^\)]+\))/g;
 
   // Set up all inheritable **Backbone.Controller** properties and methods.
   _.extend(Backbone.Controller.prototype, Backbone.Events, {
@@ -661,8 +662,9 @@
     //
     route : function(route, name, callback) {
       Backbone.history || (Backbone.history = new Backbone.History);
+      var revpat = this._routeToRevPat(route);
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-      Backbone.history.route(route, _.bind(function(fragment) {
+      Backbone.history.route(route, revpat, name, _.bind(function(fragment) {
         var args = this._extractParameters(route, fragment);
         callback.apply(this, args);
         this.trigger.apply(this, ['route:' + name].concat(args));
@@ -673,6 +675,11 @@
     // without triggering routes.
     saveLocation : function(fragment) {
       Backbone.history.saveLocation(fragment);
+    },
+
+    // Again, just a proxy to `Backbone.history` to get a reversed URL
+    reverse : function() {
+      return Backbone.history.reverse.apply(Backbone.history, arguments);
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
@@ -698,6 +705,14 @@
       return new RegExp('^' + route + '$');
     },
 
+    _routeToRevPat : function(route) {
+      if (!_.isRegExp(route))
+        return route.replace(namedParam, "<arg>").replace(splatParam, "<arg>");
+      return route.toString().replace('/^', '')
+                             .replace('$/', '')
+                             .replace(parenMatch, "<arg>");
+    },
+
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters : function(route, fragment) {
@@ -717,8 +732,9 @@
     _.bindAll(this, 'checkUrl');
   };
 
-  // Cached regex for cleaning hashes.
+  // Cached regex for cleaning hashes and matching arguments in reverse URLs
   var hashStrip = /^#*/;
+  var argMatch = /<arg>/;
 
   // Has the history handling already been started?
   var historyStarted = false;
@@ -755,8 +771,9 @@
 
     // Add a route to be tested when the hash changes. Routes added later may
     // override previous routes.
-    route : function(route, callback) {
-      this.handlers.unshift({route : route, callback : callback});
+    route : function(route, revpat, name, callback) {
+      this.handlers.unshift({route : route, revpat : revpat, name : name,
+                             callback : callback});
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -786,6 +803,25 @@
         }
       });
       return matched;
+    },
+
+    // Attempt to make URL from URL name and list of parameters
+    reverse : function(name) {
+      var handler = null;
+      for (var i = 0; i < this.handlers.length; i++) {
+        if (this.handlers[i].name == name) {
+          handler = this.handlers[i];
+          break;
+        }
+      }
+      if (handler === null) {
+        throw new Error('Route ' + name + ' is not found');
+      }
+
+      return _.reduce(
+        Array.prototype.slice.call(arguments, 1),
+        function (path, arg) { return path.replace(argMatch, arg); },
+        handler.revpat);
     },
 
     // Save a fragment into the hash history. You are responsible for properly
