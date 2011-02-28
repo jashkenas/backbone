@@ -859,7 +859,7 @@
     // For small amounts of DOM Elements, where a full-blown template isn't
     // needed, use **make** to manufacture elements, one at a time.
     //
-    //     var el = this.make('li', {'class': 'row'}, this.model.get('title'));
+    //     var el = this.make('li', {'class': 'row'}, this.model.escape('title'));
     //
     make : function(tagName, attributes, content) {
       var el = document.createElement(tagName);
