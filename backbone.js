@@ -321,8 +321,7 @@
       return new this.constructor(this);
     },
 
-    // A model is new if it has never been saved to the server, and has a negative
-    // ID.
+    // A model is new if it does not have an ID.
     isNew : function() {
       return !this.id;
     },
