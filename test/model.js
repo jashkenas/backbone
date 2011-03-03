@@ -92,12 +92,12 @@ $(document).ready(function() {
   });
 
   test("Model: isNew", function() {
-    a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
-    ok(a.isNew(), "it should be new");
-    a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3, 'id': 2 });
-    ok(!a.isNew(), "any defined ID is legal, positive integer");
-    a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3, 'id': -5 });
-    ok(!a.isNew(), "any defined ID is legal, negative integer");
+    a = new Backbone.Model({ });
+    ok(a.isNew(), "is true when there is no id");
+    a = new Backbone.Model({ 'id': 2 });
+    ok(!a.isNew(), "is false for a positive integer");
+    a = new Backbone.Model({ 'id': -5 });
+    ok(!a.isNew(), "is false for a negative integer");
   });
 
   test("Model: get", function() {
