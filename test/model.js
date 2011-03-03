@@ -92,11 +92,9 @@ $(document).ready(function() {
   });
 
   test("Model: isNew", function() {
-    attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
-    a = new Backbone.Model(attrs);
+    a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
     ok(a.isNew(), "it should be new");
-    attrs = { 'foo': 1, 'bar': 2, 'baz': 3, 'id': -5 };
-    a = new Backbone.Model(attrs);
+    a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3, 'id': -5 });
     ok(!a.isNew(), "any defined ID is legal, negative or positive");
   });
 
