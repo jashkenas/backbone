@@ -316,6 +316,12 @@
       return resp;
     },
 
+    // **parseRequest** converts any request into the proper formatting, allows for adjusting any
+    // of the request parameters. The default implementation is just to pass the request along.
+    parseRequest : function(req) {
+      return req;
+    },
+
     // Create a new model with identical attributes to this one.
     clone : function() {
       return new this.constructor(this);
@@ -1004,6 +1010,8 @@
         };
       }
     }
+
+    params = model.parseRequest(params);
 
     // Make the request.
     $.ajax(params);
