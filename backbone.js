@@ -316,8 +316,8 @@
       return resp;
     },
 
-    // **parseRequest** converts any request into the proper formatting, allows for adjusting any
-    // of the request parameters. The default implementation is just to pass the request along.
+    // **parseRequest** converts any request into the proper formatting, allows for encoding the request as desired.
+    // The default implementation is just to stringify the object into json.
     parseRequest : function(req) {
       return JSON.stringify(req);
     },
