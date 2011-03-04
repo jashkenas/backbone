@@ -319,7 +319,7 @@
     // **parseRequest** converts any request into the proper formatting, allows for adjusting any
     // of the request parameters. The default implementation is just to pass the request along.
     parseRequest : function(req) {
-      return req;
+      return JSON.stringify(req);
     },
 
     // Create a new model with identical attributes to this one.
@@ -989,7 +989,7 @@
 
     // Ensure that we have the appropriate request data.
     if (!params.data && model && (method == 'create' || method == 'update')) {
-      params.data = JSON.stringify(model.toJSON());
+      params.data = model.parseRequest(model.toJSON());
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
@@ -1010,8 +1010,6 @@
         };
       }
     }
-
-    params = model.parseRequest(params);
 
     // Make the request.
     $.ajax(params);
