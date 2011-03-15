@@ -883,7 +883,7 @@
     // For small amounts of DOM Elements, where a full-blown template isn't
     // needed, use **make** to manufacture elements, one at a time.
     //
-    //     var el = this.make('li', {'class': 'row'}, this.model.get('title'));
+    //     var el = this.make('li', {'class': 'row'}, this.model.escape('title'));
     //
     make : function(tagName, attributes, content) {
       var el = document.createElement(tagName);
@@ -1103,7 +1103,7 @@
 
   // Helper function to escape a string for HTML rendering.
   var escapeHTML = function(string) {
-    return string.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    return string.replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   };
 
 }).call(this);
