@@ -1045,7 +1045,7 @@
     // Add static properties to the constructor function, if supplied.
     if (staticProps) _.extend(child, staticProps);
 
-    // Correctly set child's `prototype.constructor`, for `instanceof`.
+    // Correctly set child's `prototype.constructor`.
     child.prototype.constructor = child;
 
     // Set a convenience property in case the parent's prototype is needed later.
