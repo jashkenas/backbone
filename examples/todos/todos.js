@@ -196,7 +196,6 @@ $(function(){
     // Re-rendering the App just means refreshing the statistics -- the rest
     // of the app doesn't change.
     render: function() {
-      var done = Todos.done().length;
       this.$('#todo-stats').html(this.statsTemplate({
         total:      Todos.length,
         done:       Todos.done().length,
