@@ -77,7 +77,7 @@ html {
     #create-todo input::-webkit-input-placeholder {
       font-style: italic;
     }
-  #create-todo span {
+  #create-todo .ui-tooltip-top {
     position: absolute;
     z-index: 999;
     width: 170px;
@@ -308,4 +308,8 @@ html {
   -moz-transform:rotate(180deg);
   -khtml-transform:rotate(180deg);
   -webkit-transform:rotate(180deg);
+}
+
+.ui-tooltip-top {
+  display: none;
 }
