@@ -145,6 +145,9 @@
     // CouchDB users may want to set this to `"_id"`.
     idAttribute : 'id',
 
+    // A jQuery promise object (set on 'fetch', 'save' and 'destroy')
+    promise: null,
+
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize : function(){},
@@ -264,7 +267,8 @@
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync).call(this, 'read', this, options);
+      var request = (this.sync || Backbone.sync).call(this, 'read', this, options);
+      this.promise = _.isFunction( request.promise ) ? request.promise() : request;
       return this;
     },
 
@@ -282,7 +286,8 @@
       };
       options.error = wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
-      (this.sync || Backbone.sync).call(this, method, this, options);
+      var request = (this.sync || Backbone.sync).call(this, method, this, options);
+	  this.promise = _.isFunction( request.promise ) ? request.promise() : request;
       return this;
     },
 
@@ -297,7 +302,8 @@
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync).call(this, 'delete', this, options);
+      var request = (this.sync || Backbone.sync).call(this, 'delete', this, options);
+	  this.promise = _.isFunction( request.promise ) ? request.promise() : request;
       return this;
     },
 
@@ -415,6 +421,9 @@
     // This should be overridden in most cases.
     model : Backbone.Model,
 
+    // A jQuery promise object (set on 'fetch')
+    promise: null,
+
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize : function(){},
@@ -507,7 +516,8 @@
         if (success) success(collection, resp);
       };
       options.error = wrapError(options.error, collection, options);
-      (this.sync || Backbone.sync).call(this, 'read', this, options);
+      var request = (this.sync || Backbone.sync).call(this, 'read', this, options);
+	  this.promise = _.isFunction( request.promise ) ? request.promise() : request;
       return this;
     },
 
@@ -528,6 +538,7 @@
         coll.add(nextModel);
         if (success) success(nextModel, resp);
       };
+	  this.promise = model.promise;
       return model.save(null, options);
     },
 
@@ -1006,7 +1017,7 @@
     }
 
     // Make the request.
-    $.ajax(params);
+    return $.ajax(params);
   };
 
   // Helpers
