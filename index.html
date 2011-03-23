@@ -265,6 +265,13 @@
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
     </ul>
 
+    <a class="toc_title" href="#Utility">
+      Utility
+    </a>
+    <ul class="toc_section">
+      <li>– <a href="#Utility-noConflict">noConflict</a></li>
+    </ul>
+
     <a class="toc_title" href="#examples">
       Examples
     </a>
@@ -1887,6 +1894,26 @@ var DocumentView = Backbone.View.extend({
   ...
 
 });
+</pre>
+
+    <h2 id="Utility">Backbone Utilities</h2>
+
+    <p>
+      
+    </p>
+
+    <p id="Utility-noConflict">
+      <b class="header">noConflict</b><code>var backbone = Backbone.noConflict();</code>
+      <br />
+      Returns the <tt>Backbone</tt> object back to its original value. You can
+      use the return value of <tt>Backbone.noConflict()</tt> to keep a local
+      reference to Backbone. Useful for embedding Backbone on third-party
+      websites, where you don't want to clobber the existing Backbone.
+    </p>
+
+<pre>
+var localBackbone = Backbone.noConflict();
+var model = localBackbone.Model.extend(...);
 </pre>
 
     <h2 id="examples">Examples</h2>
