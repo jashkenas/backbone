@@ -268,6 +268,18 @@
     <a class="toc_title" href="#examples">
       Examples
     </a>
+    <ul class="toc_section">
+      <li>– <a href="#examples-todos">Todos</a></li>
+      <li>– <a href="#examples-documentcloud">DocumentCloud</a></li>
+      <li>– <a href="#examples-basecamp">Basecamp Mobile</a></li>
+      <li>– <a href="#examples-flow">Flow</a></li>
+      <li>– <a href="#examples-tilemill">TileMill</a></li>
+      <li>– <a href="#examples-soundcloud">Mobile SoundCloud</a></li>
+      <li>- <a href="#examples-instagreat">Insta-great!</a></li>
+      <li>- <a href="#examples-quietwrite">QuietWrite</a></li>
+      <li>- <a href="#examples-tzigla">Tzigla</a></li>
+      <li>- <a href="#examples-substance">Substance</a></li>
+    </ul>
 
     <a class="toc_title" href="#faq">
       F.A.Q.
@@ -1879,7 +1891,7 @@ var DocumentView = Backbone.View.extend({
 
     <h2 id="examples">Examples</h2>
 
-    <p>
+    <p id="examples-todos">
       <a href="http://jgn.me/">Jérôme Gravel-Niquet</a> has contributed a
       <a href="examples/todos/index.html">Todo List application</a>
       that is bundled in the repository as Backbone example. If you're wondering
@@ -1899,7 +1911,7 @@ var DocumentView = Backbone.View.extend({
       </a>
     </div>
 
-    <p>
+    <p id="examples-documentcloud">
       The <a href="http://www.documentcloud.org/public/#search/">DocumentCloud workspace</a>
       is built on Backbone.js, with <i>Documents</i>, <i>Projects</i>,
       <i>Notes</i>, and <i>Accounts</i> all as Backbone models and collections.
@@ -1911,7 +1923,7 @@ var DocumentView = Backbone.View.extend({
       </a>
     </div>
 
-    <p>
+    <p id="examples-basecamp">
       <a href="http://37signals.com/">37Signals</a> used Backbone.js to create
       <a href="http://basecamphq.com/mobile">Basecamp Mobile</a>, the mobile version
       of their popular project management software. You can access all your Basecamp
@@ -1924,8 +1936,21 @@ var DocumentView = Backbone.View.extend({
         <img src="docs/images/basecamp-mobile.png" alt="Basecamp Mobile" class="example_image" />
       </a>
     </div>
+    
+    <p id="examples-flow">
+      <a href="http://www.metalabdesign.com/">MetaLab</a> used Backbone.js to create
+      <a href="http://www.getflow.com/">Flow</a>, a task management app for teams. The
+      workspace relies on Backbone.js to construct task views, activities, accounts, 
+      folders, projects, and tags. You can see the internals under <tt>window.Flow</tt>.
+    </p>
 
-    <p>
+    <div style="text-align: center;">
+      <a href="http://www.getflow.com/">
+        <img src="docs/images/flow.png" alt="Flow" class="example_image" />
+      </a>
+    </div>
+
+    <p id="examples-tilemill">
       Our fellow
       <a href="http://www.newschallenge.org/">Knight Foundation News Challenge</a>
       winners, <a href="http://mapbox.com/">MapBox</a>, created an open-source
@@ -1942,7 +1967,32 @@ var DocumentView = Backbone.View.extend({
       </a>
     </div>
 
-    <p>
+    <p id="examples-soundcloud">
+      <a href="http://soundcloud.com">SoundCloud</a> is the best sound sharing 
+      platform on the internet, and Backbone.js provides the foundation for 
+      <a href="http://m.soundcloud.com">Mobile SoundCloud</a>. The project uses 
+      the public SoundCloud <a href="http://soundcloud.com/developers">API</a> 
+      as a data source (channeled through a nginx proxy), 
+      <a href="http://api.jquery.com/category/plugins/templates/">jQuery templates</a> 
+      for the rendering, <a href="http://docs.jquery.com/Qunit">Qunit
+      </a> and <a href="http://code.google.com/p/phantomjs/">PhantomJS</a> for 
+      the testing suite. The JS code, templates and CSS are built for the 
+      production deployment with various Node.js tools like 
+      <a href="https://github.com/dsimard/ready.js">ready.js</a>, 
+      <a href="https://github.com/mde/node-jake">Jake</a>, 
+      <a href="https://github.com/tmpvar/jsdom">jsdom</a>. 
+      The <b>Backbone.History</b> was modified to support the HTML5 <tt>history.pushState</tt>. 
+      <b>Backbone.sync</b> was extended with an additional SessionStorage based cache 
+      layer.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://m.soundcloud.com">
+        <img src="docs/images/soundcloud.png" alt="SoundCloud" class="example_image" />
+      </a>
+    </div>
+    
+    <p id="examples-instagreat">
       <a href="http://twitter.com/elliottkember">Elliott Kember</a> and
       <a href="http://twitter.com/dizzyup">Hector Simpson</a> built
       <a href="http://instagre.at">Insta-great!</a>
@@ -1959,7 +2009,7 @@ var DocumentView = Backbone.View.extend({
       </a>
     </div>
 
-    <p>
+    <p id="examples-quietwrite">
       <a href="http://www.twitter.com/jamesjyu">James Yu</a> used Backbone.js to
       create <a href="http://www.quietwrite.com/">QuietWrite</a>, an app
       that gives writers a clean and quiet interface to concentrate on the text itself.
@@ -1974,7 +2024,7 @@ var DocumentView = Backbone.View.extend({
       </a>
     </div>
 
-    <p>
+    <p id="examples-tzigla">
       <a href="http://twitter.com/evilchelu">Cristi Balan</a> and
       <a href="http://dira.ro">Irina Dumitrascu</a> created
       <a href="http://tzigla.com">Tzigla</a>, a collaborative drawing
@@ -1996,30 +2046,19 @@ var DocumentView = Backbone.View.extend({
         <img src="docs/images/tzigla.png" alt="Tzigla" class="example_image" />
       </a>
     </div>
-
-    <p>
-      Michael Aufreiter is building an open source document authoring and publishing engine: <a href="http://substance.io">Substance</a>. 
-      Substance makes use of Backbone.View and Backbone.Controller, while Backbone plays well together with <a href="http://github.com/michael/data">Data.js</a>, which is used for data persistence.
+    
+    <p id="examples-substance">
+      Michael Aufreiter is building an open source document authoring and 
+      publishing engine: <a href="http://substance.io">Substance</a>. 
+      Substance makes use of Backbone.View and Backbone.Controller, while 
+      Backbone plays well together with 
+      <a href="http://github.com/michael/data">Data.js</a>, which is used for 
+      data persistence.
     </p>
 
     <div style="text-align: center;">
       <a href="http://substance.io/">
         <img src="docs/images/substance.png" alt="Substance" class="example_image" />
-      </a>
-    </div>
-
-    <p>
-      <a href="http://bennolan.com/">Ben Nolan</a> created
-      <a href="http://bennolan.com/2010/11/24/backbone-jquery-demo.html">an example "Backbone Mobile" application</a>, combining Backbone.js
-      with <a href="http://jquerymobile.com/">jQuery Mobile</a>. You can
-      <a href="http://bennolan.com/science/backbone-mobile/">try the app</a>
-      in your browser, or view the
-      <a href="https://github.com/bnolan/backbone-mobile">source code</a> on Github.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="http://bennolan.com/science/backbone-mobile/">
-        <img src="docs/images/backbone-mobile.png" alt="Backbone Mobile" class="example_image" />
       </a>
     </div>
 
