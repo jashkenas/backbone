@@ -677,10 +677,26 @@
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       Backbone.history.route(route, _.bind(function(fragment) {
         var args = this._extractParameters(route, fragment);
+
+        if( _(this.before).isFunction() ){
+          this.before.apply(this, args); 
+        }
+
         callback.apply(this, args);
+
+        if( _(this.after).isFunction() ){
+          this.after.apply(this, args); 
+        }
+
         this.trigger.apply(this, ['route:' + name].concat(args));
       }, this));
     },
+    
+    // You can define a function as a `before` filter to be run before each route handler
+    before: function() { }
+    
+    // You can define a function as a `after` filter to be run after each route handler
+    after: function() { }
 
     // Simple proxy to `Backbone.history` to save a fragment into the history,
     // without triggering routes.

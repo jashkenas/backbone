@@ -12,6 +12,14 @@ $(document).ready(function() {
       ":entity?*args":              "query",
       "*anything":                  "anything"
     },
+    
+    before: function(query) {
+      this.before_tag = query;
+    },
+
+    after: function(query) {
+      this.after_tag = query; 
+    },
 
     initialize : function(options) {
       this.testing = options.testing;
@@ -50,6 +58,22 @@ $(document).ready(function() {
 
   test("Controller: initialize", function() {
     equals(controller.testing, 101);
+  });
+
+  asyncTest("Controller: routes (before filter)", 1, function() {
+    window.location.hash = 'search/news';
+    setTimeout(function() {
+      equals(controller.before_tag, 'news');
+      start();
+    }, 10);
+  });
+
+  asyncTest("Controller: routes (after filter)", 1, function() {
+    window.location.hash = 'search/news';
+    setTimeout(function() {
+      equals(controller.after_tag, 'news');
+      start();
+    }, 10);
   });
 
   asyncTest("Controller: routes (simple)", 2, function() {
