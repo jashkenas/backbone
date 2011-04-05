@@ -146,9 +146,24 @@ $(document).ready(function() {
   });
   
   
-  // test("sync: fetch something using a baseURL", function() {
-  //   
-  // });
+  test("sync: fetch something using a baseURL", function() {
+    Backbone.baseUrl = 'http://documentcloud.github.com';
+    Backbone.sync = originalSync;
+    library.fetch();
+    equals(lastRequest.url, 'http://documentcloud.github.com/library');
+    ok(_.isEmpty(lastRequest.data));
+    Backbone.useJSONP = false;
+  });
+
+
+  test("sync: fetch something using a baseURL that has a trailing slash", function() {
+    Backbone.baseUrl = 'http://documentcloud.github.com/';
+    Backbone.sync = originalSync;
+    library.fetch();
+    equals(lastRequest.url, 'http://documentcloud.github.com/library');
+    ok(_.isEmpty(lastRequest.data));
+    Backbone.useJSONP = false;
+  });
   
 
 });

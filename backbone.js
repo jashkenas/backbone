@@ -1018,10 +1018,24 @@
       }
     }
 
+    // If you want to prevent crossdomain issues. Use JSONP as datatype.
     if (Backbone.useJSONP) {
       params.dataType = 'jsonp';
     }
-
+    
+    // If you want to always use a specific url set the baseUrl.
+    if (Backbone.baseUrl && params.url.indexOf('http') != 0) {
+      // remove the trailing slash, if it is there
+      var base;
+      if(Backbone.baseUrl.charAt(Backbone.baseUrl.length - 1) == '/') {
+        base = Backbone.baseUrl.substr(0, Backbone.baseUrl.length - 1);
+      } else {
+        base = Backbone.baseUrl;
+      }
+      params.url = base + params.url;
+    }
+    
+    
     // Make the request.
     $.ajax(params);
   };
