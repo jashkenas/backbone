@@ -1018,6 +1018,10 @@
       }
     }
 
+    if (Backbone.useJSONP) {
+      params.dataType = 'jsonp';
+    }
+
     // Make the request.
     $.ajax(params);
   };

@@ -100,7 +100,7 @@ $(document).ready(function() {
     equals(data.length, 123);
     Backbone.emulateJSON = false;
   });
-
+  
   test("sync: read model", function() {
     library.first().fetch();
     equals(lastRequest.url, '/library/2-the-tempest');
@@ -132,5 +132,21 @@ $(document).ready(function() {
     model.fetch({url: '/one/two'});
     equals(lastRequest.url, '/one/two');
   });
+
+  
+  test("sync: fetch something with useJSONP", function() {
+    Backbone.useJSONP = true;
+    Backbone.sync = originalSync;
+    library.fetch();
+    equals(lastRequest.url, '/library');
+    equals(lastRequest.type, 'GET');
+    equals(lastRequest.dataType, 'jsonp');
+    ok(_.isEmpty(lastRequest.data));
+    Backbone.useJSONP = false;
+  });
+  
+  
+  
+  
 
 });
