@@ -146,7 +146,9 @@ $(document).ready(function() {
   });
   
   
-  
+  // test("sync: fetch something using a baseURL", function() {
+  //   
+  // });
   
 
 });

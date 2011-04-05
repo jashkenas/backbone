@@ -249,6 +249,7 @@
       <li>– <a href="#Sync">Backbone.sync</a></li>
       <li>– <a href="#Sync-emulateHTTP">Backbone.emulateHTTP</a></li>
       <li>– <a href="#Sync-emulateJSON">Backbone.emulateJSON</a></li>
+      <li>– <a href="#Sync-useJSONP">Backbone.useJSONP</a></li>
     </ul>
 
     <a class="toc_title" href="#View">
@@ -1642,6 +1643,15 @@ model.save();  // POST to "/collection/id", with "_method=PUT" + header.
       will cause the JSON to be serialized under a <tt>model</tt> parameter, and
       the request to be made with a <tt>application/x-www-form-urlencoded</tt>
       mime type, as if from an HTML form.
+    </p>
+
+
+    <p id="Sync-useJSONP">
+      <b class="header">useJSONP</b><code>Backbone.useJSONP = true</code>
+      <br />
+      When you want to use a url from a remote webserver, you can enable JSONP support by setting 
+      <tt>Backbone.useJSONP = true;</tt>. This will cause the url to be submitted to include a 
+      <tt>callback</tt> parameter that you're webserver must invoke with the corresponding JSON.
     </p>
 
     <h2 id="View">Backbone.View</h2>
