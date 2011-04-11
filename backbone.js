@@ -731,7 +731,7 @@
   };
 
   // Cached regex for cleaning hashes.
-  var hashStrip = /^#*/;
+  var hashStrip = /^#*!?/;
 
   // Has the history handling already been started?
   var historyStarted = false;
