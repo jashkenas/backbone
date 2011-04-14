@@ -864,6 +864,7 @@
     if (methodName) this[methodName](evt);
   };
 
+
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(Backbone.View.prototype, Backbone.Events, {
 
@@ -939,7 +940,8 @@
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
         var method;
-        if (viewKeyEvents.indexOf(eventName) >= 0 && $.isPlainObject(methodName)) {
+        if (viewKeyEvents.indexOf(eventName) >= 0 && typeof methodName === "object") { 
+          // typeof check is naive... better solution?
           var keyBindings = methodName;
           method = _.bind(keyDelegate, this, keyBindings);
         } else {
