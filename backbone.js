@@ -842,6 +842,28 @@
   // List of view options to be merged as properties.
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName'];
 
+  // List of key events.
+  var viewKeyEvents = ['keypress', 'keydown', 'keyup'];
+
+  // private delegate for key bindings
+  var keyDelegate = function(keyBindings, evt) {
+    // determining key code ripped from jQuery. thx guyz
+    var which;
+		if (evt.which == null && (evt.charCode != null || evt.keyCode != null) ) {
+			which = evt.charCode != null ? evt.charCode : evt.keyCode;
+		} else {
+      which = evt.which;
+    }
+    
+    var methodName;
+    if (which in keyBindings) {
+      methodName = keyBindings[which];
+    } else if ("default" in keyBindings) {
+      methodName = keyBindings['default'];
+    }
+    if (methodName) this[methodName](evt);
+  };
+
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(Backbone.View.prototype, Backbone.Events, {
 
@@ -892,6 +914,20 @@
     //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
     // Uses event delegation for efficiency.
+    //
+    // It's also possible to bind declaratively to specific key codes
+    // on key events using similar syntax:
+    //
+    //     {
+    //       'keypress .title' : {
+    //         '13' : 'save'   // bound to enter
+    //       },
+    //       'keyup .title' : {
+    //         'default' : 'defaultBehavior',
+    //         '27' : 'cancel' // bound to escape
+    //       }
+    //     }
+    //
     // Omitting the selector binds the event to `this.el`.
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
@@ -902,7 +938,13 @@
         var methodName = events[key];
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
-        var method = _.bind(this[methodName], this);
+        var method;
+        if (viewKeyEvents.indexOf(eventName) >= 0 && $.isPlainObject(methodName)) {
+          var keyBindings = methodName;
+          method = _.bind(keyDelegate, this, keyBindings);
+        } else {
+          method = _.bind(this[methodName], this);
+        }
         eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
           $(this.el).bind(eventName, method);
