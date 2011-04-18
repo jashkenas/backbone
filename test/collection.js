@@ -286,4 +286,11 @@ $(document).ready(function() {
     ok(_.isEqual(col.last().attributes, a.attributes));
   });
 
+  test("Collection: trigger custom events on models", function() {
+    var fired = null;
+    a.bind("custom", function() { fired = true });
+    a.trigger("custom");
+    equals(fired, true);
+  });
+
 });
