@@ -28,11 +28,11 @@
   Backbone.VERSION = '0.3.3';
 
   // Require Underscore, if we're on the server, and it's not already present.
-  var _ = root._;
+  var _ = root.$ && root.$.ender ? root.$ : root._;
   if (!_ && (typeof require !== 'undefined')) _ = require('underscore')._;
 
   // For Backbone's purposes, either jQuery or Zepto owns the `$` variable.
-  var $ = root.jQuery || root.Zepto;
+  var $ = root.$ && root.$.ender ? root.$ : (root.jQuery || root.Zepto);
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
@@ -753,7 +753,7 @@
     start : function() {
       if (historyStarted) throw new Error("Backbone.history has already been started");
       var docMode = document.documentMode;
-      var oldIE = ($.browser.msie && (!docMode || docMode <= 7));
+      var oldIE = (navigator.userAgent.toLowerCase().match(/msie [\w.]+/) && (!docMode || docMode <= 7));
       if (oldIE) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
       }
