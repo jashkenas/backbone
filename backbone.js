@@ -279,8 +279,7 @@
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync).call(this, 'read', this, options);
-      return this;
+      return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
     // Set a hash of model attributes, and sync the model to the server.
@@ -297,8 +296,7 @@
       };
       options.error = wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
-      (this.sync || Backbone.sync).call(this, method, this, options);
-      return this;
+      return (this.sync || Backbone.sync).call(this, method, this, options);
     },
 
     // Destroy this model on the server. Upon success, the model is removed
@@ -312,8 +310,7 @@
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
-      (this.sync || Backbone.sync).call(this, 'delete', this, options);
-      return this;
+      return (this.sync || Backbone.sync).call(this, 'delete', this, options);
     },
 
     // Default URL for the model's representation on the server -- if you're
@@ -522,8 +519,7 @@
         if (success) success(collection, resp);
       };
       options.error = wrapError(options.error, collection, options);
-      (this.sync || Backbone.sync).call(this, 'read', this, options);
-      return this;
+      return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
     // Create a new instance of a model in this collection. After the model
@@ -543,7 +539,8 @@
         coll.add(nextModel);
         if (success) success(nextModel, resp);
       };
-      return model.save(null, options);
+      model.save(null, options);
+      return model;
     },
 
     // **parse** converts a response into a list of models to be added to the
@@ -1024,7 +1021,7 @@
     }
 
     // Make the request.
-    $.ajax(params);
+    return $.ajax(params);
   };
 
   // Helpers

@@ -1,14 +1,11 @@
 $(document).ready(function() {
 
-  module("Backbone.sync");
-
-  // Variable to catch the last request.
-  window.lastRequest = null;
-
-  // Stub out jQuery.ajax...
-  $.ajax = function(obj) {
-    lastRequest = obj;
-  };
+  module("Backbone.sync", {setup : function() {
+    window.lastRequest = null;
+    $.ajax = function(obj) {
+      lastRequest = obj;
+    };
+  }});
 
   var Library = Backbone.Collection.extend({
     url : function() { return '/library'; }
