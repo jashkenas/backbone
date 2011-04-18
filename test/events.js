@@ -39,6 +39,20 @@ $(document).ready(function() {
     equals(obj.counterB, 2, 'counterB should have been incremented twice.');
   });
 
+  test("Events: unbind a callback in the midst of it firing", function() {
+    var obj = {counter: 0};
+    _.extend(obj, Backbone.Events);
+    var callback = function() {
+      obj.counter += 1;
+      obj.unbind('event', callback);
+    };
+    obj.bind('event', callback);
+    obj.trigger('event');
+    obj.trigger('event');
+    obj.trigger('event');
+    equals(obj.counter, 1, 'the callback should have been unbound.');
+  });
+
   test("Events: two binds that unbind themeselves", function() {
     var obj = { counterA: 0, counterB: 0 };
     _.extend(obj,Backbone.Events);
