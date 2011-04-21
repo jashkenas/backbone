@@ -530,7 +530,7 @@
       if (!(model instanceof Backbone.Model)) {
         var attrs = model;
         model = new this.model(null, {collection: coll});
-        if (!model.set(attrs)) return false;
+        if (!model.set(attrs, options)) return false;
       } else {
         model.collection = coll;
       }
