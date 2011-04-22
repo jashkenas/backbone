@@ -274,7 +274,7 @@
       options || (options = {});
       var model = this;
       var success = options.success;
-      options.success = function(resp, _, xhr) {
+      options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp);
       };
@@ -292,7 +292,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
-        if (success) success(model, resp, request);
+        if (success) success(model, resp, xhr);
       };
       options.error = wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
@@ -535,9 +535,9 @@
         model.collection = coll;
       }
       var success = options.success;
-      options.success = function(nextModel, resp) {
+      options.success = function(nextModel, resp, xhr) {
         coll.add(nextModel);
-        if (success) success(nextModel, resp);
+        if (success) success(nextModel, resp, xhr);
       };
       model.save(null, options);
       return model;
