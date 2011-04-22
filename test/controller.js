@@ -106,4 +106,13 @@ $(document).ready(function() {
     }, 10);
   });
 
+  asyncTest("Controller: routes (hashbang)", 2, function() {
+    window.location.hash = '!search/news';
+    setTimeout(function() {
+      equals(controller.query, 'news');
+      equals(controller.page, undefined);
+      start();
+    }, 10);
+  });
+
 });

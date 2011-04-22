@@ -730,7 +730,7 @@
   };
 
   // Cached regex for cleaning hashes.
-  var hashStrip = /^#*/;
+  var hashStrip = /^#*!?/;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
