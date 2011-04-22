@@ -290,7 +290,7 @@
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
       var success = options.success;
-      options.success = function(resp, _, xhr) {
+      options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp, request);
       };
@@ -514,7 +514,7 @@
       options || (options = {});
       var collection = this;
       var success = options.success;
-      options.success = function(resp, _, xhr) {
+      options.success = function(resp, status, xhr) {
         collection[options.add ? 'add' : 'refresh'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp);
       };
