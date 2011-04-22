@@ -1,8 +1,8 @@
-$(document).ready(function() {
+jQuery(document).ready(function() {
 
   module("Backbone.sync", {setup : function() {
     window.lastRequest = null;
-    $.ajax = function(obj) {
+    jQuery.ajax = function(obj) {
       lastRequest = obj;
     };
   }});
