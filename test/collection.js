@@ -123,6 +123,28 @@ $(document).ready(function() {
     equals(col.first(), d);
     equals(otherRemoved, null);
   });
+  
+  test("Collection: remove array of models", function() {
+    var a = new Backbone.Model({id: 0, label: 'a'}),
+        b = new Backbone.Model({id: 1, label: 'b'}),
+        c = new Backbone.Model({id: 2, label: 'c'}),
+        d = new Backbone.Model({id: 3, label: 'd'}),
+        col = new Backbone.Collection([a, b, c, d]);
+    col.remove([a, b, c, d]);
+    equals(col.length, 0);
+    deepEqual(col.models, []);
+  });
+  
+  test("Collection: remove all using collection.models", function() {
+    var a = new Backbone.Model({id: 0, label: 'a'}),
+        b = new Backbone.Model({id: 1, label: 'b'}),
+        c = new Backbone.Model({id: 2, label: 'c'}),
+        d = new Backbone.Model({id: 3, label: 'd'}),
+        col = new Backbone.Collection([a, b, c, d]);
+    col.remove(col.models);
+    equals(col.length, 0);
+    deepEqual(col.models, []);
+  });
 
   test("Collection: events are unbound on remove", function() {
     var counter = 0;

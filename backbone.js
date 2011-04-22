@@ -454,8 +454,8 @@
     // firing the `removed` event for every model removed.
     remove : function(models, options) {
       if (_.isArray(models)) {
-        for (var i = 0, l = models.length; i < l; i++) {
-          this._remove(models[i], options);
+        for (var i = 0, l = models.length, _remove = _.clone(models); i < l; i++) {
+          this._remove(_remove[i], options);
         }
       } else {
         this._remove(models, options);
