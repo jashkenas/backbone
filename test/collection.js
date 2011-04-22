@@ -233,6 +233,22 @@ $(document).ready(function() {
     equals(col.create({"foo":"bar"}),false);
   });
 
+  test("Collection: a failing create runs the error callback", function() {
+    var ValidatingModel = Backbone.Model.extend({
+      validate: function(attrs) {
+        return "fail";
+      }
+    });
+    var ValidatingCollection = Backbone.Collection.extend({
+      model: ValidatingModel
+    });
+    var flag = false;
+    var callback = function(model, error) { flag = true; };
+    var col = new ValidatingCollection();
+    col.create({"foo":"bar"}, { error: callback });
+    equals(flag, true);
+  });
+
   test("collection: initialize", function() {
     var Collection = Backbone.Collection.extend({
       initialize: function() {
