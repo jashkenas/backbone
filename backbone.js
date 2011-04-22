@@ -31,7 +31,7 @@
   var _ = root._ || root.$;
   if (!_ && (typeof require !== 'undefined')) _ = require('underscore')._;
 
-  // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
+  // For Backbone's purposes, jQuery or Zepto owns the `$` variable.
   var $ = root.jQuery || root.Zepto || root.$;
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
