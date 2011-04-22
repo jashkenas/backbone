@@ -462,6 +462,11 @@
       }
       return this;
     },
+    
+    // Remove all models from the set.
+    clear : function(options) {
+      this.remove(this.models, options);
+    },
 
     // Get a model from the set by id.
     get : function(id) {

@@ -228,6 +228,15 @@ $(document).ready(function() {
     equals(null, e.collection);
   });
 
+  test("Collection: clear", function() {
+    var col = new Backbone.Collection([
+          new Backbone.Model({id: 0, label: 'a'}),
+          new Backbone.Model({id: 1, label: 'b'})]);
+    col.clear();
+    equals(col.length, 0);
+    deepEqual(col.models, []);
+  });
+
   test("Collection: fetch", function() {
     col.fetch();
     equals(lastRequest[0], 'read');
