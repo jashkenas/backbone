@@ -1377,6 +1377,12 @@ Accounts.fetch();
       model from being created. In order for this to work, your should set the
       <a href="#Collection-model">model</a> property of the collection.
     </p>
+    
+    <p>
+      You can pass in either an object literal or an existing model object. If you use
+      an existing model, it will have its collection set to this collection, thereby 
+      removing it from any previous collection.
+    </p>
 
 <pre>
 var Library = Backbone.Collection.extend({
