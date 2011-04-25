@@ -1381,7 +1381,8 @@ Accounts.fetch();
     <p>
       You can pass in either an object literal or an existing model object. If you use
       an existing model, it will have its collection set to this collection, thereby 
-      removing it from any previous collection.
+      removing it from any previous collection. However, the model should not have been
+      saved to the server. Otherwise, use <tt>Collection.add</tt>.
     </p>
 
 <pre>
