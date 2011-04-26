@@ -1376,6 +1376,8 @@ Accounts.fetch();
       the model, or <tt>false</tt> if a validation error prevented the
       model from being created. In order for this to work, your should set the
       <a href="#Collection-model">model</a> property of the collection.
+      The <b>create</b> method can accept either an attributes hash or an 
+      existing, unsaved model object.
     </p>
 
 <pre>
@@ -1546,6 +1548,12 @@ openPage: function(pageNumber) {
       When all of your <a href="#Controller">Controllers</a> have been created,
       and all of the routes are set up properly, call <tt>Backbone.history.start()</tt>
       to begin monitoring <tt>hashchange</tt> events, and dispatching routes.
+    </p>
+    
+    <p>
+      When called, if a route succeeds with a match for the current URL, 
+      <tt>Backbone.history.start()</tt> returns <tt>true</tt>. If no defined 
+      routes matches the current URL fragment, it returns <tt>false</tt>.
     </p>
 
 <pre>
