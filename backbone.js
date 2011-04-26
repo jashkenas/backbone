@@ -267,6 +267,18 @@
       return this;
     },
 
+    // Checks whether the server's response is something the rest of the API
+    // can work with. If not, throw an exception, since otherwise the program
+    // would crash at some later stage when incorrectly assuming the server's
+    // reponse was correct.
+    checkResponse : function(resp) {
+      var ty = typeof(resp);
+      if (ty && ty != "object") {
+        throw 'Invalid response received from server. Expected an object, but received a ' + ty + '.';
+      }
+      return resp;
+    },
+
     // Fetch the model from the server. If the server's representation of the
     // model differs from its current attributes, they will be overriden,
     // triggering a `"change"` event.
@@ -275,7 +287,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(model.parse(resp, xhr), options)) return false;
+        if (!model.set(model.checkResponse(model.parse(resp, xhr), options))) return false;
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
@@ -291,7 +303,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(model.parse(resp, xhr), options)) return false;
+        if (!model.set(model.checkResponse(model.parse(resp, xhr), options))) return false;
         if (success) success(model, resp, xhr);
       };
       options.error = wrapError(options.error, model, options);
