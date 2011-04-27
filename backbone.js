@@ -70,7 +70,7 @@
     // Passing `"all"` will bind the callback to all events fired.
     bind : function(ev, callback) {
       var calls = this._callbacks || (this._callbacks = {});
-      var list  = this._callbacks[ev] || (this._callbacks[ev] = []);
+      var list  = calls[ev] || (calls[ev] = []);
       list.push(callback);
       return this;
     },
