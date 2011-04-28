@@ -2217,6 +2217,34 @@ Inbox.messages.fetch();
       represents a logical chunk of UI, responsible for the contents of a single
       DOM element.
     </p>
+    
+    <p>
+      Comparing the overall structure of Backbone to a server-side MVC framework
+      like <b>Rails</b>, the pieces line up like so:
+    </p>
+    
+    <ul>
+      <li>
+        <b>Backbone.Model</b> &ndash; Like a Rails model minus the class 
+        methods. Wraps a row of data in business logic.
+      </li>
+      <li>
+        <b>Backbone.Collection</b> &ndash; A group of models on the client-side,
+        with sorting/filtering/aggregation logic.
+      </li>
+      <li>
+        <b>Backbone.Controller</b> &ndash; Rails <tt>routes.rb</tt> + Rails controller
+        actions. Maps URLs to functions.
+      </li>
+      <li>
+        <b>Backbone.View</b> &ndash; A logical, re-usable piece of UI. Often,
+        but not always, associated with a model.
+      </li>
+      <li>
+        <b>Client-side Templates</b> &ndash; Rails <tt>.html.erb</tt> views, 
+        rendering a chunk of HTML.
+      </li>
+    </ul>
 
     <p id="FAQ-this">
       <b class="header">Binding "this"</b>
