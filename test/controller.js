@@ -115,4 +115,15 @@ $(document).ready(function() {
     }, 10);
   });
 
+  asyncTest("Controller: routes (reverse)", 1, function() {
+    var url = controller.reverse('search', [], {
+      query : "nyc",
+      page :  "10"
+    });
+    setTimeout(function() {
+      equals(url, 'search/nyc/p10');
+      start();
+    });
+  });
+
 });

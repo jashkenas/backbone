@@ -681,6 +681,31 @@
       }, this));
     },
 
+    // Returns a url given the name of route, and optional splat (array),
+    // and route (object). For exanmple:
+    //
+    //     this.route('search/:query/p:num', 'search', function(query, num) {
+    //       ...
+    //     });
+    //     var url = this.reverse('search', null, {query : 'nyc', num : 10});
+    //     url == 'search/nyc/p10';
+    //
+    reverse : function(name, splat, named) {
+      for(var scheme in this.routes) {
+        var route = this.routes[scheme];
+        if(route == name) {
+          var placeholders = this._extractPlaceholders(scheme);
+          if(named) {
+            if(_.isEqual(placeholders.named, _.keys(named))) {
+              return scheme.replace(namedParam, function(p, k) {
+                return named[k];
+              });
+            }
+          }
+        }
+      }
+    },
+
     // Simple proxy to `Backbone.history` to save a fragment into the history,
     // without triggering routes.
     saveLocation : function(fragment) {
@@ -708,6 +733,29 @@
                    .replace(namedParam, "([^\/]*)")
                    .replace(splatParam, "(.*?)");
       return new RegExp('^' + route + '$');
+    },
+
+    // Given a route, return the array of extracted placeholders.
+    _extractPlaceholders : function(route) {
+      var placeholders = {
+        'splat' : [],
+        'named' : []
+      };
+
+      var namedParam    = /:([\w\d]+)/g;
+      var splatParam    = /\*([\w\d]+)/g;
+      var namedParamMatch;
+      var splatParamMatch;
+
+      while((namedParamMatch = namedParam.exec(route)) != null) {
+        placeholders.named.push(namedParamMatch[1]);
+      }
+
+      while((splatParamMatch = splatParam.exec(route)) != null) {
+        placeholders.splat.push(splatParamMatch[1]);
+      }
+
+      return placeholders;
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
