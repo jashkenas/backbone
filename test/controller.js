@@ -52,6 +52,22 @@ $(document).ready(function() {
     equals(controller.testing, 101);
   });
 
+  test("Controller: routes (reverse)", function() {
+    var url = controller.reverse('search', [], {query : "nyc"});
+    var url2 = controller.reverse('search', [], {query : "nyc", page :  "10"});
+    var url3 = controller.reverse('splat', ["foo/bar/baz"]);
+    var url4 = controller.reverse('complex', ["foo/bar/baz", "baz/bar/foo"], {part: "qux"});
+    var url5 = controller.reverse('query', ["foobarbaz"], {entity:"search"});
+    var url6 = controller.reverse('anything', ["reallyanything"]);
+
+    equals(url, 'search/nyc');
+    equals(url2, 'search/nyc/p10');
+    equals(url3, 'splat/foo/bar/baz/end');
+    equals(url4, 'foo/bar/baz/complex-qux/baz/bar/foo');
+    equals(url5, 'search?foobarbaz');
+    equals(url6, 'reallyanything');
+  });
+
   asyncTest("Controller: routes (simple)", 2, function() {
     window.location.hash = 'search/news';
     setTimeout(function() {
@@ -113,19 +129,6 @@ $(document).ready(function() {
       equals(controller.page, undefined);
       start();
     }, 10);
-  });
-
-  asyncTest("Controller: routes (reverse)", 3, function() {
-    var url = controller.reverse('search', [], {query : "nyc", page :  "10"});
-    var url2 = controller.reverse('splat', ["foo", "bar"]);
-    var url3 = controller.reverse('complex', ["foo/bar/baz", "baz/bar/foo"], {part: 'qux'});
-
-    setTimeout(function() {
-      equals(url, 'search/nyc/p10');
-      equals(url2, 'splat/foo/end');
-      equals(url3, 'foo/bar/baz/complex-qux/baz/bar/foo');
-      start();
-    });
   });
 
 });
