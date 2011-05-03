@@ -720,7 +720,7 @@
           }
         }
       }
-      return null;
+      return '';
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history,
