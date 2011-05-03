@@ -56,8 +56,8 @@ $(document).ready(function() {
     var url = controller.reverse('search', [], {query : "nyc"});
     var url2 = controller.reverse('search', [], {query : "nyc", page :  "10"});
     var url3 = controller.reverse('splat', ["foo/bar/baz"]);
-    var url4 = controller.reverse('complex', ["foo/bar/baz", "baz/bar/foo"], {part: "qux"});
-    var url5 = controller.reverse('query', ["foobarbaz"], {entity:"search"});
+    var url4 = controller.reverse('complex', ["foo/bar/baz", "baz/bar/foo"], {part : "qux"});
+    var url5 = controller.reverse('query', ["foobarbaz"], {entity : "search"});
     var url6 = controller.reverse('anything', ["reallyanything"]);
 
     equals(url, 'search/nyc');
@@ -66,6 +66,20 @@ $(document).ready(function() {
     equals(url4, 'foo/bar/baz/complex-qux/baz/bar/foo');
     equals(url5, 'search?foobarbaz');
     equals(url6, 'reallyanything');
+  });
+
+  test("Controller: routes (reverse failing)", function() {
+    var url = controller.reverse('search', ["foo", "bar"], {query : "nyc"});
+    var url2 = controller.reverse('splat', []);
+    var url3 = controller.reverse('splat', [], {foo : "bar"});
+    var url4 = controller.reverse('complex', ["qux"], {foo : "bar"});
+    var url5 = controller.reverse('complex', ["foo/bar/baz", "baz/bar/foo"], {dart : "qux"});
+
+    equals(url, '');
+    equals(url2, '');
+    equals(url3, '');
+    equals(url4, '');
+    equals(url5, '');
   });
 
   asyncTest("Controller: routes (simple)", 2, function() {

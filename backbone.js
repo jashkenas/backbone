@@ -691,31 +691,47 @@
     //     url == 'search/nyc/p10';
     //
     reverse : function(name, splat, named) {
+      splat = splat || [];
+      named = named || [];
+
       if(!_.isArray(splat)) {
         throw new Error("splat argument must be an Array");
       }
 
       for(var scheme in this.routes) {
+        var namedMatched = false;
+        var splatMatched = false;
         var route = this.routes[scheme];
+
         if(route == name) {
+          var namedParams = this._extractNamedParams(scheme);
+          var splatParams = this._extractSplatParams(scheme);
+
           // Replacing named params
-          var placeholders = this._extractNamedParams(scheme);
-          if(named && _.isEqual(placeholders, _.keys(named))) {
+          if(_.isEqual(namedParams, _.keys(named))) {
+            namedMatched = true;
             scheme = scheme.replace(namedParam, function(pattern, key) {
               return named[key];
             });
           }
 
-          // Replacing splat
-          var splatCounter = 0;
-          scheme = scheme.replace(/\*([\w\d]+)/g, function() {
-            var newValue = splat[splatCounter];
-            splatCounter = splatCounter + 1;
-            return newValue;
-          });
+          // Replacing splat params
+          if(splatParams.length == splat.length) {
+              var splatCounter = 0;
+              splatMatched = true;
 
-          // Named arguments and splat arguments matched
-          if(!namedParam.test(scheme) && !splatParam.test(scheme)) {
+              scheme = scheme.replace(splatParam, function() {
+                var newValue = splat[splatCounter];
+                splatCounter++;
+                return newValue;
+              });
+          }
+
+          // All named arguments and splat were replaced
+          // and all params matched.
+          if(!namedParam.test(scheme) &&
+             !splatParam.test(scheme) &&
+             namedMatched && splatMatched) {
             return scheme;
           }
         }
@@ -752,11 +768,23 @@
       return new RegExp('^' + route + '$');
     },
 
-    // Given a route, return the array of extracted placeholders.
+    // Given a route, return the array of extracted named params.
     _extractNamedParams : function(route) {
       var match;
       var placeholders = [];
       var regexp       = /:([\w\d]+)/g;
+
+      while((match = regexp.exec(route)) != null) {
+        placeholders.push(match[1]);
+      }
+      return placeholders;
+    },
+
+    // Given a route, return the array of extracted named params.
+    _extractSplatParams : function(route) {
+      var match;
+      var placeholders = [];
+      var regexp       = /\*([\w\d]+)/g;
 
       while((match = regexp.exec(route)) != null) {
         placeholders.push(match[1]);
