@@ -691,19 +691,30 @@
     //     url == 'search/nyc/p10';
     //
     reverse : function(name, splat, named) {
+      if(!_.isArray(splat)) {
+        throw new Error("splat argument must be an Array");
+      }
+
       for(var scheme in this.routes) {
         var route = this.routes[scheme];
         if(route == name) {
-          var placeholders = this._extractPlaceholders(scheme);
-          if(named) {
-            if(_.isEqual(placeholders.named, _.keys(named))) {
-              return scheme.replace(namedParam, function(p, k) {
-                return named[k];
-              });
-            }
+          var placeholders = this._extractNamedParams(scheme);
+          if(named && _.isEqual(placeholders, _.keys(named))) {
+            scheme = scheme.replace(namedParam, function(p, k) {
+              return named[k];
+            });
+          }
+
+          for(var i = 0, l = splat.length; i < l; i++) {
+            scheme = scheme.replace(splatParam, splat[i])
+          }
+
+          if(!namedParam.test(scheme) && !splatParam.test(scheme)) {
+            return scheme;
           }
         }
       }
+      //throw new Error("Reverse didn't match route " + name);
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history,
@@ -736,25 +747,14 @@
     },
 
     // Given a route, return the array of extracted placeholders.
-    _extractPlaceholders : function(route) {
-      var placeholders = {
-        'splat' : [],
-        'named' : []
-      };
+    _extractNamedParams : function(route) {
+      var match;
+      var placeholders = [];
+      var regexp       = /:([\w\d]+)/g;
 
-      var namedParam    = /:([\w\d]+)/g;
-      var splatParam    = /\*([\w\d]+)/g;
-      var namedParamMatch;
-      var splatParamMatch;
-
-      while((namedParamMatch = namedParam.exec(route)) != null) {
-        placeholders.named.push(namedParamMatch[1]);
+      while((match = regexp.exec(route)) != null) {
+        placeholders.push(match[1]);
       }
-
-      while((splatParamMatch = splatParam.exec(route)) != null) {
-        placeholders.splat.push(splatParamMatch[1]);
-      }
-
       return placeholders;
     },
 
@@ -817,7 +817,8 @@
     },
 
     // Add a route to be tested when the hash changes. Routes added later may
-    // override previous routes.
+    // override previous
+    // ]'routes.
     route : function(route, callback) {
       this.handlers.unshift({route : route, callback : callback});
     },
