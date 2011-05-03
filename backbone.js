@@ -704,8 +704,8 @@
         var route = this.routes[scheme];
 
         if(route == name) {
-          var namedParams = this._extractNamedParams(scheme);
-          var splatParams = this._extractSplatParams(scheme);
+          var namedParams = this._extractPlaceholders(scheme, namedParam);
+          var splatParams = this._extractPlaceholders(scheme, splatParam);
 
           // Replacing named params
           if(_.isEqual(namedParams, _.keys(named))) {
@@ -768,23 +768,11 @@
       return new RegExp('^' + route + '$');
     },
 
-    // Given a route, return the array of extracted named params.
-    _extractNamedParams : function(route) {
+    // Given a route and a regexp to match against returns
+    // the array of extracted placeholders.
+    _extractPlaceholders : function(route, regexp) {
       var match;
       var placeholders = [];
-      var regexp       = /:([\w\d]+)/g;
-
-      while((match = regexp.exec(route)) != null) {
-        placeholders.push(match[1]);
-      }
-      return placeholders;
-    },
-
-    // Given a route, return the array of extracted named params.
-    _extractSplatParams : function(route) {
-      var match;
-      var placeholders = [];
-      var regexp       = /\*([\w\d]+)/g;
 
       while((match = regexp.exec(route)) != null) {
         placeholders.push(match[1]);
