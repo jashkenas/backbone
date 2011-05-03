@@ -54,7 +54,7 @@ $(document).ready(function() {
 
   test("Controller: routes (reverse)", function() {
     var url = controller.reverse('search', [], {query : "nyc"});
-    var url2 = controller.reverse('search', [], {query : "nyc", page :  "10"});
+    var url2 = controller.reverse('search', [], {query : "nyc", page : "10"});
     var url3 = controller.reverse('splat', ["foo/bar/baz"]);
     var url4 = controller.reverse('complex', ["foo/bar/baz", "baz/bar/foo"], {part : "qux"});
     var url5 = controller.reverse('query', ["foobarbaz"], {entity : "search"});

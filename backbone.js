@@ -694,17 +694,15 @@
       splat = splat || [];
       named = named || [];
 
-      if(!_.isArray(splat)) {
-        throw new Error("splat argument must be an Array");
-      }
-
       for(var scheme in this.routes) {
         var namedMatched = false;
         var splatMatched = false;
         var route = this.routes[scheme];
 
         if(route == name) {
-          var namedParams = this._extractPlaceholders(scheme, namedParam);
+          // Regexp.exec modifies the regexp in place, instead of using namedParam
+          // we need to create a new regexp everytime
+          var namedParams = this._extractPlaceholders(scheme, /:([\w\d]+)/g);
           var splatParams = this._extractPlaceholders(scheme, splatParam);
 
           // Replacing named params
