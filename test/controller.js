@@ -115,13 +115,15 @@ $(document).ready(function() {
     }, 10);
   });
 
-  asyncTest("Controller: routes (reverse)", 2, function() {
+  asyncTest("Controller: routes (reverse)", 3, function() {
     var url = controller.reverse('search', [], {query : "nyc", page :  "10"});
     var url2 = controller.reverse('splat', ["foo", "bar"]);
+    var url3 = controller.reverse('complex', ["foo/bar/baz", "baz/bar/foo"], {part: 'qux'});
 
     setTimeout(function() {
       equals(url, 'search/nyc/p10');
       equals(url2, 'splat/foo/end');
+      equals(url3, 'foo/bar/baz/complex-qux/baz/bar/foo');
       start();
     });
   });

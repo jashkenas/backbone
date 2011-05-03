@@ -698,23 +698,29 @@
       for(var scheme in this.routes) {
         var route = this.routes[scheme];
         if(route == name) {
+          // Replacing named params
           var placeholders = this._extractNamedParams(scheme);
           if(named && _.isEqual(placeholders, _.keys(named))) {
-            scheme = scheme.replace(namedParam, function(p, k) {
-              return named[k];
+            scheme = scheme.replace(namedParam, function(pattern, key) {
+              return named[key];
             });
           }
 
-          for(var i = 0, l = splat.length; i < l; i++) {
-            scheme = scheme.replace(splatParam, splat[i])
-          }
+          // Replacing splat
+          var splatCounter = 0;
+          scheme = scheme.replace(/\*([\w\d]+)/g, function() {
+            var newValue = splat[splatCounter];
+            splatCounter = splatCounter + 1;
+            return newValue;
+          });
 
+          // Named arguments and splat arguments matched
           if(!namedParam.test(scheme) && !splatParam.test(scheme)) {
             return scheme;
           }
         }
       }
-      //throw new Error("Reverse didn't match route " + name);
+      return null;
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history,
