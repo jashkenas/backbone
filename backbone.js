@@ -416,8 +416,7 @@
     }
     _.bindAll(this, '_onModelEvent', '_removeReference');
     this._reset();
-    this.initialize(null, options);
-    if (models) this.refresh(models, {silent: true});
+    this.initialize(models, options);
   };
 
   // Define the Collection's inheritable methods.
@@ -427,9 +426,11 @@
     // This should be overridden in most cases.
     model : Backbone.Model,
 
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
-    initialize : function(){},
+    // Initialize does collection refresh by default.
+    // Override it with your own initialization logic.
+    initialize : function(models, options) {
+        if (models) this.refresh(models, {silent: true});
+    },
 
     // The JSON representation of a Collection is an array of the
     // models' attributes.
