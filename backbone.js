@@ -416,8 +416,8 @@
     }
     _.bindAll(this, '_onModelEvent', '_removeReference');
     this._reset();
+    this.initialize(null, options);
     if (models) this.refresh(models, {silent: true});
-    this.initialize(models, options);
   };
 
   // Define the Collection's inheritable methods.
