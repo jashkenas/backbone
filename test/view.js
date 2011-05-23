@@ -113,4 +113,24 @@ $(document).ready(function() {
     $("body").trigger("click");
     equals(5, count);
   });
+
+  test("View: with skipDelegateEvents", function() {
+    var originalDelegateEvents = Backbone.View.prototype.delegateEvents;
+    
+    var delegateEventsCalled = false;
+    Backbone.View.prototype.delegateEvents = function() {
+      delegateEventsCalled = true;
+    };
+    var view = new Backbone.View({skipDelegateEvents: true});
+    equals(delegateEventsCalled, false);
+    delegateEventsCalled = false;
+    var view = new Backbone.View({skipDelegateEvents: false});
+    equals(delegateEventsCalled, true);
+    delegateEventsCalled = false;
+    var view = new Backbone.View();
+    equals(delegateEventsCalled, true);
+    
+    Backbone.View.prototype.delegateEvents = originalDelegateEvents;
+  });
+
 });

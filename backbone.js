@@ -825,7 +825,9 @@
     this.cid = _.uniqueId('view');
     this._configure(options || {});
     this._ensureElement();
-    this.delegateEvents();
+    if (!this.options.skipDelegateEvents) {
+        this.delegateEvents();
+    }
     this.initialize(options);
   };
 
