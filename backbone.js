@@ -681,6 +681,62 @@
       }, this));
     },
 
+    // Returns a url given the name of route, and optional splat (array),
+    // and route (object). For exanmple:
+    //
+    //     this.route('search/:query/p:num', 'search', function(query, num) {
+    //       ...
+    //     });
+    //     var url = this.reverse('search', null, {query : 'nyc', num : 10});
+    //     url == 'search/nyc/p10';
+    //
+    reverse : function(name, splat, named) {
+      splat = splat || [];
+      named = named || [];
+
+      for(var scheme in this.routes) {
+        var namedMatched = false;
+        var splatMatched = false;
+        var route = this.routes[scheme];
+
+        if(route == name) {
+          // Regexp.exec modifies the regexp in place, instead of using namedParam
+          // we need to create a new regexp everytime
+          var namedParams = this._extractPlaceholders(scheme, /:([\w\d]+)/g);
+          var splatParams = this._extractPlaceholders(scheme, splatParam);
+
+          // Replacing named params
+          if(_.isEqual(namedParams, _.keys(named))) {
+            namedMatched = true;
+            scheme = scheme.replace(namedParam, function(pattern, key) {
+              return named[key];
+            });
+          }
+
+          // Replacing splat params
+          if(splatParams.length == splat.length) {
+              var splatCounter = 0;
+              splatMatched = true;
+
+              scheme = scheme.replace(splatParam, function() {
+                var newValue = splat[splatCounter];
+                splatCounter++;
+                return newValue;
+              });
+          }
+
+          // All named arguments and splat were replaced
+          // and all params matched.
+          if(!namedParam.test(scheme) &&
+             !splatParam.test(scheme) &&
+             namedMatched && splatMatched) {
+            return scheme;
+          }
+        }
+      }
+      return '';
+    },
+
     // Simple proxy to `Backbone.history` to save a fragment into the history,
     // without triggering routes.
     saveLocation : function(hash) {
@@ -708,6 +764,18 @@
                    .replace(namedParam, "([^\/]*)")
                    .replace(splatParam, "(.*?)");
       return new RegExp('^' + route + '$');
+    },
+
+    // Given a route and a regexp to match against returns
+    // the array of extracted placeholders.
+    _extractPlaceholders : function(route, regexp) {
+      var match;
+      var placeholders = [];
+
+      while((match = regexp.exec(route)) != null) {
+        placeholders.push(match[1]);
+      }
+      return placeholders;
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
