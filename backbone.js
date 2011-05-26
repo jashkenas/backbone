@@ -563,13 +563,12 @@
         var attrs = model;
         model = new this.model(null, {collection: this});
         if (!model.set(attrs, options)) model = false;
-      }
-      else if (!model.collection) {
+      } else if (!model.collection) {
         model.collection = this;
       }
       return model;
     },
-    
+
     // Internal implementation of adding a single model to the set, updating
     // hash indexes for `id` and `cid` lookups.
     // Returns the model, or 'false' if validation on a new model fails.
