@@ -492,8 +492,8 @@
     },
 
     // When you have more items than you want to add or remove individually,
-    // you can refresh the entire set with a new list of models, without firing
-    // any `added` or `removed` events. Fires `refresh` when finished.
+    // you can reset the entire set with a new list of models, without firing
+    // any `added` or `removed` events. Fires `reset` when finished.
     reset : function(models, options) {
       models  || (models = []);
       options || (options = {});
@@ -504,9 +504,9 @@
       return this;
     },
 
-    // Fetch the default set of models for this collection, refreshing the
+    // Fetch the default set of models for this collection, resetting the
     // collection when they arrive. If `add: true` is passed, appends the
-    // models to the collection instead of refreshing.
+    // models to the collection instead of resetting.
     fetch : function(options) {
       options || (options = {});
       var collection = this;
@@ -553,7 +553,7 @@
       return _(this.models).chain();
     },
 
-    // Reset all internal state. Called when the collection is refreshed.
+    // Reset all internal state. Called when the collection is reset.
     _reset : function(options) {
       this.length = 0;
       this.models = [];
