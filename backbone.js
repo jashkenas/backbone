@@ -578,8 +578,9 @@
       if (!model.collection) {
         model.collection = this;
       }
-      var index = this.comparator ? this.sortedIndex(model, this.comparator) :
-                  options.at != null ? options.at : this.length;
+      var index = options.at != null ? options.at :
+                  this.comparator ? this.sortedIndex(model, this.comparator) :
+                  this.length;
       this.models.splice(index, 0, model);
       model.bind('all', this._onModelEvent);
       this.length++;
@@ -689,9 +690,8 @@
     },
 
     // Simple proxy to `Backbone.history` to both save a fragment into the
-    // history and to then load the route at that fragment. Used in place
-    // of settings `window.location.hash` when using `window.history.pushState`.
-    loadUrl : function(fragment) {
+    // history and to then load the route at that fragment.
+    setLocation : function(fragment) {
       Backbone.history.saveLocation(fragment);
       Backbone.history.loadUrl();
     },
