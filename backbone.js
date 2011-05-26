@@ -772,7 +772,7 @@
     // an existing route, and `false` otherwise.
     start : function(options) {
       if (historyStarted) throw new Error("Backbone.history has already been started");
-      this.options          = _.extend({}, {root: '/'}, options);
+      this.options          = _.extend({}, {root: '/'}, this.options, options);
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && window.history && window.history.pushState);
       var fragment          = this.getFragment();
