@@ -697,6 +697,11 @@ var Meal = Backbone.Model.extend({
 alert("Dessert will be " + (new Meal).get('dessert'));
 </pre>
 
+    <p class="warning">
+      Remember that in JavaScript, objects are passed by reference, so if you
+      include an object as a default value, it will be shared among all instances.
+    </p>
+
     <p id="Model-toJSON">
       <b class="header">toJSON</b><code>model.toJSON()</code>
       <br />
