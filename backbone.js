@@ -845,7 +845,7 @@
     // a `hashchange` event.
     saveLocation : function(fragment) {
       fragment = (fragment || '').replace(hashStrip, '');
-      if (this.fragment == fragment) return;
+      if (this.fragment == fragment || this.fragment == decodeURIComponent(fragment)) return;
       if (this._hasPushState) {
         var loc = window.location;
         if (fragment.indexOf(this.options.root) != 0) fragment = this.options.root + fragment;
