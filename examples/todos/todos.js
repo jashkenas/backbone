@@ -187,7 +187,7 @@ $(function(){
       this.input    = this.$("#new-todo");
 
       Todos.bind('add',     this.addOne);
-      Todos.bind('refresh', this.addAll);
+      Todos.bind('reset',   this.addAll);
       Todos.bind('all',     this.render);
 
       Todos.fetch();

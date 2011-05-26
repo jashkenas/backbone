@@ -1,8 +1,8 @@
 $(document).ready(function() {
 
-  module("Backbone.Controller");
+  module("Backbone.Router");
 
-  var Controller = Backbone.Controller.extend({
+  var Router = Backbone.Router.extend({
 
     routes: {
       "search/:query":              "search",
@@ -43,74 +43,75 @@ $(document).ready(function() {
 
   });
 
-  var controller = new Controller({testing: 101});
+  Backbone.history = null;
+  var router = new Router({testing: 101});
 
   Backbone.history.interval = 9;
-  Backbone.history.start();
+  Backbone.history.start({pushState: false});
 
-  test("Controller: initialize", function() {
-    equals(controller.testing, 101);
+  test("Router: initialize", function() {
+    equals(router.testing, 101);
   });
 
-  asyncTest("Controller: routes (simple)", 2, function() {
+  asyncTest("Router: routes (simple)", 2, function() {
     window.location.hash = 'search/news';
     setTimeout(function() {
-      equals(controller.query, 'news');
-      equals(controller.page, undefined);
+      equals(router.query, 'news');
+      equals(router.page, undefined);
       start();
     }, 10);
   });
 
-  asyncTest("Controller: routes (two part)", 2, function() {
+  asyncTest("Router: routes (two part)", 2, function() {
     window.location.hash = 'search/nyc/p10';
     setTimeout(function() {
-      equals(controller.query, 'nyc');
-      equals(controller.page, '10');
+      equals(router.query, 'nyc');
+      equals(router.page, '10');
       start();
     }, 10);
   });
 
-  asyncTest("Controller: routes (splats)", function() {
+  asyncTest("Router: routes (splats)", function() {
     window.location.hash = 'splat/long-list/of/splatted_99args/end';
     setTimeout(function() {
-      equals(controller.args, 'long-list/of/splatted_99args');
+      equals(router.args, 'long-list/of/splatted_99args');
       start();
     }, 10);
   });
 
-  asyncTest("Controller: routes (complex)", 3, function() {
+  asyncTest("Router: routes (complex)", 3, function() {
     window.location.hash = 'one/two/three/complex-part/four/five/six/seven';
     setTimeout(function() {
-      equals(controller.first, 'one/two/three');
-      equals(controller.part, 'part');
-      equals(controller.rest, 'four/five/six/seven');
+      equals(router.first, 'one/two/three');
+      equals(router.part, 'part');
+      equals(router.rest, 'four/five/six/seven');
       start();
     }, 10);
   });
 
-  asyncTest("Controller: routes (query)", 2, function() {
+  asyncTest("Router: routes (query)", 2, function() {
     window.location.hash = 'mandel?a=b&c=d';
     setTimeout(function() {
-      equals(controller.entity, 'mandel');
-      equals(controller.queryArgs, 'a=b&c=d');
+      equals(router.entity, 'mandel');
+      equals(router.queryArgs, 'a=b&c=d');
       start();
     }, 10);
   });
 
-  asyncTest("Controller: routes (anything)", 1, function() {
+  asyncTest("Router: routes (anything)", 1, function() {
     window.location.hash = 'doesnt-match-a-route';
     setTimeout(function() {
-      equals(controller.anything, 'doesnt-match-a-route');
+      equals(router.anything, 'doesnt-match-a-route');
       start();
       window.location.hash = '';
     }, 10);
   });
 
-  asyncTest("Controller: routes (hashbang)", 2, function() {
+  asyncTest("Router: routes (hashbang)", 2, function() {
     window.location.hash = '!search/news';
     setTimeout(function() {
-      equals(controller.query, 'news');
-      equals(controller.page, undefined);
+      equals(router.query, 'news');
+      equals(router.page, undefined);
       start();
     }, 10);
   });
