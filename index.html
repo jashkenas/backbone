@@ -224,15 +224,16 @@
       <li>– <a href="#Collection-create">create</a></li>
     </ul>
 
-    <a class="toc_title" href="#Controller">
-      Controller
+    <a class="toc_title" href="#Router">
+      Router
     </a>
     <ul class="toc_section">
-      <li>– <a href="#Controller-extend">extend</a></li>
-      <li>– <a href="#Controller-routes">routes</a></li>
-      <li>– <a href="#Controller-constructor">constructor / initialize</a></li>
-      <li>– <a href="#Controller-route">route</a></li>
-      <li>– <a href="#Controller-saveLocation">saveLocation</a></li>
+      <li>– <a href="#Router-extend">extend</a></li>
+      <li>– <a href="#Router-routes">routes</a></li>
+      <li>– <a href="#Router-constructor">constructor / initialize</a></li>
+      <li>– <a href="#Router-route">route</a></li>
+      <li>– <a href="#Router-saveLocation">saveLocation</a></li>
+      <li>– <a href="#Router-setLocation">setLocation</a></li>
     </ul>
 
     <a class="toc_title" href="#History">
@@ -1398,39 +1399,32 @@ var othello = NYPL.create({
 });
 </pre>
 
-    <h2 id="Controller">Backbone.Controller</h2>
+    <h2 id="Router">Backbone.Router</h2>
 
     <p>
       Web applications often choose to change their URL fragment (<tt>#fragment</tt>)
       in order to provide shareable, bookmarkable URLs for an Ajax-heavy application.
-      <b>Backbone.Controller</b> provides methods for routing client-side URL
+      <b>Backbone.Router</b> provides methods for routing client-side URL
       fragments, and connecting them to actions and events.
     </p>
 
-    <p class="warning">
-      Backbone controllers do not yet make use of HTML5 <b>pushState</b> and
-      <b>replaceState</b>. Currently, <b>pushState</b> and <b>replaceState</b>
-      need special handling on the server-side, cause you to mint duplicate URLs,
-      and have an incomplete API. We may start supporting them in the future
-      when these issues have been resolved.
-    </p>
-
     <p>
-      During page load, after your application has finished creating all of its controllers,
-      be sure to call <tt>Backbone.history.start()</tt> to route the initial URL.
+      During page load, after your application has finished creating all of its routers,
+      be sure to call <tt>Backbone.history.start()</tt>, or 
+      <tt>Backbone.history.start({pushState: true})</tt> to route the initial URL.
     </p>
 
-    <p id="Controller-extend">
-      <b class="header">extend</b><code>Backbone.Controller.extend(properties, [classProperties])</code>
+    <p id="Router-extend">
+      <b class="header">extend</b><code>Backbone.Router.extend(properties, [classProperties])</code>
       <br />
-      Get started by creating a custom controller class. You'll
+      Get started by creating a custom router class. You'll
       want to define actions that are triggered when certain URL fragments are
-      matched, and provide a <a href="#Controller-routes">routes</a> hash
+      matched, and provide a <a href="#Router-routes">routes</a> hash
       that pairs routes to actions.
     </p>
 
 <pre>
-var Workspace = Backbone.Controller.extend({
+var Workspace = Backbone.Router.extend({
 
   routes: {
     "help":                 "help",    // #help
@@ -1449,10 +1443,10 @@ var Workspace = Backbone.Controller.extend({
 });
 </pre>
 
-    <p id="Controller-routes">
-      <b class="header">routes</b><code>controller.routes</code>
+    <p id="Router-routes">
+      <b class="header">routes</b><code>router.routes</code>
       <br />
-      The routes hash maps URLs with parameters to functions on your controller,
+      The routes hash maps URLs with parameters to functions on your router,
       similar to the <a href="#View">View</a>'s <a href="#View-delegateEvents">events hash</a>.
       Routes can contain parameter parts, <tt>:param</tt>, which match a single URL
       component between slashes; and splat parts <tt>*splat</tt>, which can match
@@ -1470,9 +1464,9 @@ var Workspace = Backbone.Controller.extend({
     <p>
       When the visitor presses the back button, or enters a URL, and a particular
       route is matched, the name of the action will be fired as an
-      <a href="#Events">event</a>, so that other objects can listen to the controller,
+      <a href="#Events">event</a>, so that other objects can listen to the router,
       and be notified. In the following example, visiting <tt>#help/uploading</tt>
-      will fire a <tt>route:help</tt> event from the controller.
+      will fire a <tt>route:help</tt> event from the router.
     </p>
 
 <pre>
@@ -1485,25 +1479,25 @@ routes: {
 </pre>
 
 <pre>
-controller.bind("route:help", function(page) {
+router.bind("route:help", function(page) {
   ...
 });
 </pre>
 
-    <p id="Controller-constructor">
-      <b class="header">constructor / initialize</b><code>new Controller([options])</code>
+    <p id="Router-constructor">
+      <b class="header">constructor / initialize</b><code>new Router([options])</code>
       <br />
-      When creating a new controller, you may pass its
-      <a href="#Controller-routes">routes</a> hash directly as an option, if you
+      When creating a new router, you may pass its
+      <a href="#Router-routes">routes</a> hash directly as an option, if you
       choose. All <tt>options</tt> will also be passed to your <tt>initialize</tt>
       function, if defined.
     </p>
 
-    <p id="Controller-route">
-      <b class="header">route</b><code>controller.route(route, name, callback)</code>
+    <p id="Router-route">
+      <b class="header">route</b><code>router.route(route, name, callback)</code>
       <br />
-      Manually create a route for the controller, The <tt>route</tt> argument may
-      be a <a href="#Controller-routes">routing string</a> or regular expression.
+      Manually create a route for the router, The <tt>route</tt> argument may
+      be a <a href="#Router-routes">routing string</a> or regular expression.
       Each matching capture from the route or regular expression will be passed as
       an argument to the callback. The <tt>name</tt> argument will be triggered as
       a <tt>"route:name"</tt> event whenever the route is matched.
@@ -1521,8 +1515,8 @@ initialize: function(options) {
 }
 </pre>
 
-    <p id="Controller-saveLocation">
-      <b class="header">saveLocation</b><code>controller.saveLocation(fragment)</code>
+    <p id="Router-saveLocation">
+      <b class="header">saveLocation</b><code>router.saveLocation(fragment)</code>
       <br />
       Whenever you reach a point in your application that you'd like to save
       as a URL, call <b>saveLocation</b> in order to update the URL fragment
@@ -1537,6 +1531,18 @@ openPage: function(pageNumber) {
 }
 </pre>
 
+    <p id="Router-setLocation">
+      <b class="header">setLocation</b><code>router.setLocation(fragment)</code>
+      <br />
+      Just like <a href="#Router-saveLocation">saveLocation</a>, but also triggers
+      your route action at the same time. Useful if you want to transition to a page
+      where no state serialization is necessary, like a simple string.
+    </p>
+    
+<pre>
+app.setLocation("help/troubleshooting");
+</pre>
+
     <h2 id="History">Backbone.history</h2>
 
     <p>
@@ -1544,13 +1550,13 @@ openPage: function(pageNumber) {
       events, match the appropriate route, and trigger callbacks. You shouldn't
       ever have to create one of these yourself &mdash; you should use the reference
       to <tt>Backbone.history</tt> that will be created for you automatically if you make use
-      of <a href="#Controller">Controllers</a> with <a href="#Controller-routes">routes</a>.
+      of <a href="#Router">Routers</a> with <a href="#Router-routes">routes</a>.
     </p>
 
     <p id="History-start">
       <b class="header">start</b><code>Backbone.history.start()</code>
       <br />
-      When all of your <a href="#Controller">Controllers</a> have been created,
+      When all of your <a href="#Router">Routers</a> have been created,
       and all of the routes are set up properly, call <tt>Backbone.history.start()</tt>
       to begin monitoring <tt>hashchange</tt> events, and dispatching routes.
     </p>
@@ -1563,8 +1569,8 @@ openPage: function(pageNumber) {
 
 <pre>
 $(function(){
-  new WorkspaceController();
-  new HelpPaneController();
+  new WorkspaceRouter();
+  new HelpPaneRouter();
   Backbone.history.start();
 });
 </pre>
@@ -2103,7 +2109,7 @@ var model = localBackbone.Model.extend(...);
       <a href="http://tzigla.com">Tzigla</a>, a collaborative drawing
       application where artists make tiles that connect to each other to
       create <a href="http://tzigla.com/boards/1">surreal drawings</a>.
-      Backbone models help organize the code, controllers provide
+      Backbone models help organize the code, routers provide
       <a href="http://tzigla.com/boards/1#!/tiles/2-2">bookmarkable deep links</a>,
       and the views are rendered with
       <a href="https://github.com/creationix/haml-js">haml.js</a> and
@@ -2123,7 +2129,7 @@ var model = localBackbone.Model.extend(...);
     <p id="examples-substance">
       Michael Aufreiter is building an open source document authoring and 
       publishing engine: <a href="http://substance.io">Substance</a>. 
-      Substance makes use of Backbone.View and Backbone.Controller, while 
+      Substance makes use of Backbone.View and Backbone.Router, while 
       Backbone plays well together with 
       <a href="http://github.com/michael/data">Data.js</a>, which is used for 
       data persistence.
@@ -2153,7 +2159,7 @@ var model = localBackbone.Model.extend(...);
       <li><b>"change:[attribute]"</b> (model, collection) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destrooy"</b> (model, collection) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
       <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
-      <li><b>"route:[name]"</b> (controller) &mdash; when one of a controller's routes has matched. </li>
+      <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
     </ul>
 
@@ -2236,7 +2242,7 @@ Inbox.messages.fetch();
         with sorting/filtering/aggregation logic.
       </li>
       <li>
-        <b>Backbone.Controller</b> &ndash; Rails <tt>routes.rb</tt> + Rails controller
+        <b>Backbone.Router</b> &ndash; Rails <tt>routes.rb</tt> + Rails controller
         actions. Maps URLs to functions.
       </li>
       <li>
