@@ -16,15 +16,14 @@ function guid() {
 // with a meaningful name, like the name you'd give a table.
 var Store = function(name) {
   this.name = name;
-  var store = localStorage.getItem(this.name);
-  this.data = (store && JSON.parse(store)) || {};
+  this.data = store.get(this.name) || {};
 };
 
 _.extend(Store.prototype, {
 
   // Save the current state of the **Store** to *localStorage*.
   save: function() {
-    localStorage.setItem(this.name, JSON.stringify(this.data));
+    store.set(this.name, this.data);
   },
 
   // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
