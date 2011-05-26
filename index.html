@@ -280,9 +280,11 @@
       <li>– <a href="#examples-documentcloud">DocumentCloud</a></li>
       <li>– <a href="#examples-basecamp">Basecamp Mobile</a></li>
       <li>– <a href="#examples-flow">Flow</a></li>
-      <li>– <a href="#examples-tilemill">TileMill</a></li>
+      <li>– <a href="#examples-cloudapp">CloudApp</a></li>
       <li>– <a href="#examples-soundcloud">Mobile SoundCloud</a></li>
+      <li>– <a href="#examples-tilemill">TileMill</a></li>
       <li>- <a href="#examples-instagreat">Insta-great!</a></li>
+      <li>- <a href="#examples-bittorrent">BitTorrent</a></li>
       <li>- <a href="#examples-quietwrite">QuietWrite</a></li>
       <li>- <a href="#examples-tzigla">Tzigla</a></li>
       <li>- <a href="#examples-substance">Substance</a></li>
@@ -1984,21 +1986,21 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/flow.png" alt="Flow" class="example_image" />
       </a>
     </div>
-
-    <p id="examples-tilemill">
-      Our fellow
-      <a href="http://www.newschallenge.org/">Knight Foundation News Challenge</a>
-      winners, <a href="http://mapbox.com/">MapBox</a>, created an open-source
-      map design studio with Backbone.js:
-      <a href="http://mapbox.github.com/tilemill/">TileMill</a>.
-      TileMill lets you manage map layers based on shapefiles and rasters, and
-      edit their appearance directly in the browser with the
-      <a href="https://github.com/mapbox/carto">Carto styling language</a>.
+    
+    <p id="examples-cloudapp">
+      <a href="http://getcloudapp.com">CloudApp</a> is simple file and link 
+      sharing for the Mac. Backbone.js powers the web tools
+      which consume the <a href="http://developer.getcloudapp.com">documented API</a> 
+      to manage Drops. Data is either pulled manually or pushed by 
+      <a href="http://pusher.com">Pusher</a> and fed to 
+      <a href="http://github.com/janl/mustache.js">Mustache</a> templates for 
+      rendering. Check out the <a href="http://cloudapp.github.com/engine">annotated source code</a> 
+      to see the magic.
     </p>
 
     <div style="text-align: center;">
-      <a href="http://mapbox.github.com/tilemill/">
-        <img src="docs/images/tilemill.png" alt="TileMill" class="example_image" />
+      <a href="http://getcloudapp.com">
+        <img src="docs/images/cloudapp.png" alt="CloudApp" class="example_image" />
       </a>
     </div>
 
@@ -2027,6 +2029,23 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
     
+    <p id="examples-tilemill">
+      Our fellow
+      <a href="http://www.newschallenge.org/">Knight Foundation News Challenge</a>
+      winners, <a href="http://mapbox.com/">MapBox</a>, created an open-source
+      map design studio with Backbone.js:
+      <a href="http://mapbox.github.com/tilemill/">TileMill</a>.
+      TileMill lets you manage map layers based on shapefiles and rasters, and
+      edit their appearance directly in the browser with the
+      <a href="https://github.com/mapbox/carto">Carto styling language</a>.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://mapbox.github.com/tilemill/">
+        <img src="docs/images/tilemill.png" alt="TileMill" class="example_image" />
+      </a>
+    </div>
+    
     <p id="examples-instagreat">
       <a href="http://twitter.com/elliottkember">Elliott Kember</a> and
       <a href="http://twitter.com/dizzyup">Hector Simpson</a> built
@@ -2041,6 +2060,22 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://instagre.at">
         <img src="docs/images/instagreat.png" alt="instagre.at" class="example_image" />
+      </a>
+    </div>
+    
+    <p id="examples-bittorrent">
+      <a href="http://www.bittorrent.com">BitTorrent</a> used Backbone to 
+      completely rework an existing Win32 UI. Models normalize access to the 
+      client's data and views rely heavily on the <tt>change</tt> events to keep 
+      the UI state current. Using Backbone and SCSS, 
+      <a href="http://www.bittorrent.com/chrysalis/">our new design</a> and UX 
+      prototypes are considerably easier to iterate, test and work with than 
+      the original Win32 UI.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://www.bittorrent.com/chrysalis/">
+        <img src="docs/images/bittorrent.jpg" alt="BitTorrent" class="example_image" />
       </a>
     </div>
 
@@ -2182,6 +2217,34 @@ Inbox.messages.fetch();
       represents a logical chunk of UI, responsible for the contents of a single
       DOM element.
     </p>
+    
+    <p>
+      Comparing the overall structure of Backbone to a server-side MVC framework
+      like <b>Rails</b>, the pieces line up like so:
+    </p>
+    
+    <ul>
+      <li>
+        <b>Backbone.Model</b> &ndash; Like a Rails model minus the class 
+        methods. Wraps a row of data in business logic.
+      </li>
+      <li>
+        <b>Backbone.Collection</b> &ndash; A group of models on the client-side,
+        with sorting/filtering/aggregation logic.
+      </li>
+      <li>
+        <b>Backbone.Controller</b> &ndash; Rails <tt>routes.rb</tt> + Rails controller
+        actions. Maps URLs to functions.
+      </li>
+      <li>
+        <b>Backbone.View</b> &ndash; A logical, re-usable piece of UI. Often,
+        but not always, associated with a model.
+      </li>
+      <li>
+        <b>Client-side Templates</b> &ndash; Rails <tt>.html.erb</tt> views, 
+        rendering a chunk of HTML.
+      </li>
+    </ul>
 
     <p id="FAQ-this">
       <b class="header">Binding "this"</b>
