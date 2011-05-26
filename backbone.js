@@ -1090,9 +1090,9 @@
     };
   };
 
-  // Helper function to escape a string for HTML rendering.
+  // Helper function to escape a string for HTML rendering. (Allows use of HTML entities.)
   var escapeHTML = function(string) {
-    return string.replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    return string.replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
   };
 
 }).call(this);
