@@ -1341,6 +1341,12 @@ Accounts.fetch();
       of replacing the collection's contents, pass <tt>{add: true}</tt> as an
       option to <b>fetch</b>.
     </p>
+    
+    <p>
+      <b>jQuery.ajax</b> options can also be passed directly as <b>fetch</b> options, 
+      so to fetch a specific page of a paginated collection: 
+      <tt>Documents.fetch({data: {page: 3}})</tt>
+    </p>
 
     <p>
       Note that <b>fetch</b> should not be used to populate collections on
