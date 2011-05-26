@@ -693,7 +693,7 @@
     // history and to then load the route at that fragment.
     setLocation : function(fragment) {
       Backbone.history.saveLocation(fragment);
-      Backbone.history.loadUrl();
+      Backbone.history.loadUrl(fragment);
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
@@ -753,7 +753,8 @@
     // twenty times a second.
     interval: 50,
 
-    // Get the cross-browser normalized URL fragment.
+    // Get the cross-browser normalized URL fragment, either from the URL,
+    // the hash, or the override.
     getFragment : function(fragment, forcePushState) {
       if (!fragment) {
         if (this._hasPushState || forcePushState) {
@@ -771,17 +772,23 @@
     // Start the hash change handling, returning `true` if the current URL matches
     // an existing route, and `false` otherwise.
     start : function(options) {
+
+      // Figure out the initial configuration. Do we need an iframe?
+      // Is pushState desired ... is it available?
       if (historyStarted) throw new Error("Backbone.history has already been started");
       this.options          = _.extend({}, {root: '/'}, this.options, options);
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && window.history && window.history.pushState);
       var fragment          = this.getFragment();
-      var docMode = document.documentMode;
-      var oldIE = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
+      var docMode           = document.documentMode;
+      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
       if (oldIE) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
         this.saveLocation(fragment);
       }
+
+      // Depending on whether we're using pushState or hashes, and whether
+      // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
         $(window).bind('popstate', this.checkUrl);
       } else if ('onhashchange' in window && !oldIE) {
@@ -789,13 +796,15 @@
       } else {
         setInterval(this.checkUrl, this.interval);
       }
+
+      // Determine if we need to change the base url, for a pushState link
+      // opened by a non-pushState browser.
       this.fragment = fragment;
       historyStarted = true;
       var started = this.loadUrl() || this.loadUrl(window.location.hash);
-
       if (this._wantsPushState && !this._hasPushState && window.location.pathname != this.options.root) {
         this.fragment = this.getFragment(null, true);
-        window.location.href = this.options.root + '#' + this.fragment;
+        window.location = this.options.root + '#' + this.fragment;
       } else {
         return started;
       }
@@ -811,23 +820,17 @@
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl : function(e) {
       var current = this.getFragment();
-      if (current == this.fragment && this.iframe) {
-        current = this.getFragment(this.iframe.location);
-      }
-      if (current == this.fragment ||
-          current == decodeURIComponent(this.fragment)) return false;
-
-      if (this.iframe) {
-        window.location.hash = this.iframe.location.hash = current;
-      }
+      if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location);
+      if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
+      if (this.iframe) this.saveLocation(current);
       this.loadUrl() || this.loadUrl(window.location.hash);
     },
 
     // Attempt to load the current URL fragment. If a route succeeds with a
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
-    loadUrl : function(fragment) {
-      fragment = this.fragment = this.getFragment(fragment);
+    loadUrl : function(fragmentOverride) {
+      var fragment = this.fragment = this.getFragment(fragmentOverride);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
@@ -842,8 +845,7 @@
     // a `hashchange` event.
     saveLocation : function(fragment) {
       fragment = (fragment || '').replace(hashStrip, '');
-      if (this.fragment == fragment || this.fragment == decodeURIComponent(fragment)) return;
-
+      if (this.fragment == fragment) return;
       if (this._hasPushState) {
         var loc = window.location;
         if (fragment.indexOf(this.options.root) != 0) fragment = this.options.root + fragment;
@@ -851,7 +853,7 @@
         window.history.pushState({}, document.title, loc.protocol + '//' + loc.host + fragment);
       } else {
         window.location.hash = this.fragment = fragment;
-        if (this.iframe && (fragment != this.getFragment(this.iframe.location))) {
+        if (this.iframe && (fragment != this.getFragment(this.iframe.location.hash))) {
           this.iframe.document.open().close();
           this.iframe.location.hash = fragment;
         }
