@@ -756,7 +756,7 @@
     // Get the cross-browser normalized URL fragment, either from the URL,
     // the hash, or the override.
     getFragment : function(fragment, forcePushState) {
-      if (!fragment) {
+      if (fragment == null) {
         if (this._hasPushState || forcePushState) {
           fragment = window.location.pathname;
           var search = window.location.search;
@@ -820,7 +820,7 @@
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl : function(e) {
       var current = this.getFragment();
-      if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location);
+      if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location.hash);
       if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
       if (this.iframe) this.saveLocation(current);
       this.loadUrl() || this.loadUrl(window.location.hash);
