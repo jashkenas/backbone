@@ -220,19 +220,20 @@
       <li>– <a href="#Collection-url">url</a></li>
       <li>– <a href="#Collection-parse">parse</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
-      <li>– <a href="#Collection-refresh">refresh</a></li>
+      <li>– <a href="#Collection-reset">reset</a></li>
       <li>– <a href="#Collection-create">create</a></li>
     </ul>
 
-    <a class="toc_title" href="#Controller">
-      Controller
+    <a class="toc_title" href="#Router">
+      Router
     </a>
     <ul class="toc_section">
-      <li>– <a href="#Controller-extend">extend</a></li>
-      <li>– <a href="#Controller-routes">routes</a></li>
-      <li>– <a href="#Controller-constructor">constructor / initialize</a></li>
-      <li>– <a href="#Controller-route">route</a></li>
-      <li>– <a href="#Controller-saveLocation">saveLocation</a></li>
+      <li>– <a href="#Router-extend">extend</a></li>
+      <li>– <a href="#Router-routes">routes</a></li>
+      <li>– <a href="#Router-constructor">constructor / initialize</a></li>
+      <li>– <a href="#Router-route">route</a></li>
+      <li>– <a href="#Router-saveLocation">saveLocation</a></li>
+      <li>– <a href="#Router-setLocation">setLocation</a></li>
     </ul>
 
     <a class="toc_title" href="#History">
@@ -366,7 +367,8 @@
       <a href="#View">Backbone.View</a>,
       it's highly recommended to include
       <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
-      <a href="http://jquery.com">jQuery</a> or <a href="http://zeptojs.com/">Zepto</a>.
+      <a href="http://jquery.com">jQuery</a> <small>( > 1.4.2)</small> or 
+      <a href="http://zeptojs.com/">Zepto</a>.
     </p>
 
     <h2 id="Introduction">Introduction</h2>
@@ -579,23 +581,6 @@ new Book({
       <tt>note.get("title")</tt>
     </p>
 
-    <p id="Model-escape">
-      <b class="header">escape</b><code>model.escape(attribute)</code>
-      <br />
-      Similar to <a href="#Model-get">get</a>, but returns the HTML-escaped version
-      of a model's attribute. If you're interpolating data from the model into
-      HTML, using <b>escape</b> to retrieve attributes will prevent
-      <a href="http://en.wikipedia.org/wiki/Cross-site_scripting">XSS</a> attacks.
-    </p>
-
-<pre class="runnable">
-var hacker = new Backbone.Model({
-  name: "&lt;script&gt;alert('xss')&lt;/script&gt;"
-});
-
-alert(hacker.escape('name'));
-</pre>
-
     <p id="Model-set">
       <b class="header">set</b><code>model.set(attributes, [options])</code>
       <br />
@@ -711,6 +696,11 @@ var Meal = Backbone.Model.extend({
 
 alert("Dessert will be " + (new Meal).get('dessert'));
 </pre>
+
+    <p class="warning">
+      Remember that in JavaScript, objects are passed by reference, so if you
+      include an object as a default value, it will be shared among all instances.
+    </p>
 
     <p id="Model-toJSON">
       <b class="header">toJSON</b><code>model.toJSON()</code>
@@ -1027,7 +1017,7 @@ bill.set({name : "Bill Jones"});
       Override this property to specify the model class that the collection
       contains. If defined, you can pass raw attributes objects (and arrays) to
       <a href="#Collection-add">add</a>, <a href="#Collection-create">create</a>,
-      and <a href="#Collection-refresh">refresh</a>, and the attributes will be
+      and <a href="#Collection-reset">reset</a>, and the attributes will be
       converted into a model of the proper type.
     </p>
 
@@ -1140,6 +1130,8 @@ var alphabetical = Books.sortBy(function(book) {
       event, which you can pass <tt>{silent: true}</tt> to suppress. If a
       <a href="#Collection-model">model</a> property is defined, you may also pass
       raw attributes objects, and have them be vivified as instances of the model.
+      Pass <tt>{at: index}</tt> to splice the model into the collection at the
+      specified <tt>index</tt>.
     </p>
 
 <pre class="runnable">
@@ -1240,7 +1232,7 @@ alert(chapters.pluck('title'));
       Force a collection to re-sort itself. You don't need to call this under
       normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a> function
       will maintain itself in proper sort order at all times. Calling <b>sort</b>
-      triggers the collection's <tt>"refresh"</tt> event, unless silenced by passing
+      triggers the collection's <tt>"reset"</tt> event, unless silenced by passing
       <tt>{silent: true}</tt>
     </p>
 
@@ -1314,7 +1306,7 @@ var Tweets = Backbone.Collection.extend({
       <tt>success</tt> and <tt>error</tt>
       callbacks which will be passed <tt>(collection, response)</tt> as arguments.
       When the model data returns from the server, the collection will
-      <a href="#Collection-refresh">refresh</a>.
+      <a href="#Collection-reset">reset</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers, for custom persistence strategies.
       The server handler for <b>fetch</b> requests should return a JSON array of
@@ -1337,6 +1329,12 @@ Accounts.fetch();
       of replacing the collection's contents, pass <tt>{add: true}</tt> as an
       option to <b>fetch</b>.
     </p>
+    
+    <p>
+      <b>jQuery.ajax</b> options can also be passed directly as <b>fetch</b> options, 
+      so to fetch a specific page of a paginated collection: 
+      <tt>Documents.fetch({data: {page: 3}})</tt>
+    </p>
 
     <p>
       Note that <b>fetch</b> should not be used to populate collections on
@@ -1347,26 +1345,32 @@ Accounts.fetch();
       toggled open and closed.
     </p>
 
-    <p id="Collection-refresh">
-      <b class="header">refresh</b><code>collection.refresh(models, [options])</code>
+    <p id="Collection-reset">
+      <b class="header">reset</b><code>collection.reset(models, [options])</code>
       <br />
       Adding and removing models one at a time is all well and good, but sometimes
       you have so many models to change that you'd rather just update the collection
-      in bulk. Use <b>refresh</b> to replace a collection with a new list
-      of models (or attribute hashes), triggering a single <tt>"refresh"</tt> event
-      at the end. Pass <tt>{silent: true}</tt> to suppress the <tt>"refresh"</tt> event.
+      in bulk. Use <b>reset</b> to replace a collection with a new list
+      of models (or attribute hashes), triggering a single <tt>"reset"</tt> event
+      at the end. Pass <tt>{silent: true}</tt> to suppress the <tt>"reset"</tt> event.
+      Using reset with no arguments is useful as a way to empty the collection.
     </p>
 
     <p>
-      Here's an example using <b>refresh</b> to bootstrap a collection during initial page load,
+      Here's an example using <b>reset</b> to bootstrap a collection during initial page load,
       in a Rails application.
     </p>
 
 <pre>
 &lt;script&gt;
-  Accounts.refresh(&lt;%= @accounts.to_json %&gt;);
+  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
 &lt;/script&gt;
 </pre>
+
+    <p>
+      Calling <tt>collection.reset()</tt> without passing any models as arguments
+      will empty the entire collection.
+    </p>
 
     <p id="Collection-create">
       <b class="header">create</b><code>collection.create(attributes, [options])</code>
@@ -1395,39 +1399,32 @@ var othello = NYPL.create({
 });
 </pre>
 
-    <h2 id="Controller">Backbone.Controller</h2>
+    <h2 id="Router">Backbone.Router</h2>
 
     <p>
       Web applications often choose to change their URL fragment (<tt>#fragment</tt>)
       in order to provide shareable, bookmarkable URLs for an Ajax-heavy application.
-      <b>Backbone.Controller</b> provides methods for routing client-side URL
+      <b>Backbone.Router</b> provides methods for routing client-side URL
       fragments, and connecting them to actions and events.
     </p>
 
-    <p class="warning">
-      Backbone controllers do not yet make use of HTML5 <b>pushState</b> and
-      <b>replaceState</b>. Currently, <b>pushState</b> and <b>replaceState</b>
-      need special handling on the server-side, cause you to mint duplicate URLs,
-      and have an incomplete API. We may start supporting them in the future
-      when these issues have been resolved.
-    </p>
-
     <p>
-      During page load, after your application has finished creating all of its controllers,
-      be sure to call <tt>Backbone.history.start()</tt> to route the initial URL.
+      During page load, after your application has finished creating all of its routers,
+      be sure to call <tt>Backbone.history.start()</tt>, or 
+      <tt>Backbone.history.start({pushState: true})</tt> to route the initial URL.
     </p>
 
-    <p id="Controller-extend">
-      <b class="header">extend</b><code>Backbone.Controller.extend(properties, [classProperties])</code>
+    <p id="Router-extend">
+      <b class="header">extend</b><code>Backbone.Router.extend(properties, [classProperties])</code>
       <br />
-      Get started by creating a custom controller class. You'll
+      Get started by creating a custom router class. You'll
       want to define actions that are triggered when certain URL fragments are
-      matched, and provide a <a href="#Controller-routes">routes</a> hash
+      matched, and provide a <a href="#Router-routes">routes</a> hash
       that pairs routes to actions.
     </p>
 
 <pre>
-var Workspace = Backbone.Controller.extend({
+var Workspace = Backbone.Router.extend({
 
   routes: {
     "help":                 "help",    // #help
@@ -1446,10 +1443,10 @@ var Workspace = Backbone.Controller.extend({
 });
 </pre>
 
-    <p id="Controller-routes">
-      <b class="header">routes</b><code>controller.routes</code>
+    <p id="Router-routes">
+      <b class="header">routes</b><code>router.routes</code>
       <br />
-      The routes hash maps URLs with parameters to functions on your controller,
+      The routes hash maps URLs with parameters to functions on your router,
       similar to the <a href="#View">View</a>'s <a href="#View-delegateEvents">events hash</a>.
       Routes can contain parameter parts, <tt>:param</tt>, which match a single URL
       component between slashes; and splat parts <tt>*splat</tt>, which can match
@@ -1467,9 +1464,9 @@ var Workspace = Backbone.Controller.extend({
     <p>
       When the visitor presses the back button, or enters a URL, and a particular
       route is matched, the name of the action will be fired as an
-      <a href="#Events">event</a>, so that other objects can listen to the controller,
+      <a href="#Events">event</a>, so that other objects can listen to the router,
       and be notified. In the following example, visiting <tt>#help/uploading</tt>
-      will fire a <tt>route:help</tt> event from the controller.
+      will fire a <tt>route:help</tt> event from the router.
     </p>
 
 <pre>
@@ -1482,25 +1479,25 @@ routes: {
 </pre>
 
 <pre>
-controller.bind("route:help", function(page) {
+router.bind("route:help", function(page) {
   ...
 });
 </pre>
 
-    <p id="Controller-constructor">
-      <b class="header">constructor / initialize</b><code>new Controller([options])</code>
+    <p id="Router-constructor">
+      <b class="header">constructor / initialize</b><code>new Router([options])</code>
       <br />
-      When creating a new controller, you may pass its
-      <a href="#Controller-routes">routes</a> hash directly as an option, if you
+      When creating a new router, you may pass its
+      <a href="#Router-routes">routes</a> hash directly as an option, if you
       choose. All <tt>options</tt> will also be passed to your <tt>initialize</tt>
       function, if defined.
     </p>
 
-    <p id="Controller-route">
-      <b class="header">route</b><code>controller.route(route, name, callback)</code>
+    <p id="Router-route">
+      <b class="header">route</b><code>router.route(route, name, callback)</code>
       <br />
-      Manually create a route for the controller, The <tt>route</tt> argument may
-      be a <a href="#Controller-routes">routing string</a> or regular expression.
+      Manually create a route for the router, The <tt>route</tt> argument may
+      be a <a href="#Router-routes">routing string</a> or regular expression.
       Each matching capture from the route or regular expression will be passed as
       an argument to the callback. The <tt>name</tt> argument will be triggered as
       a <tt>"route:name"</tt> event whenever the route is matched.
@@ -1518,8 +1515,8 @@ initialize: function(options) {
 }
 </pre>
 
-    <p id="Controller-saveLocation">
-      <b class="header">saveLocation</b><code>controller.saveLocation(fragment)</code>
+    <p id="Router-saveLocation">
+      <b class="header">saveLocation</b><code>router.saveLocation(fragment)</code>
       <br />
       Whenever you reach a point in your application that you'd like to save
       as a URL, call <b>saveLocation</b> in order to update the URL fragment
@@ -1534,6 +1531,18 @@ openPage: function(pageNumber) {
 }
 </pre>
 
+    <p id="Router-setLocation">
+      <b class="header">setLocation</b><code>router.setLocation(fragment)</code>
+      <br />
+      Just like <a href="#Router-saveLocation">saveLocation</a>, but also triggers
+      your route action at the same time. Useful if you want to transition to a page
+      where no state serialization is necessary, like a simple string.
+    </p>
+    
+<pre>
+app.setLocation("help/troubleshooting");
+</pre>
+
     <h2 id="History">Backbone.history</h2>
 
     <p>
@@ -1541,13 +1550,13 @@ openPage: function(pageNumber) {
       events, match the appropriate route, and trigger callbacks. You shouldn't
       ever have to create one of these yourself &mdash; you should use the reference
       to <tt>Backbone.history</tt> that will be created for you automatically if you make use
-      of <a href="#Controller">Controllers</a> with <a href="#Controller-routes">routes</a>.
+      of <a href="#Router">Routers</a> with <a href="#Router-routes">routes</a>.
     </p>
 
     <p id="History-start">
       <b class="header">start</b><code>Backbone.history.start()</code>
       <br />
-      When all of your <a href="#Controller">Controllers</a> have been created,
+      When all of your <a href="#Router">Routers</a> have been created,
       and all of the routes are set up properly, call <tt>Backbone.history.start()</tt>
       to begin monitoring <tt>hashchange</tt> events, and dispatching routes.
     </p>
@@ -1560,8 +1569,8 @@ openPage: function(pageNumber) {
 
 <pre>
 $(function(){
-  new WorkspaceController();
-  new HelpPaneController();
+  new WorkspaceRouter();
+  new HelpPaneRouter();
   Backbone.history.start();
 });
 </pre>
@@ -2100,7 +2109,7 @@ var model = localBackbone.Model.extend(...);
       <a href="http://tzigla.com">Tzigla</a>, a collaborative drawing
       application where artists make tiles that connect to each other to
       create <a href="http://tzigla.com/boards/1">surreal drawings</a>.
-      Backbone models help organize the code, controllers provide
+      Backbone models help organize the code, routers provide
       <a href="http://tzigla.com/boards/1#!/tiles/2-2">bookmarkable deep links</a>,
       and the views are rendered with
       <a href="https://github.com/creationix/haml-js">haml.js</a> and
@@ -2120,7 +2129,7 @@ var model = localBackbone.Model.extend(...);
     <p id="examples-substance">
       Michael Aufreiter is building an open source document authoring and 
       publishing engine: <a href="http://substance.io">Substance</a>. 
-      Substance makes use of Backbone.View and Backbone.Controller, while 
+      Substance makes use of Backbone.View and Backbone.Router, while 
       Backbone plays well together with 
       <a href="http://github.com/michael/data">Data.js</a>, which is used for 
       data persistence.
@@ -2145,12 +2154,12 @@ var model = localBackbone.Model.extend(...);
     <ul>
       <li><b>"add"</b> (model, collection) &mdash; when a model is added to a collection. </li>
       <li><b>"remove"</b> (model, collection) &mdash; when a model is removed from a collection. </li>
-      <li><b>"refresh"</b> (collection) &mdash; when the collection's entire contents have been replaced. </li>
+      <li><b>"reset"</b> (collection) &mdash; when the collection's entire contents have been replaced. </li>
       <li><b>"change"</b> (model, collection) &mdash; when a model's attributes have changed. </li>
       <li><b>"change:[attribute]"</b> (model, collection) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destrooy"</b> (model, collection) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
       <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
-      <li><b>"route:[name]"</b> (controller) &mdash; when one of a controller's routes has matched. </li>
+      <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
     </ul>
 
@@ -2171,7 +2180,7 @@ var Mailbox = Backbone.Model.extend({
   initialize: function() {
     this.messages = new Messages;
     this.messages.url = '/mailbox/' + this.id + '/messages';
-    this.messages.bind("refresh", this.updateCounts);
+    this.messages.bind("reset", this.updateCounts);
   },
 
   ...
@@ -2192,7 +2201,7 @@ Inbox.messages.fetch();
       you know you're going to need, in order to render the page. Instead of
       firing an extra AJAX request to <a href="#Collection-fetch">fetch</a> them,
       a nicer pattern is to have their data already bootstrapped into the page.
-      You can then use <a href="#Collection-refresh">refresh</a> to populate your
+      You can then use <a href="#Collection-reset">reset</a> to populate your
       collections with the initial data. At DocumentCloud, in the
       <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the
       workspace, we do something along these lines:
@@ -2200,8 +2209,8 @@ Inbox.messages.fetch();
 
 <pre>
 &lt;script&gt;
-  Accounts.refresh(&lt;%= @accounts.to_json %&gt;);
-  Projects.refresh(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
+  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  Projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
 &lt;/script&gt;
 </pre>
 
@@ -2233,7 +2242,7 @@ Inbox.messages.fetch();
         with sorting/filtering/aggregation logic.
       </li>
       <li>
-        <b>Backbone.Controller</b> &ndash; Rails <tt>routes.rb</tt> + Rails controller
+        <b>Backbone.Router</b> &ndash; Rails <tt>routes.rb</tt> + Rails controller
         actions. Maps URLs to functions.
       </li>
       <li>
@@ -2270,7 +2279,7 @@ var MessageList = Backbone.View.extend({
     _.bindAll(this, "addMessage", "removeMessage", "render");
 
     var messages = this.collection;
-    messages.bind("refresh", this.render);
+    messages.bind("reset", this.render);
     messages.bind("add", this.addMessage);
     messages.bind("remove", this.removeMessage);
   }
@@ -2304,6 +2313,13 @@ Inbox.messages.add(newMessage);
 
     <h2 id="changelog">Change Log</h2>
 
+    <p>
+      <b class="header">0.4.0</b> &mdash; <small><i>FUTURE DATE, 2011</i></small><br />
+      <tt>Collection.refresh</tt> renamed to <tt>Collection.reset</tt> to emphasize
+      its ability to both refresh the collection with new models, as well as empty
+      out the collection when used with no parameters.
+    </p>
+    
     <p>
       <b class="header">0.3.3</b> &mdash; <small><i>Dec 1, 2010</i></small><br />
       Backbone.js now supports <a href="http://zeptojs.com">Zepto</a>, alongside
