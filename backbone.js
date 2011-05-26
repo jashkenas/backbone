@@ -521,16 +521,12 @@
 
     // Create a new instance of a model in this collection. After the model
     // has been created on the server, it will be added to the collection.
+    // Returns the model, or 'false' if validation on a new model fails.
     create : function(model, options) {
       var coll = this;
       options || (options = {});
-      if (!(model instanceof Backbone.Model)) {
-        var attrs = model;
-        model = new this.model(null, {collection: coll});
-        if (!model.set(attrs, options)) return false;
-      } else {
-        model.collection = coll;
-      }
+      model = this._prepareModel(model, options);
+      if (!model) return false;
       var success = options.success;
       options.success = function(nextModel, resp, xhr) {
         coll.add(nextModel, options);
@@ -553,7 +549,7 @@
       return _(this.models).chain();
     },
 
-    // Reset all internal state. Called when the collection is reset.
+    // Reset all internal state. Called when the collection is refreshed.
     _reset : function(options) {
       this.length = 0;
       this.models = [];
@@ -561,20 +557,30 @@
       this._byCid = {};
     },
 
+    // Prepare a model to be added to this collection
+    _prepareModel: function(model, options) {
+      if (!(model instanceof Backbone.Model)) {
+        var attrs = model;
+        model = new this.model(null, {collection: this});
+        if (!model.set(attrs, options)) model = false;
+      }
+      else if (!model.collection) {
+        model.collection = this;
+      }
+      return model;
+    },
+    
     // Internal implementation of adding a single model to the set, updating
     // hash indexes for `id` and `cid` lookups.
+    // Returns the model, or 'false' if validation on a new model fails.
     _add : function(model, options) {
       options || (options = {});
-      if (!(model instanceof Backbone.Model)) {
-        model = new this.model(model, {collection: this});
-      }
+      model = this._prepareModel(model, options);
+      if (!model) return false;
       var already = this.getByCid(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
-      if (!model.collection) {
-        model.collection = this;
-      }
       var index = options.at != null ? options.at :
                   this.comparator ? this.sortedIndex(model, this.comparator) :
                   this.length;
