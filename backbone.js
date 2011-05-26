@@ -533,7 +533,7 @@
       }
       var success = options.success;
       options.success = function(nextModel, resp, xhr) {
-        coll.add(nextModel);
+        coll.add(nextModel, options);
         if (success) success(nextModel, resp, xhr);
       };
       model.save(null, options);
