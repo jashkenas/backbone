@@ -304,10 +304,11 @@
       return (this.sync || Backbone.sync).call(this, method, this, options);
     },
 
-    // Destroy this model on the server. Upon success, the model is removed
+    // Destroy this model on the server if it was already persisted. Upon success, the model is removed
     // from its collection, if it has one.
     destroy : function(options) {
       options || (options = {});
+      if (this.isNew()) return this.trigger('destroy', this, this.collection, options);
       var model = this;
       var success = options.success;
       options.success = function(resp) {

@@ -83,7 +83,7 @@ $(document).ready(function() {
     equals(otherCol.length, 1);
     equals(secondAdded, null);
     ok(opts.amazing);
-    
+
     var f = new Backbone.Model({id: 20, label : 'f'});
     var g = new Backbone.Model({id: 21, label : 'g'});
     var h = new Backbone.Model({id: 22, label : 'h'});
@@ -205,9 +205,20 @@ $(document).ready(function() {
     equals(counter, 2);
   });
 
-  test("Colllection: model destroy removes from all collections", function() {
+  test("Collection: model destroy removes from all collections", function() {
     var e = new Backbone.Model({id: 5, title: 'Othello'});
     e.sync = function(method, model, options) { options.success({}); };
+    var colE = new Backbone.Collection([e]);
+    var colF = new Backbone.Collection([e]);
+    e.destroy();
+    ok(colE.length == 0);
+    ok(colF.length == 0);
+    equals(null, e.collection);
+  });
+
+  test("Colllection: non-persisted model destroy removes from all collections", function() {
+    var e = new Backbone.Model({title: 'Othello'});
+    e.sync = function(method, model, options) { throw "should not be called"; };
     var colE = new Backbone.Collection([e]);
     var colF = new Backbone.Collection([e]);
     e.destroy();
