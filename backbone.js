@@ -188,6 +188,13 @@
       return this.attributes[attr] != null;
     },
 
+    // Merge a hash of model attributes with the object
+    merge: function(attrs, options) {
+        var merged = {};
+        for(var key in attrs) { merged[key] = _.extend( _.isArray(attrs[key]) ? [] : {}, this.attributes[key], attrs[key]) }
+        return this.set(merged);
+    },
+
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
