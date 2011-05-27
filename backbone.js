@@ -188,6 +188,11 @@
       return this.attributes[attr] != null;
     },
 
+    // Make current attributes become previous attributes
+    _saveAttrs : function() {
+      this._previousAttributes = _.clone(this.attributes);
+    },
+
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
@@ -205,6 +210,7 @@
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
       // Update attributes.
+      this._saveAttrs();
       for (var attr in attrs) {
         var val = attrs[attr];
         if (!_.isEqual(now[attr], val)) {
@@ -233,6 +239,7 @@
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
       // Remove the attribute.
+      this._saveAttrs();
       delete this.attributes[attr];
       delete this._escapedAttributes[attr];
       if (attr == this.idAttribute) delete this.id;
@@ -343,7 +350,6 @@
     // Calling this will cause all objects observing the model to update.
     change : function(options) {
       this.trigger('change', this, options);
-      this._previousAttributes = _.clone(this.attributes);
       this._changed = false;
     },
 
