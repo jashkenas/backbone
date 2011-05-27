@@ -370,4 +370,30 @@ $(document).ready(function() {
     notEqual(Child.prototype.instancePropDiff, undefined);
   });
 
+  test("Model: Nested change events don't clobber previous attributes", function() {
+    var A = Backbone.Model.extend({
+      initialize: function() {
+        this.bind("change:state", function(a, newState) {
+          equals(a.previous('state'), undefined);
+          equals(newState, 'hello');
+          // Fire a nested change event.
+          this.set({ other: "whatever" });
+        });
+      }
+    });
+
+    var B = Backbone.Model.extend({
+      initialize: function() {
+        this.get("a").bind("change:state", function(a, newState) {
+          equals(a.previous('state'), undefined);
+          equals(newState, 'hello');
+        });
+      }
+    });
+
+    a = new A();
+    b = new B({a: a});
+    a.set({state: 'hello'});
+  });
+
 });

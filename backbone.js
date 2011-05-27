@@ -204,6 +204,10 @@
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
+      // We're about to start triggering change events.
+      var alreadyChanging = this._changing;
+      this._changing = true;
+
       // Update attributes.
       for (var attr in attrs) {
         var val = attrs[attr];
@@ -216,7 +220,8 @@
       }
 
       // Fire the `"change"` event, if the model has been changed.
-      if (!options.silent && this._changed) this.change(options);
+      if (!alreadyChanging && !options.silent && this._changed) this.change(options);
+      this._changing = false;
       return this;
     },
 
