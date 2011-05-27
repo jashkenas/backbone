@@ -939,6 +939,11 @@ ActiveRecord::Base.include_root_in_json = false
       Has the model changed since the last <tt>"change"</tt> event? If an <b>attribute</b>
       is passed, returns <tt>true</tt> if that specific attribute has changed.
     </p>
+    
+    <p class="warning">
+      Note that this method, and the following change-related ones, 
+      are only useful during the course of a <tt>"change"</tt> event.
+    </p>
 
 <pre>
 book.bind("change", function() {
