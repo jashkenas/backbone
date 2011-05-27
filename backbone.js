@@ -952,17 +952,21 @@
     delegateEvents : function(events) {
       if (!(events || (events = this.events))) return;
       $(this.el).unbind('.delegateEvents' + this.cid);
+      var self = this;
       for (var key in events) {
-        var methodName = events[key];
-        var match = key.match(eventSplitter);
-        var eventName = match[1], selector = match[2];
-        var method = _.bind(this[methodName], this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          $(this.el).bind(eventName, method);
-        } else {
-          $(this.el).delegate(selector, eventName, method);
-        }
+        (function(key) {
+          var methodName = events[key],
+              match = key.match(eventSplitter),
+              eventName = match[1], 
+              selector = match[2],
+              deferredLookup = function() { self[methodName].apply(self,arguments) };
+          eventName += '.delegateEvents' + self.cid;
+          if (selector === '') {
+            $(self.el).bind(eventName,deferredLookup);
+          } else {
+            $(self.el).delegate(selector, eventName,deferredLookup);
+          }
+        })(key)
       }
     },
 
