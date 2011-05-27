@@ -103,13 +103,13 @@
     // same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
     trigger : function(eventName) {
-      var list, calls, ev, callback, args, i, l;
+      var list, calls, ev, callback, args;
       var both = 2;
       if (!(calls = this._callbacks)) return this;
       while (both--) {
         ev = both ? eventName : 'all';
         if (list = calls[ev]) {
-          for (i = 0, l = list.length; i < l; i++) {
+          for (var i = 0, l = list.length; i < l; i++) {
             if (!(callback = list[i])) {
               list.splice(i, 1); i--; l--;
             } else {
@@ -257,14 +257,14 @@
 
       // Run validation.
       var validObj = {};
-      for (attr in old) validObj[attr] = void 0;
+      for (var attr in old) validObj[attr] = void 0;
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
       this.attributes = {};
       this._escapedAttributes = {};
       this._changed = true;
       if (!options.silent) {
-        for (attr in old) {
+        for (var attr in old) {
           this.trigger('change:' + attr, this, void 0, options);
         }
         this.change(options);
