@@ -18,11 +18,9 @@ $(function(){
       done: false
     },
 
-    // Ensure that each todo created has `content`.
+    // Ensure that each todo has non-blank `content`.
     initialize: function() {
-      if (!this.get("content")) {
-        this.set({"content": this.defaults.content});
-      }
+      this.bind("change:content", this.fixContent);
     },
 
     // Toggle the `done` state of this todo item.
@@ -34,6 +32,13 @@ $(function(){
     clear: function() {
       this.destroy();
       this.view.remove();
+    },
+    
+    // Fill in default content on attempt to set `content` to an empty or blank string.
+    fixContent: function() {
+      if (/^\s*$/.test(this.get("content"))) {
+        this.set({"content": this.defaults.content});
+      }
     }
 
   });
