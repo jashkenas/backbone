@@ -12,10 +12,6 @@ $(document).ready(function() {
     lastRequest = _.toArray(arguments);
   };
 
-  var model_with = function(attributes){
-    return new Backbone.Model(attributes);
-  }
-
   var attrs = {
     id     : '1-the-tempest',
     title  : "The Tempest",
@@ -96,9 +92,9 @@ $(document).ready(function() {
   });
 
   test("Model: isNew", function() {
-    ok( model_with({          }).isNew(), "is true when there is no id");
-    ok(!model_with({ 'id': 2  }).isNew(), "is false for a positive integer");
-    ok(!model_with({ 'id': -5 }).isNew(), "is false for a negative integer");
+    ok( new Backbone.Model({          }).isNew(), "is true when there is no id");
+    ok(!new Backbone.Model({ 'id': 2  }).isNew(), "is false for a positive integer");
+    ok(!new Backbone.Model({ 'id': -5 }).isNew(), "is false for a negative integer");
   });
 
   test("Model: get", function() {
