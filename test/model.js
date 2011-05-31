@@ -76,6 +76,16 @@ $(document).ready(function() {
     equals(model.url(), '/collection/%2B1%2B');
   });
 
+  test("Model: url when using parameters in urlRoot", function() {
+    var Model = Backbone.Model.extend({
+      urlRoot: '/collection?foo=bar'
+    });
+    var model = new Model();
+    equals(model.url(), '/collection?foo=bar');
+    model.set({id: '42'});
+    equals(model.url(), '/collection/42?foo=bar');
+  });
+  
   test("Model: clone", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);

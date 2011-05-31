@@ -330,8 +330,8 @@
       var param = "";
       var index = base.indexOf("?");
       if (index > 0){
-        base = base.substring(0, index);
         param = base.substring(index);
+        base = base.substring(0, index);
       }
       
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id) + param;
