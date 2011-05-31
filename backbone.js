@@ -325,7 +325,16 @@
     url : function() {
       var base = getUrl(this.collection) || this.urlRoot || urlError();
       if (this.isNew()) return base;
-      return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id);
+      
+      // slice the url into base part and parameters part
+      var param = "";
+      var index = base.indexOf("?");
+      if (index > 0){
+        base = base.substring(0, index);
+        param = base.substring(index);
+      }
+      
+      return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id) + param;
     },
 
     // **parse** converts a response into the hash of attributes to be `set` on
