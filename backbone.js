@@ -769,7 +769,7 @@
           fragment = window.location.pathname;
           var search = window.location.search;
           if (search) fragment += search;
-          if (fragment.indexOf(this.options.root) == 0) fragment = fragment.substr(this.options.root.length);
+          if (fragment.length > 1 && fragment.indexOf(this.options.root) == 0) fragment = fragment.substr(this.options.root.length);
         } else {
           fragment = window.location.hash;
         }
