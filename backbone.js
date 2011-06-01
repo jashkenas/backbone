@@ -103,7 +103,7 @@
     // same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
     trigger : function(eventName) {
-      var list, calls, ev, callback, args;
+      var list, calls, ev, callback, args, errs = [];
       var both = 2;
       if (!(calls = this._callbacks)) return this;
       while (both--) {
@@ -114,9 +114,16 @@
               list.splice(i, 1); i--; l--;
             } else {
               args = both ? Array.prototype.slice.call(arguments, 1) : arguments;
-              callback.apply(this, args);
+              try {
+                callback.apply(this, args);
+              } catch(e) {
+                // Collect, and continue firing callbacks
+                errs.push(e);
+                continue;
+              }
             }
           }
+          if (!_.isEmpty(errs)) throw errs[0];  // Throw the first we collected
         }
       }
       return this;

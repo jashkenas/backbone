@@ -67,4 +67,23 @@ $(document).ready(function() {
     equals(obj.counterB, 1, 'counterB should have only been incremented once.');
   });
 
+  test("Events: continues through callbacks if one errors out", function() {
+    var obj = {counter: 0};
+    _.extend(obj, Backbone.Events);
+    var callA = function() {
+      obj.counter += 1;
+      throw new Error('Bad callback');
+    };
+    var callB = function() {
+      obj.counter += 1;
+    };
+    obj.bind('event', callA);
+    obj.bind('event', callB);
+    var trigger = function() {
+      obj.trigger('event');
+    };
+    raises(trigger, 'Bad callback', 'triggering the event should have thrown an error');
+    equals(obj.counter, 2, 'callB should have been called bringing counter to 2');
+  });
+
 });
