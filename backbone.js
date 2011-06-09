@@ -987,9 +987,11 @@
         var attrs = this.attributes || {};
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
-        this.el = this.make(this.tagName, attrs);
+        this.el = this[0] = this.make(this.tagName, attrs);
+        this.length = 1;
       } else if (_.isString(this.el)) {
-        this.el = $(this.el).get(0);
+        this.el = this[0] = $(this.el).get(0);
+        this.length = 1;
       }
     }
 
