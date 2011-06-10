@@ -197,6 +197,7 @@
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
+      if (!(attrs instanceof Object)) throw "Backbone.model#set takes a hash of attributes as the first parameter.";
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes, escaped = this._escapedAttributes;
 
