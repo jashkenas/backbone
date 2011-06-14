@@ -403,4 +403,27 @@ $(document).ready(function() {
     a.set({state: 'hello'});
   });
 
+  test("Model: private per object", function() {
+    var A = Backbone.Model.extend(function(){
+      var private_var = 1;
+
+      function private_fun(r){
+        private_var = r;
+      }
+      return {
+        initialize: function(){
+          equal(1, private_var);
+          var r = Math.random();
+          private_fun(r);
+          equal(r, private_var);
+        }
+      };
+    });
+    for(var i = 0; i < 3; i++){
+      new A();
+    }
+  });
+
+  
+
 });

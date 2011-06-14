@@ -90,6 +90,23 @@ $(document).ready(function() {
     equals(view.el.id, 'two');
   });
 
+  test("Views: function as event handler", function(){
+    var count = 0, ViewClass = Backbone.View.extend(function(){
+      function click() {
+          count++;
+        }
+      return {
+        el: $("body"),
+        events: {
+          "click": click
+        }
+      };
+    });
+    var view1 = new ViewClass;
+    $("body").trigger("click");
+    equals(1, count);
+  });
+
   test("View: multiple views per element", function() {
     var count = 0, ViewClass = Backbone.View.extend({
       el: $("body"),

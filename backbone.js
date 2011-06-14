@@ -714,7 +714,13 @@
         routes.unshift([route, this.routes[route]]);
       }
       for (var i = 0, l = routes.length; i < l; i++) {
-        this.route(routes[i][0], routes[i][1], this[routes[i][1]]);
+        var callback = routes[i][1];
+        if(_.isFunction(callback)) {
+          this.route(routes[i][0], callback.name, callback);
+        }else {
+          // backbone default
+          this.route(routes[i][0], callback, this[callback]);
+        }
       }
     },
 
@@ -953,10 +959,15 @@
       if (!(events || (events = this.events))) return;
       $(this.el).unbind('.delegateEvents' + this.cid);
       for (var key in events) {
-        var methodName = events[key];
+        var methodName = events[key],
+            method;
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
-        var method = _.bind(this[methodName], this);
+        if (_.isFunction(methodName)){
+          method = _.bind(methodName, this);
+        } else {
+          method = _.bind(this[methodName], this);
+        }
         eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
           $(this.el).bind(eventName, method);
@@ -1086,7 +1097,14 @@
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
   var inherits = function(parent, protoProps, staticProps) {
-    var child;
+    var child,
+        conf,
+        isf = _.isFunction(protoProps);
+
+    if(isf){
+      conf = protoProps;
+      protoProps = {};
+    }
 
     // The constructor function for the new subclass is either defined by you
     // (the "constructor" property in your `extend` definition), or defaulted
@@ -1094,7 +1112,12 @@
     if (protoProps && protoProps.hasOwnProperty('constructor')) {
       child = protoProps.constructor;
     } else {
-      child = function(){ return parent.apply(this, arguments); };
+      child = function(){ 
+        if(isf) {
+          _.extend(this, conf.apply(null));
+        }
+        return parent.apply(this, arguments);
+      };
     }
 
     // Inherit class (static) properties from parent.
