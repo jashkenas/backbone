@@ -1048,9 +1048,11 @@
     }
 
     // Ensure that we have the appropriate request data.
-    if (!params.data && model && (method == 'create' || method == 'update')) {
+    if (method == 'create' || method == 'update') {
       params.contentType = 'application/json';
-      params.data = JSON.stringify(model.toJSON());
+      if (!params.data && model) {
+        params.data = JSON.stringify(model.toJSON());
+      }
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
