@@ -292,7 +292,8 @@
     // state will be `set` again.
     save : function(attrs, options) {
       options || (options = {});
-      if (attrs && !this.set(attrs, options)) return false;
+      attrs = _.extend({}, this.attributes, attrs);
+      if (!this.set(attrs, options)) return false;
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {

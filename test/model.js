@@ -353,6 +353,20 @@ $(document).ready(function() {
     equals(boundError, undefined);
   });
 
+  test("Model: validate on save", function() {
+    var model = new Backbone.Model({a: 100});
+    model.validate = function(attrs) {
+      if (attrs.a == 100) return "'a' can't be 100";
+    };
+    var result = model.save();
+    equals(result, false);
+    equals(model.get('a'), 100);
+
+    result = model.save(undefined, {silent: true});
+    equals(lastRequest[0], "create");
+    ok(_.isEqual(lastRequest[1], model));
+  });
+
   test("Model: Inherit class properties", function() {
     var Parent = Backbone.Model.extend({
       instancePropSame: function() {},
