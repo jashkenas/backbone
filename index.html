@@ -758,13 +758,16 @@ setInterval(function() {
     </p>
 
     <p>
-      In the following example, notice how because the model has never been
-      saved previously, our overridden version of <tt>Backbone.sync</tt> receives a <tt>"create"</tt> request.
+      In the following example, notice how our overridden version
+      of <tt>Backbone.sync</tt> receives a <tt>"create"</tt> request
+      the first time the model is saved and an <tt>"update"</tt>
+      request the second time.
     </p>
 
 <pre class="runnable">
 Backbone.sync = function(method, model) {
   alert(method + ": " + JSON.stringify(model));
+  model.id = 1;
 };
 
 var book = new Backbone.Model({
@@ -773,6 +776,10 @@ var book = new Backbone.Model({
 });
 
 book.save();
+
+book.save({
+  author: "Teddy"
+});
 </pre>
 
     <p>
