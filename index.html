@@ -1391,7 +1391,7 @@ Accounts.fetch();
       saving the model to the server, and adding the model to the set after being
       successfully created. Returns
       the model, or <tt>false</tt> if a validation error prevented the
-      model from being created. In order for this to work, your should set the
+      model from being created. In order for this to work, you should set the
       <a href="#Collection-model">model</a> property of the collection.
       The <b>create</b> method can accept either an attributes hash or an 
       existing, unsaved model object.
@@ -2392,7 +2392,7 @@ Inbox.messages.fetch();
       <b class="header">Binding "this"</b>
       <br />
       Perhaps the single most common JavaScript "gotcha" is the fact that when
-      you pass a function as a callback, it's value for <tt>this</tt> is lost. With
+      you pass a function as a callback, its value for <tt>this</tt> is lost. With
       Backbone, when dealing with <a href="#Events">events</a> and callbacks,
       you'll often find it useful to rely on
       <a href="http://documentcloud.github.com/underscore/#bind">_.bind</a> and
@@ -2400,7 +2400,7 @@ Inbox.messages.fetch();
       from Underscore.js. <tt>_.bind</tt> takes a function and an object to be
       used as <tt>this</tt>, any time the function is called in the future.
       <tt>_.bindAll</tt> takes an object and a list of method names: each method
-      in the list will be bound to the object, so that it's <tt>this</tt> may
+      in the list will be bound to the object, so that its <tt>this</tt> may
       not change. For example, in a <a href="#View">View</a> that listens for
       changes to a collection...
     </p>
