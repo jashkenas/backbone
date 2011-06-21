@@ -810,9 +810,9 @@
       this.fragment = fragment;
       historyStarted = true;
       var started = this.loadUrl() || this.loadUrl(window.location.hash);
-      if (this._wantsPushState && !this._hasPushState && window.location.pathname != this.options.root) {
+      if (this._wantsPushState && !this._hasPushState && window.location.pathname != (this.options.fallbackRoot || this.options.root)) {
         this.fragment = this.getFragment(null, true);
-        window.location = this.options.root + '#' + this.fragment;
+        window.location = (this.options.fallbackRoot || this.options.root) + '#' + this.fragment;
       } else {
         return started;
       }
