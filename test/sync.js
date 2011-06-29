@@ -109,7 +109,6 @@ $(document).ready(function() {
     library.first().destroy();
     equals(lastRequest.url, '/library/2-the-tempest');
     equals(lastRequest.type, 'DELETE');
-    equals(lastRequest.data, null);
   });
 
   test("sync: destroy with emulateHTTP", function() {
@@ -117,7 +116,7 @@ $(document).ready(function() {
     library.first().destroy();
     equals(lastRequest.url, '/library/2-the-tempest');
     equals(lastRequest.type, 'POST');
-    equals(JSON.stringify(lastRequest.data), '{"_method":"DELETE"}');
+	equals(lastRequest.data._method, "DELETE");
     Backbone.emulateHTTP = Backbone.emulateJSON = false;
   });
 
