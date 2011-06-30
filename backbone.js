@@ -342,7 +342,7 @@
     // A model is new if it has never been saved to the server, and has a negative
     // ID.
     isNew : function() {
-      return !this.id;
+      return this.id == null;
     },
 
     // Call this method to manually fire a `change` event for this model.
