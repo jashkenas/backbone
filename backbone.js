@@ -197,6 +197,7 @@
       if (!attrs) return this;
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes, escaped = this._escapedAttributes;
+      var changes = {};
 
       // Run validation.
       if (!options.silent && this.validate && !this._performValidation(attrs, options)) return false;
@@ -213,10 +214,16 @@
         var val = attrs[attr];
         if (!_.isEqual(now[attr], val)) {
           now[attr] = val;
+          changes[attr] = val;
           delete escaped[attr];
           this._changed = true;
-          if (!options.silent) this.trigger('change:' + attr, this, val, options);
         }
+      }
+
+      // Fire the change events after all of the attributes have been set.
+      for (var attr in changes) {
+        var val = changes[attr];
+        if (!options.silent) this.trigger('change:' + attr, this, val, options);
       }
 
       // Fire the `"change"` event, if the model has been changed.
