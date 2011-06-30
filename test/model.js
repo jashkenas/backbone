@@ -154,6 +154,14 @@ $(document).ready(function() {
 
     a.unset('id');
     equals(a.id, undefined, "Unsetting the id should remove the id property.");
+    
+    try {
+      a.set('attribute', 'value')
+      equals(true, false, "Passing a string instead of a hash should throw an exception")
+      }
+    catch(e) {
+      equals(e, "Backbone.model#set takes a hash of attributes as the first parameter.", "Passing a string instead of a hash should throw a useful message")
+    }
   });
 
   test("Model: multiple unsets", function() {

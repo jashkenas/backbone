@@ -30,10 +30,12 @@
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
   if (!_ && (typeof require !== 'undefined')) _ = require('underscore')._;
+	if (!_) throw("underscore.js is required to use backbone!");
 
   // For Backbone's purposes, jQuery or Zepto owns the `$` variable.
   var $ = root.jQuery || root.Zepto;
-
+  if (!$) throw("Either jQuery or Zepto is required to use backbone, but neither were found!");
+	
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
   Backbone.noConflict = function() {
@@ -195,6 +197,7 @@
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
+      if (!(attrs instanceof Object)) throw "Backbone.model#set takes a hash of attributes as the first parameter.";
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes, escaped = this._escapedAttributes;
 
