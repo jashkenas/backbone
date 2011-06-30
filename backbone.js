@@ -143,7 +143,7 @@
     this._changed = false;
     this._previousAttributes = _.clone(this.attributes);
     if (options && options.collection) this.collection = options.collection;
-    this.initialize(attributes, options);
+    this.initialize.apply(this, arguments);
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -419,7 +419,7 @@
     _.bindAll(this, '_onModelEvent', '_removeReference');
     this._reset();
     if (models) this.reset(models, {silent: true});
-    this.initialize(models, options);
+    this.initialize.apply(this, arguments);
   };
 
   // Define the Collection's inheritable methods.
@@ -658,7 +658,7 @@
     options || (options = {});
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
-    this.initialize(options);
+    this.initialize.apply(this, arguments);
   };
 
   // Cached regular expressions for matching named param parts and splatted
@@ -879,7 +879,7 @@
     this._configure(options || {});
     this._ensureElement();
     this.delegateEvents();
-    this.initialize(options);
+    this.initialize.apply(this, arguments);
   };
 
   // Element lookup, scoped to DOM elements within the current view.
