@@ -952,10 +952,11 @@
       if (!(events || (events = this.events))) return;
       $(this.el).unbind('.delegateEvents' + this.cid);
       for (var key in events) {
-        var methodName = events[key];
+        var method = this[events[key]];
+        if (!method) throw new Error('Event "' + events[key] + '" does not exist');
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
-        var method = _.bind(this[methodName], this);
+        method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
           $(this.el).bind(eventName, method);
@@ -1129,7 +1130,7 @@
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
-    throw new Error("A 'url' property or function must be specified");
+    throw new Error('A "url" property or function must be specified');
   };
 
   // Wrap an optional error callback with a fallback error event.
