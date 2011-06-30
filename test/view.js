@@ -15,9 +15,10 @@ $(document).ready(function() {
   });
 
   test("View: jQuery", function() {
-    view.el = document.body;
+    view.el = view[0] = document.body;
     ok(view.$('#qunit-header a').get(0).innerHTML.match(/Backbone Test Suite/));
     ok(view.$('#qunit-header a').get(1).innerHTML.match(/Backbone Speed Suite/));
+    ok($(view).find('#qunit-header a').get(1).innerHTML.match(/Backbone Speed Suite/));
   });
 
   test("View: make", function() {
