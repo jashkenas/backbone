@@ -82,7 +82,7 @@
       var calls;
       if (!ev) {
         this._callbacks = {};
-      } else if (calls = this._callbacks) {
+      } else if (calls == this._callbacks) {
         if (!callback) {
           calls[ev] = [];
         } else {
