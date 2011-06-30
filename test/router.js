@@ -97,16 +97,6 @@ $(document).ready(function() {
       start();
     }, 10);
   });
-  
-  asyncTest("Router: routes (complex query)", 2, function() {
-    var complex = '~!@#$%^&*()=+[]{}\\;:\'",/? ';
-    window.location.hash = 'complex?' + encodeURIComponent(complex);
-    setTimeout(function() {
-      equals(router.entity, 'complex');
-      equals(router.queryArgs, complex);
-      start();
-    }, 10);
-  });
 
   asyncTest("Router: routes (anything)", 1, function() {
     window.location.hash = 'doesnt-match-a-route';
