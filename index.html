@@ -780,9 +780,7 @@ var book = new Backbone.Model({
 
 book.save();
 
-book.save({
-  author: "Teddy"
-});
+book.save({author: "Teddy"});
 </pre>
 
     <p>
@@ -1152,25 +1150,15 @@ var alphabetical = Books.sortBy(function(book) {
     </p>
 
 <pre class="runnable">
-var Ship = Backbone.Model.extend({
-  defaults: {
-    "name":  "Black Pearl"
-  }
-});
+var ships = new Backbone.Collection;
 
-var Fleet = Backbone.Collection.extend({
-  model: Ship
-});
-
-var pirates = new Fleet();
-
-pirates.bind("add", function(ship) {
+ships.bind("add", function(ship) {
   alert("Ahoy " + ship.get("name") + "!");
 });
 
-pirates.add([
+ships.add([
   {name: "Flying Dutchman"},
-  {captain: "Jack Sparrow"}
+  {name: "Black Pearl"}
 ]);
 </pre>
 
