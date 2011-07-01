@@ -761,13 +761,16 @@ setInterval(function() {
     </p>
 
     <p>
-      In the following example, notice how because the model has never been
-      saved previously, our overridden version of <tt>Backbone.sync</tt> receives a <tt>"create"</tt> request.
+      In the following example, notice how our overridden version
+      of <tt>Backbone.sync</tt> receives a <tt>"create"</tt> request
+      the first time the model is saved and an <tt>"update"</tt>
+      request the second time.
     </p>
 
 <pre class="runnable">
 Backbone.sync = function(method, model) {
   alert(method + ": " + JSON.stringify(model));
+  model.id = 1;
 };
 
 var book = new Backbone.Model({
@@ -776,6 +779,10 @@ var book = new Backbone.Model({
 });
 
 book.save();
+
+book.save({
+  author: "Teddy"
+});
 </pre>
 
     <p>
@@ -1145,15 +1152,25 @@ var alphabetical = Books.sortBy(function(book) {
     </p>
 
 <pre class="runnable">
-var ships = new Backbone.Collection;
+var Ship = Backbone.Model.extend({
+  defaults: {
+    "name":  "Black Pearl"
+  }
+});
 
-ships.bind("add", function(ship) {
+var Fleet = Backbone.Collection.extend({
+  model: Ship
+});
+
+var pirates = new Fleet();
+
+pirates.bind("add", function(ship) {
   alert("Ahoy " + ship.get("name") + "!");
 });
 
-ships.add([
+pirates.add([
   {name: "Flying Dutchman"},
-  {name: "Black Pearl"}
+  {captain: "Jack Sparrow"}
 ]);
 </pre>
 
@@ -1588,7 +1605,7 @@ $(function(){
     <h2 id="Sync">Backbone.sync</h2>
 
     <p>
-      <b>Backbone.sync</b> is the function the Backbone calls every time it
+      <b>Backbone.sync</b> is the function that Backbone calls every time it
       attempts to read or save a model to the server. By default, it uses
       <tt>(jQuery/Zepto).ajax</tt> to make a RESTful JSON request. You can override
       it in order to use a different persistence strategy, such as WebSockets,
