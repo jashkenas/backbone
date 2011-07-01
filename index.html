@@ -149,7 +149,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.3.3)</span>
+      Backbone.js <span class="version">(0.5.0)</span>
     </a>
 
     <a class="toc_title" href="#Introduction">
@@ -305,7 +305,6 @@
       <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
       <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
       <li>– <a href="#FAQ-this">Binding "this"</a></li>
-      <li>- <a href="#FAQ-rias">Other RIA Frameworks</a></li>
     </ul>
 
     <a class="toc_title" href="#changelog">
@@ -357,12 +356,12 @@
 
     <table>
       <tr>
-        <td><a href="backbone.js">Development Version (0.3.3)</a></td>
-        <td><i>35kb, Uncompressed with Comments</i></td>
+        <td><a href="backbone.js">Development Version (0.5.0)</a></td>
+        <td><i>41kb, Uncompressed with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="backbone-min.js">Production Version (0.3.3)</a></td>
-        <td><i>3.9kb, Packed and Gzipped</i></td>
+        <td><a href="backbone-min.js">Production Version (0.5.0)</a></td>
+        <td><i>4.6kb, Packed and Gzipped</i></td>
       </tr>
     </table>
 
@@ -374,6 +373,15 @@
       <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
       <a href="http://jquery.com">jQuery</a> <small>( > 1.4.2)</small> or 
       <a href="http://zeptojs.com/">Zepto</a>.
+    </p>
+    
+    <h2 id="Upgrading">Upgrading to 0.5.0</h2>
+
+    <p>
+      We've taken the opportunity to clarify some naming with the <b>0.5.0</b>
+      release. <tt>Controller</tt> is now <tt>Router</tt>, and <tt>refresh</tt>
+      is now <tt>reset</tt>. Be sure to <a href="#History-start">opt-in</a> to 
+      <tt>pushState</tt> support, if you want to use it.
     </p>
 
     <h2 id="Introduction">Introduction</h2>
@@ -731,7 +739,7 @@ alert(JSON.stringify(artist));
     <p id="Model-fetch">
       <b class="header">fetch</b><code>model.fetch([options])</code>
       <br />
-      Refreshes the model's state from the server. Useful if the model has never
+      Resets the model's state from the server. Useful if the model has never
       been populated with data, or if you'd like to ensure that you have the
       latest server state. A <tt>"change"</tt> event will be triggered if the
       server's state differs from the current attributes. Accepts
@@ -1317,7 +1325,7 @@ var Tweets = Backbone.Collection.extend({
       <b class="header">fetch</b><code>collection.fetch([options])</code>
       <br />
       Fetch the default set of models for this collection from the server,
-      refreshing the collection when they arrive. The <b>options</b> hash takes
+      resetting the collection when they arrive. The <b>options</b> hash takes
       <tt>success</tt> and <tt>error</tt>
       callbacks which will be passed <tt>(collection, response)</tt> as arguments.
       When the model data returns from the server, the collection will
@@ -1535,8 +1543,8 @@ initialize: function(options) {
       <br />
       Whenever you reach a point in your application that you'd like to save
       as a URL, call <b>saveLocation</b> in order to update the URL fragment
-      without triggering a <tt>hashchange</tt> event. (If you would prefer to
-      trigger the event and routing, you can just set the hash directly.)
+      without triggering an event that would cause a route to be called. 
+      If you wish to also trigger the event, use <a href="#Router-setLocation">setLocation</a>.
     </p>
 
 <pre>
@@ -1569,11 +1577,21 @@ app.setLocation("help/troubleshooting");
     </p>
 
     <p id="History-start">
-      <b class="header">start</b><code>Backbone.history.start()</code>
+      <b class="header">start</b><code>Backbone.history.start([options])</code>
       <br />
       When all of your <a href="#Router">Routers</a> have been created,
       and all of the routes are set up properly, call <tt>Backbone.history.start()</tt>
       to begin monitoring <tt>hashchange</tt> events, and dispatching routes.
+    </p>
+    
+    <p>
+      To indicate that you'd like to use HTML5 <tt>pushState</tt> support in
+      your application, use <tt>Backbone.history.start({pushState: true})</tt>.
+      Older browsers that don't support <tt>pushState</tt> will continue to use 
+      hash-based URL fragments, and if a hash URL is visited by a 
+      <tt>pushState</tt>-capable browser, it'll be upgraded to the true URL. 
+      Note that using real URLs requires your web server to be able to correctly
+      render those pages, so back-end changes are required as well.
     </p>
     
     <p>
@@ -1586,7 +1604,7 @@ app.setLocation("help/troubleshooting");
 $(function(){
   new WorkspaceRouter();
   new HelpPaneRouter();
-  Backbone.history.start();
+  Backbone.history.start({pushState: true});
 });
 </pre>
 
@@ -2428,33 +2446,29 @@ var MessageList = Backbone.View.extend({
 Inbox.messages.add(newMessage);
 </pre>
 
-    <p id="FAQ-rias">
-      <b class="header">
-        How is Backbone different than
-        <a href="http://www.sproutcore.com/">SproutCore</a> or
-        <a href="http://cappuccino.org/">Cappuccino</a>?
-      </b>
-      <br />
-      This question is frequently asked, and all three projects apply general
-      <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
-      principles to JavaScript applications. However, there isn't much basis
-      for comparison. SproutCore and Cappuccino provide rich UI widgets, vast
-      core libraries, and determine the structure of your HTML for you.
-      Both frameworks measure in the hundreds of kilobytes when packed and
-      gzipped, and megabytes of JavaScript, CSS, and images when loaded in the browser
-      &mdash; there's a lot of room underneath for libraries of a more moderate scope.
-      Backbone is a <i>4 kilobyte</i> include that provides
-      just the core concepts of models, events, collections, views, controllers,
-      and persistence.
-    </p>
-
     <h2 id="changelog">Change Log</h2>
 
     <p>
-      <b class="header">0.4.0</b> &mdash; <small><i>FUTURE DATE, 2011</i></small><br />
-      <tt>Collection.refresh</tt> renamed to <tt>Collection.reset</tt> to emphasize
-      its ability to both refresh the collection with new models, as well as empty
+      <b class="header">0.5.0</b> &mdash; <small><i>July 1, 2011</i></small><br />
+      A large number of tiny tweaks and micro bugfixes, best viewed by looking
+      at <a href="https://github.com/documentcloud/backbone/compare/0.3.3...0.5.0">the commit diff</a>.
+      HTML5 <tt>pushState</tt> support, enabled by opting-in with: 
+      <tt>Backbone.history.start({pushState: true})</tt>.
+      <tt>Controller</tt> was renamed to <tt>Router</tt>, for clarity.
+      <tt>Collection#refresh</tt> was renamed to <tt>Collection#reset</tt> to emphasize
+      its ability to both reset the collection with new models, as well as empty
       out the collection when used with no parameters.
+      RESTful persistence methods (save, fetch, etc.) now return the jQuery deferred
+      object for further success/error chaining and general convenience.
+      Improved XSS escaping for <tt>Model#escape</tt>.
+      Added a <tt>urlRoot</tt> option to allow specifying RESTful urls without
+      the use of a collection.
+      An error is thrown if <tt>Backbone.history.start</tt> is called multiple times.
+      <tt>Collection#create</tt> now validates before initializing the new model.
+      <tt>view.el</tt> can now be a jQuery string lookup.
+      Backbone Views can now also take an <tt>attributes</tt> parameter.
+      <tt>Model#defaults</tt> can now be a function as well as a literal attributes
+      object.
     </p>
     
     <p>

@@ -1,4 +1,4 @@
-//     Backbone.js 0.5.0-pre
+//     Backbone.js 0.5.0
 //     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -25,7 +25,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.5.0-pre';
+  Backbone.VERSION = '0.5.0';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
@@ -253,18 +253,19 @@
     // to silence it.
     clear : function(options) {
       options || (options = {});
+      var attr;
       var old = this.attributes;
 
       // Run validation.
       var validObj = {};
-      for (var attr in old) validObj[attr] = void 0;
+      for (attr in old) validObj[attr] = void 0;
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
       this.attributes = {};
       this._escapedAttributes = {};
       this._changed = true;
       if (!options.silent) {
-        for (var attr in old) {
+        for (attr in old) {
           this.trigger('change:' + attr, this, void 0, options);
         }
         this.change(options);
@@ -554,7 +555,7 @@
       return _(this.models).chain();
     },
 
-    // Reset all internal state. Called when the collection is refreshed.
+    // Reset all internal state. Called when the collection is reset.
     _reset : function(options) {
       this.length = 0;
       this.models = [];
