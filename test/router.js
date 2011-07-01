@@ -71,6 +71,12 @@ $(document).ready(function() {
     }, 10);
   });
 
+  test("Router: routes via navigate", 2, function() {
+    Backbone.history.navigate('search/manhattan/p20', true);
+    equals(router.query, 'manhattan');
+    equals(router.page, '20');
+  });
+
   asyncTest("Router: routes (splats)", function() {
     window.location.hash = 'splat/long-list/of/splatted_99args/end';
     setTimeout(function() {

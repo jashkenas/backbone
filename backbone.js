@@ -847,18 +847,18 @@
     // URL-encoding the fragment in advance. This does not trigger
     // a `hashchange` event.
     navigate : function(fragment, triggerRoute) {
-      fragment = (fragment || '').replace(hashStrip, '');
-      if (this.fragment == fragment || this.fragment == decodeURIComponent(fragment)) return;
+      var frag = (fragment || '').replace(hashStrip, '');
+      if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
       if (this._hasPushState) {
         var loc = window.location;
-        if (fragment.indexOf(this.options.root) != 0) fragment = this.options.root + fragment;
-        this.fragment = fragment;
-        window.history.pushState({}, document.title, loc.protocol + '//' + loc.host + fragment);
+        if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
+        this.fragment = frag;
+        window.history.pushState({}, document.title, loc.protocol + '//' + loc.host + frag);
       } else {
-        window.location.hash = this.fragment = fragment;
-        if (this.iframe && (fragment != this.getFragment(this.iframe.location.hash))) {
+        window.location.hash = this.fragment = frag;
+        if (this.iframe && (frag != this.getFragment(this.iframe.location.hash))) {
           this.iframe.document.open().close();
-          this.iframe.location.hash = fragment;
+          this.iframe.location.hash = frag;
         }
       }
       if (triggerRoute) this.loadUrl(fragment);
