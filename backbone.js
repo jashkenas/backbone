@@ -802,9 +802,12 @@
       this.fragment = fragment;
       historyStarted = true;
       var started = this.loadUrl() || this.loadUrl(window.location.hash);
-      if (this._wantsPushState && !this._hasPushState && window.location.pathname != this.options.root) {
+      var atRoot  = window.location.pathname == this.options.root;
+      if (this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
         window.location = this.options.root + '#' + this.fragment;
+      } else if (this._wantsPushState && this._hasPushState && atRoot && window.location.hash) {
+        this.navigate(window.location.hash);
       } else {
         return started;
       }
