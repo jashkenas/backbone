@@ -691,17 +691,9 @@
       }, this));
     },
 
-    // Simple proxy to `Backbone.history` to save a fragment into the history,
-    // without triggering routes.
-    saveLocation : function(fragment) {
-      Backbone.history.saveLocation(fragment);
-    },
-
-    // Simple proxy to `Backbone.history` to both save a fragment into the
-    // history and to then load the route at that fragment.
-    setLocation : function(fragment) {
-      Backbone.history.saveLocation(fragment);
-      Backbone.history.loadUrl(fragment);
+    // Simple proxy to `Backbone.history` to save a fragment into the history.
+    navigate : function(fragment, triggerRoute) {
+      Backbone.history.navigate(fragment, triggerRoute);
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
@@ -792,7 +784,7 @@
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
       if (oldIE) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
-        this.saveLocation(fragment);
+        this.navigate(fragment);
       }
 
       // Depending on whether we're using pushState or hashes, and whether
@@ -830,7 +822,7 @@
       var current = this.getFragment();
       if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location.hash);
       if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
-      if (this.iframe) this.saveLocation(current);
+      if (this.iframe) this.navigate(current);
       this.loadUrl() || this.loadUrl(window.location.hash);
     },
 
@@ -851,7 +843,7 @@
     // Save a fragment into the hash history. You are responsible for properly
     // URL-encoding the fragment in advance. This does not trigger
     // a `hashchange` event.
-    saveLocation : function(fragment) {
+    navigate : function(fragment, triggerRoute) {
       fragment = (fragment || '').replace(hashStrip, '');
       if (this.fragment == fragment || this.fragment == decodeURIComponent(fragment)) return;
       if (this._hasPushState) {
@@ -866,6 +858,7 @@
           this.iframe.location.hash = fragment;
         }
       }
+      if (triggerRoute) this.loadUrl(fragment);
     }
 
   });

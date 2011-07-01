@@ -232,8 +232,7 @@
       <li>– <a href="#Router-routes">routes</a></li>
       <li>– <a href="#Router-constructor">constructor / initialize</a></li>
       <li>– <a href="#Router-route">route</a></li>
-      <li>– <a href="#Router-saveLocation">saveLocation</a></li>
-      <li>– <a href="#Router-setLocation">setLocation</a></li>
+      <li>– <a href="#Router-navigate">navigate</a></li>
     </ul>
 
     <a class="toc_title" href="#History">
@@ -379,9 +378,12 @@
 
     <p>
       We've taken the opportunity to clarify some naming with the <b>0.5.0</b>
-      release. <tt>Controller</tt> is now <tt>Router</tt>, and <tt>refresh</tt>
-      is now <tt>reset</tt>. Be sure to <a href="#History-start">opt-in</a> to 
-      <tt>pushState</tt> support, if you want to use it.
+      release. <tt>Controller</tt> is now <a href="#Router">Router</a>, and 
+      <tt>refresh</tt> is now <a href="#Collection-reset">reset</a>. 
+      The previous <tt>saveLocation</tt> and <tt>setLocation</tt>
+      functions have peen replaced by <a href="#Router-navigate">navigate</a>. 
+      Be sure to <a href="#History-start">opt-in</a> to <tt>pushState</tt> support, 
+      if you want to use it.
     </p>
 
     <h2 id="Introduction">Introduction</h2>
@@ -1538,39 +1540,30 @@ initialize: function(options) {
 }
 </pre>
 
-    <p id="Router-saveLocation">
-      <b class="header">saveLocation</b><code>router.saveLocation(fragment)</code>
+    <p id="Router-navigate">
+      <b class="header">navigate</b><code>router.navigate(fragment, [triggerRoute])</code>
       <br />
       Whenever you reach a point in your application that you'd like to save
-      as a URL, call <b>saveLocation</b> in order to update the URL fragment
-      without triggering an event that would cause a route to be called. 
-      If you wish to also trigger the event, use <a href="#Router-setLocation">setLocation</a>.
+      as a URL, call <b>navigate</b> in order to update the URL.
+      If you wish to also call the route function, pass <b>triggerRoute</b>.
     </p>
 
 <pre>
 openPage: function(pageNumber) {
   this.document.pages.at(pageNumber).open();
-  this.saveLocation("page/" + pageNumber);
+  this.navigate("page/" + pageNumber);
 }
-</pre>
 
-    <p id="Router-setLocation">
-      <b class="header">setLocation</b><code>router.setLocation(fragment)</code>
-      <br />
-      Just like <a href="#Router-saveLocation">saveLocation</a>, but also triggers
-      your route action at the same time. Useful if you want to transition to a page
-      where no state serialization is necessary, like a simple string.
-    </p>
-    
-<pre>
-app.setLocation("help/troubleshooting");
+# Or ...
+
+app.navigate("help/troubleshooting", true);
 </pre>
 
     <h2 id="History">Backbone.history</h2>
 
     <p>
       <b>History</b> serves as a global router (per frame) to handle <tt>hashchange</tt>
-      events, match the appropriate route, and trigger callbacks. You shouldn't
+      events or <tt>pushState</tt>, match the appropriate route, and trigger callbacks. You shouldn't
       ever have to create one of these yourself &mdash; you should use the reference
       to <tt>Backbone.history</tt> that will be created for you automatically if you make use
       of <a href="#Router">Routers</a> with <a href="#Router-routes">routes</a>.
@@ -2464,6 +2457,7 @@ Inbox.messages.add(newMessage);
       <tt>Collection#refresh</tt> was renamed to <tt>Collection#reset</tt> to emphasize
       its ability to both reset the collection with new models, as well as empty
       out the collection when used with no parameters.
+      <tt>saveLocation</tt> was replaced with <tt>navigate</tt>.
       RESTful persistence methods (save, fetch, etc.) now return the jQuery deferred
       object for further success/error chaining and general convenience.
       Improved XSS escaping for <tt>Model#escape</tt>.
