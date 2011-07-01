@@ -52,6 +52,10 @@
   // form param named `model`.
   Backbone.emulateJSON = false;
 
+  // Turn on `useTrailingSlashes` to support servers that prefer URLs have
+  // a trailing slash.
+  Backbone.useTrailingSlashes = false;
+
   // Backbone.Events
   // -----------------
 
@@ -1051,6 +1055,11 @@
     if (!params.data && model && (method == 'create' || method == 'update')) {
       params.contentType = 'application/json';
       params.data = JSON.stringify(model.toJSON());
+    }
+
+    // For server-side code that prefers a trailing slash.
+    if (Backbone.useTrailingSlashes) {
+      params.url += (params.url.charAt(params.url.length - 1) == '/' ? '' : '/');
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
