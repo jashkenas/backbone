@@ -329,8 +329,9 @@
     <p>
       The project is <a href="http://github.com/documentcloud/backbone/">hosted on GitHub</a>,
       and the <a href="docs/backbone.html">annotated source code</a> is available,
-      as well as an online <a href="test/test.html">test suite</a>, and
-      <a href="examples/todos/index.html">example application</a>.
+      as well as an online <a href="test/test.html">test suite</a>, an
+      <a href="examples/todos/index.html">example application</a> and a 
+      <a href="https://github.com/documentcloud/backbone/wiki/Tutorials%2C-blog-posts-and-example-sites">list of tutorials</a>.
     </p>
 
     <p>
@@ -356,7 +357,7 @@
     <table>
       <tr>
         <td><a href="backbone.js">Development Version (0.5.0)</a></td>
-        <td><i>41kb, Uncompressed with Comments</i></td>
+        <td><i>41kb, Full Source with Comments</i></td>
       </tr>
       <tr>
         <td><a href="backbone-min.js">Production Version (0.5.0)</a></td>
@@ -395,7 +396,7 @@
       jQuery selectors and callbacks, all trying frantically to keep data in
       sync between the HTML UI, your JavaScript logic, and the database on your
       server. For rich client-side applications, a more structured approach
-      is helpful.
+      is often helpful.
     </p>
 
     <p>
@@ -1588,9 +1589,13 @@ app.navigate("help/troubleshooting", true);
     </p>
     
     <p>
+      If your application is not being served off the root url <tt>/</tt> of your
+      domain, be sure to tell History where the root really is, as an option:
+      <tt>{root: "/public/search/"}</tt>
+    <p>
       When called, if a route succeeds with a match for the current URL, 
       <tt>Backbone.history.start()</tt> returns <tt>true</tt>. If no defined 
-      routes matches the current URL fragment, it returns <tt>false</tt>.
+      route matches the current URL, it returns <tt>false</tt>.
     </p>
 
 <pre>
