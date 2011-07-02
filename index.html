@@ -1569,6 +1569,21 @@ app.navigate("help/troubleshooting", true);
       to <tt>Backbone.history</tt> that will be created for you automatically if you make use
       of <a href="#Router">Routers</a> with <a href="#Router-routes">routes</a>.
     </p>
+    
+    <p>
+      <b>pushState</b> support exists on a purely opt-in basis in Backbone.
+      Older browsers that don't support <tt>pushState</tt> will continue to use 
+      hash-based URL fragments, and if a hash URL is visited by a 
+      <tt>pushState</tt>-capable browser, it will be transparently upgraded to 
+      the true URL. Note that using real URLs requires your web server to be 
+      able to correctly render those pages, so back-end changes are required 
+      as well. For example, if you have a route of <tt>/documents/100</tt>, 
+      your web server must be able to serve that page, if the browser
+      visits that URL directly. For full search-engine crawlability, it's best to
+      have the server generate the complete HTML for the page ... but if it's a web 
+      application, just rendering the same content you would have for the root URL,
+      and filling in the rest with Backbone Views and JavaScript works fine.
+    </p>
 
     <p id="History-start">
       <b class="header">start</b><code>Backbone.history.start([options])</code>
@@ -1581,17 +1596,12 @@ app.navigate("help/troubleshooting", true);
     <p>
       To indicate that you'd like to use HTML5 <tt>pushState</tt> support in
       your application, use <tt>Backbone.history.start({pushState: true})</tt>.
-      Older browsers that don't support <tt>pushState</tt> will continue to use 
-      hash-based URL fragments, and if a hash URL is visited by a 
-      <tt>pushState</tt>-capable browser, it'll be upgraded to the true URL. 
-      Note that using real URLs requires your web server to be able to correctly
-      render those pages, so back-end changes are required as well.
     </p>
     
     <p>
-      If your application is not being served off the root url <tt>/</tt> of your
+      If your application is not being served from the root url <tt>/</tt> of your
       domain, be sure to tell History where the root really is, as an option:
-      <tt>{root: "/public/search/"}</tt>
+      <tt>Backbone.history.start({pushState: true, root: "/public/search/"})</tt>
     <p>
       When called, if a route succeeds with a match for the current URL, 
       <tt>Backbone.history.start()</tt> returns <tt>true</tt>. If no defined 
