@@ -383,6 +383,8 @@
       <tt>refresh</tt> is now <a href="#Collection-reset">reset</a>. 
       The previous <tt>saveLocation</tt> and <tt>setLocation</tt>
       functions have been replaced by <a href="#Router-navigate">navigate</a>. 
+      <tt>Backbone.sync</tt>'s method signature has changed to allow the passing
+      of arbitrary options to <tt>jQuery.ajax</tt>.
       Be sure to <a href="#History-start">opt-in</a> to <tt>pushState</tt> support, 
       if you want to use it.
     </p>
@@ -1627,14 +1629,13 @@ $(function(){
     </p>
 
     <p>
-      The method signature of <b>Backbone.sync</b> is <tt>sync(method, model, success, error)</tt>
+      The method signature of <b>Backbone.sync</b> is <tt>sync(method, model, [options])</tt>
     </p>
 
     <ul>
       <li><b>method</b> – the CRUD method (<tt>"create"</tt>, <tt>"read"</tt>, <tt>"update"</tt>, or <tt>"delete"</tt>)</li>
       <li><b>model</b> – the model to be saved (or collection to be read)</li>
-      <li><b>success({model: ...})</b> – a callback that should be fired if the request works</li>
-      <li><b>error({model: ...})</b> – a callback that should be fired if the request fails</li>
+      <li><b>options</b> – success and error callbacks, and all other jQuery request options</li>
     </ul>
 
     <p>
