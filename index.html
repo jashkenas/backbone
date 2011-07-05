@@ -149,7 +149,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.5.0)</span>
+      Backbone.js <span class="version">(0.5.1)</span>
     </a>
 
     <a class="toc_title" href="#Introduction">
@@ -356,11 +356,11 @@
 
     <table>
       <tr>
-        <td><a href="backbone.js">Development Version (0.5.0)</a></td>
+        <td><a href="backbone.js">Development Version (0.5.1)</a></td>
         <td><i>41kb, Full Source with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="backbone-min.js">Production Version (0.5.0)</a></td>
+        <td><a href="backbone-min.js">Production Version (0.5.1)</a></td>
         <td><i>4.6kb, Packed and Gzipped</i></td>
       </tr>
     </table>
@@ -375,7 +375,7 @@
       <a href="http://zeptojs.com/">Zepto</a>.
     </p>
     
-    <h2 id="Upgrading">Upgrading to 0.5.0</h2>
+    <h2 id="Upgrading">Upgrading to 0.5.0+</h2>
 
     <p>
       We've taken the opportunity to clarify some naming with the <b>0.5.0</b>
@@ -2462,6 +2462,15 @@ Inbox.messages.add(newMessage);
 </pre>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <p>
+      <b class="header">0.5.1</b> &mdash; <small><i>July 5, 2011</i></small><br />
+      Cleanups from the 0.5.0 release, to wit: improved transparent upgrades from
+      hash-based URLs to pushState, and vice-versa. Fixed inconsistency with
+      non-modified attributes being passed to <tt>Model#initialize</tt>. Reverted
+      a <b>0.5.0</b> change that would strip leading hashbangs from routes.
+      Added <tt>contains</tt> as an alias for <tt>includes</tt>. 
+    </p>
 
     <p>
       <b class="header">0.5.0</b> &mdash; <small><i>July 1, 2011</i></small><br />
