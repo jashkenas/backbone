@@ -640,7 +640,7 @@
   // Underscore methods that we want to implement on the Collection.
   var methods = ['forEach', 'each', 'map', 'reduce', 'reduceRight', 'find', 'detect',
     'filter', 'select', 'reject', 'every', 'all', 'some', 'any', 'include',
-    'invoke', 'max', 'min', 'sortBy', 'sortedIndex', 'toArray', 'size',
+    'contains', 'invoke', 'max', 'min', 'sortBy', 'sortedIndex', 'toArray', 'size',
     'first', 'rest', 'last', 'without', 'indexOf', 'lastIndexOf', 'isEmpty'];
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
@@ -805,7 +805,7 @@
       var atRoot  = loc.pathname == this.options.root;
       if (this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
-        window.location = this.options.root + '#' + this.fragment;
+        window.location.replace(this.options.root + '#' + this.fragment);
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
         this.fragment = loc.hash.replace(hashStrip, '');
         window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
