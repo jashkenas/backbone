@@ -71,6 +71,12 @@ $(document).ready(function() {
     }, 10);
   });
 
+  test("Router: routes via navigate", 2, function() {
+    Backbone.history.navigate('search/manhattan/p20', true);
+    equals(router.query, 'manhattan');
+    equals(router.page, '20');
+  });
+
   asyncTest("Router: routes (splats)", function() {
     window.location.hash = 'splat/long-list/of/splatted_99args/end';
     setTimeout(function() {
@@ -104,15 +110,6 @@ $(document).ready(function() {
       equals(router.anything, 'doesnt-match-a-route');
       start();
       window.location.hash = '';
-    }, 10);
-  });
-
-  asyncTest("Router: routes (hashbang)", 2, function() {
-    window.location.hash = '!search/news';
-    setTimeout(function() {
-      equals(router.query, 'news');
-      equals(router.page, undefined);
-      start();
     }, 10);
   });
 

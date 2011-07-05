@@ -1,4 +1,4 @@
-//     Backbone.js 0.5.0
+//     Backbone.js 0.5.1
 //     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -25,7 +25,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.5.0';
+  Backbone.VERSION = '0.5.1';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
@@ -143,7 +143,7 @@
     this._changed = false;
     this._previousAttributes = _.clone(this.attributes);
     if (options && options.collection) this.collection = options.collection;
-    this.initialize.apply(this, arguments);
+    this.initialize(attributes, options);
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -640,7 +640,7 @@
   // Underscore methods that we want to implement on the Collection.
   var methods = ['forEach', 'each', 'map', 'reduce', 'reduceRight', 'find', 'detect',
     'filter', 'select', 'reject', 'every', 'all', 'some', 'any', 'include',
-    'invoke', 'max', 'min', 'sortBy', 'sortedIndex', 'toArray', 'size',
+    'contains', 'invoke', 'max', 'min', 'sortBy', 'sortedIndex', 'toArray', 'size',
     'first', 'rest', 'last', 'without', 'indexOf', 'lastIndexOf', 'isEmpty'];
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
@@ -738,7 +738,7 @@
   };
 
   // Cached regex for cleaning hashes.
-  var hashStrip = /^#*!?/;
+  var hashStrip = /^#*/;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
@@ -801,16 +801,16 @@
       // opened by a non-pushState browser.
       this.fragment = fragment;
       historyStarted = true;
-      var started = this.loadUrl() || this.loadUrl(window.location.hash);
-      var atRoot  = window.location.pathname == this.options.root;
+      var loc = window.location;
+      var atRoot  = loc.pathname == this.options.root;
       if (this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
-        window.location = this.options.root + '#' + this.fragment;
-      } else if (this._wantsPushState && this._hasPushState && atRoot && window.location.hash) {
-        this.navigate(window.location.hash);
-      } else {
-        return started;
+        window.location.replace(this.options.root + '#' + this.fragment);
+      } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
+        this.fragment = loc.hash.replace(hashStrip, '');
+        window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
       }
+      return this.loadUrl();
     },
 
     // Add a route to be tested when the fragment changes. Routes added later may
@@ -847,18 +847,18 @@
     // URL-encoding the fragment in advance. This does not trigger
     // a `hashchange` event.
     navigate : function(fragment, triggerRoute) {
-      fragment = (fragment || '').replace(hashStrip, '');
-      if (this.fragment == fragment || this.fragment == decodeURIComponent(fragment)) return;
+      var frag = (fragment || '').replace(hashStrip, '');
+      if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
       if (this._hasPushState) {
         var loc = window.location;
-        if (fragment.indexOf(this.options.root) != 0) fragment = this.options.root + fragment;
-        this.fragment = fragment;
-        window.history.pushState({}, document.title, loc.protocol + '//' + loc.host + fragment);
+        if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
+        this.fragment = frag;
+        window.history.pushState({}, document.title, loc.protocol + '//' + loc.host + frag);
       } else {
-        window.location.hash = this.fragment = fragment;
-        if (this.iframe && (fragment != this.getFragment(this.iframe.location.hash))) {
+        window.location.hash = this.fragment = frag;
+        if (this.iframe && (frag != this.getFragment(this.iframe.location.hash))) {
           this.iframe.document.open().close();
-          this.iframe.location.hash = fragment;
+          this.iframe.location.hash = frag;
         }
       }
       if (triggerRoute) this.loadUrl(fragment);

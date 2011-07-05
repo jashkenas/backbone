@@ -101,6 +101,9 @@ $(document).ready(function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3, 'id': 0 };
     a = new Backbone.Model(attrs);
     ok(!a.isNew(), "any defined ID is legal, including zero");
+    ok( new Backbone.Model({          }).isNew(), "is true when there is no id");
+    ok(!new Backbone.Model({ 'id': 2  }).isNew(), "is false for a positive integer");
+    ok(!new Backbone.Model({ 'id': -5 }).isNew(), "is false for a negative integer");
   });
 
   test("Model: get", function() {
@@ -355,6 +358,17 @@ $(document).ready(function() {
     equals(model.get('a'), 100);
     equals(lastError, "Can't change admin status.");
     equals(boundError, undefined);
+  });
+
+  test("Model: defaults always extend attrs (#459)", function() {
+    var Defaulted = Backbone.Model.extend({
+      defaults: {one: 1},
+      initialize : function(attrs, opts) {
+        equals(attrs.one, 1);
+      }
+    });
+    var providedattrs = new Defaulted({});
+    var emptyattrs = new Defaulted();
   });
 
   test("Model: Inherit class properties", function() {
