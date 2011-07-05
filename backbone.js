@@ -143,7 +143,7 @@
     this._changed = false;
     this._previousAttributes = _.clone(this.attributes);
     if (options && options.collection) this.collection = options.collection;
-    this.initialize.apply(this, arguments);
+    this.initialize.apply(this, [attributes].concat(Array.prototype.slice.call(arguments,1)));
   };
 
   // Attach all inheritable methods to the Model prototype.
