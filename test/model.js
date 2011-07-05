@@ -357,6 +357,17 @@ $(document).ready(function() {
     equals(boundError, undefined);
   });
 
+  test("Model: defaults always extend attrs (#459)", function() {
+    var Defaulted = Backbone.Model.extend({
+      defaults: {one: 1},
+      initialize : function(attrs, opts) {
+        equals(attrs.one, 1);
+      }
+    });
+    var providedattrs = new Defaulted({});
+    var emptyattrs = new Defaulted();
+  });
+
   test("Model: Inherit class properties", function() {
     var Parent = Backbone.Model.extend({
       instancePropSame: function() {},
