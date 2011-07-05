@@ -113,13 +113,4 @@ $(document).ready(function() {
     }, 10);
   });
 
-  asyncTest("Router: routes (hashbang)", 2, function() {
-    window.location.hash = '!search/news';
-    setTimeout(function() {
-      equals(router.query, 'news');
-      equals(router.page, undefined);
-      start();
-    }, 10);
-  });
-
 });
