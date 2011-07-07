@@ -802,13 +802,14 @@
       this.fragment = fragment;
       historyStarted = true;
       var loc = window.location;
-      var atRoot  = loc.pathname == this.options.root;
+      var absoluteRoot = loc.protocol + '//' + loc.host + this.options.root;
+      var atRoot = loc.pathname == this.options.root;
       if (this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
-        window.location.replace(this.options.root + '#' + this.fragment);
+        window.location.replace(absoluteRoot + '#' + this.fragment);
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
         this.fragment = loc.hash.replace(hashStrip, '');
-        window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
+        window.history.replaceState({}, document.title, absoluteRoot + this.fragment);
       }
       return this.loadUrl();
     },
