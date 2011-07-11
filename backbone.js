@@ -587,7 +587,7 @@
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
       if(options.move) {
-        model.collection.remove(model);
+        model.collection && model.collection.remove(model);
         model.collection = this;
       }
       var index = options.at != null ? options.at :
