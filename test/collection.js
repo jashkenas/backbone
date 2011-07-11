@@ -161,6 +161,8 @@ $(document).ready(function() {
     equals(e.collection, colE);
     colF.add(e, { move: true });
     equals(e.collection, colF);
+    equals(colE.get(e.id), null);
+    equals(colF.get(e.id), e);
   });
 
   test("Collection: remove", function() {
