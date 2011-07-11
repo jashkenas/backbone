@@ -586,6 +586,7 @@
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
+      if(options.move) model.collection = this;
       var index = options.at != null ? options.at :
                   this.comparator ? this.sortedIndex(model, this.comparator) :
                   this.length;
