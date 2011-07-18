@@ -43,6 +43,14 @@ $(document).ready(function() {
 
   });
 
+  function routeBind(callback) {
+    var handler = function() {
+      callback.apply(undefined, arguments);
+      Backbone.history.unbind('route', handler);
+    };
+    Backbone.history.bind('route', handler);
+  }
+
   Backbone.history = null;
   var router = new Router({testing: 101});
 
@@ -53,64 +61,74 @@ $(document).ready(function() {
     equals(router.testing, 101);
   });
 
-  asyncTest("Router: routes (simple)", 2, function() {
+  asyncTest("Router: routes (simple)", 3, function() {
     window.location.hash = 'search/news';
-    setTimeout(function() {
+    routeBind(function(fragment) {
+      equals(fragment, 'search/news');
       equals(router.query, 'news');
       equals(router.page, undefined);
       start();
-    }, 10);
+    });
   });
 
-  asyncTest("Router: routes (two part)", 2, function() {
+  asyncTest("Router: routes (two part)", 3, function() {
     window.location.hash = 'search/nyc/p10';
-    setTimeout(function() {
+    routeBind(function(fragment) {
+      equals(fragment, 'search/nyc/p10');
       equals(router.query, 'nyc');
       equals(router.page, '10');
       start();
-    }, 10);
+    });
   });
 
-  test("Router: routes via navigate", 2, function() {
+  asyncTest("Router: routes via navigate", 3, function() {
+    routeBind(function(fragment) {
+      equals(fragment, 'search/manhattan/p20');
+      equals(router.query, 'manhattan');
+      equals(router.page, '20');
+      start();
+    });
+
     Backbone.history.navigate('search/manhattan/p20', true);
-    equals(router.query, 'manhattan');
-    equals(router.page, '20');
   });
 
-  asyncTest("Router: routes (splats)", function() {
+  asyncTest("Router: routes (splats)", 2, function() {
     window.location.hash = 'splat/long-list/of/splatted_99args/end';
-    setTimeout(function() {
+    routeBind(function(fragment) {
+      equals(fragment, 'splat/long-list/of/splatted_99args/end');
       equals(router.args, 'long-list/of/splatted_99args');
       start();
-    }, 10);
+    });
   });
 
-  asyncTest("Router: routes (complex)", 3, function() {
+  asyncTest("Router: routes (complex)", 4, function() {
     window.location.hash = 'one/two/three/complex-part/four/five/six/seven';
-    setTimeout(function() {
+    routeBind(function(fragment) {
+      equals(fragment, 'one/two/three/complex-part/four/five/six/seven');
       equals(router.first, 'one/two/three');
       equals(router.part, 'part');
       equals(router.rest, 'four/five/six/seven');
       start();
-    }, 10);
+    });
   });
 
-  asyncTest("Router: routes (query)", 2, function() {
+  asyncTest("Router: routes (query)", 3, function() {
     window.location.hash = 'mandel?a=b&c=d';
-    setTimeout(function() {
+    routeBind(function(fragment) {
+      equals(fragment, 'mandel?a=b&c=d');
       equals(router.entity, 'mandel');
       equals(router.queryArgs, 'a=b&c=d');
       start();
-    }, 10);
+    });
   });
 
   asyncTest("Router: routes (anything)", 1, function() {
     window.location.hash = 'doesnt-match-a-route';
-    setTimeout(function() {
+    routeBind(function() {
       equals(router.anything, 'doesnt-match-a-route');
       start();
       window.location.hash = '';
-    }, 10);
+    });
   });
 
 });
