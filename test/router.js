@@ -81,15 +81,32 @@ $(document).ready(function() {
     });
   });
 
-  asyncTest("Router: routes via navigate", 3, function() {
+  asyncTest("Router: routes via navigate", 4, function() {
+    var originalHistory = window.history.length;
     routeBind(function(fragment) {
       equals(fragment, 'search/manhattan/p20');
       equals(router.query, 'manhattan');
       equals(router.page, '20');
+
+      // Warn: This is only valid up to the history limit of the browser (50 in chrome)
+      equals(window.history.length, originalHistory+1);
       start();
     });
 
     Backbone.history.navigate('search/manhattan/p20', true);
+  });
+
+  asyncTest("Router: routes via navigate replace", 4, function() {
+    var originalHistory = window.history.length;
+    routeBind(function(fragment) {
+      equals(fragment, 'search/manhattan/p30');
+      equals(router.query, 'manhattan');
+      equals(router.page, '30');
+      equals(window.history.length, originalHistory);
+      start();
+    });
+
+    Backbone.history.navigate('search/manhattan/p30', true, true);
   });
 
   asyncTest("Router: routes (splats)", 2, function() {
