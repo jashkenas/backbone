@@ -747,7 +747,7 @@
   var historyStarted = false;
 
   // Set up all inheritable **Backbone.History** properties and methods.
-  _.extend(Backbone.History.prototype, {
+  _.extend(Backbone.History.prototype, Backbone.Events, {
 
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
@@ -845,6 +845,10 @@
           return true;
         }
       });
+      if (matched) {
+        this.trigger('route', fragment);
+      }
+
       return matched;
     },
 
