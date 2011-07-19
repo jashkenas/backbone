@@ -1035,8 +1035,7 @@
     // Default JSON-request options.
     var params = _.extend({
       type:         type,
-      dataType:     'json',
-      processData:  false
+      dataType:     'json'
     }, options);
 
     // Ensure that we have a URL.
@@ -1053,7 +1052,6 @@
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (Backbone.emulateJSON) {
       params.contentType = 'application/x-www-form-urlencoded';
-      params.processData = true;
       params.data        = params.data ? {model : params.data} : {};
     }
 
@@ -1067,6 +1065,11 @@
           xhr.setRequestHeader('X-HTTP-Method-Override', type);
         };
       }
+    }
+
+    // Don't process data on a non-GET request.
+    if (params.type !== 'GET') {
+      params.processData = false;
     }
 
     // Make the request.
