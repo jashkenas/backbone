@@ -120,6 +120,15 @@
         }
       }
       return this;
+    },
+
+    // Bind an event like bind, and remove it after fired.
+    once: function (ev, callback) {
+        var that = this;
+        this.bind(ev, function () {
+             callback.apply(that, arguments);
+             that.unbind(ev, arguments.callee);
+        });
     }
 
   };
