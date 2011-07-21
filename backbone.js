@@ -931,6 +931,12 @@
       return el;
     },
 
+    // Options setter
+    set: function(options) {
+        _.extend(this.options, options);
+       return this;
+    },
+
     // Set callbacks, where `this.callbacks` is a hash of
     //
     // *{"event selector": "callback"}*
