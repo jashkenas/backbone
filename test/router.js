@@ -62,7 +62,6 @@ $(document).ready(function() {
   });
 
   asyncTest("Router: routes (simple)", 4, function() {
-    window.location.hash = 'search/news';
     routeBind(function(fragment, delta) {
       equals(fragment, 'search/news');
       equals(delta, 1);
@@ -70,10 +69,11 @@ $(document).ready(function() {
       equals(router.page, undefined);
       start();
     });
+
+    window.location.hash = 'search/news';
   });
 
   asyncTest("Router: routes (two part)", 4, function() {
-    window.location.hash = 'search/nyc/p10';
     routeBind(function(fragment, delta) {
       equals(fragment, 'search/nyc/p10');
       equals(delta, 1);
@@ -81,6 +81,8 @@ $(document).ready(function() {
       equals(router.page, '10');
       start();
     });
+
+    window.location.hash = 'search/nyc/p10';
   });
 
   asyncTest("Router: routes via navigate", 6, function() {
@@ -118,17 +120,17 @@ $(document).ready(function() {
   });
 
   asyncTest("Router: routes (splats)", 3, function() {
-    window.location.hash = 'splat/long-list/of/splatted_99args/end';
     routeBind(function(fragment, delta) {
       equals(fragment, 'splat/long-list/of/splatted_99args/end');
       equals(delta, 1);
       equals(router.args, 'long-list/of/splatted_99args');
       start();
     });
+
+    window.location.hash = 'splat/long-list/of/splatted_99args/end';
   });
 
   asyncTest("Router: routes (complex)", 5, function() {
-    window.location.hash = 'one/two/three/complex-part/four/five/six/seven';
     routeBind(function(fragment, delta) {
       equals(fragment, 'one/two/three/complex-part/four/five/six/seven');
       equals(delta, 1);
@@ -137,10 +139,11 @@ $(document).ready(function() {
       equals(router.rest, 'four/five/six/seven');
       start();
     });
+
+    window.location.hash = 'one/two/three/complex-part/four/five/six/seven';
   });
 
   asyncTest("Router: routes (query)", 4, function() {
-    window.location.hash = 'mandel?a=b&c=d';
     routeBind(function(fragment, delta) {
       equals(fragment, 'mandel?a=b&c=d');
       equals(delta, 1);
@@ -148,16 +151,19 @@ $(document).ready(function() {
       equals(router.queryArgs, 'a=b&c=d');
       start();
     });
+
+    window.location.hash = 'mandel?a=b&c=d';
   });
 
   asyncTest("Router: routes (anything)", 3, function() {
-    window.location.hash = 'doesnt-match-a-route';
     routeBind(function(fragment, delta) {
       equals(fragment, 'doesnt-match-a-route');
       equals(delta, 1);
       equals(router.anything, 'doesnt-match-a-route');
       start();
     });
+
+    window.location.hash = 'doesnt-match-a-route';
   });
 
   asyncTest("Router: index delta", 15, function() {
