@@ -45,8 +45,8 @@ $(document).ready(function() {
 
   function routeBind(callback) {
     var handler = function() {
-      Backbone.history.unbind('route', handler);
       callback.apply(undefined, arguments);
+      Backbone.history.unbind('route', handler);
     };
     Backbone.history.bind('route', handler);
   }
@@ -190,17 +190,26 @@ $(document).ready(function() {
           equals(router.query, 'manhattan');
           equals(router.page, '20');
 
-          start();
-          window.location.hash = '';
+
+          setTimeout(function() {
+            start();
+            window.location.hash = '';
+          }, 0);
         });
 
-        window.history.back();
+        setTimeout(function() {
+          window.history.back();
+        }, 0);
       });
 
-      Backbone.history.navigate('search/manhattan/p30', true);
+      setTimeout(function() {
+        Backbone.history.navigate('search/manhattan/p30', true);
+      }, 0);
     });
 
-    Backbone.history.navigate('search/manhattan/p20', true);
+    setTimeout(function() {
+      Backbone.history.navigate('search/manhattan/p20', true);
+    }, 0);
   });
 
 });
