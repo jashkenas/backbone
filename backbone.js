@@ -126,9 +126,10 @@
     once: function (ev, callback) {
         var that = this;
         this.bind(ev, function () {
-             callback.apply(that, arguments);
+             callback.apply(this, arguments);
              that.unbind(ev, arguments.callee);
         });
+        return this;
     }
 
   };
