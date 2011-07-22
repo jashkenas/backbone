@@ -874,18 +874,18 @@
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
     loadUrl : function(fragmentOverride) {
+      var history = this;
       var fragment = this.fragment = this.getFragment(fragmentOverride);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
+          var oldIndex = history._directionIndex;
+          history._directionIndex  = history.loadIndex();
+          history.trigger('route', fragment, history._directionIndex-oldIndex);
+
           handler.callback(fragment);
           return true;
         }
       });
-      if (matched) {
-        var oldIndex = this._directionIndex;
-        this._directionIndex  = this.loadIndex();
-        this.trigger('route', fragment, this._directionIndex-oldIndex);
-      }
 
       return matched;
     },
