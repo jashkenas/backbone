@@ -738,7 +738,10 @@
   };
 
   // Cached regex for cleaning hashes.
-  var hashStrip = /^#*/;
+  var hashStrip = /^#*\d*#*/;
+
+  // Cached regex for index extraction from the hash
+  var indexMatch = /^#*(\d+)#/;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
@@ -752,6 +755,13 @@
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
     interval: 50,
+
+    // Get the location of the current route within the backbone history.
+    // This should be considered a hint
+    // Returns -1 if history is unknown or disabled
+    getIndex : function() {
+      return this._directionIndex;
+    },
 
     // Get the cross-browser normalized URL fragment, either from the URL,
     // the hash, or the override.
@@ -810,6 +820,22 @@
         this.fragment = loc.hash.replace(hashStrip, '');
         window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
       }
+
+      // Direction tracking setup
+      this._trackDirection  = !!this.options.trackDirection;
+      if (this._trackDirection) {
+        var loadedIndex = this.loadIndex();
+        this._directionIndex  = loadedIndex || window.history.length;
+
+        // If we are tracking direction ensure that we have a direction field to play with
+        if (!loadedIndex) {
+          if (!this._hasPushState) {
+            loc.replace(loc.pathname + (loc.search || '') + '#' + this._directionIndex + '#' + this.fragment);
+          } else {
+            window.history.replaceState({index: this._directionIndex}, document.title, loc);
+          }
+        }
+      }
       return this.loadUrl();
     },
 
@@ -823,9 +849,20 @@
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl : function(e) {
       var current = this.getFragment();
-      if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location.hash);
+      var fromIframe;
+      if (current == this.fragment && this.iframe) {
+        current = this.getFragment(this.iframe.location.hash);
+        fromIframe = true;
+      }
       if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
-      if (this.iframe) this.navigate(current);
+
+      var loadedIndex = this.loadIndex(fromIframe && this.iframe.location.hash);
+      if (!loadedIndex) {
+        this.navigate(current, false, true, this._directionIndex+1);
+      } else if (this.iframe) {
+        this.navigate(current, false, false, loadedIndex);
+      }
+
       this.loadUrl() || this.loadUrl(window.location.hash);
     },
 
@@ -841,26 +878,47 @@
         }
       });
       if (matched) {
-        this.trigger('route', fragment);
+        var oldIndex = this._directionIndex;
+        this._directionIndex  = this.loadIndex();
+        this.trigger('route', fragment, this._directionIndex-oldIndex);
       }
 
       return matched;
     },
 
+    // Pulls the direction index out of the state or hash
+    loadIndex : function(fragmentOverride) {
+      if (!this._trackDirection) return;
+      if (!fragmentOverride && this._hasPushState) {
+        return (window.history.state && window.history.state.index) || 0;
+      } else {
+        var match = indexMatch.exec(fragmentOverride || window.location.hash);
+        return (match && parseInt(match[1])) || 0;
+      }
+    },
+
     // Save a fragment into the hash history. You are responsible for properly
     // URL-encoding the fragment in advance. This does not trigger
     // a `hashchange` event.
-    navigate : function(fragment, triggerRoute, replace) {
+    navigate : function(fragment, triggerRoute, replace, forceIndex) {
       var frag = (fragment || '').replace(hashStrip, '');
       var loc = window.location;
       if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
+
+      // Figure out the direction index if enabled
+      var newIndex;
+      if (this._trackDirection) {
+        newIndex = forceIndex || (this._directionIndex + (replace ? 0 : 1));
+      }
+
       if (this._hasPushState) {
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
         this.fragment = frag;
 
         var history = window.history;
-        (replace ? history.replaceState : history.pushState).call(history, {}, document.title, loc.protocol + '//' + loc.host + frag);
+        (replace ? history.replaceState : history.pushState).call(history, {index: newIndex}, document.title, loc.protocol + '//' + loc.host + frag);
       } else {
+        if (this._trackDirection) frag = newIndex + '#' + frag;
         this.fragment = frag
         if (replace) {
           loc.replace(loc.pathname + (loc.search || '') + '#' + frag);
