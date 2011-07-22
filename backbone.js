@@ -922,8 +922,8 @@
         var history = window.history;
         (replace ? history.replaceState : history.pushState).call(history, {index: newIndex}, document.title, loc.protocol + '//' + loc.host + frag);
       } else {
+        this.fragment = frag;
         if (this._trackDirection) frag = newIndex + '#' + frag;
-        this.fragment = frag
         if (replace) {
           loc.replace(loc.pathname + (loc.search || '') + '#' + frag);
         } else {
