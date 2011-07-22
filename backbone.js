@@ -738,10 +738,10 @@
   };
 
   // Cached regex for cleaning hashes.
-  var hashStrip = /^#*\d*#*/;
+  var hashStrip = /^(?:#|%23)*\d*(?:#|%23)*/;
 
   // Cached regex for index extraction from the hash
-  var indexMatch = /^#*(\d+)#/;
+  var indexMatch = /^(?:#|%23)*(\d+)(?:#|%23)/;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
