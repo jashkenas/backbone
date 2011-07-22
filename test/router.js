@@ -2,6 +2,12 @@ $(document).ready(function() {
 
   module("Backbone.Router");
 
+  var Context = {
+    handle: function() {
+      this.handled = true;
+    }
+  };
+
   var Router = Backbone.Router.extend({
 
     routes: {
@@ -15,6 +21,7 @@ $(document).ready(function() {
 
     initialize : function(options) {
       this.testing = options.testing;
+      this.route("context", "context", Context.handle, Context)
     },
 
     search : function(query, page) {
@@ -108,6 +115,15 @@ $(document).ready(function() {
     window.location.hash = 'doesnt-match-a-route';
     setTimeout(function() {
       equals(router.anything, 'doesnt-match-a-route');
+      start();
+      window.location.hash = '';
+    }, 10);
+  });
+
+  asyncTest("Router: routes (context)", 1, function() {
+    window.location.hash = 'context';
+    setTimeout(function() {
+      equals(Context.handled, true);
       start();
       window.location.hash = '';
     }, 10);

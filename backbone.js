@@ -684,14 +684,14 @@
     //       ...
     //     });
     //
-    route : function(route, name, callback) {
+    route : function(route, name, callback, context) {
       Backbone.history || (Backbone.history = new Backbone.History);
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-      Backbone.history.route(route, _.bind(function(fragment) {
+      Backbone.history.route(route, function(fragment) {
         var args = this._extractParameters(route, fragment);
-        callback.apply(this, args);
+        callback.apply(context || this, args);
         this.trigger.apply(this, ['route:' + name].concat(args));
-      }, this));
+      }, this);
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
@@ -820,8 +820,8 @@
 
     // Add a route to be tested when the fragment changes. Routes added later may
     // override previous routes.
-    route : function(route, callback) {
-      this.handlers.unshift({route : route, callback : callback});
+    route : function(route, callback, context) {
+      this.handlers.unshift({route : route, callback : callback, context : context});
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -841,7 +841,7 @@
       var fragment = this.fragment = this.getFragment(fragmentOverride);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
-          handler.callback(fragment);
+          handler.callback.call(handler.context || handler, fragment);
           return true;
         }
       });
