@@ -306,6 +306,7 @@
       <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
       <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
       <li>– <a href="#FAQ-this">Binding "this"</a></li>
+      <li>– <a href="#FAQ-routes">Anchor routes with pushState</a></li>
     </ul>
 
     <a class="toc_title" href="#changelog">
@@ -1115,261 +1116,7 @@ alert(JSON.stringify(collection));
       <li><a href="http://documentcloud.github.com/underscore/#detect">find (detect)</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#select">filter (select)</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#reject">reject</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#all">every (all)</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#any">some (any)</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#include">include</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#invoke">invoke</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#max">max</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#min">min</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#sortBy">sortBy</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#sortedIndex">sortedIndex</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#toArray">toArray</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#size">size</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#first">first</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#rest">rest</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#last">last</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#without">without</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#indexOf">indexOf</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#lastIndexOf">lastIndexOf</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#isEmpty">isEmpty</a></li>
-      <li><a href="http://documentcloud.github.com/underscore/#chain">chain</a></li>
-    </ul>
-
-<pre>
-Books.each(function(book) {
-  book.publish();
-});
-
-var titles = Books.map(function(book) {
-  return book.get("title");
-});
-
-var publishedBooks = Books.filter(function(book) {
-  return book.get("published") === true;
-});
-
-var alphabetical = Books.sortBy(function(book) {
-  return book.author.get("name").toLowerCase();
-});
-</pre>
-
-    <p id="Collection-add">
-      <b class="header">add</b><code>collection.add(models, [options])</code>
-      <br />
-      Add a model (or an array of models) to the collection. Fires an <tt>"add"</tt>
-      event, which you can pass <tt>{silent: true}</tt> to suppress. If a
-      <a href="#Collection-model">model</a> property is defined, you may also pass
-      raw attributes objects, and have them be vivified as instances of the model.
-      Pass <tt>{at: index}</tt> to splice the model into the collection at the
-      specified <tt>index</tt>.
-    </p>
-
-<pre class="runnable">
-var ships = new Backbone.Collection;
-
-ships.bind("add", function(ship) {
-  alert("Ahoy " + ship.get("name") + "!");
-});
-
-ships.add([
-  {name: "Flying Dutchman"},
-  {name: "Black Pearl"}
-]);
-</pre>
-
-    <p id="Collection-remove">
-      <b class="header">remove</b><code>collection.remove(models, [options])</code>
-      <br />
-      Remove a model (or an array of models) from the collection. Fires a
-      <tt>"remove"</tt> event, which you can use <tt>silent</tt>
-      to suppress.
-    </p>
-
-    <p id="Collection-get">
-      <b class="header">get</b><code>collection.get(id)</code>
-      <br />
-      Get a model from a collection, specified by <b>id</b>.
-    </p>
-
-<pre>
-var book = Library.get(110);
-</pre>
-
-    <p id="Collection-getByCid">
-      <b class="header">getByCid</b><code>collection.getByCid(cid)</code>
-      <br />
-      Get a model from a collection, specified by client id. The client id
-      is the <tt>.cid</tt> property of the model, automatically assigned whenever
-      a model is created. Useful for models which have not yet been saved to
-      the server, and do not yet have true ids.
-    </p>
-
-    <p id="Collection-at">
-      <b class="header">at</b><code>collection.at(index)</code>
-      <br />
-      Get a model from a collection, specified by index. Useful if your collection
-      is sorted, and if your collection isn't sorted, <b>at</b> will still
-      retrieve models in insertion order.
-    </p>
-
-    <p id="Collection-length">
-      <b class="header">length</b><code>collection.length</code>
-      <br />
-      Like an array, a Collection maintains a <tt>length</tt> property, counting
-      the number of models it contains.
-    </p>
-
-    <p id="Collection-comparator">
-      <b class="header">comparator</b><code>collection.comparator</code>
-      <br />
-      By default there is no <b>comparator</b> function on a collection.
-      If you define a comparator, it will be used to maintain
-      the collection in sorted order. This means that as models are added,
-      they are inserted at the correct index in <tt>collection.models</tt>.
-      Comparator functions take a model and return a numeric or string value
-      by which the model should be ordered relative to others.
-    </p>
-
-    <p>
-      Note how even though all of the chapters in this example are added backwards,
-      they come out in the proper order:
-    </p>
-
-<pre class="runnable">
-var Chapter  = Backbone.Model;
-var chapters = new Backbone.Collection;
-
-chapters.comparator = function(chapter) {
-  return chapter.get("page");
-};
-
-chapters.add(new Chapter({page: 9, title: "The End"}));
-chapters.add(new Chapter({page: 5, title: "The Middle"}));
-chapters.add(new Chapter({page: 1, title: "The Beginning"}));
-
-alert(chapters.pluck('title'));
-</pre>
-
-    <p class="warning">
-      Brief aside: This comparator function is different than JavaScript's regular
-      "sort", which must return <tt>0</tt>, <tt>1</tt>, or <tt>-1</tt>,
-      and is more similar to a <tt>sortBy</tt> &mdash; a much nicer API.
-    </p>
-
-    <p id="Collection-sort">
-      <b class="header">sort</b><code>collection.sort([options])</code>
-      <br />
-      Force a collection to re-sort itself. You don't need to call this under
-      normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a> function
-      will maintain itself in proper sort order at all times. Calling <b>sort</b>
-      triggers the collection's <tt>"reset"</tt> event, unless silenced by passing
-      <tt>{silent: true}</tt>
-    </p>
-
-    <p id="Collection-pluck">
-      <b class="header">pluck</b><code>collection.pluck(attribute)</code>
-      <br />
-      Pluck an attribute from each model in the collection. Equivalent to calling
-      <tt>map</tt>, and returning a single attribute from the iterator.
-    </p>
-
-<pre class="runnable">
-var stooges = new Backbone.Collection([
-  new Backbone.Model({name: "Curly"}),
-  new Backbone.Model({name: "Larry"}),
-  new Backbone.Model({name: "Moe"})
-]);
-
-var names = stooges.pluck("name");
-
-alert(JSON.stringify(names));
-</pre>
-
-    <p id="Collection-url">
-      <b class="header">url</b><code>collection.url or collection.url()</code>
-      <br />
-      Set the <b>url</b> property (or function) on a collection to reference
-      its location on the server. Models within the collection will use <b>url</b>
-      to construct URLs of their own.
-    </p>
-
-<pre>
-var Notes = Backbone.Collection.extend({
-  url: '/notes'
-});
-
-// Or, something more sophisticated:
-
-var Notes = Backbone.Collection.extend({
-  url: function() {
-    return this.document.url() + '/notes';
-  }
-});
-</pre>
-
-    <p id="Collection-parse">
-      <b class="header">parse</b><code>collection.parse(response)</code>
-      <br />
-      <b>parse</b> is called by Backbone whenever a collection's models are
-      returned by the server, in <a href="#Collection-fetch">fetch</a>.
-      The function is passed the raw <tt>response</tt> object, and should return
-      the array of model attributes to be <a href="#Collection-add">added</a>
-      to the collection. The default implementation is a no-op, simply passing
-      through the JSON response. Override this if you need to work with a
-      preexisting API, or better namespace your responses.
-    </p>
-
-<pre>
-var Tweets = Backbone.Collection.extend({
-  // The Twitter Search API returns tweets under "results".
-  parse: function(response) {
-    return response.results;
-  }
-});
-</pre>
-
-    <p id="Collection-fetch">
-      <b class="header">fetch</b><code>collection.fetch([options])</code>
-      <br />
-      Fetch the default set of models for this collection from the server,
-      resetting the collection when they arrive. The <b>options</b> hash takes
-      <tt>success</tt> and <tt>error</tt>
-      callbacks which will be passed <tt>(collection, response)</tt> as arguments.
-      When the model data returns from the server, the collection will
-      <a href="#Collection-reset">reset</a>.
-      Delegates to <a href="#Sync">Backbone.sync</a>
-      under the covers, for custom persistence strategies.
-      The server handler for <b>fetch</b> requests should return a JSON array of
-      models.
-    </p>
-
-<pre class="runnable">
-Backbone.sync = function(method, model) {
-  alert(method + ": " + model.url);
-};
-
-var Accounts = new Backbone.Collection;
-Accounts.url = '/accounts';
-
-Accounts.fetch();
-</pre>
-
-    <p>
-      If you'd like to add the incoming models to the current collection, instead
-      of replacing the collection's contents, pass <tt>{add: true}</tt> as an
-      option to <b>fetch</b>.
-    </p>
-    
-    <p>
-      <b>jQuery.ajax</b> options can also be passed directly as <b>fetch</b> options, 
-      so to fetch a specific page of a paginated collection: 
-      <tt>Documents.fetch({data: {page: 3}})</tt>
-    </p>
-
-    <p>
-      Note that <b>fetch</b> should not be used to populate collections on
-      page load &mdash; all models needed at load time should already be
-      <a href="#FAQ-bootstrap">bootstrapped</a> in to place. <b>fetch</b> is
+      FAQ-bootstrap">bootstrapped</a> in to place. <b>fetch</b> is
       intended for lazily-loading models for interfaces that are not needed
       immediately: for example, documents with collections of notes that may be
       toggled open and closed.
@@ -2495,6 +2242,42 @@ var MessageList = Backbone.View.extend({
 Inbox.messages.add(newMessage);
 </pre>
 
+    <p id="FAQ-routes">
+      <b class="header">Anchor routes with pushState</b>
+      <br />
+      When using the new opt-in 
+      <a href="http://documentcloud.github.com/backbone/#History">pushState</a> 
+      navigation feature, you may find it surprising that your links are making 
+      full page requests, instead of triggering the routes defined. This is 
+      because Backbone provides no magic to handle routes without hashbangs 
+      (which inherently do not cause page reloads).  In order to work around 
+      this, an event handler needs to be bound to all anchors and potentially 
+      all forms as well.  This handler will then ensure the anchor href or form 
+      action is a valid route. If the route is not valid, then the handler should 
+      allow the event to pass through; however, if the route is matched, 
+      <a href="http://documentcloud.github.com/backbone/#Router-navigate">navigate</a> 
+      should be triggered and the event terminated.
+      <br />
+      <br />
+      <strong>A code example using jQuery</strong>
+      <br />
+    </p>
+
+<pre>
+var router = new Router();
+
+Backbone.history.start({ pushState: true });
+
+$(document).delegate('a', 'click', function() {
+  var href = $(this).attr('href');
+  if(href.slice(4) !== 'http') {
+    router.navigate(href, true);
+    return false;
+  }
+});
+</pre>
+      
+
     <h2 id="changelog">Change Log</h2>
     
     <p>
@@ -2636,5 +2419,3 @@ Inbox.messages.add(newMessage);
     });
   </script>
 
-</body>
-</html>
