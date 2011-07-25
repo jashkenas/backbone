@@ -66,5 +66,21 @@ $(document).ready(function() {
     equals(obj.counterA, 1, 'counterA should have only been incremented once.');
     equals(obj.counterB, 1, 'counterB should have only been incremented once.');
   });
+  
+  test("Events: bind a callback with a supplied context", function () {
+    expect(1);
+    
+    var TestClass = function () { return this; }
+    TestClass.prototype.assertTrue = function () {
+      ok(true, '`this` was bound to the callback')
+    };
+    
+    var obj = _.extend({},Backbone.Events);
+    
+    obj.bind('event', function () { this.assertTrue(); }, (new TestClass));
+    
+    obj.trigger('event');
+    
+  });
 
 });

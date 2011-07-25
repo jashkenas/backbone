@@ -68,10 +68,10 @@
 
     // Bind an event, specified by a string name, `ev`, to a `callback` function.
     // Passing `"all"` will bind the callback to all events fired.
-    bind : function(ev, callback) {
+    bind : function(ev, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
       var list  = calls[ev] || (calls[ev] = []);
-      list.push(callback);
+      list.push([callback, context]);
       return this;
     },
 
@@ -89,7 +89,7 @@
           var list = calls[ev];
           if (!list) return this;
           for (var i = 0, l = list.length; i < l; i++) {
-            if (callback === list[i]) {
+            if (list[i] && callback === list[i][0]) {
               list[i] = null;
               break;
             }
@@ -114,7 +114,7 @@
               list.splice(i, 1); i--; l--;
             } else {
               args = both ? Array.prototype.slice.call(arguments, 1) : arguments;
-              callback.apply(this, args);
+              callback[0].apply(callback[1] || this, args);
             }
           }
         }
