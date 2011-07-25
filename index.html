@@ -306,6 +306,7 @@
       <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
       <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
       <li>– <a href="#FAQ-this">Binding "this"</a></li>
+      <li>– <a href="#FAQ-routes">Anchor routes with pushState</a></li>
     </ul>
 
     <a class="toc_title" href="#changelog">
@@ -2493,6 +2494,42 @@ var MessageList = Backbone.View.extend({
 // Later, in the app...
 
 Inbox.messages.add(newMessage);
+</pre>
+
+
+    <p id="FAQ-routes">
+      <b class="header">Anchor routes with pushState</b>
+      <br />
+      When using the new opt-in 
+      <a href="http://documentcloud.github.com/backbone/#History">pushState</a> 
+      navigation feature, you may find it surprising that your links are making 
+      full page requests, instead of triggering the routes defined. This is 
+      because Backbone provides no magic to handle routes without hashbangs 
+      (which inherently do not cause page reloads).  In order to work around 
+      this, an event handler needs to be bound to all anchors and potentially 
+      all forms as well.  This handler will then ensure the anchor href or form 
+      action is a valid route. If the route is not valid, then the handler should 
+      allow the event to pass through; however, if the route is matched, 
+      <a href="http://documentcloud.github.com/backbone/#Router-navigate">navigate</a> 
+      should be triggered and the event terminated.
+      <br />
+      <br />
+      <strong>A code example using jQuery</strong>
+      <br />
+    </p>
+
+<pre>
+var router = new Router();
+
+Backbone.history.start({ pushState: true });
+
+$(document).delegate('a', 'click', function() {
+  var href = $(this).attr('href');
+  if(href.slice(4) !== 'http') {
+    router.navigate(href, true);
+    return false;
+  }
+});
 </pre>
 
     <h2 id="changelog">Change Log</h2>
