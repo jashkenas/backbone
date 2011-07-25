@@ -175,8 +175,10 @@ $(document).ready(function() {
     var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
     equals(model.get('id'), 'eye-dee');
     equals(model.id, 25);
+    equals(model.isNew(), false);
     model.unset('_id');
     equals(model.id, undefined);
+    equals(model.isNew(), true);
   });
 
   test("Model: set an empty string", function() {
