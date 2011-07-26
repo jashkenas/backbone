@@ -1,4 +1,4 @@
-//     Backbone.js 0.5.1
+//     Backbone.js 0.5.2
 //     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -25,7 +25,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.5.1';
+  Backbone.VERSION = '0.5.2';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;

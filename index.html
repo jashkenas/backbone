@@ -149,7 +149,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.5.1)</span>
+      Backbone.js <span class="version">(0.5.2)</span>
     </a>
 
     <a class="toc_title" href="#Introduction">
@@ -359,11 +359,11 @@
 
     <table>
       <tr>
-        <td><a href="backbone.js">Development Version (0.5.1)</a></td>
+        <td><a href="backbone.js">Development Version (0.5.2)</a></td>
         <td><i>41kb, Full Source with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="backbone-min.js">Production Version (0.5.1)</a></td>
+        <td><a href="backbone-min.js">Production Version (0.5.2)</a></td>
         <td><i>4.6kb, Packed and Gzipped</i></td>
       </tr>
     </table>
@@ -443,12 +443,17 @@ object.trigger("alert", "an event");
 </pre>
 
     <p id="Events-bind">
-      <b class="header">bind</b><code>object.bind(event, callback)</code>
+      <b class="header">bind</b><code>object.bind(event, callback, [context])</code>
       <br />
       Bind a <b>callback</b> function to an object. The callback will be invoked
       whenever the <b>event</b> (specified by an arbitrary string identifier) is fired.
       If you have a large number of different events on a page, the convention is to use colons to
       namespace them: <tt>"poll:start"</tt>, or <tt>"change:selection"</tt>
+    </p>
+    
+    <p>
+      To supply a <b>context</b> value for <tt>this</tt> when the callback is invoked,
+      pass the optional third argument: <tt>model.bind('change', this.render, this)</tt>
     </p>
 
     <p>
@@ -1746,10 +1751,6 @@ var DocumentRow = Backbone.View.extend({
     "click .button.delete": "destroy"
   },
 
-  initialize: function() {
-    _.bindAll(this, "render");
-  },
-
   render: function() {
     ...
   }
@@ -2485,24 +2486,23 @@ Inbox.messages.fetch();
       you'll often find it useful to rely on
       <a href="http://documentcloud.github.com/underscore/#bind">_.bind</a> and
       <a href="http://documentcloud.github.com/underscore/#bindAll">_.bindAll</a>
-      from Underscore.js. <tt>_.bind</tt> takes a function and an object to be
-      used as <tt>this</tt>, any time the function is called in the future.
-      <tt>_.bindAll</tt> takes an object and a list of method names: each method
-      in the list will be bound to the object, so that its <tt>this</tt> may
-      not change. For example, in a <a href="#View">View</a> that listens for
-      changes to a collection...
+      from Underscore.js.
+    </p>
+    
+    <p>
+      When binding callbacks to Backbone events, you can choose to pass an optional
+      third argument to specify the <tt>this</tt> that will be used when the
+      callback is later invoked:
     </p>
 
 <pre>
 var MessageList = Backbone.View.extend({
 
   initialize: function() {
-    _.bindAll(this, "addMessage", "removeMessage", "render");
-
     var messages = this.collection;
-    messages.bind("reset", this.render);
-    messages.bind("add", this.addMessage);
-    messages.bind("remove", this.removeMessage);
+    messages.bind("reset", this.render, this);
+    messages.bind("add", this.addMessage, this);
+    messages.bind("remove", this.removeMessage, this);
   }
 
 });
@@ -2513,6 +2513,17 @@ Inbox.messages.add(newMessage);
 </pre>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <p>
+      <b class="header">0.5.2</b> &mdash; <small><i>July 26, 2011</i></small><br />
+      The <tt>bind</tt> function, can now take an optional third argument, to specify
+      the <tt>this</tt> of the callback function.
+      Multiple models with the same <tt>id</tt> are now allowed in a collection.
+      Fixed a bug where calling <tt>.fetch(jQueryOptions)</tt> could cause an
+      incorrect URL to be serialized.
+      Fixed a brief extra route fire before redirect, when degrading from 
+      <tt>pushState</tt>.
+    </p>
     
     <p>
       <b class="header">0.5.1</b> &mdash; <small><i>July 5, 2011</i></small><br />
