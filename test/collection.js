@@ -97,16 +97,9 @@ $(document).ready(function() {
 
   test("Collection: add model to collection twice", function() {
     try {
-      // same id, different cid
-      col.add({id: a.id, label: a.label});
-      ok(false, "duplicate; expected add to fail");
-    } catch (e) {
-      equals(e.message, "Can't add the same model to a set twice,3");
-    }
-    try {
       // no id, same cid
       var a2 = new Backbone.Model({label: a.label});
-      a2.cid = a.cid
+      a2.cid = a.cid;
       col.add(a2);
       ok(false, "duplicate; expected add to fail");
     } catch (e) {

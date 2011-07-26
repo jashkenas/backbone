@@ -102,8 +102,7 @@ $(function(){
     // a one-to-one correspondence between a **Todo** and a **TodoView** in this
     // app, we set a direct reference on the model for convenience.
     initialize: function() {
-      _.bindAll(this, 'render', 'close');
-      this.model.bind('change', this.render);
+      this.model.bind('change', this.render, this);
       this.model.view = this;
     },
 
@@ -120,7 +119,7 @@ $(function(){
       var content = this.model.get('content');
       this.$('.todo-content').text(content);
       this.input = this.$('.todo-input');
-      this.input.bind('blur', this.close);
+      this.input.bind('blur', _.bind(this.close, this));
       this.input.val(content);
     },
 
@@ -182,13 +181,11 @@ $(function(){
     // collection, when items are added or changed. Kick things off by
     // loading any preexisting todos that might be saved in *localStorage*.
     initialize: function() {
-      _.bindAll(this, 'addOne', 'addAll', 'render');
-
       this.input    = this.$("#new-todo");
 
-      Todos.bind('add',     this.addOne);
-      Todos.bind('reset',   this.addAll);
-      Todos.bind('all',     this.render);
+      Todos.bind('add',   this.addOne, this);
+      Todos.bind('reset', this.addAll, this);
+      Todos.bind('all',   this.render, this);
 
       Todos.fetch();
     },
