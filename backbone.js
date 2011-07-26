@@ -190,11 +190,20 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
-    set : function(attrs, options) {
+    set : function(attr, value, options) {
 
       // Extract attributes and options.
+      if (!attr) return this;
+      if (_.isString(attr)) {
+        // Create object with single key/value pair
+        attrs = {};
+        attrs[attr] = value;
+      } else {
+        // Shift arguments
+        attrs = attr;
+        options = value;
+      }
       options || (options = {});
-      if (!attrs) return this;
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes, escaped = this._escapedAttributes;
 
