@@ -71,7 +71,7 @@
     bind : function(ev, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
       var list  = calls[ev] || (calls[ev] = []);
-      list.push([callback, context]);
+      list.push([callback, context||this]);
       return this;
     },
 
@@ -114,7 +114,7 @@
               list.splice(i, 1); i--; l--;
             } else {
               args = both ? Array.prototype.slice.call(arguments, 1) : arguments;
-              callback[0].apply(callback[1] || this, args);
+              callback[0].apply(callback[1], args);
             }
           }
         }
