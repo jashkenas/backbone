@@ -323,8 +323,8 @@
     // Default URL for the model's representation on the server -- if you're
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
-    url : function() {
-      var base = getUrl(this.collection) || this.urlRoot || urlError();
+    url : function(options) {
+      var base = getUrl(this.collection, options) || this.urlRoot || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -1042,7 +1042,7 @@
 
     // Ensure that we have a URL.
     if (!params.url) {
-      params.url = getUrl(model) || urlError();
+      params.url = getUrl(model, options) || urlError();
     }
 
     // Ensure that we have the appropriate request data.
@@ -1125,9 +1125,9 @@
 
   // Helper function to get a URL from a Model or Collection as a property
   // or as a function.
-  var getUrl = function(object) {
+  var getUrl = function(object, options) {
     if (!(object && object.url)) return null;
-    return _.isFunction(object.url) ? object.url() : object.url;
+    return _.isFunction(object.url) ? object.url(options) : object.url;
   };
 
   // Throw an error when a URL is needed, and none is supplied.
