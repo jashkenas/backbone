@@ -71,7 +71,7 @@
     bind : function(ev, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
       var list  = calls[ev] || (calls[ev] = []);
-      list.push([callback, context||this]);
+      list.push([callback, context || this]);
       return this;
     },
 
