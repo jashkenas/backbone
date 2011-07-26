@@ -192,17 +192,22 @@
     // choose to silence it.
     set : function(attr, value, options) {
 
-      // Extract attributes and options.
-      if (!attr) return this;
-      if (_.isString(attr)) {
-        // Create object with single key/value pair
-        attrs = {};
-        attrs[attr] = value;
-      } else {
+      // Determine what `attr` is
+      if (typeof attr === 'object') {
+        // If it is empty, don't process
+        if (!attr) return this;
         // Shift arguments
         attrs = attr;
         options = value;
+      } else {
+        // Undefined or null keys are no good
+        if (attr === undefined || attr === null) return this;
+        // Create object with single key/value pair
+        attrs = {};
+        attrs[attr] = value;
       }
+
+      // Extract attributes and options.
       options || (options = {});
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes, escaped = this._escapedAttributes;

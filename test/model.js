@@ -152,6 +152,8 @@ $(document).ready(function() {
     ok(changeCount == 1, "Change count should NOT have incremented.");
     a.set('bar', 3); // set with value that is not new shouldn't fire change event
     ok(a.get('bar')== 3, "Bar should have changed.");
+    a.set(5, 1); // testing a number of a key
+    ok(a.get(5)== 1, "Number as a key, still should work.");
 
     a.unset('foo');
     ok(a.get('foo')== null, "Foo should have changed");
