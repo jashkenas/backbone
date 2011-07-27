@@ -191,10 +191,11 @@
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attr, value, options) {
-      var attrs = this._resolveAttrs(attr, value)
-      if (!attrs) return this;
-      options = Array.prototype.slice.call(arguments, arguments.length-1)[0] || {}
+      var args = this._resolveArgs(attr, value, options);
+      var attrs = args[0];
+      options = args[1];
 
+      if (!attrs) return this;
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes, escaped = this._escapedAttributes;
 
@@ -292,9 +293,11 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save : function(attr, value, options) {
-      // Allow coercion between null and undefined to occur
-      if (attr != null && !this.set(attr, value, options)) return false;
-      options = Array.prototype.slice.call(arguments, arguments.length-1)[0] || {}
+      var args = this._resolveArgs(attr, value, options);
+      var attrs = args[0];
+      options = args[1];
+
+      if (!attrs && !this.set(attrs, options)) return false;
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -410,7 +413,7 @@
     // Helper function that takes a single attr/value pair and creates
     // an object. The single pair is a convenience implemented in methods
     // such as ``set`` and ``save``
-    _resolveAttrs : function(attr, value) {
+    _resolveArgs : function(attr, value, options) {
       var attrs;
       // Determine what `attr` is. Support for two most practical types
       if (_.isString(attr) || _.isNumber(attr)) {
@@ -419,8 +422,10 @@
         attrs[attr] = value;
       } else {
         attrs = attr;
+        options = value;
       }
-      return attrs;
+      options || (options = {});
+      return [attrs, options];
     }
 
   });
