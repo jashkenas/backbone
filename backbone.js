@@ -194,18 +194,16 @@
 
       var attrs;
       // Determine what `attr` is
-      if (typeof attr === 'object') {
+      if (_.isString(attr) || _.isNumber(attr)) {
+        // Create object with single key/value pair
+        attrs = {};
+        attrs[attr] = value;
+      } else {
         // If it is empty, don't process
         if (!attr) return this;
         // Shift arguments
         attrs = attr;
         options = value;
-      } else {
-        // Undefined or null keys are no good
-        if (attr === undefined || attr === null) return this;
-        // Create object with single key/value pair
-        attrs = {};
-        attrs[attr] = value;
       }
 
       // Extract attributes and options.
