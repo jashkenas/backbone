@@ -191,23 +191,10 @@
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attr, value, options) {
+      var attrs = this._resolveAttrs(attr, value)
+      if (!attrs) return this;
+      options = Array.prototype.slice.call(arguments, arguments.length-1)[0] || {}
 
-      var attrs;
-      // Determine what `attr` is
-      if (_.isString(attr) || _.isNumber(attr)) {
-        // Create object with single key/value pair
-        attrs = {};
-        attrs[attr] = value;
-      } else {
-        // If it is empty, don't process
-        if (!attr) return this;
-        // Shift arguments
-        attrs = attr;
-        options = value;
-      }
-
-      // Extract attributes and options.
-      options || (options = {});
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes, escaped = this._escapedAttributes;
 
@@ -304,9 +291,10 @@
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
-    save : function(attrs, options) {
-      options || (options = {});
-      if (attrs && !this.set(attrs, options)) return false;
+    save : function(attr, value, options) {
+      // Allow coercion between null and undefined to occur
+      if (attr != null && !this.set(attr, value, options)) return false;
+      options = Array.prototype.slice.call(arguments, arguments.length-1)[0] || {}
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -417,6 +405,22 @@
         return false;
       }
       return true;
+    },
+
+    // Helper function that takes a single attr/value pair and creates
+    // an object. The single pair is a convenience implemented in methods
+    // such as ``set`` and ``save``
+    _resolveAttrs : function(attr, value) {
+      var attrs;
+      // Determine what `attr` is. Support for two most practical types
+      if (_.isString(attr) || _.isNumber(attr)) {
+        // Create object with single key/value pair
+        attrs = {};
+        attrs[attr] = value;
+      } else {
+        attrs = attr;
+      }
+      return attrs;
     }
 
   });
