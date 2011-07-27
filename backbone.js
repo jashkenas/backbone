@@ -192,6 +192,7 @@
     // choose to silence it.
     set : function(attr, value, options) {
 
+      var attrs;
       // Determine what `attr` is
       if (typeof attr === 'object') {
         // If it is empty, don't process
