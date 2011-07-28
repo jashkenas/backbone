@@ -917,7 +917,7 @@
     // Remove this view from the DOM. Note that the view isn't present in the
     // DOM by default, so calling this method may be a no-op.
     remove : function() {
-      this.el.remove();
+      $(this.el).remove();
       return this;
     },
 
