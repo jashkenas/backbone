@@ -917,7 +917,7 @@
     // Remove this view from the DOM. Note that the view isn't present in the
     // DOM by default, so calling this method may be a no-op.
     remove : function() {
-      $(this.el).remove();
+      this.el.remove();
       return this;
     },
 
@@ -949,7 +949,7 @@
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents : function(events) {
       if (!(events || (events = this.events))) return;
-      $(this.el).unbind('.delegateEvents' + this.cid);
+      this.el.unbind('.delegateEvents' + this.cid);
       for (var key in events) {
         var method = this[events[key]];
         if (!method) throw new Error('Event "' + events[key] + '" does not exist');
@@ -958,9 +958,9 @@
         method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
-          $(this.el).bind(eventName, method);
+          this.el.bind(eventName, method);
         } else {
-          $(this.el).delegate(selector, eventName, method);
+          this.el.delegate(selector, eventName, method);
         }
       }
     },
@@ -986,7 +986,7 @@
         var attrs = this.attributes || {};
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
-        this.el = this.make(this.tagName, attrs);
+        this.el = $(this.make(this.tagName, attrs));
       } else if (_.isString(this.el)) {
         this.el = $(this.el).first();
       }
