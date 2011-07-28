@@ -949,7 +949,7 @@
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents : function(events) {
       if (!(events || (events = this.events))) return;
-      this.el.unbind('.delegateEvents' + this.cid);
+      var el = $(this.el).unbind('.delegateEvents' + this.cid);
       for (var key in events) {
         var method = this[events[key]];
         if (!method) throw new Error('Event "' + events[key] + '" does not exist');
@@ -958,9 +958,9 @@
         method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
-          this.el.bind(eventName, method);
+          el.bind(eventName, method);
         } else {
-          this.el.delegate(selector, eventName, method);
+          el.delegate(selector, eventName, method);
         }
       }
     },
@@ -987,8 +987,9 @@
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
         this.el = this.make(this.tagName, attrs);
-      } else if (_.isString(this.el)) {
-        this.el = $(this.el).first();
+      } else if (_.isString(this.el) || _.isElement(this.el)) {
+        var el = $(this.el).first();
+        (!el.length) ? this.el = null : this.el = el;
       }
     }
 
