@@ -190,10 +190,10 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
-    set : function(attr, value, options) {
-      var args = this._resolveArgs(attr, value, options);
-      var attrs = args[0];
-      options = args[1];
+    set : function(attrs, value, options) {
+      this._resolveArgs(arguments);
+      attrs = arguments[0];
+      options = arguments[2];
 
       if (!attrs) return this;
       if (attrs.attributes) attrs = attrs.attributes;
@@ -292,10 +292,10 @@
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
-    save : function(attr, value, options) {
-      var args = this._resolveArgs(attr, value, options);
-      var attrs = args[0];
-      options = args[1];
+    save : function(attrs, value, options) {
+      this._resolveArgs(arguments);
+      attrs = arguments[0];
+      options = arguments[2];
 
       if (!attrs && !this.set(attrs, options)) return false;
       var model = this;
@@ -413,19 +413,17 @@
     // Helper function that takes a single attr/value pair and creates
     // an object. The single pair is a convenience implemented in methods
     // such as ``set`` and ``save``
-    _resolveArgs : function(attr, value, options) {
-      var attrs;
+    _resolveArgs : function(args) {
       // Determine what `attr` is. Support for two most practical types
-      if (_.isString(attr) || _.isNumber(attr)) {
+      if (_.isString(args[0]) || _.isNumber(args[0])) {
+        var attr = args[0]
         // Create object with single key/value pair
-        attrs = {};
-        attrs[attr] = value;
+        args[0] = {};
+        args[0][attr] = args[1];
       } else {
-        attrs = attr;
-        options = value;
+        args[2] = args[1];
       }
-      options || (options = {});
-      return [attrs, options];
+      args[2]|| (args[2] = {});
     }
 
   });
