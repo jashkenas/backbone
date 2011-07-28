@@ -976,7 +976,7 @@
     //        '.button': 'button'
     //    }
     setLocalElements: function(elements) {
-      if (!(elements|| (elements = this.elements))) return;
+      if (!(elements || (elements = this.elements))) return;
       for (var key in elements) {
         this[elements[key]] = this.$(key);
       }
