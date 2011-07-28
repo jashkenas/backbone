@@ -190,10 +190,11 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
-    set : function(attrs, options) {
+    set : function(attrs, value, options) {
+      this._resolveArgs(arguments);
+      attrs = arguments[0];
+      options = arguments[2];
 
-      // Extract attributes and options.
-      options || (options = {});
       if (!attrs) return this;
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes, escaped = this._escapedAttributes;
@@ -291,9 +292,12 @@
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
-    save : function(attrs, options) {
-      options || (options = {});
-      if (attrs && !this.set(attrs, options)) return false;
+    save : function(attrs, value, options) {
+      this._resolveArgs(arguments);
+      attrs = arguments[0];
+      options = arguments[2];
+
+      if (!attrs && !this.set(attrs, options)) return false;
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -404,6 +408,22 @@
         return false;
       }
       return true;
+    },
+
+    // Helper function that takes a single attr/value pair and creates
+    // an object. The single pair is a convenience implemented in methods
+    // such as ``set`` and ``save``
+    _resolveArgs : function(args) {
+      // Determine what `attr` is. Support for two most practical types
+      if (_.isString(args[0]) || _.isNumber(args[0])) {
+        var attr = args[0]
+        // Create object with single key/value pair
+        args[0] = {};
+        args[0][attr] = args[1];
+      } else {
+        args[2] = args[1];
+      }
+      args[2]|| (args[2] = {});
     }
 
   });
@@ -927,9 +947,9 @@
     //     var el = this.make('li', {'class': 'row'}, this.model.escape('title'));
     //
     make : function(tagName, attributes, content) {
-      var el = $(document.createElement(tagName));
-      if (attributes) el.attr(attributes);
-      if (content) el.html(content);
+      var el = document.createElement(tagName);
+      if (attributes) $(el).attr(attributes);
+      if (content) $(el).html(content);
       return el;
     },
 
@@ -987,9 +1007,8 @@
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
         this.el = this.make(this.tagName, attrs);
-      } else if (_.isString(this.el) || _.isElement(this.el)) {
-        var el = $(this.el).first();
-        (!el.length) ? this.el = null : this.el = el;
+      } else if (_.isString(this.el)) {
+        this.el = $(this.el).get(0);
       }
     }
 
@@ -1071,7 +1090,7 @@
     }
 
     // Don't process data on a non-GET request.
-    if (params.type !== 'GET') {
+    if (params.type !== 'GET' && ! Backbone.emulateJSON) {
       params.processData = false;
     }
 
