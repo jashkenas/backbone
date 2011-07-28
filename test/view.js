@@ -8,8 +8,8 @@ $(document).ready(function() {
   });
 
   test("View: constructor", function() {
-    equals(view.el.id, 'test-view');
-    equals(view.el.className, 'test-view');
+    equals(view.el.get(0).id, 'test-view');
+    equals(view.el.get(0).className, 'test-view');
     equals(view.options.id, 'test-view');
     equals(view.options.className, 'test-view');
   });
@@ -22,9 +22,9 @@ $(document).ready(function() {
 
   test("View: make", function() {
     var div = view.make('div', {id: 'test-div'}, "one two three");
-    equals(div.tagName.toLowerCase(), 'div');
-    equals(div.id, 'test-div');
-    equals($(div).text(), 'one two three');
+    equals(div.get(0).tagName.toLowerCase(), 'div');
+    equals(div.get(0).id, 'test-div');
+    equals(div.text(), 'one two three');
   });
 
   test("View: initialize", function() {
@@ -61,7 +61,7 @@ $(document).ready(function() {
       el: document.body
     });
     var view = new ViewClass;
-    equals(view.el, document.body);
+    equals(view.el.get(0), document.body);
   });
 
   test("View: _ensureElement with string el", function() {
@@ -69,13 +69,13 @@ $(document).ready(function() {
       el: "body"
     });
     var view = new ViewClass;
-    equals(view.el, document.body);
+    equals(view.el.get(0), document.body);
 
     ViewClass = Backbone.View.extend({
       el: "body > h2"
     });
     view = new ViewClass;
-    equals(view.el, $("#qunit-banner").get(0));
+    equals(view.el.get(0), $("#qunit-banner").get(0));
 
     ViewClass = Backbone.View.extend({
       el: "#nonexistent"
@@ -86,8 +86,8 @@ $(document).ready(function() {
 
   test("View: with attributes", function() {
     var view = new Backbone.View({attributes : {'class': 'one', id: 'two'}});
-    equals(view.el.className, 'one');
-    equals(view.el.id, 'two');
+    equals(view.el.get(0).className, 'one');
+    equals(view.el.get(0).id, 'two');
   });
 
   test("View: multiple views per element", function() {
