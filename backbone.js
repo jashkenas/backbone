@@ -988,7 +988,7 @@
         if (this.className) attrs['class'] = this.className;
         this.el = this.make(this.tagName, attrs);
       } else if (_.isString(this.el)) {
-        this.el = $(this.el).get(0);
+        this.el = $(this.el).first();
       }
     }
 
