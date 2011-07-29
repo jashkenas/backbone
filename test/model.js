@@ -101,9 +101,12 @@ $(document).ready(function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3, 'id': 0 };
     a = new Backbone.Model(attrs);
     ok(!a.isNew(), "any defined ID is legal, including zero");
-    ok( new Backbone.Model({          }).isNew(), "is true when there is no id");
-    ok(!new Backbone.Model({ 'id': 2  }).isNew(), "is false for a positive integer");
-    ok(!new Backbone.Model({ 'id': -5 }).isNew(), "is false for a negative integer");
+    ok( new Backbone.Model({                 }).isNew(), "is true when there is no id");
+    ok( new Backbone.Model({ 'id': undefined }).isNew(), "is true when the id is undefined");
+    ok( new Backbone.Model({ 'id': null      }).isNew(), "is true when the id is null");
+    ok( new Backbone.Model({ 'id': ""        }).isNew(), "is true when the id is an empty string");
+    ok(!new Backbone.Model({ 'id': 2         }).isNew(), "is false for a positive integer");
+    ok(!new Backbone.Model({ 'id': -5        }).isNew(), "is false for a negative integer");
   });
 
   test("Model: get", function() {
