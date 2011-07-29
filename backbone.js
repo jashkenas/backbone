@@ -41,7 +41,7 @@
     return this;
   };
 
-  // Turn on `emulateHTTP` to use support legacy HTTP servers. Setting this option will
+  // Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option will
   // fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and set a
   // `X-Http-Method-Override` header.
   Backbone.emulateHTTP = false;
