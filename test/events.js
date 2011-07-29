@@ -15,6 +15,15 @@ $(document).ready(function() {
     equals(obj.counter, 5, 'counter should be incremented five times.');
   });
 
+  test("Events: bind with context and trigger", function() {
+    var obj = { counter: 0 }, context = { counter: 0 };
+    _.extend(obj,Backbone.Events);
+    obj.bind('event', function() { this.counter += 1; }, context);
+    obj.trigger('event');
+    equals(context.counter,1,'context counter should be incremented.');
+    equals(obj.counter,0,'counter should not be incremented.');
+  });
+
   test("Events: bind, then unbind all functions", function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
@@ -37,6 +46,19 @@ $(document).ready(function() {
     obj.trigger('event');
     equals(obj.counterA, 1, 'counterA should have only been incremented once.');
     equals(obj.counterB, 2, 'counterB should have been incremented twice.');
+  });
+
+  test("Events: bind a callback in two contexts, unbind one by context", function() {
+    var a = { counter: 0 }, b = { counter: 0 };
+    _.extend(a,Backbone.Events);
+    var callback = function() { this.counter += 1 };
+    a.bind('event', callback, a);
+    a.bind('event', callback, b);
+    a.trigger('event');
+    a.unbind('event', callback, b);
+    a.trigger('event');
+    equals(a.counter, 2, 'counter A should have been incremented twice.');
+    equals(b.counter, 1, 'counter B should have only been incremented once.');
   });
 
   test("Events: unbind a callback in the midst of it firing", function() {
