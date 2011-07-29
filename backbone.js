@@ -192,9 +192,6 @@
     // choose to silence it.
     set : function(attrs, value, options) {
       this._resolveArgs(arguments);
-      attrs = arguments[0];
-      options = arguments[2];
-
       if (!attrs) return this;
       if (attrs.attributes) attrs = attrs.attributes;
       var now = this.attributes, escaped = this._escapedAttributes;
@@ -294,9 +291,6 @@
     // state will be `set` again.
     save : function(attrs, value, options) {
       this._resolveArgs(arguments);
-      attrs = arguments[0];
-      options = arguments[2];
-
       if (!attrs && !this.set(attrs, options)) return false;
       var model = this;
       var success = options.success;
@@ -423,7 +417,7 @@
       } else {
         args[2] = args[1];
       }
-      args[2]|| (args[2] = {});
+      args[2] || (args[2] = {});
     }
 
   });
