@@ -306,6 +306,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#FAQ-events">Catalog of Events</a></li>
+      <li>– <a href="#FAQ-tim-toady">More Than One Way To Do It</a></li>
       <li>– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
       <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
       <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
@@ -2433,6 +2434,60 @@ var model = localBackbone.Model.extend(...);
       <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
     </ul>
+    
+    <p id="FAQ-tim-toady">
+      <b class="header">There's More Than One Way To Do It</b>
+      <br />
+      It's common for folks just getting started to treat the examples listed 
+      on this page as some sort of gospel truth. In fact, Backbone.js is intended 
+      to be fairly agnostic about many common patterns in client-side code.
+      For example...
+    </p>
+    
+    <p>
+      <b>References between Models and Views</b> can be handled several ways. 
+      Some people like to have direct pointers, where views correspond 1:1 with
+      models (`model.view` and `view.model`). Others prefer to have intermediate 
+      "controller" objects that orchestrate the creation and organization of 
+      views into a hierarchy. Others still prefer the evented approach, and always
+      fire events instead of calling methods directly. All of these style work well.
+    </p>
+    
+    <p>
+      <b>Batch operations</b> on Models are common, but often best handled differently
+      depending on your server-side setup. Some folks don't mind making individual
+      Ajax requests. Others create explicit resources for RESTful batch operations: 
+      `/notes/batch/destroy?ids=1,2,3,4`. Others tunnel REST over JSON, with the 
+      creation of "changeset" requests:
+    </p>
+    
+<pre>
+  {
+    "create":  [array of models to create]
+    "update":  [array of models to update]
+    "destroy": [array of model ids to destroy]
+  }
+</pre>
+
+    <p>
+      <b>Feel free to define your own events.</b> <a href="#Events">Backbone.Events</a>
+      is designed so that you can mix it in to any JavaScript object or prototype.
+      Since you can use any string as an event, it's often very useful to bind
+      and trigger your own custom events: <tt>model.bind("selected:true")</tt> or
+      <tt>model.bind("editing")</tt>
+    </p>
+    
+    <p>
+      <b>Render the UI</b> as you see fit. Backbone is agnostic as to whether you
+      use <a href="http://documentcloud.github.com/underscore/#template">Underscore templates</a>,
+      <a href="https://github.com/janl/mustache.js">Mustache.js</a>, direct DOM
+      manipulation, server-side rendered snippets of HTML, or 
+      <a href="http://jqueryui.com/">jQuery UI</a> in your <tt>render</tt> function. 
+      Sometimes you'll create a view for each model ... sometimes you'll have a 
+      view that renders thousands of models at once, in a tight loop. Both can be 
+      appropriate in the same app, depending on the quantity of data involved,
+      and the complexity of the UI.
+    </p>
 
     <p id="FAQ-nested">
       <b class="header">Nested Models &amp; Collections</b>
