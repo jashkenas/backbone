@@ -2447,7 +2447,7 @@ var model = localBackbone.Model.extend(...);
     <p>
       <b>References between Models and Views</b> can be handled several ways. 
       Some people like to have direct pointers, where views correspond 1:1 with
-      models (`model.view` and `view.model`). Others prefer to have intermediate 
+      models (<tt>model.view</tt> and <tt>view.model</tt>). Others prefer to have intermediate 
       "controller" objects that orchestrate the creation and organization of 
       views into a hierarchy. Others still prefer the evented approach, and always
       fire events instead of calling methods directly. All of these style work well.
@@ -2457,7 +2457,7 @@ var model = localBackbone.Model.extend(...);
       <b>Batch operations</b> on Models are common, but often best handled differently
       depending on your server-side setup. Some folks don't mind making individual
       Ajax requests. Others create explicit resources for RESTful batch operations: 
-      `/notes/batch/destroy?ids=1,2,3,4`. Others tunnel REST over JSON, with the 
+      <tt>/notes/batch/destroy?ids=1,2,3,4</tt>. Others tunnel REST over JSON, with the 
       creation of "changeset" requests:
     </p>
     
