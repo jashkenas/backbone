@@ -696,6 +696,23 @@
       Backbone.history.navigate(fragment, triggerRoute);
     },
 
+    triggerForCurrentUrl: function() {
+      var url              = window.location.pathname,
+          search           = window.location.search;
+
+      if(search) url += search;
+
+      for(var route in this.routes){
+        var regex = this._routeToRegExp(route);
+        if(regex.test(url)){
+          handler = this.routes[route];
+          args = this._extractParameters(regex, url);
+          this[handler].apply(this, args);
+          break;
+        }
+      }
+    },
+
     // Bind all defined routes to `Backbone.history`. We have to reverse the
     // order of the routes here to support behavior where the most general
     // routes can be defined at the bottom of the route map.
