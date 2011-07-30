@@ -696,23 +696,43 @@
       Backbone.history.navigate(fragment, triggerRoute);
     },
 
-    triggerForCurrentUrl: function() {
+    triggerForCurrentUrl : function() {
       var url              = window.location.pathname,
           search           = window.location.search;
 
       if(search) url += search;
 
-      for(var route in this.routes){
-        var regex = this._routeToRegExp(route);
-        if(regex.test(url)){
-          handler = this.routes[route];
-          args = this._extractParameters(regex, url);
-          this[handler].apply(this, args);
-          break;
-        }
-      }
+      this.triggerForUrl(url);
+
     },
 
+    triggerForUrl : function(url){
+      var route = this.routeForUrl(url);
+      this.executeRoute(route);
+    },
+
+    executeRoute : function(route){
+      handler = this.routes[route.name];
+      this[handler].apply(this, route.args);
+    },
+
+    routeForUrl : function(url){
+
+      var routeNames = _.keys(this.routes),
+          route      = {};
+
+      _.detect(routeNames, function(routeName){
+        regex = this._routeToRegExp(routeName);
+        if(regex.test(url)){
+          route.name = routeName;
+          route.regExp = regex;
+          route.args = this._extractParameters(regex, url);
+          return true;
+        }
+      }, this);
+
+      return route;
+    },
     // Bind all defined routes to `Backbone.history`. We have to reverse the
     // order of the routes here to support behavior where the most general
     // routes can be defined at the bottom of the route map.
@@ -739,6 +759,7 @@
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters : function(route, fragment) {
+    console.log(route, fragment);
       return route.exec(fragment).slice(1);
     }
 
