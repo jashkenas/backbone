@@ -68,7 +68,7 @@
 
     // Bind an event, specified by a string name, `ev`, to a `callback` function.
     // Passing `"all"` will bind the callback to all events fired.
-    bind : function(ev, callback, context) {
+    bind : function(ev, callback, context, catchup) {
       var calls = this._callbacks || (this._callbacks = {});
       var list  = calls[ev] || (calls[ev] = []);
 
@@ -76,7 +76,14 @@
       // trigger execution of our callback on the initial bind.
       var history = this._event_history || (this._event_history = {});
       if(history[ev]) {
-        callback.apply(context || this);
+        if(catchup) {
+          for(var i=0; i<history[ev]; i++) {
+            callback.apply(context || this);
+          }
+        }
+        else {
+          callback.apply(context || this);
+        }
       }
       list.push([callback, context]);
       return this;
@@ -116,7 +123,8 @@
       // Track the history of this event being triggered so that events that
       // late bind the event, will be triggered on initial bind.
       var history = this._event_history || (this._event_history = {});
-      history[eventName] = true;
+      // Increment the event trigger history
+      history[eventName] = history[eventName] ? history[eventName] + 1 : 1;
 
       if (!(calls = this._callbacks)) return this;
       while (both--) {

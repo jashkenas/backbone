@@ -18,20 +18,25 @@ $(document).ready(function() {
   test("Events: late binding and trigger", function() {
     var obj = { counter: 0 };
     var obj2 = { counter: 0 };
+    var obj3 = { counter: 0 };
     _.extend(obj,Backbone.Events);
     obj.bind('event', function() { obj.counter += 1; });
     obj.trigger('event');
     obj.trigger('event');
-    equals(obj.counter,2,'counter should be incremented.');
+    obj.trigger('event');
+    equals(obj.counter,3,'counter should be incremented.');
     equals(obj2.counter,0,'counter should be zero.');
+    equals(obj3.counter,0,'counter should be zero.');
     obj.bind('event', function() { obj2.counter += 1; });
-    equals(obj.counter,2,'counter should be incremented.');
+    obj.bind('event', function() { obj3.counter += 1; }, obj, true);
+    equals(obj.counter,3,'counter should be incremented.');
     equals(obj2.counter,1,'counter should be incremented after late binding.');
+    equals(obj3.counter,3,'counter should be incremented after late binding.');
     obj.trigger('event');
     obj.trigger('event');
-    equals(obj.counter, 4, 'counter should be incremented four times.');
+    equals(obj.counter, 5, 'counter should be incremented five times.');
     equals(obj2.counter, 3, 'late bound counter counter should be incremented three times.');
-
+    equals(obj3.counter, 5, 'late bound counter counter should be incremented five times.');
   });
 
   test("Events: bind, then unbind all functions", function() {
