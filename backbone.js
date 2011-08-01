@@ -691,6 +691,8 @@
       var oldIE = ($.browser.msie && (!docMode || docMode <= 7));
       if (oldIE) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
+        this.iframe.document.open().close();
+        this.iframe.location.hash = this.getFragment();
       }
       if ('onhashchange' in window && !oldIE) {
         $(window).bind('hashchange', this.checkUrl);
