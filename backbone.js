@@ -71,6 +71,13 @@
     bind : function(ev, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
       var list  = calls[ev] || (calls[ev] = []);
+
+      // If we are late binding an event that has already been triggered,
+      // trigger execution of our callback on the initial bind.
+      var history = this._event_history || (this._event_history = {});
+      if(history[ev]) {
+        callback.apply(context || this);
+      }
       list.push([callback, context]);
       return this;
     },
@@ -105,6 +112,12 @@
     trigger : function(eventName) {
       var list, calls, ev, callback, args;
       var both = 2;
+
+      // Track the history of this event being triggered so that events that
+      // late bind the event, will be triggered on initial bind.
+      var history = this._event_history || (this._event_history = {});
+      history[eventName] = true;
+
       if (!(calls = this._callbacks)) return this;
       while (both--) {
         ev = both ? eventName : 'all';

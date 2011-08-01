@@ -15,6 +15,25 @@ $(document).ready(function() {
     equals(obj.counter, 5, 'counter should be incremented five times.');
   });
 
+  test("Events: late binding and trigger", function() {
+    var obj = { counter: 0 };
+    var obj2 = { counter: 0 };
+    _.extend(obj,Backbone.Events);
+    obj.bind('event', function() { obj.counter += 1; });
+    obj.trigger('event');
+    obj.trigger('event');
+    equals(obj.counter,2,'counter should be incremented.');
+    equals(obj2.counter,0,'counter should be zero.');
+    obj.bind('event', function() { obj2.counter += 1; });
+    equals(obj.counter,2,'counter should be incremented.');
+    equals(obj2.counter,1,'counter should be incremented after late binding.');
+    obj.trigger('event');
+    obj.trigger('event');
+    equals(obj.counter, 4, 'counter should be incremented four times.');
+    equals(obj2.counter, 3, 'late bound counter counter should be incremented three times.');
+
+  });
+
   test("Events: bind, then unbind all functions", function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
