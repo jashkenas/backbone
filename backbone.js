@@ -983,7 +983,7 @@
         }
       } while( currentConstructor = ( currentProto = currentConstructor.__super__ ) && currentProto.constructor ); 
       
-      return _.extend.apply( _, eventsObjects );  // merge all of the 'events' objects (hashes) together, and return that merged hash
+      return _.extend.apply( _, [ {} ].concat( eventsObjects ) );  // merge all of the 'events' objects (hashes) together into a new object, and return that merged hash
     },
     
 
