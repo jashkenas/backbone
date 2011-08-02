@@ -262,6 +262,10 @@ $(document).ready(function() {
     equals(lastRequest[0], 'read');
     equals(lastRequest[1], col);
 
+    lastRequest[2].success(undefined, "notmodified", {status:304});
+    equals(col.length, 4);
+    lastRequest[2].success(undefined, "success", {status:200});
+    equals(col.length, 0);
   });
 
   test("Collection: create", function() {
