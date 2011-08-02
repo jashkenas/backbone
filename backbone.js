@@ -10,7 +10,7 @@
   // -------------
 
   // Save a reference to the global object.
-  var root = this;
+  var root = window || this;
 
   // Save the previous value of the `Backbone` variable.
   var previousBackbone = root.Backbone;
