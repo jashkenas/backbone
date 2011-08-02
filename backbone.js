@@ -68,21 +68,26 @@
 
     // Bind an event, specified by a string name, `ev`, to a `callback` function.
     // Passing `"all"` will bind the callback to all events fired.
-    bind : function(ev, callback, context, catchup) {
+    bind : function(ev, callback, context, late_binding) {
       var calls = this._callbacks || (this._callbacks = {});
       var list  = calls[ev] || (calls[ev] = []);
 
       // If we are late binding an event that has already been triggered,
       // trigger execution of our callback on the initial bind.
       var history = this._event_history || (this._event_history = {});
-      if(history[ev]) {
-        if(catchup) {
-          for(var i=0; i<history[ev]; i++) {
+      if(typeof late_binding !== 'undefined' && late_binding !== null) {
+        if(history[ev]) {
+          if(late_binding === 'full') {
+            for(var i=0; i<history[ev]; i++) {
+              callback.apply(context || this);
+            }
+          }
+          else if(late_binding === 'once') {
             callback.apply(context || this);
           }
-        }
-        else {
-          callback.apply(context || this);
+          else {
+            throw new Error('Invalid late_binding option. Must be one of [null, "once", "full"]');
+          }
         }
       }
       list.push([callback, context]);

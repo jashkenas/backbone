@@ -17,6 +17,7 @@ $(document).ready(function() {
 
   test("Events: late binding and trigger", function() {
     var obj = { counter: 0 };
+    var obj1 = { counter: 0 };
     var obj2 = { counter: 0 };
     var obj3 = { counter: 0 };
     _.extend(obj,Backbone.Events);
@@ -25,16 +26,20 @@ $(document).ready(function() {
     obj.trigger('event');
     obj.trigger('event');
     equals(obj.counter,3,'counter should be incremented.');
+    equals(obj1.counter,0,'counter should be zero.');
     equals(obj2.counter,0,'counter should be zero.');
     equals(obj3.counter,0,'counter should be zero.');
-    obj.bind('event', function() { obj2.counter += 1; });
-    obj.bind('event', function() { obj3.counter += 1; }, obj, true);
+    obj.bind('event', function() { obj1.counter += 1; }, obj);
+    obj.bind('event', function() { obj2.counter += 1; }, obj, 'once');
+    obj.bind('event', function() { obj3.counter += 1; }, obj, 'full');
     equals(obj.counter,3,'counter should be incremented.');
-    equals(obj2.counter,1,'counter should be incremented after late binding.');
-    equals(obj3.counter,3,'counter should be incremented after late binding.');
+    equals(obj1.counter,0,'counter should not be incremented after late binding with no flag set.');
+    equals(obj2.counter,1,'counter should be incremented after late binding with once flag set.');
+    equals(obj3.counter,3,'counter should be incremented after late binding with full flag set.');
     obj.trigger('event');
     obj.trigger('event');
     equals(obj.counter, 5, 'counter should be incremented five times.');
+    equals(obj1.counter, 2, 'late bound counter counter should be incremented two times.');
     equals(obj2.counter, 3, 'late bound counter counter should be incremented three times.');
     equals(obj3.counter, 5, 'late bound counter counter should be incremented five times.');
   });
