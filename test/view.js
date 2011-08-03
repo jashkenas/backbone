@@ -133,5 +133,116 @@ $(document).ready(function() {
     $('body').trigger('fake$event');
     equals(count, 2);
   });
-
+  
+  
+  // -----------------------------
+  
+  
+  test( "View: events inheritance (testing collectEvents())", function() {
+    var ViewClass = Backbone.View.extend({
+      el: $('body'),
+      events : {
+        "click a.class1" : "myMethod1"
+      },
+      myMethod1 : function() {}
+    } );
+    
+    // Testing that the regular direct inheritance from Backbone.View still has the correct events
+    var instanceEvents = (new ViewClass()).collectEvents();
+    deepEqual( instanceEvents, {
+      "click a.class1" : "myMethod1"
+    } );
+    
+    
+    var ViewSubClass = ViewClass.extend( {
+      events : {
+        "click a.class2" : "myMethod2"
+      },
+      myMethod2 : function() {}
+    } );
+    
+    // Testing that single inheritance of a Backbone.View subclass merges the events
+    var instanceEvents = (new ViewSubClass()).collectEvents();
+    deepEqual( instanceEvents, {
+      "click a.class1" : "myMethod1",
+      "click a.class2" : "myMethod2"
+    } );
+    
+    
+    // Testing that deeper inheritance of a Backbone.View subclass merges all of the events
+    var ViewSubSubClass = ViewSubClass.extend( {
+      events : {
+        "click a.class3" : "myMethod3"
+      },
+      myMethod3 : function() {}
+    } );
+    
+    var instanceEvents = (new ViewSubSubClass()).collectEvents();
+    deepEqual( instanceEvents, {
+      "click a.class1" : "myMethod1",
+      "click a.class2" : "myMethod2",
+      "click a.class3" : "myMethod3"
+    } );
+  } );
+  
+  
+  test( "View: events inheritance with View that doesn't have events (testing collectEvents())", function() {
+    var ViewClass = Backbone.View.extend( {
+      el: $('body'),
+      events : {
+        "click a.class1" : "myMethod1"
+      },
+      myMethod1 : function() {}
+    } );
+    
+    var ViewSubClass = ViewClass.extend( {
+      // note: no events defined by this subclass
+    } );
+    
+    // Testing that a Backbone.View subclass that doesn't define events still has the events of its superclass
+    var instanceEvents = (new ViewSubClass()).collectEvents();
+    deepEqual( instanceEvents, {
+      "click a.class1" : "myMethod1"
+    } );
+    
+    
+    var ViewSubSubClass = ViewSubClass.extend( {
+      events : {
+        "click a.class3" : "myMethod3"
+      },
+      myMethod3 : function() {}
+    } );
+    
+    // Testing that a Backbone.View subclass in the middle of a hierarchy that doesn't define 'events' doesn't effect the merge of 'events'
+    var instanceEvents = (new ViewSubSubClass()).collectEvents();
+    deepEqual( instanceEvents, {
+      "click a.class1" : "myMethod1",
+      // note: no events defined by ViewSubClass
+      "click a.class3" : "myMethod3"
+    } );
+  } );
+  
+  
+  test( "View: events inheritance, subclass's events should take priority over base class's events (testing collectEvents())", function() {
+    var ViewClass = Backbone.View.extend( {
+      el: $('body'),
+      events : {
+        "click a.class" : "myMethod1"
+      },
+      myMethod1 : function() {}
+    } );
+    
+    var ViewSubClass = ViewClass.extend( {
+      events : {
+        "click a.class" : "myMethod2"  // same event name / selector as defined by superclass
+      },
+      myMethod2 : function() {}
+    } );
+    
+    var instanceEvents = (new ViewSubClass()).collectEvents();
+    deepEqual( instanceEvents, {
+      "click a.class" : "myMethod2"
+    } );
+  } );
+  
 });

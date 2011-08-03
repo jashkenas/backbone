@@ -948,7 +948,7 @@
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents : function(events) {
-      if (!(events || (events = this.events))) return;
+      if (!(events || (events = this.collectEvents()))) return;
       $(this.el).unbind('.delegateEvents' + this.cid);
       for (var key in events) {
         var method = this[events[key]];
@@ -964,6 +964,28 @@
         }
       }
     },
+    
+    
+    // Walks up the prototype chain of the current object (Backbone.View subclass), collecting the 'events' object defined at 
+    // each level, and merging them into a single object for use with delegateEvents(). This is to allow inheritance from a 
+    // Backbone.View subclass, and to collect all of the events from all superclasses to be created in delegateEvents().
+    // Note that because of the current limitation of using a single hash (object) in delegateEvents(), which won't allow more
+    // than one handler for a given eventname/selector key, events with the same eventname/selector key will have higher 
+    // precedence in subclasses than their superclasses (overwriting their definition in their superclasses).
+    collectEvents : function() {
+      var eventsObjects = [],
+          currentConstructor = this.constructor,
+          currentProto = currentConstructor.prototype;
+      
+      do {
+        if( currentProto.hasOwnProperty( 'events' ) ) {  // skip over any prototype that doesn't define 'events' itself
+          eventsObjects.unshift( currentProto.events );  // prepending so that when we run _.extend() to do the merge, subclasses take precedence
+        }
+      } while( currentConstructor = ( currentProto = currentConstructor.__super__ ) && currentProto.constructor ); 
+      
+      return _.extend.apply( _, [ {} ].concat( eventsObjects ) );  // merge all of the 'events' objects (hashes) together into a new object, and return that merged hash
+    },
+    
 
     // Performs the initial configuration of a View with a set of options.
     // Keys with special meaning *(model, collection, id, className)*, are
