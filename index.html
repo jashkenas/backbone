@@ -280,10 +280,11 @@
       <li>– <a href="#examples-documentcloud">DocumentCloud</a></li>
       <li>– <a href="#examples-basecamp">Basecamp Mobile</a></li>
       <li>– <a href="#examples-flow">Flow</a></li>
+      <li>– <a href="#examples-groupon">Groupon Now!</a></li>
       <li>– <a href="#examples-trajectory">Trajectory</a></li>
+      <li>– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
       <li>– <a href="#examples-pandora">Pandora</a></li>
       <li>– <a href="#examples-cloudapp">CloudApp</a></li>
-      <li>– <a href="#examples-soundcloud">Mobile SoundCloud</a></li>
       <li>– <a href="#examples-seatgeek">SeatGeek</a></li>
       <li>– <a href="#examples-tpm">Talking Points Memo</a></li>
       <li>– <a href="#examples-hotel-tonight">Hotel Tonight</a></li>
@@ -2057,6 +2058,28 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
     
+    <h2 id="examples-groupon">Groupon Now!</h2>
+    
+    <p>
+      <a href="http://www.groupon.com/now">Groupon Now!</a> helps you find  
+      local deals that you can buy and use right now. When first developing
+      the product, the team decided it would be AJAX heavy with smooth transitions 
+      between sections instead of full refreshes, but still needed to be fully 
+      linkable and shareable. Despite never having used Backbone before, the
+      learning curve was incredibly quick &mdash; a prototype was hacked out in an 
+      afternoon, and the team was able to ship the product in two weeks. 
+      Because the source is minimal and understandable, it was easy to 
+      add several Backbone extensions for Groupon Now!: changing the router 
+      to handle URLs with querystring parameters, and adding a simple 
+      in-memory store for caching repeated requests for the same data.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://www.groupon.com/now">
+        <img src="docs/images/groupon.png" alt="Groupon Now!" class="example_image" />
+      </a>
+    </div>
+    
     <h2 id="examples-trajectory">Trajectory</h2>
     
     <p>
@@ -2071,6 +2094,33 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://www.apptrajectory.com/">
         <img src="docs/images/trajectory.png" alt="Trajectory" class="example_image" />
+      </a>
+    </div>
+    
+    <h2 id="examples-soundcloud">SoundCloud Mobile</h2>
+
+    <p>
+      <a href="http://soundcloud.com">SoundCloud</a> is the leading sound sharing 
+      platform on the internet, and Backbone.js provides the foundation for 
+      <a href="http://m.soundcloud.com">SoundCloud Mobile</a>. The project uses 
+      the public SoundCloud <a href="http://soundcloud.com/developers">API</a> 
+      as a data source (channeled through a nginx proxy), 
+      <a href="http://api.jquery.com/category/plugins/templates/">jQuery templates</a> 
+      for the rendering, <a href="http://docs.jquery.com/Qunit">Qunit
+      </a> and <a href="http://code.google.com/p/phantomjs/">PhantomJS</a> for 
+      the testing suite. The JS code, templates and CSS are built for the 
+      production deployment with various Node.js tools like 
+      <a href="https://github.com/dsimard/ready.js">ready.js</a>, 
+      <a href="https://github.com/mde/node-jake">Jake</a>, 
+      <a href="https://github.com/tmpvar/jsdom">jsdom</a>. 
+      The <b>Backbone.History</b> was modified to support the HTML5 <tt>history.pushState</tt>. 
+      <b>Backbone.sync</b> was extended with an additional SessionStorage based cache 
+      layer.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://m.soundcloud.com">
+        <img src="docs/images/soundcloud.png" alt="SoundCloud" class="example_image" />
       </a>
     </div>
     
@@ -2107,33 +2157,6 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://getcloudapp.com">
         <img src="docs/images/cloudapp.png" alt="CloudApp" class="example_image" />
-      </a>
-    </div>
-    
-    <h2 id="examples-soundcloud">SoundCloud</h2>
-
-    <p>
-      <a href="http://soundcloud.com">SoundCloud</a> is the leading sound sharing 
-      platform on the internet, and Backbone.js provides the foundation for 
-      <a href="http://m.soundcloud.com">Mobile SoundCloud</a>. The project uses 
-      the public SoundCloud <a href="http://soundcloud.com/developers">API</a> 
-      as a data source (channeled through a nginx proxy), 
-      <a href="http://api.jquery.com/category/plugins/templates/">jQuery templates</a> 
-      for the rendering, <a href="http://docs.jquery.com/Qunit">Qunit
-      </a> and <a href="http://code.google.com/p/phantomjs/">PhantomJS</a> for 
-      the testing suite. The JS code, templates and CSS are built for the 
-      production deployment with various Node.js tools like 
-      <a href="https://github.com/dsimard/ready.js">ready.js</a>, 
-      <a href="https://github.com/mde/node-jake">Jake</a>, 
-      <a href="https://github.com/tmpvar/jsdom">jsdom</a>. 
-      The <b>Backbone.History</b> was modified to support the HTML5 <tt>history.pushState</tt>. 
-      <b>Backbone.sync</b> was extended with an additional SessionStorage based cache 
-      layer.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="http://m.soundcloud.com">
-        <img src="docs/images/soundcloud.png" alt="SoundCloud" class="example_image" />
       </a>
     </div>
     
