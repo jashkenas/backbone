@@ -71,7 +71,12 @@
     bind : function(ev, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
       var list  = calls[ev] || (calls[ev] = []);
-      list.push([callback, context]);
+      if(!_.isFunction(callback)) {
+        _.each(callback, function(call) { 
+          list.push([call, context])});
+      } else {
+        list.push([callback, context]);
+      }
       return this;
     },
 
