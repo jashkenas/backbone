@@ -734,6 +734,8 @@
   // browser does not support `onhashchange`, falls back to polling.
   Backbone.History = function() {
     this.handlers = [];
+    // Has the history handling already been started?
+    this.historyStarted = false;
     _.bindAll(this, 'checkUrl');
   };
 
@@ -775,7 +777,7 @@
 
       // Figure out the initial configuration. Do we need an iframe?
       // Is pushState desired ... is it available?
-      if (historyStarted) throw new Error("Backbone.history has already been started");
+      if (this.historyStarted) throw new Error("Backbone.history has already been started");
       this.options          = _.extend({}, {root: '/'}, this.options, options);
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && window.history && window.history.pushState);
@@ -800,7 +802,7 @@
       // Determine if we need to change the base url, for a pushState link
       // opened by a non-pushState browser.
       this.fragment = fragment;
-      historyStarted = true;
+      this.historyStarted = true;
       var loc = window.location;
       var atRoot  = loc.pathname == this.options.root;
       if (this._wantsPushState && !this._hasPushState && !atRoot) {
