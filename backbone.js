@@ -1032,6 +1032,10 @@
   // `application/json` with the model in a param named `model`.
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
+  //
+  // Backbone.sync will send "sync:start", "sync:done", "sync:fail" and "sync:always" events
+  // to the model or collection that was synced with the synced model or collection as first parameter.
+  //
   Backbone.sync = function(method, model, options) {
     var type = methodMap[method];
 
@@ -1075,8 +1079,13 @@
       params.processData = false;
     }
 
-    // Make the request.
-    return $.ajax(params);
+    // Make the request and trigger applicable sync-events
+    model.trigger("sync:start", model);
+    var ajaxDeferred = $.ajax(params);
+    ajaxDeferred.done(function(){ model.trigger("sync:done", model) });
+    ajaxDeferred.fail(function(){ model.trigger("sync:fail", model) });
+    ajaxDeferred.always(function(){ model.trigger("sync:always", model) });
+    return ajaxDeferred;
   };
 
   // Helpers
