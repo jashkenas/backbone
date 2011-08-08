@@ -812,7 +812,10 @@
         this.fragment = loc.hash.replace(hashStrip, '');
         window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
       }
-      return this.loadUrl();
+
+      if (!this.options.silent) {
+        return this.loadUrl();
+      }
     },
 
     // Add a route to be tested when the fragment changes. Routes added later may
