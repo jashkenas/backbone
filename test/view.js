@@ -118,8 +118,8 @@ $(document).ready(function() {
     var count = 0;
     var ViewClass = Backbone.View.extend({
       el: $('body'),
-      events: {
-        "fake$event.namespaced": "run"
+      events: function() {
+        return {"fake$event.namespaced": "run"};
       },
       run: function() {
         count++;
