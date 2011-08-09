@@ -766,7 +766,7 @@
           fragment = window.location.hash;
         }
       }
-      return fragment.replace(hashStrip, '');
+      return decodeURIComponent(fragment.replace(hashStrip, ''));
     },
 
     // Start the hash change handling, returning `true` if the current URL matches
