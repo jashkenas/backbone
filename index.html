@@ -149,7 +149,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.5.2)</span>
+      Backbone.js <span class="version">(0.5.3)</span>
     </a>
 
     <a class="toc_title" href="#Introduction">
@@ -366,11 +366,11 @@
 
     <table>
       <tr>
-        <td><a href="backbone.js">Development Version (0.5.2)</a></td>
+        <td><a href="backbone.js">Development Version (0.5.3)</a></td>
         <td><i>41kb, Full Source with Comments</i></td>
       </tr>
       <tr>
-        <td><a href="backbone-min.js">Production Version (0.5.2)</a></td>
+        <td><a href="backbone-min.js">Production Version (0.5.3)</a></td>
         <td><i>4.6kb, Packed and Gzipped</i></td>
       </tr>
     </table>
@@ -1620,10 +1620,17 @@ app.navigate("help/troubleshooting", true);
       If your application is not being served from the root url <tt>/</tt> of your
       domain, be sure to tell History where the root really is, as an option:
       <tt>Backbone.history.start({pushState: true, root: "/public/search/"})</tt>
+    </p>
+    
     <p>
       When called, if a route succeeds with a match for the current URL, 
       <tt>Backbone.history.start()</tt> returns <tt>true</tt>. If no defined 
       route matches the current URL, it returns <tt>false</tt>.
+    </p>
+    
+    <p>
+      If the server has already rendered the entire page, and you don't want the
+      initial route to trigger when starting History, pass <tt>silent: true</tt>.
     </p>
 
 <pre>
@@ -1922,6 +1929,12 @@ $("#make-demo").append(el);
       within the View's constructor for you, so if you have a simple <tt>events</tt>
       hash, all of your DOM events will always already be connected, and you will
       never have to call this function yourself.
+    </p>
+    
+    <p>
+      The <tt>events</tt> property may also be defined as a function that returns 
+      an <b>events</b> hash, to make it easier to programmatically define your
+      events, as well as inherit them from parent views.
     </p>
 
     <p>
@@ -2685,6 +2698,16 @@ Inbox.messages.add(newMessage);
 </pre>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <p>
+      <b class="header">0.5.3</b> &mdash; <small><i>August 9, 2011</i></small><br />
+      A View's <tt>events</tt> property may now be defined as a function, as well
+      as an object literal, making it easier to programmatically define and inherit
+      events. <tt>groupBy</tt> is now proxied from Underscore as a method on Collections.
+      If the server has already rendered everything on page load, pass
+      <tt>Backbone.history.start({silent: true})</tt> to prevent the initial route
+      from triggering. Bugfix for pushState with encoded URLs.
+    </p>
     
     <p>
       <b class="header">0.5.2</b> &mdash; <small><i>July 26, 2011</i></small><br />
