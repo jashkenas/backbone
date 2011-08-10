@@ -1446,10 +1446,14 @@ var othello = NYPL.create({
     <h2 id="Router">Backbone.Router</h2>
 
     <p>
-      Web applications often choose to change their URL fragment (<tt>#fragment</tt>)
-      in order to provide shareable, bookmarkable URLs for an Ajax-heavy application.
-      <b>Backbone.Router</b> provides methods for routing client-side URL
-      fragments, and connecting them to actions and events.
+      Web applications often provide linkable, bookmarkable, shareable URLs for
+      imporant locations in the app. Until recently, hash fragments 
+      (<tt>#page</tt>) were used to provide these permalinks, but with the 
+      arrival of the History API, it's now possible to use standard URLs (<tt>/page</tt>).
+      <b>Backbone.Router</b> provides methods for routing client-side pages, and
+      connecting them to actions and events. For browsers which don't yet support
+      the History API, the Router handles graceful fallback and transparent 
+      translation to the fragment version of the URL.
     </p>
 
     <p>
