@@ -170,6 +170,14 @@ $(document).ready(function() {
     equals(i, 2, 'Unset does not fire an event for missing attributes.');
   });
 
+  test("Model: unset and changedAttributes", function() {
+    var model = new Backbone.Model({a: 1});
+    model.unset('a', {silent: true});
+    var changedAttributes = model.changedAttributes();
+    ok('a' in changedAttributes, 'changedAttributes should contain unset properties');
+    equals(changedAttributes.a, undefined);
+  });
+
   test("Model: using a non-default id attribute.", function() {
     var MongoModel = Backbone.Model.extend({idAttribute : '_id'});
     var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
