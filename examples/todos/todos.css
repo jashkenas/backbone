@@ -60,7 +60,7 @@ html {
 #create-todo {
   position: relative;
 }
-  #create-todo input {
+  #todo-form input {
     width: 466px;
     font-size: 24px;
     font-family: inherit;
