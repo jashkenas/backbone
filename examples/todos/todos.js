@@ -17,17 +17,12 @@ Task = Backbone.Model.extend({
 		this.collection.trigger("status-changed");
 	}
 });
+
 //the collection
 Tasks = Backbone.Collection.extend({
 	model : Task,
 	//if your tasks are stored in a database - set the RESTful URL here
 	//url : "/tasks" //is a prime example
-	
-	//this is overriden simply for example
-	//normally you'd let this collection fetch() from the URL specified
-	fetch : function() {
-		return taskStore;
-	},
 	//you could bind to this - or just use the length as below
 	completed : function(){
 		return  _.select(this.models, function(model){
