@@ -988,7 +988,7 @@
         if (this.className) attrs['class'] = this.className;
         this.el = this.make(this.tagName, attrs);
       } else if (_.isString(this.el) || _.isElement(this.el)) {
-        var el = $(this.el).first();
+        var el = $(this.el);
         (!el.length) ? this.el = null : this.el = el;
       }
     }
