@@ -14,7 +14,6 @@ Task = Backbone.Model.extend({
 	//let the model figure out the mechanism
 	toggleStatus : function(){
 		this.get("status") == "incomplete" ? this.set({status : "completed"}) : this.set({status : "incomplete"});
-		this.collection.trigger("status-changed");
 	}
 });
 
@@ -152,7 +151,7 @@ TaskStatsView = Backbone.View.extend({
 		_.bindAll(this,"render", "clearCompleted");
 		//bind to collection change events - including the trigger that's bubbled up from the 
 		//model's toggleStatus event
-		this.collection.bind("status-changed", this.render);
+		this.collection.bind('change:status', this.render, this);
 		this.collection.bind("add", this.render);
 		this.collection.bind("remove", this.render);
 	},
