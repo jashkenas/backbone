@@ -2,7 +2,7 @@
 Task = Backbone.Model.extend({
 	defaults : {
 		status : "incomplete"
-	}
+	},
 	isComplete : function(){
 		return this.get("status") === "completed";
 	},
