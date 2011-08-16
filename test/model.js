@@ -159,6 +159,16 @@ $(document).ready(function() {
     equals(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
+  test("Model: dynamic set", function() {
+    a = new Backbone.Model();
+    a.write_foo = function(now, val) {
+      now.foo = val + "FOO";
+    };
+    a.set({foo: "THIS SHOULD END WITH "});
+    
+    equals(a.get('foo'), "THIS SHOULD END WITH FOO", "Dynamic setters intervene with set.");
+  });
+
   test("Model: multiple unsets", function() {
     var i = 0;
     var counter = function(){ i++; };
