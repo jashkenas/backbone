@@ -51,6 +51,9 @@
   // `application/x-www-form-urlencoded` instead and will send the model in a
   // form param named `model`.
   Backbone.emulateJSON = false;
+  
+  // Turn on `emulateJSON` to support Rails JSON style where root of object is included in json.
+  Backbone.emulateRails = false;
 
   // Backbone.Events
   // -----------------
@@ -1053,6 +1056,12 @@
     if (!params.data && model && (method == 'create' || method == 'update')) {
       params.contentType = 'application/json';
       params.data = JSON.stringify(model.toJSON());
+    }
+    
+    // For rails, when saving, use JSON serialized under the model name.
+    if (Backbone.emulateRails && (method == 'create' || method == 'update')) {
+      var modelName = model.name || 'model';
+      params.data = '{"' + modelName + '":' + params.data + '}';
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
