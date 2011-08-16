@@ -212,7 +212,12 @@
       for (var attr in attrs) {
         var val = attrs[attr];
         if (!_.isEqual(now[attr], val)) {
-          now[attr] = val;
+          if (this["write_" +  attr]) {
+            this["write_" + attr].call(this, now, val)
+          }
+          else {
+            now[attr] = val; 
+          }
           delete escaped[attr];
           this._changed = true;
           if (!options.silent) this.trigger('change:' + attr, this, val, options);
