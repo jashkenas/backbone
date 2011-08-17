@@ -880,6 +880,7 @@
     this.cid = _.uniqueId('view');
     this._configure(options || {});
     this._ensureElement();
+    this.setLocalElements();
     this.delegateEvents();
     this.initialize.apply(this, arguments);
   };
@@ -966,6 +967,22 @@
         } else {
           $(this.el).delegate(selector, eventName, method);
         }
+      }
+    },
+
+    // Iterates over each key (a selector) which creates an element within the
+    // scope of `this.el`. It is bound to `this` by key's value.
+    // 
+    // *{"selector": "attr"}*
+    //
+    //    {
+    //        '.title': 'title',
+    //        '.button': 'button'
+    //    }
+    setLocalElements: function(elements) {
+      if (!(elements || (elements = this.elements))) return;
+      for (var key in elements) {
+        this[elements[key]] = this.$(key);
       }
     },
 
