@@ -888,7 +888,7 @@
   // This should be prefered to global lookups, if you're dealing with
   // a specific view.
   var selectorDelegate = function(selector) {
-    return $(selector, this.el);
+    return this.el.find(selector);
   };
 
   // Cached regex to split keys for `delegate`.
@@ -920,7 +920,7 @@
     // Remove this view from the DOM. Note that the view isn't present in the
     // DOM by default, so calling this method may be a no-op.
     remove : function() {
-      $(this.el).remove();
+      this.el.remove();
       return this;
     },
 
@@ -930,9 +930,9 @@
     //     var el = this.make('li', {'class': 'row'}, this.model.escape('title'));
     //
     make : function(tagName, attributes, content) {
-      var el = document.createElement(tagName);
-      if (attributes) $(el).attr(attributes);
-      if (content) $(el).html(content);
+      var el = $(document.createElement(tagName));
+      if (attributes) el.attr(attributes);
+      if (content) el.html(content);
       return el;
     },
 
@@ -953,7 +953,7 @@
     delegateEvents : function(events) {
       if (!(events || (events = this.events))) return;
       if (_.isFunction(events)) events = events.call(this);
-      $(this.el).unbind('.delegateEvents' + this.cid);
+      this.el.unbind('.delegateEvents' + this.cid);
       for (var key in events) {
         var method = this[events[key]];
         if (!method) throw new Error('Event "' + events[key] + '" does not exist');
@@ -962,9 +962,9 @@
         method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
-          $(this.el).bind(eventName, method);
+          this.el.bind(eventName, method);
         } else {
-          $(this.el).delegate(selector, eventName, method);
+          this.el.delegate(selector, eventName, method);
         }
       }
     },
@@ -981,18 +981,18 @@
       this.options = options;
     },
 
-    // Ensure that the View has a DOM element to render into.
+    // Ensure that the View has a jQuery element to render into.
     // If `this.el` is a string, pass it through `$()`, take the first
     // matching element, and re-assign it to `el`. Otherwise, create
     // an element from the `id`, `className` and `tagName` proeprties.
     _ensureElement : function() {
-      if (!this.el) {
+      if (!this.el && (this.el.length || 0) === 0) {
         var attrs = this.attributes || {};
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
         this.el = this.make(this.tagName, attrs);
       } else if (_.isString(this.el)) {
-        this.el = $(this.el).get(0);
+        this.el = $(this.el).eq(0);
       }
     }
 
