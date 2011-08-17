@@ -189,11 +189,12 @@ $(document).ready(function() {
 
   test("Model: clear", function() {
     var changed;
-    var model = new Backbone.Model({name : "Model"});
+    var model = new Backbone.Model({id: 1, name : "Model"});
     model.bind("change:name", function(){ changed = true; });
     model.clear();
     equals(changed, true);
     equals(model.get('name'), undefined);
+    equals(model.id, undefined);
   });
 
   test("Model: defaults", function() {

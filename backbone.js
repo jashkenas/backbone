@@ -264,6 +264,7 @@
       this.attributes = {};
       this._escapedAttributes = {};
       this._changed = true;
+      delete this.id;
       if (!options.silent) {
         for (attr in old) {
           this.trigger('change:' + attr, this, void 0, options);
