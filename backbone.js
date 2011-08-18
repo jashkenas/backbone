@@ -984,7 +984,7 @@
     // Ensure that the View has a DOM element to render into.
     // If `this.el` is a string, pass it through `$()`, take the first
     // matching element, and re-assign it to `el`. Otherwise, create
-    // an element from the `id`, `className` and `tagName` proeprties.
+    // an element from the `id`, `className` and `tagName` properties.
     _ensureElement : function() {
       if (!this.el) {
         var attrs = this.attributes || {};
