@@ -28,12 +28,6 @@ $(function(){
     // Toggle the `done` state of this todo item.
     toggle: function() {
       this.save({done: !this.get("done")});
-    },
-
-    // Remove this Todo from *localStorage* and delete its view.
-    clear: function() {
-      this.destroy();
-      this.view.remove();
     }
 
   });
@@ -103,7 +97,7 @@ $(function(){
     // app, we set a direct reference on the model for convenience.
     initialize: function() {
       this.model.bind('change', this.render, this);
-      this.model.view = this;
+      this.model.bind('destroy', this.remove, this);
     },
 
     // Re-render the contents of the todo item.
@@ -152,7 +146,7 @@ $(function(){
 
     // Remove the item, destroy the model.
     clear: function() {
-      this.model.clear();
+      this.model.destroy();
     }
 
   });
@@ -231,7 +225,7 @@ $(function(){
 
     // Clear all done todo items, destroying their models.
     clearCompleted: function() {
-      _.each(Todos.done(), function(todo){ todo.clear(); });
+      _.each(Todos.done(), function(todo){ todo.destroy(); });
       return false;
     },
 
