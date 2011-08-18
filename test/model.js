@@ -370,6 +370,33 @@ $(document).ready(function() {
     var providedattrs = new Defaulted({});
     var emptyattrs = new Defaulted();
   });
+  
+  test("Model: set attribute with model.strict", function() {
+    var model = new (Backbone.Model.extend({
+      strict: false,
+      defaults: {
+        test: 'yes'
+      }
+    }))();
+    
+    model.set({'attr': true});
+    
+    ok(model.get('attr'), 'Expects the model to have set "attr"');
+    deepEqual(model.attributes, {'test': 'yes', 'attr': true}, 'Expects the model to have "test:yes" and "attr:true" attributes');
+    
+    model = new (Backbone.Model.extend({
+      strict: true,
+      defaults: {
+        test: 'yes'
+      }
+    }))();
+    
+    model.set({'attr': true});
+    ok(model.strict, 'Expects the model to be set to strict');
+    
+    ok(!model.get('attr'), 'Expects the model to have set "attr"');
+    deepEqual(model.attributes, {'test': 'yes'}, 'Expects the model to have only "test:yes" attributes');
+  });
 
   test("Model: Inherit class properties", function() {
     var Parent = Backbone.Model.extend({
