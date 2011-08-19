@@ -422,5 +422,35 @@ $(document).ready(function() {
     b = new B({a: a});
     a.set({state: 'hello'});
   });
+  
+  test("Model: toJSON returns expected JSON", function() {
+    var A = new (Backbone.Model.extend())();
+    
+    A.set({one: 1, two: 2});
+    
+    deepEqual(A.toJSON(), {one: 1, two: 2}, 'Expects the toJSON object to return {one:1,two:2}');
+  });
+  
+  test("Model: toJSON returns expected JSON, when provided attributes parameter", function() {
+    var A = new (Backbone.Model.extend({
+      defaults: {
+        'x': 'y'
+      }
+    }))();
+    
+    A.set({one: 1, two: 2});
+    
+    deepEqual(A.attributes, {x: 'y', one: 1, two: 2}, 'Ensure the attributes are as expected');
+    
+    deepEqual(A.toJSON(['one']), {one: 1}, 'Expects the toJSON object to return {one:1}');
+    
+    A.set({three: 3, four: 4});
+    
+    deepEqual(A.toJSON({one:true,two:true}), {one: 1, two: 2}, 'Expects the toJSON object to return {one:1,two:2}');
+    
+    deepEqual(A.toJSON({one:true,fake:true}), {one: 1}, 'Expects the toJSON object to return {one:1}');
+    
+    deepEqual(A.toJSON(['one', 'x']), {one: 1, x: 'y'}, 'Expects the toJSON object to return {one:1,x:"y"}');
+  });
 
 });
