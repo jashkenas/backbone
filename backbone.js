@@ -165,8 +165,23 @@
     initialize : function(){},
 
     // Return a copy of the model's `attributes` object.
-    toJSON : function() {
-      return _.clone(this.attributes);
+    toJSON : function(attributes) {
+      var returnedAttrs = {};
+      if (!attributes) {
+        return _.clone(this.attributes);
+      } else if (!_.isArray(attributes)) {
+        attributes = _.keys(attributes);
+      }
+      
+      var i = attributes.length;
+      
+      while(i--) {
+        if (this.attributes.hasOwnProperty(attributes[i])) {
+          returnedAttrs[attributes[i]] = this.attributes[attributes[i]];
+        }
+      }
+      
+      return returnedAttrs;
     },
 
     // Get the value of an attribute.
