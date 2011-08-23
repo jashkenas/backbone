@@ -695,6 +695,21 @@
     navigate : function(fragment, triggerRoute) {
       Backbone.history.navigate(fragment, triggerRoute);
     },
+    
+    // Replaces browser history state with the new fragment without creating
+    // a new entry.  If the browser doesn't support `replaceState`, defer to
+    // `navigate`.
+    replaceState: function( fragment, triggerRoute ) {
+		if( window.history && window.history.replaceState ) {
+			window.history.replaceState( null, null, Backbone.history.options.root + fragment );
+			
+			if (triggerRoute){
+				Backbone.history.loadUrl( fragment );
+			}
+		} else {
+			this.navigate( fragment, triggerRoute );
+		}
+	},
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
     // order of the routes here to support behavior where the most general

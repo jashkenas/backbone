@@ -76,7 +76,25 @@ $(document).ready(function() {
     equals(router.query, 'manhattan');
     equals(router.page, '20');
   });
-
+  
+  test("Router: routes via replaceState", 2, function() {
+    router.replaceState('search/manhattan/p20', true);
+    equals(router.query, 'manhattan');
+    equals(router.page, '20');
+  });
+  
+  if (window.history && window.history.replaceState) {
+    test("Router: replaceState shouldn't add history in browsers that support it", 1, function() {
+      var historyLength = window.history.length;
+      router.replaceState('search/manhattan/p20', true);
+      equals(window.history.length, historyLength);
+  	});
+  } else {
+    if (window.console){
+      window.console.log("browser doesn't support replaceState");
+    }
+  }
+  
   asyncTest("Router: routes (splats)", function() {
     window.location.hash = 'splat/long-list/of/splatted_99args/end';
     setTimeout(function() {
