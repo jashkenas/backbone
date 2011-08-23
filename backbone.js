@@ -458,7 +458,7 @@
     remove : function(models, options) {
       if (_.isArray(models)) {
         for (var i = 0, l = models.length; i < l; i++) {
-          this._remove(models[i], options);
+          this._remove(models[0], options);
         }
       } else {
         this._remove(models, options);
