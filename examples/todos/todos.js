@@ -9,31 +9,20 @@ $(function(){
   // Todo Model
   // ----------
 
-  // Our basic **Todo** model has `content`, `order`, and `done` attributes.
+  // Our basic **Todo** model has `text`, `order`, and `done` attributes.
   window.Todo = Backbone.Model.extend({
 
-    // Default attributes for the todo.
-    defaults: {
-      content: "empty todo...",
-      done: false
-    },
-
-    // Ensure that each todo created has `content`.
-    initialize: function() {
-      if (!this.get("content")) {
-        this.set({"content": this.defaults.content});
-      }
+    // Default attributes for a todo item.
+    defaults: function() {
+      return {
+        done:  false,
+        order: Todos.nextOrder()
+      };
     },
 
     // Toggle the `done` state of this todo item.
     toggle: function() {
       this.save({done: !this.get("done")});
-    },
-
-    // Remove this Todo from *localStorage* and delete its view.
-    clear: function() {
-      this.destroy();
-      this.view.remove();
     }
 
   });
@@ -93,35 +82,31 @@ $(function(){
     // The DOM events specific to an item.
     events: {
       "click .check"              : "toggleDone",
-      "dblclick div.todo-content" : "edit",
+      "dblclick div.todo-text"    : "edit",
       "click span.todo-destroy"   : "clear",
       "keypress .todo-input"      : "updateOnEnter"
     },
 
-    // The TodoView listens for changes to its model, re-rendering. Since there's
-    // a one-to-one correspondence between a **Todo** and a **TodoView** in this
-    // app, we set a direct reference on the model for convenience.
+    // The TodoView listens for changes to its model, re-rendering.
     initialize: function() {
-      _.bindAll(this, 'render', 'close');
-      this.model.bind('change', this.render);
-      this.model.view = this;
+      this.model.bind('change', this.render, this);
+      this.model.bind('destroy', this.remove, this);
     },
 
     // Re-render the contents of the todo item.
     render: function() {
       $(this.el).html(this.template(this.model.toJSON()));
-      this.setContent();
+      this.setText();
       return this;
     },
 
     // To avoid XSS (not that it would be harmful in this particular app),
     // we use `jQuery.text` to set the contents of the todo item.
-    setContent: function() {
-      var content = this.model.get('content');
-      this.$('.todo-content').text(content);
+    setText: function() {
+      var text = this.model.get('text');
+      this.$('.todo-text').text(text);
       this.input = this.$('.todo-input');
-      this.input.bind('blur', this.close);
-      this.input.val(content);
+      this.input.bind('blur', _.bind(this.close, this)).val(text);
     },
 
     // Toggle the `"done"` state of the model.
@@ -137,7 +122,7 @@ $(function(){
 
     // Close the `"editing"` mode, saving changes to the todo.
     close: function() {
-      this.model.save({content: this.input.val()});
+      this.model.save({text: this.input.val()});
       $(this.el).removeClass("editing");
     },
 
@@ -153,7 +138,7 @@ $(function(){
 
     // Remove the item, destroy the model.
     clear: function() {
-      this.model.clear();
+      this.model.destroy();
     }
 
   });
@@ -182,13 +167,11 @@ $(function(){
     // collection, when items are added or changed. Kick things off by
     // loading any preexisting todos that might be saved in *localStorage*.
     initialize: function() {
-      _.bindAll(this, 'addOne', 'addAll', 'render');
-
       this.input    = this.$("#new-todo");
 
-      Todos.bind('add',     this.addOne);
-      Todos.bind('reset',   this.addAll);
-      Todos.bind('all',     this.render);
+      Todos.bind('add',   this.addOne, this);
+      Todos.bind('reset', this.addAll, this);
+      Todos.bind('all',   this.render, this);
 
       Todos.fetch();
     },
@@ -215,26 +198,18 @@ $(function(){
       Todos.each(this.addOne);
     },
 
-    // Generate the attributes for a new Todo item.
-    newAttributes: function() {
-      return {
-        content: this.input.val(),
-        order:   Todos.nextOrder(),
-        done:    false
-      };
-    },
-
-    // If you hit return in the main input field, create new **Todo** model,
-    // persisting it to *localStorage*.
+    // If you hit return in the main input field, and there is text to save,
+    // create new **Todo** model persisting it to *localStorage*.
     createOnEnter: function(e) {
-      if (e.keyCode != 13) return;
-      Todos.create(this.newAttributes());
+      var text = this.input.val();
+      if (!text || e.keyCode != 13) return;
+      Todos.create({text: text});
       this.input.val('');
     },
 
     // Clear all done todo items, destroying their models.
     clearCompleted: function() {
-      _.each(Todos.done(), function(todo){ todo.clear(); });
+      _.each(Todos.done(), function(todo){ todo.destroy(); });
       return false;
     },
 
