@@ -279,6 +279,54 @@ $(document).ready(function() {
     ok(_.isEqual(lastRequest[1], doc));
   });
 
+  test("Model: fetch triggers beforeFetch and afterFetch events", function() {
+    var requestDone = false;
+    var receivedEvents = { after: false, before: false };
+
+    var TestModel = Backbone.Model.extend({
+      sync: function(_, _, options) {
+        requestDone = true;
+        options.success({})
+      }
+    });
+
+    var instance = new TestModel;
+    instance.bind("beforeFetch", function() {
+      receivedEvents.before = true;
+      ok(requestDone === false, "beforeFetch was triggered before the request");
+    });
+
+    instance.bind("afterFetch", function() {
+      ok(requestDone === true, "beforeFetch was triggered after the request");
+      receivedEvents.after = true;
+    });
+
+    instance.fetch()
+
+    ok(receivedEvents.before, "beforeFetch event was triggered");
+    ok(receivedEvents.after, "afterFetch event was triggered");
+  });
+
+  test("Model: afterFetch event when failed", function() {
+
+    var TestModel = Backbone.Model.extend({
+      sync: function(_, _, options) { options.error({}); }
+    });
+
+    var receivedAfterFetch = false;
+
+    var instance = new TestModel;
+    instance.bind("afterFetch", function(success, model) {
+      receivedAfterFetch = true;
+      ok(model === instance, "model instance was received");
+      equals(success, false, "success param is false");
+    });
+
+    instance.fetch();
+
+    ok(receivedAfterFetch, "afterFetch event was triggered");
+  });
+
   test("Model: destroy", function() {
     doc.destroy();
     equals(lastRequest[0], 'delete');

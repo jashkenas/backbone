@@ -281,10 +281,13 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
+        model.trigger("afterFetch", true, model);
+
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp);
       };
-      options.error = wrapError(options.error, model, options);
+      options.error = wrapError(options.error, model, options, "afterFetch");
+      this.trigger("beforeFetch", this, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
