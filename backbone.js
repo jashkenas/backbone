@@ -524,10 +524,13 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
+        collection.trigger("afterFetch", true, collection);
+
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp);
       };
-      options.error = wrapError(options.error, collection, options);
+      options.error = wrapError(options.error, collection, options, "afterFetch");
+      this.trigger("beforeFetch", this, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
