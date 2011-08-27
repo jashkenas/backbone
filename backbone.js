@@ -803,7 +803,7 @@
       // If we are in hash mode figure out if we are on a browser that is hit by 63777
       //     https://bugs.webkit.org/show_bug.cgi?id=63777
       if (!this._hasPushState && window.history && window.history.replaceState) {
-        var webkitVersion = webkitVersion.exec(navigator.userAgent);
+        var webkitVersion = /WebKit\/([\d.]+)/.exec(navigator.userAgent);
         if (webkitVersion) {
           webkitVersion = parseFloat(webkitVersion[1]);
           this._useReplaceState = webkitVersion < 535.2;
@@ -941,7 +941,7 @@
         if (this._trackDirection) frag = newIndex + '#' + frag;
         if (replace) {
           if (this._useReplaceState) {
-            history.replaceState({}, document.title, loc.protocol + '//' + loc.host + loc.pathname + (loc.search || '') + '#' + frag);
+            window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + loc.pathname + (loc.search || '') + '#' + frag);
           } else {
             loc.replace(loc.pathname + (loc.search || '') + '#' + frag);
           }
