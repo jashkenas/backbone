@@ -746,6 +746,9 @@
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
 
+  // Regex for detecting webkit version
+  var webkitVersion = /WebKit\/([\d.]+)/;
+
   // Has the history handling already been started?
   var historyStarted = false;
 
@@ -795,6 +798,16 @@
       if (oldIE) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
         this.navigate(fragment);
+      }
+
+      // If we are in hash mode figure out if we are on a browser that is hit by 63777
+      //     https://bugs.webkit.org/show_bug.cgi?id=63777
+      if (!this._hasPushState && window.history && window.history.replaceState) {
+        var webkitVersion = webkitVersion.exec(navigator.userAgent);
+        if (webkitVersion) {
+          webkitVersion = parseFloat(webkitVersion[1]);
+          this._useReplaceState = webkitVersion < 535.2;
+        }
       }
 
       // Depending on whether we're using pushState or hashes, and whether
@@ -927,7 +940,11 @@
         this.fragment = frag;
         if (this._trackDirection) frag = newIndex + '#' + frag;
         if (replace) {
-          loc.replace(loc.pathname + (loc.search || '') + '#' + frag);
+          if (this._useReplaceState) {
+            history.replaceState({}, document.title, loc.protocol + '//' + loc.host + loc.pathname + (loc.search || '') + '#' + frag);
+          } else {
+            loc.replace(loc.pathname + (loc.search || '') + '#' + frag);
+          }
         } else {
           loc.hash = frag;
         }
