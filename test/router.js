@@ -87,7 +87,7 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'search/nyc/p10';
+    Backbone.history.navigate('search/nyc/p10', true);
   });
 
   asyncTest("Router: routes via navigate", 6, function() {
@@ -132,7 +132,7 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'splat/long-list/of/splatted_99args/end';
+    Backbone.history.navigate('splat/long-list/of/splatted_99args/end', true);
   });
 
   asyncTest("Router: routes (complex)", 5, function() {
@@ -145,7 +145,7 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'one/two/three/complex-part/four/five/six/seven';
+    Backbone.history.navigate('one/two/three/complex-part/four/five/six/seven', true);
   });
 
   asyncTest("Router: routes (query)", 4, function() {
@@ -157,7 +157,7 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'mandel?a=b&c=d';
+    Backbone.history.navigate('mandel?a=b&c=d', true);
   });
 
   asyncTest("Router: routes (anything)", 3, function() {
@@ -168,7 +168,7 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'doesnt-match-a-route';
+    Backbone.history.navigate('doesnt-match-a-route', true);
   });
 
   asyncTest("Router: index delta", 15, function() {
