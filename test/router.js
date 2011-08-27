@@ -171,47 +171,65 @@ $(document).ready(function() {
     Backbone.history.navigate('doesnt-match-a-route', true);
   });
 
-  asyncTest("Router: index delta", 15, function() {
+  asyncTest("Router: index delta", 20, function() {
+    console.log('index delta');
     var startingIndex = Backbone.history.getIndex();
 
-    routeBind(function(fragment, delta) {
+    function step1(fragment, delta) {
       equals(fragment, 'search/manhattan/p20');
       equals(delta, 1);
       equals(Backbone.history.getIndex(), startingIndex+1);
       equals(router.query, 'manhattan');
       equals(router.page, '20');
 
-      routeBind(function(fragment, delta) {
-        equals(fragment, 'search/manhattan/p30');
-        equals(delta, 1);
-        equals(Backbone.history.getIndex(), startingIndex+2);
-        equals(router.query, 'manhattan');
-        equals(router.page, '30');
-
-        routeBind(function(fragment, delta) {
-          equals(fragment, 'search/manhattan/p20');
-          equals(delta, -1);
-          equals(Backbone.history.getIndex(), startingIndex+1);
-          equals(router.query, 'manhattan');
-          equals(router.page, '20');
-
-
-          setTimeout(function() {
-            start();
-            window.location.hash = '';
-          }, 0);
-        });
-
-        setTimeout(function() {
-          window.history.back();
-        }, 0);
-      });
+      routeBind(step2);
 
       setTimeout(function() {
-        Backbone.history.navigate('search/manhattan/p30', true);
+        Backbone.history.navigate('search/manhattan/p30', true, true);
       }, 0);
-    });
+    }
+    function step2(fragment, delta) {
+      equals(fragment, 'search/manhattan/p30');
+      equals(delta, 0);
+      equals(Backbone.history.getIndex(), startingIndex+1);
+      equals(router.query, 'manhattan');
+      equals(router.page, '30');
 
+      routeBind(step3);
+
+      setTimeout(function() {
+        Backbone.history.navigate('search/manhattan/p40', true);
+      }, 0);
+    }
+    function step3(fragment, delta) {
+      equals(fragment, 'search/manhattan/p40');
+      equals(delta, 1);
+      equals(Backbone.history.getIndex(), startingIndex+2);
+      equals(router.query, 'manhattan');
+      equals(router.page, '40');
+
+      routeBind(step4);
+
+      setTimeout(function() {
+        window.history.back();
+      }, 0);
+    }
+    function step4(fragment, delta) {
+      console.log(Backbone.history._state);
+      equals(fragment, 'search/manhattan/p30');
+      equals(delta, -1);
+      equals(Backbone.history.getIndex(), startingIndex+1);
+      equals(router.query, 'manhattan');
+      equals(router.page, '30');
+
+
+      setTimeout(function() {
+        window.location.hash = '';
+        start();
+      }, 0);
+    }
+
+    routeBind(step1);
     setTimeout(function() {
       Backbone.history.navigate('search/manhattan/p20', true);
     }, 0);
