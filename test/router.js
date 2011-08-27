@@ -57,10 +57,11 @@ $(document).ready(function() {
   }
 
   Backbone.history = null;
-  var router = new Router({testing: 101});
+  var router = new Router({testing: 101}),
+      originalUrl = window.location.href;
 
   Backbone.history.interval = 9;
-  Backbone.history.start({pushState: false, trackDirection: true});
+  Backbone.history.start({pushState: window.testPushState, trackDirection: true});
 
   test("Router: initialize", function() {
     equals(router.testing, 101);
@@ -75,7 +76,11 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'search/news';
+    if (window.testPushState) {
+      Backbone.history.navigate('search/news', true);
+    } else {
+      window.location.hash = 'search/news';
+    }
   });
 
   asyncTest("Router: routes (two part)", 4, function() {
@@ -224,7 +229,11 @@ $(document).ready(function() {
 
 
       setTimeout(function() {
-        window.location.hash = '';
+        if (window.testPushState) {
+          window.history.pushState({}, document.title, originalUrl);
+        } else {
+          window.location.hash = '';
+        }
         start();
       }, 0);
     }
