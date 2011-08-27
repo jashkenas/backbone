@@ -57,10 +57,11 @@ $(document).ready(function() {
   }
 
   Backbone.history = null;
-  var router = new Router({testing: 101});
+  var router = new Router({testing: 101}),
+      originalUrl = window.location.href;
 
   Backbone.history.interval = 9;
-  Backbone.history.start({pushState: false, trackDirection: true});
+  Backbone.history.start({pushState: window.testPushState, trackDirection: true});
 
   test("Router: initialize", function() {
     equals(router.testing, 101);
@@ -75,7 +76,11 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'search/news';
+    if (window.testPushState) {
+      Backbone.history.navigate('search/news', true);
+    } else {
+      window.location.hash = 'search/news';
+    }
   });
 
   asyncTest("Router: routes (two part)", 4, function() {
@@ -87,7 +92,7 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'search/nyc/p10';
+    Backbone.history.navigate('search/nyc/p10', true);
   });
 
   asyncTest("Router: routes via navigate", 6, function() {
@@ -132,7 +137,7 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'splat/long-list/of/splatted_99args/end';
+    Backbone.history.navigate('splat/long-list/of/splatted_99args/end', true);
   });
 
   asyncTest("Router: routes (complex)", 5, function() {
@@ -145,7 +150,7 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'one/two/three/complex-part/four/five/six/seven';
+    Backbone.history.navigate('one/two/three/complex-part/four/five/six/seven', true);
   });
 
   asyncTest("Router: routes (query)", 4, function() {
@@ -157,7 +162,7 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'mandel?a=b&c=d';
+    Backbone.history.navigate('mandel?a=b&c=d', true);
   });
 
   asyncTest("Router: routes (anything)", 3, function() {
@@ -168,50 +173,72 @@ $(document).ready(function() {
       start();
     });
 
-    window.location.hash = 'doesnt-match-a-route';
+    Backbone.history.navigate('doesnt-match-a-route', true);
   });
 
-  asyncTest("Router: index delta", 15, function() {
+  asyncTest("Router: index delta", 20, function() {
+    console.log('index delta');
     var startingIndex = Backbone.history.getIndex();
 
-    routeBind(function(fragment, delta) {
+    function step1(fragment, delta) {
       equals(fragment, 'search/manhattan/p20');
       equals(delta, 1);
       equals(Backbone.history.getIndex(), startingIndex+1);
       equals(router.query, 'manhattan');
       equals(router.page, '20');
 
-      routeBind(function(fragment, delta) {
-        equals(fragment, 'search/manhattan/p30');
-        equals(delta, 1);
-        equals(Backbone.history.getIndex(), startingIndex+2);
-        equals(router.query, 'manhattan');
-        equals(router.page, '30');
-
-        routeBind(function(fragment, delta) {
-          equals(fragment, 'search/manhattan/p20');
-          equals(delta, -1);
-          equals(Backbone.history.getIndex(), startingIndex+1);
-          equals(router.query, 'manhattan');
-          equals(router.page, '20');
-
-
-          setTimeout(function() {
-            start();
-            window.location.hash = '';
-          }, 0);
-        });
-
-        setTimeout(function() {
-          window.history.back();
-        }, 0);
-      });
+      routeBind(step2);
 
       setTimeout(function() {
-        Backbone.history.navigate('search/manhattan/p30', true);
+        Backbone.history.navigate('search/manhattan/p30', true, true);
       }, 0);
-    });
+    }
+    function step2(fragment, delta) {
+      equals(fragment, 'search/manhattan/p30');
+      equals(delta, 0);
+      equals(Backbone.history.getIndex(), startingIndex+1);
+      equals(router.query, 'manhattan');
+      equals(router.page, '30');
 
+      routeBind(step3);
+
+      setTimeout(function() {
+        Backbone.history.navigate('search/manhattan/p40', true);
+      }, 0);
+    }
+    function step3(fragment, delta) {
+      equals(fragment, 'search/manhattan/p40');
+      equals(delta, 1);
+      equals(Backbone.history.getIndex(), startingIndex+2);
+      equals(router.query, 'manhattan');
+      equals(router.page, '40');
+
+      routeBind(step4);
+
+      setTimeout(function() {
+        window.history.back();
+      }, 0);
+    }
+    function step4(fragment, delta) {
+      console.log(Backbone.history._state);
+      equals(fragment, 'search/manhattan/p30');
+      equals(delta, -1);
+      equals(Backbone.history.getIndex(), startingIndex+1);
+      equals(router.query, 'manhattan');
+      equals(router.page, '30');
+
+
+      setTimeout(function() {
+        if (window.testPushState) {
+          window.history.pushState({}, document.title, originalUrl);
+        } else {
+          window.location.hash = '';
+        }
+        start();
+      }, 0);
+    }
+
+    routeBind(step1);
     setTimeout(function() {
       Backbone.history.navigate('search/manhattan/p20', true);
     }, 0);
