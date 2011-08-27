@@ -860,6 +860,7 @@
       }
       if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
 
+      this._state = (e.originalEvent || e).state;
       var loadedIndex = this.loadIndex(fromIframe && this.iframe.location.hash);
       if (!loadedIndex) {
         this.navigate(current, false, true, this._directionIndex+1);
@@ -894,10 +895,10 @@
     loadIndex : function(fragmentOverride) {
       if (!this._trackDirection) return;
       if (!fragmentOverride && this._hasPushState) {
-        return (window.history.state && window.history.state.index) || 0;
+        return (this._state && this._state.index) || 0;
       } else {
         var match = indexMatch.exec(fragmentOverride || window.location.hash);
-        return (match && parseInt(match[1])) || 0;
+        return (match && parseInt(match[1], 10)) || 0;
       }
     },
 
@@ -920,7 +921,8 @@
         this.fragment = frag;
 
         var history = window.history;
-        (replace ? history.replaceState : history.pushState).call(history, {index: newIndex}, document.title, loc.protocol + '//' + loc.host + frag);
+        this._state = {index: newIndex};
+        history[replace ? 'replaceState' : 'pushState'](this._state, document.title, loc.protocol + '//' + loc.host + frag);
       } else {
         this.fragment = frag;
         if (this._trackDirection) frag = newIndex + '#' + frag;
