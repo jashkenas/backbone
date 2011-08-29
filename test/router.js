@@ -227,15 +227,16 @@ $(document).ready(function() {
       equals(router.query, 'manhattan');
       equals(router.page, '30');
 
+      setTimeout(cleanup, 0);
+    }
 
-      setTimeout(function() {
-        if (window.testPushState) {
-          window.history.pushState({}, document.title, originalUrl);
-        } else {
-          window.location.hash = '';
-        }
-        start();
-      }, 0);
+    function cleanup() {
+      if (window.testPushState) {
+        window.history.pushState({}, document.title, originalUrl);
+      } else {
+        window.location.hash = '';
+      }
+      start();
     }
 
     routeBind(step1);
