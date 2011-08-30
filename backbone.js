@@ -870,7 +870,7 @@
       }
       if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
 
-      this._state = (e.originalEvent || e).state;
+      this._state = e && (e.originalEvent || e).state;
       var loadedIndex = this.loadIndex(fromIframe && this.iframe.location.hash);
       if (!loadedIndex) {
         this.navigate(current, false, true, this._directionIndex+1);
