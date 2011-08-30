@@ -873,7 +873,7 @@
       }
       if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
 
-      this._state = (e.originalEvent || e).state;
+      this._state = e && (e.originalEvent || e).state;
       var loadedIndex = this.loadIndex(fromIframe && this.iframe.location.hash);
       if (!loadedIndex) {
         this.navigate(current, false, true, this._directionIndex+1);
@@ -890,8 +890,15 @@
     loadUrl : function(fragmentOverride) {
       var history = this;
       var fragment = this.fragment = this.getFragment(fragmentOverride);
+
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
+          if (history._ignoreChange) {
+            history._ignoreChange = false;
+            history._directionIndex  = history.loadIndex();
+            return true;
+          }
+
           var oldIndex = history._directionIndex;
           history._directionIndex  = history.loadIndex();
           history.trigger('route', fragment, history._directionIndex-oldIndex);
@@ -955,8 +962,19 @@
         }
       }
       if (triggerRoute) this.loadUrl(fragment);
-    }
+    },
 
+    back : function(triggerRoute) {
+      this.go(-1, triggerRoute);
+    },
+    foward : function(triggerRoute) {
+      this.go(1, triggerRoute);
+    },
+    go : function(count, triggerRoute) {
+      this._ignoreChange = !triggerRoute;
+
+      window.history.go(count);
+    }
   });
 
   // Backbone.View
