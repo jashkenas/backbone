@@ -176,7 +176,7 @@ $(document).ready(function() {
     Backbone.history.navigate('doesnt-match-a-route', true);
   });
 
-  asyncTest("Router: index delta", 20, function() {
+  asyncTest("Router: index delta", 32, function() {
     var startingIndex = Backbone.history.getIndex();
 
     function step1(fragment, delta) {
@@ -215,7 +215,7 @@ $(document).ready(function() {
       routeBind(step4);
 
       setTimeout(function() {
-        window.history.back();
+        Backbone.history.back(true);
       }, 0);
     }
     function step4(fragment, delta) {
@@ -224,6 +224,55 @@ $(document).ready(function() {
       equals(Backbone.history.getIndex(), startingIndex+1);
       equals(router.query, 'manhattan');
       equals(router.page, '30');
+
+      routeBind(step5);
+
+      setTimeout(function() {
+        Backbone.history.navigate('search/manhattan/p50', true);
+      }, 0);
+    }
+    function step5(fragment, delta) {
+      equals(fragment, 'search/manhattan/p50');
+      equals(delta, 1);
+      equals(Backbone.history.getIndex(), startingIndex+2);
+
+      routeBind(step6);
+
+      setTimeout(function() {
+        Backbone.history.navigate('search/manhattan/p60', true);
+      }, 0);
+    }
+    function step6(fragment, delta) {
+      equals(fragment, 'search/manhattan/p60');
+      equals(delta, 1);
+      equals(Backbone.history.getIndex(), startingIndex+3);
+
+      routeBind(step7);
+
+      setTimeout(function() {
+        Backbone.history.go(-2, false);
+        setTimeout(function() {
+          Backbone.history.navigate('search/manhattan/p70', true);
+        }, 1000);
+      }, 0);
+    }
+
+    function step7(fragment, delta) {
+      equals(fragment, 'search/manhattan/p70');
+      equals(delta, 1);
+      equals(Backbone.history.getIndex(), startingIndex+2);
+
+      routeBind(step8);
+
+      setTimeout(function() {
+        Backbone.history.back(true);
+      }, 0);
+    }
+
+    function step8(fragment, delta) {
+      equals(fragment, 'search/manhattan/p30');
+      equals(delta, -1);
+      equals(Backbone.history.getIndex(), startingIndex+1);
 
       setTimeout(cleanup, 0);
     }
