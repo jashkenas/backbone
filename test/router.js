@@ -177,7 +177,6 @@ $(document).ready(function() {
   });
 
   asyncTest("Router: index delta", 20, function() {
-    console.log('index delta');
     var startingIndex = Backbone.history.getIndex();
 
     function step1(fragment, delta) {
@@ -220,7 +219,6 @@ $(document).ready(function() {
       }, 0);
     }
     function step4(fragment, delta) {
-      console.log(Backbone.history._state);
       equals(fragment, 'search/manhattan/p30');
       equals(delta, -1);
       equals(Backbone.history.getIndex(), startingIndex+1);
