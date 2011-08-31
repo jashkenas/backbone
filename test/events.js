@@ -39,6 +39,76 @@ $(document).ready(function() {
     equals(obj.counterB, 2, 'counterB should have been incremented twice.');
   });
 
+  test("Events: bind two events (using a single bind) and trigger", function() {
+    var obj = { counter: 0 };
+    _.extend(obj,Backbone.Events);
+    var callback = function() { obj.counter += 1; };
+    obj.bind('event1 event2', callback);
+    obj.trigger('event1');
+    obj.trigger('event2');
+    equals(obj.counter, 2, 'counter should have been incremented twice.');
+  });
+
+  test("Events: bind two events (using a single bind), and unbind only one", function() {
+    var obj = { counter: 0 };
+    _.extend(obj,Backbone.Events);
+    var callback = function() { obj.counter += 1; };
+    obj.bind('event1 event2', callback);
+    obj.trigger('event1');
+    obj.trigger('event2');
+    obj.unbind('event1', callback)
+    obj.trigger('event1');
+    obj.trigger('event2');
+    equals(obj.counter, 3, 'counter should have been incremented three times.');
+  });
+
+  test("Events: bind two events (using a single bind), and unbind both (using a single unbind)", function() {
+    var obj = { counter: 0 };
+    _.extend(obj,Backbone.Events);
+    var callback = function() { obj.counter += 1; };
+    obj.bind('event1 event2', callback);
+    obj.trigger('event1');
+    obj.trigger('event2');
+    obj.unbind('event1 event2', callback)
+    obj.trigger('event1');
+    obj.trigger('event2');
+    equals(obj.counter, 2, 'counter should have been incremented twice.');
+  });
+
+  test("Events: bind four events (using 2 binds) with different callbacks, and unbind all events with particular callback (using a single unbind)", function() {
+    var obj = { counterA: 0, counterB: 0 };
+    _.extend(obj,Backbone.Events);
+    var callbackA = function() { 
+      obj.counterA += 1; };
+    var callbackB = function() { 
+      obj.counterB += 1; };
+    obj.bind('event1 event2', callbackA);
+    obj.bind('event1 event2', callbackB);
+    obj.trigger('event1');
+    obj.trigger('event2');
+    obj.unbind('event1 event2', callbackA)
+    obj.trigger('event1');
+    obj.trigger('event2');
+    equals(obj.counterA, 2, 'counterA should have only been incremented once.');
+    equals(obj.counterB, 4, 'counterB should have been incremented twice.');
+  });
+
+  test("Events: bind 2 events (using one bind), then unbind all functions", function() {
+    var obj = { counterA: 0, counterB: 0 };
+    _.extend(obj,Backbone.Events);
+    var callbackA = function() { obj.counterA += 1; };
+    var callbackB = function() { obj.counterB += 1; };
+    obj.bind('event1 event2', callbackA);
+    obj.bind('event1 event2', callbackB)
+    obj.trigger('event1');
+    obj.trigger('event2');
+    obj.unbind();
+    obj.trigger('event1');
+    obj.trigger('event2');
+    equals(obj.counterA, 2, 'counterA should have only been incremented once.');
+    equals(obj.counterB, 2, 'counterB should have been incremented twice.');
+  });
+
   test("Events: unbind a callback in the midst of it firing", function() {
     var obj = {counter: 0};
     _.extend(obj, Backbone.Events);
