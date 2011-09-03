@@ -75,6 +75,15 @@
       return this;
     },
 
+    // Bind an event, specified by a string name, `ev`, to a `callback` function 
+    // that will only be trggered once.
+    // Passing `"all"` will bind the callback to all events fired.
+    once : function(ev, callback, context) {
+      var onceFn = function() { this.unbind(ev, onceFn); callback.apply(context || this, arguments); };
+      this.bind(ev, onceFn);
+      return this;
+    },
+
     // Remove one or many callbacks. If `callback` is null, removes all
     // callbacks for the event. If `ev` is null, removes all bound callbacks
     // for all events.
