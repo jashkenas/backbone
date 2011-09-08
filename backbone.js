@@ -69,9 +69,10 @@
     // Bind an event, specified by a string name, `ev`, to a `callback` function.
     // Passing `"all"` will bind the callback to all events fired.
     bind : function(ev, callback, context) {
-      var calls = this._callbacks || (this._callbacks = {});
-      var list  = calls[ev] || (calls[ev] = []);
-      list.push([callback, context]);
+      var calls   = this._callbacks || (this._callbacks = {});
+      var events  = calls[ev] || (calls[ev] = {});
+      var uid     = callback._uid || (callback._uid = _.uniqueId('e'));
+      events[uid] = [ callback, context ];
       return this;
     },
 
@@ -84,16 +85,9 @@
         this._callbacks = {};
       } else if (calls = this._callbacks) {
         if (!callback) {
-          calls[ev] = [];
+          calls[ev] = {};
         } else {
-          var list = calls[ev];
-          if (!list) return this;
-          for (var i = 0, l = list.length; i < l; i++) {
-            if (list[i] && callback === list[i][0]) {
-              list[i] = null;
-              break;
-            }
-          }
+          delete calls[ev][callback._uid];
         }
       }
       return this;
@@ -103,21 +97,14 @@
     // same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
     trigger : function(eventName) {
-      var list, calls, ev, callback, args;
-      var both = 2;
+      var calls, events, args;
       if (!(calls = this._callbacks)) return this;
-      while (both--) {
-        ev = both ? eventName : 'all';
-        if (list = calls[ev]) {
-          for (var i = 0, l = list.length; i < l; i++) {
-            if (!(callback = list[i])) {
-              list.splice(i, 1); i--; l--;
-            } else {
-              args = both ? Array.prototype.slice.call(arguments, 1) : arguments;
-              callback[0].apply(callback[1] || this, args);
-            }
-          }
-        }
+      args = Array.prototype.slice.call(arguments, 1);
+      for(i in (events = calls[eventName])) {
+        events[i][0].apply(events[i][1] || this, args);
+      }
+      for(i in (events = calls['all'])) {
+        events[i][0].apply(events[i][1] || this, arguments);
       }
       return this;
     }
