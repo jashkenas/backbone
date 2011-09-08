@@ -842,6 +842,7 @@
       if (this._trackDirection) {
         var loadedIndex = this.loadIndex();
         this._directionIndex  = loadedIndex || window.history.length;
+        this._state = {index: this._directionIndex};
 
         // If we are tracking direction ensure that we have a direction field to play with
         if (!loadedIndex) {
