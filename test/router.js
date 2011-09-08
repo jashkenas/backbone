@@ -61,7 +61,7 @@ $(document).ready(function() {
       originalUrl = window.location.href;
 
   Backbone.history.interval = 9;
-  Backbone.history.start({pushState: window.testPushState, trackDirection: true});
+  Backbone.history.start({pushState: window.testPushState, root: '/foo/', trackDirection: true});
 
   test("Router: initialize", function() {
     equals(router.testing, 101);
@@ -81,6 +81,18 @@ $(document).ready(function() {
     } else {
       window.location.hash = 'search/news';
     }
+  });
+
+  asyncTest("Router: routes (root)", 4, function() {
+    routeBind(function(fragment, delta) {
+      equals(fragment, 'search/foodNews');
+      equals(delta, 1);
+      equals(router.query, 'foodNews');
+      equals(router.page, undefined);
+      start();
+    });
+
+    Backbone.history.navigate('/foo/search/foodNews', true);
   });
 
   asyncTest("Router: routes (two part)", 4, function() {
