@@ -40,6 +40,25 @@
   // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
   var $ = root.jQuery || root.Zepto || root.ender;
 
+
+  // Set the javascript library that will be used for the selector work
+  // (a.k.a. the `$` variable).
+  //
+  // By default Backbone will use: jQuery, Zepto, or Ender; but the `use()`
+  // method let's you inject an alternate javascript library (or a mock
+  // library for testing your views outside of a browser). This is also useful
+  // if you are using a packaging library -- to add support for `require()`
+  // calls in the browser (e.g. ender or browserify). The scoping used to
+  // support `require()`, prevents Backbone from automatically loading the
+  // default javascript library.
+  //
+  //     Backbone.use(jQuery)
+  //
+  Backbone.use = function(lib) {
+    $ = lib;
+  };
+
+
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
   Backbone.noConflict = function() {
