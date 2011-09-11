@@ -34,6 +34,13 @@
   // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
   var $ = root.jQuery || root.Zepto || root.ender;
 
+  // Try to require jQuery in case this is Node.js, Browserify or Ender.
+  if(!$ && (typeof require !== 'undefined')) {
+    try {
+      var $ = require('jQuery');
+    } catch (e) {}
+  }
+
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
   Backbone.noConflict = function() {
