@@ -159,6 +159,15 @@ $(document).ready(function() {
     equals(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
+  test("Model: setting a single attributes", function() {
+    var model = new Backbone.Model({baz: 1});
+
+    ok(model.get('baz') === 1);
+    model.set('baz', 5);
+    ok(model.get('baz') === 5, "Attriubtes should have been set without using a hash.");
+    ok(model.set('baz', 5) === model, "Set should return the model for chaining.");
+  });
+
   test("Model: multiple unsets", function() {
     var i = 0;
     var counter = function(){ i++; };
