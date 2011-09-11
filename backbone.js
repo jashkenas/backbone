@@ -210,6 +210,12 @@
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
+      // Support setting a single attriubte with simple syntax: `set('age', 7)`
+      if (_.isString(attrs)) {
+        var newAttrs = {};
+        newAttrs[attrs] = options;
+        return this.set(newAttrs);
+      }
 
       // Extract attributes and options.
       options || (options = {});
