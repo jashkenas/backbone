@@ -41,19 +41,31 @@ $(document).ready(function() {
     var counter = counter2 = 0;
     view.el = document.body;
     view.increment = function(){ counter++; };
-    $(view.el).bind('click', function(){ counter2++; });
-    var events = {"click #qunit-banner": "increment"};
+    function lessVisibleIncrement_(){ counter++; };
+    function inc_(){ counter2++; }
+    $(view.el).bind('click', inc_);
+    $(view.el).bind('dblclick', inc_);
+    var events = {"click #qunit-banner": "increment", "dblclick #qunit-banner": lessVisibleIncrement_};
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
     equals(counter, 1);
     equals(counter2, 1);
-    $('#qunit-banner').trigger('click');
+    $('#qunit-banner').trigger('dblclick');
     equals(counter, 2);
     equals(counter2, 2);
-    view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
     equals(counter, 3);
     equals(counter2, 3);
+    $('#qunit-banner').trigger('dblclick');
+    equals(counter, 4);
+    equals(counter2, 4);
+    view.delegateEvents(events);
+    $('#qunit-banner').trigger('click');
+    equals(counter, 5);
+    equals(counter2, 5);
+    $('#qunit-banner').trigger('dblclick');
+    equals(counter, 6);
+    equals(counter2, 6);
   });
 
   test("View: _ensureElement with DOM node el", function() {
