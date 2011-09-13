@@ -1645,7 +1645,7 @@ app.navigate("help/troubleshooting", true);
 $(function(){
   new WorkspaceRouter();
   new HelpPaneRouter();
-  Backbone.history.start({pushState: true});
+  Backbone.history.start({silent: true});
 });
 </pre>
 
