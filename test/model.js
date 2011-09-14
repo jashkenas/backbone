@@ -76,6 +76,17 @@ $(document).ready(function() {
     equals(model.url(), '/collection/%2B1%2B');
   });
 
+  test("Model: url when using urlExtension", function() {
+    var Model = Backbone.Model.extend({
+      urlRoot: '/collection',
+      urlExtension: '.json'
+    });
+    var model = new Model();
+    equals(model.url(), '/collection');
+    model.set({id: '1'});
+    equals(model.url(), '/collection/1.json');
+  });
+
   test("Model: clone", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
