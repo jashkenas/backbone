@@ -936,7 +936,7 @@
       return el;
     },
 
-    // Set callbacks, where `this.callbacks` is a hash of
+    // Set callbacks, where `this.events` is a hash of
     //
     // *{"event selector": "callback"}*
     //
@@ -1022,7 +1022,7 @@
 
   // Override this function to change the manner in which Backbone persists
   // models to the server. You will be passed the type of request, and the
-  // model in question. By default, uses makes a RESTful Ajax request
+  // model in question. By default, makes a RESTful Ajax request
   // to the model's `url()`. Some possible customizations could be:
   //
   // * Use `setTimeout` to batch rapid-fire updates into a single request.
