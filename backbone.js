@@ -955,7 +955,7 @@
       if (_.isFunction(events)) events = events.call(this);
       $(this.el).unbind('.delegateEvents' + this.cid);
       for (var key in events) {
-        var method = this[events[key]];
+        var method = this[events[key]] || events[key];
         if (!method) throw new Error('Event "' + events[key] + '" does not exist');
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
