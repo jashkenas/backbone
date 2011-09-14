@@ -429,7 +429,7 @@
 	// This utility fixes that by pointing the underlying model data object to the collection data
 	// so that the model's data is always the same as the nested collection's.
 	// No more need to override the model's toJSON function.
-	Backbone.Collection.nest = function nestCollection(model, attributeName, nestedCollection) {
+	Backbone.Collection.nest = function(model, attributeName, nestedCollection) {
 		// Setup nested references
 		for (var i = 0; i < nestedCollection.length; i++) {
 			model.attributes[attributeName][i] = nestedCollection.at(i).attributes;

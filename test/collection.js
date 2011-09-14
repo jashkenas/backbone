@@ -342,4 +342,44 @@ $(document).ready(function() {
     equals(fired, true);
   });
 
+	test("Collection.nest static method", function(){
+		a.set({
+			comments: [
+				{name: 'jenny', comment: 'nice!'},
+				{name: 'dave', comment: 'w00t'},
+				{name: 'mark', comment: 'good read'}
+			]
+		});
+		var Comments = Backbone.Collection.extend({});
+		a.comments = Backbone.Collection.nest(a, 'comments', new Comments(a.get('comments')));
+		equals(a.get('comments').length, 3);
+		equals(a.comments.length, 3);
+
+		//update a variable, and the other reference should point to the same thing
+		a.comments.at(0).set({comment: "I disagree"});
+		equals(a.get('comments')[0].comment, "I disagree");
+
+		//add a new item to the collection, make sure underlying array is also updated
+		equals(a.comments.length, 3);
+		equals(a.get('comments').length, 3);
+		a.comments.add({name: 'Sam', comment: 'thanks'});
+		equals(a.comments.length, 4);
+		equals(a.get('comments').length, 4);
+
+		//make sure newly added item gets updated on change
+		a.comments.last().set({comment: 'no thanks'});
+		equals(a.get('comments')[3].comment, 'no thanks');
+
+		//removing item from collection should remove it from underlying model
+		equals(a.get('comments').length, 4);
+		a.comments.remove(a.comments.at(0));
+		equals(a.get('comments').length, 3);
+
+		//toJSON should now be correct for the model without having to override it
+		var manualJSON = _.clone(a.attributes);
+		_.extend(manualJSON, {
+			comments: a.comments.toJSON()
+		});
+		ok(_.isEqual(a.toJSON(), manualJSON));
+	});
 });
