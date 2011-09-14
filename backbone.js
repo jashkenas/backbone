@@ -201,8 +201,13 @@
       // Run validation.
       if (!options.silent && this.validate && !this._performValidation(attrs, options)) return false;
 
+      // TODO: Make this idAttribute nested attribute aware and non-eval
       // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+      //Before: if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+      // After with evil eval method, allows idAttribute = "myobject.id"
+      if (eval("attrs." + this.idAttribute)) {
+		this.id = eval("attrs." + this.idAttribute);
+      }
 
       // We're about to start triggering change events.
       var alreadyChanging = this._changing;
