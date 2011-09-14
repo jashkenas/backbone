@@ -1642,6 +1642,12 @@ app.navigate("help/troubleshooting", true);
       If the server has already rendered the entire page, and you don't want the
       initial route to trigger when starting History, pass <tt>silent: true</tt>.
     </p>
+    
+    <p>
+      Because hash-based history in Internet Explorer relies on an 
+      <tt>&lt;iframe&gt;</tt>, be sure to only call <tt>start()</tt> after the DOM
+      is ready.
+    </p>
 
 <pre>
 $(function(){
