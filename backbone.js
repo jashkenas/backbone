@@ -432,7 +432,9 @@
 	Backbone.Collection.nest = function(model, attributeName, nestedCollection) {
 		// Setup nested references
 		for (var i = 0; i < nestedCollection.length; i++) {
-			model.attributes[attributeName][i] = nestedCollection.at(i).attributes;
+			if(model.attributes[attributeName]){
+				model.attributes[attributeName][i] = nestedCollection.at(i).attributes;
+			}
 		}
 		nestedCollection.bind('add', function(initiative) {
 			model.get(attributeName).push(initiative.attributes);
