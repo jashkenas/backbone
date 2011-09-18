@@ -342,4 +342,55 @@ $(document).ready(function() {
     equals(fired, true);
   });
 
+  test("Collection: fetch triggers beforeFetch and afterFetch events", function() {
+    var requestDone = false;
+    var receivedEvents = { after: false, before: false };
+
+    var TestCollection = Backbone.Collection.extend({
+      sync: function(_, _, options) {
+        requestDone = true;
+        options.success({})
+      }
+    });
+
+    var collection = new TestCollection;
+    collection.bind("beforeFetch", function() {
+      receivedEvents.before = true;
+      ok(requestDone === false, "beforeFetch was triggered before the request");
+    });
+
+    collection.bind("afterFetch", function(success, collectionParam) {
+      ok(collectionParam === collection, "collection instance was received");
+      ok(success === true, "success param is true");
+      ok(requestDone === true, "beforeFetch was triggered after the request");
+      receivedEvents.after = true;
+    });
+
+    collection.fetch()
+
+    ok(receivedEvents.before, "beforeFetch event was triggered");
+    ok(receivedEvents.after, "afterFetch event was triggered");
+  });
+
+  test("Collection: afterFetch event when failed", function() {
+
+    var receivedAfterFetch = false;
+
+    var TestCollection = Backbone.Collection.extend({
+      sync: function(_, _, options) { options.error({}); }
+    });
+
+    var collection = new TestCollection;
+    collection.bind("afterFetch", function(success, collectionParam) {
+      receivedAfterFetch = true;
+      ok(collectionParam === collection, "collection instance was received");
+      ok(success === false, "success param is false");
+    });
+
+    collection.fetch();
+
+    ok(receivedAfterFetch, "afterFetch event was triggered");
+  });
+
+
 });

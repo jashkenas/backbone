@@ -281,10 +281,13 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
+        model.trigger("afterFetch", true, model);
+
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp);
       };
-      options.error = wrapError(options.error, model, options);
+      options.error = wrapError(options.error, model, options, "afterFetch");
+      this.trigger("beforeFetch", this, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
@@ -297,11 +300,14 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
+        model.trigger("afterSave", true, model);
+
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp, xhr);
       };
-      options.error = wrapError(options.error, model, options);
+      options.error = wrapError(options.error, model, options, "afterSave");
       var method = this.isNew() ? 'create' : 'update';
+      this.trigger("beforeSave", this, options);
       return (this.sync || Backbone.sync).call(this, method, this, options);
     },
 
@@ -518,10 +524,13 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
+        collection.trigger("afterFetch", true, collection);
+
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp);
       };
-      options.error = wrapError(options.error, collection, options);
+      options.error = wrapError(options.error, collection, options, "afterFetch");
+      this.trigger("beforeFetch", this, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
@@ -1141,13 +1150,16 @@
   };
 
   // Wrap an optional error callback with a fallback error event.
-  var wrapError = function(onError, model, options) {
+  var wrapError = function(onError, model, options, triggerEvent) {
     return function(resp) {
       if (onError) {
         onError(model, resp, options);
       } else {
         model.trigger('error', model, resp, options);
       }
+
+      if(triggerEvent)
+        model.trigger(triggerEvent, false, model);
     };
   };
 

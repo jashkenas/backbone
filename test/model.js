@@ -279,6 +279,54 @@ $(document).ready(function() {
     ok(_.isEqual(lastRequest[1], doc));
   });
 
+  test("Model: fetch triggers beforeFetch and afterFetch events", function() {
+    var requestDone = false;
+    var receivedEvents = { after: false, before: false };
+
+    var TestModel = Backbone.Model.extend({
+      sync: function(_, _, options) {
+        requestDone = true;
+        options.success({})
+      }
+    });
+
+    var instance = new TestModel;
+    instance.bind("beforeFetch", function() {
+      receivedEvents.before = true;
+      ok(requestDone === false, "beforeFetch was triggered before the request");
+    });
+
+    instance.bind("afterFetch", function() {
+      ok(requestDone === true, "beforeFetch was triggered after the request");
+      receivedEvents.after = true;
+    });
+
+    instance.fetch()
+
+    ok(receivedEvents.before, "beforeFetch event was triggered");
+    ok(receivedEvents.after, "afterFetch event was triggered");
+  });
+
+  test("Model: afterFetch event when failed", function() {
+
+    var TestModel = Backbone.Model.extend({
+      sync: function(_, _, options) { options.error({}); }
+    });
+
+    var receivedAfterFetch = false;
+
+    var instance = new TestModel;
+    instance.bind("afterFetch", function(success, model) {
+      receivedAfterFetch = true;
+      ok(model === instance, "model instance was received");
+      equals(success, false, "success param is false");
+    });
+
+    instance.fetch();
+
+    ok(receivedAfterFetch, "afterFetch event was triggered");
+  });
+
   test("Model: destroy", function() {
     doc.destroy();
     equals(lastRequest[0], 'delete');
@@ -421,6 +469,65 @@ $(document).ready(function() {
     a = new A();
     b = new B({a: a});
     a.set({state: 'hello'});
+  });
+
+  test("Model: beforeSave and afterSave events", function() {
+
+    var TestModel = Backbone.Model.extend({
+
+      // Fake #sync which always succeeds
+      sync: function(_, _, options) {
+        equals(receivedEvents.before, true, "beforeSave was triggered before sync");
+        equals(receivedEvents.after, false, "afterSave was not triggered before sync");
+        options.success({});
+      }
+    });
+
+    var receivedEvents = { after: false, before: false };
+
+    var instance = new TestModel;
+    instance.bind("beforeSave", function() {
+      equals(receivedEvents.before, false, "beforeSave was not triggered twice");
+      equals(receivedEvents.after, false, "afterSave was not triggered before beforeSave");
+
+      receivedEvents.before = true;
+    });
+
+    instance.bind("afterSave", function(success, model) {
+      equals(receivedEvents.before, true, "beforeSave was triggered before afterSave");
+      equals(receivedEvents.after, false, "afterSave was not triggered twice");
+      equals(success, true, "success param is true");
+      ok(model === instance, "model instance was received");
+
+      receivedEvents.after = true;
+    });
+
+    instance.save();
+
+    equals(receivedEvents.before, true, "beforeSave event was triggered");
+    equals(receivedEvents.after, true, "afterSave event was triggered");
+  });
+
+  test("Model: afterSave event when failed", function() {
+
+    var TestModel = Backbone.Model.extend({
+
+      // Fake #sync which always fails
+      sync: function(_, _, options) { options.error({}); }
+    });
+
+    var receivedAfterSave = false;
+
+    var instance = new TestModel;
+    instance.bind("afterSave", function(success, model) {
+      receivedAfterSave = true;
+      ok(model === instance, "model instance was received");
+      equals(success, false, "success param is false");
+    });
+
+    instance.save();
+
+    equals(receivedAfterSave, true, "afterSave event was triggered");
   });
 
 });
