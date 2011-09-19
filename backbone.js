@@ -954,7 +954,7 @@
     delegateEvents : function(events) {
       if (!(events || (events = this.events))) return;
       if (_.isFunction(events)) events = events.call(this);
-      $(this.el).unbind('.delegateEvents' + this.cid);
+      this.undelegateEvents();
       for (var key in events) {
         var method = this[events[key]];
         if (!method) throw new Error('Event "' + events[key] + '" does not exist');
@@ -968,6 +968,11 @@
           $(this.el).delegate(selector, eventName, method);
         }
       }
+    },
+
+    // Clears all callbacks previously bound to the view with `delegateEvents`.
+    undelegateEvents: function() {
+      $(this.el).unbind('.delegateEvents' + this.cid);
     },
 
     // Performs the initial configuration of a View with a set of options.
