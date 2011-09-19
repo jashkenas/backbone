@@ -56,6 +56,27 @@ $(document).ready(function() {
     equals(counter2, 3);
   });
 
+  test("View: clearEvents", function() {
+    var counter = counter2 = 0;
+    view.el = document.body;
+    view.increment = function(){ counter++; };
+    $(view.el).unbind('click');
+    $(view.el).bind('click', function(){ counter2++; });
+    var events = {"click #qunit-userAgent": "increment"};
+    view.delegateEvents(events);
+    $('#qunit-userAgent').trigger('click');
+    equals(counter, 1);
+    equals(counter2, 1);
+    view.clearEvents();
+    $('#qunit-userAgent').trigger('click');
+    equals(counter, 1);
+    equals(counter2, 2);
+    view.delegateEvents(events);
+    $('#qunit-userAgent').trigger('click');
+    equals(counter, 2);
+    equals(counter2, 3);
+  });
+
   test("View: _ensureElement with DOM node el", function() {
     var ViewClass = Backbone.View.extend({
       el: document.body
