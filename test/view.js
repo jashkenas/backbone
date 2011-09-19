@@ -56,7 +56,7 @@ $(document).ready(function() {
     equals(counter2, 3);
   });
 
-  test("View: clearEvents", function() {
+  test("View: undelegateEvents", function() {
     var counter = counter2 = 0;
     view.el = document.body;
     view.increment = function(){ counter++; };
@@ -67,7 +67,7 @@ $(document).ready(function() {
     $('#qunit-userAgent').trigger('click');
     equals(counter, 1);
     equals(counter2, 1);
-    view.clearEvents();
+    view.undelegateEvents();
     $('#qunit-userAgent').trigger('click');
     equals(counter, 1);
     equals(counter2, 2);

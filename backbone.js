@@ -954,7 +954,7 @@
     delegateEvents : function(events) {
       if (!(events || (events = this.events))) return;
       if (_.isFunction(events)) events = events.call(this);
-      this.clearEvents();
+      this.undelegateEvents();
       for (var key in events) {
         var method = this[events[key]];
         if (!method) throw new Error('Event "' + events[key] + '" does not exist');
@@ -971,7 +971,7 @@
     },
 
     // Clears all callbacks previously bound to the view with `delegateEvents`.
-    clearEvents: function() {
+    undelegateEvents: function() {
       $(this.el).unbind('.delegateEvents' + this.cid);
     },
 
