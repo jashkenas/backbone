@@ -216,6 +216,9 @@
           delete escaped[attr];
           this._changed = true;
           if (!options.silent) this.trigger('change:' + attr, this, val, options);
+
+          // auto-sort
+          if (this.collection && this.collection.sortAttribute && (attr == this.collection.sortAttribute)) this.resort()
         }
       }
 
