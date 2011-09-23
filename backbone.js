@@ -90,7 +90,7 @@
           if (!list) return this;
           for (var i = 0, l = list.length; i < l; i++) {
             if (list[i] && callback === list[i][0]) {
-              list[i] = null;
+              list.splice(i, 1);
               break;
             }
           }
