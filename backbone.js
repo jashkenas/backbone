@@ -217,8 +217,8 @@
           this._changed = true;
           if (!options.silent) this.trigger('change:' + attr, this, val, options);
 
-          // auto-sort
-          if (this.collection && this.collection.sortAttribute && (attr == this.collection.sortAttribute)) this.resort()
+          // auto resort
+          if (this.collection && this.collection.sortAttribute && (attr == this.collection.sortAttribute)) this.resort();
         }
       }
 
@@ -391,6 +391,21 @@
     // `"change"` event.
     previousAttributes : function() {
       return _.clone(this._previousAttributes);
+    },
+
+    // Incrementally resorts a model
+    resort : function(options) {
+      options || (options={});
+      var collection = this.collection;
+      var new_index, previous_index = collection.indexOf(this);
+
+      // remove so don't find yourself, find your new position, and add back
+      collection.models.splice(previous_index, 1);
+      new_index = collection.comparator ? collection.sortedIndex(this, collection.comparator) : collection.length
+      collection.models.splice(new_index, 0, this);
+
+      // a change in position, trigger
+      if ((previous_index != new_index) && !options.silent) this.trigger('resort', this, {});
     },
 
     // Run validation against a set of incoming attributes, returning `true`
