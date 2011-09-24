@@ -252,6 +252,23 @@ $(document).ready(function() {
     equals(model.get('label'), 'f');
     equals(model.collection, col);
   });
+  
+  test("Collection: adds the model to the collection upon success", function() {
+    var colE = new Backbone.Collection();
+    colE.create({label: 'f'});
+    equals(colE.length, 0);
+    lastRequest[2].success();
+    equals(colE.length, 1);
+    equals(colE.at(0).get("label"), 'f');
+  });
+  
+  test("Collection: adds the model immediately when told to do so", function() {
+    var colE = new Backbone.Collection();
+    colE.create({label: 'f'}, {addImmediately: true});
+    equals(colE.length, 1);
+    equals(colE.at(0).get("label"), 'f');
+    lastRequest[2].success();
+  });
 
   test("Collection: create enforces validation", function() {
     var ValidatingModel = Backbone.Model.extend({
