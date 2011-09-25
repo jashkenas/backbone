@@ -231,10 +231,10 @@
           delete escaped[attr];
           this._changed = true;
           if (!options.silent) this.trigger('change:' + attr, this, val, options);
-          if (this._ownAttribute) this._disownAttribute(attr, prev)
+          if (this._ownAttribute) this._disownAttribute(attr, prev);
 
           // auto resort
-          if (this.collection && this.collection.sortAttribute && (attr == this.collection.sortAttribute)) this.collection.resort(this);
+          if (this.collection && this.collection.sortAttribute && (attr === this.collection.sortAttribute)) this.collection.resort(this);
         }
       }
 
