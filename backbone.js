@@ -141,7 +141,11 @@
     this.cid = _.uniqueId('c');
     this.set(attributes, {silent : true});
     this._changed = false;
-    this._previousAttributes = _.clone(this.attributes);
+    if (this._ownAttribute) {
+      var model = this; model._previousAttributes = {};
+      _.each(model.attributes, function(attribute, key) { model._previousAttributes[key] = model._ownAttribute(attribute, key); });
+    }
+    else this._previousAttributes = _.clone(this.attributes);
     if (options && options.collection) this.collection = options.collection;
     this.initialize(attributes, options);
   };
@@ -202,20 +206,35 @@
       if (!options.silent && this.validate && !this._performValidation(attrs, options)) return false;
 
       // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+      if (this.idAttribute in attrs) {
+        var previous_id = this.id;
+        var new_id = attrs[this.idAttribute];
+        // a change in 'id'
+        if (previous_id !== new_id) {
+          this.id = new_id;
+          if (this.collection) this.collection._updateModelId(this, previous_id); // make sure the collection updates before notification 
+          this.trigger('change:' + this.idAttribute, this, new_id, options); // special case: an id change should not be silent
+        }
+      }
 
       // We're about to start triggering change events.
       var alreadyChanging = this._changing;
       this._changing = true;
 
       // Update attributes.
+      var val, prev;
       for (var attr in attrs) {
-        var val = attrs[attr];
+        val = attrs[attr];
         if (!_.isEqual(now[attr], val)) {
+          prev = now[attr];
           now[attr] = val;
           delete escaped[attr];
           this._changed = true;
           if (!options.silent) this.trigger('change:' + attr, this, val, options);
+          if (this._ownAttribute) this._disownAttribute(attr, prev)
+
+          // auto resort
+          if (this.collection && this.collection.sortAttribute && (attr == this.collection.sortAttribute)) this.collection.resort(this);
         }
       }
 
@@ -238,6 +257,7 @@
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
       // Remove the attribute.
+      if (this._ownAttribute) this._disownAttribute(attr, this.attributes[attr]);
       delete this.attributes[attr];
       delete this._escapedAttributes[attr];
       if (attr == this.idAttribute) delete this.id;
@@ -261,6 +281,10 @@
       for (attr in old) validObj[attr] = void 0;
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
+      if (this._ownAttribute) {
+        var model = this;
+        _.each(model.attributes, function(attribute, key) { model._disownAttribute(attribute, key); }); 
+      }
       this.attributes = {};
       this._escapedAttributes = {};
       this._changed = true;
@@ -314,6 +338,10 @@
       var success = options.success;
       options.success = function(resp) {
         model.trigger('destroy', model, model.collection, options);
+        if (model._disownAttribute) {
+          _.each(model.attributes, function(attribute, key) { model._disownAttribute(attribute, key); }); 
+        }
+        model.attributes = {};
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
@@ -349,7 +377,12 @@
     // Calling this will cause all objects observing the model to update.
     change : function(options) {
       this.trigger('change', this, options);
-      this._previousAttributes = _.clone(this.attributes);
+      if (this._ownAttribute) {
+        var model = this;
+        _.each(model._previousAttributes, function(attribute, key) { model._disownAttribute(attribute, key); }); model._previousAttributes = {};
+        _.each(model.attributes, function(attribute, key) { model._previousAttributes[key] = model._ownAttribute(attribute, key); });
+      }
+      else this._previousAttributes = _.clone(this.attributes);
       this._changed = false;
     },
 
@@ -386,8 +419,13 @@
 
     // Get all of the attributes of the model at the time of the previous
     // `"change"` event.
-    previousAttributes : function() {
-      return _.clone(this._previousAttributes);
+     previousAttributes : function(take_ownership) {
+      if (take_ownership) {
+        var model = this, caller_owned_attributes = {};
+        _.each(model._previousAttributes, function(attribute, key) { caller_owned_attributes[key] = model._ownAttribute(attribute, key); });
+        return caller_owned_attributes;
+      } 
+      else return _.clone(this._previousAttributes);
     },
 
     // Run validation against a set of incoming attributes, returning `true`
@@ -406,6 +444,10 @@
       return true;
     }
 
+    // // Customization hook for owning an attribute. For example, cloning it, updating a reference count, binding it, etc.
+    // _ownAttribute : function (key, value) {},
+    // // Customization hook for disowning an attribute. For example, calling destroy()
+    // _disownAttribute : function (key, value) {}
   });
 
   // Backbone.Collection
@@ -584,7 +626,7 @@
       if (!model) return false;
       var already = this.getByCid(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
-      this._byId[model.id] = model;
+      if (!_.isUndefined(model.id)) this._byId[model.id] = model;
       this._byCid[model.cid] = model;
       var index = options.at != null ? options.at :
                   this.comparator ? this.sortedIndex(model, this.comparator) :
@@ -629,10 +671,14 @@
         this._remove(model, options);
       }
       if (model && ev === 'change:' + model.idAttribute) {
-        delete this._byId[model.previous(model.idAttribute)];
-        this._byId[model.id] = model;
+        this._updateModelId(model, model.previous(model.idAttribute));
       }
       this.trigger.apply(this, arguments);
+    },
+    
+    _updateModelId : function(model, previous_id) {
+      if (!_.isUndefined(previous_id)) delete this._byId[previous_id];
+      if (!_.isUndefined(model.id)) this._byId[model.id] = model;
     }
 
   });
