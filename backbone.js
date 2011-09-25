@@ -109,7 +109,7 @@
       while (both--) {
         ev = both ? eventName : 'all';
         if (list = calls[ev]) {
-          list = _.clone(list) // clone the list in case it changes during processing
+          list = _.clone(list); // clone the list in case it changes during processing
           for (var i = 0, l = list.length; i < l; i++) {
             callback = list[i];
             if (!_.contains(calls[ev], callback)) continue; // the list has changed and this item is no longer part of it
