@@ -593,7 +593,7 @@
       if (!model) return false;
       var already = this.getByCid(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
-      if (model.id) this._byId[model.id] = model;
+      if (!_.isUndefined(model.id)) this._byId[model.id] = model;
       this._byCid[model.cid] = model;
       var index = options.at != null ? options.at :
                   this.comparator ? this.sortedIndex(model, this.comparator) :
@@ -644,8 +644,8 @@
     },
     
     _updateModelId : function(model, previous_id) {
-      if (previous_id) delete this._byId[previous_id];
-      if (model.id) this._byId[model.id] = model;
+      if (!_.isUndefined(previous_id)) delete this._byId[previous_id];
+      if (!_.isUndefined(model.id)) this._byId[model.id] = model;
     }
 
   });
