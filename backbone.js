@@ -166,36 +166,73 @@
     // initialization logic.
     initialize : function(){},
 
-    // Setting hooks
+    // Setting hooks.
     _setHooks : function(hooks) {
-      return;
-      var attribute, hook;
+      var attr, hook;
       hooks || (hooks = this.hooks);
       if (!hooks) return;
       if (_.isFunction(hooks)) hooks = hooks.call(this);
-      for (attribute in hooks) {
-        this.setHook(attribute, hooks[attribute]);
+      for (attr in hooks) {
+        this.setHook(attr, hooks[attr]);
       }
     },
 
-    // Set a single hook
-    setHook : function(attribute, hook) {
+    // Set a single hook.
+    setHook : function(attr, hook) {
       if (!hook) return false;
       if (_.isFunction(hook)) hook = {getter: hook, setter: hook};
       hook = _.extend({ json: true, property: null }, hook);
-      this._hooked[attribute] = hook;
-      if (hook.property) this[attribute] = hook.property;
+      this._hooked[attr] = hook;
+      if (hook.property) this[hook.propertyName || attr] = hook.property;
       return this;
     },
 
+    // Unsets an hook completely.
+    unsetHook : function(attr) {
+      var hook = this._hooked[attr];
+      if (!hook) return this;
+      if (hook.property) delete this[hook.propertyName || attr];
+      if (this._escapedAttributes[attr]) delete this._escapedAttributes[attr];
+      delete this._hooked[attr];
+      return this;
+    },
+
+    // Completely remove every hook mounted.
+    _unsetHooks : function() {
+      for (var attr in this._hooked) {
+        this.unsetHook(attr);
+      }
+    },
+
     // Return a copy of the model's `attributes` object.
-    toJSON : function() {
-      return _.clone(this.attributes);
+    toJSON : function(onlyAttrs) {
+      return onlyAttrs ? _.clone(this.attributes) : _.extend({}, this.attributes, this.hooksToJSON());
+    },
+
+    // Map any hook to its value in a JSON-like object.
+    hooksToJSON : function() {
+      var obj = {};
+      for (var attr in this._hooked) {
+        var hook = this._hooked[attr];
+        if (!hook.json) continue;
+        obj[attr] = hook.getter.call(this);
+      }
+      return obj;
+    },
+
+    // Creates an object ready to be used with Mustache like template engine
+    toHookedJSON : function() {
+      var obj = _.clone(this.attributes);
+      for (var attr in this._hooked) {
+        hook = this._hooked[attr];
+        if (hook.getter) obj[attr] = _.bind(this, hook.getter);
+      }
+      return obj;
     },
 
     // Get the value of an attribute.
     get : function(attr) {
-      if (this._hooked[attr]) return this._hooked[attr].getter.apply(this,arguments);
+      if (this._hooked[attr]) return this._hooked[attr].getter.apply(this);
       return this.attributes[attr];
     },
 
@@ -203,14 +240,15 @@
     escape : function(attr) {
       var html;
       if (html = this._escapedAttributes[attr]) return html;
-      var val = this.attributes[attr];
+      var val = this.get(attr);
       return this._escapedAttributes[attr] = escapeHTML(val == null ? '' : '' + val);
     },
 
     // Returns `true` if the attribute contains a value that is not null
     // or undefined.
-    has : function(attr) {
-      return this.attributes[attr] != null;
+    has : function(attr, onlyAttrs) {
+      // TODO check for hook
+      return this.attributes[attr] != null || !onlyAttrs && this._hooked[attr] != null;
     },
 
     // Set a hash of model attributes on the object, firing `"change"` unless you
@@ -236,6 +274,11 @@
       // Update attributes.
       for (var attr in attrs) {
         var val = attrs[attr];
+        var hook = this._hooked[attr];
+        if (hook) {
+          hook.setter.call(this, val, options);
+          continue;
+        }
         if (!_.isEqual(now[attr], val)) {
           now[attr] = val;
           delete escaped[attr];
@@ -333,6 +376,7 @@
     // Destroy this model on the server if it was already persisted. Upon success, the model is removed
     // from its collection, if it has one.
     destroy : function(options) {
+      // TODO remove hooks
       options || (options = {});
       if (this.isNew()) return this.trigger('destroy', this, this.collection, options);
       var model = this;
@@ -362,6 +406,7 @@
 
     // Create a new model with identical attributes to this one.
     clone : function() {
+      // TODO clone hooks too (?)
       return new this.constructor(this);
     },
 
