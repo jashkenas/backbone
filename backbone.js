@@ -139,6 +139,8 @@
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
+    this._hooked = {};
+    this._setHooks();
     this.set(attributes, {silent : true});
     this._changed = false;
     this._previousAttributes = _.clone(this.attributes);
@@ -164,6 +166,28 @@
     // initialization logic.
     initialize : function(){},
 
+    // Setting hooks
+    _setHooks : function(hooks) {
+      return;
+      var attribute, hook;
+      hooks || (hooks = this.hooks);
+      if (!hooks) return;
+      if (_.isFunction(hooks)) hooks = hooks.call(this);
+      for (attribute in hooks) {
+        this.setHook(attribute, hooks[attribute]);
+      }
+    },
+
+    // Set a single hook
+    setHook : function(attribute, hook) {
+      if (!hook) return false;
+      if (_.isFunction(hook)) hook = {getter: hook, setter: hook};
+      hook = _.extend({ json: true, property: null }, hook);
+      this._hooked[attribute] = hook;
+      if (hook.property) this[attribute] = hook.property;
+      return this;
+    },
+
     // Return a copy of the model's `attributes` object.
     toJSON : function() {
       return _.clone(this.attributes);
@@ -171,6 +195,7 @@
 
     // Get the value of an attribute.
     get : function(attr) {
+      if (this._hooked[attr]) return this._hooked[attr].getter.apply(this,arguments);
       return this.attributes[attr];
     },
 
