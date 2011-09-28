@@ -83,4 +83,17 @@ $(document).ready(function() {
     
   });
 
+  test("Events: bind an array of events", function() {
+    var obj = { counter: 0 };
+    _.extend(obj,Backbone.Events);
+    obj.bind(['event1', 'event2'], function() { obj.counter += 1; });
+    obj.trigger('event1');
+    obj.trigger('event2');
+    equals(obj.counter,2,'counter should be incremented for each event.');
+    obj.trigger('event1');
+    obj.trigger('event2');
+    obj.trigger('event1');
+    obj.trigger('event2');
+    equals(obj.counter, 6, 'counter should be incremented six times.');
+  });
 });

@@ -66,12 +66,15 @@
   //
   Backbone.Events = {
 
-    // Bind an event, specified by a string name, `ev`, to a `callback` function.
+    // Bind one or multiple events, specified by a string name or an array of string names, `evs`, to a `callback` function.
     // Passing `"all"` will bind the callback to all events fired.
-    bind : function(ev, callback, context) {
+    bind : function(evs, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
-      var list  = calls[ev] || (calls[ev] = []);
-      list.push([callback, context]);
+      if (!_.isArray(evs)) { evs = [evs] }
+      _.each(evs, function (ev) {
+        var list = calls[ev] || (calls[ev] = []);
+        list.push([callback, context]);
+      });
       return this;
     },
 
