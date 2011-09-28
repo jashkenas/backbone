@@ -443,7 +443,11 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `added` event for every new model.
     add : function(models, options) {
-      if (_.isArray(models)) {
+      if (_.isArray(models) && options && options.at) {
+        for (var i = models.length - 1; i >= 0; i--) {
+          this._add(models[i], options);
+        }
+      } else if (_.isArray(models)) {
         for (var i = 0, l = models.length; i < l; i++) {
           this._add(models[i], options);
         }
