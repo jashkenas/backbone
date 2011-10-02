@@ -722,7 +722,7 @@
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters : function(route, fragment) {
-      return _.map(route.exec(fragment).slice(1), function(param){return decodeURIComponent(param);});
+      return _.map(route.exec(fragment).slice(1), decodeURIComponent);
     }
 
   });
