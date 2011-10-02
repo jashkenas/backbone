@@ -766,7 +766,9 @@
           fragment = window.location.hash;
         }
       }
-      return fragment.replace(hashStrip, '');
+      fragment = fragment.replace(hashStrip, '');
+      if (!fragment.indexOf(this.options.root)) fragment = fragment.substr(this.options.root.length);
+      return fragment;
     },
 
     // Start the hash change handling, returning `true` if the current URL matches
