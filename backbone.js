@@ -722,7 +722,7 @@
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters : function(route, fragment) {
-      return _.map(route.exec(fragment).slice(1), decodeURIComponent);
+      return _.map(route.exec(fragment).slice(1), function(param){ return typeof param == 'string' ? decodeURIComponent(param) : param});
     }
 
   });
@@ -831,7 +831,7 @@
     checkUrl : function(e) {
       var current = this.getFragment();
       if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location.hash);
-      if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
+      if (current == this.fragment || current == this.fragment) return false;
       if (this.iframe) this.navigate(current);
       this.loadUrl() || this.loadUrl(window.location.hash);
     },
@@ -855,7 +855,7 @@
     // a `hashchange` event.
     navigate : function(fragment, triggerRoute) {
       var frag = (fragment || '').replace(hashStrip, '');
-      if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
+      if (this.fragment == frag || this.fragment == frag) return;
       if (this._hasPushState) {
         var loc = window.location;
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
