@@ -52,7 +52,7 @@ TaskFormView = Backbone.View.extend({
 		$(this.el).html(content);
 		return this;
 	},
-	save : function(){
+	save : function(event){
 		//save
 		//read this directly. You could also just bind right to the form using the ModelBinder plugin
 		//https://github.com/derickbailey/backbone.modelbinding
