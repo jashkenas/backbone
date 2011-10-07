@@ -686,7 +686,9 @@
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       Backbone.history.route(route, _.bind(function(fragment) {
         var args = this._extractParameters(route, fragment);
-        callback.apply(this, args);
+        if (callback){
+          callback.apply(this, args);
+        }
         this.trigger.apply(this, ['route:' + name].concat(args));
       }, this));
     },
