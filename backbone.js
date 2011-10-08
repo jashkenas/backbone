@@ -127,6 +127,16 @@
       return this;
     },
 
+    // Bind an event like bind(), but unbind the callback after the first time its called
+	  bindOnce : function(ev, callback, context) {
+		  var this2 = this;
+		  var bindCallback = function() {
+			  this2.unbind(ev, bindCallback);
+			  callback.apply(context || this, arguments);
+		  };
+		  this.bind(ev, bindCallback);
+	  },
+
     // Trigger one or many events, firing all bound callbacks. Callbacks are
     // passed the same arguments as `trigger` is, apart from the event name
     // (unless you're listening on `"all"`, which will cause your callback to
