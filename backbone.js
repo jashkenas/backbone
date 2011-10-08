@@ -75,6 +75,16 @@
       return this;
     },
 
+    // Bind an event like bind(), but unbind the callback after the first time its called
+	  bindOnce : function(ev, callback, context) {
+		  var this2 = this;
+		  var bindCallback = function() {
+			  this2.unbind(ev, bindCallback);
+			  callback.apply(context || this, arguments);
+		  };
+		  this.bind(ev, bindCallback);
+	  },
+
     // Remove one or many callbacks. If `callback` is null, removes all
     // callbacks for the event. If `ev` is null, removes all bound callbacks
     // for all events.
