@@ -77,7 +77,8 @@
 
     // Remove one or many callbacks. If `callback` is null, removes all
     // callbacks for the event. If `ev` is null, removes all bound callbacks
-    // for all events.
+    // for all events. If `callback` is a `context` passed when the callback
+    // was bound with `bind`, removes all callbacks for the context.
     unbind : function(ev, callback) {
       var calls;
       if (!ev) {
@@ -92,6 +93,9 @@
             if (list[i] && callback === list[i][0]) {
               list[i] = null;
               break;
+            }
+            else if (list[i] && callback === list[i][1]) {
+              list[i] = null;
             }
           }
         }
