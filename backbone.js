@@ -99,7 +99,7 @@
 	    var calls;
 	    if (callback && (calls = this._callbacks)) {
 				for (var list in calls) {
-					this.unbind(list, callback);
+					this._unbind(list, callback);
 				}
 	    }
 	    return this;
