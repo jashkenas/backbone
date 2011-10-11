@@ -81,7 +81,7 @@
     // was bound with `bind`, removes all callbacks for the context for the given `ev`.
     unbind : function(ev, callback) {
       var calls;
-      if (!ev && !callback) {
+      if (!ev) {
         this._callbacks = {};
       } else if (calls = this._callbacks) {
         if (!callback) {
