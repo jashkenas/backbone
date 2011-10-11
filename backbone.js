@@ -86,43 +86,36 @@
       } else if (calls = this._callbacks) {
         if (!callback) {
           calls[ev] = [];
-        } else {
-          var list = calls[ev];
-          if (!list) return this;
-          for (var i = 0, l = list.length; i < l; i++) {
-            if (list[i] && callback === list[i][0]) {
-              list[i] = null;
-              break;
-            }
-            else if (list[i] && callback === list[i][1]) {
-              list[i] = null;
-            }
-          }
         }
+        else this._unbind(calls[ev], callback);
       }
       return this;
     },
 
-    // Remove `callback` as bound to any event. If `callback` is a `context`
-    // passed when the callback was bound with `bind`, removes all callbacks
-    // for the context for all events.
-    unbindAll : function(callback) {
-      var calls;
-      if (callback && (calls = this._callbacks)) {
+	  // Remove `callback` as bound to any event. If `callback` is a `context`
+	  // passed when the callback was bound with `bind`, removes all callbacks
+	  // for the context for all events.
+	  unbindAll : function(callback) {
+	    var calls;
+	    if (callback && (calls = this._callbacks)) {
 				for (var list in calls) {
-          for (var i = 0, l = list.length; i < l; i++) {
-            if (list[i] && callback === list[i][0]) {
-              list[i] = null;
-              break;
-            }
-            else if (list[i] && callback === list[i][1]) {
-              list[i] = null;
-            }
-          }
+					this.unbind(list, callback);
+				}
+	    }
+	    return this;
+	  },
+
+		_unbind: function(list, callback) {
+      if (list) for (var i = 0, l = list.length; i < l; i++) {
+        if (list[i] && callback === list[i][0]) {
+          list[i] = null;
+          break;
+        }
+        else if (list[i] && callback === list[i][1]) {
+          list[i] = null;
         }
       }
-      return this;
-    },
+    }
 
     // Trigger an event, firing all bound callbacks. Callbacks are passed the
     // same arguments as `trigger` is, apart from the event name.
