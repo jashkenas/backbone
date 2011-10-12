@@ -233,7 +233,6 @@
       <li>– <a href="#Router-constructor">constructor / initialize</a></li>
       <li>– <a href="#Router-route">route</a></li>
       <li>– <a href="#Router-navigate">navigate</a></li>
-      <li>– <a href="#Router-replaceState">replaceState</a></li>
     </ul>
 
     <a class="toc_title" href="#History">
@@ -1567,37 +1566,20 @@ initialize: function(options) {
 </pre>
 
     <p id="Router-navigate">
-      <b class="header">navigate</b><code>router.navigate(fragment, [triggerRoute])</code>
+      <b class="header">navigate</b><code>router.navigate(fragment, [options])</code>
       <br />
       Whenever you reach a point in your application that you'd like to save
       as a URL, call <b>navigate</b> in order to update the URL.
-      If you wish to also call the route function, pass <b>triggerRoute</b>.
+      If you wish to also call the route function, set the <b>triggerRoute</b>
+      option to <tt>true</tt>.
+      To update the URL without creating an entry in the browser's history,
+      set the <b>replaceState</b> option to <tt>true</tt>.
     </p>
 
 <pre>
 openPage: function(pageNumber) {
   this.document.pages.at(pageNumber).open();
   this.navigate("page/" + pageNumber);
-}
-
-# Or ...
-
-app.navigate("help/troubleshooting", true);
-</pre>
-
-    <p id="Router-replaceState">
-      <b class="header">replaceState</b><code>router.replaceState(fragment, [triggerRoute])</code>
-      <br />
-      Whenever you reach a point in your application that you'd like to update
-      the URL without creating an entry in the browser's history, call <b>replaceState</b>.
-      It will otherwise function like the <b>navigate</b> method.  If you wish to also call 
-      the route function, pass <b>triggerRoute</b>.
-    </p>
-
-<pre>
-doContinuousScroll: function(pageNumber) {
-  this.document.pages.at(pageNumber).open();
-  this.replaceState("page/" + pageNumber);
 }
 
 # Or ...

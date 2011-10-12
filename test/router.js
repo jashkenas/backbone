@@ -72,28 +72,32 @@ $(document).ready(function() {
   });
 
   test("Router: routes via navigate", 2, function() {
+    Backbone.history.navigate('search/manhattan/p20', {triggerRoute: true});
+    equals(router.query, 'manhattan');
+    equals(router.page, '20');
+  });
+  
+  test("Router: routes via navigate for backwards-compatibility", 2, function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equals(router.query, 'manhattan');
     equals(router.page, '20');
   });
   
-  test("Router: routes via replaceState", 2, function() {
-    router.replaceState('search/manhattan/p20', true);
+  test("Router: routes via navigate with pushState", 2, function() {
+    router.navigate('search/manhattan/p20', {triggerRoute: true, replaceState: true});
     equals(router.query, 'manhattan');
     equals(router.page, '20');
   });
   
-  if (window.history && window.history.replaceState) {
-    test("Router: replaceState shouldn't add history in browsers that support it", 1, function() {
-      var historyLength = window.history.length;
-      router.replaceState('search/manhattan/p20', true);
+  test("Router: routes via navigate with pushState shouldn't add history in browsers that support it", 1, function() {
+    var historyLength = window.history.length;
+    router.navigate('search/manhattan/p20', {triggerRoute: true, replaceState: true});
+    if (window.history && window.history.replaceState) {
       equals(window.history.length, historyLength);
-  	});
-  } else {
-    if (window.console){
-      window.console.log("browser doesn't support replaceState");
+    } else {
+      equals(window.history.length, historyLength + 1);
     }
-  }
+  });
   
   asyncTest("Router: routes (splats)", function() {
     window.location.hash = 'splat/long-list/of/splatted_99args/end';
