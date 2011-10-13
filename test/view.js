@@ -155,4 +155,20 @@ $(document).ready(function() {
     equals(count, 2);
   });
 
+  test("View: setLocalElements", function() {
+    var ViewClass = Backbone.View.extend({
+        el: '<div><span class="title"></span> by <em class="author"></em>',
+        elements: {
+          '.title': 'title',
+          '.author': 'author'
+        }
+    });
+
+    var view = new ViewClass;
+
+    equals(view.title.selector, '.title');
+    equals(view.author.selector, '.author');
+
+  });
+
 });
