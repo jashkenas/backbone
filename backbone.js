@@ -81,22 +81,27 @@
     // Remove one or many callbacks. If `callback` is null, removes all
     // callbacks for the event. If `ev` is null, removes all bound callbacks
     // for all events.
-    unbind : function(ev, callback) {
+    unbind : function(evs, callback) {
       var calls;
-      if (!ev) {
+      if (!evs) {
         this._callbacks = {};
       } else if (calls = this._callbacks) {
+        if (!_.isArray(evs)) evs = [evs]
         if (!callback) {
-          calls[ev] = [];
+          _.each(evs, function(ev) {
+            calls[ev] = [];
+          });
         } else {
-          var list = calls[ev];
-          if (!list) return this;
-          for (var i = 0, l = list.length; i < l; i++) {
-            if (list[i] && callback === list[i][0]) {
-              list[i] = null;
-              break;
+          _.each(evs, function(ev) {
+            var list = calls[ev];
+            if (!list) return this;
+            for (var i = 0, l = list.length; i < l; i++) {
+              if (list[i] && callback === list[i][0]) {
+                list[i] = null;
+                break;
+              }
             }
-          }
+          });
         }
       }
       return this;
