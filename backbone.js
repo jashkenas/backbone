@@ -664,6 +664,7 @@
 
   // Cached regular expressions for matching named param parts and splatted
   // parts of route strings.
+  var queryStringParam = /\?$/;
   var namedParam    = /:([\w\d]+)/g;
   var splatParam    = /\*([\w\d]+)/g;
   var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
@@ -713,16 +714,51 @@
     // Convert a route string into a regular expression, suitable for matching
     // against the current location hash.
     _routeToRegExp : function(route) {
+      var hasQueryString = false;
+      if (route.match(queryStringParam)) {
+        // make a query string syntax look like a wildcard syntax
+        route = route.replace(queryStringParam, '*queryString');
+        hasQueryString = true;
+      }
+
       route = route.replace(escapeRegExp, "\\$&")
                    .replace(namedParam, "([^\/]*)")
                    .replace(splatParam, "(.*?)");
-      return new RegExp('^' + route + '$');
+      var rtn = new RegExp('^' + route + '$');
+
+      if (hasQueryString) {
+        // keep note that this route is a query string syntax
+        if (!this.queryStringRoutes) this.queryStringRoutes = {};
+        this.queryStringRoutes[rtn] = true;
+      }
+      return rtn;
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters : function(route, fragment) {
-      return route.exec(fragment).slice(1);
+      var rtn = route.exec(fragment);
+      if (this.queryStringRoutes) {
+        // take the last parameter and extract query string data
+        var queryString = rtn[rtn.length-1];
+        var data = {};
+        if (queryString) {
+          var keyValues = queryString.split('&');
+          _.each(keyValues, function(keyValue) {
+            var arr = keyValue.split('=');
+            if (arr.length > 1 && arr[1]) {
+              data[arr[0]] = decodeURIComponent(arr[1]);
+            }
+          });
+        }
+        rtn[rtn.length-1] = data;
+      }
+      for (var i=1; i<rtn.length; i++) {
+        if (_.isString(rtn[i])) {
+          rtn[i] = decodeURIComponent(rtn[i]);
+        }
+      }
+      return rtn.slice(1);
     }
 
   });
@@ -765,7 +801,7 @@
           fragment = window.location.hash;
         }
       }
-      fragment = decodeURIComponent(fragment.replace(hashStrip, ''));
+      fragment = fragment.replace(hashStrip, '');
       if (!fragment.indexOf(this.options.root)) fragment = fragment.substr(this.options.root.length);
       return fragment;
     },
