@@ -444,9 +444,11 @@
     // firing the `added` event for every new model.
     add : function(models, options) {
       if (_.isArray(models)) {
+        var appendedModels = [];
         for (var i = 0, l = models.length; i < l; i++) {
-          this._add(models[i], options);
+          appendedModels.push(this._add(models[i], options));
         }
+       if (options.addMany === true && !options.silent) this.trigger("addMany", appendedModels, this, options);
       } else {
         this._add(models, options);
       }
@@ -592,7 +594,7 @@
       this.models.splice(index, 0, model);
       model.bind('all', this._onModelEvent);
       this.length++;
-      if (!options.silent) model.trigger('add', model, this, options);
+      if (!options.silent && !options.addMany) model.trigger('add', model, this, options);
       return model;
     },
 
