@@ -15,6 +15,7 @@ $(document).ready(function() {
   var e         = null;
   var col       = new Backbone.Collection([a,b,c,d]);
   var otherCol  = new Backbone.Collection();
+  var urlCol    = new Backbone.Collection(null, {url: '/users'})
 
   test("Collection: new and sort", function() {
     equals(col.first(), a, "a should be first");
@@ -24,6 +25,10 @@ $(document).ready(function() {
     equals(col.first(), d, "d should be first");
     equals(col.last(), a, "a should be last");
     equals(col.length, 4);
+  });
+
+  test("Collection: can be initialized with an URL", function() {
+    equals(urlCol.url, '/users');
   });
 
   test("Collection: get, getByCid", function() {
