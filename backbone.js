@@ -740,7 +740,7 @@
       var rtn = route.exec(fragment);
       if (this.queryStringRoutes && this.queryStringRoutes[route]) {
         // take the last parameter and extract query string data
-        var queryString = rtn[rtn.length-1].substring(1);
+        var queryString = rtn[rtn.length-1].replace(/^\?/, '');
         var data = {};
         if (queryString) {
           var keyValues = queryString.split('&');
