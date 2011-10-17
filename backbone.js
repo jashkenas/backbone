@@ -78,7 +78,7 @@
     // Remove one or many callbacks. If `callback` is null, removes all
     // callbacks for the event. If `ev` is null, removes all bound callbacks
     // for all events. If `callback` is a `context` passed when the callback
-    // was bound with `bind`, removes all callbacks for the context for the given `ev`.
+    // was bound with `bind`, removes all callbacks for the context.
     unbind : function(ev, callback) {
       var calls;
       if (!ev) {
@@ -86,36 +86,22 @@
       } else if (calls = this._callbacks) {
         if (!callback) {
           calls[ev] = [];
+        } else {
+          var list = calls[ev];
+          if (!list) return this;
+          for (var i = 0, l = list.length; i < l; i++) {
+            if (list[i] && callback === list[i][0]) {
+              list[i] = null;
+              break;
+            }
+            else if (list[i] && callback === list[i][1]) {
+              list[i] = null;
+            }
+          }
         }
-        else this._unbind(calls[ev], callback);
       }
       return this;
     },
-
-	  // Remove `callback` as bound to any event. If `callback` is a `context`
-	  // passed when the callback was bound with `bind`, removes all callbacks
-	  // for the context for all events.
-	  unbindAll : function(callback) {
-	    var calls;
-	    if (callback && (calls = this._callbacks)) {
-				for (var list in calls) {
-					this._unbind(list, callback);
-				}
-	    }
-	    return this;
-	  },
-
-		_unbind: function(list, callback) {
-      if (list) for (var i = 0, l = list.length; i < l; i++) {
-        if (list[i] && callback === list[i][0]) {
-          list[i] = null;
-          break;
-        }
-        else if (list[i] && callback === list[i][1]) {
-          list[i] = null;
-        }
-      }
-    }
 
     // Trigger an event, firing all bound callbacks. Callbacks are passed the
     // same arguments as `trigger` is, apart from the event name.
@@ -412,7 +398,7 @@
     // if all is well. If a specific `error` callback has been passed,
     // call that instead of firing the general `"error"` event.
     _performValidation : function(attrs, options) {
-      var error = this.validate(attrs);
+      var error = this.validate(attrs,options);
       if (error) {
         if (options.error) {
           options.error(this, error, options);
