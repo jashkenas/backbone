@@ -1000,6 +1000,16 @@
       } else if (_.isString(this.el)) {
         this.el = $(this.el).get(0);
       }
+    },
+
+    // Makes an el sub-element lookup based on selector, and
+    // caches the element reference.  A useful alternative
+    // to writing $(this.el).find() repeatedly.
+    find : function (selector) {
+        if (!this.elcache) this.elcache = {};
+        if (this.elcache['selector']) return this.elcache['selector'];
+        this.elcache[selector] = $(this.el).find(selector);
+        return this.elcache[selector];
     }
 
   });
