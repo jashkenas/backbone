@@ -104,7 +104,7 @@
     // Listening for `"all"` passes the true event name as the first argument.
     trigger : function(eventName) {
       var list, calls, ev, callback, args;
-      var both = 2;
+      var both = (eventName === 'all') ? 1 : 2;
       if (!(calls = this._callbacks)) return this;
       while (both--) {
         ev = both ? eventName : 'all';
