@@ -159,6 +159,12 @@ $(document).ready(function() {
     equals(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
+  test("Model: set single attribute", function() {
+    a = new Backbone.Model();
+    a.set('foo', 2);
+    equals(a.attributes.foo, 2)
+  });
+
   test("Model: multiple unsets", function() {
     var i = 0;
     var counter = function(){ i++; };

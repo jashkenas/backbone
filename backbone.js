@@ -191,6 +191,11 @@
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
+      if (_.isString(attrs) || _.isNumber(attrs)){
+        var key = attrs;
+        (attrs = {})[key] = options;
+        options = arguments.length > 2 ? arguments[3] : undefined;
+      }
 
       // Extract attributes and options.
       options || (options = {});
