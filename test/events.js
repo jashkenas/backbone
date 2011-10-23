@@ -86,7 +86,7 @@ $(document).ready(function() {
   test("Events: bind an array of events", function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
-    obj.bind(['event1', 'event2'], function() { obj.counter += 1; });
+    obj.bind('event1, event2', function() { obj.counter += 1; });
     obj.trigger('event1');
     obj.trigger('event2');
     equals(obj.counter,2,'counter should be incremented for each event.');
@@ -100,12 +100,12 @@ $(document).ready(function() {
   test("Events: unbind an array of events", function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
-    obj.bind(['event1', 'event2', 'event3'], function() { obj.counter += 1; });
+    obj.bind('event1,event2,event3', function() { obj.counter += 1; });
     obj.trigger('event1');
     obj.trigger('event2');
     obj.trigger('event3');
     equals(obj.counter,3,'counter should be incremented for each event.');
-    obj.unbind(['event1', 'event2'])
+    obj.unbind('event1, event2')
     obj.trigger('event1');
     obj.trigger('event2');
     obj.trigger('event3');
@@ -116,12 +116,12 @@ $(document).ready(function() {
     var obj = { counter: 0 };
     var callback = function() { obj.counter += 1 };
     _.extend(obj,Backbone.Events);
-    obj.bind(['event1', 'event2', 'event3'], callback);
+    obj.bind('event1, event2 , event3', callback);
     obj.trigger('event1');
     obj.trigger('event2');
     obj.trigger('event3');
     equals(obj.counter,3,'counter should be incremented for each event.');
-    obj.unbind(['event1', 'event2'], callback)
+    obj.unbind('event1, event2', callback)
     obj.trigger('event1');
     obj.trigger('event2');
     obj.trigger('event3');
