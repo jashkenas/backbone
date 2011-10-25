@@ -194,7 +194,7 @@
       if (_.isString(attrs) || _.isNumber(attrs)){
         var key = attrs;
         (attrs = {})[key] = options;
-        options = arguments.length > 2 ? arguments[3] : undefined;
+        options = arguments.length > 2 ? arguments[2] : undefined;
       }
 
       // Extract attributes and options.

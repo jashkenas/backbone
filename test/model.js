@@ -160,9 +160,15 @@ $(document).ready(function() {
   });
 
   test("Model: set single attribute", function() {
-    a = new Backbone.Model();
+    var counter = 0;
+    var a = new Backbone.Model();
+    a.bind('change:foo', function(){ counter++; });
     a.set('foo', 2);
     equals(a.attributes.foo, 2)
+    equals(counter, 1);
+    a.set('foo', 3, {silent: true});
+    equals(a.attributes.foo, 3);
+    equals(counter, 1);
   });
 
   test("Model: multiple unsets", function() {
