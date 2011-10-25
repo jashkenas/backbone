@@ -4,42 +4,39 @@
 //     For all details and documentation:
 //     http://documentcloud.github.com/backbone
 
-(function(){
+// Use a factory function to attach Backbone properties to an exports value.
+// Code at the end of this file creates the right define, require and exports
+// values to allow Backbone to run in a CommonJS or AMD container or in the
+// default browser environment.
+(function(define){ var root = this; define('backbone', function(require, exports) {
 
   // Initial Setup
   // -------------
-
-  // Save a reference to the global object.
-  var root = this;
 
   // Save the previous value of the `Backbone` variable.
   var previousBackbone = root.Backbone;
 
   // The top-level namespace. All public Backbone classes and modules will
-  // be attached to this. Exported for both CommonJS and the browser.
-  var Backbone;
-  if (typeof exports !== 'undefined') {
-    Backbone = exports;
-  } else {
-    Backbone = root.Backbone = {};
-  }
+  // be attached to this.
+  var Backbone = exports;
 
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '0.5.3';
 
-  // Require Underscore, if we're on the server, and it's not already present.
-  var _ = root._;
-  if (!_ && (typeof require !== 'undefined')) _ = require('underscore')._;
+  // Require Underscore.
+  var _ = require('underscore');
 
-  // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
-  var $ = root.jQuery || root.Zepto || root.ender;
+  // The DOM/Ajax library used internally by Backbone. It can be set to any
+  // library that supports the portions of the jQuery API used by Backbone.
+  // In the browser, by default Backbone looks for a global jQuery, Zepto or Ender.
+  var $ = require('jquery');
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
   Backbone.noConflict = function() {
     root.Backbone = previousBackbone;
-    return this;
-  };
+    return exports;
+  }
 
   // Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option will
   // fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and set a
@@ -1161,4 +1158,53 @@
     return string.replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
   };
 
-}).call(this);
+})}).call(this, typeof define === 'function' && define.amd ? define : function (id, factory) {
+
+  if (typeof exports !== 'undefined') {
+    // CommonJS has require and exports, use them and execute
+    // the factory function immediately. Provide a wrapper
+    // for require to deal with jQuery.
+    factory(function(id) {
+      // jQuery most likely cannot be loaded
+      // in a CommonJS environment, unless the developer
+      // also uses a browser shim like jsdom. Allow
+      // for that possibility, but do not blow
+      // up if it does not work. Use of a
+      // try/catch has precedent in Node modules
+      // for this kind of situation.
+      try {
+        return require(id);
+      } catch (e) {
+        // Do not bother returning a value, just absorb
+        // the error, the caller will receive undefined
+        // for the value.
+      }
+    }, exports);
+  } else {
+    // Plain browser. Grab the global.
+    var root = this;
+
+    // Create an object to hold the exported properties for Backbone.
+    // Do not use "exports" for the variable name, since var hoisting
+    // means it will shadow CommonJS exports in that environmetn.
+    var exportValue = {};
+
+    // Create a global for Backbone.
+    // Call the factory function to attach the Backbone
+    // properties to the exports value.
+    factory(function(value) {
+      if (value === 'jquery') {
+        // Support libraries that support the portions of
+        // the jQuery API used by Backbone.
+        return root.jQuery || root.Zepto || root.ender;
+      } else {
+        // Only other dependency is underscore.
+        return root._;
+      }
+    }, exportValue);
+
+    // Create the global only after running the factory,
+    // so that the previousBackbone for noConflict is found correctly.
+    root.Backbone = exportValue;
+  }
+});
