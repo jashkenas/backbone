@@ -722,8 +722,8 @@
       }
 
       route = route.replace(escapeRegExp, "\\$&")
-                   .replace(namedParam, "([^\/]*)")
                    .replace(namedParam, "([^\/?]*)")
+                   .replace(splatParam, "(.*?)");
       var rtn = new RegExp('^' + route + '$');
 
       if (hasQueryString) {

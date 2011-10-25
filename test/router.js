@@ -137,6 +137,14 @@ $(document).ready(function() {
     }, 10);
   });
 
+  asyncTest("Router: routes (mappedQuery - no '/')", 1, function() {
+    window.location.hash = 'mandel?a=b';
+    setTimeout(function() {
+      equals(router.mappedQueryArgs['a'], 'b');
+      start();
+    }, 10);
+  });
+
   asyncTest("Router: routes (anything)", 1, function() {
     window.location.hash = 'doesnt-match-a-route';
     setTimeout(function() {
