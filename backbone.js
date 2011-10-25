@@ -723,7 +723,7 @@
 
       route = route.replace(escapeRegExp, "\\$&")
                    .replace(namedParam, "([^\/]*)")
-                   .replace(splatParam, "(.*?)");
+                   .replace(namedParam, "([^\/?]*)")
       var rtn = new RegExp('^' + route + '$');
 
       if (hasQueryString) {
