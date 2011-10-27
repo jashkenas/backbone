@@ -664,7 +664,7 @@
 
   // Cached regular expressions for matching named param parts and splatted
   // parts of route strings.
-  var queryStringParam = /\?$/;
+  var queryStringParam = /^\?(.*)/;
   var namedParam    = /:([\w\d]+)/g;
   var splatParam    = /\*([\w\d]+)/g;
   var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
@@ -714,33 +714,24 @@
     // Convert a route string into a regular expression, suitable for matching
     // against the current location hash.
     _routeToRegExp : function(route) {
-      var hasQueryString = false;
-      if (route.match(queryStringParam)) {
-        // make a query string syntax look like a wildcard syntax
-        route = route.replace(queryStringParam, '*queryString');
-        hasQueryString = true;
-      }
-
       route = route.replace(escapeRegExp, "\\$&")
                    .replace(namedParam, "([^\/?]*)")
-                   .replace(splatParam, "(.*?)");
-      var rtn = new RegExp('^' + route + '$');
-
-      if (hasQueryString) {
-        // keep note that this route is a query string syntax
-        if (!this.queryStringRoutes) this.queryStringRoutes = {};
-        this.queryStringRoutes[rtn] = true;
-      }
-      return rtn;
+                   .replace(splatParam, "([^\?]*?)");
+      route += '([\?]{1}.*)?';
+      console.log(route);
+      return new RegExp('^' + route + '$');
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters : function(route, fragment) {
-      var rtn = route.exec(fragment);
-      if (this.queryStringRoutes && this.queryStringRoutes[route]) {
-        // take the last parameter and extract query string data
-        var queryString = rtn[rtn.length-1].replace(/^\?/, '');
+      var params = route.exec(fragment).slice(1);
+      console.log(params);
+
+      // do we have an additional query string
+      var match = params.length && params[params.length-1] && params[params.length-1].match(queryStringParam);
+      if (match) {
+    	  var queryString = match[1];
         var data = {};
         if (queryString) {
           var keyValues = queryString.split('&');
@@ -751,14 +742,17 @@
             }
           });
         }
-        rtn[rtn.length-1] = data;
+        params[params.length-1] = data;
       }
-      for (var i=1; i<rtn.length; i++) {
-        if (_.isString(rtn[i])) {
-          rtn[i] = decodeURIComponent(rtn[i]);
+
+      // decode params
+      for (var i=1; i<params.length; i++) {
+        if (_.isString(params[i])) {
+          params[i] = decodeURIComponent(params[i]);
         }
       }
-      return rtn.slice(1);
+
+      return params;
     }
 
   });

@@ -9,7 +9,6 @@ $(document).ready(function() {
       "search/:query/p:page":       "search",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
-      ":entity/?":                  "mappedQuery",
       ":entity?*args":              "query",
       "*anything":                  "anything"
     },
@@ -18,33 +17,34 @@ $(document).ready(function() {
       this.testing = options.testing;
     },
 
-    search : function(query, page) {
+    search : function(query, page, queryParams) {
       this.query = query;
       this.page = page;
+      this.queryParams = queryParams;
     },
 
-    splat : function(args) {
+    splat : function(args, queryParams) {
       this.args = args;
+      this.queryParams = queryParams;
     },
 
-    complex : function(first, part, rest) {
+    complex : function(first, part, rest, queryParams) {
       this.first = first;
       this.part = part;
       this.rest = rest;
+      this.queryParams = queryParams;
     },
 
-    query : function(entity, args) {
+    query : function(entity, args, queryParams) {
       this.entity    = entity;
       this.queryArgs = args;
+      this.queryParams = queryParams;
     },
 
-    mappedQuery : function(entity, args) {
-      this.entity          = entity;
-      this.mappedQueryArgs = args;
-    },
-
-    anything : function(whatever) {
+    anything : function(whatever, queryParams) {
       this.anything = whatever;
+      this.queryParams = queryParams;
+      console.log(whatever + ": " + queryParams);
     }
 
   });
@@ -77,11 +77,12 @@ $(document).ready(function() {
     }, 10);
   });
 
-  asyncTest("Router: routes (encoded reserved char)", 2, function() {
-    window.location.hash = 'search/nyc/pa%2Fb';
+  asyncTest("Router: routes (two part - query params)", 3, function() {
+    window.location.hash = 'search/nyc/p10?a=b';
     setTimeout(function() {
       equals(router.query, 'nyc');
-      equals(router.page, 'a/b');
+      equals(router.page, '10');
+      equals(router.queryParams.a, 'b');
       start();
     }, 10);
   });
@@ -100,6 +101,15 @@ $(document).ready(function() {
     }, 10);
   });
 
+  asyncTest("Router: routes (splats - query params)", 2, function() {
+    window.location.hash = 'splat/long-list/of/splatted_99args/end?c=d';
+    setTimeout(function() {
+      equals(router.args, 'long-list/of/splatted_99args');
+      equals(router.queryParams.c, 'd');
+      start();
+    }, 10);
+  });
+
   asyncTest("Router: routes (complex)", 3, function() {
     window.location.hash = 'one/two/three/complex-part/four/five/six/seven';
     setTimeout(function() {
@@ -110,37 +120,22 @@ $(document).ready(function() {
     }, 10);
   });
 
+  asyncTest("Router: routes (complex - query params)", 4, function() {
+    window.location.hash = 'one/two/three/complex-part/four/five/six/seven?e=f';
+    setTimeout(function() {
+      equals(router.first, 'one/two/three');
+      equals(router.part, 'part');
+      equals(router.rest, 'four/five/six/seven');
+      equals(router.queryParams.e, 'f');
+      start();
+    }, 10);
+  });
+
   asyncTest("Router: routes (query)", 2, function() {
     window.location.hash = 'mandel?a=b&c=d';
     setTimeout(function() {
       equals(router.entity, 'mandel');
       equals(router.queryArgs, 'a=b&c=d');
-      start();
-    }, 10);
-  });
-
-  asyncTest("Router: routes (mappedQuery)", 3, function() {
-    window.location.hash = 'mandel/?a=b&escaped=%2F%3D';
-    setTimeout(function() {
-      equals(router.entity, 'mandel');
-      equals(router.mappedQueryArgs['a'], 'b');
-      equals(router.mappedQueryArgs['escaped'], '/=');
-      start();
-    }, 10);
-  });
-
-  asyncTest("Router: routes (mappedQuery - no '?')", 1, function() {
-    window.location.hash = 'mandel/a=b';
-    setTimeout(function() {
-      equals(router.mappedQueryArgs['a'], 'b');
-      start();
-    }, 10);
-  });
-
-  asyncTest("Router: routes (mappedQuery - no '/')", 1, function() {
-    window.location.hash = 'mandel?a=b';
-    setTimeout(function() {
-      equals(router.mappedQueryArgs['a'], 'b');
       start();
     }, 10);
   });
