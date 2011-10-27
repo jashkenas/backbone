@@ -1107,6 +1107,18 @@
     return $.ajax(params);
   };
 
+  // Namespace
+  // ---------
+  //
+  // Allows you to namespace your state or modules inside backbone
+  // Instead of creating global variables, you can contain all
+  // your app inside Backbone
+  //
+  Backbone.namespace = function (name, data) {
+    if (data) this[name] = data;
+    return this[name];
+  };
+
   // Helpers
   // -------
 
