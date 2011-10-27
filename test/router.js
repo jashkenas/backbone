@@ -77,6 +77,15 @@ $(document).ready(function() {
     }, 10);
   });
 
+  asyncTest("Router: routes (two part - encoded reserved char)", 2, function() {
+    window.location.hash = 'search/nyc/pa%2Fb';
+    setTimeout(function() {
+      equals(router.query, 'nyc');
+      equals(router.page, 'a/b');
+      start();
+    }, 10);
+  });
+
   asyncTest("Router: routes (two part - query params)", 3, function() {
     window.location.hash = 'search/nyc/p10?a=b';
     setTimeout(function() {
