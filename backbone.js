@@ -718,7 +718,6 @@
                    .replace(namedParam, "([^\/?]*)")
                    .replace(splatParam, "([^\?]*?)");
       route += '([\?]{1}.*)?';
-      console.log(route);
       return new RegExp('^' + route + '$');
     },
 
@@ -726,9 +725,8 @@
     // extracted parameters.
     _extractParameters : function(route, fragment) {
       var params = route.exec(fragment).slice(1);
-      console.log(params);
 
-      // do we have an additional query string
+      // do we have an additional query string?
       var match = params.length && params[params.length-1] && params[params.length-1].match(queryStringParam);
       if (match) {
     	  var queryString = match[1];
