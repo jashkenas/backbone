@@ -342,4 +342,22 @@ $(document).ready(function() {
     equals(fired, true);
   });
 
+  test("Collection: Can handle relationships", function() {
+    var user, tasks;
+
+    var Tasks = Backbone.Collection.extend({});
+    tasks = new Tasks([{due: 'today'}, {due: 'tomorrow'}]);
+
+    var User = Backbone.Model.extend({
+      initialize: function() {
+        this.rel('tasks', tasks);
+      }
+    });
+
+    user = new User({name: 'john'});
+
+    equal(user.rel('tasks').length, 2)
+    equal(user.rel('tasks').at(1).get('due'), 'tomorrow')
+  });
+
 });
