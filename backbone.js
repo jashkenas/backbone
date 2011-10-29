@@ -26,6 +26,7 @@
 
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '0.5.3';
+  Backbone.HAS_ATTRIBUTE_OWNERSHIP = true; // a version check until this is integrated into the main branch and given a real VERSION number
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
@@ -141,7 +142,11 @@
     this.cid = _.uniqueId('c');
     this.set(attributes, {silent : true});
     this._changed = false;
-    this._previousAttributes = _.clone(this.attributes);
+    if (this._ownAttribute) {
+      var model = this; model._previousAttributes = {};
+      _.each(model.attributes, function(attribute, key) { model._previousAttributes[key] = model._ownAttribute(key, attribute); });
+    }
+    else this._previousAttributes = _.clone(this.attributes);
     if (options && options.collection) this.collection = options.collection;
     this.initialize(attributes, options);
   };
@@ -209,13 +214,16 @@
       this._changing = true;
 
       // Update attributes.
+      var val, prev;
       for (var attr in attrs) {
-        var val = attrs[attr];
+        val = attrs[attr];
         if (!_.isEqual(now[attr], val)) {
+          prev = now[attr];
           now[attr] = val;
           delete escaped[attr];
           this._changed = true;
           if (!options.silent) this.trigger('change:' + attr, this, val, options);
+          if (this._ownAttribute) this._disownAttribute(attr, prev);
         }
       }
 
@@ -238,6 +246,7 @@
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
       // Remove the attribute.
+      if (this._ownAttribute) this._disownAttribute(attr, this.attributes[attr]);
       delete this.attributes[attr];
       delete this._escapedAttributes[attr];
       if (attr == this.idAttribute) delete this.id;
@@ -261,7 +270,13 @@
       for (attr in old) validObj[attr] = void 0;
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
+      if (this._ownAttribute) {
+        var model = this;
+        _.each(model.attributes, function(attribute, key) { model._disownAttribute(key, attribute); }); 
+        _.each(model._previousAttributes, function(attribute, key) { model._disownAttribute(key, attribute); }); 
+      }
       this.attributes = {};
+      this._previousAttributes = {};
       this._escapedAttributes = {};
       this._changed = true;
       if (!options.silent) {
@@ -314,6 +329,10 @@
       var success = options.success;
       options.success = function(resp) {
         model.trigger('destroy', model, model.collection, options);
+        if (model._disownAttribute) {
+          _.each(model.attributes, function(attribute, key) { model._disownAttribute(attribute, key); }); 
+        }
+        model.attributes = {};
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
@@ -349,7 +368,12 @@
     // Calling this will cause all objects observing the model to update.
     change : function(options) {
       this.trigger('change', this, options);
-      this._previousAttributes = _.clone(this.attributes);
+      if (this._ownAttribute) {
+        var model = this;
+        _.each(model._previousAttributes, function(attribute, key) { model._disownAttribute(key, attribute); }); model._previousAttributes = {};
+        _.each(model.attributes, function(attribute, key) { model._previousAttributes[key] = model._ownAttribute(key, attribute); });
+      }
+      else this._previousAttributes = _.clone(this.attributes);
       this._changed = false;
     },
 
@@ -386,8 +410,13 @@
 
     // Get all of the attributes of the model at the time of the previous
     // `"change"` event.
-    previousAttributes : function() {
-      return _.clone(this._previousAttributes);
+     previousAttributes : function(take_ownership) {
+      if (take_ownership) {
+        var model = this, caller_owned_attributes = {};
+        _.each(model._previousAttributes, function(attribute, key) { caller_owned_attributes[key] = model._ownAttribute(key, attribute); });
+        return caller_owned_attributes;
+      } 
+      else return _.clone(this._previousAttributes);
     },
 
     // Run validation against a set of incoming attributes, returning `true`
@@ -406,6 +435,10 @@
       return true;
     }
 
+    // // Customization hook for owning an attribute. For example, cloning it, updating a reference count, binding it, etc.
+    // _ownAttribute : function (key, value) {},
+    // // Customization hook for disowning an attribute. For example, calling destroy()
+    // _disownAttribute : function (key, value) {}
   });
 
   // Backbone.Collection
@@ -558,6 +591,7 @@
     // Reset all internal state. Called when the collection is reset.
     _reset : function(options) {
       this.length = 0;
+      if (this.models && this.models.length) { _.each(this.models, function(model) { model.clear({silent: true}); }); }
       this.models = [];
       this._byId  = {};
       this._byCid = {};
