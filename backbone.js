@@ -690,6 +690,7 @@
     //     });
     //
     route : function(route, name, callback) {
+      this.trigger('route', this, options);
       Backbone.history || (Backbone.history = new Backbone.History);
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       Backbone.history.route(route, _.bind(function(fragment) {
