@@ -257,10 +257,10 @@
       return this;
     },
 
-    // Clear all attributes on the model, firing `"change"` unless you choose
-    // to silence it.
+    // Clear all attributes except `id` on the model, firing `"change"` unless
+    // you choose to silence it.
     clear : function(options) {
-      return this.unset(_.keys(this.attributes), options);
+      return this.unset(_.without(_.keys(this.attributes), 'id'), options);
     },
 
     // Fetch the model from the server. If the server's representation of the
