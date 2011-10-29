@@ -175,7 +175,9 @@ $(document).ready(function() {
     model.unset('a', {silent: true});
     var changedAttributes = model.changedAttributes();
     ok('a' in changedAttributes, 'changedAttributes should contain unset properties');
-    equals(changedAttributes.a, undefined);
+
+    changedAttributes = model.changedAttributes();
+    ok('a' in changedAttributes, 'changedAttributes should contain unset properties when running changedAttributes again after an unset.');
   });
 
   test("Model: using a non-default id attribute.", function() {

@@ -253,6 +253,7 @@
       if (!options.silent) {
         this.trigger('change:' + attr, this, void 0, options);
         this.change(options);
+        this._unsetAttributes = false;
       }
       return this;
     },
@@ -389,7 +390,6 @@
         changed[attr] = void 0;
       }
       
-      this._unsetAttributes = false;
       return changed;
     },
 
