@@ -1093,8 +1093,10 @@
     }
 
     // Make the request.
-    return $.ajax(params);
+    return Backbone.ajax(params);
   };
+
+  Backbone.ajax = $.ajax;
 
   // Helpers
   // -------
