@@ -610,6 +610,7 @@
       this.models.splice(index, 0, model);
       model.bind('all', this._onModelEvent);
       this.length++;
+      options.index = index;
       if (!options.silent) model.trigger('add', model, this, options);
       return model;
     },
@@ -622,8 +623,10 @@
       if (!model) return null;
       delete this._byId[model.id];
       delete this._byCid[model.cid];
-      this.models.splice(this.indexOf(model), 1);
+      var index = this.indexOf(model);
+      this.models.splice(index, 1);
       this.length--;
+      options.index = index;
       if (!options.silent) model.trigger('remove', model, this, options);
       this._removeReference(model);
       return model;
