@@ -1053,18 +1053,15 @@
     var type = methodMap[method];
 
     // Default JSON-request options.
-    var params = _.extend({
-      type:         type,
-      dataType:     'json'
-    }, options);
+    var params = {type : type, dataType : 'json'};
 
     // Ensure that we have a URL.
-    if (!params.url) {
+    if (!options.url) {
       params.url = getUrl(model) || urlError();
     }
 
     // Ensure that we have the appropriate request data.
-    if (!params.data && model && (method == 'create' || method == 'update')) {
+    if (!options.data && model && (method == 'create' || method == 'update')) {
       params.contentType = 'application/json';
       params.data = JSON.stringify(model.toJSON());
     }
@@ -1072,7 +1069,7 @@
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (Backbone.emulateJSON) {
       params.contentType = 'application/x-www-form-urlencoded';
-      params.data        = params.data ? {model : params.data} : {};
+      params.data = params.data ? {model : params.data} : {};
     }
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
@@ -1092,8 +1089,8 @@
       params.processData = false;
     }
 
-    // Make the request.
-    return $.ajax(params);
+    // Make the request, allowing the user to override any Ajax options.
+    return $.ajax(_.extend(params, options));
   };
 
   // Helpers
