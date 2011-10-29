@@ -425,6 +425,7 @@
   Backbone.Collection = function(models, options) {
     options || (options = {});
     if (options.comparator) this.comparator = options.comparator;
+    if (options.url) this.url = options.url;
     _.bindAll(this, '_onModelEvent', '_removeReference');
     this._reset();
     if (models) this.reset(models, {silent: true});
