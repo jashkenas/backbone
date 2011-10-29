@@ -50,7 +50,7 @@ div#sidebar {
         .toc_section li a:hover {
           text-decoration: underline;
         }
-div.container {
+.container {
   position: relative;
   width: 950px;
   margin: 40px 0 50px 260px;
@@ -149,22 +149,23 @@ header h2 {
 }
 
 /* Nav */
-nav {
+header nav {
   margin: 0 0 50px 0;
   float: right;
   background: rgba(0,0,0,.1);
 }
-nav ul li {
+header nav ul li {
   display: inline;
   margin: 0;
 }
-nav a {
+header nav a {
   text-decoration: none;
   padding: 10px;
   font-size: 16px;
 }
-
-
+footer {
+  border-top: 1px solid #c2c2c2;
+}
 /* Fonts */
 .os {
   font-family: 'Open Sans', sans-serif;
@@ -199,7 +200,12 @@ hr.space {
     margin: 0;
     text-align: left;
   }
-  
+
+.half {
+  float: left;
+  width: 40%;
+  margin-right: 8%;
+}  
 .third {
   float: left;
   width: 30%;

@@ -89,9 +89,20 @@ title: Home
     <a href="http://zeptojs.com/">Zepto</a>.
   </p>
 </section>
+
+<section class="third">
+  <h2>What is backbone?</h2>
+  <p>      
+    <a href="http://github.com/documentcloud/backbone/">Backbone</a>
+    supplies structure to JavaScript-heavy applications by providing <b>models</b> with
+    key-value binding and custom events, <b>collections</b> with a rich API of enumerable functions,
+    <b>views</b> with declarative event handling, and connects it all to your
+    existing application over a RESTful JSON interface.
+  </p>
+</section>
+
 <section class="third">
   <h2>Hello World</h2>
-  
 <pre class="runnable">
 var object = {};
 
@@ -102,79 +113,6 @@ object.bind("alert", function(msg) {
 });
 
 object.trigger("alert", "an event");
-</pre>
-      
+</pre>      
   </section>
-  <section class="third">
-    
-  </section>
-  
-  <hr class="space">
-  <p>      
-    <a href="http://github.com/documentcloud/backbone/">Backbone</a>
-    supplies structure to JavaScript-heavy applications by providing <b>models</b> with
-    key-value binding and custom events, <b>collections</b> with a rich API of enumerable functions,
-    <b>views</b> with declarative event handling, and connects it all to your
-    existing application over a RESTful JSON interface.
-  </p>
-  
-  <p>
-    The project is <a href="http://github.com/documentcloud/backbone/">hosted on GitHub</a>,
-    and the <a href="docs/backbone.html">annotated source code</a> is available,
-    as well as an online <a href="test/test.html">test suite</a>, an
-    <a href="examples/todos/index.html">example application</a> and a 
-    <a href="https://github.com/documentcloud/backbone/wiki/Tutorials%2C-blog-posts-and-example-sites">list of tutorials</a>.
-  </p>
-  
-  <p>
-    You can report bugs and discuss features on the
-    <a href="http://github.com/documentcloud/backbone/issues">GitHub issues page</a>,
-    on Freenode IRC in the <tt>#documentcloud</tt> channel, post questions to the
-    <a href="https://groups.google.com/forum/#!forum/backbonejs">Google Group</a>,
-    or send tweets to <a href="http://twitter.com/documentcloud">@documentcloud</a>.
-  </p>
-  
-  
-  <h2 id="Upgrading">Upgrading to 0.5.0+</h2>
-  
-  <p>
-    We've taken the opportunity to clarify some naming with the <b>0.5.0</b>
-    release. <tt>Controller</tt> is now <a href="#Router">Router</a>, and 
-    <tt>refresh</tt> is now <a href="#Collection-reset">reset</a>. 
-    The previous <tt>saveLocation</tt> and <tt>setLocation</tt>
-    functions have been replaced by <a href="#Router-navigate">navigate</a>. 
-    <tt>Backbone.sync</tt>'s method signature has changed to allow the passing
-    of arbitrary options to <tt>jQuery.ajax</tt>.
-    Be sure to <a href="#History-start">opt-in</a> to <tt>pushState</tt> support, 
-    if you want to use it.
-  </p>
-  
-  <h2 id="Introduction">Introduction</h2>
-  
-  <p>
-    When working on a web application that involves a lot of JavaScript, one
-    of the first things you learn is to stop tying your data to the DOM. It's all
-    too easy to create JavaScript applications that end up as tangled piles of
-    jQuery selectors and callbacks, all trying frantically to keep data in
-    sync between the HTML UI, your JavaScript logic, and the database on your
-    server. For rich client-side applications, a more structured approach
-    is often helpful.
-  </p>
-  
-  <p>
-    With Backbone, you represent your data as
-    <a href="#Model">Models</a>, which can be created, validated, destroyed,
-    and saved to the server. Whenever a UI action causes an attribute of
-    a model to change, the model triggers a <i>"change"</i> event; all
-    the <a href="#View">Views</a> that display the model's data are notified of the
-    event, causing them to re-render. You don't have to write the glue
-    code that looks into the DOM to find an element with a specific <i>id</i>,
-    and update the HTML manually
-    &mdash; when the model changes, the views simply update themselves.
-  </p>
-  
-  <p>
-    Many of the examples that follow are runnable. Click the <i>play</i> button
-    to execute them.
-  </p>
 </div>
