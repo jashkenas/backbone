@@ -374,6 +374,12 @@
           changed[attr] = now[attr];
         }
       }
+      for (attr in old){
+        if (!(attr in now)){
+          changed = changed || {};
+          changed[attr] = void 0;
+        }
+      }
       return changed;
     },
 
