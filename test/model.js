@@ -423,4 +423,21 @@ $(document).ready(function() {
     a.set({state: 'hello'});
   });
 
+  test("Model: Can handle relationships", function() {
+    var user, task;
+
+    var User = Backbone.Model.extend({});
+
+    user = new User({name: 'john'});
+
+    var Task = Backbone.Model.extend({
+      initialize: function() {
+        this.rel('user', user);
+      }
+    });
+
+    task = new Task();
+    equal(task.rel('user').get('name'), 'john')
+  });
+
 });

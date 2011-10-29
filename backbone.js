@@ -9,6 +9,17 @@
   // Initial Setup
   // -------------
 
+  // Helper function to define namespaced relationships
+  function addRelationships(object) {
+    object._rels = {};
+
+    // sets or gets the relation
+    object.rel = function (name, object) {
+      if (object) this._rels[name] = object;
+      return this._rels[name];
+    }
+  };
+
   // Save a reference to the global object.
   var root = this;
 
@@ -141,6 +152,7 @@
     this.cid = _.uniqueId('c');
     this.set(attributes, {silent : true});
     this._changed = false;
+    this._rels = {};
     this._previousAttributes = _.clone(this.attributes);
     if (options && options.collection) this.collection = options.collection;
     this.initialize(attributes, options);
@@ -408,6 +420,9 @@
 
   });
 
+  // Adds `rel` method and private var `_rels` to namespace relationships
+  addRelationships(Backbone.Model.prototype);
+
   // Backbone.Collection
   // -------------------
 
@@ -420,6 +435,7 @@
     _.bindAll(this, '_onModelEvent', '_removeReference');
     this._reset();
     if (models) this.reset(models, {silent: true});
+    this._rels = {};
     this.initialize.apply(this, arguments);
   };
 
@@ -649,6 +665,9 @@
       return _[method].apply(_, [this.models].concat(_.toArray(arguments)));
     };
   });
+
+  // Adds `rel` method and private var `_rels` to namespace relationships
+  addRelationships(Backbone.Collection.prototype);
 
   // Backbone.Router
   // -------------------
@@ -1086,6 +1105,18 @@
 
     // Make the request.
     return $.ajax(params);
+  };
+
+  // Namespace
+  // ---------
+  //
+  // Allows you to namespace your state or modules inside backbone
+  // Instead of creating global variables, you can contain all
+  // your app inside Backbone
+  //
+  Backbone.namespace = function (name, data) {
+    if (data) this[name] = data;
+    return this[name];
   };
 
   // Helpers
