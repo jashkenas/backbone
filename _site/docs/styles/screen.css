@@ -214,6 +214,9 @@ hr.space {
     margin: 0;
     text-align: center;
   }
+  #componants h3 a {
+    text-decoration: none;
+  }
 .half {
   float: left;
   width: 40%;
