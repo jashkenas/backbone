@@ -53,7 +53,7 @@ div#sidebar {
 .container {
   position: relative;
   width: 950px;
-  margin: 40px 0 50px 260px;
+  margin: 40px auto 50px auto;
 }
 .container-fixed {
   position: relative;
