@@ -227,50 +227,40 @@
 
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
-    unset : function(attr, options) {
-      if (!(attr in this.attributes)) return this;
+    unset : function(attrs, options) {
+      var i, l, attr;
+      var attributes = this.attributes;
+      if (_.isString(attrs)) attrs = [attrs];
+      attrs = _.filter(attrs, function(attr){ return attr in attributes; });
+      if (!attrs.length) return this;
       options || (options = {});
-      var value = this.attributes[attr];
 
       // Run validation.
       var validObj = {};
-      validObj[attr] = void 0;
+      for (i = 0, l = attrs.length; i < l; i++) validObj[attrs[i]] = void 0;
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
-      // Remove the attribute.
-      delete this.attributes[attr];
-      delete this._escapedAttributes[attr];
-      if (attr == this.idAttribute) delete this.id;
+      var alreadyChanging = this._changing;
+      this._changing = true;
+
       this._changed = true;
-      if (!options.silent) {
-        this.trigger('change:' + attr, this, void 0, options);
-        this.change(options);
+      for (i = 0, l = attrs.length; i < l; i++) {
+        attr = attrs[i];
+        delete attributes[attr];
+        delete this._escapedAttributes[attr];
+        if (attr == this.idAttribute) delete this.id;
+        if (!options.silent) this.trigger('change:' + attr, this, void 0, options);
       }
+
+      if (!alreadyChanging && !options.silent) this.change(options);
+      this._changing = false;
       return this;
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
     // to silence it.
     clear : function(options) {
-      options || (options = {});
-      var attr;
-      var old = this.attributes;
-
-      // Run validation.
-      var validObj = {};
-      for (attr in old) validObj[attr] = void 0;
-      if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
-
-      this.attributes = {};
-      this._escapedAttributes = {};
-      this._changed = true;
-      if (!options.silent) {
-        for (attr in old) {
-          this.trigger('change:' + attr, this, void 0, options);
-        }
-        this.change(options);
-      }
-      return this;
+      return this.unset(_.keys(this.attributes), options);
     },
 
     // Fetch the model from the server. If the server's representation of the
