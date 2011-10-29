@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <title>Backbone.js</title>
+  <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
+  <link href="docs/styles/screen.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <ul>
+        <li><a href="">Home</a></li>
+        <li><a href="">Documentation</a></li>
+        <li><a href="">Plugins</a></li>
+        <li><a href="">Demos</a></li>
+      </ul>
+    </nav>
+    <header>
+      <h1 id="title" class="os-light">
+        Backbone.js
+      </h1>
+      <h2 id="subtitle" class="os-light">JavaScript Common Sense</h2>
+    </header>
+
+    {{ content }}
+
+  </div>
+  <script src="test/vendor/underscore-1.1.6.js"></script>
+  <script src="test/vendor/jquery-1.5.js"></script>
+  <script src="test/vendor/json2.js"></script>
+  <script src="backbone.js"></script>
+
+  <script>
+    // Set up the "play" buttons for each runnable code example.
+    $(function() {
+      $('.runnable').each(function() {
+        var code = this;
+        var button = $('<div class="run" title="Run"></div>');
+        $(button).insertBefore(code).bind('click', function(){
+          eval($(code).text());
+        });
+      });
+    });
+  </script>
+
+<a id="box-github" href="http://github.com/boazsender"><img src="/images/forkme-white.png" alt="Fork me on GitHub"></a>
+</body>
+</html>
