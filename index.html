@@ -2,117 +2,119 @@
 layout: default
 title: Home
 ---
-<figure id="componants">
-  <section>
-    <img src="docs/images/main/componants/model.png">
-    <h3 class="os-light">model</h3>
+<div class="container">
+  <figure id="componants">
+    <section>
+      <img src="docs/images/main/componants/model.png">
+      <h3 class="os-light">model</h3>
+      <p>
+        Organize your data into structures and sync them with the server.
+      </p>
+    </section>
+    <section>
+      <img src="docs/images/main/componants/collection.png">
+      <h3 class="os-light">collection</h3>
+      <p>
+        Organize your models into collections to operate on them in bulk.
+      </p>
+    </section>
+    <section>
+      <img src="docs/images/main/componants/view.png">
+      <h3 class="os-light">view</h3>
+      <p>
+        Organizing your UI code, and send it to the templates.
+      </p>
+    </section>
+    <section>
+      <img src="docs/images/main/componants/router.png">
+      <h3 class="os-light">router</h3>
+      <p>
+        Respond to changes in the url client side.
+      </p>
+    </section>
+    <section>
+      <img src="docs/images/main/componants/events.png">
+      <h4 class="os-light">events</h4>
+      <p>
+        Register events to bubble across models, collections and views.
+      </p>
+    </section>
+
+  <!-- 
+        <section>
+          <img src="docs/images/main/componants/history.png">
+          <h4 class="os-light">history</h4>
+          <p>
+            Managw user browsing history, enable use of back/forth button with the router.
+          </p>
+        </section>
+        <section>
+          <img src="docs/images/main/componants/sync.png">
+          <h4 class="os-light">sync</h4>
+          <p>
+            Sync the data represented in your models/collections with the server or LocalStorage.
+          </p>
+        </section>
+
+        <section>
+          <img src="docs/images/main/componants/template.png"  height="30px">
+          <h4 class="os-light">template</h4>
+        </section> -->
+  </figure>
+  <hr class="space">
+
+  <section class="third">
+    <h2>
+      Downloads &amp; Dependencies
+      <span style="padding-left: 7px; font-size:11px; font-weight: normal;" class="interface">(Right-click, and use "Save As")</span>
+    </h2>
+
+    <table>
+      <tr>
+        <td><a href="backbone.js">Development Version (0.5.3)</a></td>
+        <td><i>41kb, Full Source with Comments</i></td>
+      </tr>
+      <tr>
+        <td><a href="backbone-min.js">Production Version (0.5.3)</a></td>
+        <td><i>4.6kb, Packed and Gzipped</i></td>
+      </tr>
+    </table>
+
     <p>
-      Organize your data into structures and sync them with the server.
+      Backbone's only hard dependency is
+      <a href="http://documentcloud.github.com/underscore/">Underscore.js</a>.
+      For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
+      and DOM manipulation with <a href="#View">Backbone.View</a>, include
+      <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
+      <a href="http://jquery.com">jQuery</a> <small>( > 1.4.2)</small> or 
+      <a href="http://zeptojs.com/">Zepto</a>.
     </p>
   </section>
-  <section>
-    <img src="docs/images/main/componants/collection.png">
-    <h3 class="os-light">collection</h3>
-    <p>
-      Organize your models into collections to operate on them in bulk.
-    </p>
-  </section>
-  <section>
-    <img src="docs/images/main/componants/view.png">
-    <h3 class="os-light">view</h3>
-    <p>
-      Organizing your UI code, and send it to the templates.
-    </p>
-  </section>
-  <section>
-    <img src="docs/images/main/componants/router.png">
-    <h3 class="os-light">router</h3>
-    <p>
-      Respond to changes in the url client side.
-    </p>
-  </section>
-  <section>
-    <img src="docs/images/main/componants/events.png">
-    <h4 class="os-light">events</h4>
-    <p>
-      Register events to bubble across models, collections and views.
+
+  <section class="third">
+    <h2>What is backbone?</h2>
+    <p>      
+      <a href="http://github.com/documentcloud/backbone/">Backbone</a>
+      supplies structure to JavaScript-heavy applications by providing <b>models</b> with
+      key-value binding and custom events, <b>collections</b> with a rich API of enumerable functions,
+      <b>views</b> with declarative event handling, and connects it all to your
+      existing application over a RESTful JSON interface.
     </p>
   </section>
 
-<!-- 
-      <section>
-        <img src="docs/images/main/componants/history.png">
-        <h4 class="os-light">history</h4>
-        <p>
-          Managw user browsing history, enable use of back/forth button with the router.
-        </p>
-      </section>
-      <section>
-        <img src="docs/images/main/componants/sync.png">
-        <h4 class="os-light">sync</h4>
-        <p>
-          Sync the data represented in your models/collections with the server or LocalStorage.
-        </p>
-      </section>
+  <section class="third">
+    <h2>Hello World</h2>
+  <pre class="runnable">
+  var object = {};
 
-      <section>
-        <img src="docs/images/main/componants/template.png"  height="30px">
-        <h4 class="os-light">template</h4>
-      </section> -->
-</figure>
-<hr class="space">
+  _.extend(object, Backbone.Events);
 
-<section class="third">
-  <h2>
-    Downloads &amp; Dependencies
-    <span style="padding-left: 7px; font-size:11px; font-weight: normal;" class="interface">(Right-click, and use "Save As")</span>
-  </h2>
+  object.bind("alert", function(msg) {
+    alert("Triggered " + msg);
+  });
 
-  <table>
-    <tr>
-      <td><a href="backbone.js">Development Version (0.5.3)</a></td>
-      <td><i>41kb, Full Source with Comments</i></td>
-    </tr>
-    <tr>
-      <td><a href="backbone-min.js">Production Version (0.5.3)</a></td>
-      <td><i>4.6kb, Packed and Gzipped</i></td>
-    </tr>
-  </table>
-
-  <p>
-    Backbone's only hard dependency is
-    <a href="http://documentcloud.github.com/underscore/">Underscore.js</a>.
-    For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
-    and DOM manipulation with <a href="#View">Backbone.View</a>, include
-    <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
-    <a href="http://jquery.com">jQuery</a> <small>( > 1.4.2)</small> or 
-    <a href="http://zeptojs.com/">Zepto</a>.
-  </p>
-</section>
-
-<section class="third">
-  <h2>What is backbone?</h2>
-  <p>      
-    <a href="http://github.com/documentcloud/backbone/">Backbone</a>
-    supplies structure to JavaScript-heavy applications by providing <b>models</b> with
-    key-value binding and custom events, <b>collections</b> with a rich API of enumerable functions,
-    <b>views</b> with declarative event handling, and connects it all to your
-    existing application over a RESTful JSON interface.
-  </p>
-</section>
-
-<section class="third">
-  <h2>Hello World</h2>
-<pre class="runnable">
-var object = {};
-
-_.extend(object, Backbone.Events);
-
-object.bind("alert", function(msg) {
-  alert("Triggered " + msg);
-});
-
-object.trigger("alert", "an event");
-</pre>      
-  </section>
+  object.trigger("alert", "an event");
+  </pre>      
+    </section>
+  </div>
 </div>
