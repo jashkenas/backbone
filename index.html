@@ -1275,6 +1275,12 @@ alert(chapters.pluck('title'));
       "sort", which must return <tt>0</tt>, <tt>1</tt>, or <tt>-1</tt>,
       and is more similar to a <tt>sortBy</tt> &mdash; a much nicer API.
     </p>
+    
+    <p class="warning">
+      Collections with comparator functions will not automatically re-sort if you 
+      later change model attributes, so you may wish to call <tt>sort</tt> after 
+      changing model attributes that would affect the order.
+    </p>
 
     <p id="Collection-sort">
       <b class="header">sort</b><code>collection.sort([options])</code>
@@ -2954,7 +2960,7 @@ Inbox.messages.add(newMessage);
 
   </div>
 
-  <script src="test/vendor/underscore-1.1.6.js"></script>
+  <script src="test/vendor/underscore-1.2.1.js"></script>
   <script src="test/vendor/jquery-1.5.js"></script>
   <script src="test/vendor/json2.js"></script>
   <script src="backbone.js"></script>
