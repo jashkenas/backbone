@@ -600,7 +600,7 @@
       this.models.splice(index, 0, model);
       model.bind('all', this._onModelEvent);
       this.length++;
-      if (!options.silent) model.trigger('add', model, this, options);
+      if (!options.silent) model.trigger('add', model, this, options, index);
       return model;
     },
 

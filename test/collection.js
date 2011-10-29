@@ -93,18 +93,20 @@ $(document).ready(function() {
   });
 
   test("Collection: add", function() {
-    var added = opts = secondAdded = null;
+    var added, added_idx, opts = secondAdded = null;
     e = new Backbone.Model({id: 10, label : 'e'});
     otherCol.add(e);
     otherCol.bind('add', function() {
       secondAdded = true;
     });
-    col.bind('add', function(model, collection, options){
+    col.bind('add', function(model, collection, options, idx){
       added = model.get('label');
+      added_idx = idx;
       opts = options;
     });
     col.add(e, {amazing: true});
     equals(added, 'e');
+    equals(added_idx, 4);
     equals(col.length, 5);
     equals(col.last(), e);
     equals(otherCol.length, 1);
@@ -120,6 +122,27 @@ $(document).ready(function() {
     equals(atCol.length, 4);
     equals(atCol.at(1), e);
     equals(atCol.last(), h);
+  });
+
+  test("Collection: add into sorted position", function() {
+    var added, added_idx;
+    var p = new Backbone.Model({id: 30, label : 'p'});
+    var t = new Backbone.Model({id: 31, label : 't'});
+    var s = new Backbone.Model({id: 32, label : 's'});
+    var colIdx = new Backbone.Collection([p,t]);
+    colIdx.comparator = function(obj) {
+      return obj.get("label");
+    };
+    colIdx.bind("add", function(model, collection, options, idx) {
+      added = model;
+      added_idx = idx;
+    });
+    colIdx.add(s);
+    equals(colIdx.at(0), p);
+    equals(colIdx.at(1), s);
+    equals(colIdx.at(2), t);
+    equals(added, s);
+    equals(added_idx, 1);
   });
 
   test("Collection: add model to collection twice", function() {
