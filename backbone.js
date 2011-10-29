@@ -363,23 +363,26 @@
     // Return an object containing all the attributes that have changed, or false
     // if there are no changed attributes. Useful for determining what parts of a
     // view need to be updated and/or what attributes need to be persisted to
-    // the server.
+    // the server. Unset attributes will be set to undefined.
     changedAttributes : function(now) {
       now || (now = this.attributes);
-      var old = this._previousAttributes;
+      var old = _.clone(this._previousAttributes);
       var changed = false;
       for (var attr in now) {
         if (!_.isEqual(old[attr], now[attr])) {
           changed = changed || {};
           changed[attr] = now[attr];
         }
+        delete old[attr];
       }
-      for (attr in old){
-        if (!(attr in now)){
+      
+      for (var attr in old) {
+        if (typeof now[attr] === 'undefined') {
           changed = changed || {};
-          changed[attr] = void 0;
+          changed[attr] = undefined;
         }
       }
+
       return changed;
     },
 
