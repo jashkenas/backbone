@@ -207,13 +207,13 @@ hr.space {
   margin: 0px 30px 50px 0;
   display: block;
   width: 140px;
+  text-align: center;
 }
   #componants h3, #componants h4 {
     padding: 0;
     margin: 0;
-    text-align: left;
+    text-align: center;
   }
-
 .half {
   float: left;
   width: 40%;
@@ -223,4 +223,11 @@ hr.space {
   float: left;
   width: 31%;
   margin-right: 2%;
+}
+.badge {
+  vertical-align: center;
+  text-decoration: none;
+  font-size: 24px;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
 }

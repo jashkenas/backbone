@@ -5,8 +5,8 @@ title: Documentation
 
 <div id="sidebar" class="interface">
 
-  <a class="toc_title" href="#">
-    Backbone.js <span class="version">(0.5.3)</span>
+  <a class="badge" href="#">
+    <img src="/docs/images/main/backbone.png" width="16" alt="Backbone"> Backbone.js
   </a>
 
   <a class="toc_title" href="#Introduction">
@@ -141,28 +141,21 @@ title: Documentation
     <li>– <a href="#FAQ-this">Binding "this"</a></li>
   </ul>
 
+  <a class="toc_title" href="#dependencies">
+    Dependencies
+  </a>
+
+  <a class="toc_title" href="#upgrading">
+    Upgrading to 0.5.0+
+  </a>
+
   <a class="toc_title" href="#changelog">
     Change Log
   </a>
 
 </div>
 
-  <div class="container-fixed">
-    <h2 id="Upgrading">Upgrading to 0.5.0+</h2>
-
-    <p>
-      We've taken the opportunity to clarify some naming with the <b>0.5.0</b>
-      release. <tt>Controller</tt> is now <a href="#Router">Router</a>, and 
-      <tt>refresh</tt> is now <a href="#Collection-reset">reset</a>. 
-      The previous <tt>saveLocation</tt> and <tt>setLocation</tt>
-      functions have been replaced by <a href="#Router-navigate">navigate</a>. 
-      <tt>Backbone.sync</tt>'s method signature has changed to allow the passing
-      of arbitrary options to <tt>jQuery.ajax</tt>.
-      Be sure to <a href="#History-start">opt-in</a> to <tt>pushState</tt> support, 
-      if you want to use it.
-    </p>
-    
-    
+  <div class="container-fixed">    
     <h2 id="Introduction">Introduction</h2>
     
     <p>
@@ -1773,7 +1766,7 @@ var model = localBackbone.Model.extend(...);
 
     <div style="text-align: center;">
       <a href="http://substance.io/">
-        <img src="docs/images/substance.png" alt="Substance" class="example_image" />
+        <img src="/docs/images/substance.png" alt="Substance" class="example_image" />
       </a>
     </div>
 
@@ -1986,8 +1979,34 @@ var MessageList = Backbone.View.extend({
 Inbox.messages.add(newMessage);
 </pre>
 
-    <h2 id="changelog">Change Log</h2>
+    <h2 id="dependencies">Dependencies</h2>
+
+    <p>
+      Backbone's only hard dependency is
+      <a href="http://documentcloud.github.com/underscore/">Underscore.js</a>.
+      For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
+      and DOM manipulation with <a href="#View">Backbone.View</a>, include
+      <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
+      <a href="http://jquery.com">jQuery</a> <small>( > 1.4.2)</small> or 
+      <a href="http://zeptojs.com/">Zepto</a>.
+    </p>
+
+    <h2 id="Upgrading">Upgrading to 0.5.0+</h2>
+
+    <p>
+      We've taken the opportunity to clarify some naming with the <b>0.5.0</b>
+      release. <tt>Controller</tt> is now <a href="#Router">Router</a>, and 
+      <tt>refresh</tt> is now <a href="#Collection-reset">reset</a>. 
+      The previous <tt>saveLocation</tt> and <tt>setLocation</tt>
+      functions have been replaced by <a href="#Router-navigate">navigate</a>. 
+      <tt>Backbone.sync</tt>'s method signature has changed to allow the passing
+      of arbitrary options to <tt>jQuery.ajax</tt>.
+      Be sure to <a href="#History-start">opt-in</a> to <tt>pushState</tt> support, 
+      if you want to use it.
+    </p>
     
+    <h2 id="changelog">Change Log</h2>    
+
     <p>
       <b class="header">0.5.3</b> &mdash; <small><i>August 9, 2011</i></small><br />
       A View's <tt>events</tt> property may now be defined as a function, as well
