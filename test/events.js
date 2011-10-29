@@ -116,6 +116,21 @@ $(document).ready(function() {
     equals(obj.counterB, 1, 'counterB should have only been incremented once.');
   });
 
+  test("Events: once", function() {
+    // Same as the previous test, but we use bindOnce rather than having to explicitly unbind
+    var obj = { counterA: 0, counterB: 0 };
+    _.extend(obj,Backbone.Events);
+    var incrA = function(){ obj.counterA += 1 };
+    var incrB = function(){ obj.counterB += 1 };
+    obj.once('event', incrA);
+    obj.once('event', incrB);
+    obj.trigger('event');
+    obj.trigger('event');
+    obj.trigger('event');
+    equals(obj.counterA, 1, 'counterA should have only been incremented once.');
+    equals(obj.counterB, 1, 'counterB should have only been incremented once.');
+  });
+
   test("bind a callback with a supplied context", 1, function () {
     var TestClass = function () {
       return this;

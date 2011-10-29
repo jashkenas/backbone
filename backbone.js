@@ -127,13 +127,14 @@
       return this;
     },
 
-    // Bind an event like bind(), but unbind the callback after the first time its called
-	  bindOnce : function(ev, callback, context) {
-		  var this2 = this;
-		  var bindCallback = function() {
-			  this2.unbind(ev, bindCallback);
+    // Bind an event like bind(), but unbind the callback after the first time
+    // its called.
+	  once : function(ev, callback, context) {
+		  var bindCallback = _.bind(function() {
+			  this.unbind(ev, bindCallback);
 			  callback.apply(context || this, arguments);
-		  };
+		  }, this);
+
 		  this.bind(ev, bindCallback);
 	  },
 
