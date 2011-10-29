@@ -1054,8 +1054,7 @@
 
     // Default JSON-request options.
     var params = _.extend({
-      type:         type,
-      dataType:     'json'
+      type:         type
     }, options);
 
     // Ensure that we have a URL.
