@@ -704,6 +704,7 @@
         var args = this._extractParameters(route, fragment);
         callback.apply(this, args);
         this.trigger.apply(this, ['route:' + name].concat(args));
+        Backbone.history.trigger('route', this, fragment, args);
       }, this));
     },
 
@@ -763,7 +764,7 @@
   var historyStarted = false;
 
   // Set up all inheritable **Backbone.History** properties and methods.
-  _.extend(Backbone.History.prototype, {
+  _.extend(Backbone.History.prototype, Backbone.Events, {
 
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
@@ -856,12 +857,12 @@
     // returns `false`.
     loadUrl : function(fragmentOverride) {
       var fragment = this.fragment = this.getFragment(fragmentOverride);
-      var matched = _.any(this.handlers, function(handler) {
+      var matched = _.any(this.handlers, _.bind(function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
           return true;
         }
-      });
+      }, this));
       return matched;
     },
 
@@ -885,7 +886,6 @@
       }
       if (triggerRoute) this.loadUrl(fragment);
     }
-
   });
 
   // Backbone.View
