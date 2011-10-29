@@ -195,6 +195,7 @@ $(document).ready(function() {
     equals(changed, true);
     equals(model.get('name'), undefined);
     equals(model.id, 1);
+    equals(model.get('id'), 1);
   });
 
   test("Model: defaults", function() {
