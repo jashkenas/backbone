@@ -149,14 +149,6 @@
   // Attach all inheritable methods to the Model prototype.
   _.extend(Backbone.Model.prototype, Backbone.Events, {
 
-    // A snapshot of the model's previous attributes, taken immediately
-    // after the last `"change"` event was fired.
-    _previousAttributes : null,
-
-    // A snapshot of the model's unset attributes. Used to build a 
-    // changedAttributes object
-    _unsetAttributes : null,
-
     // Has the item been changed since the last `"change"` event?
     _changed : false,
 
@@ -241,10 +233,9 @@
       validObj[attr] = void 0;
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
-      // cache the attribute as unset for changedAttributes
-      this._unsetAttributes || (this._unsetAttributes = {});
-      this._unsetAttributes[attr] = void 0;
-      
+      // changedAttributes needs to know if an attribute has been unset.
+      (this._unsetAttributes || (this._unsetAttributes = [])).push(attr);
+
       // Remove the attribute.
       delete this.attributes[attr];
       delete this._escapedAttributes[attr];
@@ -253,7 +244,6 @@
       if (!options.silent) {
         this.trigger('change:' + attr, this, void 0, options);
         this.change(options);
-        this._unsetAttributes = false;
       }
       return this;
     },
@@ -359,6 +349,7 @@
     change : function(options) {
       this.trigger('change', this, options);
       this._previousAttributes = _.clone(this.attributes);
+      this._unsetAttributes = null;
       this._changed = false;
     },
 
@@ -375,21 +366,22 @@
     // the server. Unset attributes will be set to undefined.
     changedAttributes : function(now) {
       now || (now = this.attributes);
-      var old = this._previousAttributes;
+      var old = this._previousAttributes, unset = this._unsetAttributes;
 
       var changed = false;
       for (var attr in now) {
         if (!_.isEqual(old[attr], now[attr])) {
-          changed = changed || {};
+          changed || (changed = {});
           changed[attr] = now[attr];
         }
       }
 
-      for (attr in this._unsetAttributes) {
-        changed = changed || {};
-        changed[attr] = void 0;
+      if (unset) {
+        changed || (changed = {});
+        var len = unset.length;
+        while (len--) changed[unset[len]] = void 0;
       }
-      
+
       return changed;
     },
 
