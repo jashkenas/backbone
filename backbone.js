@@ -153,6 +153,10 @@
     // after the last `"change"` event was fired.
     _previousAttributes : null,
 
+    // A snapshot of the model's unset attributes. Used to build a 
+    // changedAttributes object
+    _unsetAttributes : null,
+
     // Has the item been changed since the last `"change"` event?
     _changed : false,
 
@@ -237,6 +241,10 @@
       validObj[attr] = void 0;
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
+      // cache the attribute as unset for changedAttributes
+      this._unsetAttributes || (this._unsetAttributes = {});
+      this._unsetAttributes[attr] = void 0;
+      
       // Remove the attribute.
       delete this.attributes[attr];
       delete this._escapedAttributes[attr];
@@ -245,6 +253,7 @@
       if (!options.silent) {
         this.trigger('change:' + attr, this, void 0, options);
         this.change(options);
+        this._unsetAttributes = false;
       }
       return this;
     },
@@ -363,10 +372,11 @@
     // Return an object containing all the attributes that have changed, or false
     // if there are no changed attributes. Useful for determining what parts of a
     // view need to be updated and/or what attributes need to be persisted to
-    // the server.
+    // the server. Unset attributes will be set to undefined.
     changedAttributes : function(now) {
       now || (now = this.attributes);
       var old = this._previousAttributes;
+
       var changed = false;
       for (var attr in now) {
         if (!_.isEqual(old[attr], now[attr])) {
@@ -374,6 +384,12 @@
           changed[attr] = now[attr];
         }
       }
+
+      for (attr in this._unsetAttributes) {
+        changed = changed || {};
+        changed[attr] = void 0;
+      }
+      
       return changed;
     },
 
