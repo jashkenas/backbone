@@ -4,11 +4,24 @@
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <title>Backbone.js</title>
+
   <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css">
-  <link href="/docs/styles/screen.css" rel="stylesheet" type="text/css">
+  
+  <!--
+    If we're in > IE9, shim them new semantic elements in there
+  -->
   <!--[if lt IE 9]>
   <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
+  
+  <!--
+    Include styles directly in the head so that
+    these pages can be passed around stand alone
+    and served easily
+  -->
+  <style>
+   {% include screen.css %}
+  </style>
 </head>
 <body>
   <header class="container">
