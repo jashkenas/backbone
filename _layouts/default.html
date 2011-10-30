@@ -289,10 +289,10 @@
   <header class="container{% if page.type == 'fixed' %}-fixed{% endif %}">
     <nav>
       <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/docs">Documentation</a></li>
+        <li><a href="{% if page.type == 'fixed' %}../{% endif %}">Home</a></li>
+        <li><a href="{% if page.type == 'fixed' %}../{% endif %}docs">Documentation</a></li>
         <li><a href="https://github.com/documentcloud/backbone/wiki/Extensions%2C-Plugins%2C-Resources">Plugins</a></li>
-        <li><a href="/examples">Examples</a></li>
+        <li><a href="{% if page.type == 'fixed' %}../{% endif %}examples">Examples</a></li>
       </ul>
     </nav>
     <h1 id="title" class="os-light">
@@ -311,10 +311,10 @@
       <h3><a href="/">Backbone.js</a></h3>
       <nav>
         <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/docs">Documentation</a></li>
+          <li><a href="{% if page.type == 'fixed' %}../{% endif %}">Home</a></li>
+          <li><a href="{% if page.type == 'fixed' %}../{% endif %}docs">Documentation</a></li>
           <li><a href="https://github.com/documentcloud/backbone/wiki/Extensions%2C-Plugins%2C-Resources">Plugins</a></li>
-          <li><a href="/examples">Examples</a></li>
+          <li><a href="{% if page.type == 'fixed' %}../{% endif %}examples">Examples</a></li>
         </ul>
       </nav>
     </section>
