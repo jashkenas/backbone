@@ -8,7 +8,7 @@
 // Code at the end of this file creates the right define, require and exports
 // values to allow Backbone to run in a CommonJS or AMD container or in the
 // default browser environment.
-(function(define){ var root = this; define('backbone', function(require, exports) {
+(function(root, define){ define('backbone', function(require, exports) {
 
   // Initial Setup
   // -------------
@@ -1158,7 +1158,7 @@
     return string.replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
   };
 
-})}).call(this, typeof define === 'function' && define.amd ? define : function (id, factory) {
+})}).call(this, this, typeof define === 'function' && define.amd ? define : function (id, factory) {
 
   if (typeof exports !== 'undefined') {
     // CommonJS has require and exports, use them and execute
