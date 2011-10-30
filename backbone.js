@@ -146,10 +146,6 @@
   // Attach all inheritable methods to the Model prototype.
   _.extend(Backbone.Model.prototype, Backbone.Events, {
 
-    // A snapshot of the model's previous attributes, taken immediately
-    // after the last `"change"` event was fired.
-    _previousAttributes : null,
-
     // Has the item been changed since the last `"change"` event?
     _changed : false,
 
@@ -233,6 +229,9 @@
       var validObj = {};
       validObj[attr] = void 0;
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
+
+      // changedAttributes needs to know if an attribute has been unset.
+      (this._unsetAttributes || (this._unsetAttributes = [])).push(attr);
 
       // Remove the attribute.
       delete this.attributes[attr];
@@ -347,6 +346,7 @@
     change : function(options) {
       this.trigger('change', this, options);
       this._previousAttributes = _.clone(this.attributes);
+      this._unsetAttributes = null;
       this._changed = false;
     },
 
@@ -360,17 +360,25 @@
     // Return an object containing all the attributes that have changed, or false
     // if there are no changed attributes. Useful for determining what parts of a
     // view need to be updated and/or what attributes need to be persisted to
-    // the server.
+    // the server. Unset attributes will be set to undefined.
     changedAttributes : function(now) {
       now || (now = this.attributes);
-      var old = this._previousAttributes;
+      var old = this._previousAttributes, unset = this._unsetAttributes;
+
       var changed = false;
       for (var attr in now) {
         if (!_.isEqual(old[attr], now[attr])) {
-          changed = changed || {};
+          changed || (changed = {});
           changed[attr] = now[attr];
         }
       }
+
+      if (unset) {
+        changed || (changed = {});
+        var len = unset.length;
+        while (len--) changed[unset[len]] = void 0;
+      }
+
       return changed;
     },
 
@@ -565,7 +573,7 @@
       if (!(model instanceof Backbone.Model)) {
         var attrs = model;
         model = new this.model(attrs, {collection: this});
-        if (model.validate && !model._performValidation(attrs, options)) model = false;
+        if (model.validate && !model._performValidation(model.attributes, options)) model = false;
       } else if (!model.collection) {
         model.collection = this;
       }
@@ -589,6 +597,7 @@
       this.models.splice(index, 0, model);
       model.bind('all', this._onModelEvent);
       this.length++;
+      options.index = index;
       if (!options.silent) model.trigger('add', model, this, options);
       return model;
     },
@@ -601,8 +610,10 @@
       if (!model) return null;
       delete this._byId[model.id];
       delete this._byCid[model.cid];
-      this.models.splice(this.indexOf(model), 1);
+      var index = this.indexOf(model);
+      this.models.splice(index, 1);
       this.length--;
+      options.index = index;
       if (!options.silent) model.trigger('remove', model, this, options);
       this._removeReference(model);
       return model;
@@ -1042,18 +1053,15 @@
     var type = methodMap[method];
 
     // Default JSON-request options.
-    var params = _.extend({
-      type:         type,
-      dataType:     'json'
-    }, options);
+    var params = {type : type, dataType : 'json'};
 
     // Ensure that we have a URL.
-    if (!params.url) {
+    if (!options.url) {
       params.url = getUrl(model) || urlError();
     }
 
     // Ensure that we have the appropriate request data.
-    if (!params.data && model && (method == 'create' || method == 'update')) {
+    if (!options.data && model && (method == 'create' || method == 'update')) {
       params.contentType = 'application/json';
       params.data = JSON.stringify(model.toJSON());
     }
@@ -1061,7 +1069,7 @@
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (Backbone.emulateJSON) {
       params.contentType = 'application/x-www-form-urlencoded';
-      params.data        = params.data ? {model : params.data} : {};
+      params.data = params.data ? {model : params.data} : {};
     }
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
@@ -1081,8 +1089,8 @@
       params.processData = false;
     }
 
-    // Make the request.
-    return $.ajax(params);
+    // Make the request, allowing the user to override any Ajax options.
+    return $.ajax(_.extend(params, options));
   };
 
   // Helpers
@@ -1144,7 +1152,8 @@
 
   // Wrap an optional error callback with a fallback error event.
   var wrapError = function(onError, model, options) {
-    return function(resp) {
+    return function(model, resp) {
+      var resp = model === model ? resp : model;
       if (onError) {
         onError(model, resp, options);
       } else {

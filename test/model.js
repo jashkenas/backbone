@@ -170,6 +170,16 @@ $(document).ready(function() {
     equals(i, 2, 'Unset does not fire an event for missing attributes.');
   });
 
+  test("Model: unset and changedAttributes", function() {
+    var model = new Backbone.Model({a: 1});
+    model.unset('a', {silent: true});
+    var changedAttributes = model.changedAttributes();
+    ok('a' in changedAttributes, 'changedAttributes should contain unset properties');
+
+    changedAttributes = model.changedAttributes();
+    ok('a' in changedAttributes, 'changedAttributes should contain unset properties when running changedAttributes again after an unset.');
+  });
+
   test("Model: using a non-default id attribute.", function() {
     var MongoModel = Backbone.Model.extend({idAttribute : '_id'});
     var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
@@ -265,6 +275,22 @@ $(document).ready(function() {
       ok(_.isEqual(lastRequest[1], model));
     });
     model.set({lastName: 'Hicks'});
+  });
+
+  test("Model: validate after save", function() {
+    var lastError, model = new Backbone.Model();
+    model.validate = function(attrs) {
+      if (attrs.admin) return "Can't change admin status.";
+    };
+    model.sync = function(method, model, options) {
+      options.success.call(this, {admin: true});
+    };
+    model.save(null, {error: function(model, error) {
+      console.log('erroring!');
+      lastError = error;
+    }});
+
+    equals(lastError, "Can't change admin status.");
   });
 
   test("Model: save", function() {
