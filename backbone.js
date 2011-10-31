@@ -1149,9 +1149,9 @@
   };
 
   // Wrap an optional error callback with a fallback error event.
-  var wrapError = function(onError, model, options) {
+  var wrapError = function(onError, originalModel, options) {
     return function(model, resp) {
-      var resp = model === model ? resp : model;
+      var resp = model === originalModel ? resp : model;
       if (onError) {
         onError(model, resp, options);
       } else {
