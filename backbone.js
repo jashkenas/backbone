@@ -77,8 +77,9 @@
 
     // Remove one or many callbacks. If `callback` is null, removes all
     // callbacks for the event. If `ev` is null, removes all bound callbacks
-    // for all events.
-    unbind : function(ev, callback) {
+    // for all events. If `context` is given, only listeners bound to that
+    // context are removed.
+    unbind : function(ev, callback, context) {
       var calls;
       if (!ev) {
         this._callbacks = {};
@@ -86,13 +87,15 @@
         if (!callback) {
           calls[ev] = [];
         } else {
-          var list = calls[ev];
+          var list = calls[ev], item;
           if (!list) return this;
           for (var i = 0, l = list.length; i < l; i++) {
-            if (list[i] && callback === list[i][0]) {
+            item = list[i];
+            if (!item) continue;
+            if (context && context !== item[1]) continue;
+            if (callback === item[0])
               list[i] = null;
               break;
-            }
           }
         }
       }
@@ -692,14 +695,14 @@
     //       ...
     //     });
     //
-    route : function(route, name, callback) {
+    route : function(route, name, callback, context) {
       Backbone.history || (Backbone.history = new Backbone.History);
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-      Backbone.history.route(route, _.bind(function(fragment) {
+      Backbone.history.route(route, function(fragment) {
         var args = this._extractParameters(route, fragment);
-        callback.apply(this, args);
+        callback.apply(context || this, args);
         this.trigger.apply(this, ['route:' + name].concat(args));
-      }, this));
+      }, this);
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
@@ -832,8 +835,8 @@
 
     // Add a route to be tested when the fragment changes. Routes added later may
     // override previous routes.
-    route : function(route, callback) {
-      this.handlers.unshift({route : route, callback : callback});
+    route : function(route, callback, context) {
+      this.handlers.unshift({route : route, callback : callback, context : context});
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -853,7 +856,7 @@
       var fragment = this.fragment = this.getFragment(fragmentOverride);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
-          handler.callback(fragment);
+          handler.callback.call(handler.context || handler, fragment);
           return true;
         }
       });
