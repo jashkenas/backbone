@@ -83,4 +83,18 @@ $(document).ready(function() {
     
   });
 
+  test("Events: once and trigger 5 times", function() {
+    var obj = { counter: 0 };
+    _.extend(obj,Backbone.Events);
+    obj.once('event', function() { obj.counter += 1; });
+    obj.trigger('event');
+    equals(obj.counter,1,'counter should be incremented.');
+    obj.trigger('event');
+    obj.trigger('event');
+    obj.trigger('event');
+    obj.trigger('event');
+    equals(obj.counter, 1, 'counter should not have be incremented five times.');
+  });
+
+
 });
