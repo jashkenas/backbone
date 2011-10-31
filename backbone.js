@@ -74,8 +74,10 @@
     bind : function(ev, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
       var list  = calls[ev] || (calls[ev] = {});
-      var tail = list.tail || list;
-      list.tail = tail.next = {callback: callback, context: context};
+      var tail = list.tail || (list.tail = list.next = {});
+      tail.callback = callback;
+      tail.context = context;
+      list.tail = tail.next = {};
       return this;
     },
 
@@ -83,17 +85,16 @@
     // callbacks for the event. If `ev` is null, removes all bound callbacks
     // for all events.
     unbind : function(ev, callback) {
-      var calls, list, node, prev;
+      var calls, node, prev;
       if (!ev) {
         this._callbacks = {};
       } else if (calls = this._callbacks) {
         if (!callback) {
           calls[ev] = {};
-        } else if (list = node = calls[ev]) {
+        } else if (node = calls[ev]) {
           while (prev = node, node = node.next) {
             if (node.callback !== callback) continue;
             prev.next = node.next;
-            if (list.tail === node) list.tail = prev;
             node.context = node.callback = null;
             break;
           }
