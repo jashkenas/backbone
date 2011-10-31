@@ -66,34 +66,42 @@
   //
   Backbone.Events = {
 
-    // Bind an event, specified by a string name, `ev`, to a `callback` function.
+    // Bind one or multiple events, specified by a string name or an array of string names, `evs`, to a `callback` function.
     // Passing `"all"` will bind the callback to all events fired.
-    bind : function(ev, callback, context) {
+    bind : function(evs, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
-      var list  = calls[ev] || (calls[ev] = []);
-      list.push([callback, context]);
+      evs = evs.split(' ');
+      _.each(evs, function (ev) {
+        var list = calls[ev] || (calls[ev] = []);
+        list.push([callback, context]);
+      });
       return this;
     },
 
     // Remove one or many callbacks. If `callback` is null, removes all
     // callbacks for the event. If `ev` is null, removes all bound callbacks
     // for all events.
-    unbind : function(ev, callback) {
+    unbind : function(evs, callback) {
       var calls;
-      if (!ev) {
+      if (!evs) {
         this._callbacks = {};
       } else if (calls = this._callbacks) {
+        evs = evs.split(' ');
         if (!callback) {
-          calls[ev] = [];
+          _.each(evs, function(ev) {
+            calls[ev] = [];
+          });
         } else {
-          var list = calls[ev];
-          if (!list) return this;
-          for (var i = 0, l = list.length; i < l; i++) {
-            if (list[i] && callback === list[i][0]) {
-              list[i] = null;
-              break;
+          _.each(evs, function(ev) {
+            var list = calls[ev];
+            if (!list) return this;
+            for (var i = 0, l = list.length; i < l; i++) {
+              if (list[i] && callback === list[i][0]) {
+                list[i] = null;
+                break;
+              }
             }
-          }
+          });
         }
       }
       return this;
