@@ -36,7 +36,7 @@
   Backbone.noConflict = function() {
     root.Backbone = previousBackbone;
     return exports;
-  }
+  };
 
   // Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option will
   // fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and set a
@@ -1201,8 +1201,8 @@
     // Create a global for Backbone.
     // Call the factory function to attach the Backbone
     // properties to the exports value.
-    factory(function(value) {
-      if (value === 'jquery') {
+    factory(function(id) {
+      if (id === 'jquery') {
         // Support libraries that support the portions of
         // the jQuery API used by Backbone.
         return root.jQuery || root.Zepto || root.ender;
