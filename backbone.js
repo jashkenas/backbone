@@ -15,6 +15,9 @@
   // Save the previous value of the `Backbone` variable.
   var previousBackbone = root.Backbone;
 
+  // Create a local reference to slice.
+  var slice = Array.prototype.slice;
+
   // The top-level namespace. All public Backbone classes and modules will
   // be attached to this. Exported for both CommonJS and the browser.
   var Backbone;
@@ -70,8 +73,11 @@
     // Passing `"all"` will bind the callback to all events fired.
     bind : function(ev, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
-      var list  = calls[ev] || (calls[ev] = []);
-      list.push([callback, context]);
+      var list  = calls[ev] || (calls[ev] = {});
+      var tail = list.tail || (list.tail = list.next = {});
+      tail.callback = callback;
+      tail.context = context;
+      list.tail = tail.next = {};
       return this;
     },
 
@@ -79,20 +85,18 @@
     // callbacks for the event. If `ev` is null, removes all bound callbacks
     // for all events.
     unbind : function(ev, callback) {
-      var calls;
+      var calls, node, prev;
       if (!ev) {
         this._callbacks = {};
       } else if (calls = this._callbacks) {
         if (!callback) {
-          calls[ev] = [];
-        } else {
-          var list = calls[ev];
-          if (!list) return this;
-          for (var i = 0, l = list.length; i < l; i++) {
-            if (list[i] && callback === list[i][0]) {
-              list[i] = null;
-              break;
-            }
+          calls[ev] = {};
+        } else if (node = calls[ev]) {
+          while (prev = node, node = node.next) {
+            if (node.callback !== callback) continue;
+            prev.next = node.next;
+            node.context = node.callback = null;
+            break;
           }
         }
       }
@@ -103,21 +107,12 @@
     // same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
     trigger : function(eventName) {
-      var list, calls, ev, callback, args;
-      var both = 2;
+      var node, calls, callback, args, ev, events = ['all', eventName];
       if (!(calls = this._callbacks)) return this;
-      while (both--) {
-        ev = both ? eventName : 'all';
-        if (list = calls[ev]) {
-          for (var i = 0, l = list.length; i < l; i++) {
-            if (!(callback = list[i])) {
-              list.splice(i, 1); i--; l--;
-            } else {
-              args = both ? Array.prototype.slice.call(arguments, 1) : arguments;
-              callback[0].apply(callback[1] || this, args);
-            }
-          }
-        }
+      while (ev = events.pop()) {
+        if (!(node = calls[ev])) continue;
+        args = ev == 'all' ? arguments : slice.call(arguments, 1);
+        while (node = node.next) if (callback = node.callback) callback.apply(node.context || this, args);
       }
       return this;
     }
