@@ -92,7 +92,7 @@
         if (!callback) {
           calls[ev] = {};
         } else if (node = calls[ev]) {
-          while (prev = node, node = node.next) {
+          while ((prev = node) && (node = node.next)) {
             if (node.callback !== callback) continue;
             prev.next = node.next;
             node.context = node.callback = null;
@@ -170,7 +170,7 @@
       var html;
       if (html = this._escapedAttributes[attr]) return html;
       var val = this.attributes[attr];
-      return this._escapedAttributes[attr] = escapeHTML(val == null ? '' : '' + val);
+      return this._escapedAttributes[attr] = _.escape(val == null ? '' : '' + val);
     },
 
     // Returns `true` if the attribute contains a value that is not null
@@ -1158,11 +1158,6 @@
         model.trigger('error', model, resp, options);
       }
     };
-  };
-
-  // Helper function to escape a string for HTML rendering.
-  var escapeHTML = function(string) {
-    return string.replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
   };
 
 }).call(this);
