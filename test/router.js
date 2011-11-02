@@ -96,6 +96,19 @@ $(document).ready(function() {
     }, 10);
   });
 
+  asyncTest("Router: routes (two part - query params - hash)", 6, function() {
+    window.location.hash = 'search/nyc/p10?a=b&b[c]=d&b[d]=e&b[e[f]]=g';
+    setTimeout(function() {
+      equals(router.query, 'nyc');
+      equals(router.page, '10');
+      equals(router.queryParams.a, 'b');
+      equals(router.queryParams.b.c, 'd');
+      equals(router.queryParams.b.d, 'e');
+      equals(router.queryParams.b.e.f, 'g');
+      start();
+    }, 10);
+  });
+
   test("Router: routes via navigate", 2, function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equals(router.query, 'manhattan');

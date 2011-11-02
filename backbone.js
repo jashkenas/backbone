@@ -726,6 +726,26 @@
     _extractParameters : function(route, fragment) {
       var params = route.exec(fragment).slice(1);
 
+      var keyPattern = /^[^\]]/; // detect a hash key pattern - a in a[b]
+      var valuePattern = /\[(.*)\]/; // detect a hash value pattern - b in a[b]
+      var setValue = function(key, value, data) {
+        var valueMatch = key.match(valuePattern);
+        if (valueMatch) {
+          var keyMatch = key.match(keyPattern);
+          if (keyMatch) {
+            // we have a hash structure
+            var key = keyMatch[0];
+            data[key] = data[key] || {};
+            var newKey = valueMatch[valueMatch.length-1];
+            setValue(newKey, value, data[key]);
+          } else {
+            data[key] = value;
+          }
+        } else {
+          data[key] = value;
+        }
+	  };
+
       // do we have an additional query string?
       var match = params.length && params[params.length-1] && params[params.length-1].match(queryStringParam);
       if (match) {
@@ -736,7 +756,7 @@
           _.each(keyValues, function(keyValue) {
             var arr = keyValue.split('=');
             if (arr.length > 1 && arr[1]) {
-              data[arr[0]] = decodeURIComponent(arr[1]);
+              setValue(arr[0], decodeURIComponent(arr[1]), data);
             }
           });
         }
