@@ -6,7 +6,7 @@
 
 
 (function(root, factory) {
-  // Set up Backbone in the
+  // Set up Backbone appropriately for the environment.
   if (typeof exports !== 'undefined') {
     // Node/CommonJS
     factory(root, exports, require('underscore'), undefined);
