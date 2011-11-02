@@ -90,7 +90,7 @@
           if (!list) return this;
           for (var i = 0, l = list.length; i < l; i++) {
             if (list[i] && callback === list[i][0]) {
-              list.splice(i, 1);
+              list[i] = null;
               break;
             }
           }
@@ -109,12 +109,13 @@
       while (both--) {
         ev = both ? eventName : 'all';
         if (list = calls[ev]) {
-          list = _.clone(list); // clone the list in case it changes during processing
           for (var i = 0, l = list.length; i < l; i++) {
-            callback = list[i];
-            if (!_.contains(calls[ev], callback)) continue; // the list has changed and this item is no longer part of it
-            args = both ? Array.prototype.slice.call(arguments, 1) : arguments;
-            callback[0].apply(callback[1] || this, args);
+            if (!(callback = list[i])) {
+              list.splice(i, 1); i--; l--;
+            } else {
+              args = both ? Array.prototype.slice.call(arguments, 1) : arguments;
+              callback[0].apply(callback[1] || this, args);
+            }
           }
         }
       }

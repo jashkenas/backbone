@@ -66,6 +66,29 @@ $(document).ready(function() {
     equals(obj.counterA, 1, 'counterA should have only been incremented once.');
     equals(obj.counterB, 1, 'counterB should have only been incremented once.');
   });
+
+  test("Events: events that removes self and adds other events", function() {
+    var obj = { counterA: 0, counterB: 0, counterC: 0, counterD: 0 };
+    _.extend(obj,Backbone.Events);
+    var incrA,incrB,incrC;
+    incrA = function(){ obj.counterA += 1; obj.bind('event', incrB); obj.unbind('event', incrD); obj.unbind('event', incrA); obj.unbind('event', incrC); };
+    incrB = function(){ obj.counterB += 1; obj.unbind('event', incrB); obj.bind('event', incrD); obj.bind('event', incrA); obj.bind('event', incrC); };
+    incrC = function(){ obj.counterC += 1; };
+    incrD = function(){ obj.counterD += 1; };
+
+    obj.bind('event', incrC);
+    obj.bind('event', incrA);
+    obj.bind('event', incrD);
+    obj.trigger('event'); // C,A,D -> B -> C,A called D skipped
+    obj.trigger('event'); // B -> D,A,C -> B called
+    obj.trigger('event'); // D,A,C -> B -> D,A called C skipped
+    obj.trigger('event'); // B -> D,A,C -> B called
+    obj.trigger('event'); // D,A,C -> B -> D,A called C skipped
+    equals(obj.counterA, 3, 'counterA should have been incremented thrice.');
+    equals(obj.counterB, 2, 'counterB should have been incremented twice.');
+    equals(obj.counterC, 1, 'counterC should have only been incremented once.');
+    equals(obj.counterD, 2, 'counterD should have been incremented twice.');
+  });
   
   test("Events: bind a callback with a supplied context", function () {
     expect(1);
