@@ -446,26 +446,20 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `added` event for every new model.
     add : function(models, options) {
-      if (_.isArray(models)) {
-        for (var i = 0, l = models.length; i < l; i++) {
-          this._add(models[i], options);
-        }
-      } else {
-        this._add(models, options);
-      }
+      _.each(_.flatten([models]), function(model) {
+        this._add(model, options);
+      });
+
       return this;
     },
 
     // Remove a model, or a list of models from the set. Pass silent to avoid
     // firing the `removed` event for every model removed.
     remove : function(models, options) {
-      if (_.isArray(models)) {
-        for (var i = 0, l = models.length; i < l; i++) {
-          this._remove(models[i], options);
-        }
-      } else {
-        this._remove(models, options);
-      }
+      _.each(_.flatten([models]), function(model) {
+        this._remove(model, options);
+      });
+
       return this;
     },
 
