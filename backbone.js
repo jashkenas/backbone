@@ -726,26 +726,6 @@
     _extractParameters : function(route, fragment) {
       var params = route.exec(fragment).slice(1);
 
-      var keyPattern = /^[^\]]/; // detect a hash key pattern - a in a[b]
-      var valuePattern = /\[(.*)\]/; // detect a hash value pattern - b in a[b]
-      var setValue = function(key, value, data) {
-        var valueMatch = key.match(valuePattern);
-        if (valueMatch) {
-          var keyMatch = key.match(keyPattern);
-          if (keyMatch) {
-            // we have a hash structure
-            var key = keyMatch[0];
-            data[key] = data[key] || {};
-            var newKey = valueMatch[valueMatch.length-1];
-            setValue(newKey, value, data[key]);
-          } else {
-            data[key] = value;
-          }
-        } else {
-          data[key] = value;
-        }
-	  };
-
       // do we have an additional query string?
       var match = params.length && params[params.length-1] && params[params.length-1].match(queryStringParam);
       if (match) {
@@ -753,10 +733,11 @@
         var data = {};
         if (queryString) {
           var keyValues = queryString.split('&');
+          var self = this;
           _.each(keyValues, function(keyValue) {
             var arr = keyValue.split('=');
             if (arr.length > 1 && arr[1]) {
-              setValue(arr[0], decodeURIComponent(arr[1]), data);
+              self._setParamValue(arr[0], arr[1], data);
             }
           });
         }
@@ -771,6 +752,38 @@
       }
 
       return params;
+    },
+
+    _setParamValue : function(key, value, data) {
+      // use '.' to define hash separators
+      var parts = key.split('.');
+      var _data = data;
+      for (var i=0; i<parts.length; i++) {
+        var part = parts[i];
+        if (i === parts.length-1) {
+          // set the value
+          _data[part] = this._decodeParamValue(value);
+        } else {
+          _data = _data[part] = _data[part] || {};
+        }
+      }
+    },
+
+    _decodeParamValue : function(value) {
+      // '|' will indicate an array.  Array with 1 value is a=|b - multiple values can be a=b|c
+      if (value.indexOf('|') >= 0) {
+        var values = value.split('|');
+        // clean it up
+        for (var i=values.length-1; i>=0; i--) {
+          if (!values[i]) {
+            values.splice(i, 1);
+          } else {
+            values[i] = decodeURIComponent(values[i])
+          }
+        }
+        return values;
+      }
+      return decodeURIComponent(value);
     }
 
   });

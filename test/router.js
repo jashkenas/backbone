@@ -44,7 +44,6 @@ $(document).ready(function() {
     anything : function(whatever, queryParams) {
       this.anything = whatever;
       this.queryParams = queryParams;
-      console.log(whatever + ": " + queryParams);
     }
 
   });
@@ -96,8 +95,8 @@ $(document).ready(function() {
     }, 10);
   });
 
-  asyncTest("Router: routes (two part - query params - hash)", 6, function() {
-    window.location.hash = 'search/nyc/p10?a=b&b[c]=d&b[d]=e&b[e[f]]=g';
+  asyncTest("Router: routes (two part - query params - hash)", 16, function() {
+    window.location.hash = 'search/nyc/p10?a=b&b.c=d&b.d=e&b.e.f=g&array1=|a&array2=a|b&array3=|c|d&array4=|e%7C';
     setTimeout(function() {
       equals(router.query, 'nyc');
       equals(router.page, '10');
@@ -105,6 +104,16 @@ $(document).ready(function() {
       equals(router.queryParams.b.c, 'd');
       equals(router.queryParams.b.d, 'e');
       equals(router.queryParams.b.e.f, 'g');
+      equals(router.queryParams.array1.length, 1);
+      equals(router.queryParams.array1[0], 'a');
+      equals(router.queryParams.array2.length, 2);
+      equals(router.queryParams.array2[0], 'a');
+      equals(router.queryParams.array2[1], 'b');
+      equals(router.queryParams.array3.length, 2);
+      equals(router.queryParams.array3[0], 'c');
+      equals(router.queryParams.array3[1], 'd');
+      equals(router.queryParams.array4.length, 1);
+      equals(router.queryParams.array4[0], 'e|');
       start();
     }, 10);
   });
