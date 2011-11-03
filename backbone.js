@@ -182,6 +182,9 @@
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
+		
+	  // Look for inline key/value pairs
+	  if(!_.isObject(attrs)) return collapseInlineArgs.call(this, arguments);
 
       // Extract attributes and options.
       options || (options = {});
@@ -286,6 +289,10 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save : function(attrs, options) {
+		
+      // Look for inline key/value pairs
+      if(_.isString(attrs) || _.isNumber(attrs)) return collapseInlineArgs.call(this, arguments);
+
       options || (options = {});
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
@@ -1159,5 +1166,41 @@
       }
     };
   };
+  
+  // Helper function to collapse inline key/value pairs into attrs object
+  // for Model.set() and Model.save()
+  var collapseInlineArgs = function(args) {
+	  
+	  var oldArgs = [],
+		  attrs = {},
+		  options;
+
+      // convert the original arguments object to an array
+	  oldArgs.push.apply(oldArgs, args);
+
+	  // look for scalar arguments to use as keys
+	  while(_.isString(oldArgs[0]) || _.isNumber(oldArgs[0])) {
+		  
+		  // assume the subsequent arg is the corresponding value
+		  attrs[oldArgs[0]] = oldArgs[1];
+		  
+		  // double-shift the original and look for the next pair
+		  oldArgs.splice(0, 2);
+	  }
+	  
+	  // assume all but the last remaining arguments are additional attributes
+	  // in the regular format
+	  while(oldArgs[1]) {
+		  
+		  // merge
+		  _.extend(attrs, oldArgs.splice(0, 1)[0])
+	  }
+	  
+	  // the last arg (if any) will be options.
+	  options = oldArgs[0];
+
+	  // re-call the original method (set or save)
+	  return args.callee.call(this, attrs, options);
+  }
 
 }).call(this);
