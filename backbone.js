@@ -87,7 +87,7 @@
     unbind : function(ev, callback) {
       var calls, node, prev;
       if (!ev) {
-        this._callbacks = {};
+        this._callbacks = null;
       } else if (calls = this._callbacks) {
         if (!callback) {
           calls[ev] = {};
