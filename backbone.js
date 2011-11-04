@@ -481,7 +481,7 @@
     },
 
     // Get the model at the given index.
-    at: function(index) {
+    at : function(index) {
       return this.models[index];
     },
 
@@ -554,7 +554,7 @@
     // Proxy to _'s chain. Can't be proxied the same way the rest of the
     // underscore methods are proxied because it relies on the underscore
     // constructor.
-    chain: function () {
+    chain : function () {
       return _(this.models).chain();
     },
 
@@ -567,7 +567,7 @@
     },
 
     // Prepare a model to be added to this collection
-    _prepareModel: function(model, options) {
+    _prepareModel : function(model, options) {
       if (!(model instanceof Backbone.Model)) {
         var attrs = model;
         model = new this.model(attrs, {collection: this});
@@ -977,7 +977,7 @@
     },
 
     // Clears all callbacks previously bound to the view with `delegateEvents`.
-    undelegateEvents: function() {
+    undelegateEvents : function() {
       $(this.el).unbind('.delegateEvents' + this.cid);
     },
 
