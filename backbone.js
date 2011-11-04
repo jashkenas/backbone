@@ -8,8 +8,8 @@
 (function(root, factory) {
   // Set up Backbone appropriately for the environment.
   if (typeof exports !== 'undefined') {
-    // Node/CommonJS
-    factory(root, exports, require('underscore'), undefined);
+    // Node/CommonJS, no need for jQuery in that case.
+    factory(root, exports, require('underscore'));
   } else if (typeof define === 'function' && define.amd) {
     // AMD
     define('backbone', ['underscore', 'jquery', 'exports'], function(_, $, exports) {
