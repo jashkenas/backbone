@@ -95,4 +95,18 @@ $(document).ready(function() {
     equals(obj.counter, 3, 'counter should have been incremented three times');
   });
 
+  test("Events: callback list is not altered during trigger", function () {
+    var counter = 0, obj = _.extend({}, Backbone.Events);
+    var incr = function(){ counter++; };
+    obj.bind('event', function(){ obj.bind('event', incr).bind('all', incr); })
+    .trigger('event');
+    equals(counter, 0, 'bind does not alter callback list');
+    obj.unbind()
+    .bind('event', function(){ obj.unbind('event', incr).unbind('all', incr); })
+    .bind('event', incr)
+    .bind('all', incr)
+    .trigger('event');
+    equals(counter, 2, 'unbind does not alter callback list');
+  });
+
 });

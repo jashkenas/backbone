@@ -86,20 +86,17 @@
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `ev` is null, removes all bound callbacks for all events.
     unbind : function(ev, callback, context) {
-      var calls, node, prev;
+      var calls, node;
       if (!ev) {
-        this._callbacks = null;
+        delete this._callbacks;
       } else if (calls = this._callbacks) {
-        if (!callback) {
-          calls[ev] = {};
-        } else if (node = calls[ev]) {
-          while ((prev = node) && (node = node.next)) {
-            if (node.callback !== callback) continue;
-            if (context && (context !== node.context)) continue;
-            prev.next = node.next;
-            node.context = node.callback = null;
-            // break;
-          }
+        node = calls[ev];
+        delete calls[ev];
+        if (!callback || !node) return this;
+        while ((node = node.next) && node.next) {
+          if (node.callback === callback &&
+            (!context || node.context === context)) continue;
+          this.bind(ev, node.callback, node.context);
         }
       }
       return this;
@@ -108,16 +105,18 @@
     // Trigger an event, firing all bound callbacks. Callbacks are passed the
     // same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
-    trigger : function(eventName) {
-      var node, calls, callback, args, ev, events = ['all', eventName];
+    trigger : function(ev) {
+      var node, calls, tail, args, event, events = ['all', ev, null];
       if (!(calls = this._callbacks)) return this;
-      while (ev = events.pop()) {
-        if (!(node = calls[ev])) continue;
-        args = ev == 'all' ? arguments : slice.call(arguments, 1);
-        while (node = node.next) {
-          if (callback = node.callback) {
-            callback.apply(node.context || this, args);
-          }
+      while (event = events.shift()) {
+        if (!(node = calls[event])) continue;
+        args = event == 'all' ? arguments : slice.call(arguments, 1);
+        events.push({next: node.next, tail: node.tail, args: args});
+      }
+      while (node = events.pop()) {
+        tail = node.tail, args = node.args;
+        while ((node = node.next) !== tail) {
+          node.callback.apply(node.context || this, args);
         }
       }
       return this;
