@@ -960,7 +960,6 @@
     delegateEvents : function(events) {
       if (!(events || (events = this.events))) return;
       if (_.isFunction(events)) events = events.call(this);
-      this.el.undelegate();
       this.undelegateEvents();
       for (var key in events) {
         var method = this[events[key]];
@@ -979,6 +978,7 @@
 
     // Clears all callbacks previously bound to the view with `delegateEvents`.
     undelegateEvents : function() {
+      $(this.el).undelegate();
       $(this.el).unbind('.delegateEvents' + this.cid);
     },
 
