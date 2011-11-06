@@ -960,6 +960,7 @@
     delegateEvents : function(events) {
       if (!(events || (events = this.events))) return;
       if (_.isFunction(events)) events = events.call(this);
+      this.el.undelegate();
       this.undelegateEvents();
       for (var key in events) {
         var method = this[events[key]];
