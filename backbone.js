@@ -978,6 +978,7 @@
 
     // Clears all callbacks previously bound to the view with `delegateEvents`.
     undelegateEvents : function() {
+      $(this.el).undelegate();
       $(this.el).unbind('.delegateEvents' + this.cid);
     },
 
