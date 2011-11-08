@@ -271,6 +271,8 @@
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
       this.attributes = {};
+      this.set({ id: old.id }, { silent : true });
+
       this._escapedAttributes = {};
       this._changed = true;
       if (!options.silent) {
