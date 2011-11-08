@@ -84,7 +84,7 @@
     // Remove one or many callbacks. If `callback` is null, removes all
     // callbacks for the event. If `ev` is null, removes all bound callbacks
     // for all events.
-    unbind : function(ev, callback) {
+    unbind : function(ev, callback, context) {
       var calls, node, prev;
       if (!ev) {
         this._callbacks = null;
@@ -93,10 +93,18 @@
           calls[ev] = {};
         } else if (node = calls[ev]) {
           while ((prev = node) && (node = node.next)) {
-            if (node.callback !== callback) continue;
-            prev.next = node.next;
-            node.context = node.callback = null;
-            break;
+            if (node.callback === callback) {
+              if (context) {
+                if (node.context === context) {
+                  prev.next = node.next;
+                  node.context = node.callback = null;
+                  break;
+                }
+              } else {
+                prev.next = node.next;
+                node.context = node.callback = null;
+              }
+            }
           }
         }
       }
