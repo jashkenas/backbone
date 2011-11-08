@@ -1005,6 +1005,9 @@
         this.el = this.make(this.tagName, attrs);
       } else if (_.isString(this.el)) {
         this.el = $(this.el).get(0);
+      } else if (_.isFunction(this.el)) {
+        var constructed = this.el();
+        this.el = _.isElement(constructed) ? constructed : null;
       }
     }
 
