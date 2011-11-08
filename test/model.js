@@ -201,6 +201,11 @@ $(document).ready(function() {
     var changed;
     var model = new Backbone.Model({name : "Model"});
     model.bind("change:name", function(){ changed = true; });
+    model.bind("change", function() {
+      var keys = _.keys(model.changedAttributes());
+      equals(keys.indexOf('name') > -1, true);
+      equals(keys.indexOf('id') > -1, true)
+    });
     model.clear();
     equals(changed, true);
     equals(model.get('name'), undefined);
