@@ -1017,6 +1017,29 @@
     return child;
   };
 
+  // Backbone.Object
+  // ---------------
+
+  // Primitive base class that provides the self-propagating `extend` function
+  // used by other Backbone classes. Use this as the base for your own classes.
+  // Example:
+  //
+  // var Person = Backbone.Object.extend({
+  //   constructor: function (firstName, lastName) {
+  //     this._firstName = firstName;
+  //     this._lastName = lastName;
+  //   },
+  //   fullName: function () {
+  //     return this._firstName + ' ' + this._lastName;
+  //   }
+  // };
+  // var Agent = Person.extend({ ... });
+  // var Scientist = Person.extend({ ... });
+  // var olivia = new Agent('Olivia', 'Dunham');
+  // var walter = new Scientist('Walter', 'Bishop');
+  Backbone.Object = function(){};
+  Backbone.Object.extend = extend;
+
   // Set up inheritance for the model, collection, and view.
   Backbone.Model.extend = Backbone.Collection.extend =
     Backbone.Router.extend = Backbone.View.extend = extend;
