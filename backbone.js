@@ -4,7 +4,7 @@
 //     For all details and documentation:
 //     http://documentcloud.github.com/backbone
 
-(function(){
+(function() {
 
   // Initial Setup
   // -------------
@@ -64,7 +64,7 @@
   //
   //     var object = {};
   //     _.extend(object, Backbone.Events);
-  //     object.bind('expand', function(){ alert('expanded'); });
+  //     object.bind('expand', function() { alert('expanded'); });
   //     object.trigger('expand');
   //
   Backbone.Events = {
@@ -153,7 +153,7 @@
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
-    initialize : function(){},
+    initialize : function() {},
 
     // Return a copy of the model's `attributes` object.
     toJSON : function() {
@@ -435,12 +435,12 @@
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
-    initialize : function(){},
+    initialize : function() {},
 
     // The JSON representation of a Collection is an array of the
     // models' attributes.
     toJSON : function() {
-      return this.map(function(model){ return model.toJSON(); });
+      return this.map(function(model) { return model.toJSON(); });
     },
 
     // Add a model, or list of models to the set. Pass **silent** to avoid
@@ -497,7 +497,7 @@
 
     // Pluck an attribute from each model in the collection.
     pluck : function(attr) {
-      return _.map(this.models, function(model){ return model.get(attr); });
+      return _.map(this.models, function(model) { return model.get(attr); });
     },
 
     // When you have more items than you want to add or remove individually,
@@ -679,7 +679,7 @@
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
-    initialize : function(){},
+    initialize : function() {},
 
     // Manually bind a single named route to a callback. For example:
     //
@@ -915,7 +915,7 @@
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
-    initialize : function(){},
+    initialize : function() {},
 
     // **render** is the core function that your view should override, in order
     // to populate its element (`this.el`), with the appropriate HTML. The
@@ -1095,7 +1095,7 @@
   // -------
 
   // Shared empty constructor function to aid in prototype-chain creation.
-  var ctor = function(){};
+  var ctor = function() {};
 
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
@@ -1109,7 +1109,7 @@
     if (protoProps && protoProps.hasOwnProperty('constructor')) {
       child = protoProps.constructor;
     } else {
-      child = function(){ return parent.apply(this, arguments); };
+      child = function() { return parent.apply(this, arguments); };
     }
 
     // Inherit class (static) properties from parent.
