@@ -449,4 +449,13 @@ $(document).ready(function() {
     a.set({state: 'hello'});
   });
 
+  test("Model: Multiple nested calls to set", function() {
+    var model = new Backbone.Model({});
+    model.bind('change', function() {
+      model.set({b: 1});
+      model.set({a: 1});
+    })
+    .set({a: 1});
+  });
+
 });
