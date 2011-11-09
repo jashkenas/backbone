@@ -158,8 +158,8 @@ $(document).ready(function() {
 	  	obj2.dispose();
 	  	evt.trigger('event');
 	  	
-	  	equals(evt.counter, 2, 'event counter should have been incremeted three times.');
-	  	equals(obj1.counter, 1, 'obj1 listener counter should have been incremeted two times.');
+	  	equals(evt.counter, 2, 'event counter should have been incremeted two times.');
+	  	equals(obj1.counter, 1, 'obj1 listener counter should have been incremeted one time.');
 	  	equals(obj2.counter, 1, 'obj2 listener counter should have been incremeted one time.');
 	  });
 });
