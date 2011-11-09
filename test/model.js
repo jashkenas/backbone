@@ -450,12 +450,14 @@ $(document).ready(function() {
   });
 
   test("Model: Multiple nested calls to set", function() {
-    var model = new Backbone.Model({});
+    var counter = 0, model = new Backbone.Model({});
     model.bind('change', function() {
+      counter++;
       model.set({b: 1});
       model.set({a: 1});
     })
     .set({a: 1});
+    equal(counter, 1, 'change is only triggered once');
   });
 
 });
