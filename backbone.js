@@ -857,7 +857,8 @@
       return matched;
     },
 
-    // Save a fragment into the hash history. You are responsible for properly
+    // Save a fragment into the hash history, or replace the URL state
+    // if the 'replace' option is passed. You are responsible for properly
     // URL-encoding the fragment in advance. This does not trigger
     // a `hashchange` event.
     // parameters:
