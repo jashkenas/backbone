@@ -204,11 +204,18 @@ $(document).ready(function() {
 
   test("Model: clear", function() {
     var changed;
-    var model = new Backbone.Model({name : "Model"});
+    var model = new Backbone.Model({id: 1, name : "Model"});
     model.bind("change:name", function(){ changed = true; });
+    model.bind("change", function() {
+      var changedAttrs = model.changedAttributes();
+      ok('name' in changedAttrs);
+      ok(!('id' in changedAttrs));
+    });
     model.clear();
     equals(changed, true);
     equals(model.get('name'), undefined);
+    equals(model.id, 1);
+    equals(model.get('id'), 1);
   });
 
   test("Model: defaults", function() {
