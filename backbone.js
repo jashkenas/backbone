@@ -182,7 +182,14 @@
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
-
+      // allow a name and a value to be passed
+      if (typeof attrs === 'string') {
+        var name = attrs;
+        attrs = {};
+        attrs[name] = options;
+        options = {};
+      }
+      
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;

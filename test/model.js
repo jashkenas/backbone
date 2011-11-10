@@ -457,5 +457,11 @@ $(document).ready(function() {
     })
     .set({a: 1});
   });
+  
+  test("Model: Passing a name as first argument and value as the second.", function() {
+    var model = new Backbone.Model({});
+    model.set('name', 'value');
+    equals(model.get('name'), 'value');
+  });
 
 });
