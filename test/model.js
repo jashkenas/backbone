@@ -170,7 +170,7 @@ $(document).ready(function() {
         methods = {save: 1, set: 1},
         i, s, j, triggered;
         
-    expect(28);
+    expect(30);
         
     model.bind('all', function(){triggered = true});
         
@@ -191,8 +191,9 @@ $(document).ready(function() {
         for(j in attrs1) equals(attrs1[j], model.get(j), j + ' should be ' + attrs1[j]);
         ok(triggered, 'Should be triggered');
         
-        s(key, 'bar', attrs1, attrs2, silent);
+        s(key, 'bar', 'another-key', null, attrs1, attrs2, silent);
         equals('bar', model.get(key), key +' should be bar');
+        equals(null, model.get('another-key'), 'another-key should be null');
         for(j in attrs1) equals(attrs1[j], model.get(j), j + ' should be ' + attrs1[j]);
         for(j in attrs2) equals(attrs2[j], model.get(j), j + ' should be ' + attrs2[j]);
         ok(!triggered, 'Should not be triggered');
