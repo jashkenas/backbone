@@ -75,9 +75,29 @@ $(document).ready(function() {
   });
 
   test("Router: routes via navigate", 2, function() {
+    Backbone.history.navigate('search/manhattan/p20', {trigger: true});
+    equals(router.query, 'manhattan');
+    equals(router.page, '20');
+  });
+
+  test("Router: routes via navigate for backwards-compatibility", 2, function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equals(router.query, 'manhattan');
     equals(router.page, '20');
+  });
+
+  asyncTest("Router: routes via navigate with {replace: true}", function() {
+    var historyLength = window.history.length;
+    router.navigate('search/manhattan/start_here');
+    router.navigate('search/manhattan/then_here');
+    router.navigate('search/manhattan/finally_here', {replace: true});
+
+    equals(window.location.hash, "#search/manhattan/finally_here");
+    window.history.go(-1);
+    waitFor(function() { return(window.location.hash != "#search/manhattan/finally_here"); }, 2000).then(function() {
+      equals(window.location.hash, "#search/manhattan/start_here");
+      start();
+    });
   });
 
   asyncTest("Router: routes (splats)", function() {
