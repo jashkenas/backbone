@@ -328,13 +328,13 @@
     // view need to be updated and/or what attributes need to be persisted to
     // the server. Unset attributes will be set to undefined.
     changedAttributes : function(now) {
+      if (!this._changed) return false;
       now || (now = this.attributes);
       var changed = false, old = this._previousAttributes;
       for (var attr in now) {
         if (_.isEqual(old[attr], now[attr])) continue;
         (changed || (changed = {}))[attr] = now[attr];
       }
-      if (!this._changed) return changed;
       for (var attr in old) {
         if (!(attr in now)) (changed || (changed = {}))[attr] = void 0;
       }
