@@ -44,6 +44,33 @@ $(document).ready(function() {
     equals(col.get(101), model);
   });
 
+  test("Collection: add model with attributes modified by set", function() {
+    var CustomSetModel = Backbone.Model.extend({
+      defaults: {
+        number_as_string: null //presence of defaults forces extend
+      },
+
+      validate: function (attributes) {
+        if (!_.isString(attributes.num_as_string)) {
+          return 'fail';
+        }
+      },
+
+      set: function (attributes, options) {
+        if (attributes.num_as_string) {
+          attributes.num_as_string = attributes.num_as_string.toString();
+        }
+        Backbone.Model.prototype.set.call(this, attributes, options);
+      }
+    });
+
+    var CustomSetCollection = Backbone.Collection.extend({
+      model: CustomSetModel
+    });
+    var col = new CustomSetCollection([{ num_as_string: 2 }]);
+    equals(col.length, 1);
+  });
+
   test("Collection: update index when id changes", function() {
     var col = new Backbone.Collection();
     col.add([
@@ -95,6 +122,23 @@ $(document).ready(function() {
     equals(atCol.last(), h);
   });
 
+  test("Collection: add model to collection and verify index updates", function() {
+    var f = new Backbone.Model({id: 20, label : 'f'});
+    var g = new Backbone.Model({id: 21, label : 'g'});
+    var h = new Backbone.Model({id: 22, label : 'h'});
+    var col = new Backbone.Collection();
+    
+    var counts = [];
+     
+    col.bind('add', function(model, collection, options) {
+      counts.push(options.index);  
+    });
+    col.add(f); 
+    col.add(g); 
+    col.add(h); 
+    ok(_.isEqual(counts, [0,1,2]));
+  });
+
   test("Collection: add model to collection twice", function() {
     try {
       // no id, same cid
@@ -144,6 +188,23 @@ $(document).ready(function() {
     equals(col.length, 4);
     equals(col.first(), d);
     equals(otherRemoved, null);
+  });
+
+  test("Collection: remove should return correct index events", function() {
+    var f = new Backbone.Model({id: 20, label : 'f'});
+    var g = new Backbone.Model({id: 21, label : 'g'});
+    var h = new Backbone.Model({id: 22, label : 'h'});
+    var col = new Backbone.Collection([f,g,h]);
+    
+    var counts = [];
+     
+    col.bind('remove', function(model, collection, options) {
+      counts.push(options.index);  
+    });
+    col.remove(h); 
+    col.remove(g); 
+    col.remove(f); 
+    ok(_.isEqual(counts, [2,1,0]));
   });
 
   test("Collection: events are unbound on remove", function() {

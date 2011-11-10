@@ -280,26 +280,31 @@
       <li>– <a href="#examples-documentcloud">DocumentCloud</a></li>
       <li>– <a href="#examples-linkedin">LinkedIn Mobile</a></li>
       <li>– <a href="#examples-flow">Flow</a></li>
-      <li>– <a href="#examples-basecamp">Basecamp Mobile</a></li>
+      <li>– <a href="#examples-audiovroom">AudioVroom</a></li>
       <li>– <a href="#examples-groupon">Groupon Now!</a></li>
+      <li>– <a href="#examples-basecamp">Basecamp Mobile</a></li>
       <li>– <a href="#examples-trajectory">Trajectory</a></li>
       <li>– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
       <li>– <a href="#examples-pandora">Pandora</a></li>
       <li>– <a href="#examples-cloudapp">CloudApp</a></li>
       <li>– <a href="#examples-seatgeek">SeatGeek</a></li>
       <li>– <a href="#examples-tpm">Talking Points Memo</a></li>
+      <li>– <a href="#examples-kicksend">Kicksend</a></li>
       <li>– <a href="#examples-shortmail">Shortmail</a></li>
-      <li>– <a href="#examples-hotel-tonight">Hotel Tonight</a></li>
+      <li>– <a href="#examples-battlefield">Battlefield Play4Free</a></li>
+      <li>– <a href="#examples-salon">Salon.io</a></li>
       <li>– <a href="#examples-quoteroller">Quote Roller</a></li>
       <li>– <a href="#examples-tilemill">TileMill</a></li>
-      <li>– <a href="#examples-menagerievet">Menagerie Whiteboard</a></li>
+      <li>– <a href="#examples-rround">rround.me</a></li>
       <li>- <a href="#examples-blossom">Blossom</a></li>
       <li>- <a href="#examples-instagreat">Insta-great!</a></li>
       <li>- <a href="#examples-decide">Decide</a></li>
+      <li>- <a href="#examples-trello">Trello</a></li>
       <li>- <a href="#examples-bittorrent">BitTorrent</a></li>
       <li>- <a href="#examples-trapit">Trapit</a></li>
       <li>- <a href="#examples-fluxiom">Fluxiom</a></li>
       <li>- <a href="#examples-chop">Chop</a></li>
+      <li>- <a href="#examples-blackcomb">Blackcomb</a></li>
       <li>- <a href="#examples-test-kitchen">America&rsquo;s Test Kitchen</a></li>
       <li>- <a href="#examples-quietwrite">QuietWrite</a></li>
       <li>- <a href="#examples-tzigla">Tzigla</a></li>
@@ -1271,6 +1276,12 @@ alert(chapters.pluck('title'));
       "sort", which must return <tt>0</tt>, <tt>1</tt>, or <tt>-1</tt>,
       and is more similar to a <tt>sortBy</tt> &mdash; a much nicer API.
     </p>
+    
+    <p class="warning">
+      Collections with comparator functions will not automatically re-sort if you 
+      later change model attributes, so you may wish to call <tt>sort</tt> after 
+      changing model attributes that would affect the order.
+    </p>
 
     <p id="Collection-sort">
       <b class="header">sort</b><code>collection.sort([options])</code>
@@ -1449,7 +1460,7 @@ var othello = NYPL.create({
 
     <p>
       Web applications often provide linkable, bookmarkable, shareable URLs for
-      imporant locations in the app. Until recently, hash fragments 
+      important locations in the app. Until recently, hash fragments 
       (<tt>#page</tt>) were used to provide these permalinks, but with the 
       arrival of the History API, it's now possible to use standard URLs (<tt>/page</tt>).
       <b>Backbone.Router</b> provides methods for routing client-side pages, and
@@ -1573,7 +1584,7 @@ initialize: function(options) {
       If you wish to also call the route function, set the <b>triggerRoute</b>
       option to <tt>true</tt>.
       To update the URL without creating an entry in the browser's history,
-      set the <b>replaceState</b> option to <tt>true</tt>.
+      set the <b>replace</b> option to <tt>true</tt>.
     </p>
 
 <pre>
@@ -1640,6 +1651,12 @@ app.navigate("help/troubleshooting", true);
     <p>
       If the server has already rendered the entire page, and you don't want the
       initial route to trigger when starting History, pass <tt>silent: true</tt>.
+    </p>
+    
+    <p>
+      Because hash-based history in Internet Explorer relies on an 
+      <tt>&lt;iframe&gt;</tt>, be sure to only call <tt>start()</tt> after the DOM
+      is ready.
     </p>
 
 <pre>
@@ -2084,19 +2101,21 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
     
-    <h2 id="examples-basecamp">Basecamp Mobile</h2>
-
+    <h2 id="examples-audiovroom">AudioVroom</h2>
+    
     <p>
-      <a href="http://37signals.com/">37Signals</a> used Backbone.js to create
-      <a href="http://basecamphq.com/mobile">Basecamp Mobile</a>, the mobile version
-      of their popular project management software. You can access all your Basecamp
-      projects, post new messages, and comment on milestones (all represented
-      internally as Backbone.js models).
+      <a href="http://www.audiovroom.com/">AudioVroom</a> is a free music 
+      streaming app that allows you to listen to your Facebook friends like 
+      radio stations. It relies heavily on Backbone (views and song management) 
+      and also features a responsive grid-based design (using CSS3 media-queries) 
+      to deliver a unified user experience on desktops, mobiles, and tablets alike. 
+      Being a pure Backbone app, AudioVroom is only 60kb compressed, and can be
+      entirely hosted on the CDN.
     </p>
 
     <div style="text-align: center;">
-      <a href="http://basecamphq.com/mobile">
-        <img src="docs/images/basecamp-mobile.png" alt="Basecamp Mobile" class="example_image" />
+      <a href="http://www.audiovroom.com/">
+        <img src="docs/images/audiovroom.png" alt="AudioVroom" class="example_image" />
       </a>
     </div>
     
@@ -2119,6 +2138,22 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://www.groupon.com/now">
         <img src="docs/images/groupon.png" alt="Groupon Now!" class="example_image" />
+      </a>
+    </div>
+    
+    <h2 id="examples-basecamp">Basecamp Mobile</h2>
+
+    <p>
+      <a href="http://37signals.com/">37Signals</a> used Backbone.js to create
+      <a href="http://basecamphq.com/mobile">Basecamp Mobile</a>, the mobile version
+      of their popular project management software. You can access all your Basecamp
+      projects, post new messages, and comment on milestones (all represented
+      internally as Backbone.js models).
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://basecamphq.com/mobile">
+        <img src="docs/images/basecamp-mobile.png" alt="Basecamp Mobile" class="example_image" />
       </a>
     </div>
     
@@ -2235,6 +2270,21 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
     
+    <h2 id="examples-kicksend">Kicksend</h2>
+    
+    <p>
+      <a href="http://kicksend.com">Kicksend</a> is a real-time file sharing 
+      platform that helps everyday people send and receive files of any size 
+      with their friends and family. Kicksend's web application makes extensive 
+      use of Backbone.js to model files, friends, lists and activity streams.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://kicksend.com">
+        <img src="docs/images/kicksend.png" alt="Kicksend" class="example_image" />
+      </a>
+    </div>
+    
     <h2 id="examples-shortmail">Shortmail</h2>
     
     <p>
@@ -2254,22 +2304,36 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
     
-    <h2 id="examples-hotel-tonight">Hotel Tonight</h2>
+    <h2 id="examples-battlefield">Battlefield Play4Free</h2>
     
     <p>
-      <a href="http://www.hoteltonight.com/">Hotel Tonight</a> used Backbone.js, 
-      <a href="http://coffeescript.org">CoffeeScript</a>, 
-      <a href="http://documentcloud.github.com/jammit/">Jammit</a> and more to 
-      create the 
-      <a href="https://market.android.com/details?id=com.hoteltonight.android.prod">Android version</a> 
-      of their app; a last-minute, mobile, hotel booking application. The app 
-      leverages Backbone for the bulk of its architecture, with jQuery Mobile 
-      coming in for visual presentation.
+      <a href="http://battlefield.play4free.com/">Battlefield Play4Free</a> is 
+      the latest free-to-play first person shooter from the same team that 
+      created Battlefield Heroes. The in-game HTML5 front-end for makes heavy use of 
+      Backbone's views, models and collections to help keep the code modular 
+      and structured.
     </p>
 
     <div style="text-align: center;">
-      <a href="http://www.hoteltonight.com">
-        <img src="docs/images/hotel-tonight.png" alt="Hotel Tonight" class="example_image" />
+      <a href="http://battlefield.play4free.com/">
+        <img src="docs/images/battlefield.png" alt="Battlefield Play4Free" class="example_image" />
+      </a>
+    </div>
+    
+    <h2 id="examples-salon">Salon.io</h2>
+    
+    <p>
+      <a href="http://salon.io">Salon.io</a> provides a space where photographers, 
+      artists and designers freely arrange their visual art on virtual walls. 
+      <a href="http://salon.io">Salon.io</a> runs on Rails, but does not use
+      much of the traditional stack, as the entire frontend is designed as a 
+      single page web app, using Backbone.js and 
+      <a href="http://coffeescript.org">CoffeeScript</a>.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://salon.io">
+        <img src="docs/images/salon.png" alt="Salon.io" class="example_image" />
       </a>
     </div>
     
@@ -2310,25 +2374,21 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
     
-    <h2 id="examples-menagerievet">Menagerie Whiteboard</h2>
+    <h2 id="examples-rround">rround.me</h2>
     
     <p>
-      <a href="http://twitter.com/_aaron_">Aaron Hamid</a> and 
-      <a href="http://twitter.com/mkuklis">Michal Kuklis</a> from 
-      <a href="http://incandescentsoftware.com">Incandescent Software</a> 
-      used Backbone.js to create 
-      <a href="http://menagerievet.com">Menagerie Whiteboard</a> a digital 
-      "whiteboard" for veterinary practices. Backbone <b>Models</b> were used to 
-      sync the data with CouchDB. A Backbone <b>Controller</b> was used for 
-      routing and bookmarkable deep links. Backbone <b>Views</b> were used to 
-      bind, listen and 'react' to changes coming from models. 
-      <b>Backbone.sync</b> was extended to support connection to CouchDB 
-      and deployment as a CouchApp.
+      <a href="http://rround.me">rround.me</a> uses the HTML 
+      <a href="http://diveintohtml5.org/geolocation.html">Geolocation API</a> 
+      to discover tweets, YouTube videos, Instagram photos, Foursquare spots, and other happenings
+      posted by people close to you. The site is a single-page app built on Backbone.js,
+      with people, locations and events all represented by Backbone Models. 
+      Backbone Views listen for changes in the underlying data as you adjust 
+      the range (distance) of your search.
     </p>
 
     <div style="text-align: center;">
-      <a href="http://menagerievet.com/">
-        <img src="docs/images/menagerievet.png" alt="MenagerieVet" class="example_image" />
+      <a href="http://rround.me/">
+        <img src="docs/images/rround.png" alt="rround.me" class="example_image" />
       </a>
     </div>
     
@@ -2383,6 +2443,23 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://decide.com">
         <img src="docs/images/decide.png" alt="Decide" class="example_image" />
+      </a>
+    </div>
+    
+    <h2 id="examples-trello">Trello</h2>
+    
+    <p>
+      <a href="http://trello.com">Trello</a> is a collaboration tool that 
+      organizes your projects into boards. A Trello board holds many lists of 
+      cards, which can contain checklists, files and conversations, and may be
+      voted on and organized with labels. Updates on the board happen in 
+      real time. The site was built ground up using Backbone.js for all the 
+      models, views, and routes.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://trello.com">
+        <img src="docs/images/trello.png" alt="Trello" class="example_image" />
       </a>
     </div>
     
@@ -2454,6 +2531,23 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://chopapp.com/">
         <img src="docs/images/chop.png" alt="Chop" class="example_image" />
+      </a>
+    </div>
+    
+    
+    <h2 id="examples-blackcomb">Blackcomb</h2>
+    
+    <p>
+      <a href="http://www.opzi.com/">Opzi</a> used Backbone.js to create 
+      <a href="http://www.opzi.com/">Blackcomb</a>, a web-based platform for collaboration
+      applications. Apps can be installed through a simple app store or added in
+      custom configurations by editing a simple YAML file. The project relied 
+      heavily on Backbone.js for the creation of reusable view components.
+    </p>
+    
+    <div style="text-align: center;">
+      <a href="http://www.opzi.com/">
+        <img src="docs/images/blackcomb.png" alt="Blackcomb" class="example_image" />
       </a>
     </div>
     
@@ -2888,7 +2982,7 @@ Inbox.messages.add(newMessage);
 
   </div>
 
-  <script src="test/vendor/underscore-1.1.6.js"></script>
+  <script src="test/vendor/underscore-1.2.1.js"></script>
   <script src="test/vendor/jquery-1.5.js"></script>
   <script src="test/vendor/json2.js"></script>
   <script src="backbone.js"></script>
