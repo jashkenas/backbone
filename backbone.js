@@ -222,8 +222,11 @@
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
     unset : function(attrs, options) {
-      var key = attrs;
-      if (_.isString(key)) (attrs = {})[key] = void 0;
+      if (_.isString(attrs)) {
+        var key, args = _.toArray(arguments), attrs = {};
+        while (_.isString(key = args.shift())) attrs[key] = void 0;
+        options = key;
+      }
       (options || (options = {})).unset = true;
       return this.set(attrs, options);
     },
@@ -231,9 +234,8 @@
     // Clear all attributes on the model, firing `"change"` unless you choose
     // to silence it.
     clear : function(options) {
-      var attrs = {};
-      for (var attr in this.attributes) if (attr != this.idAttribute) attrs[attr] = void 0;
-      return this.unset(attrs);
+      var keys = _.without(_.keys(this.attributes), 'id');
+      return this.unset.apply(this, keys.concat([options]));
     },
 
     // Fetch the model from the server. If the server's representation of the
