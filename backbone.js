@@ -865,15 +865,15 @@
     //
     // * fragment: the URL fragment to navigate to (the portion after the '#')
     // * options: An object with the following parameters:
-    //            - triggerRoute: call the route corresponding to the provided fragment
+    //            - trigger: call the route corresponding to the provided fragment
     //            - replace: Navigate such that the back button will
     //              not return to this current state.
     //
     //            To comply with earlier API specifications, passing
     //            true/false for options will be interpretted as
-    //            {options: triggerRoute: true/false}
+    //            {options: trigger: true/false}
     navigate : function(fragment, options) {
-      if (!options || typeof options === 'boolean') options = {triggerRoute: options};
+      if (!options || typeof options === 'boolean') options = {trigger: options};
       var frag = (fragment || '').replace(hashStrip, '');
       if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
       if (this._hasPushState) {
@@ -892,7 +892,7 @@
           this._updateLocationHash(this.iframe.location, frag, options.replace);
         }
       }
-      if (options.triggerRoute) this.loadUrl(fragment);
+      if (options.trigger) this.loadUrl(fragment);
     },
 
     _updateLocationHash: function(location, new_fragment, replace) {

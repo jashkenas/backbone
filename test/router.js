@@ -75,7 +75,7 @@ $(document).ready(function() {
   });
 
   test("Router: routes via navigate", 2, function() {
-    Backbone.history.navigate('search/manhattan/p20', {triggerRoute: true});
+    Backbone.history.navigate('search/manhattan/p20', {trigger: true});
     equals(router.query, 'manhattan');
     equals(router.page, '20');
   });
