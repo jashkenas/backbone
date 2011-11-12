@@ -140,7 +140,7 @@ $(document).ready(function() {
   });
 
   test("Model: set and unset", function() {
-    expect(10);
+    expect(12);
     attrs = {id: 'id', foo: 1, bar: 2, baz: 3};
     a = new Backbone.Model(attrs);
     var changeCount = 0;
@@ -161,9 +161,11 @@ $(document).ready(function() {
 
     var options = {};
     a.bind('change', function(model, _options){ ok(options === _options); });
-    a.set('foo', 5, 'bar', 6, options);
+    a.set('foo', 5, 'bar', 6, '', 7, 0, 8, options);
     equals(a.get('foo'), 5);
     equals(a.get('bar'), 6);
+    equals(a.get(''), 7);
+    equals(a.get('0'), 8);
   });
 
   test("Model: multiple unsets", function() {
@@ -293,7 +295,6 @@ $(document).ready(function() {
       options.success.call(this, {admin: true});
     };
     model.save(null, {error: function(model, error) {
-      console.log('erroring!');
       lastError = error;
     }});
 
