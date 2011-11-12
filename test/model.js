@@ -140,23 +140,30 @@ $(document).ready(function() {
   });
 
   test("Model: set and unset", function() {
+    expect(10);
     attrs = {id: 'id', foo: 1, bar: 2, baz: 3};
     a = new Backbone.Model(attrs);
     var changeCount = 0;
     a.bind("change:foo", function() { changeCount += 1; });
     a.set({'foo': 2});
-    ok(a.get('foo')== 2, "Foo should have changed.");
+    ok(a.get('foo') == 2, "Foo should have changed.");
     ok(changeCount == 1, "Change count should have incremented.");
     a.set({'foo': 2}); // set with value that is not new shouldn't fire change event
-    ok(a.get('foo')== 2, "Foo should NOT have changed, still 2");
+    ok(a.get('foo') == 2, "Foo should NOT have changed, still 2");
     ok(changeCount == 1, "Change count should NOT have incremented.");
 
     a.unset('foo');
-    ok(a.get('foo')== null, "Foo should have changed");
+    ok(a.get('foo') == null, "Foo should have changed");
     ok(changeCount == 2, "Change count should have incremented for unset.");
 
     a.unset('id');
     equals(a.id, undefined, "Unsetting the id should remove the id property.");
+
+    var options = {};
+    a.bind('change', function(model, _options){ ok(options === _options); });
+    a.set('foo', 5, 'bar', 6, options);
+    equals(a.get('foo'), 5);
+    equals(a.get('bar'), 6);
   });
 
   test("Model: multiple unsets", function() {
@@ -297,6 +304,14 @@ $(document).ready(function() {
     doc.save({title : "Henry V"});
     equals(lastRequest[0], 'update');
     ok(_.isEqual(lastRequest[1], doc));
+  });
+
+  test("Model: var args to save", function() {
+    var options = {}, model = new Backbone.Model();
+    model.save('foo', 1, 'bar', 2, options);
+    ok(lastRequest[2] === options);
+    equals(model.get('foo'), 1);
+    equals(model.get('bar'), 2);
   });
 
   test("Model: fetch", function() {
