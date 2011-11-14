@@ -207,6 +207,9 @@
           delete escaped[attr];
           this._changed = true;
           if (!options.silent) this.trigger('change:' + attr, this, val, options);
+
+          // auto resort
+          if (this.collection && this.collection.sortAttribute && (attr == this.collection.sortAttribute)) this.collection.resort(this);
         }
       }
 
@@ -395,6 +398,12 @@
       return _.clone(this._previousAttributes);
     },
 
+    // Incrementally resorts a model
+    resort : function(options) {
+      if (!this.collection) return;
+      return this.collection.resort(this);
+    },
+
     // Run validation against a set of incoming attributes, returning `true`
     // if all is well. If a specific `error` callback has been passed,
     // call that instead of firing the general `"error"` event.
@@ -494,6 +503,46 @@
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
       this.models = this.sortBy(this.comparator);
       if (!options.silent) this.trigger('reset', this, options);
+      return this;
+    },
+
+    // Incrementally resorts a model or an array of models.
+    resort : function(model_or_models, options) {
+      options || (options={});
+      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
+      var model, previous_index, new_index;
+      if (_.isArray(model_or_models)) {
+        var changed_models = [];
+        for (var i = 0, l = model_or_models.length; i < l; i++) {
+          model = model_or_models[i]; previous_index = this.indexOf(model);
+
+          // remove so don't find yourself, find new model position, and add back
+          this.models.splice(previous_index, 1);
+          new_index = this.sortedIndex(model, this.comparator);
+          this.models.splice(new_index, 0, model);
+
+          // a change in position, save trigger
+          if (!options.silent && (previous_index != new_index)) changed_models.push(model);
+        }
+        
+        if (changed_models.length) {
+          for (var j = 0, len = changed_models.length; j < len; j++) this.trigger('resort', changed_models[j], {});
+        }
+      }
+      else {
+        model = model_or_models;
+        if (model.collection!=this) return undefined;
+        previous_index = this.indexOf(model);
+        if (previous_index<0) throw new Error('Model not part of the collection');
+
+        // remove so don't find yourself, find new model position, and add back
+        this.models.splice(previous_index, 1);
+        new_index = this.sortedIndex(model, this.comparator);
+        this.models.splice(new_index, 0, model);
+
+        // a change in position, trigger
+        if (!options.silent && (previous_index != new_index)) this.trigger('resort', model, {});
+      }
       return this;
     },
 
