@@ -459,9 +459,23 @@ $(document).ready(function() {
   });
   
   test("Model: Passing a name as first argument and value as the second.", function() {
-    var model = new Backbone.Model({});
-    model.set('name', 'value');
-    equals(model.get('name'), 'value');
+    var model  = new Backbone.Model({});
+    var change = false;
+    var silent = true;
+
+    model.bind('change:change', function() {
+      change = true;
+    }).bind('change:silent', function() {
+      silent = false;
+    });
+
+    model.set('change', true);
+    model.set('silent', true, { silent: true });
+
+    equals(model.get('change'), true);
+    equals(change, true);
+    equals(model.get('silent'), true);
+    equals(silent, true);
   });
 
 });
