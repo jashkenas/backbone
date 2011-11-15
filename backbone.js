@@ -716,7 +716,7 @@
     _routeToRegExp : function(route) {
       route = route.replace(escapeRegExp, "\\$&")
                    .replace(namedParam, "([^\/?]*)")
-                   .replace(splatParam, "([^\?]*?)");
+                   .replace(splatParam, "([^\?]*)");
       route += '([\?]{1}.*)?';
       return new RegExp('^' + route + '$');
     },
