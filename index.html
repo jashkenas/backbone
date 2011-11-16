@@ -281,6 +281,7 @@
       <li>– <a href="#examples-linkedin">LinkedIn Mobile</a></li>
       <li>– <a href="#examples-flow">Flow</a></li>
       <li>– <a href="#examples-audiovroom">AudioVroom</a></li>
+      <li>– <a href="#examples-do">Do</a></li>
       <li>– <a href="#examples-groupon">Groupon Now!</a></li>
       <li>– <a href="#examples-basecamp">Basecamp Mobile</a></li>
       <li>– <a href="#examples-trajectory">Trajectory</a></li>
@@ -332,7 +333,7 @@
   <div class="container">
 
     <p>
-      <img style="width: 385px; height: 126px;" src="docs/images/backbone.png" alt="Backbone.js" />
+      <img style="width: 409px; height: 74px;" src="docs/images/backbone.png" alt="Backbone.js" />
     </p>
 
     <p>
@@ -390,20 +391,6 @@
       <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
       <a href="http://jquery.com">jQuery</a> <small>( > 1.4.2)</small> or 
       <a href="http://zeptojs.com/">Zepto</a>.
-    </p>
-    
-    <h2 id="Upgrading">Upgrading to 0.5.0+</h2>
-
-    <p>
-      We've taken the opportunity to clarify some naming with the <b>0.5.0</b>
-      release. <tt>Controller</tt> is now <a href="#Router">Router</a>, and 
-      <tt>refresh</tt> is now <a href="#Collection-reset">reset</a>. 
-      The previous <tt>saveLocation</tt> and <tt>setLocation</tt>
-      functions have been replaced by <a href="#Router-navigate">navigate</a>. 
-      <tt>Backbone.sync</tt>'s method signature has changed to allow the passing
-      of arbitrary options to <tt>jQuery.ajax</tt>.
-      Be sure to <a href="#History-start">opt-in</a> to <tt>pushState</tt> support, 
-      if you want to use it.
     </p>
 
     <h2 id="Introduction">Introduction</h2>
@@ -2113,6 +2100,24 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://www.audiovroom.com/">
         <img src="docs/images/audiovroom.png" alt="AudioVroom" class="example_image" />
+      </a>
+    </div>
+    
+    <h2 id="examples-do">Do</h2>
+    
+    <p>
+      <a href="http://do.com">Do</a> is a social productivity app that makes it 
+      easy to work on tasks, track projects, and take notes with your team. 
+      The <a href="http://do.com">Do.com</a> web application was built from the 
+      ground up to work seamlessly on your smartphone, tablet and computer. The 
+      team used Backbone, CoffeeScript and Handlebars to build a full-featured 
+      app in record time and rolled their own extensions for complex navigation 
+      and model sync support.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://do.com">
+        <img src="docs/images/do.png" alt="Do" class="example_image" />
       </a>
     </div>
     
