@@ -74,10 +74,11 @@ $(document).ready(function() {
     }, 10);
   });
 
-  test("Router: routes via navigate", 2, function() {
-    Backbone.history.navigate('search/manhattan/p20', true);
+  test("Router: routes via navigate", 3, function() {
+    router.navigate('search/manhattan/p20', true);
     equals(router.query, 'manhattan');
     equals(router.page, '20');
+    equals(window.location.hash, '#search/manhattan/p20');
   });
 
   asyncTest("Router: routes (splats)", function() {
@@ -124,12 +125,43 @@ $(document).ready(function() {
       window.location.hash = "noCallback";
       setTimeout(function(){
         equals(callbackFired, true);
-        start();
         window.location.hash = '';
+        start(2);
       }, 10);
     } catch (err) {
       ok(false, "an exception was thrown trying to fire the router event with no router handler callback");
     }
+  });
+
+  // test Router's discreet mode
+
+  var Router = Backbone.Router.extend({
+
+    routes: {
+      "find/:query":              "find",
+    },
+
+    find : function(query) {
+      this.query = query;
+    },
+
+  });
+
+  var discreetRouter = new Router({discreet: true});
+
+  test("Router: discreet mode, routes via navigate", 2, function() {
+    discreetRouter.navigate('find/paris', true);
+    equals(discreetRouter.query, 'paris');
+    equals(window.location.hash, '');
+    delete discreetRouter.query;
+  });
+
+  asyncTest("Router: discreet mode, setting url hash", 1, function() {
+    window.location.hash = 'find/amsterdam';
+    setTimeout(function() {
+      equals(discreetRouter.query, undefined);
+      start();
+    }, 10);
   });
 
 });

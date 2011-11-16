@@ -666,6 +666,8 @@
   Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
+    this.discreet = (options.discreet != undefined) ? options.discreet : false;
+    this.handlers = new Array();
     this._bindRoutes();
     this.initialize.apply(this, arguments);
   };
@@ -692,16 +694,25 @@
     route : function(route, name, callback) {
       Backbone.history || (Backbone.history = new Backbone.History);
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-      Backbone.history.route(route, _.bind(function(fragment) {
+      var boundCallback = _.bind(function(fragment) {
         var args = this._extractParameters(route, fragment);
         callback && callback.apply(this, args);
         this.trigger.apply(this, ['route:' + name].concat(args));
-      }, this));
+      }, this)
+      if (!this.discreet) {
+        Backbone.history.route(route, boundCallback);
+      } else {
+        this.handlers.unshift({route : route, callback : boundCallback});
+      }
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate : function(fragment, triggerRoute) {
-      Backbone.history.navigate(fragment, triggerRoute);
+      if (!this.discreet) {
+        Backbone.history.navigate(fragment, triggerRoute);
+      } else if (triggerRoute) {
+        Backbone.history.loadUrl(fragment, this.handlers);
+      }
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
@@ -846,9 +857,9 @@
     // Attempt to load the current URL fragment. If a route succeeds with a
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
-    loadUrl : function(fragmentOverride) {
+    loadUrl : function(fragmentOverride, handlersOverride) {
       var fragment = this.fragment = this.getFragment(fragmentOverride);
-      var matched = _.any(this.handlers, function(handler) {
+      var matched = _.any((handlersOverride || this.handlers), function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
           return true;
