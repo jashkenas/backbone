@@ -223,9 +223,8 @@
     // to silence it. `unset` is a noop if the attribute doesn't exist.
     unset : function(attrs, options) {
       if (_.isString(attrs)) {
-        var key, args = _.toArray(arguments), attrs = {};
-        while (_.isString(key = args.shift())) attrs[key] = void 0;
-        options = key;
+        var args = _.toArray(arguments), attrs = {};
+        while (_.isString(options = args.shift())) attrs[options] = void 0;
       }
       (options || (options = {})).unset = true;
       return this.set(attrs, options);
