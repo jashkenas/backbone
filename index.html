@@ -1564,11 +1564,14 @@ initialize: function(options) {
 </pre>
 
     <p id="Router-navigate">
-      <b class="header">navigate</b><code>router.navigate(fragment, [triggerRoute])</code>
+      <b class="header">navigate</b><code>router.navigate(fragment, [options])</code>
       <br />
       Whenever you reach a point in your application that you'd like to save
       as a URL, call <b>navigate</b> in order to update the URL.
-      If you wish to also call the route function, pass <b>triggerRoute</b>.
+      If you wish to also call the route function, set the <b>trigger</b>
+      option to <tt>true</tt>.
+      To update the URL without creating an entry in the browser's history,
+      set the <b>replace</b> option to <tt>true</tt>.
     </p>
 
 <pre>
@@ -1579,7 +1582,11 @@ openPage: function(pageNumber) {
 
 # Or ...
 
-app.navigate("help/troubleshooting", true);
+app.navigate("help/troubleshooting", {trigger: true});
+
+# Or ...
+
+app.navigate("help/troubleshooting", {trigger: true, replace: true});
 </pre>
 
     <h2 id="History">Backbone.history</h2>
