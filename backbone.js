@@ -399,7 +399,7 @@
     // if all is well. If a specific `error` callback has been passed,
     // call that instead of firing the general `"error"` event.
     _performValidation : function(attrs, options) {
-      var error = this.validate(attrs);
+      var error = this.validate(attrs, options);
       if (error) {
         if (options.error) {
           options.error(this, error, options);
