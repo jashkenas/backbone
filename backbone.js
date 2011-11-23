@@ -873,17 +873,6 @@
     this.initialize.apply(this, arguments);
   };
 
-  // Element lookup, scoped to DOM elements within the current view.
-  // This should be prefered to global lookups, if you're dealing with
-  // a specific view.
-  var selectorDelegate = function(selector) {
-    if (typeof selector == 'undefined') {
-      return $(this.el);
-    } else {
-      return $(selector, this.el);
-    };
-  };
-
   // Cached regex to split keys for `delegate`.
   var eventSplitter = /^(\S+)\s*(.*)$/;
 
@@ -896,8 +885,11 @@
     // The default `tagName` of a View's element is `"div"`.
     tagName : 'div',
 
-    // Attach the `selectorDelegate` function as the `$` property.
-    $       : selectorDelegate,
+    // jQuery delegate for element lookup, scoped to DOM elements within the
+    // current view. This should be prefered to global lookups where possible.
+    $ : function(selector) {
+      return (selector == null) ? $(this.el) : $(selector, this.el);
+    },
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
