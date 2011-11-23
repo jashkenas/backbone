@@ -94,10 +94,10 @@ $(document).ready(function() {
 
     equals(window.location.hash, "#search/manhattan/finally_here");
     window.history.go(-1);
-    waitFor(function() { return(window.location.hash != "#search/manhattan/finally_here"); }, 2000).then(function() {
+    setTimeout(function() {
       equals(window.location.hash, "#search/manhattan/start_here");
       start();
-    });
+    }, 500);
   });
 
   asyncTest("Router: routes (splats)", function() {
@@ -139,7 +139,7 @@ $(document).ready(function() {
   asyncTest("Router: fires event when router doesn't have callback on it", 1, function() {
     try{
       var callbackFired = false;
-      var myCallback = function(){ callbackFired = true; }
+      var myCallback = function(){ callbackFired = true; };
       router.bind("route:noCallback", myCallback);
       window.location.hash = "noCallback";
       setTimeout(function(){

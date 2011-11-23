@@ -857,36 +857,24 @@
       return matched;
     },
 
-    // Save a fragment into the hash history, or replace the URL state
-    // if the 'replace' option is passed. You are responsible for properly
-    // URL-encoding the fragment in advance. This does not trigger
-    // a `hashchange` event.
-    // parameters:
+    // Save a fragment into the hash history, or replace the URL state if the
+    // 'replace' option is passed. You are responsible for properly URL-encoding
+    // the fragment in advance.
     //
-    // * fragment: the URL fragment to navigate to (the portion after the '#')
-    // * options: An object with the following parameters:
-    //            - trigger: call the route corresponding to the provided fragment
-    //            - replace: Navigate such that the back button will
-    //              not return to this current state.
-    //
-    //            To comply with earlier API specifications, passing
-    //            true/false for options will be interpretted as
-    //            {options: trigger: true/false}
+    // The options object can contain `trigger: true` if you wish to have the
+    // route callback be fired (not usually desirable), or `replace: true`, if
+    // you which to modify the current URL without adding an entry to the history.
     navigate : function(fragment, options) {
-      if (!options || typeof options === 'boolean') options = {trigger: options};
+      if (!options || options === true) options = {trigger: options};
       var frag = (fragment || '').replace(hashStrip, '');
       if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
       if (this._hasPushState) {
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
         this.fragment = frag;
-        if (options.replace) {
-          window.history.replaceState({}, document.title, frag);
-        } else {
-          window.history.pushState({}, document.title, frag);
-        }
+        window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, frag);
       } else {
         this.fragment = frag;
-        this._updateLocationHash(window.location, frag, options.replace);
+        this._updateHash(window.location, frag, options.replace);
         if (this.iframe && (frag != this.getFragment(this.iframe.location.hash))) {
           // Opening and closing the iframe tricks IE7 and earlier to push a history entry on hash-tag change.
           // When replace is true, we don't want this.
@@ -897,13 +885,14 @@
       if (options.trigger) this.loadUrl(fragment);
     },
 
-    // Since you can't run `location.replace` on a hash fragment, this
-    // helper function provides an effective work-around.
-    _updateLocationHash: function(location, new_fragment, replace) {
-      if (replace)
-        location.replace(location.toString().replace(/#.*$/, "") + "#" + new_fragment);
-      else
-        location.hash = new_fragment;
+    // Update the hash location, either replacing the current entry, or adding
+    // a new one to the browser history.
+    _updateHash: function(location, fragment, replace) {
+      if (replace) {
+        location.replace(location.toString().replace(/#.*$/, '') + '#' + fragment);
+      } else {
+        location.hash = fragment;
+      }
     }
   });
 
