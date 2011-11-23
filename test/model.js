@@ -140,19 +140,24 @@ $(document).ready(function() {
   });
 
   test("Model: set and unset", function() {
+    expect(8);
     attrs = {id: 'id', foo: 1, bar: 2, baz: 3};
     a = new Backbone.Model(attrs);
     var changeCount = 0;
     a.bind("change:foo", function() { changeCount += 1; });
     a.set({'foo': 2});
-    ok(a.get('foo')== 2, "Foo should have changed.");
+    ok(a.get('foo') == 2, "Foo should have changed.");
     ok(changeCount == 1, "Change count should have incremented.");
     a.set({'foo': 2}); // set with value that is not new shouldn't fire change event
-    ok(a.get('foo')== 2, "Foo should NOT have changed, still 2");
+    ok(a.get('foo') == 2, "Foo should NOT have changed, still 2");
     ok(changeCount == 1, "Change count should NOT have incremented.");
 
-    a.unset('foo');
-    ok(a.get('foo')== null, "Foo should have changed");
+    a.validate = function(attrs) {
+      ok(attrs.foo === void 0, 'ignore values when unsetting');
+    };
+    a.unset({foo: 1});
+    ok(a.get('foo') == null, "Foo should have changed");
+    delete a.validate;
     ok(changeCount == 2, "Change count should have incremented for unset.");
 
     a.unset('id');
@@ -199,11 +204,18 @@ $(document).ready(function() {
 
   test("Model: clear", function() {
     var changed;
-    var model = new Backbone.Model({name : "Model"});
+    var model = new Backbone.Model({id: 1, name : "Model"});
     model.bind("change:name", function(){ changed = true; });
+    model.bind("change", function() {
+      var changedAttrs = model.changedAttributes();
+      ok('name' in changedAttrs);
+      ok(!('id' in changedAttrs));
+    });
     model.clear();
     equals(changed, true);
     equals(model.get('name'), undefined);
+    equals(model.id, 1);
+    equals(model.get('id'), 1);
   });
 
   test("Model: defaults", function() {
@@ -450,12 +462,14 @@ $(document).ready(function() {
   });
 
   test("Model: Multiple nested calls to set", function() {
-    var model = new Backbone.Model({});
+    var counter = 0, model = new Backbone.Model({});
     model.bind('change', function() {
+      counter++;
       model.set({b: 1});
       model.set({a: 1});
     })
     .set({a: 1});
+    equal(counter, 1, 'change is only triggered once');
   });
 
 });
