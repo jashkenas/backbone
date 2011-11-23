@@ -187,6 +187,7 @@
       options || (options = {});
       if (!attrs) return this;
       if (attrs.attributes) attrs = attrs.attributes;
+      if (options.unset) for (var attr in attrs) attrs[attr] = void 0;
       var now = this.attributes, escaped = this._escapedAttributes;
 
       // Run validation.
@@ -202,8 +203,8 @@
       // Update attributes.
       for (var attr in attrs) {
         var val = attrs[attr];
-        if (!_.isEqual(now[attr], val)) {
-          now[attr] = val;
+        if (!_.isEqual(now[attr], val) || options.unset && (attr in now)) {
+          options.unset ? delete now[attr] : now[attr] = val;
           delete escaped[attr];
           this._changed = true;
           if (!options.silent) this.trigger('change:' + attr, this, val, options);
@@ -220,53 +221,20 @@
 
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
-    unset : function(attr, options) {
-      if (!(attr in this.attributes)) return this;
-      options || (options = {});
-      var value = this.attributes[attr];
-
-      // Run validation.
-      var validObj = {};
-      validObj[attr] = void 0;
-      if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
-
-      // changedAttributes needs to know if an attribute has been unset.
-      (this._unsetAttributes || (this._unsetAttributes = [])).push(attr);
-
-      // Remove the attribute.
-      delete this.attributes[attr];
-      delete this._escapedAttributes[attr];
-      if (attr == this.idAttribute) delete this.id;
-      this._changed = true;
-      if (!options.silent) {
-        this.trigger('change:' + attr, this, void 0, options);
-        this.change(options);
+    unset : function(attrs, options) {
+      if (_.isString(attrs)) {
+        var args = _.toArray(arguments), attrs = {};
+        while (_.isString(options = args.shift())) attrs[options] = void 0;
       }
-      return this;
+      (options || (options = {})).unset = true;
+      return this.set(attrs, options);
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
     // to silence it.
     clear : function(options) {
-      options || (options = {});
-      var attr;
-      var old = this.attributes;
-
-      // Run validation.
-      var validObj = {};
-      for (attr in old) validObj[attr] = void 0;
-      if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
-
-      this.attributes = {};
-      this._escapedAttributes = {};
-      this._changed = true;
-      if (!options.silent) {
-        for (attr in old) {
-          this.trigger('change:' + attr, this, void 0, options);
-        }
-        this.change(options);
-      }
-      return this;
+      var keys = _.without(_.keys(this.attributes), 'id');
+      return this.unset.apply(this, keys.concat([options]));
     },
 
     // Fetch the model from the server. If the server's representation of the
@@ -346,7 +314,6 @@
     change : function(options) {
       this.trigger('change', this, options);
       this._previousAttributes = _.clone(this.attributes);
-      this._unsetAttributes = null;
       this._changed = false;
     },
 
@@ -362,23 +329,16 @@
     // view need to be updated and/or what attributes need to be persisted to
     // the server. Unset attributes will be set to undefined.
     changedAttributes : function(now) {
+      if (!this._changed) return false;
       now || (now = this.attributes);
-      var old = this._previousAttributes, unset = this._unsetAttributes;
-
-      var changed = false;
+      var changed = false, old = this._previousAttributes;
       for (var attr in now) {
-        if (!_.isEqual(old[attr], now[attr])) {
-          changed || (changed = {});
-          changed[attr] = now[attr];
-        }
+        if (_.isEqual(old[attr], now[attr])) continue;
+        (changed || (changed = {}))[attr] = now[attr];
       }
-
-      if (unset) {
-        changed || (changed = {});
-        var len = unset.length;
-        while (len--) changed[unset[len]] = void 0;
+      for (var attr in old) {
+        if (!(attr in now)) (changed || (changed = {}))[attr] = void 0;
       }
-
       return changed;
     },
 
