@@ -843,7 +843,7 @@
           // Opening and closing the iframe tricks IE7 and earlier to push a history entry on hash-tag change.
           // When replace is true, we don't want this.
           if(!options.replace) this.iframe.document.open().close();
-          this._updateLocationHash(this.iframe.location, frag, options.replace);
+          this._updateHash(this.iframe.location, frag, options.replace);
         }
       }
       if (options.trigger) this.loadUrl(fragment);
