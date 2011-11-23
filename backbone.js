@@ -182,6 +182,10 @@
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
+      if (attrs != null && !_.isObject(attrs)) {
+        var args = slice.call(arguments), attrs = {};
+        while ((options = args.shift()) != null && !_.isObject(options)) attrs[options] = args.shift();
+      }
 
       // Extract attributes and options.
       options || (options = {});
@@ -288,6 +292,10 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save : function(attrs, options) {
+      if (attrs != null && !_.isObject(attrs)) {
+        var args = slice.call(arguments), attrs = {};
+        while ((options = args.shift()) != null && !_.isObject(options)) attrs[options] = args.shift();
+      }
       options || (options = {});
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
