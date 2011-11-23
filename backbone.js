@@ -180,7 +180,7 @@
     },
 
     // Set a hash of model attributes on the object, firing `"change"` unless you
-    // choose to silence it.
+    // choose to silence it. If this.strict is set to true, only the attributes in this.default will be set
     set : function(attrs, options) {
 
       // Extract attributes and options.
@@ -201,12 +201,14 @@
 
       // Update attributes.
       for (var attr in attrs) {
-        var val = attrs[attr];
-        if (!_.isEqual(now[attr], val)) {
-          now[attr] = val;
-          delete escaped[attr];
-          this._changed = true;
-          if (!options.silent) this.trigger('change:' + attr, this, val, options);
+        if (!this.strict || this.strict && this.defaults.hasOwnProperty(attr)) {
+          var val = attrs[attr];
+          if (!_.isEqual(now[attr], val)) {
+            now[attr] = val;
+            delete escaped[attr];
+            this._changed = true;
+            if (!options.silent) this.trigger('change:' + attr, this, val, options);
+          }
         }
       }
 
