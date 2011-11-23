@@ -250,11 +250,14 @@
     clear : function(options) {
       options || (options = {});
       var attr;
-      var old = this.attributes;
+      var old = this.attributes, unset = (this._unsetAttributes || (this._unsetAttributes = []));
 
       // Run validation.
       var validObj = {};
-      for (attr in old) validObj[attr] = void 0;
+      for (attr in old) {
+        validObj[attr] = void 0;
+        unset.push(attr);
+      }
       if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
 
       this.attributes = {};
