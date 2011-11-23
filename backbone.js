@@ -875,7 +875,7 @@
           this.iframe.location.hash = frag;
         }
       }
-      if (triggerRoute) this.loadUrl(fragment);
+      if (triggerRoute) return this.loadUrl(fragment);
     }
 
   });
