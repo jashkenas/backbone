@@ -158,6 +158,49 @@ $(document).ready(function() {
     a.unset('id');
     equals(a.id, undefined, "Unsetting the id should remove the id property.");
   });
+  
+  test("Model: set with different argument combinations", function() {
+     
+    var attrs1 = {a: 'A', b: 'B', o: 0},
+        attrs2 = {x: 'X', y: 'Y'},
+        silent = {silent: true},
+        nada = {},
+        key = 'string... with: "punctuation!"',
+        model = new Backbone.Model,
+        methods = {save: 1, set: 1},
+        i, s, j, triggered;
+        
+    expect(30);
+        
+    model.bind('all', function(){triggered = true});
+        
+    for(i in methods) {
+        
+        s = function() {
+            model.clear();
+            triggered = false;
+            model[i].apply(model, arguments);
+        };
+        
+        s(key, 'bar');
+        equals('bar', model.get(key), key +' should be bar');
+        ok(triggered, 'Should be triggered');
+
+        s(key, 'bar', attrs1, nada);
+        equals('bar', model.get(key), key +' should be bar');
+        for(j in attrs1) equals(attrs1[j], model.get(j), j + ' should be ' + attrs1[j]);
+        ok(triggered, 'Should be triggered');
+        
+        s(key, 'bar', 'another-key', null, attrs1, attrs2, silent);
+        equals('bar', model.get(key), key +' should be bar');
+        equals(null, model.get('another-key'), 'another-key should be null');
+        for(j in attrs1) equals(attrs1[j], model.get(j), j + ' should be ' + attrs1[j]);
+        for(j in attrs2) equals(attrs2[j], model.get(j), j + ' should be ' + attrs2[j]);
+        ok(!triggered, 'Should not be triggered');
+
+    }
+     
+  });
 
   test("Model: multiple unsets", function() {
     var i = 0;
