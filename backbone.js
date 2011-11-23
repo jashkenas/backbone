@@ -182,6 +182,11 @@
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
+      if (_.isString(attrs) || _.isNumber(attrs)) {
+        var key = attrs;
+        (attrs = {})[key] = options;
+        options = arguments[2];
+      }
 
       // Extract attributes and options.
       options || (options = {});
@@ -288,6 +293,12 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save : function(attrs, options) {
+      if (_.isString(attrs) || _.isNumber(attrs)) {
+        var key = attrs;
+        (attrs = {})[key] = options;
+        options = arguments[2];
+      }
+
       options || (options = {});
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
