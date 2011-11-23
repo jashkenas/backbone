@@ -877,7 +877,11 @@
   // This should be prefered to global lookups, if you're dealing with
   // a specific view.
   var selectorDelegate = function(selector) {
-    return $(selector, this.el);
+    if (typeof selector == 'undefined') {
+      return $(this.el);
+    } else {
+      return $(selector, this.el);
+    };
   };
 
   // Cached regex to split keys for `delegate`.
