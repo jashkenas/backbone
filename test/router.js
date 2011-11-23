@@ -56,34 +56,64 @@ $(document).ready(function() {
     equals(router.testing, 101);
   });
 
-  asyncTest("Router: routes (simple)", 2, function() {
+  asyncTest("Router: routes (simple)", 4, function() {
+    
+    Backbone.history.bind('route', function(r, fragment, args) {
+      equals(fragment, "search/news");
+      ok(_.isEqual(r, router));
+    });
     window.location.hash = 'search/news';
+
     setTimeout(function() {
       equals(router.query, 'news');
       equals(router.page, undefined);
+      Backbone.history.unbind('route');
       start();
     }, 10);
   });
 
-  asyncTest("Router: routes (two part)", 2, function() {
+  asyncTest("Router: routes (two part)", 5, function() {
+    Backbone.history.bind('route', function(r, fragment, args) {
+      equals(fragment, 'search/nyc/p10');
+      ok(_.isEqual(args, ["nyc", "10"]));
+      ok(_.isEqual(r, router));
+    });
     window.location.hash = 'search/nyc/p10';
+    
     setTimeout(function() {
-      equals(router.query, 'nyc');
-      equals(router.page, '10');
+      equals(router.query, 'nyc', "Should be nyc is actually " + router.query);
+      equals(router.page, '10', "Should be 10, is actually", router.page);
+      Backbone.history.unbind('route');
       start();
     }, 10);
   });
 
-  test("Router: routes via navigate", 2, function() {
+  test("Router: routes via navigate", 5, function() {
+
+    Backbone.history.bind('route', function(r, fragment, args) {
+      equals(fragment, 'search/manhattan/p20');
+      ok(_.isEqual(args, ["manhattan", "20"]));
+      ok(_.isEqual(r, router));
+    });
+
     Backbone.history.navigate('search/manhattan/p20', true);
+    Backbone.history.unbind('route');
     equals(router.query, 'manhattan');
     equals(router.page, '20');
   });
 
   asyncTest("Router: routes (splats)", function() {
+
+    Backbone.history.bind('route', function(r, fragment, args) {
+      equals(fragment, 'splat/long-list/of/splatted_99args/end');
+      ok(_.isEqual(args, ["long-list/of/splatted_99args"]));
+      ok(_.isEqual(r, router));
+    });
+
     window.location.hash = 'splat/long-list/of/splatted_99args/end';
     setTimeout(function() {
       equals(router.args, 'long-list/of/splatted_99args');
+      Backbone.history.unbind('route');
       start();
     }, 10);
   });
