@@ -181,7 +181,15 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
-    set : function(attrs, options) {
+    set : function(key, value, options) {
+      var attrs;
+      if (_.isObject(key)) {
+        attrs = key;
+        options = value;
+      } else {
+        attrs = {};
+        attrs[key] = value;
+      }
 
       // Extract attributes and options.
       options || (options = {});
@@ -203,7 +211,7 @@
       // Update attributes.
       for (var attr in attrs) {
         var val = attrs[attr];
-        if (!_.isEqual(now[attr], val) || options.unset && (attr in now)) {
+        if (!_.isEqual(now[attr], val) || (options.unset && (attr in now))) {
           options.unset ? delete now[attr] : now[attr] = val;
           delete escaped[attr];
           this._changed = true;
@@ -221,20 +229,16 @@
 
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
-    unset : function(attrs, options) {
-      if (_.isString(attrs)) {
-        var args = _.toArray(arguments), attrs = {};
-        while (_.isString(options = args.shift())) attrs[options] = void 0;
-      }
+    unset : function(attr, options) {
       (options || (options = {})).unset = true;
-      return this.set(attrs, options);
+      return this.set(attr, null, options);
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
     // to silence it.
     clear : function(options) {
-      var keys = _.without(_.keys(this.attributes), 'id');
-      return this.unset.apply(this, keys.concat([options]));
+      (options || (options = {})).unset = true;
+      return this.set(_.clone(this.attributes), options);
     },
 
     // Fetch the model from the server. If the server's representation of the

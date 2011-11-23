@@ -153,9 +153,9 @@ $(document).ready(function() {
     ok(changeCount == 1, "Change count should NOT have incremented.");
 
     a.validate = function(attrs) {
-      ok(attrs.foo === void 0, 'ignore values when unsetting');
+      equals(attrs.foo, void 0, 'ignore values when unsetting');
     };
-    a.unset({foo: 1});
+    a.unset('foo');
     ok(a.get('foo') == null, "Foo should have changed");
     delete a.validate;
     ok(changeCount == 2, "Change count should have incremented for unset.");
@@ -209,13 +209,10 @@ $(document).ready(function() {
     model.bind("change", function() {
       var changedAttrs = model.changedAttributes();
       ok('name' in changedAttrs);
-      ok(!('id' in changedAttrs));
     });
     model.clear();
     equals(changed, true);
     equals(model.get('name'), undefined);
-    equals(model.id, 1);
-    equals(model.get('id'), 1);
   });
 
   test("Model: defaults", function() {
