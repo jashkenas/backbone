@@ -700,8 +700,8 @@
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
-    navigate : function(fragment, triggerRoute) {
-      Backbone.history.navigate(fragment, triggerRoute);
+    navigate : function(fragment, triggerRoute, state) {
+      Backbone.history.navigate(fragment, triggerRoute, state);
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
@@ -860,14 +860,15 @@
     // Save a fragment into the hash history. You are responsible for properly
     // URL-encoding the fragment in advance. This does not trigger
     // a `hashchange` event.
-    navigate : function(fragment, triggerRoute) {
+    navigate : function(fragment, triggerRoute, state) {
+      state = state || {}
       var frag = (fragment || '').replace(hashStrip, '');
       if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
       if (this._hasPushState) {
         var loc = window.location;
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
         this.fragment = frag;
-        window.history.pushState({}, document.title, loc.protocol + '//' + loc.host + frag);
+        window.history.pushState(state, document.title, loc.protocol + '//' + loc.host + frag);
       } else {
         window.location.hash = this.fragment = frag;
         if (this.iframe && (frag != this.getFragment(this.iframe.location.hash))) {
