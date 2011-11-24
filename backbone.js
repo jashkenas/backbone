@@ -667,7 +667,7 @@
     options || (options = {});
     if (options.routes) this.routes = options.routes;
     if (options.discreet) this.discreet = options.discreet;
-    this.handlers = new Array();
+    this.handlers = [];
     this._bindRoutes();
     this.initialize.apply(this, arguments);
   };
