@@ -666,7 +666,7 @@
   Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
-    this.discreet = (options.discreet != undefined) ? options.discreet : false;
+    if (options.discreet) this.discreet = options.discreet;
     this.handlers = new Array();
     this._bindRoutes();
     this.initialize.apply(this, arguments);
@@ -680,6 +680,9 @@
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Backbone.Router.prototype, Backbone.Events, {
+
+    // The router will never push state to the history if this is true.
+    discreet: false,
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
