@@ -544,6 +544,15 @@
       return model;
     },
 
+    //Internal implementation of checking for a duplicate model.
+    //Allows end users to override this as they see fit.
+    //Defaults to first checking for a getByUniqueId() function that 
+    //should return an existing model.
+    //Falls back to getByCid() if getByUniqueId is not defined.
+    _getDuplicate : function(model) {
+      return this.getByUniqueId ? this.getByUniqueId(model) : this.getByCid(model);
+    },
+
     // Internal implementation of adding a single model to the set, updating
     // hash indexes for `id` and `cid` lookups.
     // Returns the model, or 'false' if validation on a new model fails.
@@ -551,7 +560,7 @@
       options || (options = {});
       model = this._prepareModel(model, options);
       if (!model) return false;
-      var already = this.getByCid(model);
+      var already = this._getDuplicate(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
