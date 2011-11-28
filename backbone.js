@@ -115,6 +115,17 @@
         while (node = node.next) if (callback = node.callback) callback.apply(node.context || this, args);
       }
       return this;
+    },
+
+    // Checks wether the given event and callback are already bound
+    bound : function(ev, callback) {
+      var calls = this._callbacks || (this._callbacks = {}), node;
+      if (node = calls[ev]) {
+        while (node = node.next) {
+          if (node.callback === callback) return true;
+        }
+      }
+      return false;
     }
 
   };
