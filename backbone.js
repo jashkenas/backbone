@@ -762,14 +762,14 @@
         var part = parts[i];
         if (i === parts.length-1) {
           // set the value
-          _data[part] = this._decodeParamValue(value);
+          _data[part] = this._decodeParamValue(value, _data[part]);
         } else {
           _data = _data[part] = _data[part] || {};
         }
       }
     },
 
-    _decodeParamValue : function(value) {
+    _decodeParamValue : function(value, currentValue) {
       // '|' will indicate an array.  Array with 1 value is a=|b - multiple values can be a=b|c
       if (value.indexOf('|') >= 0) {
         var values = value.split('|');
@@ -783,7 +783,14 @@
         }
         return values;
       }
-      return decodeURIComponent(value);
+      if (!currentValue) {
+        return decodeURIComponent(value);
+      } else if (_.isArray(currentValue)) {
+        currentValue.push(value);
+        return currentValue;
+      } else {
+        return [currentValue, value];
+      }
     }
 
   });

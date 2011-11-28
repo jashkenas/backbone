@@ -99,12 +99,19 @@ $(document).ready(function() {
     }, 10);
   });
 
-  asyncTest("Router: routes (two part - query params - hash)", 16, function() {
-    window.location.hash = 'search/nyc/p10?a=b&b.c=d&b.d=e&b.e.f=g&array1=|a&array2=a|b&array3=|c|d&array4=|e%7C';
+  asyncTest("Router: routes (two part - query params - hash and list)", 23, function() {
+    window.location.hash = 'search/nyc/p10?a=b&a2=x&a2=y&a3=x&a3=y&a3=z&b.c=d&b.d=e&b.e.f=g&array1=|a&array2=a|b&array3=|c|d&array4=|e%7C';
     setTimeout(function() {
       equals(router.query, 'nyc');
       equals(router.page, '10');
       equals(router.queryParams.a, 'b');
+      equals(router.queryParams.a2.length, 2);
+      equals(router.queryParams.a2[0], 'x');
+      equals(router.queryParams.a2[1], 'y');
+      equals(router.queryParams.a3.length, 3);
+      equals(router.queryParams.a3[0], 'x');
+      equals(router.queryParams.a3[1], 'y');
+      equals(router.queryParams.a3[2], 'z');
       equals(router.queryParams.b.c, 'd');
       equals(router.queryParams.b.d, 'e');
       equals(router.queryParams.b.e.f, 'g');
