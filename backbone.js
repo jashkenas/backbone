@@ -729,7 +729,7 @@
       // do we have an additional query string?
       var match = params.length && params[params.length-1] && params[params.length-1].match(queryStringParam);
       if (match) {
-    	  var queryString = match[1];
+        var queryString = match[1];
         var data = {};
         if (queryString) {
           var keyValues = queryString.split('&');
@@ -800,6 +800,7 @@
 
   // Cached regex for cleaning hashes.
   var hashStrip = /^#*/;
+  var queryStrip = /\?(.*)/;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
@@ -816,7 +817,7 @@
 
     // Get the cross-browser normalized URL fragment, either from the URL,
     // the hash, or the override.
-    getFragment : function(fragment, forcePushState) {
+    getFragment : function(fragment, forcePushState, includeQueryPath) {
       if (fragment == null) {
         if (this._hasPushState || forcePushState) {
           fragment = window.location.pathname;
@@ -827,8 +828,17 @@
         }
       }
       fragment = fragment.replace(hashStrip, '');
+      if (!includeQueryPath) {
+        fragment = fragment.replace(queryStrip, '');
+      }
       if (!fragment.indexOf(this.options.root)) fragment = fragment.substr(this.options.root.length);
       return fragment;
+    },
+
+    getQueryString : function(fragment) {
+      fragment = this.getFragment(fragment, false, true);
+      var match = fragment.match(queryStrip);
+      return match && match[1];
     },
 
     // Start the hash change handling, returning `true` if the current URL matches
@@ -841,7 +851,7 @@
       this.options          = _.extend({}, {root: '/'}, this.options, options);
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && window.history && window.history.pushState);
-      var fragment          = this.getFragment();
+      var fragment          = this.getFragment(null, false, true);
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
       if (oldIE) {
@@ -866,7 +876,7 @@
       var loc = window.location;
       var atRoot  = loc.pathname == this.options.root;
       if (this._wantsPushState && !this._hasPushState && !atRoot) {
-        this.fragment = this.getFragment(null, true);
+        this.fragment = this.getFragment(null, true, true);
         window.location.replace(this.options.root + '#' + this.fragment);
         // Return immediately as browser will do redirect to new url
         return true;
@@ -889,8 +899,8 @@
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl : function(e) {
-      var current = this.getFragment();
-      if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location.hash);
+      var current = this.getFragment(null, false, true);
+      if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location.hash, false, true);
       if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
       if (this.iframe) this.navigate(current);
       this.loadUrl() || this.loadUrl(window.location.hash);
@@ -900,7 +910,7 @@
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
     loadUrl : function(fragmentOverride) {
-      var fragment = this.fragment = this.getFragment(fragmentOverride);
+      var fragment = this.fragment = this.getFragment(fragmentOverride, false, true);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
@@ -923,7 +933,7 @@
         window.history.pushState({}, document.title, loc.protocol + '//' + loc.host + frag);
       } else {
         window.location.hash = this.fragment = frag;
-        if (this.iframe && (frag != this.getFragment(this.iframe.location.hash))) {
+        if (this.iframe && (frag != this.getFragment(this.iframe.location.hash, false, true))) {
           this.iframe.document.open().close();
           this.iframe.location.hash = frag;
         }
