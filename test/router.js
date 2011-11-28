@@ -22,6 +22,7 @@ $(document).ready(function() {
       this.page = page;
       this.queryParams = queryParams;
       this.queryString = Backbone.history.getQueryString();
+      this.fragment = Backbone.history.getFragment();
     },
 
     splat : function(args, queryParams) {
@@ -86,11 +87,12 @@ $(document).ready(function() {
     }, 10);
   });
 
-  asyncTest("Router: routes (two part - query params)", 4, function() {
+  asyncTest("Router: routes (two part - query params)", 5, function() {
     window.location.hash = 'search/nyc/p10?a=b';
     setTimeout(function() {
       equals(router.query, 'nyc');
       equals(router.page, '10');
+      equals(router.fragment, 'search/nyc/p10');
       equals(router.queryString, 'a=b');
       equals(router.queryParams.a, 'b');
       start();
@@ -120,11 +122,12 @@ $(document).ready(function() {
     }, 10);
   });
 
-  test("Router: routes via navigate", 3, function() {
+  test("Router: routes via navigate", 4, function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equals(router.query, 'manhattan');
     equals(router.page, '20');
     equals(router.queryString, undefined);
+    equals(router.fragment, 'search/manhattan/p20');
   });
 
   asyncTest("Router: routes (splats)", function() {
