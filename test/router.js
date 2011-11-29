@@ -22,7 +22,7 @@ $(document).ready(function() {
       this.page = page;
       this.queryParams = queryParams;
       this.queryString = Backbone.history.getQueryString();
-      this.fragment = Backbone.history.getFragment();
+      this.fragment = Backbone.history.getFragment(null, false, true);
     },
 
     splat : function(args, queryParams) {

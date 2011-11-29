@@ -824,7 +824,7 @@
 
     // Get the cross-browser normalized URL fragment, either from the URL,
     // the hash, or the override.
-    getFragment : function(fragment, forcePushState, includeQueryPath) {
+    getFragment : function(fragment, forcePushState, excludeQueryString) {
       if (fragment == null) {
         if (this._hasPushState || forcePushState) {
           fragment = window.location.pathname;
@@ -835,7 +835,7 @@
         }
       }
       fragment = fragment.replace(hashStrip, '');
-      if (!includeQueryPath) {
+      if (excludeQueryString) {
         fragment = fragment.replace(queryStrip, '');
       }
       if (!fragment.indexOf(this.options.root)) fragment = fragment.substr(this.options.root.length);
@@ -843,7 +843,7 @@
     },
 
     getQueryString : function(fragment) {
-      fragment = this.getFragment(fragment, false, true);
+      fragment = this.getFragment(fragment);
       var match = fragment.match(queryStrip);
       return match && match[1];
     },
@@ -858,7 +858,7 @@
       this.options          = _.extend({}, {root: '/'}, this.options, options);
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && window.history && window.history.pushState);
-      var fragment          = this.getFragment(null, false, true);
+      var fragment          = this.getFragment();
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
       if (oldIE) {
@@ -883,7 +883,7 @@
       var loc = window.location;
       var atRoot  = loc.pathname == this.options.root;
       if (this._wantsPushState && !this._hasPushState && !atRoot) {
-        this.fragment = this.getFragment(null, true, true);
+        this.fragment = this.getFragment(null, true);
         window.location.replace(this.options.root + '#' + this.fragment);
         // Return immediately as browser will do redirect to new url
         return true;
@@ -906,8 +906,8 @@
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl : function(e) {
-      var current = this.getFragment(null, false, true);
-      if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location.hash, false, true);
+      var current = this.getFragment();
+      if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location.hash);
       if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
       if (this.iframe) this.navigate(current);
       this.loadUrl() || this.loadUrl(window.location.hash);
@@ -917,7 +917,7 @@
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
     loadUrl : function(fragmentOverride) {
-      var fragment = this.fragment = this.getFragment(fragmentOverride, false, true);
+      var fragment = this.fragment = this.getFragment(fragmentOverride);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
