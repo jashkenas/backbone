@@ -791,8 +791,65 @@
       } else {
         return [currentValue, value];
       }
-    }
+    },
 
+    // Return the query string representation of the val hash.
+    // Use the namePrefix for complex structures.
+    toFragment: function(route, queryParameters) {
+      if (queryParameters) {
+        if (!_.isString(queryParameters)) {
+          queryParameters = this._toQueryString(queryParameters);
+        }
+        route += '?' + queryParameters;
+      }
+      return route;
+    },
+    
+    _toQueryString: function(val, namePrefix) {
+      if (!val) return '';
+      namePrefix = namePrefix || '';
+      var rtn = '';
+      for (var name in val) {
+        var _val = val[name];
+        if (_.isString(_val) || _.isNumber(_val) || _.isBoolean(_val) || _.isDate(_val)) {
+          // primitave type
+          _val = this._stringifyQueryParam(_val);
+          if (_.isBoolean(_val) || _val) {
+            rtn += (rtn ? '&' : '') + namePrefix + name + '=' + encodeURIComponent(_val).replace('|', '%7C');
+          }
+        } else if (_.isArray(_val)) {
+          // arrrays use | separator
+          var str = '';
+          for (var i in _val) {
+            var param = this._stringifyQueryParam(_val[i]);
+            if (_.isBoolean(param) || param) {
+              str += '|' + encodeURIComponent(param).replace('|', '%7C');
+            }
+          }
+          if (str) {
+            rtn += (rtn ? '&' : '') + namePrefix + name + '=' + str;
+          }
+        } else {
+          // dig into hash
+          var result = this._toQueryString(_val, namePrefix + name + '.');
+          if (result) {
+            rtn += (rtn ? '&' : '') + result;
+          }
+        }
+      }
+      return rtn;
+    },
+
+    // Return the string representation of the param used for the query string
+    _stringifyQueryParam: function (param) {
+      if (_.isNull(param) || _.isUndefined(param)) {
+        return null;
+      }
+      if (_.isDate(param)) {
+        return param.getDate().getTime();
+      }
+      return param;
+    }
   });
 
   // Backbone.History
@@ -940,13 +997,15 @@
         window.history.pushState({}, document.title, loc.protocol + '//' + loc.host + frag);
       } else {
         window.location.hash = this.fragment = frag;
-        if (this.iframe && (frag != this.getFragment(this.iframe.location.hash, false, true))) {
+        if (this.iframe && (frag != this.getFragment(this.iframe.location.hash))) {
           this.iframe.document.open().close();
           this.iframe.location.hash = frag;
         }
       }
       if (triggerRoute) this.loadUrl(fragment);
-    }
+    },
+
+
 
   });
 

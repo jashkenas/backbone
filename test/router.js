@@ -99,7 +99,7 @@ $(document).ready(function() {
     }, 10);
   });
 
-  asyncTest("Router: routes (two part - query params - hash and list)", 23, function() {
+  asyncTest("Router: routes (two part - query params - hash and list - location)", 23, function() {
     window.location.hash = 'search/nyc/p10?a=b&a2=x&a2=y&a3=x&a3=y&a3=z&b.c=d&b.d=e&b.e.f=g&array1=|a&array2=a|b&array3=|c|d&array4=|e%7C';
     setTimeout(function() {
       equals(router.query, 'nyc');
@@ -125,6 +125,30 @@ $(document).ready(function() {
       equals(router.queryParams.array3[1], 'd');
       equals(router.queryParams.array4.length, 1);
       equals(router.queryParams.array4[0], 'e|');
+      start();
+    }, 10);
+  });
+
+  asyncTest("Router: routes (two part - query params - hash and list - navigate)", 15, function() {
+    window.location.hash = router.toFragment('search/nyc/p10', {
+      a:'l', b:{c: 'n', d:'m', e:{f: 'o'}}, array1:['p'], array2:['q', 'r'], array3:['s','t','|']
+    });
+    setTimeout(function() {
+      equals(router.query, 'nyc');
+      equals(router.page, '10');
+      equals(router.queryParams.a, 'l');
+      equals(router.queryParams.b.c, 'n');
+      equals(router.queryParams.b.d, 'm');
+      equals(router.queryParams.b.e.f, 'o');
+      equals(router.queryParams.array1.length, 1);
+      equals(router.queryParams.array1[0], 'p');
+      equals(router.queryParams.array2.length, 2);
+      equals(router.queryParams.array2[0], 'q');
+      equals(router.queryParams.array2[1], 'r');
+      equals(router.queryParams.array3.length, 3);
+      equals(router.queryParams.array3[0], 's');
+      equals(router.queryParams.array3[1], 't');
+      equals(router.queryParams.array3[2], '|');
       start();
     }, 10);
   });
@@ -176,7 +200,7 @@ $(document).ready(function() {
   });
 
   asyncTest("Router: routes (query)", 2, function() {
-    window.location.hash = 'mandel?a=b&c=d';
+    window.location.hash = router.toFragment('mandel', {a:'b', c:'d'});
     setTimeout(function() {
       equals(router.entity, 'mandel');
       equals(router.queryArgs, 'a=b&c=d');
