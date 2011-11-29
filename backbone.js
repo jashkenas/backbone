@@ -869,6 +869,7 @@
     this.cid = _.uniqueId('view');
     this._configure(options || {});
     this._ensureElement();
+    this._assignElements( options && options.elements ? options.elements : {} );
     this.delegateEvents();
     this.initialize.apply(this, arguments);
   };
@@ -957,6 +958,41 @@
     // Clears all callbacks previously bound to the view with `delegateEvents`.
     undelegateEvents : function() {
       $(this.el).unbind('.delegateEvents' + this.cid);
+    },
+    
+    
+    // Helper to set a bunch of instance variables referencing various elements.
+    //
+    // *{"instance variable name": "selector"}*
+    //
+    //    {
+    //        title: 'h1',
+    //        banner: '#banner'
+    //    }
+    // 
+    // Can be used with jQuery element too:
+    // 
+    //    {
+    //        title: $('h1'),
+    //        banner: $('#banner', 'div.wrapper')
+    //    }
+    // 
+    // And passed by option's parameter when instatiates the view:
+    // 
+    // var carousel = new CarouselView({ 
+    //   elements: { 
+    //     holder: '#carousel-holder' 
+    //   } 
+    // });
+    _assignElements : function(elements) {
+      var elems = $.extend({}, this.elements, elements)
+        , el    = $(this.el).get(0)
+        , scope = el == window || el == document ? 'html' : el
+      ;
+      for(var key in elems) {
+        var elem  = $(elems[key], scope);
+        this[key] = elem.length ? elem : $([]);
+      }
     },
 
     // Performs the initial configuration of a View with a set of options.
