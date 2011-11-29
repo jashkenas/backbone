@@ -154,5 +154,81 @@ $(document).ready(function() {
     $('body').trigger('fake$event');
     equals(count, 2);
   });
+  
+  test("View: assign elements with string", function() {
+    var View = Backbone.View.extend({
+      el: 'body',
+      elements: {
+        header: 'h1',
+        banner: 'h2#qunit-banner'
+      },
+      initialize: function() {
+        equals(this.header.first().get(0), $('h1', 'body').first().get(0));
+        equals(this.banner.first().get(0), $('h2#qunit-banner', 'body').first().get(0));
+      }
+    });
+    var view = new View;
+  });
+  
+  test("View: assign elements with jQuery elements $()", function() {
+    var View = Backbone.View.extend({
+      el: 'body',
+      elements: {
+        header: $('h1'),
+        banner: $('h2#qunit-banner', 'body')
+      },
+      initialize: function() {
+        equals(this.header.first().get(0), $('h1', 'body').first().get(0));
+        equals(this.banner.first().get(0), $('h2#qunit-banner', 'body').first().get(0));
+      }
+    });
+    var view = new View;
+  });
+  
+  test("View: assign elements passing elements by parameters", function() {
+    var View = Backbone.View.extend({
+      el: 'body',
+      initialize: function() {
+        equals(this.header.first().get(0), $('h1', 'body').first().get(0));
+        equals(this.banner.first().get(0), $('h2#qunit-banner', 'body').first().get(0));
+      }
+    });
+    var view = new View({
+      elements: {
+        header: 'h1',
+        banner: 'h2#qunit-banner'
+      }
+    });
+  });
+  
+  test("View: assign elements with string when el is document", function() {
+    var View = Backbone.View.extend({
+      el: $(document),
+      elements: {
+        header: 'h1',
+        banner: 'h2#qunit-banner'
+      },
+      initialize: function() {
+        equals(this.header.first().get(0), $('h1', 'body').first().get(0));
+        equals(this.banner.first().get(0), $('h2#qunit-banner', 'body').first().get(0));
+      }
+    });
+    var view = new View;
+  });
+  
+  test("View: assign elements with string when el is window", function() {
+    var View = Backbone.View.extend({
+      el: $(window),
+      elements: {
+        head: 'head',
+        body: 'body'
+      },
+      initialize: function() {
+        equals(this.head.get(0), $('head').get(0));
+        equals(this.body.get(0), $('body').get(0));
+      }
+    });
+    var view = new View;
+  });
 
 });

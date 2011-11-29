@@ -263,6 +263,7 @@
       <li>– <a href="#View-remove">remove</a></li>
       <li>– <a href="#View-make">make</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
+      <li>– <a href="#View-assignElements">assignElements</a></li>
     </ul>
 
     <a class="toc_title" href="#Utility">
@@ -1765,7 +1766,7 @@ model.save();  // POST to "/collection/id", with "_method=PUT" + header.
       <br />
       Get started with views by creating a custom view class. You'll want to
       override the <a href="#View-render">render</a> function, specify your
-      declarative <a href="#View-delegateEvents">events</a>, and perhaps the
+      declarative <a href="#View-delegateEvents">events</a>, <tt>elements</tt>, and perhaps the
       <tt>tagName</tt>, <tt>className</tt>, or <tt>id</tt> of the View's root
       element.
     </p>
@@ -1776,6 +1777,10 @@ var DocumentRow = Backbone.View.extend({
   tagName: "li",
 
   className: "document-row",
+  
+  elements: {
+    external_links: "a[target=_blank]"
+  },
 
   events: {
     "click .icon":          "open",
@@ -1992,6 +1997,36 @@ var DocumentView = Backbone.View.extend({
 
   select: function() {
     this.model.set({selected: true});
+  },
+
+  ...
+
+});
+</pre>
+
+    <p id="View-assignElements">
+      <b class="header">assignElements</b><code>assignElements([elements])</code>
+      <br />
+      Use the property <tt>elements</tt> to provide a declarative way to set the appropriate elements as properties on the instance.
+      Each property will respond like a jQuery's object.
+    </p>
+    <p>
+      Setting the carousel's controls(next, prev) could be like this:
+    </p>
+
+<pre>
+var CarouselView = Backbone.View.extend({
+
+  el: "div#carousel",
+
+  elements: {
+    next: "a.next",
+    prev: "a.prev"
+  },
+  
+  initialize: function() {
+    this.next.fadeIn(300);
+    this.prev.fadeOut(300);
   },
 
   ...
