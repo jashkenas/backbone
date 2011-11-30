@@ -793,8 +793,7 @@
       }
     },
 
-    // Return the query string representation of the val hash.
-    // Use the namePrefix for complex structures.
+    // Return the route fragment with queryParameters serialized to query parameter string
     toFragment: function(route, queryParameters) {
       if (queryParameters) {
         if (!_.isString(queryParameters)) {
@@ -804,7 +803,8 @@
       }
       return route;
     },
-    
+
+    // Serialize the val hash to query parameters and return it.  Use the namePrefix to prefix all param names (for recursion)
     _toQueryString: function(val, namePrefix) {
       if (!val) return '';
       namePrefix = namePrefix || '';
@@ -815,7 +815,7 @@
           // primitave type
           _val = this._stringifyQueryParam(_val);
           if (_.isBoolean(_val) || _val) {
-            rtn += (rtn ? '&' : '') + namePrefix + name + '=' + encodeURIComponent(_val).replace('|', '%7C');
+            rtn += (rtn ? '&' : '') + this._toQueryParamName(name, namePrefix) + '=' + encodeURIComponent(_val).replace('|', '%7C');
           }
         } else if (_.isArray(_val)) {
           // arrrays use | separator
@@ -827,17 +827,25 @@
             }
           }
           if (str) {
-            rtn += (rtn ? '&' : '') + namePrefix + name + '=' + str;
+            rtn += (rtn ? '&' : '') + this._toQueryParamName(name, namePrefix) + '=' + str;
           }
         } else {
           // dig into hash
-          var result = this._toQueryString(_val, namePrefix + name + '.');
+          var result = this._toQueryString(_val, this._toQueryParamName(name, namePrefix, true));
           if (result) {
             rtn += (rtn ? '&' : '') + result;
           }
         }
       }
       return rtn;
+    },
+
+    // return the actual parameter name
+    // name: the parameter name
+    // namePrefix: the prefix to the name
+    // createPrefix: true if we're creating a name prefix, false if we're creating the name
+    _toQueryParamName: function(name, prefix, isPrefix) {
+      return (prefix + name + (isPrefix ? '.' : ''));
     },
 
     // Return the string representation of the param used for the query string
