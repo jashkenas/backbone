@@ -853,7 +853,7 @@
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
       if (replace) {
-        location.replace(location.toString().replace(/#.*$/, '') + '#' + fragment);
+        location.replace(location.toString().replace(/(javascript:|#).*$/, "") + "#" + fragment);
       } else {
         location.hash = fragment;
       }
