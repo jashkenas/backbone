@@ -95,4 +95,19 @@ $(document).ready(function() {
     equals(obj.counter, 3, 'counter should have been incremented three times');
   });
 
+  test("Events: bind callback and check for it via bound", function() {
+    var obj = {};
+    _.extend(obj, Backbone.Events);
+    var callback = function() {};
+    var anotherCallback = function() {};
+    equals(obj.bound('event', callback), false, 'callback should not be found');
+    obj.bind('event', callback);
+    equals(obj.bound('event', callback), true, 'callback should be found');
+    equals(obj.bound('event', anotherCallback), false, 'anotherCallback should not be found');
+    obj.bind('event', anotherCallback);
+    equals(obj.bound('event', anotherCallback), true, 'anotherCallback should be found');
+    obj.unbind('event', callback);
+    equals(obj.bound('event', callback), false, 'callback should not be found');
+  });
+
 });
