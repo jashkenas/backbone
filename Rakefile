@@ -12,8 +12,12 @@ task :build do
   end
   source = File.read 'backbone.js'
   header = source.match(HEADER)
-  File.open('backbone-min.js', 'w+') do |file|
-    file.write header[1].squeeze(' ') + Closure::Compiler.new.compress(source)
+  tmp = ""
+  File.open('backbone-min.js', 'w+') do |minfile|
+    %w(backbone.js backbone.sync.js).each { |file| 
+      tmp += File.read file
+    }
+    minfile.write header[1].squeeze(' ') + Closure::Compiler.new.compress(tmp)
   end
 end
 

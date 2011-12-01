@@ -252,7 +252,7 @@
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp);
       };
-      options.error = wrapError(options.error, model, options);
+      options.error = Backbone.wrapError(options.error, model, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
@@ -268,7 +268,7 @@
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp, xhr);
       };
-      options.error = wrapError(options.error, model, options);
+      options.error = Backbone.wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
       return (this.sync || Backbone.sync).call(this, method, this, options);
     },
@@ -284,7 +284,7 @@
         model.trigger('destroy', model, model.collection, options);
         if (success) success(model, resp);
       };
-      options.error = wrapError(options.error, model, options);
+      options.error = Backbone.wrapError(options.error, model, options);
       return (this.sync || Backbone.sync).call(this, 'delete', this, options);
     },
 
@@ -292,7 +292,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url : function() {
-      var base = getUrl(this.collection) || this.urlRoot || urlError();
+      var base = Backbone.getUrl(this.collection) || this.urlRoot || Backbone.urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -490,7 +490,7 @@
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp);
       };
-      options.error = wrapError(options.error, collection, options);
+      options.error = Backbone.wrapError(options.error, collection, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
@@ -1033,7 +1033,7 @@
 
     // Ensure that we have a URL.
     if (!options.url) {
-      params.url = getUrl(model) || urlError();
+      params.url = Backbone.getUrl(model) || Backbone.urlError();
     }
 
     // Ensure that we have the appropriate request data.
@@ -1116,18 +1116,18 @@
 
   // Helper function to get a URL from a Model or Collection as a property
   // or as a function.
-  var getUrl = function(object) {
+  Backbone.getUrl = function(object) {
     if (!(object && object.url)) return null;
     return _.isFunction(object.url) ? object.url() : object.url;
   };
 
   // Throw an error when a URL is needed, and none is supplied.
-  var urlError = function() {
+  Backbone.urlError = function() {
     throw new Error('A "url" property or function must be specified');
   };
 
   // Wrap an optional error callback with a fallback error event.
-  var wrapError = function(onError, originalModel, options) {
+  Backbone.wrapError = function(onError, originalModel, options) {
     return function(model, resp) {
       var resp = model === originalModel ? resp : model;
       if (onError) {
