@@ -487,7 +487,7 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
+        if(status!="notmodified"&&xhr&&xhr.status!=304)collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp);
       };
       options.error = wrapError(options.error, collection, options);
