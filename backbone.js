@@ -127,6 +127,7 @@
   Backbone.Model = function(attributes, options) {
     var defaults;
     attributes || (attributes = {});
+    if (options && options.parse) attributes = this.parse(attributes);
     if (defaults = this.defaults) {
       if (_.isFunction(defaults)) defaults = defaults.call(this);
       attributes = _.extend({}, defaults, attributes);
