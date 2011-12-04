@@ -475,7 +475,7 @@
       options || (options = {});
       this.each(this._removeReference);
       this._reset();
-      this.add(models, {silent: true});
+      this.add(models, {silent: true, parse: options.parse});
       if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
@@ -485,6 +485,7 @@
     // models to the collection instead of resetting.
     fetch : function(options) {
       options || (options = {});
+      if (options.parse === undefined) options.parse = true;
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -537,7 +538,7 @@
     _prepareModel : function(model, options) {
       if (!(model instanceof Backbone.Model)) {
         var attrs = model;
-        model = new this.model(attrs, {collection: this});
+        model = new this.model(attrs, {collection: this, parse: options.parse});
         if (model.validate && !model._performValidation(model.attributes, options)) model = false;
       } else if (!model.collection) {
         model.collection = this;
