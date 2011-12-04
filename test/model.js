@@ -51,6 +51,17 @@ $(document).ready(function() {
     equals(model.one, 1);
   });
 
+  test("Model: initialize with parsed attributes", function() {
+    var Model = Backbone.Model.extend({
+      parse: function(obj) {
+        obj.value += 1;
+        return obj;
+      }
+    });
+    var model = new Model({value: 1}, {parse: true});
+    equals(model.get('value'), 2);
+  });
+
   test("Model: url", function() {
     equals(doc.url(), '/collection/1-the-tempest');
     doc.collection.url = '/collection/';
