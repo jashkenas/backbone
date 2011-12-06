@@ -2657,8 +2657,8 @@ var model = localBackbone.Model.extend(...);
       <li><b>"add"</b> (model, collection) &mdash; when a model is added to a collection. </li>
       <li><b>"remove"</b> (model, collection) &mdash; when a model is removed from a collection. </li>
       <li><b>"reset"</b> (collection) &mdash; when the collection's entire contents have been replaced. </li>
-      <li><b>"change"</b> (model, collection) &mdash; when a model's attributes have changed. </li>
-      <li><b>"change:[attribute]"</b> (model, collection) &mdash; when a specific attribute has been updated. </li>
+      <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
+      <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destroy"</b> (model, collection) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
       <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
       <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
