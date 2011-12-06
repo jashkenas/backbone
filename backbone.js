@@ -530,6 +530,11 @@
     _reset : function(options) {
       this.length = 0;
       this.models = [];
+      this._resetIndices();
+    },
+
+    // Reset all internal indices. Called when the collection is reset.
+    _resetIndices : function() {
       this._byId  = {};
       this._byCid = {};
     },
@@ -546,6 +551,15 @@
       return model;
     },
 
+    //Internal implementation of checking for a duplicate model.
+    //Allows end users to override this as they see fit.
+    //Defaults to first checking for a getByUniqueId() function that 
+    //should return an existing model.
+    //Falls back to getByCid() if getByUniqueId is not defined.
+    _getDuplicate : function(model) {
+      return this.getByUniqueId ? this.getByUniqueId(model) : this.getByCid(model);
+    },
+
     // Internal implementation of adding a single model to the set, updating
     // hash indexes for `id` and `cid` lookups.
     // Returns the model, or 'false' if validation on a new model fails.
@@ -553,10 +567,9 @@
       options || (options = {});
       model = this._prepareModel(model, options);
       if (!model) return false;
-      var already = this.getByCid(model);
+      var already = this._getDuplicate(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
-      this._byId[model.id] = model;
-      this._byCid[model.cid] = model;
+      this._indexModel(model);
       var index = options.at != null ? options.at :
                   this.comparator ? this.sortedIndex(model, this.comparator) :
                   this.length;
@@ -568,14 +581,19 @@
       return model;
     },
 
+    // Internal implementation of updating the internal indices for a single model
+    _indexModel : function(model) {
+      this._byId[model.id] = model;
+      this._byCid[model.cid] = model;
+    },
+
     // Internal implementation of removing a single model from the set, updating
     // hash indexes for `id` and `cid` lookups.
     _remove : function(model, options) {
       options || (options = {});
       model = this.getByCid(model) || this.get(model);
       if (!model) return null;
-      delete this._byId[model.id];
-      delete this._byCid[model.cid];
+      this._removeFromIndices(model);
       var index = this.indexOf(model);
       this.models.splice(index, 1);
       this.length--;
@@ -583,6 +601,12 @@
       if (!options.silent) model.trigger('remove', model, this, options);
       this._removeReference(model);
       return model;
+    },
+
+    // Internal implementation of removing a single model from the internal indices
+    _removeFromIndices : function(model) {
+      delete this._byId[model.id];
+      delete this._byCid[model.cid];
     },
 
     // Internal method to remove a model's ties to a collection.
