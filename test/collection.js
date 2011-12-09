@@ -179,6 +179,20 @@ $(document).ready(function() {
     equals(e.collection, colE);
   });
 
+  test("Collection: add model with parse", function() {
+    var Model = Backbone.Model.extend({
+      parse: function(obj) {
+        obj.value += 1;
+        return obj;
+      }
+    });
+
+    var Col = Backbone.Collection.extend({model: Model});
+    var col = new Col;
+    col.add({value: 1}, {parse: true});
+    equals(col.at(0).get('value'), 2);
+  });
+
   test("Collection: remove", function() {
     var removed = otherRemoved = null;
     col.bind('remove', function(model){ removed = model.get('label'); });
@@ -304,6 +318,10 @@ $(document).ready(function() {
     col.fetch();
     equals(lastRequest[0], 'read');
     equals(lastRequest[1], col);
+    equals(lastRequest[2].parse, true);
+
+    col.fetch({parse: false});
+    equals(lastRequest[2].parse, false);
   });
 
   test("Collection: create", function() {

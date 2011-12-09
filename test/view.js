@@ -41,7 +41,7 @@ $(document).ready(function() {
     var counter = counter2 = 0;
     view.el = document.body;
     view.increment = function(){ counter++; };
-    $(view.el).bind('click', function(){ counter2++; });
+    view.$().bind('click', function(){ counter2++; });
     var events = {"click #qunit-banner": "increment"};
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');

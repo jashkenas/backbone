@@ -1,4 +1,4 @@
-//     Underscore.js 1.2.1
+//     Underscore.js 1.2.2
 //     (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
 //     Portions of Underscore are inspired or borrowed from Prototype,
@@ -67,7 +67,7 @@
   }
 
   // Current version.
-  _.VERSION = '1.2.1';
+  _.VERSION = '1.2.2';
 
   // Collection Functions
   // --------------------
@@ -194,7 +194,7 @@
     if (obj == null) return result;
     if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
     each(obj, function(value, index, list) {
-      if (result |= iterator.call(context, value, index, list)) return breaker;
+      if (result || (result = iterator.call(context, value, index, list))) return breaker;
     });
     return !!result;
   };
@@ -206,7 +206,7 @@
     if (obj == null) return found;
     if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
     found = any(obj, function(value) {
-      if (value === target) return true;
+      return value === target;
     });
     return found;
   };
@@ -335,7 +335,11 @@
   // Get the last element of an array. Passing **n** will return the last N
   // values in the array. The **guard** check allows it to work with `_.map`.
   _.last = function(array, n, guard) {
-    return (n != null) && !guard ? slice.call(array, array.length - n) : array[array.length - 1];
+    if ((n != null) && !guard) {
+      return slice.call(array, Math.max(array.length - n, 0));
+    } else {
+      return array[array.length - 1];
+    }
   };
 
   // Returns everything but the first entry of the array. Aliased as `tail`.
@@ -523,18 +527,22 @@
   // Returns a function, that, when invoked, will only be triggered at most once
   // during a given window of time.
   _.throttle = function(func, wait) {
-    var timeout, context, args, throttling, finishThrottle;
-    finishThrottle = _.debounce(function(){ throttling = false; }, wait);
+    var context, args, timeout, throttling, more;
+    var whenDone = _.debounce(function(){ more = throttling = false; }, wait);
     return function() {
       context = this; args = arguments;
-      var throttler = function() {
+      var later = function() {
         timeout = null;
-        func.apply(context, args);
-        finishThrottle();
+        if (more) func.apply(context, args);
+        whenDone();
       };
-      if (!timeout) timeout = setTimeout(throttler, wait);
-      if (!throttling) func.apply(context, args);
-      if (finishThrottle) finishThrottle();
+      if (!timeout) timeout = setTimeout(later, wait);
+      if (throttling) {
+        more = true;
+      } else {
+        func.apply(context, args);
+      }
+      whenDone();
       throttling = true;
     };
   };
@@ -546,12 +554,12 @@
     var timeout;
     return function() {
       var context = this, args = arguments;
-      var throttler = function() {
+      var later = function() {
         timeout = null;
         func.apply(context, args);
       };
       clearTimeout(timeout);
-      timeout = setTimeout(throttler, wait);
+      timeout = setTimeout(later, wait);
     };
   };
 
@@ -591,6 +599,7 @@
 
   // Returns a function that will only be executed after being called N times.
   _.after = function(times, func) {
+    if (times <= 0) return func();
     return function() {
       if (--times < 1) { return func.apply(this, arguments); }
     };
@@ -663,48 +672,42 @@
     // See the Harmony `egal` proposal: http://wiki.ecmascript.org/doku.php?id=harmony:egal.
     if (a === b) return a !== 0 || 1 / a == 1 / b;
     // A strict comparison is necessary because `null == undefined`.
-    if ((a == null) || (b == null)) return a === b;
+    if (a == null || b == null) return a === b;
     // Unwrap any wrapped objects.
     if (a._chain) a = a._wrapped;
     if (b._chain) b = b._wrapped;
     // Invoke a custom `isEqual` method if one is provided.
     if (_.isFunction(a.isEqual)) return a.isEqual(b);
     if (_.isFunction(b.isEqual)) return b.isEqual(a);
-    // Compare object types.
-    var typeA = typeof a;
-    if (typeA != typeof b) return false;
-    // Optimization; ensure that both values are truthy or falsy.
-    if (!a != !b) return false;
-    // `NaN` values are equal.
-    if (_.isNaN(a)) return _.isNaN(b);
-    // Compare string objects by value.
-    var isStringA = _.isString(a), isStringB = _.isString(b);
-    if (isStringA || isStringB) return isStringA && isStringB && String(a) == String(b);
-    // Compare number objects by value.
-    var isNumberA = _.isNumber(a), isNumberB = _.isNumber(b);
-    if (isNumberA || isNumberB) return isNumberA && isNumberB && +a == +b;
-    // Compare boolean objects by value. The value of `true` is 1; the value of `false` is 0.
-    var isBooleanA = _.isBoolean(a), isBooleanB = _.isBoolean(b);
-    if (isBooleanA || isBooleanB) return isBooleanA && isBooleanB && +a == +b;
-    // Compare dates by their millisecond values.
-    var isDateA = _.isDate(a), isDateB = _.isDate(b);
-    if (isDateA || isDateB) return isDateA && isDateB && a.getTime() == b.getTime();
-    // Compare RegExps by their source patterns and flags.
-    var isRegExpA = _.isRegExp(a), isRegExpB = _.isRegExp(b);
-    if (isRegExpA || isRegExpB) {
-      // Ensure commutative equality for RegExps.
-      return isRegExpA && isRegExpB &&
-             a.source == b.source &&
-             a.global == b.global &&
-             a.multiline == b.multiline &&
-             a.ignoreCase == b.ignoreCase;
+    // Compare `[[Class]]` names.
+    var className = toString.call(a);
+    if (className != toString.call(b)) return false;
+    switch (className) {
+      // Strings, numbers, dates, and booleans are compared by value.
+      case '[object String]':
+        // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
+        // equivalent to `new String("5")`.
+        return String(a) == String(b);
+      case '[object Number]':
+        a = +a;
+        b = +b;
+        // `NaN`s are equivalent, but non-reflexive. An `egal` comparison is performed for
+        // other numeric values.
+        return a != a ? b != b : (a == 0 ? 1 / a == 1 / b : a == b);
+      case '[object Date]':
+      case '[object Boolean]':
+        // Coerce dates and booleans to numeric primitive values. Dates are compared by their
+        // millisecond representations. Note that invalid dates with millisecond representations
+        // of `NaN` are not equivalent.
+        return +a == +b;
+      // RegExps are compared by their source patterns and flags.
+      case '[object RegExp]':
+        return a.source == b.source &&
+               a.global == b.global &&
+               a.multiline == b.multiline &&
+               a.ignoreCase == b.ignoreCase;
     }
-    // Ensure that both values are objects.
-    if (typeA != 'object') return false;
-    // Arrays or Arraylikes with different lengths are not equal.
-    if (a.length !== b.length) return false;
-    // Objects with different constructors are not equal.
-    if (a.constructor !== b.constructor) return false;
+    if (typeof a != 'object' || typeof b != 'object') return false;
     // Assume equality for cyclic structures. The algorithm for detecting cyclic
     // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
     var length = stack.length;
@@ -716,21 +719,37 @@
     // Add the first object to the stack of traversed objects.
     stack.push(a);
     var size = 0, result = true;
-    // Deep compare objects.
-    for (var key in a) {
-      if (hasOwnProperty.call(a, key)) {
-        // Count the expected number of properties.
-        size++;
-        // Deep compare each member.
-        if (!(result = hasOwnProperty.call(b, key) && eq(a[key], b[key], stack))) break;
+    // Recursively compare objects and arrays.
+    if (className == '[object Array]') {
+      // Compare array lengths to determine if a deep comparison is necessary.
+      size = a.length;
+      result = size == b.length;
+      if (result) {
+        // Deep compare the contents, ignoring non-numeric properties.
+        while (size--) {
+          // Ensure commutative equality for sparse arrays.
+          if (!(result = size in a == size in b && eq(a[size], b[size], stack))) break;
+        }
       }
-    }
-    // Ensure that both objects contain the same number of properties.
-    if (result) {
-      for (key in b) {
-        if (hasOwnProperty.call(b, key) && !size--) break;
+    } else {
+      // Objects with different constructors are not equivalent.
+      if ("constructor" in a != "constructor" in b || a.constructor != b.constructor) return false;
+      // Deep compare objects.
+      for (var key in a) {
+        if (hasOwnProperty.call(a, key)) {
+          // Count the expected number of properties.
+          size++;
+          // Deep compare each member.
+          if (!(result = hasOwnProperty.call(b, key) && eq(a[key], b[key], stack))) break;
+        }
       }
-      result = !size;
+      // Ensure that both objects contain the same number of properties.
+      if (result) {
+        for (key in b) {
+          if (hasOwnProperty.call(b, key) && !(size--)) break;
+        }
+        result = !size;
+      }
     }
     // Remove the first object from the stack of traversed objects.
     stack.pop();
@@ -845,7 +864,7 @@
 
   // Escape a string for HTML interpolation.
   _.escape = function(string) {
-    return (''+string).replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
+    return (''+string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
   };
 
   // Add your own custom functions to the Underscore object, ensuring that
@@ -889,14 +908,14 @@
          })
          .replace(c.evaluate || null, function(match, code) {
            return "');" + code.replace(/\\'/g, "'")
-                              .replace(/[\r\n\t]/g, ' ') + "__p.push('";
+                              .replace(/[\r\n\t]/g, ' ') + ";__p.push('";
          })
          .replace(/\r/g, '\\r')
          .replace(/\n/g, '\\n')
          .replace(/\t/g, '\\t')
          + "');}return __p.join('');";
-    var func = new Function('obj', tmpl);
-    return data ? func(data) : func;
+    var func = new Function('obj', '_', tmpl);
+    return data ? func(data, _) : function(data) { return func(data, _) };
   };
 
   // The OOP Wrapper
@@ -955,4 +974,4 @@
     return this._wrapped;
   };
 
-})();
+}).call(this);
