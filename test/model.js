@@ -87,6 +87,20 @@ $(document).ready(function() {
     equals(model.url(), '/collection/%2B1%2B');
   });
 
+  test("Model: url when using urlRoot with template ", function() {
+    var Model = Backbone.Model.extend({
+      urlRoot: ["/just/string", "/videos/:video_id", '/albums/:album_id/videos/:video_id']
+    });
+    var model = new Model(null, {params:{video_id:1}});
+    equals(model.url(), "/videos/1");
+    model = new Model(null, {params:{video_id:1,album_id:2}});
+    equals(model.url(), "/albums/2/videos/1");
+    model = new Model({video_id:1}, {params:{album_id:2}});
+    equals(model.url(), "/albums/2/videos/1");
+    model = new Model();
+    equals(model.url(), "/just/string");
+  });
+
   test("Model: clone", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
