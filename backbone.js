@@ -1,5 +1,5 @@
 //     Backbone.js 0.5.3
-//     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
+//     (c) 2010-2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://documentcloud.github.com/backbone
@@ -127,6 +127,7 @@
   Backbone.Model = function(attributes, options) {
     var defaults;
     attributes || (attributes = {});
+    if (options && options.parse) attributes = this.parse(attributes);
     if (defaults = this.defaults) {
       if (_.isFunction(defaults)) defaults = defaults.call(this);
       attributes = _.extend({}, defaults, attributes);
@@ -181,12 +182,21 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
-    set : function(attrs, options) {
+    set : function(key, value, options) {
+      var attrs;
+      if (_.isObject(key)) {
+        attrs = key;
+        options = value;
+      } else {
+        attrs = {};
+        attrs[key] = value;
+      }
 
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
       if (attrs.attributes) attrs = attrs.attributes;
+      if (options.unset) for (var attr in attrs) attrs[attr] = void 0;
       var now = this.attributes, escaped = this._escapedAttributes;
 
       // Run validation.
@@ -202,8 +212,8 @@
       // Update attributes.
       for (var attr in attrs) {
         var val = attrs[attr];
-        if (!_.isEqual(now[attr], val)) {
-          now[attr] = val;
+        if (!_.isEqual(now[attr], val) || (options.unset && (attr in now))) {
+          options.unset ? delete now[attr] : now[attr] = val;
           delete escaped[attr];
           this._changed = true;
           if (!options.silent) this.trigger('change:' + attr, this, val, options);
@@ -211,60 +221,25 @@
       }
 
       // Fire the `"change"` event, if the model has been changed.
-      if (!alreadyChanging && !options.silent && this._changed) this.change(options);
-      this._changing = false;
+      if (!alreadyChanging) {
+        if (!options.silent && this._changed) this.change(options);
+        this._changing = false;
+      }
       return this;
     },
 
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
     unset : function(attr, options) {
-      if (!(attr in this.attributes)) return this;
-      options || (options = {});
-      var value = this.attributes[attr];
-
-      // Run validation.
-      var validObj = {};
-      validObj[attr] = void 0;
-      if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
-
-      // changedAttributes needs to know if an attribute has been unset.
-      (this._unsetAttributes || (this._unsetAttributes = [])).push(attr);
-
-      // Remove the attribute.
-      delete this.attributes[attr];
-      delete this._escapedAttributes[attr];
-      if (attr == this.idAttribute) delete this.id;
-      this._changed = true;
-      if (!options.silent) {
-        this.trigger('change:' + attr, this, void 0, options);
-        this.change(options);
-      }
-      return this;
+      (options || (options = {})).unset = true;
+      return this.set(attr, null, options);
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
     // to silence it.
     clear : function(options) {
-      options || (options = {});
-      var attr;
-      var old = this.attributes;
-
-      // Run validation.
-      var validObj = {};
-      for (attr in old) validObj[attr] = void 0;
-      if (!options.silent && this.validate && !this._performValidation(validObj, options)) return false;
-
-      this.attributes = {};
-      this._escapedAttributes = {};
-      this._changed = true;
-      if (!options.silent) {
-        for (attr in old) {
-          this.trigger('change:' + attr, this, void 0, options);
-        }
-        this.change(options);
-      }
-      return this;
+      (options || (options = {})).unset = true;
+      return this.set(_.clone(this.attributes), options);
     },
 
     // Fetch the model from the server. If the server's representation of the
@@ -344,7 +319,6 @@
     change : function(options) {
       this.trigger('change', this, options);
       this._previousAttributes = _.clone(this.attributes);
-      this._unsetAttributes = null;
       this._changed = false;
     },
 
@@ -360,23 +334,16 @@
     // view need to be updated and/or what attributes need to be persisted to
     // the server. Unset attributes will be set to undefined.
     changedAttributes : function(now) {
+      if (!this._changed) return false;
       now || (now = this.attributes);
-      var old = this._previousAttributes, unset = this._unsetAttributes;
-
-      var changed = false;
+      var changed = false, old = this._previousAttributes;
       for (var attr in now) {
-        if (!_.isEqual(old[attr], now[attr])) {
-          changed || (changed = {});
-          changed[attr] = now[attr];
-        }
+        if (_.isEqual(old[attr], now[attr])) continue;
+        (changed || (changed = {}))[attr] = now[attr];
       }
-
-      if (unset) {
-        changed || (changed = {});
-        var len = unset.length;
-        while (len--) changed[unset[len]] = void 0;
+      for (var attr in old) {
+        if (!(attr in now)) (changed || (changed = {}))[attr] = void 0;
       }
-
       return changed;
     },
 
@@ -397,7 +364,7 @@
     // if all is well. If a specific `error` callback has been passed,
     // call that instead of firing the general `"error"` event.
     _performValidation : function(attrs, options) {
-      var error = this.validate(attrs);
+      var error = this.validate(attrs, options);
       if (error) {
         if (options.error) {
           options.error(this, error, options);
@@ -508,7 +475,7 @@
       options || (options = {});
       this.each(this._removeReference);
       this._reset();
-      this.add(models, {silent: true});
+      this.add(models, {silent: true, parse: options.parse});
       if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
@@ -518,6 +485,7 @@
     // models to the collection instead of resetting.
     fetch : function(options) {
       options || (options = {});
+      if (options.parse === undefined) options.parse = true;
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -570,7 +538,7 @@
     _prepareModel : function(model, options) {
       if (!(model instanceof Backbone.Model)) {
         var attrs = model;
-        model = new this.model(attrs, {collection: this});
+        model = new this.model(attrs, {collection: this, parse: options.parse});
         if (model.validate && !model._performValidation(model.attributes, options)) model = false;
       } else if (!model.collection) {
         model.collection = this;
@@ -698,8 +666,8 @@
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
-    navigate : function(fragment, triggerRoute) {
-      Backbone.history.navigate(fragment, triggerRoute);
+    navigate : function(fragment, options) {
+      Backbone.history.navigate(fragment, options);
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
@@ -744,7 +712,7 @@
   };
 
   // Cached regex for cleaning hashes.
-  var hashStrip = /^#*/;
+  var hashStrip = /^#/;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
@@ -855,27 +823,43 @@
       return matched;
     },
 
-    // Save a fragment into the hash history. You are responsible for properly
-    // URL-encoding the fragment in advance. This does not trigger
-    // a `hashchange` event.
-    navigate : function(fragment, triggerRoute) {
+    // Save a fragment into the hash history, or replace the URL state if the
+    // 'replace' option is passed. You are responsible for properly URL-encoding
+    // the fragment in advance.
+    //
+    // The options object can contain `trigger: true` if you wish to have the
+    // route callback be fired (not usually desirable), or `replace: true`, if
+    // you which to modify the current URL without adding an entry to the history.
+    navigate : function(fragment, options) {
+      if (!options || options === true) options = {trigger: options};
       var frag = (fragment || '').replace(hashStrip, '');
       if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
       if (this._hasPushState) {
-        var loc = window.location;
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
         this.fragment = frag;
-        window.history.pushState({}, document.title, loc.protocol + '//' + loc.host + frag);
+        window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, frag);
       } else {
-        window.location.hash = this.fragment = frag;
+        this.fragment = frag;
+        this._updateHash(window.location, frag, options.replace);
         if (this.iframe && (frag != this.getFragment(this.iframe.location.hash))) {
-          this.iframe.document.open().close();
-          this.iframe.location.hash = frag;
+          // Opening and closing the iframe tricks IE7 and earlier to push a history entry on hash-tag change.
+          // When replace is true, we don't want this.
+          if(!options.replace) this.iframe.document.open().close();
+          this._updateHash(this.iframe.location, frag, options.replace);
         }
       }
-      if (triggerRoute) this.loadUrl(fragment);
-    }
+      if (options.trigger) this.loadUrl(fragment);
+    },
 
+    // Update the hash location, either replacing the current entry, or adding
+    // a new one to the browser history.
+    _updateHash: function(location, fragment, replace) {
+      if (replace) {
+        location.replace(location.toString().replace(/(javascript:|#).*$/, "") + "#" + fragment);
+      } else {
+        location.hash = fragment;
+      }
+    }
   });
 
   // Backbone.View
@@ -891,13 +875,6 @@
     this.initialize.apply(this, arguments);
   };
 
-  // Element lookup, scoped to DOM elements within the current view.
-  // This should be prefered to global lookups, if you're dealing with
-  // a specific view.
-  var selectorDelegate = function(selector) {
-    return $(selector, this.el);
-  };
-
   // Cached regex to split keys for `delegate`.
   var eventSplitter = /^(\S+)\s*(.*)$/;
 
@@ -910,8 +887,11 @@
     // The default `tagName` of a View's element is `"div"`.
     tagName : 'div',
 
-    // Attach the `selectorDelegate` function as the `$` property.
-    $       : selectorDelegate,
+    // jQuery delegate for element lookup, scoped to DOM elements within the
+    // current view. This should be prefered to global lookups where possible.
+    $ : function(selector) {
+      return (selector == null) ? $(this.el) : $(selector, this.el);
+    },
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -1159,7 +1139,7 @@
       if (onError) {
         onError(model, resp, options);
       } else {
-        model.trigger('error', model, resp, options);
+        originalModel.trigger('error', model, resp, options);
       }
     };
   };
