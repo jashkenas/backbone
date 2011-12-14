@@ -122,11 +122,11 @@ $(document).ready(function() {
 
     ViewClass = Backbone.View.extend({
       el: function() {
-        return "not a DOM element";
+        return "body";
       }
     });
     view = new ViewClass;
-    ok(!view.el);
+    equals(view.el, document.body);
   });
 
   test("View: with attributes", function() {
