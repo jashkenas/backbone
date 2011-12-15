@@ -662,12 +662,14 @@
         var args = this._extractParameters(route, fragment);
         callback && callback.apply(this, args);
         this.trigger.apply(this, ['route:' + name].concat(args));
-      }, this));
+      }, this), name);
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate : function(fragment, options) {
-      var name = Backbone.history.navigate(fragment, options);
+      var handler = Backbone.history.navigate(fragment, options);
+      var args = this._extractParameters(handler.route, fragment);
+      this.trigger.apply(this, ['navigate:' + handler.name].concat(args));
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
@@ -795,8 +797,8 @@
 
     // Add a route to be tested when the fragment changes. Routes added later may
     // override previous routes.
-    route : function(route, callback) {
-      this.handlers.unshift({route : route, callback : callback});
+    route : function(route, callback, name) {
+      this.handlers.unshift({route : route, callback : callback, name: name});
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -848,6 +850,7 @@
         }
       }
       if (options.trigger) this.loadUrl(fragment);
+      return this._getHandler(fragment);
     },
 
     // Attempt to load the current URL fragment. If a route succeeds with a
