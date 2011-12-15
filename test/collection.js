@@ -122,6 +122,20 @@ $(document).ready(function() {
     equals(atCol.last(), h);
   });
 
+  test("Collection: add array of models at specific index", function() {
+    var col = new Backbone.Collection([
+      {id : 0, name : 'one'},
+      {id : 1, name : 'two'},
+      {id : 2, name : 'three'}
+    ]);
+    col.add([
+      {id : 3, name : 'three' },
+      {id : 4, name : 'four' }
+    ], {at : 1});
+    equals('three', col.at(1).get('name'));
+    equals('four', col.at(2).get('name'));
+  });
+
   test("Collection: add model to collection and verify index updates", function() {
     var f = new Backbone.Model({id: 20, label : 'f'});
     var g = new Backbone.Model({id: 21, label : 'g'});
