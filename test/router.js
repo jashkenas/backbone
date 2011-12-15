@@ -86,6 +86,22 @@ $(document).ready(function() {
     equals(router.page, '20');
   });
 
+  test("Router: navigate triggers navigate event when not fn trigger", 3, function() {
+    var triggered = false;
+    var query = null;
+    var page = null;
+    router.bind('navigate:search', function(q, p) {
+        triggered = true;
+        query = q;
+        page = p;
+    });
+    router.navigate('search/manhattan/p20');
+    equals(triggered, true);
+    equals(query, "manhattan");
+    equals(page, "20");
+
+  });
+
   asyncTest("Router: routes via navigate with {replace: true}", function() {
     var historyLength = window.history.length;
     router.navigate('search/manhattan/start_here');

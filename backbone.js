@@ -667,7 +667,7 @@
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate : function(fragment, options) {
-      Backbone.history.navigate(fragment, options);
+      var name = Backbone.history.navigate(fragment, options);
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
@@ -812,15 +812,14 @@
     // Attempt to load the current URL fragment. If a route succeeds with a
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
-    loadUrl : function(fragmentOverride) {
+    loadUrl : function(fragmentOverride) {    
       var fragment = this.fragment = this.getFragment(fragmentOverride);
-      var matched = _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
-        }
-      });
-      return matched;
+      var handler = this._getHandler(fragment);
+      if (handler) {
+        handler.callback(fragment);
+        return true;
+      }
+      return false;
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
@@ -849,6 +848,16 @@
         }
       }
       if (options.trigger) this.loadUrl(fragment);
+    },
+
+    // Attempt to load the current URL fragment. If a route succeeds with a
+    // match, returns `true`. If no defined routes matches the fragment,
+    // returns `false`.
+    _getHandler : function(fragment) {
+      var matched = _.find(this.handlers, function(handler) {
+        return handler.route.test(fragment);
+      });
+      return matched;
     },
 
     // Update the hash location, either replacing the current entry, or adding
