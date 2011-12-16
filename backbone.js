@@ -834,7 +834,9 @@
     navigate : function(fragment, options) {
       if (!options || options === true) options = {trigger: options};
       var frag = (fragment || '').replace(hashStrip, '');
-      if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
+      var handler = this._getHandler(frag);
+      if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return handler;
+    
       if (this._hasPushState) {
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
         this.fragment = frag;
@@ -850,7 +852,7 @@
         }
       }
       if (options.trigger) this.loadUrl(fragment);
-      return this._getHandler(fragment);
+      return handler;
     },
 
     // Attempt to load the current URL fragment. If a route succeeds with a
