@@ -348,7 +348,7 @@
       The project is <a href="http://github.com/documentcloud/backbone/">hosted on GitHub</a>,
       and the <a href="docs/backbone.html">annotated source code</a> is available,
       as well as an online <a href="test/test.html">test suite</a>, an
-      <a href="examples/todos/index.html">example application</a> and a 
+      <a href="examples/todos/index.html">example application</a> and a
       <a href="https://github.com/documentcloud/backbone/wiki/Tutorials%2C-blog-posts-and-example-sites">list of tutorials</a>.
     </p>
 
@@ -389,7 +389,7 @@
       For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
       and DOM manipulation with <a href="#View">Backbone.View</a>, include
       <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
-      <a href="http://jquery.com">jQuery</a> <small>( > 1.4.2)</small> or 
+      <a href="http://jquery.com">jQuery</a> <small>( > 1.4.2)</small> or
       <a href="http://zeptojs.com/">Zepto</a>.
     </p>
 
@@ -451,7 +451,7 @@ object.trigger("alert", "an event");
       If you have a large number of different events on a page, the convention is to use colons to
       namespace them: <tt>"poll:start"</tt>, or <tt>"change:selection"</tt>
     </p>
-    
+
     <p>
       To supply a <b>context</b> value for <tt>this</tt> when the callback is invoked,
       pass the optional third argument: <tt>model.bind('change', this.render, this)</tt>
@@ -971,9 +971,9 @@ ActiveRecord::Base.include_root_in_json = false
       Has the model changed since the last <tt>"change"</tt> event? If an <b>attribute</b>
       is passed, returns <tt>true</tt> if that specific attribute has changed.
     </p>
-    
+
     <p class="warning">
-      Note that this method, and the following change-related ones, 
+      Note that this method, and the following change-related ones,
       are only useful during the course of a <tt>"change"</tt> event.
     </p>
 
@@ -1025,7 +1025,7 @@ bill.set({name : "Bill Jones"});
     <h2 id="Collection">Backbone.Collection</h2>
 
     <p>
-      Collections are ordered sets of models. You can bind <tt>"change"</tt> events       
+      Collections are ordered sets of models. You can bind <tt>"change"</tt> events
       to be notified when any model in the collection has been modified,
       listen for <tt>"add"</tt> and <tt>"remove"</tt> events, <tt>fetch</tt>
       the collection from the server, and use a full suite of
@@ -1263,10 +1263,10 @@ alert(chapters.pluck('title'));
       "sort", which must return <tt>0</tt>, <tt>1</tt>, or <tt>-1</tt>,
       and is more similar to a <tt>sortBy</tt> &mdash; a much nicer API.
     </p>
-    
+
     <p class="warning">
-      Collections with comparator functions will not automatically re-sort if you 
-      later change model attributes, so you may wish to call <tt>sort</tt> after 
+      Collections with comparator functions will not automatically re-sort if you
+      later change model attributes, so you may wish to call <tt>sort</tt> after
       changing model attributes that would affect the order.
     </p>
 
@@ -1373,10 +1373,10 @@ Accounts.fetch();
       of replacing the collection's contents, pass <tt>{add: true}</tt> as an
       option to <b>fetch</b>.
     </p>
-    
+
     <p>
-      <b>jQuery.ajax</b> options can also be passed directly as <b>fetch</b> options, 
-      so to fetch a specific page of a paginated collection: 
+      <b>jQuery.ajax</b> options can also be passed directly as <b>fetch</b> options,
+      so to fetch a specific page of a paginated collection:
       <tt>Documents.fetch({data: {page: 3}})</tt>
     </p>
 
@@ -1426,7 +1426,7 @@ Accounts.fetch();
       the model, or <tt>false</tt> if a validation error prevented the
       model from being created. In order for this to work, you should set the
       <a href="#Collection-model">model</a> property of the collection.
-      The <b>create</b> method can accept either an attributes hash or an 
+      The <b>create</b> method can accept either an attributes hash or an
       existing, unsaved model object.
     </p>
 
@@ -1447,18 +1447,18 @@ var othello = NYPL.create({
 
     <p>
       Web applications often provide linkable, bookmarkable, shareable URLs for
-      important locations in the app. Until recently, hash fragments 
-      (<tt>#page</tt>) were used to provide these permalinks, but with the 
+      important locations in the app. Until recently, hash fragments
+      (<tt>#page</tt>) were used to provide these permalinks, but with the
       arrival of the History API, it's now possible to use standard URLs (<tt>/page</tt>).
       <b>Backbone.Router</b> provides methods for routing client-side pages, and
       connecting them to actions and events. For browsers which don't yet support
-      the History API, the Router handles graceful fallback and transparent 
+      the History API, the Router handles graceful fallback and transparent
       translation to the fragment version of the URL.
     </p>
 
     <p>
       During page load, after your application has finished creating all of its routers,
-      be sure to call <tt>Backbone.history.start()</tt>, or 
+      be sure to call <tt>Backbone.history.start()</tt>, or
       <tt>Backbone.history.start({pushState: true})</tt> to route the initial URL.
     </p>
 
@@ -1598,18 +1598,18 @@ app.navigate("help/troubleshooting", {trigger: true, replace: true});
       to <tt>Backbone.history</tt> that will be created for you automatically if you make use
       of <a href="#Router">Routers</a> with <a href="#Router-routes">routes</a>.
     </p>
-    
+
     <p>
       <b>pushState</b> support exists on a purely opt-in basis in Backbone.
-      Older browsers that don't support <tt>pushState</tt> will continue to use 
-      hash-based URL fragments, and if a hash URL is visited by a 
-      <tt>pushState</tt>-capable browser, it will be transparently upgraded to 
-      the true URL. Note that using real URLs requires your web server to be 
-      able to correctly render those pages, so back-end changes are required 
-      as well. For example, if you have a route of <tt>/documents/100</tt>, 
+      Older browsers that don't support <tt>pushState</tt> will continue to use
+      hash-based URL fragments, and if a hash URL is visited by a
+      <tt>pushState</tt>-capable browser, it will be transparently upgraded to
+      the true URL. Note that using real URLs requires your web server to be
+      able to correctly render those pages, so back-end changes are required
+      as well. For example, if you have a route of <tt>/documents/100</tt>,
       your web server must be able to serve that page, if the browser
       visits that URL directly. For full search-engine crawlability, it's best to
-      have the server generate the complete HTML for the page ... but if it's a web 
+      have the server generate the complete HTML for the page ... but if it's a web
       application, just rendering the same content you would have for the root URL,
       and filling in the rest with Backbone Views and JavaScript works fine.
     </p>
@@ -1621,31 +1621,31 @@ app.navigate("help/troubleshooting", {trigger: true, replace: true});
       and all of the routes are set up properly, call <tt>Backbone.history.start()</tt>
       to begin monitoring <tt>hashchange</tt> events, and dispatching routes.
     </p>
-    
+
     <p>
       To indicate that you'd like to use HTML5 <tt>pushState</tt> support in
       your application, use <tt>Backbone.history.start({pushState: true})</tt>.
     </p>
-    
+
     <p>
       If your application is not being served from the root url <tt>/</tt> of your
       domain, be sure to tell History where the root really is, as an option:
       <tt>Backbone.history.start({pushState: true, root: "/public/search/"})</tt>
     </p>
-    
+
     <p>
-      When called, if a route succeeds with a match for the current URL, 
-      <tt>Backbone.history.start()</tt> returns <tt>true</tt>. If no defined 
+      When called, if a route succeeds with a match for the current URL,
+      <tt>Backbone.history.start()</tt> returns <tt>true</tt>. If no defined
       route matches the current URL, it returns <tt>false</tt>.
     </p>
-    
+
     <p>
       If the server has already rendered the entire page, and you don't want the
       initial route to trigger when starting History, pass <tt>silent: true</tt>.
     </p>
-    
+
     <p>
-      Because hash-based history in Internet Explorer relies on an 
+      Because hash-based history in Internet Explorer relies on an
       <tt>&lt;iframe&gt;</tt>, be sure to only call <tt>start()</tt> after the DOM
       is ready.
     </p>
@@ -1947,9 +1947,9 @@ $("#make-demo").append(el);
       hash, all of your DOM events will always already be connected, and you will
       never have to call this function yourself.
     </p>
-    
+
     <p>
-      The <tt>events</tt> property may also be defined as a function that returns 
+      The <tt>events</tt> property may also be defined as a function that returns
       an <b>events</b> hash, to make it easier to programmatically define your
       events, as well as inherit them from parent views.
     </p>
@@ -2002,7 +2002,7 @@ var DocumentView = Backbone.View.extend({
     <h2 id="Utility">Utility Functions</h2>
 
     <p>
-      
+
     </p>
 
     <p id="Utility-noConflict">
@@ -2040,15 +2040,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/todos.png" alt="Todos" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-documentcloud">DocumentCloud</h2>
-    
+
     <p>
       The <a href="http://www.documentcloud.org/public/#search/">DocumentCloud workspace</a>
       is built on Backbone.js, with <i>Documents</i>, <i>Projects</i>,
       <i>Notes</i>, and <i>Accounts</i> all as Backbone models and collections.
       If you're interested in history &mdash; both Underscore.js and Backbone.js
-      were originally extracted from the DocumentCloud codebase, and packaged 
+      were originally extracted from the DocumentCloud codebase, and packaged
       into standalone JS libraries.
     </p>
 
@@ -2057,18 +2057,18 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/dc-workspace.png" alt="DocumentCloud Workspace" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-linkedin">LinkedIn Mobile</h2>
 
     <p>
       <a href="http://www.linkedin.com/">LinkedIn</a> used Backbone.js to create
-      its <a href="http://www.linkedin.com/static?key=mobile">next-generation HTML5 mobile web app</a>. 
-      Backbone made it easy to keep the app modular, organized and extensible so 
+      its <a href="http://www.linkedin.com/static?key=mobile">next-generation HTML5 mobile web app</a>.
+      Backbone made it easy to keep the app modular, organized and extensible so
       that it was possible to program the complexities of LinkedIn's user experience.
-      The app also uses <a href="http://zeptojs.com/">Zepto</a>, 
-      <a href="http://documentcloud.github.com/underscore/">Underscore.js</a>, 
-      <a href="http://sass-lang.com/">SASS</a>, <a href="http://cubiq.org/iscroll">iScroll</a>, 
-      HTML5 LocalStorage and Canvas. 
+      The app also uses <a href="http://zeptojs.com/">Zepto</a>,
+      <a href="http://documentcloud.github.com/underscore/">Underscore.js</a>,
+      <a href="http://sass-lang.com/">SASS</a>, <a href="http://cubiq.org/iscroll">iScroll</a>,
+      HTML5 LocalStorage and Canvas.
     </p>
 
     <div style="text-align: center;">
@@ -2076,13 +2076,13 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/linkedin-mobile.png" alt="LinkedIn Mobile" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-flow">Flow</h2>
-    
+
     <p>
       <a href="http://www.metalabdesign.com/">MetaLab</a> used Backbone.js to create
       <a href="http://www.getflow.com/">Flow</a>, a task management app for teams. The
-      workspace relies on Backbone.js to construct task views, activities, accounts, 
+      workspace relies on Backbone.js to construct task views, activities, accounts,
       folders, projects, and tags. You can see the internals under <tt>window.Flow</tt>.
     </p>
 
@@ -2091,15 +2091,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/flow.png" alt="Flow" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-audiovroom">AudioVroom</h2>
-    
+
     <p>
-      <a href="http://www.audiovroom.com/">AudioVroom</a> is a free music 
-      streaming app that allows you to listen to your Facebook friends like 
-      radio stations. It relies heavily on Backbone (views and song management) 
-      and also features a responsive grid-based design (using CSS3 media-queries) 
-      to deliver a unified user experience on desktops, mobiles, and tablets alike. 
+      <a href="http://www.audiovroom.com/">AudioVroom</a> is a free music
+      streaming app that allows you to listen to your Facebook friends like
+      radio stations. It relies heavily on Backbone (views and song management)
+      and also features a responsive grid-based design (using CSS3 media-queries)
+      to deliver a unified user experience on desktops, mobiles, and tablets alike.
       Being a pure Backbone app, AudioVroom is only 60kb compressed, and can be
       entirely hosted on the CDN.
     </p>
@@ -2109,14 +2109,14 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/audiovroom.png" alt="AudioVroom" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-foursquare">Foursquare</h2>
-    
+
     <p>
-      Foursquare is a fun little startup that helps you meet up with friends, 
-      discover new places, and save money. Backbone Models are heavily used in 
-      the core JavaScript API layer and Views power many popular features like 
-      the <a href="https://foursquare.com">homepage map</a> and 
+      Foursquare is a fun little startup that helps you meet up with friends,
+      discover new places, and save money. Backbone Models are heavily used in
+      the core JavaScript API layer and Views power many popular features like
+      the <a href="https://foursquare.com">homepage map</a> and
       <a href="https://foursquare.com/seriouseats/list/the-best-doughnuts-in-ny">lists</a>.
     </p>
 
@@ -2125,16 +2125,16 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/foursquare.png" alt="Foursquare" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-do">Do</h2>
-    
+
     <p>
-      <a href="http://do.com">Do</a> is a social productivity app that makes it 
-      easy to work on tasks, track projects, and take notes with your team. 
-      The <a href="http://do.com">Do.com</a> web application was built from the 
-      ground up to work seamlessly on your smartphone, tablet and computer. The 
-      team used Backbone, CoffeeScript and Handlebars to build a full-featured 
-      app in record time and rolled their own extensions for complex navigation 
+      <a href="http://do.com">Do</a> is a social productivity app that makes it
+      easy to work on tasks, track projects, and take notes with your team.
+      The <a href="http://do.com">Do.com</a> web application was built from the
+      ground up to work seamlessly on your smartphone, tablet and computer. The
+      team used Backbone, CoffeeScript and Handlebars to build a full-featured
+      app in record time and rolled their own extensions for complex navigation
       and model sync support.
     </p>
 
@@ -2143,20 +2143,20 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/do.png" alt="Do" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-groupon">Groupon Now!</h2>
-    
+
     <p>
-      <a href="http://www.groupon.com/now">Groupon Now!</a> helps you find  
+      <a href="http://www.groupon.com/now">Groupon Now!</a> helps you find
       local deals that you can buy and use right now. When first developing
-      the product, the team decided it would be AJAX heavy with smooth transitions 
-      between sections instead of full refreshes, but still needed to be fully 
+      the product, the team decided it would be AJAX heavy with smooth transitions
+      between sections instead of full refreshes, but still needed to be fully
       linkable and shareable. Despite never having used Backbone before, the
-      learning curve was incredibly quick &mdash; a prototype was hacked out in an 
-      afternoon, and the team was able to ship the product in two weeks. 
-      Because the source is minimal and understandable, it was easy to 
-      add several Backbone extensions for Groupon Now!: changing the router 
-      to handle URLs with querystring parameters, and adding a simple 
+      learning curve was incredibly quick &mdash; a prototype was hacked out in an
+      afternoon, and the team was able to ship the product in two weeks.
+      Because the source is minimal and understandable, it was easy to
+      add several Backbone extensions for Groupon Now!: changing the router
+      to handle URLs with querystring parameters, and adding a simple
       in-memory store for caching repeated requests for the same data.
     </p>
 
@@ -2165,7 +2165,7 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/groupon.png" alt="Groupon Now!" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-basecamp">Basecamp Mobile</h2>
 
     <p>
@@ -2181,19 +2181,19 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/basecamp-mobile.png" alt="Basecamp Mobile" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-slavery-footprint">Slavery Footprint</h2>
-    
+
     <p>
-      <a href="http://slaveryfootprint.org/survey">Slavery Footprint</a> 
-      allows consumers to visualize how their consumption habits are 
-      connected to modern-day slavery and provides them with an opportunity 
-      to have a deeper conversation with the companies that manufacture the 
+      <a href="http://slaveryfootprint.org/survey">Slavery Footprint</a>
+      allows consumers to visualize how their consumption habits are
+      connected to modern-day slavery and provides them with an opportunity
+      to have a deeper conversation with the companies that manufacture the
       goods they purchased.
-      Based in Oakland, California, the Slavery Footprint team works to engage 
-      individuals, groups, and businesses to build awareness for and create 
-      deployable action against forced labor, human trafficking, and modern-day 
-      slavery through online tools, as well as off-line community education and 
+      Based in Oakland, California, the Slavery Footprint team works to engage
+      individuals, groups, and businesses to build awareness for and create
+      deployable action against forced labor, human trafficking, and modern-day
+      slavery through online tools, as well as off-line community education and
       mobilization programs.
     </p>
 
@@ -2202,15 +2202,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/slavery-footprint.png" alt="Slavery Footprint" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-trajectory">Trajectory</h2>
-    
+
     <p>
-      <a href="https://www.apptrajectory.com/">Trajectory</a> is an agile 
-      software planning tool used to discuss wireframes, record decisions made, 
-      relate user stories and bugs to discussions, and track your progress and 
-      plan the future. With Rails on the backend, Trajectory uses Backbone.js 
-      heavily to provide a fluid story planning interface that even updates in 
+      <a href="https://www.apptrajectory.com/">Trajectory</a> is an agile
+      software planning tool used to discuss wireframes, record decisions made,
+      relate user stories and bugs to discussions, and track your progress and
+      plan the future. With Rails on the backend, Trajectory uses Backbone.js
+      heavily to provide a fluid story planning interface that even updates in
       real-time based on the actions of other users.
     </p>
 
@@ -2219,25 +2219,25 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/trajectory.png" alt="Trajectory" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-soundcloud">SoundCloud Mobile</h2>
 
     <p>
-      <a href="http://soundcloud.com">SoundCloud</a> is the leading sound sharing 
-      platform on the internet, and Backbone.js provides the foundation for 
-      <a href="http://m.soundcloud.com">SoundCloud Mobile</a>. The project uses 
-      the public SoundCloud <a href="http://soundcloud.com/developers">API</a> 
-      as a data source (channeled through a nginx proxy), 
-      <a href="http://api.jquery.com/category/plugins/templates/">jQuery templates</a> 
+      <a href="http://soundcloud.com">SoundCloud</a> is the leading sound sharing
+      platform on the internet, and Backbone.js provides the foundation for
+      <a href="http://m.soundcloud.com">SoundCloud Mobile</a>. The project uses
+      the public SoundCloud <a href="http://soundcloud.com/developers">API</a>
+      as a data source (channeled through a nginx proxy),
+      <a href="http://api.jquery.com/category/plugins/templates/">jQuery templates</a>
       for the rendering, <a href="http://docs.jquery.com/Qunit">Qunit
-      </a> and <a href="http://www.phantomjs.org/">PhantomJS</a> for 
-      the testing suite. The JS code, templates and CSS are built for the 
-      production deployment with various Node.js tools like 
-      <a href="https://github.com/dsimard/ready.js">ready.js</a>, 
-      <a href="https://github.com/mde/jake">Jake</a>, 
-      <a href="https://github.com/tmpvar/jsdom">jsdom</a>. 
-      The <b>Backbone.History</b> was modified to support the HTML5 <tt>history.pushState</tt>. 
-      <b>Backbone.sync</b> was extended with an additional SessionStorage based cache 
+      </a> and <a href="http://www.phantomjs.org/">PhantomJS</a> for
+      the testing suite. The JS code, templates and CSS are built for the
+      production deployment with various Node.js tools like
+      <a href="https://github.com/dsimard/ready.js">ready.js</a>,
+      <a href="https://github.com/mde/jake">Jake</a>,
+      <a href="https://github.com/tmpvar/jsdom">jsdom</a>.
+      The <b>Backbone.History</b> was modified to support the HTML5 <tt>history.pushState</tt>.
+      <b>Backbone.sync</b> was extended with an additional SessionStorage based cache
       layer.
     </p>
 
@@ -2246,15 +2246,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/soundcloud.png" alt="SoundCloud" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-pandora">Pandora</h2>
-    
+
     <p>
-      When <a href="http://www.pandora.com/newpandora">Pandora</a> redesigned 
+      When <a href="http://www.pandora.com/newpandora">Pandora</a> redesigned
       their site in HTML5, they chose Backbone.js to help
       manage the user interface and interactions. For example, there's a model
-      that represents the "currently playing track", and multiple views that 
-      automatically update when the current track changes. The station list is a 
+      that represents the "currently playing track", and multiple views that
+      automatically update when the current track changes. The station list is a
       collection, so that when stations are added or changed, the UI stays up to date.
     </p>
 
@@ -2263,17 +2263,17 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/pandora.png" alt="Pandora" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-cloudapp">CloudApp</h2>
-    
+
     <p>
-      <a href="http://getcloudapp.com">CloudApp</a> is simple file and link 
+      <a href="http://getcloudapp.com">CloudApp</a> is simple file and link
       sharing for the Mac. Backbone.js powers the web tools
-      which consume the <a href="http://developer.getcloudapp.com">documented API</a> 
-      to manage Drops. Data is either pulled manually or pushed by 
-      <a href="http://pusher.com">Pusher</a> and fed to 
-      <a href="http://github.com/janl/mustache.js">Mustache</a> templates for 
-      rendering. Check out the <a href="http://cloudapp.github.com/engine">annotated source code</a> 
+      which consume the <a href="http://developer.getcloudapp.com">documented API</a>
+      to manage Drops. Data is either pulled manually or pushed by
+      <a href="http://pusher.com">Pusher</a> and fed to
+      <a href="http://github.com/janl/mustache.js">Mustache</a> templates for
+      rendering. Check out the <a href="http://cloudapp.github.com/engine">annotated source code</a>
       to see the magic.
     </p>
 
@@ -2282,14 +2282,14 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/cloudapp.png" alt="CloudApp" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-seatgeek">SeatGeek</h2>
-    
+
     <p>
       <a href="http://seatgeek.com">SeatGeek</a>'s stadium ticket maps were originally
-      developed with Prototype.js. Moving to Backbone.js and jQuery helped organize 
-      a lot of the UI code, and the increased structure has made adding features 
-      a lot easier. SeatGeek is also in the process of building a mobile 
+      developed with Prototype.js. Moving to Backbone.js and jQuery helped organize
+      a lot of the UI code, and the increased structure has made adding features
+      a lot easier. SeatGeek is also in the process of building a mobile
       interface that will be Backbone.js from top to bottom.
     </p>
 
@@ -2298,15 +2298,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/seatgeek.png" alt="SeatGeek" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-tpm">Talking Points Memo: Baroque</h2>
-    
+
     <p>
-      <a href="http://labs.talkingpointsmemo.com/2011/08/the-baroque-era.php">Baroque</a> 
+      <a href="http://labs.talkingpointsmemo.com/2011/08/the-baroque-era.php">Baroque</a>
       is the editor currently powering the homepage of
-      <a href="http://talkingpointsmemo.com/">Talking Points Memo</a>. 
-      With a Sinatra backend for publishing, Baroque uses Backbone.js to provide 
-      real-time story and asset dropping, complex reordering actions and copy 
+      <a href="http://talkingpointsmemo.com/">Talking Points Memo</a>.
+      With a Sinatra backend for publishing, Baroque uses Backbone.js to provide
+      real-time story and asset dropping, complex reordering actions and copy
       editing, making web layout feel much more like print layout.
     </p>
 
@@ -2315,12 +2315,12 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/baroque.jpg" alt="Baroque" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-grove">Grove.io</h2>
-    
+
     <p>
-      <a href="http://grove.io">Grove.io</a> provides hosted IRC for teams. 
-      Backbone.js powers Grove's web client together with Handlebars.js templating. 
+      <a href="http://grove.io">Grove.io</a> provides hosted IRC for teams.
+      Backbone.js powers Grove's web client together with Handlebars.js templating.
       Updates to chat stream are pulled in realtime using long-polling.
     </p>
 
@@ -2329,13 +2329,13 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/grove.png" alt="Grove.io" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-kicksend">Kicksend</h2>
-    
+
     <p>
-      <a href="http://kicksend.com">Kicksend</a> is a real-time file sharing 
-      platform that helps everyday people send and receive files of any size 
-      with their friends and family. Kicksend's web application makes extensive 
+      <a href="http://kicksend.com">Kicksend</a> is a real-time file sharing
+      platform that helps everyday people send and receive files of any size
+      with their friends and family. Kicksend's web application makes extensive
       use of Backbone.js to model files, friends, lists and activity streams.
     </p>
 
@@ -2344,17 +2344,17 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/kicksend.png" alt="Kicksend" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-shortmail">Shortmail</h2>
-    
+
     <p>
-      <a href="http://410labs.com/">410 Labs</a> uses Backbone.js at 
-      <a href="http://shortmail.com/">Shortmail.com</a> to build a 
-      fast and responsive inbox, driven by the <a href="#Router">Router</a>. 
+      <a href="http://410labs.com/">410 Labs</a> uses Backbone.js at
+      <a href="http://shortmail.com/">Shortmail.com</a> to build a
+      fast and responsive inbox, driven by the <a href="#Router">Router</a>.
       Backbone works with a Rails backend to provide inbox rendering, archiving,
       replying, composing, and even a changes feed. Using Backbone's event-driven
-      model and pushing the rendering and interaction logic to the front-end 
-      has not only simplified the view code, it has also drastically reduced the 
+      model and pushing the rendering and interaction logic to the front-end
+      has not only simplified the view code, it has also drastically reduced the
       load on Shortmail's servers.
     </p>
 
@@ -2363,14 +2363,14 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/shortmail.png" alt="Shortmail" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-battlefield">Battlefield Play4Free</h2>
-    
+
     <p>
-      <a href="http://battlefield.play4free.com/">Battlefield Play4Free</a> is 
-      the latest free-to-play first person shooter from the same team that 
-      created Battlefield Heroes. The in-game HTML5 front-end for makes heavy use of 
-      Backbone's views, models and collections to help keep the code modular 
+      <a href="http://battlefield.play4free.com/">Battlefield Play4Free</a> is
+      the latest free-to-play first person shooter from the same team that
+      created Battlefield Heroes. The in-game HTML5 front-end for makes heavy use of
+      Backbone's views, models and collections to help keep the code modular
       and structured.
     </p>
 
@@ -2379,15 +2379,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/battlefield.png" alt="Battlefield Play4Free" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-salon">Salon.io</h2>
-    
+
     <p>
-      <a href="http://salon.io">Salon.io</a> provides a space where photographers, 
-      artists and designers freely arrange their visual art on virtual walls. 
+      <a href="http://salon.io">Salon.io</a> provides a space where photographers,
+      artists and designers freely arrange their visual art on virtual walls.
       <a href="http://salon.io">Salon.io</a> runs on Rails, but does not use
-      much of the traditional stack, as the entire frontend is designed as a 
-      single page web app, using Backbone.js and 
+      much of the traditional stack, as the entire frontend is designed as a
+      single page web app, using Backbone.js and
       <a href="http://coffeescript.org">CoffeeScript</a>.
     </p>
 
@@ -2396,13 +2396,13 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/salon.png" alt="Salon.io" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-quoteroller">Quote Roller</h2>
-    
+
     <p>
-      <a href="http://www.codingstaff.com">Coding Staff</a> used Backbone.js to 
-      create <a href="http://www.quoteroller.com">Quote Roller</a>, an application 
-      that helps to create, send, organize and track business proposals with ease. 
+      <a href="http://www.codingstaff.com">Coding Staff</a> used Backbone.js to
+      create <a href="http://www.quoteroller.com">Quote Roller</a>, an application
+      that helps to create, send, organize and track business proposals with ease.
       Backbone.js has been used to implement interactive parts of the
       application like template builder, pricing table, file attachments manager.
     </p>
@@ -2412,9 +2412,9 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/quoteroller.png" alt="Quote Roller" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-tilemill">TileMill</h2>
-    
+
     <p>
       Our fellow
       <a href="http://www.newschallenge.org/">Knight Foundation News Challenge</a>
@@ -2433,16 +2433,16 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/tilemill.png" alt="TileMill" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-rround">rround.me</h2>
-    
+
     <p>
-      <a href="http://rround.me">rround.me</a> uses the HTML 
-      <a href="http://diveintohtml5.org/geolocation.html">Geolocation API</a> 
+      <a href="http://rround.me">rround.me</a> uses the HTML
+      <a href="http://diveintohtml5.org/geolocation.html">Geolocation API</a>
       to discover tweets, YouTube videos, Instagram photos, Foursquare spots, and other happenings
       posted by people close to you. The site is a single-page app built on Backbone.js,
-      with people, locations and events all represented by Backbone Models. 
-      Backbone Views listen for changes in the underlying data as you adjust 
+      with people, locations and events all represented by Backbone Models.
+      Backbone Views listen for changes in the underlying data as you adjust
       the range (distance) of your search.
     </p>
 
@@ -2451,13 +2451,13 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/rround.png" alt="rround.me" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-blossom">Blossom</h2>
-    
+
     <p>
-      <a href="http://blossom.io">Blossom</a> is a lightweight project management 
-      tool for lean teams. Backbone.js is heavily used in combination with 
-      <a href="http://coffeescript.org">CoffeeScript</a> to provide a smooth 
+      <a href="http://blossom.io">Blossom</a> is a lightweight project management
+      tool for lean teams. Backbone.js is heavily used in combination with
+      <a href="http://coffeescript.org">CoffeeScript</a> to provide a smooth
       interaction experience. The RESTful backend is built
       with <a href="http://flask.pocoo.org/">Flask</a> on Google App Engine.
     </p>
@@ -2467,9 +2467,9 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/blossom.png" alt="Blossom" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-instagreat">Insta-great!</h2>
-    
+
     <p>
       <a href="http://twitter.com/elliottkember">Elliott Kember</a> and
       <a href="http://twitter.com/dizzyup">Hector Simpson</a> built
@@ -2486,17 +2486,17 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/instagreat.png" alt="instagre.at" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-decide">Decide</h2>
-    
+
     <p>
-      <a href="http://decide.com">Decide.com</a> helps people decide when to buy 
-      consumer electronics. It relies heavily on Backbone.js to render and 
-      update its Search Results Page. An "infinite scroll" feature takes 
-      advantage of a SearchResults model containing a collection of 
-      Product models to fetch more results and render them on the fly 
-      with Mustache. A SearchController keeps everything in sync and 
-      maintains page state in the URL. Backbone also powers the user 
+      <a href="http://decide.com">Decide.com</a> helps people decide when to buy
+      consumer electronics. It relies heavily on Backbone.js to render and
+      update its Search Results Page. An "infinite scroll" feature takes
+      advantage of a SearchResults model containing a collection of
+      Product models to fetch more results and render them on the fly
+      with Mustache. A SearchController keeps everything in sync and
+      maintains page state in the URL. Backbone also powers the user
       accounts and settings management.
     </p>
 
@@ -2505,15 +2505,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/decide.png" alt="Decide" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-trello">Trello</h2>
-    
+
     <p>
-      <a href="http://trello.com">Trello</a> is a collaboration tool that 
-      organizes your projects into boards. A Trello board holds many lists of 
+      <a href="http://trello.com">Trello</a> is a collaboration tool that
+      organizes your projects into boards. A Trello board holds many lists of
       cards, which can contain checklists, files and conversations, and may be
-      voted on and organized with labels. Updates on the board happen in 
-      real time. The site was built ground up using Backbone.js for all the 
+      voted on and organized with labels. Updates on the board happen in
+      real time. The site was built ground up using Backbone.js for all the
       models, views, and routes.
     </p>
 
@@ -2522,16 +2522,16 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/trello.png" alt="Trello" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-bittorrent">BitTorrent</h2>
-    
+
     <p>
-      <a href="http://www.bittorrent.com">BitTorrent</a> used Backbone to 
-      completely rework an existing Win32 UI. Models normalize access to the 
-      client's data and views rely heavily on the <tt>change</tt> events to keep 
-      the UI state current. Using Backbone and SCSS, 
-      <a href="http://www.bittorrent.com/chrysalis/">our new design</a> and UX 
-      prototypes are considerably easier to iterate, test and work with than 
+      <a href="http://www.bittorrent.com">BitTorrent</a> used Backbone to
+      completely rework an existing Win32 UI. Models normalize access to the
+      client's data and views rely heavily on the <tt>change</tt> events to keep
+      the UI state current. Using Backbone and SCSS,
+      <a href="http://www.bittorrent.com/chrysalis/">our new design</a> and UX
+      prototypes are considerably easier to iterate, test and work with than
       the original Win32 UI.
     </p>
 
@@ -2540,45 +2540,45 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/bittorrent.jpg" alt="BitTorrent" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-fluxiom">Fluxiom</h2>
-    
+
     <p>
-      <a href="http://fluxiom.com">Fluxiom</a> uses Backbone.js and HTML5 to 
-      deliver a seamless upload experience from the desktop to the cloud, 
+      <a href="http://fluxiom.com">Fluxiom</a> uses Backbone.js and HTML5 to
+      deliver a seamless upload experience from the desktop to the cloud,
       including drag and drop, live previews, partial uploads, and one-click sharing.
     <p>
-      
+
     <p>
-      The upload queue is a single collection and each file is it’s own model. 
-      The UI is divided into several views for efficient event handling, and 
-      uses <a href="http://documentcloud.github.com/underscore/">Underscore.js</a> 
+      The upload queue is a single collection and each file is it’s own model.
+      The UI is divided into several views for efficient event handling, and
+      uses <a href="http://documentcloud.github.com/underscore/">Underscore.js</a>
       templates for fast rendering, even when handling hundreds of uploads.
     </p>
-    
+
     <div style="text-align: center;">
       <a href="http://fluxiom.com/">
         <img src="docs/images/fluxiom.png" alt="Fluxiom" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-chop">Chop</h2>
-    
+
     <p>
-      <a href="http://chopapp.com/">Chop</a> is a little app from 
-      <a href="http://www.zurb.com/">ZURB</a> that lets people slice up bad code 
-      and share their feedback to help put it back together. 
-      Chop was built to demonstrate how easy it is to build pageless apps 
-      using Backbone.js and Rails. Chop makes extensive use of Backbone <b>Views</b>, 
+      <a href="http://chopapp.com/">Chop</a> is a little app from
+      <a href="http://www.zurb.com/">ZURB</a> that lets people slice up bad code
+      and share their feedback to help put it back together.
+      Chop was built to demonstrate how easy it is to build pageless apps
+      using Backbone.js and Rails. Chop makes extensive use of Backbone <b>Views</b>,
       <b>Controllers</b>, and <b>Models</b>.
     </p>
-    
+
     <div style="text-align: center;">
       <a href="http://chopapp.com/">
         <img src="docs/images/chop.png" alt="Chop" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-ducksboard">Ducksboard</h2>
 
     <p>
@@ -2590,8 +2590,8 @@ var model = localBackbone.Model.extend(...);
       a simple API.
       Backbone is used throughout Ducksboard's interface, every widget,
       dashboard and SaaS account is a Backbone model with several views
-      (data display, configuration view). A 
-      <a href="https://public.ducksboard.com/BFVzKVPeOoWRsL0VZ8MZ/">live demo</a> 
+      (data display, configuration view). A
+      <a href="https://public.ducksboard.com/BFVzKVPeOoWRsL0VZ8MZ/">live demo</a>
       is available.
     </p>
 
@@ -2600,7 +2600,7 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/ducksboard.png" alt="Ducksboard" class="example_image" />
       </a>
     </div>
-        
+
     <h2 id="examples-quietwrite">QuietWrite</h2>
 
     <p>
@@ -2617,7 +2617,7 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/quietwrite.png" alt="QuietWrite" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-tzigla">Tzigla</h2>
 
     <p>
@@ -2664,33 +2664,33 @@ var model = localBackbone.Model.extend(...);
       <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
     </ul>
-    
+
     <p id="FAQ-tim-toady">
       <b class="header">There's More Than One Way To Do It</b>
       <br />
-      It's common for folks just getting started to treat the examples listed 
-      on this page as some sort of gospel truth. In fact, Backbone.js is intended 
+      It's common for folks just getting started to treat the examples listed
+      on this page as some sort of gospel truth. In fact, Backbone.js is intended
       to be fairly agnostic about many common patterns in client-side code.
       For example...
     </p>
-    
+
     <p>
-      <b>References between Models and Views</b> can be handled several ways. 
+      <b>References between Models and Views</b> can be handled several ways.
       Some people like to have direct pointers, where views correspond 1:1 with
-      models (<tt>model.view</tt> and <tt>view.model</tt>). Others prefer to have intermediate 
-      "controller" objects that orchestrate the creation and organization of 
+      models (<tt>model.view</tt> and <tt>view.model</tt>). Others prefer to have intermediate
+      "controller" objects that orchestrate the creation and organization of
       views into a hierarchy. Others still prefer the evented approach, and always
       fire events instead of calling methods directly. All of these styles work well.
     </p>
-    
+
     <p>
       <b>Batch operations</b> on Models are common, but often best handled differently
       depending on your server-side setup. Some folks don't mind making individual
-      Ajax requests. Others create explicit resources for RESTful batch operations: 
-      <tt>/notes/batch/destroy?ids=1,2,3,4</tt>. Others tunnel REST over JSON, with the 
+      Ajax requests. Others create explicit resources for RESTful batch operations:
+      <tt>/notes/batch/destroy?ids=1,2,3,4</tt>. Others tunnel REST over JSON, with the
       creation of "changeset" requests:
     </p>
-    
+
 <pre>
   {
     "create":  [array of models to create]
@@ -2706,15 +2706,15 @@ var model = localBackbone.Model.extend(...);
       and trigger your own custom events: <tt>model.bind("selected:true")</tt> or
       <tt>model.bind("editing")</tt>
     </p>
-    
+
     <p>
       <b>Render the UI</b> as you see fit. Backbone is agnostic as to whether you
       use <a href="http://documentcloud.github.com/underscore/#template">Underscore templates</a>,
       <a href="https://github.com/janl/mustache.js">Mustache.js</a>, direct DOM
-      manipulation, server-side rendered snippets of HTML, or 
-      <a href="http://jqueryui.com/">jQuery UI</a> in your <tt>render</tt> function. 
-      Sometimes you'll create a view for each model ... sometimes you'll have a 
-      view that renders thousands of models at once, in a tight loop. Both can be 
+      manipulation, server-side rendered snippets of HTML, or
+      <a href="http://jqueryui.com/">jQuery UI</a> in your <tt>render</tt> function.
+      Sometimes you'll create a view for each model ... sometimes you'll have a
+      view that renders thousands of models at once, in a tight loop. Both can be
       appropriate in the same app, depending on the quantity of data involved,
       and the complexity of the UI.
     </p>
@@ -2751,8 +2751,8 @@ Inbox.messages.fetch();
 </pre>
 
     <p>
-      If you're looking for something more opinionated, there are a number of 
-      Backbone plugins that add sophisticated associations among models, 
+      If you're looking for something more opinionated, there are a number of
+      Backbone plugins that add sophisticated associations among models,
       <a href="https://github.com/documentcloud/backbone/wiki/Extensions%2C-Plugins%2C-Resources">available on the wiki</a>.
     </p>
 
@@ -2788,15 +2788,15 @@ Inbox.messages.fetch();
       represents a logical chunk of UI, responsible for the contents of a single
       DOM element.
     </p>
-    
+
     <p>
       Comparing the overall structure of Backbone to a server-side MVC framework
       like <b>Rails</b>, the pieces line up like so:
     </p>
-    
+
     <ul>
       <li>
-        <b>Backbone.Model</b> &ndash; Like a Rails model minus the class 
+        <b>Backbone.Model</b> &ndash; Like a Rails model minus the class
         methods. Wraps a row of data in business logic.
       </li>
       <li>
@@ -2812,7 +2812,7 @@ Inbox.messages.fetch();
         but not always, associated with a model.
       </li>
       <li>
-        <b>Client-side Templates</b> &ndash; Rails <tt>.html.erb</tt> views, 
+        <b>Client-side Templates</b> &ndash; Rails <tt>.html.erb</tt> views,
         rendering a chunk of HTML.
       </li>
     </ul>
@@ -2828,7 +2828,7 @@ Inbox.messages.fetch();
       <a href="http://documentcloud.github.com/underscore/#bindAll">_.bindAll</a>
       from Underscore.js.
     </p>
-    
+
     <p>
       When binding callbacks to Backbone events, you can choose to pass an optional
       third argument to specify the <tt>this</tt> that will be used when the
@@ -2853,7 +2853,7 @@ Inbox.messages.add(newMessage);
 </pre>
 
     <h2 id="changelog">Change Log</h2>
-    
+
     <p>
       <b class="header">0.5.3</b> &mdash; <small><i>August 9, 2011</i></small><br />
       A View's <tt>events</tt> property may now be defined as a function, as well
@@ -2863,7 +2863,7 @@ Inbox.messages.add(newMessage);
       <tt>Backbone.history.start({silent: true})</tt> to prevent the initial route
       from triggering. Bugfix for pushState with encoded URLs.
     </p>
-    
+
     <p>
       <b class="header">0.5.2</b> &mdash; <small><i>July 26, 2011</i></small><br />
       The <tt>bind</tt> function, can now take an optional third argument, to specify
@@ -2871,24 +2871,24 @@ Inbox.messages.add(newMessage);
       Multiple models with the same <tt>id</tt> are now allowed in a collection.
       Fixed a bug where calling <tt>.fetch(jQueryOptions)</tt> could cause an
       incorrect URL to be serialized.
-      Fixed a brief extra route fire before redirect, when degrading from 
+      Fixed a brief extra route fire before redirect, when degrading from
       <tt>pushState</tt>.
     </p>
-    
+
     <p>
       <b class="header">0.5.1</b> &mdash; <small><i>July 5, 2011</i></small><br />
       Cleanups from the 0.5.0 release, to wit: improved transparent upgrades from
       hash-based URLs to pushState, and vice-versa. Fixed inconsistency with
       non-modified attributes being passed to <tt>Model#initialize</tt>. Reverted
       a <b>0.5.0</b> change that would strip leading hashbangs from routes.
-      Added <tt>contains</tt> as an alias for <tt>includes</tt>. 
+      Added <tt>contains</tt> as an alias for <tt>includes</tt>.
     </p>
 
     <p>
       <b class="header">0.5.0</b> &mdash; <small><i>July 1, 2011</i></small><br />
       A large number of tiny tweaks and micro bugfixes, best viewed by looking
       at <a href="https://github.com/documentcloud/backbone/compare/0.3.3...0.5.0">the commit diff</a>.
-      HTML5 <tt>pushState</tt> support, enabled by opting-in with: 
+      HTML5 <tt>pushState</tt> support, enabled by opting-in with:
       <tt>Backbone.history.start({pushState: true})</tt>.
       <tt>Controller</tt> was renamed to <tt>Router</tt>, for clarity.
       <tt>Collection#refresh</tt> was renamed to <tt>Collection#reset</tt> to emphasize
@@ -2907,7 +2907,7 @@ Inbox.messages.add(newMessage);
       <tt>Model#defaults</tt> can now be a function as well as a literal attributes
       object.
     </p>
-    
+
     <p>
       <b class="header">0.3.3</b> &mdash; <small><i>Dec 1, 2010</i></small><br />
       Backbone.js now supports <a href="http://zeptojs.com">Zepto</a>, alongside
@@ -2997,7 +2997,7 @@ Inbox.messages.add(newMessage);
   </div>
 
   <script src="test/vendor/underscore-1.2.2.js"></script>
-  <script src="test/vendor/jquery-1.5.js"></script>
+  <script src="test/vendor/jquery-1.6.4.js"></script>
   <script src="test/vendor/json2.js"></script>
   <script src="backbone.js"></script>
 
@@ -3006,7 +3006,7 @@ Inbox.messages.add(newMessage);
     $(function() {
       $('.runnable').each(function() {
         var code = this;
-        var button = $('<div class="run" title="Run"></div>');
+        var button = '<div class="run" title="Run"></div>';
         $(button).insertBefore(code).bind('click', function(){
           eval($(code).text());
         });
