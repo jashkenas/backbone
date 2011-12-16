@@ -139,6 +139,7 @@
     this._changed = false;
     this._previousAttributes = _.clone(this.attributes);
     if (options && options.collection) this.collection = options.collection;
+    if (options && options.params) this.urlParams = options.params;
     this.initialize(attributes, options);
   };
 
@@ -293,7 +294,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url : function() {
-      var base = getUrl(this.collection) || this.urlRoot || urlError();
+      var base = getUrl(this.collection) || getUrlFromTemplate(this) || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -390,6 +391,7 @@
     _.bindAll(this, '_onModelEvent', '_removeReference');
     this._reset();
     if (models) this.reset(models, {silent: true});
+    if (options.params) this.urlParams = options.params;
     this.initialize.apply(this, arguments);
   };
 
@@ -607,8 +609,12 @@
         this._byId[model.id] = model;
       }
       this.trigger.apply(this, arguments);
-    }
+    },
 
+    // for tests
+    _getUrl : function() {
+      return getUrl(this);
+    }
   });
 
   // Underscore methods that we want to implement on the Collection.
@@ -1120,8 +1126,45 @@
   // or as a function.
   var getUrl = function(object) {
     if (!(object && object.url)) return null;
-    return _.isFunction(object.url) ? object.url() : object.url;
+    return _.isFunction(object.url) ? object.url() : getUrlFromTemplate(object);
   };
+
+  // Helper function to make URL from template (Rails like)
+  //   /videos/:video_id/comments => /videos/6/comments
+  // Using urlParams and model attributes for segment keys.
+  var getUrlFromTemplate = function(object) {
+    var url = object.urlRoot || object.url;
+    if (_.isString(url)) {
+      url = [url];
+    }
+    // merge urlParams and attributes
+    var attrs = object.urlParams || {};
+    if (object.attributes) {
+      attrs = _.extend({}, object.attributes, attrs);
+    }
+    var matched = [];
+    var not_matched = [];
+    _.each(url, function(it){
+      var m = null;
+      // if found segments
+      if (m = it.match(/\:[^/]+/g)) {
+        // if all segment in urlParams & attibutes
+        if (_.all(m, function(i){ return attrs[i.replace(/^\:/, '')] })) {
+          // replace segment real value
+          var single_matched = it;
+          _.each(m, function(i){
+            single_matched = single_matched.replace(i, attrs[i.replace(/^\:/, '')]);
+          });
+          matched.push(single_matched);
+        }
+      // just string
+      } else {
+        not_matched.push(it);
+      }
+    });
+    // return longest matched url or first plain url
+    return _.sortBy(matched, function(it){ return 10000 - it.length })[0] || not_matched[0];
+  }
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
