@@ -184,7 +184,7 @@
     // choose to silence it.
     set : function(key, value, options) {
       var attrs;
-      if (_.isObject(key)) {
+      if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
       } else {
