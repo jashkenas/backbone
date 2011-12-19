@@ -661,12 +661,14 @@
         var args = this._extractParameters(route, fragment);
         callback && callback.apply(this, args);
         this.trigger.apply(this, ['route:' + name].concat(args));
-      }, this));
+      }, this), name);
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate : function(fragment, options) {
-      Backbone.history.navigate(fragment, options);
+      var handler = Backbone.history.navigate(fragment, options);
+      var args = this._extractParameters(handler.route, fragment);
+      this.trigger.apply(this, ['navigate:' + handler.name].concat(args));
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
@@ -794,8 +796,8 @@
 
     // Add a route to be tested when the fragment changes. Routes added later may
     // override previous routes.
-    route : function(route, callback) {
-      this.handlers.unshift({route : route, callback : callback});
+    route : function(route, callback, name) {
+      this.handlers.unshift({route : route, callback : callback, name: name});
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -811,15 +813,14 @@
     // Attempt to load the current URL fragment. If a route succeeds with a
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
-    loadUrl : function(fragmentOverride) {
+    loadUrl : function(fragmentOverride) {    
       var fragment = this.fragment = this.getFragment(fragmentOverride);
-      var matched = _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
-        }
-      });
-      return matched;
+      var handler = this._getHandler(fragment);
+      if (handler) {
+        handler.callback(fragment);
+        return true;
+      }
+      return false;
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
@@ -832,7 +833,9 @@
     navigate : function(fragment, options) {
       if (!options || options === true) options = {trigger: options};
       var frag = (fragment || '').replace(hashStrip, '');
-      if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
+      var handler = this._getHandler(frag);
+      if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return handler;
+    
       if (this._hasPushState) {
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
         this.fragment = frag;
@@ -848,6 +851,17 @@
         }
       }
       if (options.trigger) this.loadUrl(fragment);
+      return handler;
+    },
+
+    // Attempt to load the current URL fragment. If a route succeeds with a
+    // match, returns `true`. If no defined routes matches the fragment,
+    // returns `false`.
+    _getHandler : function(fragment) {
+      var matched = _.find(this.handlers, function(handler) {
+        return handler.route.test(fragment);
+      });
+      return matched;
     },
 
     // Update the hash location, either replacing the current entry, or adding
