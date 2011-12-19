@@ -413,8 +413,14 @@
     // firing the `added` event for every new model.
     add : function(models, options) {
       if (_.isArray(models)) {
-        for (var i = 0, l = models.length; i < l; i++) {
-          this._add(models[i], options);
+        if (options && options.at) {
+          for (var i = models.length - 1; i >= 0; i--) {
+            this._add(models[i], options);
+          }
+        } else {
+          for (var i = 0, l = models.length; i < l; i++) {
+            this._add(models[i], options);
+          }
         }
       } else {
         this._add(models, options);
