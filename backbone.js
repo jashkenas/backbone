@@ -414,6 +414,7 @@
     add : function(models, options) {
       if (_.isArray(models)) {
         for (var i = 0, l = models.length; i < l; i++) {
+          if (options && (options.at == +options.at) && i) options.at += 1;
           this._add(models[i], options);
         }
       } else {
