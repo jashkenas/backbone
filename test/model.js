@@ -254,8 +254,8 @@ $(document).ready(function() {
   test("Model: change, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
     equals(model.changedAttributes(), false);
-    equals(model.previous('name'), false);
-    equals(model.previousAttributes(), false);
+    equals(model.previous('name'), null);
+    equals(model.previousAttributes(), undefined);
     model.bind('change', function() {
       ok(model.hasChanged('name'), 'name changed');
       ok(!model.hasChanged('age'), 'age did not');
