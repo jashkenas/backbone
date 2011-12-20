@@ -186,11 +186,13 @@ $(document).ready(function() {
     equals(i, 2, 'Unset does not fire an event for missing attributes.');
   });
 
-  test("Model: unset and changedAttributes", function() {
+  test("Model: unset changedAttributes and previous", function() {
     var model = new Backbone.Model({a: 1});
     model.unset('a', {silent: true});
     var changedAttributes = model.changedAttributes();
     ok('a' in changedAttributes, 'changedAttributes should contain unset properties');
+
+    equals(model.previous('a'), 1, 'previous should return previous value of unset property');
 
     changedAttributes = model.changedAttributes();
     ok('a' in changedAttributes, 'changedAttributes should contain unset properties when running changedAttributes again after an unset.');
@@ -252,6 +254,8 @@ $(document).ready(function() {
   test("Model: change, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
     equals(model.changedAttributes(), false);
+    equals(model.previous('name'), false);
+    equals(model.previousAttributes(), false);
     model.bind('change', function() {
       ok(model.hasChanged('name'), 'name changed');
       ok(!model.hasChanged('age'), 'age did not');
@@ -262,8 +266,13 @@ $(document).ready(function() {
     model.set({name : 'Rob'}, {silent : true});
     equals(model.hasChanged(), true);
     equals(model.hasChanged('name'), true);
+    equals(model.previous('name'), 'Tim');
+    ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}));
     model.change();
     equals(model.get('name'), 'Rob');
+    equals(model.hasChanged(), false);
+    equals(model.previous('name'), 'Tim');
+    ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}));
   });
 
   test("Model: change with options", function() {
