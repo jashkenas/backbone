@@ -136,7 +136,7 @@
     this.cid = _.uniqueId('c');
     this.set(attributes, {silent : true});
     this._changed = false;
-    this._previousAttributes = _.clone(this.attributes);
+    this._attributes = _.clone(this.attributes);
     if (options && options.collection) this.collection = options.collection;
     this.initialize(attributes, options);
   };
@@ -317,14 +317,15 @@
     // Calling this will cause all objects observing the model to update.
     change : function(options) {
       this.trigger('change', this, options);
-      this._previousAttributes = _.clone(this.attributes);
+      this._previousAttributes = this._attributes;
+      this._attributes = _.clone(this.attributes);
       this._changed = false;
     },
 
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged : function(attr) {
-      if (attr) return this._previousAttributes[attr] != this.attributes[attr];
+      if (attr) return this._attributes[attr] != this.attributes[attr];
       return this._changed;
     },
 
@@ -335,7 +336,7 @@
     changedAttributes : function(now) {
       if (!this._changed) return false;
       now || (now = this.attributes);
-      var changed = false, old = this._previousAttributes;
+      var changed = false, old = this._attributes;
       for (var attr in now) {
         if (_.isEqual(old[attr], now[attr])) continue;
         (changed || (changed = {}))[attr] = now[attr];
@@ -349,14 +350,15 @@
     // Get the previous value of an attribute, recorded at the time the last
     // `"change"` event was fired.
     previous : function(attr) {
-      if (!attr || !this._previousAttributes) return null;
-      return this._previousAttributes[attr];
+      var prevAttrs = this._changed ? this._attributes : this._previousAttributes;
+      if (!attr || !prevAttrs) return null;
+      return prevAttrs[attr];
     },
 
     // Get all of the attributes of the model at the time of the previous
     // `"change"` event.
     previousAttributes : function() {
-      return _.clone(this._previousAttributes);
+      return _.clone(this._changed ? this._attributes : this._previousAttributes);
     },
 
     // Run validation against a set of incoming attributes, returning `true`
