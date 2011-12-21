@@ -124,8 +124,7 @@
     var defaults;
     attributes || (attributes = {});
     if (options && options.parse) attributes = this.parse(attributes);
-    if (defaults = this.defaults) {
-      if (_.isFunction(defaults)) defaults = defaults.call(this);
+    if (defaults = getValue(this, 'defaults')) {
       attributes = _.extend({}, defaults, attributes);
     }
     this.attributes = {};
@@ -180,7 +179,7 @@
     // choose to silence it.
     set : function(key, value, options) {
       var attrs;
-      if (_.isObject(key)) {
+      if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
       } else {
@@ -289,7 +288,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url : function() {
-      var base = getUrl(this.collection) || this.urlRoot || urlError();
+      var base = getValue(this.collection, 'url') || this.urlRoot || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -411,6 +410,7 @@
     add : function(models, options) {
       if (_.isArray(models)) {
         for (var i = 0, l = models.length; i < l; i++) {
+          if (options && (options.at == +options.at) && i) options.at += 1;
           this._add(models[i], options);
         }
       } else {
@@ -634,8 +634,8 @@
 
   // Cached regular expressions for matching named param parts and splatted
   // parts of route strings.
-  var namedParam    = /:([\w\d]+)/g;
-  var splatParam    = /\*([\w\d]+)/g;
+  var namedParam    = /:\w+/g;
+  var splatParam    = /\*\w+/g;
   var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
@@ -683,9 +683,9 @@
     // Convert a route string into a regular expression, suitable for matching
     // against the current location hash.
     _routeToRegExp : function(route) {
-      route = route.replace(escapeRegExp, "\\$&")
-                   .replace(namedParam, "([^\/]*)")
-                   .replace(splatParam, "(.*?)");
+      route = route.replace(escapeRegExp, '\\$&')
+                   .replace(namedParam, '([^\/]*)')
+                   .replace(splatParam, '(.*?)');
       return new RegExp('^' + route + '$');
     },
 
@@ -851,7 +851,7 @@
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
       if (replace) {
-        location.replace(location.toString().replace(/(javascript:|#).*$/, "") + "#" + fragment);
+        location.replace(location.toString().replace(/(javascript:|#).*$/, '') + '#' + fragment);
       } else {
         location.hash = fragment;
       }
@@ -934,8 +934,7 @@
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents : function(events) {
-      if (!(events || (events = this.events))) return;
-      if (_.isFunction(events)) events = events.call(this);
+      if (!(events || (events = getValue(this, 'events')))) return;
       this.undelegateEvents();
       for (var key in events) {
         var method = this[events[key]];
@@ -1031,7 +1030,7 @@
 
     // Ensure that we have a URL.
     if (!options.url) {
-      params.url = getUrl(model) || urlError();
+      params.url = getValue(model, 'url') || urlError();
     }
 
     // Ensure that we have the appropriate request data.
@@ -1112,11 +1111,11 @@
     return child;
   };
 
-  // Helper function to get a URL from a Model or Collection as a property
+  // Helper function to get a value from a Backbone object as a property
   // or as a function.
-  var getUrl = function(object) {
-    if (!(object && object.url)) return null;
-    return _.isFunction(object.url) ? object.url() : object.url;
+  var getValue = function(object, prop) {
+    if (!(object && object[prop])) return null;
+    return _.isFunction(object[prop]) ? object[prop]() : object[prop];
   };
 
   // Throw an error when a URL is needed, and none is supplied.

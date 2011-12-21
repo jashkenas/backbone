@@ -122,20 +122,28 @@ $(document).ready(function() {
     equals(atCol.last(), h);
   });
 
+  test("Collection: add multiple models", function() {
+    var col = new Backbone.Collection([{at: 0}, {at: 1}, {at: 9}]);
+    col.add([{at: 2}, {at: 3}, {at: 4}, {at: 5}, {at: 6}, {at: 7}, {at: 8}], {at: 2});
+    for (var i = 0; i <= 5; i++) {
+      equals(col.at(i).get('at'), i);
+    }
+  });
+
   test("Collection: add model to collection and verify index updates", function() {
     var f = new Backbone.Model({id: 20, label : 'f'});
     var g = new Backbone.Model({id: 21, label : 'g'});
     var h = new Backbone.Model({id: 22, label : 'h'});
     var col = new Backbone.Collection();
-    
+
     var counts = [];
-     
+
     col.bind('add', function(model, collection, options) {
-      counts.push(options.index);  
+      counts.push(options.index);
     });
-    col.add(f); 
-    col.add(g); 
-    col.add(h); 
+    col.add(f);
+    col.add(g);
+    col.add(h);
     ok(_.isEqual(counts, [0,1,2]));
   });
 
@@ -209,15 +217,15 @@ $(document).ready(function() {
     var g = new Backbone.Model({id: 21, label : 'g'});
     var h = new Backbone.Model({id: 22, label : 'h'});
     var col = new Backbone.Collection([f,g,h]);
-    
+
     var counts = [];
-     
+
     col.bind('remove', function(model, collection, options) {
-      counts.push(options.index);  
+      counts.push(options.index);
     });
-    col.remove(h); 
-    col.remove(g); 
-    col.remove(f); 
+    col.remove(h);
+    col.remove(g);
+    col.remove(f);
     ok(_.isEqual(counts, [2,1,0]));
   });
 
