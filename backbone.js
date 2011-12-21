@@ -12,7 +12,7 @@
     factory(root, exports, require('underscore'));
   } else if (typeof define === 'function' && define.amd) {
     // AMD
-    define('backbone', ['underscore', 'jquery', 'exports'], function(_, $, exports) {
+    define(['underscore', 'jquery', 'exports'], function(_, $, exports) {
       factory(root, exports, _, $);
     });
   } else {
