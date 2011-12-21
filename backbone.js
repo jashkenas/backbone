@@ -758,7 +758,12 @@
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
       if (oldIE) {
-        this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
+        var history = this;
+        var src = 'javascript:document.open();document.domain="' + document.domain + '";document.close();';
+        var frame = $('<iframe></iframe>').attr('src', src).hide().bind('load', function() {
+          history.frame = frame.contentWindow;
+        }).appendTo('body');
+
         this.navigate(fragment);
       }
 
