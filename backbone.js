@@ -638,8 +638,8 @@
 
   // Cached regular expressions for matching named param parts and splatted
   // parts of route strings.
-  var namedParam    = /:[\w\d]+/g;
-  var splatParam    = /\*[\w\d]+/g;
+  var namedParam    = /:\w+/g;
+  var splatParam    = /\*\w+/g;
   var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
