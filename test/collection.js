@@ -152,8 +152,33 @@ $(document).ready(function() {
       // no id, same cid
       var a2 = new Backbone.Model({label: a.label});
       a2.cid = a.cid;
-      col.add(a2);
+      col.add(a2, {unique: true});
       ok(false, "duplicate; expected add to fail");
+    } catch (e) {
+      equals(e.message, "Can't add the same model to a set twice,3");
+    }
+  });
+
+  test("Collection: add model with identical cid to collection", function() {
+    // same cid as existing model.
+    try {
+      var a2 = new Backbone.Model({label: a.label});
+      a2.cid = a.cid;
+      var l = col.length;
+      col.add(a2, {unique : true});
+      ok(col.length === l, "duplicate wasn't added.");
+    } catch (e) {
+      equals(e.message, "Can't add the same model to a set twice,3");
+    }
+  });
+
+  test("Collection: add model with identical id to collection", function() {
+    try {
+      // same id as existing model.
+      var a2 = new Backbone.Model({label: a.label, id : a.id});
+      var l = col.length;
+      col.add(a2, {unique : true});
+      ok(col.length === l, "duplicate wasn't added.");
     } catch (e) {
       equals(e.message, "Can't add the same model to a set twice,3");
     }
