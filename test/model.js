@@ -87,6 +87,18 @@ $(document).ready(function() {
     equals(model.url(), '/collection/%2B1%2B');
   });
 
+  test("Model: url when using urlRoot as a function to determine urlRoot at runtime", function() {
+    var Model = Backbone.Model.extend({
+      urlRoot: function() { return '/nested/' + this.get('parent_id') + '/collection'}
+      // looks better in coffeescript: urlRoot: => "/nested/#{@get('parent_id')}/collection"
+    });	
+
+    var model = new Model({parent_id: 1});
+    equals(model.url(), '/nested/1/collection');
+    model.set({id: 2});
+    equals(model.url(), '/nested/1/collection/2');
+  });
+
   test("Model: clone", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
