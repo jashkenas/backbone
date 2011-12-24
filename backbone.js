@@ -731,7 +731,7 @@
     // the hash, or the override.
     getFragment : function(fragment, forcePushState) {
       if (fragment == null) {
-        if (this._hasPushState || forcePushState) {
+        if (this._hasPushState || this._orBust || forcePushState) {
           fragment = window.location.pathname;
           var search = window.location.search;
           if (search) fragment += search;
@@ -752,8 +752,9 @@
       // Is pushState desired ... is it available?
       if (historyStarted) throw new Error("Backbone.history has already been started");
       this.options          = _.extend({}, {root: '/'}, this.options, options);
-      this._wantsPushState  = !!this.options.pushState;
-      this._hasPushState    = !!(this.options.pushState && window.history && window.history.pushState);
+      this._wantsPushState  = !!(this.options.pushState || this.options.pushStateOrBust);
+      this._hasPushState    = !!(this._wantsPushState && window.history && window.history.pushState);
+      this._orBust          = !!(!this._hasPushState && this._wantsPushState && this.options.pushStateOrBust);
       var fragment          = this.getFragment();
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
@@ -764,8 +765,10 @@
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState) {
-        $(window).bind('popstate', this.checkUrl);
+      if (this._wantsPushState) {
+        if (this._hasPushState) {
+          $(window).bind('popstate', this.checkUrl);
+        }
       } else if ('onhashchange' in window && !oldIE) {
         $(window).bind('hashchange', this.checkUrl);
       } else {
@@ -838,6 +841,12 @@
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
         this.fragment = frag;
         window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, frag);
+      } else if (this._orBust) {
+        var loc = window.location;
+        if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
+        // this will just redirect
+        window.location.assign(loc.protocol + '//' + loc.host + frag);
+        options.trigger = false;
       } else {
         this.fragment = frag;
         this._updateHash(window.location, frag, options.replace);
