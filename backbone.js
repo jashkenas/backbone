@@ -930,6 +930,7 @@
     //     {
     //       'mousedown .title':  'edit',
     //       'click .button':     'save'
+    //       'click a': function (evnt) { ... }
     //     }
     //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
@@ -941,7 +942,8 @@
       if (!(events || (events = getValue(this, 'events')))) return;
       this.undelegateEvents();
       for (var key in events) {
-        var method = this[events[key]];
+        var method = events[key];
+        if (!_.isFunction(method)) method = this[events[key]];
         if (!method) throw new Error('Event "' + events[key] + '" does not exist');
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];

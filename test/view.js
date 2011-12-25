@@ -56,6 +56,20 @@ $(document).ready(function() {
     equals(counter2, 3);
   });
 
+  test("View: delegateEvents allows functions for callbacks", function() {
+    var counter = 0;
+    view.el = "#qunit-banner";
+    var events = {"click": function() { counter++; }};
+    view.delegateEvents(events);
+    $('#qunit-banner').trigger('click');
+    equals(counter, 1);
+    $('#qunit-banner').trigger('click');
+    equals(counter, 2);
+    view.delegateEvents(events);
+    $('#qunit-banner').trigger('click');
+    equals(counter, 3);
+  });
+
   test("View: undelegateEvents", function() {
     var counter = counter2 = 0;
     view.el = document.body;
