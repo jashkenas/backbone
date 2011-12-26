@@ -684,7 +684,30 @@ if (note.has("title")) {
       Models can be retrieved by id from collections, and the id is used to generate
       model URLs by default.
     </p>
+    
+    <p id="Model-idAttribute">
+      <b class="header">idAttribute</b><code>model.idAttribute</code>
+      <br />
+      By default a model assumes its unique identifier is stored
+      under the <b>id</b> attribute. 
+      In certain situations, for example when using CouchDB where the
+      identifying attribute is called <b>_id</b>, overwriting the property
+      name is necessary.
+      Setting the <b>idAttribute</b> during a model definition will
+      set the model's <b>id</b> to the value of the idAttribute property 
+      instead. When referencing the model's <b>id</b>, continue 
+      using <b>model.id</b>.
+      
+<pre class="runnable">
+var Meal = Backbone.Model.extend({
+  idAttribute: "_id"
+});
 
+var cake = new Meal({ _id: 1, name: "Cake" });
+alert("Cake id: " + cake.id);
+</pre>
+    </p>
+    
     <p id="Model-cid">
       <b class="header">cid</b><code>model.cid</code>
       <br />
