@@ -292,7 +292,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url : function(method,params) {
-      var base = getValue(this.collection, 'url', method, params) || this.urlRoot || urlError();
+      var base = getValue(this.collection, 'url', method, params) || getValue(this, 'urlRoot', method, params) || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id);
     },
