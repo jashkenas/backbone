@@ -291,8 +291,8 @@
     // Default URL for the model's representation on the server -- if you're
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
-    url : function(method,params) {
-      var base = getValue(this.collection, 'url', method, params) || getValue(this, 'urlRoot', method, params) || urlError();
+    url : function() {
+      var base = getValue.apply(null, [this.collection,'url'].concat(arguments)) || getValue.apply(null, [this,'urlRoot'].concat(arguments)) || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -1117,9 +1117,13 @@
 
   // Helper function to get a value from a Backbone object as a property
   // or as a function.
-  var getValue = function(object, prop, method, params) {
+  var getValue = function(object, prop) {
     if (!(object && object[prop])) return null;
-    return _.isFunction(object[prop]) ? object[prop](method,params) : object[prop];
+    if (_.isFunction(object[prop]) {
+    	return object[prop].apply(object, Array.prototype.slice.call(arguments,2));
+    } else {
+    	return object[prop];
+    }
   };
 
   // Throw an error when a URL is needed, and none is supplied.
