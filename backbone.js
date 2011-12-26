@@ -292,7 +292,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url : function() {
-      var base = getValue(this.collection, 'url') || this.urlRoot || urlError();
+      var base = getValue(this.collection, 'url') || getValue(this, 'urlRoot') || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -638,8 +638,8 @@
 
   // Cached regular expressions for matching named param parts and splatted
   // parts of route strings.
-  var namedParam    = /:([\w\d]+)/g;
-  var splatParam    = /\*([\w\d]+)/g;
+  var namedParam    = /:\w+/g;
+  var splatParam    = /\*\w+/g;
   var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
@@ -687,9 +687,9 @@
     // Convert a route string into a regular expression, suitable for matching
     // against the current location hash.
     _routeToRegExp : function(route) {
-      route = route.replace(escapeRegExp, "\\$&")
-                   .replace(namedParam, "([^\/]*)")
-                   .replace(splatParam, "(.*?)");
+      route = route.replace(escapeRegExp, '\\$&')
+                   .replace(namedParam, '([^\/]*)')
+                   .replace(splatParam, '(.*?)');
       return new RegExp('^' + route + '$');
     },
 
@@ -855,7 +855,7 @@
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
       if (replace) {
-        location.replace(location.toString().replace(/(javascript:|#).*$/, "") + "#" + fragment);
+        location.replace(location.toString().replace(/(javascript:|#).*$/, '') + '#' + fragment);
       } else {
         location.hash = fragment;
       }
