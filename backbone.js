@@ -464,7 +464,10 @@
 
     // Pluck an attribute from each model in the collection.
     pluck : function(attr) {
-      return _.map(this.models, function(model){ return model.get(attr); });
+      return _.map(this.models, function(model){
+        attr = (attr === 'id') ? model.idAttribute : attr;
+        return model.get(attr);
+      });
     },
 
     // When you have more items than you want to add or remove individually,
