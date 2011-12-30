@@ -689,15 +689,10 @@ if (note.has("title")) {
     <p id="Model-idAttribute">
       <b class="header">idAttribute</b><code>model.idAttribute</code>
       <br />
-      By default a model assumes its unique identifier is stored
-      under the <b>id</b> attribute. 
-      In certain situations, for example when using CouchDB where the
-      identifying attribute is called <b>_id</b>, overwriting the property
-      name is necessary.
-      Setting the <b>idAttribute</b> during a model definition will
-      set the model's <b>id</b> to the value of the idAttribute property 
-      instead. When referencing the model's <b>id</b>, continue 
-      using <b>model.id</b>.
+      A model's unique identifier is stored under the <tt>id</tt> attribute.
+      If you're directly communicating with a backend (CouchDB, MongoDB) that uses
+      a different unique key, you may set a Model's <tt>idAttribute</tt> to 
+      transparently map from that key to <tt>id</tt>. 
       
 <pre class="runnable">
 var Meal = Backbone.Model.extend({
