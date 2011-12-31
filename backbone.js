@@ -265,7 +265,7 @@
       var model = this;
       // If a partialUpdate is required, create a member on the options
 	  // hash called updateAttrs and set it to attrs
-	  if (options.partialUpdate != "undefined" && options.partialUpdate) {
+	  if (options.partialUpdate != undefined && options.partialUpdate) {
 	    options.updateAttrs = attrs;
 	  }
       var success = options.success;
@@ -1048,7 +1048,7 @@
 	  
 	  // If doing a partial model update, then grab the updateAttrs 
       // member from options.
-      params.data = (options.partialUpdate != "undefined" && options.partialUpdate)
+      params.data = (options.partialUpdate != undefined && options.partialUpdate)
                   ? params.data = JSON.stringify(options.updateAttrs)
                   : params.data = JSON.stringify(model.toJSON());
     }
