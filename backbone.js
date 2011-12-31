@@ -1039,9 +1039,13 @@
 
     // Ensure that we have the appropriate request data.
     if (!options.data && model && (method == 'create' || method == 'update')) {
-      params.contentType = 'application/json';
       params.data = JSON.stringify(model.toJSON());
     }
+    
+	// If the request method is anything other than GET, use 'application/json' as contentType
+	if (!options.contentType && (method == 'create' || method == 'update' || method == 'delete')) {
+		params.contentType = 'application/json';
+	}
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (Backbone.emulateJSON) {

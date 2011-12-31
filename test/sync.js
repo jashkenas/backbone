@@ -109,6 +109,7 @@ $(document).ready(function() {
     library.first().destroy();
     equals(lastRequest.url, '/library/2-the-tempest');
     equals(lastRequest.type, 'DELETE');
+    equals(lastRequest.contentType, 'application/json');
     equals(lastRequest.data, null);
   });
 
@@ -117,6 +118,7 @@ $(document).ready(function() {
     library.first().destroy();
     equals(lastRequest.url, '/library/2-the-tempest');
     equals(lastRequest.type, 'POST');
+    equals(lastRequest.contentType, 'application/json');
     equals(JSON.stringify(lastRequest.data), '{"_method":"DELETE"}');
     Backbone.emulateHTTP = Backbone.emulateJSON = false;
   });
