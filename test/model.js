@@ -312,6 +312,28 @@ $(document).ready(function() {
     equals(lastError, "Can't change admin status.");
   });
 
+  test("Model: validate only if it's being saved", function() {
+    var lastError, model = new Backbone.Model({name: "Tim"});
+    model.validate = function(attrs, options) {
+      attrs = _.extend(model.attributes, attrs);
+      if (options.saving)
+        if (attrs.name === "") return "Can't have a blank name.";
+    };
+    ok(model.set({name: ''}), 'should allow name to be blank temporarily');
+
+    model.save(null, {error: function(model, error) {
+      lastError = error;
+    }});
+    equals(lastError, "Can't have a blank name.");
+
+    model.set({name: 'Bob'});
+    model.sync = function(method, model, options) {
+      options.success.call(this, {name: ''});
+    };
+    model.save();
+    equals(model.get('name'), "");
+  });
+
   test("Model: save", function() {
     doc.save({title : "Henry V"});
     equals(lastRequest[0], 'update');
