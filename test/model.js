@@ -360,6 +360,18 @@ $(document).ready(function() {
     equals(lastError, "Can't change admin status.");
   });
 
+  test("Model: skip validation if specified", function() {
+    var error
+    var model = new Backbone.Model();
+    model.validate = function(attrs) {
+      error = true;
+      return "Not valid no matter what.";
+    };
+    model.set({name: ""}, {skipValidation: true});
+    equals(model.get('name'), '');
+    equals(error, undefined);
+  });
+
   test("Model: validate on unset and clear", function() {
     var error;
     var model = new Backbone.Model({name: "One"});
