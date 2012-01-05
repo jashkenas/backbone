@@ -91,6 +91,11 @@
       width: 950px;
       margin: 40px 0 50px 260px;
     }
+    .container-fixed.narrow {
+      position: relative;
+      width: 550px;
+      margin: 0px 0 50px 260px;
+    }
     
     div.run {
       position: absolute;
@@ -228,7 +233,10 @@
     
     
     /* Visual Explanation */
-    
+    #componants {
+      margin-top: 90px;
+      display: block;
+    }
     #componants section {
       float: left;
       margin: 0px 30px 50px 0;
@@ -279,7 +287,6 @@
     </h1>
     <h2 id="subtitle" class="os-light">Structure for your JavaScript</h2>
   </header>
-  <hr class="space">
   
     <div class="container">
     <figure id="componants">
@@ -328,8 +335,8 @@
           Register events to bubble across models, collections and views.
         </p>
       </section>
+      <hr class="space">
     </figure>
-    <hr class="space">
 
     <section class="third">
       <h2>
@@ -364,17 +371,17 @@
 
     <section class="third">
       <h2>Hello World</h2>
-    <pre class="runnable">
-    var object = {};
+<pre class="runnable">
+var Ppl = Backbone.Collection.extend({
+  model: Backbone.model
+});
+var ppl = new Ppl;
 
-    _.extend(object, Backbone.Events);
+ppl.add({ id: 1, name: 'doug' });
 
-    object.bind("alert", function(msg) {
-      alert("Triggered " + msg);
-    });
+alert( ppl.get(1).get('name') );
 
-    object.trigger("alert", "an event");
-    </pre>
+</pre>
       </section>
     </div>
   </div>
@@ -383,7 +390,7 @@
 
   <footer class="container">
     <section class="third">
-      <h3><a href="/">Backbone.js</a></h3>
+      <h3>Backbone.js</h3>
       <nav>
         <ul>
           <li><a href="">Home</a></li>
@@ -401,7 +408,7 @@
           <li><a href="/docs/backbone.html">Annotated source</a></li>
           <li><a href="/test/test.html">Hosted test suite</a></li>
           <li><a href="/examples/todos/index.html">Example application</a></li>
-          <li><a href="https://github.com/documentcloud/backbone/wiki/Tutorials%2C-blog-posts-and-example-sites">list of tutorials</a></li>
+          <li><a href="https://github.com/documentcloud/backbone/wiki/Tutorials%2C-blog-posts-and-example-sites">List of tutorials</a></li>
         </ul>
       </nav>
     </section>

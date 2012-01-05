@@ -50,8 +50,8 @@ type: normal
           Register events to bubble across models, collections and views.
         </p>
       </section>
+      <hr class="space">
     </figure>
-    <hr class="space">
 
     <section class="third">
       <h2>
@@ -86,17 +86,17 @@ type: normal
 
     <section class="third">
       <h2>Hello World</h2>
-    <pre class="runnable">
-    var object = {};
+<pre class="runnable">
+var Ppl = Backbone.Collection.extend({
+  model: Backbone.model
+});
+var ppl = new Ppl;
 
-    _.extend(object, Backbone.Events);
+ppl.add({ id: 1, name: 'doug' });
 
-    object.bind("alert", function(msg) {
-      alert("Triggered " + msg);
-    });
+alert( ppl.get(1).get('name') );
 
-    object.trigger("alert", "an event");
-    </pre>
+</pre>
       </section>
     </div>
   </div>
