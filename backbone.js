@@ -263,6 +263,7 @@
     save : function(attrs, options) {
       options || (options = {});
       if (attrs && !this.set(attrs, options)) return false;
+      if (!attrs && this.validate && !this._performValidation({}, options)) return false;
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
