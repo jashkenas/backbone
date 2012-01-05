@@ -1,9 +1,287 @@
----
-layout: default
-title: Home
-type: normal
----
-  <div class="container">
+<!DOCTYPE html>
+<html>
+<head> 
+  <meta charset="utf-8">
+  <!--
+   ____             _     _                        _     
+  |  _ \           | |   | |                      (_)    
+  | |_) | __ _  ___| | __| |__   ___  _ __   ___   _ ___ 
+  |  _ < / _` |/ __| |/ /| '_ \ / _ \| '_ \ / _ \ | / __|
+  | |_) | (_| | (__|   < | |_) | (_) | | | |  __/_| \__ \
+  |____/ \__,_|\___|_|\_\|_.__/ \___/|_| |_|\___(_) |___/
+                                                 _/ |    
+                                                |__/
+  -->
+  <title>Backbone.js</title>  
+  <!--
+    If we're in > IE9, shim them new semantic elements in there
+  -->
+  <!--[if lt IE 9]>
+  <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  
+  <!--
+    Include styles directly in the head so that
+    these pages can be passed around stand alone
+    and served easily
+  -->
+  <!-- The Backbone Font -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+  <style>
+    /* Jeremy's original styles. Dude's got style. */
+    body {
+      font-size: 14px;
+      line-height: 22px;
+      font-family: Helvetica Neue, Helvetica, Arial;
+      background: #f4f4f4 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAB95JREFUeNq82dl23DoSRFFVSZ7+/1O9lse23EHu8jHt+3q7+VDiACRyiIxMQLdPnz79+PHj5eVlv+/fv//58+ftdvv27dvT09Pr6+se37179/Xr1w8fPnz+/Hm/e7+R+7Qpr+f15s2bp/P6z3ltyt48Pz9Pzqbs1+MG7HFLfP/+fS83bHOfz+t+vxu5tby8k7iZe2W9XRtn5vTY/X6/fPkyPdJpy2+AtWfDRu53A0zZyw3YyI3fdDe7Nn4Wbti+vn37disyY58SzoDbxu3Pvu15g6afb1PfaG8sP1tN3uPWm93cvOl73KyN2XrebIzB3ljPm/1urhW9FAch2sv7/vDq8XCuZObG0cn7ab/f+Yw4sziVoXu5WXvjfl+nYiP5GDYCySZ+OC9+2UswmJDDn/ssIl4RIbLzGX9ktyVNAZfJNXcvpze1aLmX4XW/m57Nu0nvPU5mX/f+zivTxmT3U4hvFv6W2QLUvZ0Xudy5R58osYlbI6S7vpwX7T1uzLTZMIFr5AHo/VmA+Bk4eILd8mi/HLYlNz8pk8vNEgIc2QDshJg7CyldKgDrt/OaKhL/AfnDY2d+Wga2BH5rS5ZptgnTXiB4nvSpZYrxIm58orb29JO2sYnkmByeps2GGXwHNKGkL+I5cHdipYQikQ2tLfR4ZKL3yCXg7BP0wIYcnNgf57WXFsUywjVf3IB/UoT56XKBs6wJj8xiqzWYgaim02ZBJOSJO2aZNliKyyNh9mf2QZwITVKwwGMcKFLyPLLmGAqhsbIEa3OYYiBXFAwJTiwVydxLOgwqR7ihUnYwUTJyEgcAEHBIdboGZ+G4wt8CSH9mgBGKQeAVCRQqfPvdgMN/cB3k2RqLlMlx2G72VSkM71P9WmH+khBhKohbDutOIGkbAKN0OuiTM7AtN5RlQWf2wbjAF1x200lGYyb8h5wJIXY3mKUQybaKh2GHSvsA7D7oJtS4MLt74ugUiauMr7+u3MN0EKw21DKUTASKI8dvOWnxYDzgDU+UEPsWfjmvRO+GtxrPDfJf7N6eVzWROxUfkeFaCnDExh/MAvn/VuXfFMkYyABZYkopbt5IIY5CD7o6lz7i26o+h5tEk8ugiRZZKc2MTcSc9JZ0pbbICg0JMKBtiaWVk4r94VUrWRs8a+J4UerRCUGAQu/FkXeRFiG7GYxgI42llETG7PjSmwdTprWmitbcTgmO0RjK7aNmnaWpyLIyupJcfB/8DVOj6mosaiTw/aHWteaEMNzYHMUfo9aPC4Eb8Nra9f4VwSBYqtIGs1T+ZcDBLFFieGz7ECdtgft5cTWymec0gDF+OYVWNgAzeY+00AQ6NPgqRDk/oqkbFsdSjBJXEroWcqLhF2fi0jK/btEwZpRYW0W6cI9P2jj0eSQptEbrZKWTmNJYjhAxPbARLaUb26JsLZemcv6mbu0NJaSkaKBWHeiji0+VK84AC6nKcLCrCln72qeLuzAJBwwVNZZUvKFFKcy2I58MLRy75Pl1B4tpICYYcfhf2xCQioSrgEjL+8pU2pekHg9IWEyAKkTPvy6Nds17cSxATJqQ9+dFKKfWqWIsVUUut0+OBWt6rX4DFNbHMcLEsZbR+7aD/Wtr30rtjuC1LpT7uYo79cMPJU61mI0Rbx8/fqzT+ucGsCIdW0L6VNFoZC4KEJE0KNBpJlXVK9hNSMx8lG1zaoKr/xpcPUJb3D3ahLGVNnsp0SJPZRg1VNT5iZ10Mt4AHuGzQ1GerO/hVYBARchMvK6VXzvF/9cuQ4vSFjdeYJuF+BtaaA+gufyBWUarGNFpJZYjOVWhbcPOXAnPpPZw2vb2pVo83Ytuqk+d8LTZ/F1xRZ3dYideiO2aR7Ub9HbS1JZhIzvYESyf6jGvdFBw7bklzeFvTXMb0UciXEhVYZHAnRaJo19nBVfkyhKq64uYtyVDT32iQgRhUuSQbC/fc2di0lVedBxSb14TITlAcL9TEUGgNAbURRqgiaoPsyu57jePWdc9TF5VWywPAQ8jziSoFZPqHByr2UppLdEenAiCS0unFyK2M4tpchCh0n2tlBVmM6+M1Ubjf71ZevQkjvbaQVhe+DA+nfSuKIfDJCbPqR61IYTw2VWy8R188H3dogR6Ub0fBxK/2qw2J+VOtARJagC4ZE/n0MFRBEMb9sf1V1K0EDWw5r0YdUpW81r7ANrtWNB0rMZzde6wUuoMK52AEmVkpyl1ab2H13u9B+YgtIYTI3fo0I60sxBwiZZ4q+MkKPbeOS8lRLDz3/bcwfeFQtfDnXZLlWFAbnteO1XJk+FutMLX6OPJvw7SQ86kIRTW/s7EtoQxjfl5zsY3t11PUNojoZJQ2IlBmU4z8Iqxebcd/OPcNVCLphiB2hQyGiQdv7bpu+6JAYgqkOvfIo4hiI3ZVQvAqu2mOocdaaSMt3YoacMumWsufu8wz/aGoGlcqeawGKcc1Adcd2CkdQIPagJyv55tdCLSIac2KNjltnYADahsy+gaww4vaJ/Y9m1s/iOCS6YaqWsfHGXEYfjp/7ajvHfkhZA0ME1QRq4nABVaNM1628ameGwnIqNpgzUkByZzTnZtER5qdW5R59m2RziYUpPeZr96otZWHzNDZDture3WShSZiYr6H/CoB9cmdORX/nPPdbPAZ1ijc9722Xa8ALT7/g2Dx+ukBcuUUMv+/f5XgAEA6lpT0Z1CkWAAAAAASUVORK5CYII=');
+    }
+    .interface {
+      font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif !important;
+    }
+    div#sidebar {
+      background: #fff;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 200px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 15px 0 30px 30px;
+      border-right: 1px solid #ddd;
+      box-shadow: 0 0 20px #ccc; -webkit-box-shadow: 0 0 20px #ccc; -moz-box-shadow: 0 0 20px #ccc;
+    }
+      a.toc_title, a.toc_title:visited {
+        display: block;
+        color: black;
+        font-weight: bold;
+        margin-top: 15px;
+      }
+        a.toc_title:hover {
+          text-decoration: underline;
+        }
+        #sidebar .version {
+          font-size: 10px;
+          font-weight: normal;
+        }
+      ul.toc_section {
+        font-size: 11px;
+        line-height: 14px;
+        margin: 5px 0 0 0;
+        padding-left: 0px;
+        list-style-type: none;
+        font-family: Lucida Grande;
+      }
+        .toc_section li {
+          cursor: pointer;
+          margin: 0 0 3px 0;
+        }
+          .toc_section li a {
+            text-decoration: none;
+            color: black;
+          }
+            .toc_section li a:hover {
+              text-decoration: underline;
+            }
+    .container {
+      position: relative;
+      width: 950px;
+      margin: 40px auto 50px auto;
+    }
+    .container-fixed {
+      position: relative;
+      width: 950px;
+      margin: 40px 0 50px 260px;
+    }
+    
+    div.run {
+      position: absolute;
+      right: 15px;
+      width: 26px; height: 18px;
+      background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE0AAAASCAYAAAAe0VOSAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABHVJREFUeNq0WDlLM1EUvTHjElyCiooLghsJgriCKOJSuBVaiIWNjQr+Av+Fnb2N9jYWdtqIKyhYWimIG2gSl7j75Vy8w0uYNxM/Zx4MSSYz77x77rnn3RnfxsZGJBgMkmEY5NWIxWL09fVFwMGn28Pn89H7+zs9Pj5SZmYm+f1+T+L4/v4GTsyIx+PB7u5uys/P94y0nZ0dDqqtrY3e3t5cnz8rK4tub29pf3+fysvLqbKykgPE4dbIyMigBFd0enoaYHm9vr4yaR8fH64HBAVDXQgAoCDP7YH5JRnAy8nJMTHdGlAv5kyoOm5A2lIyXpSOKm3M7wWGStDn5ycT6LbSgCEJN+QEwHDobsjNzeXvWBCuw4JAuNNQ53TCyM7Opry8PHp+fuYFpkswKuRHBWYsOtJwrqCggL9D+b+pLpmXlYYfuFk3QSAQoJWVFSopKaH+/n7+DfJeXl4ciYMXqCrQkYZNYm9vj9bW1mh+fp5qa2t57mg0yvfY4UjpqALQkYbkLy4uUllZGU1MTDAu4nh6enKMJYk0KRtdZuETJycndHx8TIeHhzQ8PExNTU2cMQRlpzohCdeIInQYDw8PtLq6yjjAGBsbo1AoxJ4LHCRApzQhVkgTzNSB3fXo6Ii2t7dpa2uLpqamqKuri0pLS+nm5obvtcJRbcxUGspBZ9I4jwxhl0JAAG1tbaWBgQH+xP0IzM7PhEAdBu4HcUVFRUzQ8vIyra+vM3Gjo6OsvPv7e+38KmmCYUUa/oO6UC2I5eDggDo7O2l8fJyrCGuAPVjZB5LDSlNP6EpHyhYZAHm4HqWEVqK5uZllXldXZ9lOSNZ+ehwthpQuAoe3YQeE5ywtLbE1TE5O0vT0tGkNOhWoFmBFmgSOkkbHgO+7u7u0ublJ7e3tNDc3Rx0dHYytuzfJ0+xIU0sQi8YiKyoquC8qLCw0NwgrWcvinTDEzAUHzSosoKamhqqrqzlhUIFViatKkyTbkSYYUDgOwUA8+G3l73IuqTx1G4EEi2sikQib6MjICPX09DAIygZmqisdOew2AsHAAbJATm9vL3tbX18f/w9sO+9USVOTZZUcxHJ3d0fFxcU0MzPD8YTDYfY1YKfiiCeb5SmLtQsI7KMdgMdAvui6YdxXV1dagxalpS5Y13KAeFyDTQYegycI7NiXl5eOPVdqeepIw3UoPfgzyn1wcJDq6+s5lvPzc20skvSk3dOONGQeOwx8paqqihd0fX1t2Ys5bdk60oABH1tYWOBA4F1oA87OzmyTojbOqtLUVif1ORgVMjs7Sw0NDbybXlxcmCWri8WSNDuTxiJaWlr4BmTkN119uuWJHRObSWNjIysBJErQTnggSNQl/qwjDXEODQ3xnPIiId1nz1+VJway/teBBduVGcpT543pKC2d5hYDif8fDOEnqTy9evZUleblc206j3WuvIRAv+I1GKSNQ2fObr1TQyxSEWhS3X41hLkTGAEjIdUofjiZ7V+GeIHqU24TJmpGvwhP9EIIUHMiGbF/AgwAvUU0Wd+gT9wAAAAASUVORK5CYII=') no-repeat -26px 0;
+    }
+      div.run:active {
+        background-position: -51px 0;
+      }
+    .third div.run {
+      margin-top:-33px;
+    }
+    p, div.container ul {
+      margin: 11px 0;
+    }
+      p.warning {
+        font-size: 12px;
+        line-height: 18px;
+        font-style: italic;
+      }
+      div.container ul {
+        list-style: circle;
+        font-size: 12px;
+        padding-left: 15px;
+      }
+    a, a:visited {
+      color: #444;
+    }
+    a:active, a:hover {
+      color: #000;
+    }
+    a img {
+      border: 0;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      padding-top: 20px;
+    }
+      h2 {
+        font-size: 20px;
+      }
+    b.header {
+      font-size: 16px;
+      line-height: 30px;
+    }
+    span.alias {
+      font-size: 14px;
+      font-style: italic;
+      margin-left: 20px;
+    }
+    table {
+      margin: 15px 0 0; padding: 0;
+    }
+      tr, td {
+        margin: 0; padding: 0;
+      }
+        td {
+          padding: 0px 15px 5px 0;
+        }
+    code, pre, tt {
+      font-family: Monaco, Consolas, "Lucida Console", monospace;
+      font-size: 12px;
+      line-height: 18px;
+      font-style: normal;
+    }
+      tt {
+        padding: 0px 3px;
+        background: #fff;
+        border: 1px solid #ddd;
+        zoom: 1;
+      }
+      code {
+        margin-left: 20px;
+      }
+      pre {
+        font-size: 12px;
+        padding: 2px 0 2px 10px;
+        border: 4px solid #bbb; border-top: 0; border-bottom: 0;
+        margin: 0px 0 30px;
+      }
+      img.example_image {
+        margin: 0px auto;
+      }
+    
+    /* Header */
+    header h1 {
+      background: url('data:image/png;base64,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') no-repeat;
+      padding: 10px 0 30px 80px;
+      margin: 0px;
+      font-size: 60px;
+      line-height: 1;
+    }
+    
+    header h2 {
+      font-size: 15px;
+      margin: -50px 0px 70px 150px;
+    }
+    
+    /* Nav */
+    header nav {
+      margin: 20px 80px 0 0;
+      float: right;
+      background: rgba(0,0,0,.1);
+    }
+    header nav ul li {
+      display: inline;
+      margin: 0;
+    }
+    header nav a {
+      text-decoration: none;
+      padding: 10px;
+      font-size: 16px;
+    }
+    header nav ul{
+      padding: 0px;
+    }
+    footer {
+      border-top: 1px solid #c2c2c2;
+    }
+    /* Fonts */
+    .os {
+      font-family: 'Open Sans', sans-serif;
+    }
+    .os-light {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+    }
+    
+    /* Utilities */
+    hr.space {
+      width: 100%;
+      clear: both;
+      visibility: hidden;
+    }
+    
+    
+    /* Visual Explanation */
+    
+    #componants section {
+      float: left;
+      margin: 0px 30px 50px 0;
+      display: block;
+      width: 140px;
+      text-align: center;
+    }
+      #componants h3, #componants h4 {
+        padding: 0;
+        margin: 0;
+        text-align: center;
+      }
+      #componants h3 a {
+        text-decoration: none;
+      }
+    .half {
+      float: left;
+      width: 40%;
+      margin-right: 8%;
+    }  
+    .third {
+      float: left;
+      width: 32%;
+      margin-right: 1%;
+    }
+    .badge {
+      background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAATCAYAAACZZ43PAAAACXBIWXMAAAsTAAALEwEAmpwYAAABZGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNC40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iPgogICAgICAgICA8eG1wOkNyZWF0b3JUb29sPkFkb2JlIEltYWdlUmVhZHk8L3htcDpDcmVhdG9yVG9vbD4KICAgICAgPC9yZGY6RGVzY3JpcHRpb24+CiAgIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+Chvleg4AAAJuSURBVDgRlVRdSFRREP5mdws3STeR3c0oEolg04eKnqIVtZStsB4CXyMlWXrQJUX6oYcNjGCTQoj+fOsliDBkFxJsqcCIiEIKiSQFIXKxCDVr/+40Z6/3Z8ugDpw7M9/MN2fumbmXEGhgMCbAFObJsXH8w6KexAFouCqhASokMEhMl8HaDZ5MzhiQXVLvSDXyrk6A+wy8OIGBAlEs8yWeTv5UEPWOliKXOwfCGStE1/6WQHkZmZwPIeE4eU7I9DtZ2Q4bmIbG1abtLiPsD6cwfiuF9KJFJtcWiUkbcfYEXHh3l8eHPW1A8CSwdh2QWQae3ARe3ssjk67kK82zQuZVEhBRJB5FU8dHVGw2/Jb8OutEcnCaAo1RAc2K9DvYVAfUtljBuvZexAWMxkpEnpUztxcF1IWAqh2S6cQdRvlGu+8zHNTPsdCgHaRAUzeo0D6/iXuq4Coiz30A3gzfhXv9ECAn2NehvtvI57bi1f0uzM/onm+fbF3QckJ+KA7qwY+lFNU2XDT4FEn0yxykxO7C7mPSO5fhkgrMRXlRF2RvkF0qo32edrW2Ye9xB9aU1JhhoC+AVi52gWu10eHM8rvHFXIrp1DmA3YeBfa1b5MW1uD1MLCoCkCYB0KV0FS5+rJVIMWraes+7VdKYeWzukxNAWoTvMBBHVt5EiJxcyiKPMrIZ58ieV3JoOUjTebIrNxUrACl0ZJ8AEG+dqSeJx7VS0WtAn7XYyyysv9MQNQOeLw80PJMJ8h5b8dG4F7wgrnDwAxpewV+AAd3cuzwvOFcTUp7/dBoSO5j5TIi8eeIJJqZ5cf0HxuBxpD8jF78AkNm6F61I7sXAAAAAElFTkSuQmCC') 0px 4px no-repeat;
+      padding: 2px 2px 2px 19px;
+      text-decoration: none;
+      font-size: 16px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+    }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav>
+      <ul>
+        <li><a href="">Home</a></li>
+        <li><a href="docs">Documentation</a></li>
+        <li><a href="https://github.com/documentcloud/backbone/wiki/Extensions%2C-Plugins%2C-Resources">Plugins</a></li>
+        <li><a href="examples">Examples</a></li>
+      </ul>
+    </nav>
+    <h1 id="title" class="os-light">
+      BACKBONE.JS
+    </h1>
+    <h2 id="subtitle" class="os-light">Structure for your JavaScript</h2>
+  </header>
+  <hr class="space">
+  
+    <div class="container">
     <figure id="componants">
       <section>
         <a href="/docs/#Model">
@@ -100,3 +378,65 @@ type: normal
       </section>
     </div>
   </div>
+  
+  <hr class="space">
+
+  <footer class="container">
+    <section class="third">
+      <h3><a href="/">Backbone.js</a></h3>
+      <nav>
+        <ul>
+          <li><a href="">Home</a></li>
+          <li><a href="docs">Documentation</a></li>
+          <li><a href="https://github.com/documentcloud/backbone/wiki/Extensions%2C-Plugins%2C-Resources">Plugins</a></li>
+          <li><a href="examples">Examples</a></li>
+        </ul>
+      </nav>
+    </section>
+    <section class="third">
+      <h3>Meta</h3>
+      <nav>
+        <ul>
+          <li><a href="http://github.com/documentcloud/backbone/">GitHub project</a></li>
+          <li><a href="/docs/backbone.html">Annotated source</a></li>
+          <li><a href="/test/test.html">Hosted test suite</a></li>
+          <li><a href="/examples/todos/index.html">Example application</a></li>
+          <li><a href="https://github.com/documentcloud/backbone/wiki/Tutorials%2C-blog-posts-and-example-sites">list of tutorials</a></li>
+        </ul>
+      </nav>
+    </section>
+    <section class="third">
+      <nav>
+        <h3>Community/Support</h3>
+        <ul>
+          <li><a href="https://github.com/documentcloud/backbone/wiki/">Project Wiki</a></li>
+          <li><a href="http://github.com/documentcloud/backbone/issues">GitHub issues page</a></li>
+          <li><tt>#documentcloud</tt></li>
+          <li><a href="https://groups.google.com/forum/#!forum/backbonejs">Google Group</a></li>
+          <li><a href="http://twitter.com/documentcloud">@documentcloud</a></li>
+        </ul>
+      </nav>    
+    </section>
+  </footer>  
+  <hr class="space">
+  <a href="http://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>
+
+  <script src="test/vendor/underscore-1.2.2.js"></script>
+  <script src="test/vendor/jquery-1.6.4.js"></script>
+  <script src="test/vendor/json2.js"></script>
+  <script src="backbone.js"></script>
+
+  <script>
+    // Set up the "play" buttons for each runnable code example.
+    $(function() {
+      $('.runnable').each(function() {
+        var code = this;
+        var button = $('<div class="run" title="Run"></div>');
+        $(button).insertBefore(code).bind('click', function(){
+          eval($(code).text());
+        });
+      });
+    });
+  </script>
+</body>
+</html>
