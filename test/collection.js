@@ -126,6 +126,14 @@ $(document).ready(function() {
     equals(atCol.length, 4);
     equals(atCol.at(1), e);
     equals(atCol.last(), h);
+
+    var i = new Backbone.Model({id: 23, label : 'i'});
+    var j = new Backbone.Model({id: 24, label : 'j'});
+    atCol.add([i, j], {at: 1});
+    equals(atCol.length, 6);
+    equals(atCol.at(1), i, "First item in added list is at insertion position");
+    equals(atCol.at(2), j, "Second item in added list is next after insertion position");
+    equals(atCol.last(), h);
   });
 
   test("Collection: add multiple models", function() {
