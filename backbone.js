@@ -44,9 +44,9 @@
     return this;
   };
 
-  // Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option will
-  // fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and set a
-  // `X-Http-Method-Override` header.
+  // Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option
+  // will fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and
+  // set a `X-Http-Method-Override` header.
   Backbone.emulateHTTP = false;
 
   // Turn on `emulateJSON` to support legacy servers that can't deal with direct
@@ -69,8 +69,8 @@
   //
   Backbone.Events = {
 
-    // Bind an event, specified by a string name, `ev`, to a `callback` function.
-    // Passing `"all"` will bind the callback to all events fired.
+    // Bind an event, specified by a string name, `ev`, to a `callback`
+    // function. Passing `"all"` will bind the callback to all events fired.
     bind : function(ev, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
       var list  = calls[ev] || (calls[ev] = {});
@@ -112,7 +112,11 @@
       while (ev = events.pop()) {
         if (!(node = calls[ev])) continue;
         args = ev == 'all' ? arguments : slice.call(arguments, 1);
-        while (node = node.next) if (callback = node.callback) callback.apply(node.context || this, args);
+        while (node = node.next) {
+          if (callback = node.callback) {
+            callback.apply(node.context || this, args);
+          }
+        }
       }
       return this;
     }
@@ -179,8 +183,8 @@
       return this.attributes[attr] != null;
     },
 
-    // Set a hash of model attributes on the object, firing `"change"` unless you
-    // choose to silence it.
+    // Set a hash of model attributes on the object, firing `"change"` unless
+    // you choose to silence it.
     set : function(key, value, options) {
       var attrs;
       if (_.isObject(key) || key == null) {
@@ -273,8 +277,8 @@
       return (this.sync || Backbone.sync).call(this, method, this, options);
     },
 
-    // Destroy this model on the server if it was already persisted. Upon success, the model is removed
-    // from its collection, if it has one.
+    // Destroy this model on the server if it was already persisted.
+    // Upon success, the model is removed from its collection, if it has one.
     destroy : function(options) {
       options || (options = {});
       if (this.isNew()) return this.trigger('destroy', this, this.collection, options);
@@ -324,14 +328,14 @@
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged : function(attr) {
-      if (attr) return !_.isEqual(this._previousAttributes[attr], this.attributes[attr]);
+      if (attr) return this._previousAttributes[attr] != this.attributes[attr];
       return this._changed;
     },
 
-    // Return an object containing all the attributes that have changed, or false
-    // if there are no changed attributes. Useful for determining what parts of a
-    // view need to be updated and/or what attributes need to be persisted to
-    // the server. Unset attributes will be set to undefined.
+    // Return an object containing all the attributes that have changed, or
+    // false if there are no changed attributes. Useful for determining what
+    // parts of a view need to be updated and/or what attributes need to be
+    // persisted to the server. Unset attributes will be set to undefined.
     changedAttributes : function(now) {
       if (!this._changed) return false;
       now || (now = this.attributes);
@@ -452,8 +456,9 @@
       return this.models[index];
     },
 
-    // Force the collection to re-sort itself. You don't need to call this under normal
-    // circumstances, as the set will maintain sort order as each item is added.
+    // Force the collection to re-sort itself. You don't need to call this under
+    // normal circumstances, as the set will maintain sort order as each item
+    // is added.
     sort : function(options) {
       options || (options = {});
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
@@ -793,8 +798,8 @@
       }
     },
 
-    // Add a route to be tested when the fragment changes. Routes added later may
-    // override previous routes.
+    // Add a route to be tested when the fragment changes. Routes added later
+    // may override previous routes.
     route : function(route, callback) {
       this.handlers.unshift({route : route, callback : callback});
     },
@@ -1022,8 +1027,8 @@
   //
   // Turn on `Backbone.emulateHTTP` in order to send `PUT` and `DELETE` requests
   // as `POST`, with a `_method` parameter containing the true HTTP method,
-  // as well as all requests with the body as `application/x-www-form-urlencoded` instead of
-  // `application/json` with the model in a param named `model`.
+  // as well as all requests with the body as `application/x-www-form-urlencoded`
+  // instead of `application/json` with the model in a param named `model`.
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, options) {
