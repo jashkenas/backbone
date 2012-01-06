@@ -91,7 +91,7 @@ $(document).ready(function() {
     var Model = Backbone.Model.extend({
       urlRoot: function() { return '/nested/' + this.get('parent_id') + '/collection'}
       // looks better in coffeescript: urlRoot: => "/nested/#{@get('parent_id')}/collection"
-    });	
+    });
 
     var model = new Model({parent_id: 1});
     equals(model.url(), '/nested/1/collection');

@@ -328,7 +328,7 @@
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged : function(attr) {
-      if (attr) return this._previousAttributes[attr] != this.attributes[attr];
+      if (attr) return !_.isEqual(this._previousAttributes[attr], this.attributes[attr]);
       return this._changed;
     },
 
@@ -462,7 +462,11 @@
     sort : function(options) {
       options || (options = {});
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
-      this.models = this.sortBy(this.comparator);
+      if (this.comparator.length == 1) {
+        this.models = this.sortBy(this.comparator);
+      } else {
+        this.models.sort(this.comparator);
+      }
       if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
