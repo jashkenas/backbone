@@ -416,13 +416,18 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `added` event for every new model.
     add : function(models, options) {
-      if (_.isArray(models)) {
-        for (var i = 0, l = models.length; i < l; i++) {
-          if (options && (options.at == +options.at) && i) options.at += 1;
-          this._add(models[i], options);
+      var i, l;
+      options || (options = {});
+      if (!_.isArray(models)) models = [models];
+      for (i = 0, l = models.length; i < l; i++) {
+        if (options && (options.at == +options.at) && i) options.at += 1;
+        models[i] = this._add(models[i], options);
+      }
+      if (this.comparator) this.sort({silent: true});
+      if (!options.silent) {
+        for (i = 0; i < l; i++) {
+          models[i].trigger('add', models[i], this, options);
         }
-      } else {
-        this._add(models, options);
       }
       return this;
     },
@@ -430,12 +435,10 @@
     // Remove a model, or a list of models from the set. Pass silent to avoid
     // firing the `removed` event for every model removed.
     remove : function(models, options) {
-      if (_.isArray(models)) {
-        for (var i = 0, l = models.length; i < l; i++) {
-          this._remove(models[i], options);
-        }
-      } else {
-        this._remove(models, options);
+      options || (options = {});
+      if (!_.isArray(models)) models = [models];
+      for (var i = 0, l = models.length; i < l; i++) {
+        this._remove(models[i], options);
       }
       return this;
     },
@@ -559,28 +562,25 @@
     // hash indexes for `id` and `cid` lookups.
     // Returns the model, or 'false' if validation on a new model fails.
     _add : function(model, options) {
-      options || (options = {});
       model = this._prepareModel(model, options);
       if (!model) return false;
       var already = this.getByCid(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
-      var index = options.at != null ? options.at :
-                  this.comparator ? this.sortedIndex(model, this.comparator) :
-                  this.length;
-      this.models.splice(index, 0, model);
+      if (options.at != null) {
+        this.models.splice(options.at, 0, model);
+      } else {
+        this.models.push(model);
+      }
       model.bind('all', this._onModelEvent);
       this.length++;
-      options.index = index;
-      if (!options.silent) model.trigger('add', model, this, options);
       return model;
     },
 
     // Internal implementation of removing a single model from the set, updating
     // hash indexes for `id` and `cid` lookups.
     _remove : function(model, options) {
-      options || (options = {});
       model = this.getByCid(model) || this.get(model);
       if (!model) return null;
       delete this._byId[model.id];
@@ -588,7 +588,6 @@
       var index = this.indexOf(model);
       this.models.splice(index, 1);
       this.length--;
-      options.index = index;
       if (!options.silent) model.trigger('remove', model, this, options);
       this._removeReference(model);
       return model;

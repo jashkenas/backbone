@@ -136,23 +136,6 @@ $(document).ready(function() {
     }
   });
 
-  test("Collection: add model to collection and verify index updates", function() {
-    var f = new Backbone.Model({id: 20, label : 'f'});
-    var g = new Backbone.Model({id: 21, label : 'g'});
-    var h = new Backbone.Model({id: 22, label : 'h'});
-    var col = new Backbone.Collection();
-
-    var counts = [];
-
-    col.bind('add', function(model, collection, options) {
-      counts.push(options.index);
-    });
-    col.add(f);
-    col.add(g);
-    col.add(h);
-    ok(_.isEqual(counts, [0,1,2]));
-  });
-
   test("Collection: add model to collection twice", function() {
     try {
       // no id, same cid
@@ -207,6 +190,22 @@ $(document).ready(function() {
     equals(col.at(0).get('value'), 2);
   });
 
+  test("Collection: add model to collection with sort()-style comparator", function() {
+    var col = new Backbone.Collection;
+    col.comparator = function(a, b) {
+      return a.get('name') < b.get('name') ? -1 : 1;
+    };
+    var tom = new Backbone.Model({name: 'Tom'});
+    var rob = new Backbone.Model({name: 'Rob'});
+    var tim = new Backbone.Model({name: 'Tim'});
+    col.add(tom);
+    col.add(rob);
+    col.add(tim);
+    equals(col.indexOf(rob), 0);
+    equals(col.indexOf(tim), 1);
+    equals(col.indexOf(tom), 2);
+  });
+
   test("Collection: remove", function() {
     var removed = otherRemoved = null;
     col.bind('remove', function(model){ removed = model.get('label'); });
@@ -216,23 +215,6 @@ $(document).ready(function() {
     equals(col.length, 4);
     equals(col.first(), d);
     equals(otherRemoved, null);
-  });
-
-  test("Collection: remove should return correct index events", function() {
-    var f = new Backbone.Model({id: 20, label : 'f'});
-    var g = new Backbone.Model({id: 21, label : 'g'});
-    var h = new Backbone.Model({id: 22, label : 'h'});
-    var col = new Backbone.Collection([f,g,h]);
-
-    var counts = [];
-
-    col.bind('remove', function(model, collection, options) {
-      counts.push(options.index);
-    });
-    col.remove(h);
-    col.remove(g);
-    col.remove(f);
-    ok(_.isEqual(counts, [2,1,0]));
   });
 
   test("Collection: events are unbound on remove", function() {
