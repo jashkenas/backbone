@@ -570,6 +570,14 @@
                   this.comparator ? this.sortedIndex(model, this.comparator) :
                   this.length;
       this.models.splice(index, 0, model);
+      if (index > 0) {
+        model.prev = this.models[index-1]
+        model.prev.next = model
+      }
+      if (index < this.length) {
+        model.next = this.models[index+1]
+        model.next.prev = model
+      }
       model.bind('all', this._onModelEvent);
       this.length++;
       options.index = index;
