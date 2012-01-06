@@ -492,4 +492,17 @@ $(document).ready(function() {
     equal(counter, 1, 'change is only triggered once');
   });
 
+  test("hasChanged/set should use same comparison", function() {
+    expect(2);
+    var changed = 0, model = new Backbone.Model({a: null});
+    model.bind('change', function() {
+      ok(this.hasChanged('a'));
+    })
+    .bind('change:a', function() {
+      changed++;
+    })
+    .set({a: undefined});
+    equal(changed, 1);
+  });
+
 });
