@@ -57,17 +57,34 @@ $(document).ready(function() {
   });
 
   test("View: delegateEvents allows functions for callbacks", function() {
-    var counter = 0;
+    view.counter = 0;
     view.el = "#qunit-banner";
-    var events = {"click": function() { counter++; }};
+    var events = {"click": function() { this.counter++; }};
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
-    equals(counter, 1);
+    equals(view.counter, 1);
     $('#qunit-banner').trigger('click');
-    equals(counter, 2);
+    equals(view.counter, 2);
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
-    equals(counter, 3);
+    equals(view.counter, 3);
+  });
+
+  test("View: delegateEvents allows function as events arg", function() {
+    view.counter = 0;
+    view.el = "#qunit-banner";
+    var events = function () {
+      return {"click": this.click};
+    };
+    view.click = function() { this.counter++; };
+    view.delegateEvents(events);
+    $('#qunit-banner').trigger('click');
+    equals(view.counter, 1);
+    $('#qunit-banner').trigger('click');
+    equals(view.counter, 2);
+    view.delegateEvents(events);
+    $('#qunit-banner').trigger('click');
+    equals(view.counter, 3);
   });
 
   test("View: undelegateEvents", function() {
