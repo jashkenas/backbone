@@ -938,6 +938,13 @@
     // Omitting the selector binds the event to `this.el`.
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
+    //
+    // A function may also be returned:
+    //  function() { 
+    //      return {
+    //          'mousedown .title': this.titleMouseDown
+    //      };
+    //  }
     delegateEvents : function(events) {
       if (!(events || (events = getValue(this, 'events')))) return;
       if (_.isFunction(events)) events = _.bind(events, this)(); 
