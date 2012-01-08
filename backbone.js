@@ -564,9 +564,9 @@
     _add : function(model, options) {
       model = this._prepareModel(model, options);
       if (!model) return false;
-      var already = this.getByCid(model);
-      if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
-      this._byId[model.id] = model;
+      var already = this.getByCid(model) || this.get(model.get(model.id));
+      if (already) throw new Error(["Can't add the same model to a set twice", (already.get(already.id) || already.id)]);
+      this._byId[model.get(model.id)] = model;
       this._byCid[model.cid] = model;
       if (options.at != null) {
         this.models.splice(options.at, 0, model);
