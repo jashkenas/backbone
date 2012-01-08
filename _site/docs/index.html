@@ -212,8 +212,15 @@
     header nav ul{
       padding: 0px;
     }
-    footer {
+    footer, footer.container{
       border-top: 1px solid #c2c2c2;
+    }
+    footer p {
+      margin-top: 50px;
+      text-align: center;
+    }
+    footer ul {
+      padding: 0 20px;
     }
     /* Fonts */
     .os {
@@ -432,6 +439,20 @@
   </div>
 
   <div class="container-fixed narrow">
+    <h2 id="Upgrading">Upgrading to 0.5.0+</h2>
+
+    <p>
+      We've taken the opportunity to clarify some naming with the <b>0.5.0</b>
+      release. <tt>Controller</tt> is now <a href="#Router">Router</a>, and
+      <tt>refresh</tt> is now <a href="#Collection-reset">reset</a>.
+      The previous <tt>saveLocation</tt> and <tt>setLocation</tt>
+      functions have been replaced by <a href="#Router-navigate">navigate</a>.
+      <tt>Backbone.sync</tt>'s method signature has changed to allow the passing
+      of arbitrary options to <tt>jQuery.ajax</tt>.
+      Be sure to <a href="#History-start">opt-in</a> to <tt>pushState</tt> support,
+      if you want to use it.
+    </p>
+
     <h2 id="Introduction">Introduction</h2>
 
     <p>
@@ -723,7 +744,7 @@ if (note.has("title")) {
       Models can be retrieved by id from collections, and the id is used to generate
       model URLs by default.
     </p>
-
+    
     <p id="Model-idAttribute">
       <b class="header">idAttribute</b><code>model.idAttribute</code>
       <br />
@@ -731,7 +752,7 @@ if (note.has("title")) {
       If you're directly communicating with a backend (CouchDB, MongoDB) that uses
       a different unique key, you may set a Model's <tt>idAttribute</tt> to 
       transparently map from that key to <tt>id</tt>. 
-
+      
 <pre class="runnable">
 var Meal = Backbone.Model.extend({
   idAttribute: "_id"
@@ -741,7 +762,7 @@ var cake = new Meal({ _id: 1, name: "Cake" });
 alert("Cake id: " + cake.id);
 </pre>
     </p>
-
+    
     <p id="Model-cid">
       <b class="header">cid</b><code>model.cid</code>
       <br />
@@ -2076,53 +2097,53 @@ var localBackbone = Backbone.noConflict();
 var model = localBackbone.Model.extend(...);
 </pre>
 
-<h2 id="faq">F.A.Q.</h2>
+    <h2 id="faq">F.A.Q.</h2>
 
-<p id="FAQ-events">
-  <b class="header">Catalog of Events</b>
-  <br />
-  Here's a list of all of the built-in events that Backbone.js can fire.
-  You're also free to trigger your own events on Models and Views as you
-  see fit.
-</p>
+    <p id="FAQ-events">
+      <b class="header">Catalog of Events</b>
+      <br />
+      Here's a list of all of the built-in events that Backbone.js can fire.
+      You're also free to trigger your own events on Models and Views as you
+      see fit.
+    </p>
 
-<ul>
-  <li><b>"add"</b> (model, collection) &mdash; when a model is added to a collection. </li>
-  <li><b>"remove"</b> (model, collection) &mdash; when a model is removed from a collection. </li>
-  <li><b>"reset"</b> (collection) &mdash; when the collection's entire contents have been replaced. </li>
-  <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
-  <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
-  <li><b>"destroy"</b> (model, collection) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
-  <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
-  <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
-  <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
-</ul>
+    <ul>
+      <li><b>"add"</b> (model, collection) &mdash; when a model is added to a collection. </li>
+      <li><b>"remove"</b> (model, collection) &mdash; when a model is removed from a collection. </li>
+      <li><b>"reset"</b> (collection) &mdash; when the collection's entire contents have been replaced. </li>
+      <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
+      <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
+      <li><b>"destroy"</b> (model, collection) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
+      <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
+      <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
+      <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
+    </ul>
 
-<p id="FAQ-tim-toady">
-  <b class="header">There's More Than One Way To Do It</b>
-  <br />
-  It's common for folks just getting started to treat the examples listed
-  on this page as some sort of gospel truth. In fact, Backbone.js is intended
-  to be fairly agnostic about many common patterns in client-side code.
-  For example...
-</p>
+    <p id="FAQ-tim-toady">
+      <b class="header">There's More Than One Way To Do It</b>
+      <br />
+      It's common for folks just getting started to treat the examples listed
+      on this page as some sort of gospel truth. In fact, Backbone.js is intended
+      to be fairly agnostic about many common patterns in client-side code.
+      For example...
+    </p>
 
-<p>
-  <b>References between Models and Views</b> can be handled several ways.
-  Some people like to have direct pointers, where views correspond 1:1 with
-  models (<tt>model.view</tt> and <tt>view.model</tt>). Others prefer to have intermediate
-  "controller" objects that orchestrate the creation and organization of
-  views into a hierarchy. Others still prefer the evented approach, and always
-  fire events instead of calling methods directly. All of these styles work well.
-</p>
+    <p>
+      <b>References between Models and Views</b> can be handled several ways.
+      Some people like to have direct pointers, where views correspond 1:1 with
+      models (<tt>model.view</tt> and <tt>view.model</tt>). Others prefer to have intermediate
+      "controller" objects that orchestrate the creation and organization of
+      views into a hierarchy. Others still prefer the evented approach, and always
+      fire events instead of calling methods directly. All of these styles work well.
+    </p>
 
-<p>
-  <b>Batch operations</b> on Models are common, but often best handled differently
-  depending on your server-side setup. Some folks don't mind making individual
-  Ajax requests. Others create explicit resources for RESTful batch operations:
-  <tt>/notes/batch/destroy?ids=1,2,3,4</tt>. Others tunnel REST over JSON, with the
-  creation of "changeset" requests:
-</p>
+    <p>
+      <b>Batch operations</b> on Models are common, but often best handled differently
+      depending on your server-side setup. Some folks don't mind making individual
+      Ajax requests. Others create explicit resources for RESTful batch operations:
+      <tt>/notes/batch/destroy?ids=1,2,3,4</tt>. Others tunnel REST over JSON, with the
+      creation of "changeset" requests:
+    </p>
 
 <pre>
   {
@@ -2419,13 +2440,6 @@ Inbox.messages.add(newMessage);
       <b class="header">0.1.0</b> &mdash; <small><i>Oct 13, 2010</i></small><br />
       Initial Backbone release.
     </p>
-
-    <p>
-      <br />
-      <a href="http://documentcloud.org/" title="A DocumentCloud Project" style="background:none;">
-        <img src="http://jashkenas.s3.amazonaws.com/images/a_documentcloud_project.png" alt="A DocumentCloud Project" style="position:relative;left:-10px;" />
-      </a>
-    </p>
   </div>
   
   <hr class="space">
@@ -2466,6 +2480,12 @@ Inbox.messages.add(newMessage);
         </ul>
       </nav>    
     </section>
+    <hr class="space">
+    <p>
+      <a href="http://documentcloud.org/" title="A DocumentCloud Project" style="background:none;">
+        <img src="http://jashkenas.s3.amazonaws.com/images/a_documentcloud_project.png" alt="A DocumentCloud Project" style="position:relative;left:-10px;" />
+      </a>
+    </p>
   </footer>  
   <hr class="space">
   <a href="http://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>

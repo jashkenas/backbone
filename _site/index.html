@@ -212,8 +212,15 @@
     header nav ul{
       padding: 0px;
     }
-    footer {
+    footer, footer.container{
       border-top: 1px solid #c2c2c2;
+    }
+    footer p {
+      margin-top: 50px;
+      text-align: center;
+    }
+    footer ul {
+      padding: 0 20px;
     }
     /* Fonts */
     .os {
@@ -373,7 +380,7 @@
       <h2>Hello World</h2>
 <pre class="runnable">
 var Ppl = Backbone.Collection.extend({
-  model: Backbone.model
+  model: Backbone.Model
 });
 var ppl = new Ppl;
 
@@ -424,6 +431,12 @@ alert( ppl.get(1).get('name') );
         </ul>
       </nav>    
     </section>
+    <hr class="space">
+    <p>
+      <a href="http://documentcloud.org/" title="A DocumentCloud Project" style="background:none;">
+        <img src="http://jashkenas.s3.amazonaws.com/images/a_documentcloud_project.png" alt="A DocumentCloud Project" style="position:relative;left:-10px;" />
+      </a>
+    </p>
   </footer>  
   <hr class="space">
   <a href="http://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>

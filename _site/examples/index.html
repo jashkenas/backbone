@@ -212,8 +212,15 @@
     header nav ul{
       padding: 0px;
     }
-    footer {
+    footer, footer.container{
       border-top: 1px solid #c2c2c2;
+    }
+    footer p {
+      margin-top: 50px;
+      text-align: center;
+    }
+    footer ul {
+      padding: 0 20px;
     }
     /* Fonts */
     .os {
@@ -307,6 +314,7 @@
       <li>– <a href="#examples-groupon">Groupon Now!</a></li>
       <li>– <a href="#examples-basecamp">Basecamp Mobile</a></li>
       <li>– <a href="#examples-slavery-footprint">Slavery Footprint</a></li>
+      <li>– <a href="#examples-diaspora">Diaspora</a></li>
       <li>– <a href="#examples-trajectory">Trajectory</a></li>
       <li>– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
       <li>– <a href="#examples-pandora">Pandora</a></li>
@@ -325,7 +333,6 @@
       <li>- <a href="#examples-decide">Decide</a></li>
       <li>- <a href="#examples-trello">Trello</a></li>
       <li>- <a href="#examples-bittorrent">BitTorrent</a></li>
-      <li>- <a href="#examples-chop">Chop</a></li>
       <li>- <a href="#examples-picplum">Picplum</a></li>
       <li>- <a href="#examples-ducksboard">Ducksboard</a></li>
       <li>- <a href="#examples-quietwrite">QuietWrite</a></li>
@@ -338,7 +345,7 @@
 
     <p id="examples-todos">
       <a href="http://jgn.me/">Jérôme Gravel-Niquet</a> has contributed a
-      <a href="todos/index.html">Todo List application</a>
+      <a href="examples/todos/index.html">Todo List application</a>
       that is bundled in the repository as Backbone example. If you're wondering
       where to get started with Backbone in general, take a moment to
       <a href="docs/todos.html">read through the annotated source</a>. The app uses a
@@ -351,7 +358,7 @@
     </p>
 
     <div style="text-align: center;">
-      <a href="todos/index.html">
+      <a href="examples/todos/index.html">
         <img src="images/todos.png" alt="Todos" class="example_image" />
       </a>
     </div>
@@ -458,7 +465,7 @@
         <img src="images/do.png" alt="Do" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-posterous">Posterous</h2>
 
     <p>
@@ -536,6 +543,22 @@
       </a>
     </div>
 
+    <h2 id="examples-diaspora">Diaspora</h2>
+
+    <p>
+      <a href="http://www.joindiaspora.com/">Diaspora</a> is a distributed social
+      network, formed from a number of independently operated <i>pods</i>. 
+      You own your personal data, and control with whom you share.
+      All of Diaspora is <a href="https://github.com/diaspora/diaspora">open-source</a>
+      code, built with Rails and Backbone.js.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://www.joindiaspora.com/">
+        <img src="images/diaspora.png" alt="Diaspora" class="example_image" />
+      </a>
+    </div>
+
     <h2 id="examples-trajectory">Trajectory</h2>
 
     <p>
@@ -563,11 +586,11 @@
       as a data source (channeled through a nginx proxy),
       <a href="http://api.jquery.com/category/plugins/templates/">jQuery templates</a>
       for the rendering, <a href="http://docs.jquery.com/Qunit">Qunit
-      </a> and <a href="http://www.phantomjs.org/">PhantomJS</a> for
+      </a> and <a href="http://code.google.com/p/phantomjs/">PhantomJS</a> for
       the testing suite. The JS code, templates and CSS are built for the
       production deployment with various Node.js tools like
       <a href="https://github.com/dsimard/ready.js">ready.js</a>,
-      <a href="https://github.com/mde/jake">Jake</a>,
+      <a href="https://github.com/mde/node-jake">Jake</a>,
       <a href="https://github.com/tmpvar/jsdom">jsdom</a>.
       The <b>Backbone.History</b> was modified to support the HTML5 <tt>history.pushState</tt>.
       <b>Backbone.sync</b> was extended with an additional SessionStorage based cache
@@ -857,23 +880,6 @@
       </a>
     </div>
 
-    <h2 id="examples-chop">Chop</h2>
-
-    <p>
-      <a href="http://chopapp.com/">Chop</a> is a little app from
-      <a href="http://www.zurb.com/">ZURB</a> that lets people slice up bad code
-      and share their feedback to help put it back together.
-      Chop was built to demonstrate how easy it is to build pageless apps
-      using Backbone.js and Rails. Chop makes extensive use of Backbone <b>Views</b>,
-      <b>Controllers</b>, and <b>Models</b>.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="http://chopapp.com/">
-        <img src="images/chop.png" alt="Chop" class="example_image" />
-      </a>
-    </div>
-    
     <h2 id="examples-picplum">Picplum</h2>
 
     <p>
@@ -994,6 +1000,12 @@
         </ul>
       </nav>    
     </section>
+    <hr class="space">
+    <p>
+      <a href="http://documentcloud.org/" title="A DocumentCloud Project" style="background:none;">
+        <img src="http://jashkenas.s3.amazonaws.com/images/a_documentcloud_project.png" alt="A DocumentCloud Project" style="position:relative;left:-10px;" />
+      </a>
+    </p>
   </footer>  
   <hr class="space">
   <a href="http://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>
