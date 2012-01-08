@@ -758,7 +758,7 @@
       var fragment          = this.getFragment();
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
-      if (oldIE) {
+      if (oldIE && ! this._orBust) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
         this.navigate(fragment);
       }
@@ -771,7 +771,7 @@
         }
       } else if ('onhashchange' in window && !oldIE) {
         $(window).bind('hashchange', this.checkUrl);
-      } else {
+      } else if (! this._orBust ) {
         setInterval(this.checkUrl, this.interval);
       }
 
