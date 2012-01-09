@@ -225,7 +225,13 @@
 
       // Fire the `"change"` event, if the model has been changed.
       if (!alreadyChanging) {
-        if (!options.silent && this._changed) this.change(options);
+	if(this._changed) {
+          if (!options.silent) {
+            this.change(options);
+          } else {
+            this._previousAttributes = _.clone(this.attributes);//update previous even in silent mode
+          }
+	}	
         this._changing = false;
       }
       return this;
