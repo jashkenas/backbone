@@ -420,6 +420,7 @@
       var i, l;
       options || (options = {});
       if (!_.isArray(models)) models = [models];
+      models = slice.call(models);
       for (i = 0, l = models.length; i < l; i++) {
         models[i] = this._add(models[i], options);
       }
