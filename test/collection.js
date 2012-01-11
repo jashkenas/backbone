@@ -136,12 +136,23 @@ $(document).ready(function() {
     }
   });
 
-  test("Collection: add model to collection twice", function() {
+  test("Collection: can't add model to collection twice", function() {
     try {
       // no id, same cid
       var a2 = new Backbone.Model({label: a.label});
       a2.cid = a.cid;
       col.add(a2);
+      ok(false, "duplicate; expected add to fail");
+    } catch (e) {
+      equals(e.message, "Can't add the same model to a set twice");
+    }
+  });
+
+  test("Collection: can't add different model with same id to collection twice", function() {
+    var col = new Backbone.Collection;
+    try {
+      col.add({id: 101});
+      col.add({id: 101});
       ok(false, "duplicate; expected add to fail");
     } catch (e) {
       equals(e.message, "Can't add the same model to a set twice");

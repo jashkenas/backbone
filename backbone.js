@@ -422,10 +422,12 @@
       models = slice.call(models);
       for (i = 0, l = models.length; i < l; i++) {
         var model = models[i] = this._prepareModel(models[i], options);
-        if (this._byCid[model.cid]) {
+        var hasId = model.id != null;
+        if (this._byCid[model.cid] || (hasId && this._byId[model.id])) {
           throw new Error("Can't add the same model to a set twice");
         }
-        this._byId[model.id] = this._byCid[model.cid] = model;
+        this._byCid[model.cid] = model;
+        if (hasId) this._byId[model.id] = model;
         model.bind('all', this._onModelEvent, this);
         this.length++;
       }
