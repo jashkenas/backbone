@@ -33,7 +33,7 @@
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
-  if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
+  if (!_ && (typeof require !== 'undefined')) _ = require('underscore')._;
 
   // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
   var $ = root.jQuery || root.Zepto || root.ender;
@@ -297,7 +297,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url : function() {
-      var base = getValue(this.collection, 'url') || getValue(this, 'urlRoot') || urlError();
+      var base = getValue.apply(null, [this.collection,'url'].concat(arguments)) || getValue.apply(null, [this,'urlRoot'].concat(arguments)) || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -1023,7 +1023,7 @@
 
     // Ensure that we have a URL.
     if (!options.url) {
-      params.url = getValue(model, 'url') || urlError();
+      params.url = getValue(model, 'url', method, params) || urlError();
     }
 
     // Ensure that we have the appropriate request data.
@@ -1108,7 +1108,11 @@
   // or as a function.
   var getValue = function(object, prop) {
     if (!(object && object[prop])) return null;
-    return _.isFunction(object[prop]) ? object[prop]() : object[prop];
+    if (_.isFunction(object[prop]) {
+    	return object[prop].apply(object, Array.prototype.slice.call(arguments,2));
+    } else {
+    	return object[prop];
+    }
   };
 
   // Throw an error when a URL is needed, and none is supplied.
