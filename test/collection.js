@@ -144,7 +144,7 @@ $(document).ready(function() {
       col.add(a2);
       ok(false, "duplicate; expected add to fail");
     } catch (e) {
-      equals(e.message, "Can't add the same model to a set twice,3");
+      equals(e.message, "Can't add the same model to a set twice");
     }
   });
 

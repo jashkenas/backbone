@@ -391,7 +391,6 @@
   Backbone.Collection = function(models, options) {
     options || (options = {});
     if (options.comparator) this.comparator = options.comparator;
-    _.bindAll(this, '_removeReference');
     this._reset();
     if (models) this.reset(models, {silent: true});
     this.initialize.apply(this, arguments);
@@ -422,7 +421,13 @@
       if (!_.isArray(models)) models = [models];
       models = slice.call(models);
       for (i = 0, l = models.length; i < l; i++) {
-        models[i] = this._add(models[i], options);
+        var model = models[i] = this._prepareModel(models[i], options);
+        if (this._byCid[model.cid]) {
+          throw new Error("Can't add the same model to a set twice");
+        }
+        this._byId[model.id] = this._byCid[model.cid] = model;
+        model.bind('all', this._onModelEvent, this);
+        this.length++;
       }
       i = options.at != null ? options.at : this.models.length;
       splice.apply(this.models, [i, 0].concat(models));
@@ -440,7 +445,14 @@
       options || (options = {});
       if (!_.isArray(models)) models = [models];
       for (var i = 0, l = models.length; i < l; i++) {
-        this._remove(models[i], options);
+        var model = this.getByCid(models[i]) || this.get(models[i]);
+        if (!model) continue;
+        delete this._byId[model.id];
+        delete this._byCid[model.cid];
+        this.models.splice(this.indexOf(model), 1);
+        this.length--;
+        if (!options.silent) model.trigger('remove', model, this, options);
+        this._removeReference(model);
       }
       return this;
     },
@@ -487,7 +499,9 @@
     reset : function(models, options) {
       models  || (models = []);
       options || (options = {});
-      this.each(this._removeReference);
+      for (var i = 0, l = this.models.length; i < l; i++) {
+        this._removeReference(this.models[i]);
+      }
       this._reset();
       this.add(models, {silent: true, parse: options.parse});
       if (!options.silent) this.trigger('reset', this, options);
@@ -560,36 +574,6 @@
       return model;
     },
 
-    // Internal implementation of adding a single model to the set, updating
-    // hash indexes for `id` and `cid` lookups.
-    // Returns the model, or 'false' if validation on a new model fails.
-    _add : function(model, options) {
-      model = this._prepareModel(model, options);
-      if (!model) return false;
-      var already = this.getByCid(model);
-      if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
-      this._byId[model.id] = model;
-      this._byCid[model.cid] = model;
-      model.bind('all', this._onModelEvent, this);
-      this.length++;
-      return model;
-    },
-
-    // Internal implementation of removing a single model from the set, updating
-    // hash indexes for `id` and `cid` lookups.
-    _remove : function(model, options) {
-      model = this.getByCid(model) || this.get(model);
-      if (!model) return null;
-      delete this._byId[model.id];
-      delete this._byCid[model.cid];
-      var index = this.indexOf(model);
-      this.models.splice(index, 1);
-      this.length--;
-      if (!options.silent) model.trigger('remove', model, this, options);
-      this._removeReference(model);
-      return model;
-    },
-
     // Internal method to remove a model's ties to a collection.
     _removeReference : function(model) {
       if (this == model.collection) {
@@ -605,7 +589,7 @@
     _onModelEvent : function(ev, model, collection, options) {
       if ((ev == 'add' || ev == 'remove') && collection != this) return;
       if (ev == 'destroy') {
-        this._remove(model, options);
+        this.remove(model, options);
       }
       if (model && ev === 'change:' + model.idAttribute) {
         delete this._byId[model.previous(model.idAttribute)];
