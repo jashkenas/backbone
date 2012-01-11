@@ -4,8 +4,11 @@ $(document).ready(function() {
 
   var Router = Backbone.Router.extend({
 
+    count: 0,
+
     routes: {
       "noCallback":                 "noCallback",
+      "counter":                    "counter",
       "search/:query":              "search",
       "search/:query/p:page":       "search",
       "splat/*args/end":            "splat",
@@ -16,6 +19,10 @@ $(document).ready(function() {
 
     initialize : function(options) {
       this.testing = options.testing;
+    },
+
+    counter: function() {
+      this.count++;
     },
 
     search : function(query, page) {
@@ -84,6 +91,18 @@ $(document).ready(function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equals(router.query, 'manhattan');
     equals(router.page, '20');
+  });
+
+  test("Router: doesn't fire routes to the same place twice", function() {
+    equals(router.count, 0);
+    router.navigate('counter', {trigger: true});
+    equals(router.count, 1);
+    router.navigate('counter', {trigger: true});
+    router.navigate('counter', {trigger: true});
+    equals(router.count, 1);
+    router.navigate('search/counter', {trigger: true});
+    router.navigate('counter', {trigger: true});
+    equals(router.count, 2);
   });
 
   asyncTest("Router: routes via navigate with {replace: true}", function() {
