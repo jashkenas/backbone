@@ -416,11 +416,11 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `added` event for every new model.
     add : function(models, options) {
-      var i, l;
+      var i, length;
       options || (options = {});
       if (!_.isArray(models)) models = [models];
       models = slice.call(models);
-      for (i = 0, l = models.length; i < l; i++) {
+      for (i = 0, length = models.length; i < length; i++) {
         var model = models[i] = this._prepareModel(models[i], options);
         var hasId = model.id != null;
         if (this._byCid[model.cid] || (hasId && this._byId[model.id])) {
@@ -430,12 +430,12 @@
         if (hasId) this._byId[model.id] = model;
         model.bind('all', this._onModelEvent, this);
       }
-      this.length += l;
+      this.length += length;
       i = options.at != null ? options.at : this.models.length;
       splice.apply(this.models, [i, 0].concat(models));
       if (this.comparator) this.sort({silent: true});
       if (options.silent) return this;
-      for (i = 0; i < l; i++) {
+      for (i = 0; i < length; i++) {
         models[i].trigger('add', models[i], this, options);
       }
       return this;
