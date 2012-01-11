@@ -879,8 +879,8 @@
     this.cid = _.uniqueId('view');
     this._configure(options || {});
     this._ensureElement();
-    this.delegateEvents();
     this.initialize.apply(this, arguments);
+    this.delegateEvents();
   };
 
   // Cached regex to split keys for `delegate`.
