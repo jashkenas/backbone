@@ -111,6 +111,15 @@ $(document).ready(function() {
     equals(view.el.id, 'two');
   });
 
+  test("View: with attributes as a function", function() {
+    var viewClass = Backbone.View.extend({
+      attributes: function() {
+        return {'class': 'dynamic'};
+      }
+    });
+    equals((new viewClass).el.className, 'dynamic');
+  });
+
   test("View: multiple views per element", function() {
     var count = 0, ViewClass = Backbone.View.extend({
       el: $("body"),

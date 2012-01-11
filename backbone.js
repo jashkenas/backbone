@@ -967,7 +967,7 @@
     // an element from the `id`, `className` and `tagName` properties.
     _ensureElement : function() {
       if (!this.el) {
-        var attrs = this.attributes || {};
+        var attrs = getValue(this, 'attributes') || {};
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
         this.el = this.make(this.tagName, attrs);
