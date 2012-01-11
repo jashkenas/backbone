@@ -265,8 +265,10 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save : function(attrs, options) {
-      options || (options = {});
+      (options || (options = {})).saving = true;
       if (attrs && !this.set(attrs, options)) return false;
+      if (!attrs && this.validate && !this._performValidation({}, options)) return false;
+      delete options.saving;
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -368,6 +370,8 @@
     // if all is well. If a specific `error` callback has been passed,
     // call that instead of firing the general `"error"` event.
     _performValidation : function(attrs, options) {
+      if (options.skipValidation) return true;
+
       var error = this.validate(attrs, options);
       if (error) {
         if (options.error) {
