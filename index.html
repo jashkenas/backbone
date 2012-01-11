@@ -628,6 +628,7 @@ note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
       If the model has a <a href="#Model-validate">validate</a> method,
       it will be validated before the attributes are set, no changes will
       occur if the validation fails, and <b>set</b> will return <tt>false</tt>.
+      Otherwise, <b>set</b> returns a reference to the model.
       You may also pass an <tt>error</tt>
       callback in the options, which will be invoked instead of triggering an
       <tt>"error"</tt> event, should validation fail.
