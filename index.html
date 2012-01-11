@@ -411,8 +411,9 @@
       <a href="#Model">Models</a>, which can be created, validated, destroyed,
       and saved to the server. Whenever a UI action causes an attribute of
       a model to change, the model triggers a <i>"change"</i> event; all
-      the <a href="#View">Views</a> that display the model's data are notified of the
-      event, causing them to re-render. You don't have to write the glue
+      the <a href="#View">Views</a> that display the model's state can be notified of the
+      change, so that they are able to respond accordingly, re-rendering themselves with
+      the new information. In a finished Backbone app, you don't have to write the glue
       code that looks into the DOM to find an element with a specific <i>id</i>,
       and update the HTML manually
       &mdash; when the model changes, the views simply update themselves.
