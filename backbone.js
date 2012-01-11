@@ -429,8 +429,8 @@
         this._byCid[model.cid] = model;
         if (hasId) this._byId[model.id] = model;
         model.bind('all', this._onModelEvent, this);
-        this.length++;
       }
+      this.length += l;
       i = options.at != null ? options.at : this.models.length;
       splice.apply(this.models, [i, 0].concat(models));
       if (this.comparator) this.sort({silent: true});
