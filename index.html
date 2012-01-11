@@ -1188,7 +1188,8 @@ var alphabetical = Books.sortBy(function(book) {
       <a href="#Collection-model">model</a> property is defined, you may also pass
       raw attributes objects, and have them be vivified as instances of the model.
       Pass <tt>{at: index}</tt> to splice the model into the collection at the
-      specified <tt>index</tt>.
+      specified <tt>index</tt>. Passing <tt>{unique:true}</tt> will guarantee only 
+      unique models will be added to the collection (based on their cid or id).
     </p>
 
 <pre class="runnable">
