@@ -968,6 +968,7 @@
     _ensureElement : function() {
       if (!this.el) {
         var attrs = this.attributes || {};
+        if (_.isFunction(attrs)) attrs = attrs();
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
         this.el = this.make(this.tagName, attrs);
