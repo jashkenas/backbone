@@ -207,7 +207,16 @@
       if (!options.silent && this.validate && !this._performValidation(attrs, options)) return false;
 
       // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+      if (this.idAttribute in attrs) {
+        var previous_id = this.id;
+        var new_id = attrs[this.idAttribute];
+        // a change in 'id'
+        if (previous_id !== new_id) {
+          this.id = new_id;
+          if (this.collection) this.collection._updateModelId(this, previous_id); // make sure the collection updates before notification 
+          this.trigger('change:' + this.idAttribute, this, new_id, options); // special case: an id change should not be silent
+        }
+      }
 
       // We're about to start triggering change events.
       var alreadyChanging = this._changing;
@@ -568,7 +577,7 @@
       if (!model) return false;
       var already = this.getByCid(model);
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
-      this._byId[model.id] = model;
+      if (!_.isUndefined(model.id)) this._byId[model.id] = model;
       this._byCid[model.cid] = model;
       model.bind('all', this._onModelEvent, this);
       this.length++;
@@ -608,10 +617,14 @@
         this._remove(model, options);
       }
       if (model && ev === 'change:' + model.idAttribute) {
-        delete this._byId[model.previous(model.idAttribute)];
-        this._byId[model.id] = model;
+        this._updateModelId(model, model.previous(model.idAttribute));
       }
       this.trigger.apply(this, arguments);
+    },
+    
+    _updateModelId : function(model, previous_id) {
+      if (!_.isUndefined(previous_id)) delete this._byId[previous_id];
+      if (!_.isUndefined(model.id)) this._byId[model.id] = model;
     }
 
   });
