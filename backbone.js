@@ -15,8 +15,9 @@
   // Save the previous value of the `Backbone` variable.
   var previousBackbone = root.Backbone;
 
-  // Create a local reference to slice.
+  // Create a local reference to slice/splice.
   var slice = Array.prototype.slice;
+  var splice = Array.prototype.splice;
 
   // The top-level namespace. All public Backbone classes and modules will
   // be attached to this. Exported for both CommonJS and the browser.
@@ -419,15 +420,16 @@
       var i, l;
       options || (options = {});
       if (!_.isArray(models)) models = [models];
+      models = slice.call(models);
       for (i = 0, l = models.length; i < l; i++) {
-        if (options && (options.at == +options.at) && i) options.at += 1;
         models[i] = this._add(models[i], options);
       }
+      i = options.at != null ? options.at : this.models.length;
+      splice.apply(this.models, [i, 0].concat(models));
       if (this.comparator) this.sort({silent: true});
-      if (!options.silent) {
-        for (i = 0; i < l; i++) {
-          models[i].trigger('add', models[i], this, options);
-        }
+      if (options.silent) return this;
+      for (i = 0; i < l; i++) {
+        models[i].trigger('add', models[i], this, options);
       }
       return this;
     },
@@ -568,11 +570,6 @@
       if (already) throw new Error(["Can't add the same model to a set twice", already.id]);
       this._byId[model.id] = model;
       this._byCid[model.cid] = model;
-      if (options.at != null) {
-        this.models.splice(options.at, 0, model);
-      } else {
-        this.models.push(model);
-      }
       model.bind('all', this._onModelEvent, this);
       this.length++;
       return model;

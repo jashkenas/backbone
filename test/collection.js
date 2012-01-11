@@ -417,4 +417,12 @@ $(document).ready(function() {
     equals(fired, true);
   });
 
+  test("Collection: add does not alter arguments", function(){
+    var attrs = {};
+    var models = [attrs];
+    new Backbone.Collection().add(models);
+    equal(models.length, 1);
+    ok(attrs === models[0]);
+  });
+
 });
