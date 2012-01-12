@@ -119,6 +119,30 @@ $(document).ready(function() {
     ok(!view.el);
   });
 
+  test("View: _ensureElement with function el", function() {
+    var constructedElement;
+
+    var ViewClass = Backbone.View.extend({
+      el: function() {
+        constructedElement = this.make('div', { 'class': 'constructed-view' });
+        return constructedElement;
+      }
+    });
+    var view = new ViewClass;
+    equals(view.el, constructedElement);
+
+    var again = new ViewClass;
+    ok($(again.el).hasClass('constructed-view'));
+
+    ViewClass = Backbone.View.extend({
+      el: function() {
+        return "body";
+      }
+    });
+    view = new ViewClass;
+    equals(view.el, document.body);
+  });
+
   test("View: with attributes", function() {
     var view = new Backbone.View({attributes : {'class': 'one', id: 'two'}});
     equals(view.el.className, 'one');
