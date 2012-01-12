@@ -839,6 +839,11 @@ book.save({author: "Teddy"});
 book.save({author: "F.D.R."}, {error: function(){ ... }});
 </pre>
 
+    <p>
+      After the request is made to the server the returned data is validated and set,
+      to prevent this behavior pass <tt>{ignoreResponse: true}</tt> as an option.
+    </p>
+
     <p id="Model-destroy">
       <b class="header">destroy</b><code>model.destroy([options])</code>
       <br />
