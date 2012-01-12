@@ -689,7 +689,7 @@
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters : function(route, fragment) {
-      return route.exec(fragment).slice(1);
+      return _.map(route.exec(fragment).slice(1), function(param){ return typeof param == 'string' ? decodeURIComponent(param) : param});
     }
 
   });
@@ -728,11 +728,12 @@
           fragment = window.location.pathname;
           var search = window.location.search;
           if (search) fragment += search;
+          if (fragment.indexOf(this.options.root) == 0) fragment = fragment.substr(this.options.root.length);
         } else {
           fragment = window.location.hash;
         }
       }
-      fragment = decodeURIComponent(fragment.replace(hashStrip, ''));
+      fragment = fragment.replace(hashStrip, '');
       if (!fragment.indexOf(this.options.root)) fragment = fragment.substr(this.options.root.length);
       return fragment;
     },
@@ -798,7 +799,7 @@
     checkUrl : function(e) {
       var current = this.getFragment();
       if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location.hash);
-      if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
+      if (current == this.fragment || current == this.fragment) return false;
       if (this.iframe) this.navigate(current);
       this.loadUrl() || this.loadUrl(window.location.hash);
     },
@@ -827,7 +828,7 @@
     navigate : function(fragment, options) {
       if (!options || options === true) options = {trigger: options};
       var frag = (fragment || '').replace(hashStrip, '');
-      if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
+      if (this.fragment == frag || this.fragment == frag) return;
       if (this._hasPushState) {
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
         this.fragment = frag;
