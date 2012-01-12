@@ -318,7 +318,6 @@ $(document).ready(function() {
       options.success.call(this, {admin: true});
     };
     model.save(null, {error: function(model, error) {
-      console.log('erroring!');
       lastError = error;
     }});
 

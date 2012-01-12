@@ -217,6 +217,18 @@ $(document).ready(function() {
     equals(col.indexOf(tom), 2);
   });
 
+  test("Collection: comparator that depends on `this`", function() {
+    var col = new Backbone.Collection;
+    col.negative = function(num) {
+      return -num;
+    };
+    col.comparator = function(a) {
+      return this.negative(a.id);
+    };
+    col.add([{id: 1}, {id: 2}, {id: 3}]);
+    equals(col.pluck('id').join(' '), '3 2 1');
+  });
+
   test("Collection: remove", function() {
     var removed = otherRemoved = null;
     col.bind('remove', function(model){ removed = model.get('label'); });
