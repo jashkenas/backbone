@@ -97,8 +97,8 @@ $(document).ready(function() {
     equals(router.count, 0);
     router.navigate('counter', {trigger: true});
     equals(router.count, 1);
-    router.navigate('counter', {trigger: true});
-    router.navigate('counter', {trigger: true});
+    router.navigate('/counter', {trigger: true});
+    router.navigate('/counter', {trigger: true});
     equals(router.count, 1);
     router.navigate('search/counter', {trigger: true});
     router.navigate('counter', {trigger: true});

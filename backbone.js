@@ -704,8 +704,8 @@
     _.bindAll(this, 'checkUrl');
   };
 
-  // Cached regex for cleaning hashes.
-  var hashStrip = /^#/;
+  // Cached regex for cleaning leading hashes and slashes .
+  var routeStripper = /^[#\/]/;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
@@ -732,7 +732,7 @@
           fragment = window.location.hash;
         }
       }
-      fragment = decodeURIComponent(fragment.replace(hashStrip, ''));
+      fragment = decodeURIComponent(fragment.replace(routeStripper, ''));
       if (!fragment.indexOf(this.options.root)) fragment = fragment.substr(this.options.root.length);
       return fragment;
     },
@@ -778,7 +778,7 @@
         // Return immediately as browser will do redirect to new url
         return true;
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
-        this.fragment = loc.hash.replace(hashStrip, '');
+        this.fragment = loc.hash.replace(routeStripper, '');
         window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
       }
 
@@ -826,7 +826,7 @@
     // you which to modify the current URL without adding an entry to the history.
     navigate : function(fragment, options) {
       if (!options || options === true) options = {trigger: options};
-      var frag = (fragment || '').replace(hashStrip, '');
+      var frag = (fragment || '').replace(routeStripper, '');
       if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
       if (this._hasPushState) {
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
