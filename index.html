@@ -1819,7 +1819,7 @@ var DocumentRow = Backbone.View.extend({
       as <tt>this.options</tt>, for future reference. There are several special
       options that, if passed, will be attached directly to the view:
       <tt>model</tt>, <tt>collection</tt>,
-      <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, and <tt>tagName</tt>.
+      <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, <tt>tagName</tt> and <tt>attributes</tt>.
       If the view defines an <b>initialize</b> function, it will be called when
       the view is first created. If you'd like to create a view that references
       an element <i>already</i> in the DOM, pass in the element as an option:
@@ -1843,7 +1843,7 @@ new DocumentRow({
       fashion, views can be rendered at any time, and inserted into the DOM all
       at once, in order to get high-performance UI rendering with as few
       reflows and repaints as possible. <tt>this.el</tt> is created from the
-      view's <tt>tagName</tt>, <tt>className</tt>, and <tt>id</tt> properties,
+      view's <tt>tagName</tt>, <tt>className</tt>, <tt>id</tt> and <tt>attributes</tt> properties,
       if specified. If not, <b>el</b> is an empty <tt>div</tt>.
     </p>
 
