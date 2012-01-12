@@ -94,5 +94,72 @@ $(document).ready(function() {
     obj.trigger('event');
     equals(obj.counter, 3, 'counter should have been incremented three times');
   });
-
+  
+  test("Events: two binds of same instance, unbind with context and only unbind second", function () {
+  	var evt, TestClass, obj1, obj2;
+  	expect(3);
+  	
+  	evt = { counter: 0 };
+  	_.extend(evt, Backbone.Events);
+  	
+  	TestClass = function (eventObj) {
+  		this.counter = 0;
+  		this._eventObj = eventObj;
+  		this._eventObj.bind('event', this._onEventChange, this);
+  	};
+  	
+  	TestClass.prototype.dispose = function () {
+  		this._eventObj.unbind('event', this._onEventChange, this);
+  	};
+  	
+  	TestClass.prototype._onEventChange = function () {
+  		this.counter += 1;
+  		this._eventObj.counter += 1;
+  	}
+  	
+  	obj1 = new TestClass(evt, this);
+  	obj2 = new TestClass(evt, this);
+  	
+  	evt.trigger('event');
+  	obj2.dispose();
+  	evt.trigger('event');
+  	
+  	equals(evt.counter, 3, 'event counter should have been incremeted three times.');
+  	equals(obj1.counter, 2, 'obj1 listener counter should have been incremeted two times.');
+  	equals(obj2.counter, 1, 'obj2 listener counter should have been incremeted one time.');
+  });
+  
+  test("Events: two binds of same instance, unbind without context and unbind both", function () {
+	  	var evt, TestClass, obj1, obj2;
+	  	expect(3);
+	  	
+	  	evt = { counter: 0 };
+	  	_.extend(evt, Backbone.Events);
+	  	
+	  	TestClass = function (eventObj) {
+	  		this.counter = 0;
+	  		this._eventObj = eventObj;
+	  		this._eventObj.bind('event', this._onEventChange, this);
+	  	};
+	  	
+	  	TestClass.prototype.dispose = function () {
+	  		this._eventObj.unbind('event', this._onEventChange);
+	  	};
+	  	
+	  	TestClass.prototype._onEventChange = function () {
+	  		this.counter += 1;
+	  		this._eventObj.counter += 1;
+	  	}
+	  	
+	  	obj1 = new TestClass(evt, this);
+	  	obj2 = new TestClass(evt, this);
+	  	
+	  	evt.trigger('event');
+	  	obj2.dispose();
+	  	evt.trigger('event');
+	  	
+	  	equals(evt.counter, 2, 'event counter should have been incremeted two times.');
+	  	equals(obj1.counter, 1, 'obj1 listener counter should have been incremeted one time.');
+	  	equals(obj2.counter, 1, 'obj2 listener counter should have been incremeted one time.');
+	  });
 });
