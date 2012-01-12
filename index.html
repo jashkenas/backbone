@@ -687,15 +687,15 @@ if (note.has("title")) {
       Models can be retrieved by id from collections, and the id is used to generate
       model URLs by default.
     </p>
-    
+
     <p id="Model-idAttribute">
       <b class="header">idAttribute</b><code>model.idAttribute</code>
       <br />
       A model's unique identifier is stored under the <tt>id</tt> attribute.
       If you're directly communicating with a backend (CouchDB, MongoDB) that uses
-      a different unique key, you may set a Model's <tt>idAttribute</tt> to 
-      transparently map from that key to <tt>id</tt>. 
-      
+      a different unique key, you may set a Model's <tt>idAttribute</tt> to
+      transparently map from that key to <tt>id</tt>.
+
 <pre class="runnable">
 var Meal = Backbone.Model.extend({
   idAttribute: "_id"
@@ -705,7 +705,7 @@ var cake = new Meal({ _id: 1, name: "Cake" });
 alert("Cake id: " + cake.id);
 </pre>
     </p>
-    
+
     <p id="Model-cid">
       <b class="header">cid</b><code>model.cid</code>
       <br />
@@ -1486,10 +1486,10 @@ var othello = NYPL.create({
     <p id="Router-extend">
       <b class="header">extend</b><code>Backbone.Router.extend(properties, [classProperties])</code>
       <br />
-      Get started by creating a custom router class. Define actions that are 
+      Get started by creating a custom router class. Define actions that are
       triggered when certain URL fragments are
       matched, and provide a <a href="#Router-routes">routes</a> hash
-      that pairs routes to actions. Note that you'll want to avoid using a 
+      that pairs routes to actions. Note that you'll want to avoid using a
       leading slash in your route definitions:
     </p>
 
@@ -1949,7 +1949,7 @@ var Bookmark = Backbone.View.extend({
 <pre class="runnable">
 var view = new Backbone.View;
 
-var el = view.make("b", {className: "bold"}, "Bold! ");
+var el = view.make("b", {"class": "bold"}, "Bold! ");
 
 $("#make-demo").append(el);
 </pre>
@@ -2165,16 +2165,16 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/do.png" alt="Do" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-posterous">Posterous</h2>
 
     <p>
-      <a href="https://posterous.com/">Posterous Spaces</a> is 
-      <a href="http://technology.posterous.com/posterous-spaces-is-built-on-backbonejs">built on Backbone</a>. 
+      <a href="https://posterous.com/">Posterous Spaces</a> is
+      <a href="http://technology.posterous.com/posterous-spaces-is-built-on-backbonejs">built on Backbone</a>.
       The models and collections mirror the public
-      <a href="http://posterous.com/api">Posterous API</a>. Backbone made it easy 
-      for the team to create a JavaScript-heavy application with complex 
-      interactions and state maintenance. Spaces also uses CoffeeScript, 
+      <a href="http://posterous.com/api">Posterous API</a>. Backbone made it easy
+      for the team to create a JavaScript-heavy application with complex
+      interactions and state maintenance. Spaces also uses CoffeeScript,
       Underscore.js, Haml.js, Sass, Compass, and of course jQuery.
     </p>
 
@@ -2242,12 +2242,12 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/slavery-footprint.png" alt="Slavery Footprint" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-diaspora">Diaspora</h2>
 
     <p>
       <a href="http://www.joindiaspora.com/">Diaspora</a> is a distributed social
-      network, formed from a number of independently operated <i>pods</i>. 
+      network, formed from a number of independently operated <i>pods</i>.
       You own your personal data, and control with whom you share.
       All of Diaspora is <a href="https://github.com/diaspora/diaspora">open-source</a>
       code, built with Rails and Backbone.js.
@@ -2579,16 +2579,16 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/bittorrent.jpg" alt="BitTorrent" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-picplum">Picplum</h2>
 
     <p>
-      <a href="https://www.picplum.com/">Picplum</a> makes it easy to 
-      automatically send high quality photo prints to 
-      your close family and friends. The entire app is built in Backbone.js 
-      using Handlebars.js templates. 
-      <a href="http://pusher.com/">Pusher</a> enables real-time 
-      uploading that makes the photo import process fast and reactive. 
+      <a href="https://www.picplum.com/">Picplum</a> makes it easy to
+      automatically send high quality photo prints to
+      your close family and friends. The entire app is built in Backbone.js
+      using Handlebars.js templates.
+      <a href="http://pusher.com/">Pusher</a> enables real-time
+      uploading that makes the photo import process fast and reactive.
     </p>
 
     <div style="text-align: center;">
@@ -3015,7 +3015,7 @@ Inbox.messages.add(newMessage);
   </div>
 
   <script src="test/vendor/underscore-1.2.4.js"></script>
-  <script src="test/vendor/jquery-1.6.4.js"></script>
+  <script src="test/vendor/jquery-1.7.1.js"></script>
   <script src="test/vendor/json2.js"></script>
   <script src="backbone.js"></script>
 
