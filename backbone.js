@@ -257,7 +257,7 @@
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp);
       };
-      options.error = wrapError(options.error, model, options);
+      options.error = Backbone.wrapError(options.error, model, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
@@ -273,7 +273,7 @@
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp, xhr);
       };
-      options.error = wrapError(options.error, model, options);
+      options.error = Backbone.wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
       return (this.sync || Backbone.sync).call(this, method, this, options);
     },
@@ -289,7 +289,7 @@
         model.trigger('destroy', model, model.collection, options);
         if (success) success(model, resp);
       };
-      options.error = wrapError(options.error, model, options);
+      options.error = Backbone.wrapError(options.error, model, options);
       return (this.sync || Backbone.sync).call(this, 'delete', this, options);
     },
 
@@ -523,7 +523,7 @@
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp);
       };
-      options.error = wrapError(options.error, collection, options);
+      options.error = Backbone.wrapError(options.error, collection, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
@@ -1062,6 +1062,18 @@
     return $.ajax(_.extend(params, options));
   };
 
+  // Wrap an optional error callback with a fallback error event.
+  Backbone.wrapError = function(onError, originalModel, options) {
+    return function(model, resp) {
+      var resp = model === originalModel ? resp : model;
+      if (onError) {
+        onError(model, resp, options);
+      } else {
+        originalModel.trigger('error', model, resp, options);
+      }
+    };
+  };
+
   // Helpers
   // -------
 
@@ -1117,18 +1129,6 @@
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
     throw new Error('A "url" property or function must be specified');
-  };
-
-  // Wrap an optional error callback with a fallback error event.
-  var wrapError = function(onError, originalModel, options) {
-    return function(model, resp) {
-      var resp = model === originalModel ? resp : model;
-      if (onError) {
-        onError(model, resp, options);
-      } else {
-        originalModel.trigger('error', model, resp, options);
-      }
-    };
   };
 
 }).call(this);
