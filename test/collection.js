@@ -319,7 +319,7 @@ $(document).ready(function() {
     e.destroy();
     ok(colE.length == 0);
     ok(colF.length == 0);
-    equals(null, e.collection);
+    equals(undefined, e.collection);
   });
 
   test("Colllection: non-persisted model destroy removes from all collections", function() {
@@ -330,7 +330,7 @@ $(document).ready(function() {
     e.destroy();
     ok(colE.length == 0);
     ok(colF.length == 0);
-    equals(null, e.collection);
+    equals(undefined, e.collection);
   });
 
   test("Collection: fetch", function() {

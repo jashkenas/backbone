@@ -82,10 +82,10 @@
       return this;
     },
 
-    // Remove one or many callbacks. If `callback` is null, removes all
-    // callbacks for the event. If `ev` is null, removes all bound callbacks
-    // for all events.
-    unbind : function(ev, callback) {
+    // Remove one or many callbacks. If `context` is null, removes all callbacks
+    // with that function. If `callback` is null, removes all callbacks for the
+    // event. If `ev` is null, removes all bound callbacks for all events.
+    unbind : function(ev, callback, context) {
       var calls, node, prev;
       if (!ev) {
         this._callbacks = null;
@@ -95,9 +95,10 @@
         } else if (node = calls[ev]) {
           while ((prev = node) && (node = node.next)) {
             if (node.callback !== callback) continue;
+            if (context && (context !== node.context)) continue;
             prev.next = node.next;
             node.context = node.callback = null;
-            break;
+            // break;
           }
         }
       }
@@ -582,7 +583,7 @@
       if (this == model.collection) {
         delete model.collection;
       }
-      model.unbind('all', this._onModelEvent);
+      model.unbind('all', this._onModelEvent, this);
     },
 
     // Internal method called every time a model in the set fires an event.
