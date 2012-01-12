@@ -70,23 +70,6 @@ $(document).ready(function() {
     equals(view.counter, 3);
   });
 
-  test("View: delegateEvents allows function as events arg", function() {
-    view.counter = 0;
-    view.el = "#qunit-banner";
-    var events = function () {
-      return {"click": this.click};
-    };
-    view.click = function() { this.counter++; };
-    view.delegateEvents(events);
-    $('#qunit-banner').trigger('click');
-    equals(view.counter, 1);
-    $('#qunit-banner').trigger('click');
-    equals(view.counter, 2);
-    view.delegateEvents(events);
-    $('#qunit-banner').trigger('click');
-    equals(view.counter, 3);
-  });
-
   test("View: undelegateEvents", function() {
     var counter = counter2 = 0;
     view.el = document.body;
