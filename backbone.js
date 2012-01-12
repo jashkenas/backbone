@@ -922,6 +922,7 @@
     //     {
     //       'mousedown .title':  'edit',
     //       'click .button':     'save'
+    //       'click a': function (evnt) { ... }
     //     }
     //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
@@ -929,11 +930,20 @@
     // Omitting the selector binds the event to `this.el`.
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
+    //
+    // A function may also be returned:
+    //  function() { 
+    //      return {
+    //          'mousedown .title': this.titleMouseDown
+    //      };
+    //  }
     delegateEvents : function(events) {
       if (!(events || (events = getValue(this, 'events')))) return;
+      if (_.isFunction(events)) events = _.bind(events, this)(); 
       this.undelegateEvents();
       for (var key in events) {
-        var method = this[events[key]];
+        var method = events[key];
+        if (!_.isFunction(method)) method = this[events[key]];
         if (!method) throw new Error('Event "' + events[key] + '" does not exist');
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
