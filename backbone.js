@@ -268,6 +268,11 @@
       options || (options = {});
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
+      // If a partialUpdate is required, create a member on the options
+	  // hash called updateAttrs and set it to attrs
+	  if (options.partialUpdate != undefined && options.partialUpdate) {
+	    options.updateAttrs = attrs;
+	  }
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
@@ -1032,7 +1037,12 @@
     // Ensure that we have the appropriate request data.
     if (!options.data && model && (method == 'create' || method == 'update')) {
       params.contentType = 'application/json';
-      params.data = JSON.stringify(model.toJSON());
+	  
+	  // If doing a partial model update, then grab the updateAttrs 
+      // member from options.
+      params.data = (options.partialUpdate != undefined && options.partialUpdate)
+                  ? params.data = JSON.stringify(options.updateAttrs)
+                  : params.data = JSON.stringify(model.toJSON());
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.

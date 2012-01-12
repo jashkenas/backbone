@@ -57,6 +57,18 @@ $(document).ready(function() {
     equals(data.author, 'William Shakespeare');
     equals(data.length, 123);
   });
+  
+  test("sync: partial update", function() {
+    library.first().save({id: '1-the-tempest', author: 'William Shakespeare'}, {partialUpdate: true});
+    equals(lastRequest.url, '/library/1-the-tempest');
+    equals(lastRequest.type, 'PUT');
+    equals(lastRequest.dataType, 'json');
+    var data = JSON.parse(lastRequest.data);
+    equals(data.id, '1-the-tempest');
+    equals(data.title, undefined);
+    equals(data.author, 'William Shakespeare');
+    equals(data.length, undefined);
+  });
 
   test("sync: update with emulateHTTP and emulateJSON", function() {
     Backbone.emulateHTTP = Backbone.emulateJSON = true;
