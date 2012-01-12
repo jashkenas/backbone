@@ -745,6 +745,7 @@
       // Is pushState desired ... is it available?
       if (historyStarted) throw new Error("Backbone.history has already been started");
       this.options          = _.extend({}, {root: '/'}, this.options, options);
+      this._wantsHashChange = this.options.hashChange !== false;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && window.history && window.history.pushState);
       var fragment          = this.getFragment();
@@ -759,9 +760,9 @@
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
         $(window).bind('popstate', this.checkUrl);
-      } else if ('onhashchange' in window && !oldIE) {
+      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
         $(window).bind('hashchange', this.checkUrl);
-      } else {
+      } else if (this._wantsHashChange) {
         setInterval(this.checkUrl, this.interval);
       }
 
@@ -771,7 +772,7 @@
       historyStarted = true;
       var loc = window.location;
       var atRoot  = loc.pathname == this.options.root;
-      if (this._wantsPushState && !this._hasPushState && !atRoot) {
+      if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
         window.location.replace(this.options.root + '#' + this.fragment);
         // Return immediately as browser will do redirect to new url
@@ -831,7 +832,7 @@
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
         this.fragment = frag;
         window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, frag);
-      } else {
+      } else if (this._wantsHashChange) {
         this.fragment = frag;
         this._updateHash(window.location, frag, options.replace);
         if (this.iframe && (frag != this.getFragment(this.iframe.location.hash))) {
@@ -840,6 +841,8 @@
           if(!options.replace) this.iframe.document.open().close();
           this._updateHash(this.iframe.location, frag, options.replace);
         }
+      } else {
+        window.location.assign(this.options.root + fragment);
       }
       if (options.trigger) this.loadUrl(fragment);
     },
