@@ -1754,8 +1754,9 @@ end
       If you want to work with a legacy web server that doesn't support Backbones's
       default REST/HTTP approach, you may choose to turn on <tt>Backbone.emulateHTTP</tt>.
       Setting this option will fake <tt>PUT</tt> and <tt>DELETE</tt> requests with
-      a HTTP <tt>POST</tt>, and pass them under the <tt>_method</tt> parameter. Setting this option
-      will also set an <tt>X-HTTP-Method-Override</tt> header with the true method.
+      a HTTP <tt>POST</tt>, setting the <tt>X-HTTP-Method-Override</tt> header 
+      with the true method. If <tt>emulateJSON</tt> is also on, the true method 
+      will be passed as an additional <tt>_method</tt> parameter.
     </p>
 
 <pre>
