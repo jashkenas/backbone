@@ -669,6 +669,7 @@
         var args = this._extractParameters(route, fragment);
         callback && callback.apply(this, args);
         this.trigger.apply(this, ['route:' + name].concat(args));
+        Backbone.history.trigger('route', this, name, args);
       }, this));
     },
 
@@ -728,7 +729,7 @@
   var historyStarted = false;
 
   // Set up all inheritable **Backbone.History** properties and methods.
-  _.extend(Backbone.History.prototype, {
+  _.extend(Backbone.History.prototype, Backbone.Events, {
 
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
