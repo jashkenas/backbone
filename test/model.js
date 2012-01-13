@@ -89,8 +89,9 @@ $(document).ready(function() {
 
   test("Model: url when using urlRoot as a function to determine urlRoot at runtime", function() {
     var Model = Backbone.Model.extend({
-      urlRoot: function() { return '/nested/' + this.get('parent_id') + '/collection'}
-      // looks better in coffeescript: urlRoot: => "/nested/#{@get('parent_id')}/collection"
+      urlRoot: function() {
+        return '/nested/' + this.get('parent_id') + '/collection';
+      }
     });
 
     var model = new Model({parent_id: 1});
@@ -167,7 +168,7 @@ $(document).ready(function() {
     attrs = {id: 'id', foo: 1, bar: 2, baz: 3};
     a = new Backbone.Model(attrs);
     var changeCount = 0;
-    a.bind("change:foo", function() { changeCount += 1; });
+    a.on("change:foo", function() { changeCount += 1; });
     a.set({'foo': 2});
     ok(a.get('foo') == 2, "Foo should have changed.");
     ok(changeCount == 1, "Change count should have incremented.");
@@ -191,7 +192,7 @@ $(document).ready(function() {
     var i = 0;
     var counter = function(){ i++; };
     var model = new Backbone.Model({a: 1});
-    model.bind("change:a", counter);
+    model.on("change:a", counter);
     model.set({a: 2});
     model.unset('a');
     model.unset('a');
@@ -228,8 +229,8 @@ $(document).ready(function() {
   test("Model: clear", function() {
     var changed;
     var model = new Backbone.Model({id: 1, name : "Model"});
-    model.bind("change:name", function(){ changed = true; });
-    model.bind("change", function() {
+    model.on("change:name", function(){ changed = true; });
+    model.on("change", function() {
       var changedAttrs = model.changedAttributes();
       ok('name' in changedAttrs);
     });
@@ -264,7 +265,7 @@ $(document).ready(function() {
   test("Model: change, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
     equals(model.changedAttributes(), false);
-    model.bind('change', function() {
+    model.on('change', function() {
       ok(model.hasChanged('name'), 'name changed');
       ok(!model.hasChanged('age'), 'age did not');
       ok(_.isEqual(model.changedAttributes(), {name : 'Rob'}), 'changedAttributes returns the changed attrs');
@@ -281,7 +282,7 @@ $(document).ready(function() {
   test("Model: change with options", function() {
     var value;
     var model = new Backbone.Model({name: 'Rob'});
-    model.bind('change', function(model, options) {
+    model.on('change', function(model, options) {
       value = options.prefix + model.get('name');
     });
     model.set({name: 'Bob'}, {silent: true});
@@ -295,14 +296,14 @@ $(document).ready(function() {
     var changed = 0;
     var attrs = {id: 1, label: 'c'};
     var obj = new Backbone.Model(attrs);
-    obj.bind('change', function() { changed += 1; });
+    obj.on('change', function() { changed += 1; });
     obj.set(attrs);
     equals(changed, 0);
   });
 
   test("Model: save within change event", function () {
     var model = new Backbone.Model({firstName : "Taylor", lastName: "Swift"});
-    model.bind('change', function () {
+    model.on('change', function () {
       model.save();
       ok(_.isEqual(lastRequest[1], model));
     });
@@ -355,7 +356,7 @@ $(document).ready(function() {
     model.validate = function(attrs) {
       if (attrs.admin) return "Can't change admin status.";
     };
-    model.bind('error', function(model, error) {
+    model.on('error', function(model, error) {
       lastError = error;
     });
     var result = model.set({a: 100});
@@ -404,7 +405,7 @@ $(document).ready(function() {
     var callback = function(model, error) {
       lastError = error;
     };
-    model.bind('error', function(model, error) {
+    model.on('error', function(model, error) {
       boundError = true;
     });
     var result = model.set({a: 100}, {error: callback});
@@ -457,7 +458,7 @@ $(document).ready(function() {
   test("Model: Nested change events don't clobber previous attributes", function() {
     var A = Backbone.Model.extend({
       initialize: function() {
-        this.bind("change:state", function(a, newState) {
+        this.on("change:state", function(a, newState) {
           equals(a.previous('state'), undefined);
           equals(newState, 'hello');
           // Fire a nested change event.
@@ -468,7 +469,7 @@ $(document).ready(function() {
 
     var B = Backbone.Model.extend({
       initialize: function() {
-        this.get("a").bind("change:state", function(a, newState) {
+        this.get("a").on("change:state", function(a, newState) {
           equals(a.previous('state'), undefined);
           equals(newState, 'hello');
         });
@@ -482,7 +483,7 @@ $(document).ready(function() {
 
   test("Model: Multiple nested calls to set", function() {
     var counter = 0, model = new Backbone.Model({});
-    model.bind('change', function() {
+    model.on('change', function() {
       counter++;
       model.set({b: 1});
       model.set({a: 1});
@@ -494,10 +495,10 @@ $(document).ready(function() {
   test("hasChanged/set should use same comparison", function() {
     expect(2);
     var changed = 0, model = new Backbone.Model({a: null});
-    model.bind('change', function() {
+    model.on('change', function() {
       ok(this.hasChanged('a'));
     })
-    .bind('change:a', function() {
+    .on('change:a', function() {
       changed++;
     })
     .set({a: undefined});

@@ -60,19 +60,19 @@
   // -----------------
 
   // A module that can be mixed in to *any object* in order to provide it with
-  // custom events. You may `bind` or `unbind` a callback function to an event;
-  // `trigger`-ing an event fires all callbacks in succession.
+  // custom events. You may bind with `on` or remove with `off` callback functions
+  // to an event; trigger`-ing an event fires all callbacks in succession.
   //
   //     var object = {};
   //     _.extend(object, Backbone.Events);
-  //     object.bind('expand', function(){ alert('expanded'); });
+  //     object.on('expand', function(){ alert('expanded'); });
   //     object.trigger('expand');
   //
   Backbone.Events = {
 
     // Bind an event, specified by a string name, `ev`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
-    bind : function(ev, callback, context) {
+    on : function(ev, callback, context) {
       var calls = this._callbacks || (this._callbacks = {});
       var list  = calls[ev] || (calls[ev] = {});
       var tail = list.tail || (list.tail = list.next = {});
@@ -85,7 +85,7 @@
     // Remove one or many callbacks. If `context` is null, removes all callbacks
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `ev` is null, removes all bound callbacks for all events.
-    unbind : function(ev, callback, context) {
+    off : function(ev, callback, context) {
       var calls, node;
       if (!ev) {
         delete this._callbacks;
@@ -96,7 +96,7 @@
         while ((node = node.next) && node.next) {
           if (node.callback === callback &&
             (!context || node.context === context)) continue;
-          this.bind(ev, node.callback, node.context);
+          this.on(ev, node.callback, node.context);
         }
       }
       return this;
@@ -125,6 +125,10 @@
     }
 
   };
+
+  // Aliases for backwards compatibility.
+  Backbone.Events.bind   = Backbone.Events.on;
+  Backbone.Events.unbind = Backbone.Events.off;
 
   // Backbone.Model
   // --------------
@@ -438,7 +442,7 @@
         }
         this._byCid[model.cid] = model;
         if (hasId) this._byId[model.id] = model;
-        model.bind('all', this._onModelEvent, this);
+        model.on('all', this._onModelEvent, this);
       }
       this.length += length;
       i = options.at != null ? options.at : this.models.length;
@@ -596,7 +600,7 @@
       if (this == model.collection) {
         delete model.collection;
       }
-      model.unbind('all', this._onModelEvent, this);
+      model.off('all', this._onModelEvent, this);
     },
 
     // Internal method called every time a model in the set fires an event.
