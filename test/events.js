@@ -15,6 +15,26 @@ $(document).ready(function() {
     equals(obj.counter, 5, 'counter should be incremented five times.');
   });
 
+  test("Events: binding and triggering multiple events", function() {
+    var obj = { counter: 0 };
+    _.extend(obj,Backbone.Events);
+
+    obj.on('a b c', function() { obj.counter += 1; });
+
+    obj.trigger('a');
+    equals(obj.counter, 1);
+
+    obj.trigger('a b');
+    equals(obj.counter, 3);
+
+    obj.trigger('c');
+    equals(obj.counter, 4);
+
+    obj.off('a c');
+    obj.trigger('a b c');
+    equals(obj.counter, 5);
+  });
+
   test("Events: on, then unbind all functions", function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
@@ -70,9 +90,11 @@ $(document).ready(function() {
   test("Events: bind a callback with a supplied context", function () {
     expect(1);
 
-    var TestClass = function () { return this; }
+    var TestClass = function () {
+      return this;
+    };
     TestClass.prototype.assertTrue = function () {
-      ok(true, '`this` was bound to the callback')
+      ok(true, '`this` was bound to the callback');
     };
 
     var obj = _.extend({},Backbone.Events);

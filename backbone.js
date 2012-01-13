@@ -72,31 +72,38 @@
 
     // Bind an event, specified by a string name, `ev`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
-    on : function(ev, callback, context) {
-      var calls = this._callbacks || (this._callbacks = {});
-      var list  = calls[ev] || (calls[ev] = {});
-      var tail = list.tail || (list.tail = list.next = {});
-      tail.callback = callback;
-      tail.context = context;
-      list.tail = tail.next = {};
+    on : function(events, callback, context) {
+      var ev;
+      events = events.split(/\s+/);
+      while (ev = events.shift()) {
+        var calls = this._callbacks || (this._callbacks = {});
+        var list  = calls[ev] || (calls[ev] = {});
+        var tail = list.tail || (list.tail = list.next = {});
+        tail.callback = callback;
+        tail.context = context;
+        list.tail = tail.next = {};
+      }
       return this;
     },
 
     // Remove one or many callbacks. If `context` is null, removes all callbacks
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `ev` is null, removes all bound callbacks for all events.
-    off : function(ev, callback, context) {
-      var calls, node;
-      if (!ev) {
+    off : function(events, callback, context) {
+      var ev, calls, node;
+      if (!events) {
         delete this._callbacks;
       } else if (calls = this._callbacks) {
-        node = calls[ev];
-        delete calls[ev];
-        if (!callback || !node) return this;
-        while ((node = node.next) && node.next) {
-          if (node.callback === callback &&
-            (!context || node.context === context)) continue;
-          this.on(ev, node.callback, node.context);
+        events = events.split(/\s+/);
+        while (ev = events.shift()) {
+          node = calls[ev];
+          delete calls[ev];
+          if (!callback || !node) continue;
+          while ((node = node.next) && node.next) {
+            if (node.callback === callback &&
+              (!context || node.context === context)) continue;
+            this.on(ev, node.callback, node.context);
+          }
         }
       }
       return this;
@@ -105,9 +112,11 @@
     // Trigger an event, firing all bound callbacks. Callbacks are passed the
     // same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
-    trigger : function(ev) {
-      var node, calls, tail, args, event;
-      var events = ['all', ev, null];
+    trigger : function(evs) {
+      var event, node, calls, tail, args;
+      var events = evs.split(/\s+/);
+      events.unshift('all');
+      events.push(null);
       if (!(calls = this._callbacks)) return this;
       while (event = events.shift()) {
         if (!(node = calls[event])) continue;
