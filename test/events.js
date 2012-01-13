@@ -35,6 +35,20 @@ $(document).ready(function() {
     equals(obj.counter, 5);
   });
 
+  test("Events: trigger all for each event", function() {
+    var a, b, obj = { counter: 0 };
+    _.extend(obj, Backbone.Events);
+    obj.on('all', function(event) {
+      obj.counter++;
+      if (event == 'a') a = true;
+      if (event == 'b') b = true;
+    })
+    .trigger('a b');
+    ok(a);
+    ok(b);
+    equal(obj.counter, 2);
+  });
+
   test("Events: on, then unbind all functions", function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
