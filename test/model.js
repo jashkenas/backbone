@@ -505,4 +505,20 @@ $(document).ready(function() {
     equal(changed, 1);
   });
 
+  test("#582, #425, change:attribute callbacks should fire after all changes have occurred", 9, function() {
+    var model = new Backbone.Model;
+
+    var assertion = function() {
+      equals(model.get('a'), 'a');
+      equals(model.get('b'), 'b');
+      equals(model.get('c'), 'c');
+    };
+
+    model.on('change:a', assertion);
+    model.on('change:b', assertion);
+    model.on('change:c', assertion);
+
+    model.set({a: 'a', b: 'b', c: 'c'});
+  });
+
 });

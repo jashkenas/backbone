@@ -202,7 +202,7 @@
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
     set : function(key, value, options) {
-      var attrs;
+      var attrs, attr, val;
       if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
@@ -229,14 +229,20 @@
       this._changing = true;
 
       // Update attributes.
-      for (var attr in attrs) {
-        var val = attrs[attr];
+      var changes = {};
+      for (attr in attrs) {
+        val = attrs[attr];
         if (!_.isEqual(now[attr], val) || (options.unset && (attr in now))) {
           options.unset ? delete now[attr] : now[attr] = val;
           delete escaped[attr];
           this._changed = true;
-          if (!options.silent) this.trigger('change:' + attr, this, val, options);
+          changes[attr] = val;
         }
+      }
+
+      // Fire `change:attribute` events.
+      for (var attr in changes) {
+        if (!options.silent) this.trigger('change:' + attr, this, changes[attr], options);
       }
 
       // Fire the `"change"` event, if the model has been changed.
