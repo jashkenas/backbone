@@ -448,4 +448,16 @@ $(document).ready(function() {
     ok(attrs === models[0]);
   });
 
+  test("#714: access `model.collection` in a brand new model.", 2, function() {
+    var col = new Backbone.Collection;
+    var Model = Backbone.Model.extend({
+      set: function(attrs) {
+        equals(attrs.prop, 'value');
+        equals(this.collection, col);
+      }
+    });
+    col.model = Model;
+    col.create({prop: 'value'});
+  });
+
 });
