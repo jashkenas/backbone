@@ -75,8 +75,11 @@
     on : function(events, callback, context) {
       var ev;
       events = events.split(/\s+/);
+      var calls = this._callbacks || (this._callbacks = {});
       while (ev = events.shift()) {
-        var calls = this._callbacks || (this._callbacks = {});
+        // Create an immutable callback list, allowing traversal during
+        // modification.  The tail is an empty object that will always be used
+        // as the next node.
         var list  = calls[ev] || (calls[ev] = {});
         var tail = list.tail || (list.tail = list.next = {});
         tail.callback = callback;
@@ -99,6 +102,7 @@
           node = calls[ev];
           delete calls[ev];
           if (!callback || !node) continue;
+          // Create a new list, omitting the indicated event/context pairs.
           while ((node = node.next) && node.next) {
             if (node.callback === callback &&
               (!context || node.context === context)) continue;
@@ -118,11 +122,13 @@
       events.unshift('all');
       events.push(null);
       if (!(calls = this._callbacks)) return this;
+      // Save references to the current head, tail, & args.
       while (event = events.shift()) {
         if (!(node = calls[event])) continue;
         args = event == 'all' ? arguments : slice.call(arguments, 1);
         events.push({next: node.next, tail: node.tail, args: args});
       }
+      // Traverse each list, stopping when the saved tail is reached.
       while (node = events.pop()) {
         tail = node.tail;
         args = node.args;
