@@ -106,7 +106,8 @@
     // same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
     trigger : function(ev) {
-      var node, calls, tail, args, event, events = ['all', ev, null];
+      var node, calls, tail, args, event;
+      var events = ['all', ev, null];
       if (!(calls = this._callbacks)) return this;
       while (event = events.shift()) {
         if (!(node = calls[event])) continue;
@@ -114,7 +115,8 @@
         events.push({next: node.next, tail: node.tail, args: args});
       }
       while (node = events.pop()) {
-        tail = node.tail, args = node.args;
+        tail = node.tail;
+        args = node.args;
         while ((node = node.next) !== tail) {
           node.callback.apply(node.context || this, args);
         }
