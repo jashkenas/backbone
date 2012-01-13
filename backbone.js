@@ -252,7 +252,7 @@
     // model differs from its current attributes, they will be overriden,
     // triggering a `"change"` event.
     fetch : function(options) {
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -267,7 +267,7 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save : function(attrs, options) {
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
       var success = options.success;
@@ -287,7 +287,7 @@
     // Destroy this model on the server if it was already persisted.
     // Upon success, the model is removed from its collection, if it has one.
     destroy : function(options) {
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       if (this.isNew()) return this.trigger('destroy', this, this.collection, options);
       var model = this;
       var success = options.success;
@@ -525,7 +525,7 @@
     // collection when they arrive. If `add: true` is passed, appends the
     // models to the collection instead of resetting.
     fetch : function(options) {
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       if (options.parse === undefined) options.parse = true;
       var collection = this;
       var success = options.success;
@@ -542,7 +542,7 @@
     // Returns the model, or 'false' if validation on a new model fails.
     create : function(model, options) {
       var coll = this;
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       model = this._prepareModel(model, options);
       if (!model) return false;
       var success = options.success;
