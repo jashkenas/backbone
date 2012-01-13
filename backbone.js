@@ -272,7 +272,11 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
-        if (success) success(model, resp, xhr);
+        if (success) {
+          success(model, resp);
+        } else {
+          model.trigger('sync', model, resp, options);
+        }
       };
       options.error = Backbone.wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
@@ -288,7 +292,11 @@
       var success = options.success;
       options.success = function(resp) {
         model.trigger('destroy', model, model.collection, options);
-        if (success) success(model, resp);
+        if (success) {
+          success(model, resp);
+        } else {
+          model.trigger('sync', model, resp, options);
+        }
       };
       options.error = Backbone.wrapError(options.error, model, options);
       return (this.sync || Backbone.sync).call(this, 'delete', this, options);
@@ -539,7 +547,11 @@
       var success = options.success;
       options.success = function(nextModel, resp, xhr) {
         coll.add(nextModel, options);
-        if (success) success(nextModel, resp, xhr);
+        if (success) {
+          success(nextModel, resp);
+        } else {
+          nextModel.trigger('sync', model, resp, options);
+        }
       };
       model.save(null, options);
       return model;
