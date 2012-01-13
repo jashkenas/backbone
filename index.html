@@ -446,6 +446,11 @@ object.bind("alert", function(msg) {
 object.trigger("alert", "an event");
 </pre>
 
+    <p>
+      For example, to make a handy event dispatcher that can coordinate events
+      among different areas of your application: <tt>var dispatcher = _.clone(Backbone.Events)</tt>
+    </p>
+
     <p id="Events-bind">
       <b class="header">bind</b><code>object.bind(event, callback, [context])</code>
       <br />
