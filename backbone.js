@@ -272,7 +272,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
-        if (success) success(model, resp, xhr);
+        success ? success(model, resp, xhr) : model.trigger('success', model, resp, options);
       };
       options.error = Backbone.wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
