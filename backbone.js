@@ -445,7 +445,7 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `added` event for every new model.
     add : function(models, options) {
-      var i, length;
+      var i, index, length;
       options || (options = {});
       if (!_.isArray(models)) models = [models];
       models = slice.call(models);
@@ -460,11 +460,12 @@
         model.on('all', this._onModelEvent, this);
       }
       this.length += length;
-      i = options.at != null ? options.at : this.models.length;
-      splice.apply(this.models, [i, 0].concat(models));
+      index = options.at != null ? options.at : this.models.length;
+      splice.apply(this.models, [index, 0].concat(models));
       if (this.comparator) this.sort({silent: true});
       if (options.silent) return this;
       for (i = 0; i < length; i++) {
+        options.index = index + i;
         models[i].trigger('add', models[i], this, options);
       }
       return this;
@@ -473,16 +474,21 @@
     // Remove a model, or a list of models from the set. Pass silent to avoid
     // firing the `removed` event for every model removed.
     remove : function(models, options) {
+      var i, index, model;
       options || (options = {});
       if (!_.isArray(models)) models = [models];
-      for (var i = 0, l = models.length; i < l; i++) {
-        var model = this.getByCid(models[i]) || this.get(models[i]);
+      for (i = 0, l = models.length; i < l; i++) {
+        model = this.getByCid(models[i]) || this.get(models[i]);
         if (!model) continue;
         delete this._byId[model.id];
         delete this._byCid[model.cid];
-        this.models.splice(this.indexOf(model), 1);
+        index = this.indexOf(model);
+        this.models.splice(index, 1);
         this.length--;
-        if (!options.silent) model.trigger('remove', model, this, options);
+        if (!options.silent) {
+          options.index = index;
+          model.trigger('remove', model, this, options);
+        }
         this._removeReference(model);
       }
       return this;

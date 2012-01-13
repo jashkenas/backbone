@@ -107,6 +107,7 @@ $(document).ready(function() {
     });
     col.bind('add', function(model, collection, options){
       added = model.get('label');
+      equals(options.index, 4);
       opts = options;
     });
     col.add(e, {amazing: true});
@@ -231,8 +232,13 @@ $(document).ready(function() {
 
   test("Collection: remove", function() {
     var removed = otherRemoved = null;
-    col.bind('remove', function(model){ removed = model.get('label'); });
-    otherCol.bind('remove', function(){ otherRemoved = true; });
+    col.bind('remove', function(model, col, options) {
+      removed = model.get('label');
+      equals(options.index, 4);
+    });
+    otherCol.bind('remove', function(model, col, options) {
+      otherRemoved = true;
+    });
     col.remove(e);
     equals(removed, 'e');
     equals(col.length, 4);
