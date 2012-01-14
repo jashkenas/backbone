@@ -116,22 +116,22 @@
     // Trigger an event, firing all bound callbacks. Callbacks are passed the
     // same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
-    trigger : function(evs) {
-      var event, node, calls, tail, args;
-      var events = evs.split(/\s+/);
-      events.unshift('all');
-      events.push(null);
+    trigger : function(events) {
+      var event, node, calls, tail, args, all, rest;
       if (!(calls = this._callbacks)) return this;
-      // Save references to the current head, tail, & args.
+      all = calls['all'];
+      (events = events.split(/\s+/)).push(null);
+      // Save references to the current heads & tails.
       while (event = events.shift()) {
+        if (all) events.push({next: all.next, tail: all.tail, event: event});
         if (!(node = calls[event])) continue;
-        args = event == 'all' ? arguments : slice.call(arguments, 1);
-        events.push({next: node.next, tail: node.tail, args: args});
+        events.push({next: node.next, tail: node.tail});
       }
       // Traverse each list, stopping when the saved tail is reached.
+      rest = slice.call(arguments, 1);
       while (node = events.pop()) {
         tail = node.tail;
-        args = node.args;
+        args = node.event ? [node.event].concat(rest) : rest;
         while ((node = node.next) !== tail) {
           node.callback.apply(node.context || this, args);
         }
