@@ -2,7 +2,8 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  <link rel="icon" href="docs/images/favicon.ico" />
   <title>Backbone.js</title>
   <style>
     body {
@@ -445,6 +446,11 @@ object.bind("alert", function(msg) {
 object.trigger("alert", "an event");
 </pre>
 
+    <p>
+      For example, to make a handy event dispatcher that can coordinate events
+      among different areas of your application: <tt>var dispatcher = _.clone(Backbone.Events)</tt>
+    </p>
+
     <p id="Events-bind">
       <b class="header">bind</b><code>object.bind(event, callback, [context])</code>
       <br />
@@ -602,6 +608,12 @@ new Book({
   author: "Scheherazade"
 });
 </pre>
+  
+    <p>
+      In rare cases, if you're looking to get fancy, 
+      you may want to override <b>constructor</b>, which allows
+      you to replace the actual constructor function for your model.
+    </p>
 
     <p id="Model-get">
       <b class="header">get</b><code>model.get(attribute)</code>
@@ -1747,8 +1759,9 @@ end
       If you want to work with a legacy web server that doesn't support Backbones's
       default REST/HTTP approach, you may choose to turn on <tt>Backbone.emulateHTTP</tt>.
       Setting this option will fake <tt>PUT</tt> and <tt>DELETE</tt> requests with
-      a HTTP <tt>POST</tt>, and pass them under the <tt>_method</tt> parameter. Setting this option
-      will also set an <tt>X-HTTP-Method-Override</tt> header with the true method.
+      a HTTP <tt>POST</tt>, setting the <tt>X-HTTP-Method-Override</tt> header 
+      with the true method. If <tt>emulateJSON</tt> is also on, the true method 
+      will be passed as an additional <tt>_method</tt> parameter.
     </p>
 
 <pre>

@@ -59,15 +59,24 @@ $(document).ready(function() {
   Backbone.history.interval = 9;
   Backbone.history.start({pushState: false});
 
+  var lastRoute = null;
+  var lastArgs = [];
+  Backbone.history.bind('route', function(router, route, args) {
+    lastRoute = route;
+    lastArgs = args;
+  });
+
   test("Router: initialize", function() {
     equals(router.testing, 101);
   });
 
-  asyncTest("Router: routes (simple)", 2, function() {
+  asyncTest("Router: routes (simple)", 4, function() {
     window.location.hash = 'search/news';
     setTimeout(function() {
       equals(router.query, 'news');
       equals(router.page, undefined);
+      equals(lastRoute, 'search');
+      equals(lastArgs[0], 'news');
       start();
     }, 10);
   });
@@ -137,11 +146,14 @@ $(document).ready(function() {
     }, 10);
   });
 
-  asyncTest("Router: routes (query)", 2, function() {
+  asyncTest("Router: routes (query)", 5, function() {
     window.location.hash = 'mandel?a=b&c=d';
     setTimeout(function() {
       equals(router.entity, 'mandel');
       equals(router.queryArgs, 'a=b&c=d');
+      equals(lastRoute, 'query');
+      equals(lastArgs[0], 'mandel');
+      equals(lastArgs[1], 'a=b&c=d');
       start();
     }, 10);
   });

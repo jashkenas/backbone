@@ -57,45 +57,53 @@
   // -----------------
 
   // A module that can be mixed in to *any object* in order to provide it with
-  // custom events. You may `bind` or `unbind` a callback function to an event;
-  // `trigger`-ing an event fires all callbacks in succession.
+  // custom events. You may bind with `on` or remove with `off` callback functions
+  // to an event; trigger`-ing an event fires all callbacks in succession.
   //
   //     var object = {};
   //     _.extend(object, Backbone.Events);
-  //     object.bind('expand', function(){ alert('expanded'); });
+  //     object.on('expand', function(){ alert('expanded'); });
   //     object.trigger('expand');
   //
   Backbone.Events = {
 
     // Bind an event, specified by a string name, `ev`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
-    bind : function(ev, callback, context) {
+    on : function(events, callback, context) {
+      var ev;
+      events = events.split(/\s+/);
       var calls = this._callbacks || (this._callbacks = {});
-      var list  = calls[ev] || (calls[ev] = {});
-      var tail = list.tail || (list.tail = list.next = {});
-      tail.callback = callback;
-      tail.context = context;
-      list.tail = tail.next = {};
+      while (ev = events.shift()) {
+        // Create an immutable callback list, allowing traversal during
+        // modification.  The tail is an empty object that will always be used
+        // as the next node.
+        var list  = calls[ev] || (calls[ev] = {});
+        var tail = list.tail || (list.tail = list.next = {});
+        tail.callback = callback;
+        tail.context = context;
+        list.tail = tail.next = {};
+      }
       return this;
     },
 
     // Remove one or many callbacks. If `context` is null, removes all callbacks
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `ev` is null, removes all bound callbacks for all events.
-    unbind : function(ev, callback, context) {
-      var calls, node, prev;
-      if (!ev) {
-        this._callbacks = null;
+    off : function(events, callback, context) {
+      var ev, calls, node;
+      if (!events) {
+        delete this._callbacks;
       } else if (calls = this._callbacks) {
-        if (!callback) {
-          calls[ev] = {};
-        } else if (node = calls[ev]) {
-          while ((prev = node) && (node = node.next)) {
-            if (node.callback !== callback) continue;
-            if (context && (context !== node.context)) continue;
-            prev.next = node.next;
-            node.context = node.callback = null;
-            // break;
+        events = events.split(/\s+/);
+        while (ev = events.shift()) {
+          node = calls[ev];
+          delete calls[ev];
+          if (!callback || !node) continue;
+          // Create a new list, omitting the indicated event/context pairs.
+          while ((node = node.next) && node.next) {
+            if (node.callback === callback &&
+              (!context || node.context === context)) continue;
+            this.on(ev, node.callback, node.context);
           }
         }
       }
@@ -105,22 +113,34 @@
     // Trigger an event, firing all bound callbacks. Callbacks are passed the
     // same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
-    trigger : function(eventName) {
-      var node, calls, callback, args, ev, events = ['all', eventName];
+    trigger : function(events) {
+      var event, node, calls, tail, args, all, rest;
       if (!(calls = this._callbacks)) return this;
-      while (ev = events.pop()) {
-        if (!(node = calls[ev])) continue;
-        args = ev == 'all' ? arguments : slice.call(arguments, 1);
-        while (node = node.next) {
-          if (callback = node.callback) {
-            callback.apply(node.context || this, args);
-          }
+      all = calls['all'];
+      (events = events.split(/\s+/)).push(null);
+      // Save references to the current heads & tails.
+      while (event = events.shift()) {
+        if (all) events.push({next: all.next, tail: all.tail, event: event});
+        if (!(node = calls[event])) continue;
+        events.push({next: node.next, tail: node.tail});
+      }
+      // Traverse each list, stopping when the saved tail is reached.
+      rest = slice.call(arguments, 1);
+      while (node = events.pop()) {
+        tail = node.tail;
+        args = node.event ? [node.event].concat(rest) : rest;
+        while ((node = node.next) !== tail) {
+          node.callback.apply(node.context || this, args);
         }
       }
       return this;
     }
 
   };
+
+  // Aliases for backwards compatibility.
+  Backbone.Events.bind   = Backbone.Events.on;
+  Backbone.Events.unbind = Backbone.Events.off;
 
   // Backbone.Model
   // --------------
@@ -134,14 +154,14 @@
     if (defaults = getValue(this, 'defaults')) {
       attributes = _.extend({}, defaults, attributes);
     }
+    if (options && options.collection) this.collection = options.collection;
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
     this.set(attributes, {silent : true});
     this._changed = false;
     this._previousAttributes = _.clone(this.attributes);
-    if (options && options.collection) this.collection = options.collection;
-    this.initialize(attributes, options);
+    this.initialize.apply(this, arguments);
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -185,7 +205,7 @@
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
     set : function(key, value, options) {
-      var attrs;
+      var attrs, attr, val;
       if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
@@ -212,14 +232,20 @@
       this._changing = true;
 
       // Update attributes.
-      for (var attr in attrs) {
-        var val = attrs[attr];
+      var changes = {};
+      for (attr in attrs) {
+        val = attrs[attr];
         if (!_.isEqual(now[attr], val) || (options.unset && (attr in now))) {
           options.unset ? delete now[attr] : now[attr] = val;
           delete escaped[attr];
           this._changed = true;
-          if (!options.silent) this.trigger('change:' + attr, this, val, options);
+          changes[attr] = val;
         }
+      }
+
+      // Fire `change:attribute` events.
+      for (var attr in changes) {
+        if (!options.silent) this.trigger('change:' + attr, this, changes[attr], options);
       }
 
       // Fire the `"change"` event, if the model has been changed.
@@ -248,7 +274,7 @@
     // model differs from its current attributes, they will be overriden,
     // triggering a `"change"` event.
     fetch : function(options) {
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -263,13 +289,17 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save : function(attrs, options) {
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
-        if (success) success(model, resp, xhr);
+        if (success) {
+          success(model, resp);
+        } else {
+          model.trigger('sync', model, resp, options);
+        }
       };
       options.error = Backbone.wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
@@ -279,13 +309,17 @@
     // Destroy this model on the server if it was already persisted.
     // Upon success, the model is removed from its collection, if it has one.
     destroy : function(options) {
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       if (this.isNew()) return this.trigger('destroy', this, this.collection, options);
       var model = this;
       var success = options.success;
       options.success = function(resp) {
         model.trigger('destroy', model, model.collection, options);
-        if (success) success(model, resp);
+        if (success) {
+          success(model, resp);
+        } else {
+          model.trigger('sync', model, resp, options);
+        }
       };
       options.error = Backbone.wrapError(options.error, model, options);
       return (this.sync || Backbone.sync).call(this, 'delete', this, options);
@@ -414,7 +448,7 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `added` event for every new model.
     add : function(models, options) {
-      var i, length;
+      var i, index, length;
       options || (options = {});
       if (!_.isArray(models)) models = [models];
       models = slice.call(models);
@@ -426,14 +460,15 @@
         }
         this._byCid[model.cid] = model;
         if (hasId) this._byId[model.id] = model;
-        model.bind('all', this._onModelEvent, this);
+        model.on('all', this._onModelEvent, this);
       }
       this.length += length;
-      i = options.at != null ? options.at : this.models.length;
-      splice.apply(this.models, [i, 0].concat(models));
+      index = options.at != null ? options.at : this.models.length;
+      splice.apply(this.models, [index, 0].concat(models));
       if (this.comparator) this.sort({silent: true});
       if (options.silent) return this;
       for (i = 0; i < length; i++) {
+        options.index = index + i;
         models[i].trigger('add', models[i], this, options);
       }
       return this;
@@ -442,16 +477,21 @@
     // Remove a model, or a list of models from the set. Pass silent to avoid
     // firing the `removed` event for every model removed.
     remove : function(models, options) {
+      var i, index, model;
       options || (options = {});
       if (!_.isArray(models)) models = [models];
-      for (var i = 0, l = models.length; i < l; i++) {
-        var model = this.getByCid(models[i]) || this.get(models[i]);
+      for (i = 0, l = models.length; i < l; i++) {
+        model = this.getByCid(models[i]) || this.get(models[i]);
         if (!model) continue;
         delete this._byId[model.id];
         delete this._byCid[model.cid];
-        this.models.splice(this.indexOf(model), 1);
+        index = this.indexOf(model);
+        this.models.splice(index, 1);
         this.length--;
-        if (!options.silent) model.trigger('remove', model, this, options);
+        if (!options.silent) {
+          options.index = index;
+          model.trigger('remove', model, this, options);
+        }
         this._removeReference(model);
       }
       return this;
@@ -513,7 +553,7 @@
     // collection when they arrive. If `add: true` is passed, appends the
     // models to the collection instead of resetting.
     fetch : function(options) {
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       if (options.parse === undefined) options.parse = true;
       var collection = this;
       var success = options.success;
@@ -530,13 +570,17 @@
     // Returns the model, or 'false' if validation on a new model fails.
     create : function(model, options) {
       var coll = this;
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       model = this._prepareModel(model, options);
       if (!model) return false;
       var success = options.success;
       options.success = function(nextModel, resp, xhr) {
         coll.add(nextModel, options);
-        if (success) success(nextModel, resp, xhr);
+        if (success) {
+          success(nextModel, resp);
+        } else {
+          nextModel.trigger('sync', model, resp, options);
+        }
       };
       model.save(null, options);
       return model;
@@ -567,7 +611,8 @@
     _prepareModel : function(model, options) {
       if (!(model instanceof Backbone.Model)) {
         var attrs = model;
-        model = new this.model(attrs, {collection: this, parse: options.parse});
+        options.collection = this;
+        model = new this.model(attrs, options);
         if (model.validate && !model._performValidation(model.attributes, options)) model = false;
       } else if (!model.collection) {
         model.collection = this;
@@ -580,7 +625,7 @@
       if (this == model.collection) {
         delete model.collection;
       }
-      model.unbind('all', this._onModelEvent, this);
+      model.off('all', this._onModelEvent, this);
     },
 
     // Internal method called every time a model in the set fires an event.
@@ -602,10 +647,11 @@
   });
 
   // Underscore methods that we want to implement on the Collection.
-  var methods = ['forEach', 'each', 'map', 'reduce', 'reduceRight', 'find', 'detect',
-    'filter', 'select', 'reject', 'every', 'all', 'some', 'any', 'include',
-    'contains', 'invoke', 'max', 'min', 'sortBy', 'sortedIndex', 'toArray', 'size',
-    'first', 'rest', 'last', 'without', 'indexOf', 'lastIndexOf', 'isEmpty', 'groupBy'];
+  var methods = ['forEach', 'each', 'map', 'reduce', 'reduceRight', 'find',
+    'detect', 'filter', 'select', 'reject', 'every', 'all', 'some', 'any',
+    'include', 'contains', 'invoke', 'max', 'min', 'sortBy', 'sortedIndex',
+    'toArray', 'size', 'first', 'initial', 'rest', 'last', 'without', 'indexOf',
+    'shuffle', 'lastIndexOf', 'isEmpty', 'groupBy'];
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
   _.each(methods, function(method) {
@@ -652,6 +698,7 @@
         var args = this._extractParameters(route, fragment);
         callback && callback.apply(this, args);
         this.trigger.apply(this, ['route:' + name].concat(args));
+        Backbone.history.trigger('route', this, name, args);
       }, this));
     },
 
@@ -711,7 +758,7 @@
   var historyStarted = false;
 
   // Set up all inheritable **Backbone.History** properties and methods.
-  _.extend(Backbone.History.prototype, {
+  _.extend(Backbone.History.prototype, Backbone.Events, {
 
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.

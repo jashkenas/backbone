@@ -107,6 +107,7 @@ $(document).ready(function() {
     });
     col.bind('add', function(model, collection, options){
       added = model.get('label');
+      equals(options.index, 4);
       opts = options;
     });
     col.add(e, {amazing: true});
@@ -231,8 +232,13 @@ $(document).ready(function() {
 
   test("Collection: remove", function() {
     var removed = otherRemoved = null;
-    col.bind('remove', function(model){ removed = model.get('label'); });
-    otherCol.bind('remove', function(){ otherRemoved = true; });
+    col.bind('remove', function(model, col, options) {
+      removed = model.get('label');
+      equals(options.index, 4);
+    });
+    otherCol.bind('remove', function(model, col, options) {
+      otherRemoved = true;
+    });
     col.remove(e);
     equals(removed, 'e');
     equals(col.length, 4);
@@ -446,6 +452,18 @@ $(document).ready(function() {
     new Backbone.Collection().add(models);
     equal(models.length, 1);
     ok(attrs === models[0]);
+  });
+
+  test("#714: access `model.collection` in a brand new model.", 2, function() {
+    var col = new Backbone.Collection;
+    var Model = Backbone.Model.extend({
+      set: function(attrs) {
+        equals(attrs.prop, 'value');
+        equals(this.collection, col);
+      }
+    });
+    col.model = Model;
+    col.create({prop: 'value'});
   });
 
 });
