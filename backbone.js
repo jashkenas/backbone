@@ -758,11 +758,12 @@
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
       if (oldIE) {
-        var history = this;
-        var src = 'javascript:document.open();document.domain="' + document.domain + '";document.close();';
-        var frame = $('<iframe></iframe>').attr('src', src).hide().bind('load', function() {
-          history.frame = frame.contentWindow;
-        }).appendTo('body');
+        $('<iframe></iframe')
+          .attr('src', 'javascript:document.open();document.domain="' + document.domain + '";document.close();')
+          .bind('load', $.proxy(function(e) {
+            this.iframe = e.target.contentWindow;
+          }, this))
+          .hide().appendTo('body');
 
         this.navigate(fragment);
       }
