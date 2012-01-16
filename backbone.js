@@ -799,7 +799,13 @@
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
       if (oldIE) {
-        this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
+        $('<iframe></iframe')
+          .attr('src', 'javascript:document.open();document.domain="' + document.domain + '";document.close();')
+          .bind('load', $.proxy(function(e) {
+            this.iframe = e.target.contentWindow;
+          }, this))
+          .hide().appendTo('body');
+
         this.navigate(fragment);
       }
 
