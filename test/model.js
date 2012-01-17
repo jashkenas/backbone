@@ -331,6 +331,15 @@ $(document).ready(function() {
     ok(_.isEqual(lastRequest[1], doc));
   });
 
+  test("Model: save in positional style", function() {
+    var model = new Backbone.Model();
+    model.sync = function(method, model, options) {
+      options.success();
+    };
+    model.save('title', 'Twelfth Night');
+    equals(model.get('title'), 'Twelfth Night');
+  });
+
   test("Model: fetch", function() {
     doc.fetch();
     ok(lastRequest[0], 'read');

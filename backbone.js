@@ -291,7 +291,16 @@
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
-    save : function(attrs, options) {
+    save : function(key, value, options) {
+      var attrs;
+      if (_.isObject(key) || key == null) {
+        attrs = key;
+        options = value;
+      } else {
+        attrs = {};
+        attrs[key] = value;
+      }
+
       options = options ? _.clone(options) : {};
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
