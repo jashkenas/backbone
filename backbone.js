@@ -482,7 +482,7 @@
     remove : function(models, options) {
       var i, index, model;
       options || (options = {});
-      if (!_.isArray(models)) models = [models];
+      models = _.isArray(models) ? slice.call(models) : [models];
       for (i = 0, l = models.length; i < l; i++) {
         model = this.getByCid(models[i]) || this.get(models[i]);
         if (!model) continue;

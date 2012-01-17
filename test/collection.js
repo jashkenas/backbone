@@ -450,7 +450,7 @@ $(document).ready(function() {
     var attrs = {};
     var models = [attrs];
     new Backbone.Collection().add(models);
-    equal(models.length, 1);
+    equals(models.length, 1);
     ok(attrs === models[0]);
   });
 
@@ -464,6 +464,15 @@ $(document).ready(function() {
     });
     col.model = Model;
     col.create({prop: 'value'});
+  });
+
+  test("#574, remove its own reference to the .models array.", function() {
+    var col = new Backbone.Collection([
+      {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}
+    ]);
+    equals(col.length, 6);
+    col.remove(col.models);
+    equals(col.length, 0);
   });
 
 });
