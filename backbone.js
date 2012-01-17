@@ -302,7 +302,7 @@
       }
 
       options = options ? _.clone(options) : {};
-      if (!this.set(attrs, options)) return false;
+      if (attrs && !this.set(attrs, options)) return false;
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -980,9 +980,8 @@
     },
 
     setElement : function(element, delegate) {
-      if (_.isString(element)) element = $(element)[0];
-      this.el = element;
       this.$el = $(element);
+      this.el = this.$el[0];
       if (delegate !== false) this.delegateEvents();
     },
 
