@@ -608,9 +608,9 @@ new Book({
   author: "Scheherazade"
 });
 </pre>
-  
+
     <p>
-      In rare cases, if you're looking to get fancy, 
+      In rare cases, if you're looking to get fancy,
       you may want to override <b>constructor</b>, which allows
       you to replace the actual constructor function for your model.
     </p>
@@ -1576,13 +1576,15 @@ router.bind("route:help", function(page) {
     </p>
 
     <p id="Router-route">
-      <b class="header">route</b><code>router.route(route, name, callback)</code>
+      <b class="header">route</b><code>router.route(route, name, [callback])</code>
       <br />
       Manually create a route for the router, The <tt>route</tt> argument may
       be a <a href="#Router-routes">routing string</a> or regular expression.
       Each matching capture from the route or regular expression will be passed as
       an argument to the callback. The <tt>name</tt> argument will be triggered as
-      a <tt>"route:name"</tt> event whenever the route is matched.
+      a <tt>"route:name"</tt> event whenever the route is matched.  If the
+      <tt>callback</tt> argument is omitted <tt>router[name]</tt> will be used
+      instead.
     </p>
 
 <pre>
@@ -1591,10 +1593,12 @@ initialize: function(options) {
   // Matches #page/10, passing "10"
   this.route("page/:number", "page", function(number){ ... });
 
-  // Matches /117-a/b/c/open, passing "117-a/b/c"
-  this.route(/^(.*?)\/open$/, "open", function(id){ ... });
+  // Matches /117-a/b/c/open, passing "117-a/b/c" to this.open
+  this.route(/^(.*?)\/open$/, "open");
 
-}
+},
+
+open: function(id) { ... }
 </pre>
 
     <p id="Router-navigate">
@@ -1759,8 +1763,8 @@ end
       If you want to work with a legacy web server that doesn't support Backbones's
       default REST/HTTP approach, you may choose to turn on <tt>Backbone.emulateHTTP</tt>.
       Setting this option will fake <tt>PUT</tt> and <tt>DELETE</tt> requests with
-      a HTTP <tt>POST</tt>, setting the <tt>X-HTTP-Method-Override</tt> header 
-      with the true method. If <tt>emulateJSON</tt> is also on, the true method 
+      a HTTP <tt>POST</tt>, setting the <tt>X-HTTP-Method-Override</tt> header
+      with the true method. If <tt>emulateJSON</tt> is also on, the true method
       will be passed as an additional <tt>_method</tt> parameter.
     </p>
 
@@ -2786,25 +2790,25 @@ Inbox.messages.fetch();
       Backbone plugins that add sophisticated associations among models,
       <a href="https://github.com/documentcloud/backbone/wiki/Extensions%2C-Plugins%2C-Resources">available on the wiki</a>.
     </p>
-    
+
     <p>
-      Backbone doesn't include direct support for nested models and collections 
+      Backbone doesn't include direct support for nested models and collections
       or "has many" associations because there are a number
-      of good patterns for modeling structured data on the client side, and 
-      <i>Backbone should provide the foundation for implementing any of them.</i> 
+      of good patterns for modeling structured data on the client side, and
+      <i>Backbone should provide the foundation for implementing any of them.</i>
       You may want to&hellip;
     </p>
-    
+
     <ul>
       <li>
         Mirror an SQL database's structure, or the structure of a NoSQL database.
       </li>
       <li>
-        Use models with arrays of "foreign key" ids, and join to top level 
+        Use models with arrays of "foreign key" ids, and join to top level
         collections (a-la tables).
       </li>
       <li>
-        For associations that are numerous, use a range of ids instead of an 
+        For associations that are numerous, use a range of ids instead of an
         explicit list.
       </li>
       <li>
