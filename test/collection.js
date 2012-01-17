@@ -138,26 +138,22 @@ $(document).ready(function() {
   });
 
   test("Collection: can't add model to collection twice", function() {
-    try {
+    raises(function(){
       // no id, same cid
       var a2 = new Backbone.Model({label: a.label});
       a2.cid = a.cid;
       col.add(a2);
       ok(false, "duplicate; expected add to fail");
-    } catch (e) {
-      equals(e.message, "Can't add the same model to a set twice");
-    }
+    }, "Can't add the same model to a collection twice");
   });
 
   test("Collection: can't add different model with same id to collection twice", function() {
-    var col = new Backbone.Collection;
-    try {
+    raises(function(){
+      var col = new Backbone.Collection;
       col.add({id: 101});
       col.add({id: 101});
       ok(false, "duplicate; expected add to fail");
-    } catch (e) {
-      equals(e.message, "Can't add the same model to a set twice");
-    }
+    }, "Can't add the same model to a collection twice");
   });
 
   test("Collection: add model to multiple collections", function() {
@@ -473,6 +469,25 @@ $(document).ready(function() {
     equals(col.length, 6);
     col.remove(col.models);
     equals(col.length, 0);
+  });
+
+  test("#861, adding models to a collection which do not pass validation", function() {
+    raises(function() {
+      var Model = Backbone.Model.extend({
+        validate: function(attrs) {
+          console.log(attrs.id);
+          if (attrs.id == 3) return "id can't be 3";
+        }
+      });
+
+      var Collection = Backbone.Collection.extend({
+        model: Model
+      });
+
+      var col = new Collection;
+
+      col.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}]);
+    }, "Can't add an invalid model to a collection");
   });
 
 });

@@ -457,9 +457,12 @@
       models = slice.call(models);
       for (i = 0, length = models.length; i < length; i++) {
         var model = models[i] = this._prepareModel(models[i], options);
+        if (!model) {
+          throw new Error("Can't add an invalid model to a collection");
+        }
         var hasId = model.id != null;
         if (this._byCid[model.cid] || (hasId && this._byId[model.id])) {
-          throw new Error("Can't add the same model to a set twice");
+          throw new Error("Can't add the same model to a collection twice");
         }
         this._byCid[model.cid] = model;
         if (hasId) this._byId[model.id] = model;
