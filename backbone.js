@@ -1175,7 +1175,7 @@
     if (protoProps && protoProps.hasOwnProperty('constructor')) {
       child = protoProps.constructor;
     } else {
-      child = function(){ return parent.apply(this, arguments); };
+      child = function(){ parent.apply(this, arguments); };
     }
 
     // Inherit class (static) properties from parent.
