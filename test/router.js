@@ -19,9 +19,14 @@ $(document).ready(function() {
 
     initialize : function(options) {
       this.testing = options.testing;
+      this.route('implicit', 'implicit');
     },
 
     counter: function() {
+      this.count++;
+    },
+
+    implicit: function() {
       this.count++;
     },
 
@@ -112,6 +117,12 @@ $(document).ready(function() {
     router.navigate('search/counter', {trigger: true});
     router.navigate('counter', {trigger: true});
     equals(router.count, 2);
+  });
+
+  test("Router: use implicit callback if none provided", function() {
+    router.count = 0;
+    router.navigate('implicit', {trigger: true})
+    equals(router.count, 1);
   });
 
   asyncTest("Router: routes via navigate with {replace: true}", function() {
