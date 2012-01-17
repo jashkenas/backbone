@@ -475,7 +475,6 @@ $(document).ready(function() {
     raises(function() {
       var Model = Backbone.Model.extend({
         validate: function(attrs) {
-          console.log(attrs.id);
           if (attrs.id == 3) return "id can't be 3";
         }
       });
