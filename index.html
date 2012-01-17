@@ -2786,6 +2786,36 @@ Inbox.messages.fetch();
       Backbone plugins that add sophisticated associations among models,
       <a href="https://github.com/documentcloud/backbone/wiki/Extensions%2C-Plugins%2C-Resources">available on the wiki</a>.
     </p>
+    
+    <p>
+      Backbone doesn't include direct support for nested models and collections 
+      or "has many" associations because there are a number
+      of good patterns for modeling structured data on the client side, and 
+      <i>Backbone should provide the foundation for implementing any of them.</i> 
+      You may want to&hellip;
+    </p>
+    
+    <ul>
+      <li>
+        Mirror an SQL database's structure, or the structure of a NoSQL database.
+      </li>
+      <li>
+        Use models with arrays of "foreign key" ids, and join to top level 
+        collections (a-la tables).
+      </li>
+      <li>
+        For associations that are numerous, use a range of ids instead of an 
+        explicit list.
+      </li>
+      <li>
+        Avoid ids, and use direct references, creating a partial object graph
+        representing your data set.
+      </li>
+      <li>
+        Lazily load joined models from the server, or lazily deserialize nested
+        models from JSON documents.
+      </li>
+    </ul>
 
     <p id="FAQ-bootstrap">
       <b class="header">Loading Bootstrapped Models</b>
