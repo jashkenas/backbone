@@ -15,7 +15,7 @@ $(document).ready(function() {
   });
 
   test("View: jQuery", function() {
-    view.el = document.body;
+    view.setElement(document.body);
     ok(view.$('#qunit-header a').get(0).innerHTML.match(/Backbone Test Suite/));
     ok(view.$('#qunit-header a').get(1).innerHTML.match(/Backbone Speed Suite/));
   });
@@ -39,9 +39,9 @@ $(document).ready(function() {
 
   test("View: delegateEvents", function() {
     var counter = counter2 = 0;
-    view.el = document.body;
+    view.setElement(document.body);
     view.increment = function(){ counter++; };
-    view.$().bind('click', function(){ counter2++; });
+    view.$el.bind('click', function(){ counter2++; });
     var events = {"click #qunit-banner": "increment"};
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
@@ -58,7 +58,7 @@ $(document).ready(function() {
 
   test("View: delegateEvents allows functions for callbacks", function() {
     view.counter = 0;
-    view.el = "#qunit-banner";
+    view.setElement("#qunit-banner");
     var events = {"click": function() { this.counter++; }};
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
@@ -72,7 +72,7 @@ $(document).ready(function() {
 
   test("View: undelegateEvents", function() {
     var counter = counter2 = 0;
-    view.el = document.body;
+    view.setElement(document.body);
     view.increment = function(){ counter++; };
     $(view.el).unbind('click');
     $(view.el).bind('click', function(){ counter2++; });

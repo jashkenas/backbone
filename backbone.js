@@ -945,7 +945,7 @@
     // jQuery delegate for element lookup, scoped to DOM elements within the
     // current view. This should be prefered to global lookups where possible.
     $ : function(selector) {
-      return (selector == null) ? $(this.el) : $(selector, this.el);
+      return $(selector, this.el);
     },
 
     // Initialize is an empty function by default. Override it with your own
@@ -962,7 +962,7 @@
     // Remove this view from the DOM. Note that the view isn't present in the
     // DOM by default, so calling this method may be a no-op.
     remove : function() {
-      $(this.el).remove();
+      this.$el.remove();
       return this;
     },
 
@@ -976,6 +976,13 @@
       if (attributes) $(el).attr(attributes);
       if (content) $(el).html(content);
       return el;
+    },
+
+    setElement : function(element, delegate) {
+      if (_.isString(element)) element = $(element)[0];
+      this.el = element;
+      this.$el = $(element);
+      if (delegate !== false) this.delegateEvents();
     },
 
     // Set callbacks, where `this.events` is a hash of
@@ -1005,16 +1012,16 @@
         method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
-          $(this.el).bind(eventName, method);
+          this.$el.bind(eventName, method);
         } else {
-          $(this.el).delegate(selector, eventName, method);
+          this.$el.delegate(selector, eventName, method);
         }
       }
     },
 
     // Clears all callbacks previously bound to the view with `delegateEvents`.
     undelegateEvents : function() {
-      $(this.el).unbind('.delegateEvents' + this.cid);
+      this.$el.unbind('.delegateEvents' + this.cid);
     },
 
     // Performs the initial configuration of a View with a set of options.
@@ -1038,9 +1045,9 @@
         var attrs = getValue(this, 'attributes') || {};
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
-        this.el = this.make(this.tagName, attrs);
-      } else if (_.isString(this.el)) {
-        this.el = $(this.el).get(0);
+        this.setElement(this.make(this.tagName, attrs), false);
+      } else {
+        this.setElement(this.el, false);
       }
     }
 
