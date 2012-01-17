@@ -356,7 +356,8 @@ $(document).ready(function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
     a.sync = function() { throw "should not be called"; };
-    ok(a.destroy(), "non-persisted model should not call sync");
+    a.destroy();
+    ok(true, "non-persisted model should not call sync");
   });
 
   test("Model: validate", function() {

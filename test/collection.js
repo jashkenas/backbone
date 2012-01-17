@@ -346,7 +346,7 @@ $(document).ready(function() {
   });
 
   test("Collection: create", function() {
-    var model = col.create({label: 'f'});
+    var model = col.create({label: 'f'}, {wait: true});
     equals(lastRequest[0], 'create');
     equals(lastRequest[1], model);
     equals(model.get('label'), 'f');

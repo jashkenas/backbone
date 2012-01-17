@@ -36,7 +36,7 @@ $(document).ready(function() {
   });
 
   test("sync: create", function() {
-    library.add(library.create(attrs));
+    library.create(attrs, {wait: false});
     equals(lastRequest.url, '/library');
     equals(lastRequest.type, 'POST');
     equals(lastRequest.dataType, 'json');
@@ -106,7 +106,7 @@ $(document).ready(function() {
   });
 
   test("sync: destroy", function() {
-    library.first().destroy();
+    library.first().destroy({wait: true});
     equals(lastRequest.url, '/library/2-the-tempest');
     equals(lastRequest.type, 'DELETE');
     equals(lastRequest.data, null);

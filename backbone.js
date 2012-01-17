@@ -302,11 +302,13 @@
       }
 
       options = options ? _.clone(options) : {};
-      if (attrs && !this.set(attrs, options)) return false;
+      if (attrs && !this[options.wait ? '_performValidation' : 'set'](attrs, options)) return false;
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(model.parse(resp, xhr), options)) return false;
+        var serverAttrs = model.parse(resp, xhr);
+        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
+        if (!model.set(serverAttrs, options)) return false;
         if (success) {
           success(model, resp);
         } else {
@@ -319,14 +321,20 @@
     },
 
     // Destroy this model on the server if it was already persisted.
-    // Upon success, the model is removed from its collection, if it has one.
+    // Optimistically removes the model from its collection, if it has one.
+    // If `wait: true` is passed, waits for the server to respond before removal.
     destroy : function(options) {
       options = options ? _.clone(options) : {};
-      if (this.isNew()) return this.trigger('destroy', this, this.collection, options);
       var model = this;
       var success = options.success;
-      options.success = function(resp) {
+
+      var triggerDestroy = function() {
         model.trigger('destroy', model, model.collection, options);
+      };
+
+      if (this.isNew()) return triggerDestroy();
+      options.success = function(resp) {
+        if (options.wait) triggerDestroy();
         if (success) {
           success(model, resp);
         } else {
@@ -334,7 +342,9 @@
         }
       };
       options.error = Backbone.wrapError(options.error, model, options);
-      return (this.sync || Backbone.sync).call(this, 'delete', this, options);
+      var xhr = (this.sync || Backbone.sync).call(this, 'delete', this, options);
+      if (!options.wait) triggerDestroy();
+      return xhr;
     },
 
     // Default URL for the model's representation on the server -- if you're
@@ -580,17 +590,18 @@
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
     },
 
-    // Create a new instance of a model in this collection. After the model
-    // has been created on the server, it will be added to the collection.
-    // Returns the model, or 'false' if validation on a new model fails.
+    // Create a new instance of a model in this collection. Add the model to the
+    // collection immediately, unless `wait: true` is passed, in which case we
+    // wait for the server to agree.
     create : function(model, options) {
       var coll = this;
       options = options ? _.clone(options) : {};
       model = this._prepareModel(model, options);
       if (!model) return false;
+      if (!options.wait) coll.add(model, options);
       var success = options.success;
       options.success = function(nextModel, resp, xhr) {
-        coll.add(nextModel, options);
+        if (options.wait) coll.add(nextModel, options);
         if (success) {
           success(nextModel, resp);
         } else {
