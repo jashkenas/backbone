@@ -220,6 +220,7 @@
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
+      if (Object.prototype.toString.call(attrs) == "[object String]") throw TypeError("First argument should not be a string");
       if (attrs.attributes) attrs = attrs.attributes;
       if (options.unset) for (var attr in attrs) attrs[attr] = void 0;
       var now = this.attributes, escaped = this._escapedAttributes;
