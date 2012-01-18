@@ -22,102 +22,102 @@ $(document).ready(function() {
   test("sync: read", function() {
     Backbone.sync = originalSync;
     library.fetch();
-    equals(lastRequest.url, '/library');
-    equals(lastRequest.type, 'GET');
-    equals(lastRequest.dataType, 'json');
+    equal(lastRequest.url, '/library');
+    equal(lastRequest.type, 'GET');
+    equal(lastRequest.dataType, 'json');
     ok(_.isEmpty(lastRequest.data));
   });
 
   test("sync: passing data", function() {
     library.fetch({data: {a: 'a', one: 1}});
-    equals(lastRequest.url, '/library');
-    equals(lastRequest.data.a, 'a');
-    equals(lastRequest.data.one, 1);
+    equal(lastRequest.url, '/library');
+    equal(lastRequest.data.a, 'a');
+    equal(lastRequest.data.one, 1);
   });
 
   test("sync: create", function() {
     library.create(attrs, {wait: false});
-    equals(lastRequest.url, '/library');
-    equals(lastRequest.type, 'POST');
-    equals(lastRequest.dataType, 'json');
+    equal(lastRequest.url, '/library');
+    equal(lastRequest.type, 'POST');
+    equal(lastRequest.dataType, 'json');
     var data = JSON.parse(lastRequest.data);
-    equals(data.title, 'The Tempest');
-    equals(data.author, 'Bill Shakespeare');
-    equals(data.length, 123);
+    equal(data.title, 'The Tempest');
+    equal(data.author, 'Bill Shakespeare');
+    equal(data.length, 123);
   });
 
   test("sync: update", function() {
     library.first().save({id: '1-the-tempest', author: 'William Shakespeare'});
-    equals(lastRequest.url, '/library/1-the-tempest');
-    equals(lastRequest.type, 'PUT');
-    equals(lastRequest.dataType, 'json');
+    equal(lastRequest.url, '/library/1-the-tempest');
+    equal(lastRequest.type, 'PUT');
+    equal(lastRequest.dataType, 'json');
     var data = JSON.parse(lastRequest.data);
-    equals(data.id, '1-the-tempest');
-    equals(data.title, 'The Tempest');
-    equals(data.author, 'William Shakespeare');
-    equals(data.length, 123);
+    equal(data.id, '1-the-tempest');
+    equal(data.title, 'The Tempest');
+    equal(data.author, 'William Shakespeare');
+    equal(data.length, 123);
   });
 
   test("sync: update with emulateHTTP and emulateJSON", function() {
     Backbone.emulateHTTP = Backbone.emulateJSON = true;
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
-    equals(lastRequest.url, '/library/2-the-tempest');
-    equals(lastRequest.type, 'POST');
-    equals(lastRequest.dataType, 'json');
-    equals(lastRequest.data._method, 'PUT');
+    equal(lastRequest.url, '/library/2-the-tempest');
+    equal(lastRequest.type, 'POST');
+    equal(lastRequest.dataType, 'json');
+    equal(lastRequest.data._method, 'PUT');
     var data = JSON.parse(lastRequest.data.model);
-    equals(data.id, '2-the-tempest');
-    equals(data.author, 'Tim Shakespeare');
-    equals(data.length, 123);
+    equal(data.id, '2-the-tempest');
+    equal(data.author, 'Tim Shakespeare');
+    equal(data.length, 123);
     Backbone.emulateHTTP = Backbone.emulateJSON = false;
   });
 
   test("sync: update with just emulateHTTP", function() {
     Backbone.emulateHTTP = true;
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
-    equals(lastRequest.url, '/library/2-the-tempest');
-    equals(lastRequest.type, 'POST');
-    equals(lastRequest.contentType, 'application/json');
+    equal(lastRequest.url, '/library/2-the-tempest');
+    equal(lastRequest.type, 'POST');
+    equal(lastRequest.contentType, 'application/json');
     var data = JSON.parse(lastRequest.data);
-    equals(data.id, '2-the-tempest');
-    equals(data.author, 'Tim Shakespeare');
-    equals(data.length, 123);
+    equal(data.id, '2-the-tempest');
+    equal(data.author, 'Tim Shakespeare');
+    equal(data.length, 123);
     Backbone.emulateHTTP = false;
   });
 
   test("sync: update with just emulateJSON", function() {
     Backbone.emulateJSON = true;
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
-    equals(lastRequest.url, '/library/2-the-tempest');
-    equals(lastRequest.type, 'PUT');
-    equals(lastRequest.contentType, 'application/x-www-form-urlencoded');
+    equal(lastRequest.url, '/library/2-the-tempest');
+    equal(lastRequest.type, 'PUT');
+    equal(lastRequest.contentType, 'application/x-www-form-urlencoded');
     var data = JSON.parse(lastRequest.data.model);
-    equals(data.id, '2-the-tempest');
-    equals(data.author, 'Tim Shakespeare');
-    equals(data.length, 123);
+    equal(data.id, '2-the-tempest');
+    equal(data.author, 'Tim Shakespeare');
+    equal(data.length, 123);
     Backbone.emulateJSON = false;
   });
 
   test("sync: read model", function() {
     library.first().fetch();
-    equals(lastRequest.url, '/library/2-the-tempest');
-    equals(lastRequest.type, 'GET');
+    equal(lastRequest.url, '/library/2-the-tempest');
+    equal(lastRequest.type, 'GET');
     ok(_.isEmpty(lastRequest.data));
   });
 
   test("sync: destroy", function() {
     library.first().destroy({wait: true});
-    equals(lastRequest.url, '/library/2-the-tempest');
-    equals(lastRequest.type, 'DELETE');
-    equals(lastRequest.data, null);
+    equal(lastRequest.url, '/library/2-the-tempest');
+    equal(lastRequest.type, 'DELETE');
+    equal(lastRequest.data, null);
   });
 
   test("sync: destroy with emulateHTTP", function() {
     Backbone.emulateHTTP = Backbone.emulateJSON = true;
     library.first().destroy();
-    equals(lastRequest.url, '/library/2-the-tempest');
-    equals(lastRequest.type, 'POST');
-    equals(JSON.stringify(lastRequest.data), '{"_method":"DELETE"}');
+    equal(lastRequest.url, '/library/2-the-tempest');
+    equal(lastRequest.type, 'POST');
+    equal(JSON.stringify(lastRequest.data), '{"_method":"DELETE"}');
     Backbone.emulateHTTP = Backbone.emulateJSON = false;
   });
 
@@ -127,7 +127,7 @@ $(document).ready(function() {
       model.fetch();
     });
     model.fetch({url: '/one/two'});
-    equals(lastRequest.url, '/one/two');
+    equal(lastRequest.url, '/one/two');
   });
 
 });
