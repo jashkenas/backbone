@@ -468,7 +468,7 @@
     },
 
     // Add a model, or list of models to the set. Pass **silent** to avoid
-    // firing the `added` event for every new model.
+    // firing the `add` event for every new model.
     add : function(models, options) {
       var i, index, length;
       options || (options = {});
@@ -500,7 +500,7 @@
     },
 
     // Remove a model, or a list of models from the set. Pass silent to avoid
-    // firing the `removed` event for every model removed.
+    // firing the `remove` event for every model removed.
     remove : function(models, options) {
       var i, index, model;
       options || (options = {});
@@ -561,7 +561,7 @@
 
     // When you have more items than you want to add or remove individually,
     // you can reset the entire set with a new list of models, without firing
-    // any `added` or `removed` events. Fires `reset` when finished.
+    // any `add` or `remove` events. Fires `reset` when finished.
     reset : function(models, options) {
       models  || (models = []);
       options || (options = {});
