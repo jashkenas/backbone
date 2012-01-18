@@ -8,10 +8,10 @@ $(document).ready(function() {
   });
 
   test("View: constructor", function() {
-    equals(view.el.id, 'test-view');
-    equals(view.el.className, 'test-view');
-    equals(view.options.id, 'test-view');
-    equals(view.options.className, 'test-view');
+    equal(view.el.id, 'test-view');
+    equal(view.el.className, 'test-view');
+    equal(view.options.id, 'test-view');
+    equal(view.options.className, 'test-view');
   });
 
   test("View: jQuery", function() {
@@ -22,9 +22,9 @@ $(document).ready(function() {
 
   test("View: make", function() {
     var div = view.make('div', {id: 'test-div'}, "one two three");
-    equals(div.tagName.toLowerCase(), 'div');
-    equals(div.id, 'test-div');
-    equals($(div).text(), 'one two three');
+    equal(div.tagName.toLowerCase(), 'div');
+    equal(div.id, 'test-div');
+    equal($(div).text(), 'one two three');
   });
 
   test("View: initialize", function() {
@@ -34,7 +34,7 @@ $(document).ready(function() {
       }
     });
     var view = new View;
-    equals(view.one, 1);
+    equal(view.one, 1);
   });
 
   test("View: delegateEvents", function() {
@@ -45,15 +45,15 @@ $(document).ready(function() {
     var events = {"click #qunit-banner": "increment"};
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
-    equals(counter, 1);
-    equals(counter2, 1);
+    equal(counter, 1);
+    equal(counter2, 1);
     $('#qunit-banner').trigger('click');
-    equals(counter, 2);
-    equals(counter2, 2);
+    equal(counter, 2);
+    equal(counter2, 2);
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
-    equals(counter, 3);
-    equals(counter2, 3);
+    equal(counter, 3);
+    equal(counter2, 3);
   });
 
   test("View: delegateEvents allows functions for callbacks", function() {
@@ -62,12 +62,12 @@ $(document).ready(function() {
     var events = {"click": function() { this.counter++; }};
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
-    equals(view.counter, 1);
+    equal(view.counter, 1);
     $('#qunit-banner').trigger('click');
-    equals(view.counter, 2);
+    equal(view.counter, 2);
     view.delegateEvents(events);
     $('#qunit-banner').trigger('click');
-    equals(view.counter, 3);
+    equal(view.counter, 3);
   });
 
   test("View: undelegateEvents", function() {
@@ -79,16 +79,16 @@ $(document).ready(function() {
     var events = {"click #qunit-userAgent": "increment"};
     view.delegateEvents(events);
     $('#qunit-userAgent').trigger('click');
-    equals(counter, 1);
-    equals(counter2, 1);
+    equal(counter, 1);
+    equal(counter2, 1);
     view.undelegateEvents();
     $('#qunit-userAgent').trigger('click');
-    equals(counter, 1);
-    equals(counter2, 2);
+    equal(counter, 1);
+    equal(counter2, 2);
     view.delegateEvents(events);
     $('#qunit-userAgent').trigger('click');
-    equals(counter, 2);
-    equals(counter2, 3);
+    equal(counter, 2);
+    equal(counter2, 3);
   });
 
   test("View: _ensureElement with DOM node el", function() {
@@ -96,7 +96,7 @@ $(document).ready(function() {
       el: document.body
     });
     var view = new ViewClass;
-    equals(view.el, document.body);
+    equal(view.el, document.body);
   });
 
   test("View: _ensureElement with string el", function() {
@@ -104,13 +104,13 @@ $(document).ready(function() {
       el: "body"
     });
     var view = new ViewClass;
-    equals(view.el, document.body);
+    equal(view.el, document.body);
 
     ViewClass = Backbone.View.extend({
       el: "body > h2"
     });
     view = new ViewClass;
-    equals(view.el, $("#qunit-banner").get(0));
+    equal(view.el, $("#qunit-banner").get(0));
 
     ViewClass = Backbone.View.extend({
       el: "#nonexistent"
@@ -121,8 +121,8 @@ $(document).ready(function() {
 
   test("View: with attributes", function() {
     var view = new Backbone.View({attributes : {'class': 'one', id: 'two'}});
-    equals(view.el.className, 'one');
-    equals(view.el.id, 'two');
+    equal(view.el.className, 'one');
+    equal(view.el.id, 'two');
   });
 
   test("View: with attributes as a function", function() {
@@ -131,7 +131,7 @@ $(document).ready(function() {
         return {'class': 'dynamic'};
       }
     });
-    equals((new viewClass).el.className, 'dynamic');
+    equal((new viewClass).el.className, 'dynamic');
   });
 
   test("View: multiple views per element", function() {
@@ -147,15 +147,15 @@ $(document).ready(function() {
 
     var view1 = new ViewClass;
     $("body").trigger("click");
-    equals(1, count);
+    equal(1, count);
 
     var view2 = new ViewClass;
     $("body").trigger("click");
-    equals(3, count);
+    equal(3, count);
 
     view1.delegateEvents();
     $("body").trigger("click");
-    equals(5, count);
+    equal(5, count);
   });
 
   test("View: custom events, with namespaces", function() {
@@ -172,10 +172,10 @@ $(document).ready(function() {
 
     var view = new ViewClass;
     $('body').trigger('fake$event').trigger('fake$event');
-    equals(count, 2);
+    equal(count, 2);
     $('body').unbind('.namespaced');
     $('body').trigger('fake$event');
-    equals(count, 2);
+    equal(count, 2);
   });
 
 });
