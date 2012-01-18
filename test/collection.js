@@ -489,4 +489,37 @@ $(document).ready(function() {
     }, "Can't add an invalid model to a collection");
   });
 
+  test("Collection: index with comparator", function() {
+    expect(4);
+    var counter = 0;
+    var col = new Backbone.Collection([{id: 2}, {id: 4}], {
+      comparator: function(model){ return model.id; }
+    }).on('add', function(model, colleciton, options){
+      if (model.id == 1) {
+        equal(options.index, 0);
+        equal(counter++, 0);
+      }
+      if (model.id == 3) {
+        equal(options.index, 2);
+        equal(counter++, 1);
+      }
+    });
+    col.add([{id: 3}, {id: 1}]);
+  });
+
+  test("Collection: throwing during add leaves consistent state", function() {
+    expect(4);
+    var col = new Backbone.Collection();
+    col.bind('test', function() { ok(false); });
+    col.model = Backbone.Model.extend({
+      validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
+    });
+    var model = new col.model({id: 1, valid: true});
+    raises(function() { col.add([model, {id: 2}]); });
+    model.trigger('test');
+    ok(!col.getByCid(model.cid));
+    ok(!col.get(1));
+    equal(col.length, 0);
+  });
+
 });
