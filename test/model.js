@@ -342,7 +342,7 @@ $(document).ready(function() {
 
   test("Model: fetch", function() {
     doc.fetch();
-    ok(lastRequest[0], 'read');
+    equal(lastRequest[0], 'read');
     ok(_.isEqual(lastRequest[1], doc));
   });
 
