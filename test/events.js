@@ -7,12 +7,12 @@ $(document).ready(function() {
     _.extend(obj,Backbone.Events);
     obj.on('event', function() { obj.counter += 1; });
     obj.trigger('event');
-    equals(obj.counter,1,'counter should be incremented.');
+    equal(obj.counter,1,'counter should be incremented.');
     obj.trigger('event');
     obj.trigger('event');
     obj.trigger('event');
     obj.trigger('event');
-    equals(obj.counter, 5, 'counter should be incremented five times.');
+    equal(obj.counter, 5, 'counter should be incremented five times.');
   });
 
   test("Events: binding and triggering multiple events", function() {
@@ -22,17 +22,17 @@ $(document).ready(function() {
     obj.on('a b c', function() { obj.counter += 1; });
 
     obj.trigger('a');
-    equals(obj.counter, 1);
+    equal(obj.counter, 1);
 
     obj.trigger('a b');
-    equals(obj.counter, 3);
+    equal(obj.counter, 3);
 
     obj.trigger('c');
-    equals(obj.counter, 4);
+    equal(obj.counter, 4);
 
     obj.off('a c');
     obj.trigger('a b c');
-    equals(obj.counter, 5);
+    equal(obj.counter, 5);
   });
 
   test("Events: trigger all for each event", function() {
@@ -57,7 +57,7 @@ $(document).ready(function() {
     obj.trigger('event');
     obj.off('event');
     obj.trigger('event');
-    equals(obj.counter, 1, 'counter should have only been incremented once.');
+    equal(obj.counter, 1, 'counter should have only been incremented once.');
   });
 
   test("Events: bind two callbacks, unbind only one", function() {
@@ -69,8 +69,8 @@ $(document).ready(function() {
     obj.trigger('event');
     obj.off('event', callback);
     obj.trigger('event');
-    equals(obj.counterA, 1, 'counterA should have only been incremented once.');
-    equals(obj.counterB, 2, 'counterB should have been incremented twice.');
+    equal(obj.counterA, 1, 'counterA should have only been incremented once.');
+    equal(obj.counterB, 2, 'counterB should have been incremented twice.');
   });
 
   test("Events: unbind a callback in the midst of it firing", function() {
@@ -84,7 +84,7 @@ $(document).ready(function() {
     obj.trigger('event');
     obj.trigger('event');
     obj.trigger('event');
-    equals(obj.counter, 1, 'the callback should have been unbound.');
+    equal(obj.counter, 1, 'the callback should have been unbound.');
   });
 
   test("Events: two binds that unbind themeselves", function() {
@@ -97,8 +97,8 @@ $(document).ready(function() {
     obj.trigger('event');
     obj.trigger('event');
     obj.trigger('event');
-    equals(obj.counterA, 1, 'counterA should have only been incremented once.');
-    equals(obj.counterB, 1, 'counterB should have only been incremented once.');
+    equal(obj.counterA, 1, 'counterA should have only been incremented once.');
+    equal(obj.counterB, 1, 'counterB should have only been incremented once.');
   });
 
   test("Events: bind a callback with a supplied context", function () {
@@ -128,7 +128,7 @@ $(document).ready(function() {
     obj.bind('event', incr1);
     obj.bind('event', incr2);
     obj.trigger('event');
-    equals(obj.counter, 3, 'counter should have been incremented three times');
+    equal(obj.counter, 3, 'counter should have been incremented three times');
   });
 
   test("Events: callback list is not altered during trigger", function () {
@@ -136,13 +136,13 @@ $(document).ready(function() {
     var incr = function(){ counter++; };
     obj.bind('event', function(){ obj.bind('event', incr).bind('all', incr); })
     .trigger('event');
-    equals(counter, 0, 'bind does not alter callback list');
+    equal(counter, 0, 'bind does not alter callback list');
     obj.unbind()
     .bind('event', function(){ obj.unbind('event', incr).unbind('all', incr); })
     .bind('event', incr)
     .bind('all', incr)
     .trigger('event');
-    equals(counter, 2, 'unbind does not alter callback list');
+    equal(counter, 2, 'unbind does not alter callback list');
   });
 
 });
