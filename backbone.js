@@ -220,7 +220,7 @@
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
-      if (attrs.attributes) attrs = attrs.attributes;
+      if (attrs instanceof Backbone.Model) attrs = attrs.attributes;
       if (options.unset) for (var attr in attrs) attrs[attr] = void 0;
       var now = this.attributes, escaped = this._escapedAttributes;
 

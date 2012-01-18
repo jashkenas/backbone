@@ -531,4 +531,10 @@ $(document).ready(function() {
     model.set({a: 'a', b: 'b', c: 'c'});
   });
 
+  test("#871, set with attributes property", function() {
+    var model = new Backbone.Model();
+    model.set({attributes: true});
+    ok(model.has('attributes'));
+  });
+
 });
