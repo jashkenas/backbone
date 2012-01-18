@@ -470,31 +470,33 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add : function(models, options) {
-      var i, index, length;
+      var i, index, length, model, cids = {};
       options || (options = {});
-      if (!_.isArray(models)) models = [models];
-      models = slice.call(models);
+      models = _.isArray(models) ? models.slice() : [models];
       for (i = 0, length = models.length; i < length; i++) {
-        var model = models[i] = this._prepareModel(models[i], options);
-        if (!model) {
+        if (!(model = models[i] = this._prepareModel(models[i], options))) {
           throw new Error("Can't add an invalid model to a collection");
         }
         var hasId = model.id != null;
         if (this._byCid[model.cid] || (hasId && this._byId[model.id])) {
           throw new Error("Can't add the same model to a collection twice");
         }
+      }
+      for (i = 0; i < length; i++) {
+        (model = models[i]).on('all', this._onModelEvent, this);
         this._byCid[model.cid] = model;
-        if (hasId) this._byId[model.id] = model;
-        model.on('all', this._onModelEvent, this);
+        if (model.id != null) this._byId[model.id] = model;
+        cids[model.cid] = true;
       }
       this.length += length;
       index = options.at != null ? options.at : this.models.length;
       splice.apply(this.models, [index, 0].concat(models));
       if (this.comparator) this.sort({silent: true});
       if (options.silent) return this;
-      for (i = 0; i < length; i++) {
-        options.index = index + i;
-        models[i].trigger('add', models[i], this, options);
+      for (i = 0, length = this.models.length; i < length; i++) {
+        if (!cids[(model = this.models[i]).cid]) continue;
+        options.index = i;
+        model.trigger('add', model, this, options);
       }
       return this;
     },
@@ -504,7 +506,7 @@
     remove : function(models, options) {
       var i, index, model;
       options || (options = {});
-      models = _.isArray(models) ? slice.call(models) : [models];
+      models = _.isArray(models) ? models.slice() : [models];
       for (i = 0, l = models.length; i < l; i++) {
         model = this.getByCid(models[i]) || this.get(models[i]);
         if (!model) continue;
