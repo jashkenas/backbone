@@ -73,7 +73,7 @@
     // Bind an event, specified by a string name, `ev`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on : function(events, callback, context) {
-      var ev;
+      var ev;console.log(events);
       events = events.split(/\s+/);
       var calls = this._callbacks || (this._callbacks = {});
       while (ev = events.shift()) {
@@ -1188,7 +1188,7 @@
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
-    if (protoProps) _.extend(child.prototype, protoProps);
+    if (protoProps) classExtend(child, protoProps);
 
     // Add static properties to the constructor function, if supplied.
     if (staticProps) _.extend(child, staticProps);
@@ -1213,5 +1213,41 @@
   var urlError = function() {
     throw new Error('A "url" property or function must be specified');
   };
+  
+  // Validate if is a function
+  var fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+  
+  // Extend Properties
+  // If is a function and the function exists in the parent
+  // then wrap a proxy function and replace the _super function with its parent function
+  var classExtend = function(c, prop) {
+  	var _super = c.prototype;
+  	var prototype = new ctor();
+  	// Copy the properties over onto the new prototype
+    for (var name in prop) {
+      // Check if we're overwriting an existing function
+      prototype[name] = typeof prop[name] == "function" && 
+        typeof _super[name] == "function" && fnTest.test(prop[name]) ?
+        (function(name, fn){
+          return function() {
+            var tmp = this._super;
+            
+            // Add a new ._super() method that is the same method
+            // but on the super-class
+            this._super = _super[name];
+            
+            // The method only need to be bound temporarily, so we
+            // remove it when we're done executing
+            var ret = fn.apply(this, arguments);        
+            this._super = tmp;
+            
+            return ret;
+          };
+        })(name, prop[name]) :
+        prop[name];
+    }
+    // Populate our constructed prototype object
+    c.prototype = prototype;
+  }
 
 }).call(this);
