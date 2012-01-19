@@ -537,4 +537,12 @@ $(document).ready(function() {
     ok(model.has('attributes'));
   });
 
+  test("pass model to constructor with defaults", function() {
+    var Model = Backbone.Model.extend({defaults: {a: 1}});
+    var model = new Model(new Model({b: 2}));
+    equal(model.get('a'), 1);
+    equal(model.get('b'), 2);
+    equal(_.keys(model.attributes).length, 2);
+  });
+
 });
