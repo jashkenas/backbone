@@ -713,6 +713,13 @@
     // initialization logic.
     initialize : function(){},
 
+    // Allow to control router calling.
+    initializeRoute : function(name, callback, args) {
+      callback && callback.apply(this, args);
+      this.trigger.apply(this, ['route:' + name].concat(args));
+      Backbone.history.trigger('route', this, name, args);
+    },
+
     // Manually bind a single named route to a callback. For example:
     //
     //     this.route('search/:query/p:num', 'search', function(query, num) {
@@ -725,9 +732,7 @@
       if (!callback) callback = this[name];
       Backbone.history.route(route, _.bind(function(fragment) {
         var args = this._extractParameters(route, fragment);
-        callback && callback.apply(this, args);
-        this.trigger.apply(this, ['route:' + name].concat(args));
-        Backbone.history.trigger('route', this, name, args);
+        this.initializeRoute(name, callback, args);
       }, this));
     },
 
