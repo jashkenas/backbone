@@ -233,6 +233,7 @@
       <li>– <a href="#Router-extend">extend</a></li>
       <li>– <a href="#Router-routes">routes</a></li>
       <li>– <a href="#Router-constructor">constructor / initialize</a></li>
+      <li>– <a href="#Router-initializeRoute">initializeRoute</a></li>
       <li>– <a href="#Router-route">route</a></li>
       <li>– <a href="#Router-navigate">navigate</a></li>
     </ul>
@@ -1574,6 +1575,29 @@ router.bind("route:help", function(page) {
       choose. All <tt>options</tt> will also be passed to your <tt>initialize</tt>
       function, if defined.
     </p>
+    
+    <p id="Router-initializeRoute">
+      <b class="header">initializeRoute</b><code>router.initializeRoute(name, callback, args)</code>
+      <br />
+      Called just before user. Could be useful if you're implementing
+      authentication with backbone.
+      
+<pre>
+initializeRoute: function(name, callback, args) {
+  // Redirect to login page if user is not logged in.
+  if (app.user.isAuthenticated() && name !== 'login') {
+    Backbone.Router.prototype.initializeRoute.call(
+      this, name, callback, args
+    );
+  } else {
+    this.navigate('login')
+  }
+}
+</pre>
+    </p>
+    
+    
+    
 
     <p id="Router-route">
       <b class="header">route</b><code>router.route(route, name, [callback])</code>
