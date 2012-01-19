@@ -153,6 +153,7 @@
   Backbone.Model = function(attributes, options) {
     var defaults;
     attributes || (attributes = {});
+    if (attributes instanceof Backbone.Model) attributes = attributes.attributes;
     if (options && options.parse) attributes = this.parse(attributes);
     if (defaults = getValue(this, 'defaults')) {
       attributes = _.extend({}, defaults, attributes);
