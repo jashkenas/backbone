@@ -73,7 +73,7 @@
     // Bind an event, specified by a string name, `ev`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on : function(events, callback, context) {
-      var ev;console.log(events);
+      var ev;
       events = events.split(/\s+/);
       var calls = this._callbacks || (this._callbacks = {});
       while (ev = events.shift()) {
