@@ -369,7 +369,8 @@
 
     // A model is new if it has never been saved to the server, and lacks an id.
     isNew : function() {
-      return this.id == null;
+      var unsaved = [null, ""]
+      return _(unsaved).include(this.id)
     },
 
     // Call this method to manually fire a `change` event for this model.
