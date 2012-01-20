@@ -161,7 +161,7 @@
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
-    this.set(attributes, {silent : true});
+    this.set(attributes, options);
     this._changed = false;
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
