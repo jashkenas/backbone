@@ -537,4 +537,22 @@ $(document).ready(function() {
     ok(model.has('attributes'));
   });
 
+  test("set value regardless of equality/change", function() {
+    var model = new Backbone.Model({x: []});
+    var a = [];
+    model.set({x: a});
+    ok(model.get('x') === a);
+  });
+
+  test("unset fires change for undefined attributes", 1, function() {
+    var model = new Backbone.Model({x: undefined});
+    model.bind('change:x', function(){ ok(true); });
+    model.unset('x');
+  });
+
+  test("set: undefined values", function() {
+    var model = new Backbone.Model({x: undefined});
+    ok('x' in model.attributes);
+  });
+
 });
