@@ -239,11 +239,11 @@
       for (attr in attrs) {
         val = attrs[attr];
         if (!_.isEqual(now[attr], val) || (options.unset && (attr in now))) {
-          options.unset ? delete now[attr] : now[attr] = val;
           delete escaped[attr];
           this._changed = true;
           changes[attr] = val;
         }
+        options.unset ? delete now[attr] : now[attr] = val;
       }
 
       // Fire `change:attribute` events.
