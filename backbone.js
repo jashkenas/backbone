@@ -2,7 +2,7 @@
 //     (c) 2010-2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
-//     http://documentcloud.github.com/backbone
+//     http://backbonejs.org
 
 (function(){
 
