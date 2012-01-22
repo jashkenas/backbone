@@ -33,12 +33,12 @@ $(document).ready(function() {
     var Model = Backbone.Model.extend({
       initialize: function() {
         this.one = 1;
-        equals(this.collection, collection);
+        equal(this.collection, collection);
       }
     });
     var model = new Model({}, {collection: collection});
-    equals(model.one, 1);
-    equals(model.collection, collection);
+    equal(model.one, 1);
+    equal(model.collection, collection);
   });
 
   test("Model: initialize with attributes and options", function() {
@@ -48,7 +48,7 @@ $(document).ready(function() {
       }
     });
     var model = new Model({}, {one: 1});
-    equals(model.one, 1);
+    equal(model.one, 1);
   });
 
   test("Model: initialize with parsed attributes", function() {
@@ -59,13 +59,13 @@ $(document).ready(function() {
       }
     });
     var model = new Model({value: 1}, {parse: true});
-    equals(model.get('value'), 2);
+    equal(model.get('value'), 2);
   });
 
   test("Model: url", function() {
-    equals(doc.url(), '/collection/1-the-tempest');
+    equal(doc.url(), '/collection/1-the-tempest');
     doc.collection.url = '/collection/';
-    equals(doc.url(), '/collection/1-the-tempest');
+    equal(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;
     var failed = false;
     try {
@@ -73,7 +73,7 @@ $(document).ready(function() {
     } catch (e) {
       failed = true;
     }
-    equals(failed, true);
+    equal(failed, true);
     doc.collection = collection;
   });
 
@@ -82,9 +82,9 @@ $(document).ready(function() {
       urlRoot: '/collection'
     });
     var model = new Model();
-    equals(model.url(), '/collection');
+    equal(model.url(), '/collection');
     model.set({id: '+1+'});
-    equals(model.url(), '/collection/%2B1%2B');
+    equal(model.url(), '/collection/%2B1%2B');
   });
 
   test("Model: url when using urlRoot as a function to determine urlRoot at runtime", function() {
@@ -95,24 +95,24 @@ $(document).ready(function() {
     });
 
     var model = new Model({parent_id: 1});
-    equals(model.url(), '/nested/1/collection');
+    equal(model.url(), '/nested/1/collection');
     model.set({id: 2});
-    equals(model.url(), '/nested/1/collection/2');
+    equal(model.url(), '/nested/1/collection/2');
   });
 
   test("Model: clone", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
     a = new Backbone.Model(attrs);
     b = a.clone();
-    equals(a.get('foo'), 1);
-    equals(a.get('bar'), 2);
-    equals(a.get('baz'), 3);
-    equals(b.get('foo'), a.get('foo'), "Foo should be the same on the clone.");
-    equals(b.get('bar'), a.get('bar'), "Bar should be the same on the clone.");
-    equals(b.get('baz'), a.get('baz'), "Baz should be the same on the clone.");
+    equal(a.get('foo'), 1);
+    equal(a.get('bar'), 2);
+    equal(a.get('baz'), 3);
+    equal(b.get('foo'), a.get('foo'), "Foo should be the same on the clone.");
+    equal(b.get('bar'), a.get('bar'), "Bar should be the same on the clone.");
+    equal(b.get('baz'), a.get('baz'), "Baz should be the same on the clone.");
     a.set({foo : 100});
-    equals(a.get('foo'), 100);
-    equals(b.get('foo'), 1, "Changing a parent attribute does not change the clone.");
+    equal(a.get('foo'), 100);
+    equal(b.get('foo'), 1, "Changing a parent attribute does not change the clone.");
   });
 
   test("Model: isNew", function() {
@@ -131,35 +131,35 @@ $(document).ready(function() {
   });
 
   test("Model: get", function() {
-    equals(doc.get('title'), 'The Tempest');
-    equals(doc.get('author'), 'Bill Shakespeare');
+    equal(doc.get('title'), 'The Tempest');
+    equal(doc.get('author'), 'Bill Shakespeare');
   });
 
   test("Model: escape", function() {
-    equals(doc.escape('title'), 'The Tempest');
+    equal(doc.escape('title'), 'The Tempest');
     doc.set({audience: 'Bill & Bob'});
-    equals(doc.escape('audience'), 'Bill &amp; Bob');
+    equal(doc.escape('audience'), 'Bill &amp; Bob');
     doc.set({audience: 'Tim > Joan'});
-    equals(doc.escape('audience'), 'Tim &gt; Joan');
+    equal(doc.escape('audience'), 'Tim &gt; Joan');
     doc.set({audience: 10101});
-    equals(doc.escape('audience'), '10101');
+    equal(doc.escape('audience'), '10101');
     doc.unset('audience');
-    equals(doc.escape('audience'), '');
+    equal(doc.escape('audience'), '');
   });
 
   test("Model: has", function() {
     attrs = {};
     a = new Backbone.Model(attrs);
-    equals(a.has("name"), false);
+    equal(a.has("name"), false);
     _([true, "Truth!", 1, false, '', 0]).each(function(value) {
       a.set({'name': value});
-      equals(a.has("name"), true);
+      equal(a.has("name"), true);
     });
     a.unset('name');
-    equals(a.has('name'), false);
+    equal(a.has('name'), false);
     _([null, undefined]).each(function(value) {
       a.set({'name': value});
-      equals(a.has("name"), false);
+      equal(a.has("name"), false);
     });
   });
 
@@ -177,7 +177,7 @@ $(document).ready(function() {
     ok(changeCount == 1, "Change count should NOT have incremented.");
 
     a.validate = function(attrs) {
-      equals(attrs.foo, void 0, 'ignore values when unsetting');
+      equal(attrs.foo, void 0, 'ignore values when unsetting');
     };
     a.unset('foo');
     ok(a.get('foo') == null, "Foo should have changed");
@@ -185,7 +185,7 @@ $(document).ready(function() {
     ok(changeCount == 2, "Change count should have incremented for unset.");
 
     a.unset('id');
-    equals(a.id, undefined, "Unsetting the id should remove the id property.");
+    equal(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
   test("Model: multiple unsets", function() {
@@ -196,7 +196,7 @@ $(document).ready(function() {
     model.set({a: 2});
     model.unset('a');
     model.unset('a');
-    equals(i, 2, 'Unset does not fire an event for missing attributes.');
+    equal(i, 2, 'Unset does not fire an event for missing attributes.');
   });
 
   test("Model: unset and changedAttributes", function() {
@@ -212,18 +212,18 @@ $(document).ready(function() {
   test("Model: using a non-default id attribute.", function() {
     var MongoModel = Backbone.Model.extend({idAttribute : '_id'});
     var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
-    equals(model.get('id'), 'eye-dee');
-    equals(model.id, 25);
-    equals(model.isNew(), false);
+    equal(model.get('id'), 'eye-dee');
+    equal(model.id, 25);
+    equal(model.isNew(), false);
     model.unset('_id');
-    equals(model.id, undefined);
-    equals(model.isNew(), true);
+    equal(model.id, undefined);
+    equal(model.isNew(), true);
   });
 
   test("Model: set an empty string", function() {
     var model = new Backbone.Model({name : "Model"});
     model.set({name : ''});
-    equals(model.get('name'), '');
+    equal(model.get('name'), '');
   });
 
   test("Model: clear", function() {
@@ -235,8 +235,8 @@ $(document).ready(function() {
       ok('name' in changedAttrs);
     });
     model.clear();
-    equals(changed, true);
-    equals(model.get('name'), undefined);
+    equal(changed, true);
+    equal(model.get('name'), undefined);
   });
 
   test("Model: defaults", function() {
@@ -247,8 +247,8 @@ $(document).ready(function() {
       }
     });
     var model = new Defaulted({two: null});
-    equals(model.get('one'), 1);
-    equals(model.get('two'), null);
+    equal(model.get('one'), 1);
+    equal(model.get('two'), null);
     Defaulted = Backbone.Model.extend({
       defaults: function() {
         return {
@@ -258,25 +258,25 @@ $(document).ready(function() {
       }
     });
     var model = new Defaulted({two: null});
-    equals(model.get('one'), 3);
-    equals(model.get('two'), null);
+    equal(model.get('one'), 3);
+    equal(model.get('two'), null);
   });
 
   test("Model: change, hasChanged, changedAttributes, previous, previousAttributes", function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
-    equals(model.changedAttributes(), false);
+    equal(model.changedAttributes(), false);
     model.on('change', function() {
       ok(model.hasChanged('name'), 'name changed');
       ok(!model.hasChanged('age'), 'age did not');
       ok(_.isEqual(model.changedAttributes(), {name : 'Rob'}), 'changedAttributes returns the changed attrs');
-      equals(model.previous('name'), 'Tim');
+      equal(model.previous('name'), 'Tim');
       ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}), 'previousAttributes is correct');
     });
     model.set({name : 'Rob'}, {silent : true});
-    equals(model.hasChanged(), true);
-    equals(model.hasChanged('name'), true);
+    equal(model.hasChanged(), true);
+    equal(model.hasChanged('name'), true);
     model.change();
-    equals(model.get('name'), 'Rob');
+    equal(model.get('name'), 'Rob');
   });
 
   test("Model: change with options", function() {
@@ -287,9 +287,9 @@ $(document).ready(function() {
     });
     model.set({name: 'Bob'}, {silent: true});
     model.change({prefix: 'Mr. '});
-    equals(value, 'Mr. Bob');
+    equal(value, 'Mr. Bob');
     model.set({name: 'Sue'}, {prefix: 'Ms. '});
-    equals(value, 'Ms. Sue');
+    equal(value, 'Ms. Sue');
   });
 
   test("Model: change after initialize", function () {
@@ -298,7 +298,7 @@ $(document).ready(function() {
     var obj = new Backbone.Model(attrs);
     obj.on('change', function() { changed += 1; });
     obj.set(attrs);
-    equals(changed, 0);
+    equal(changed, 0);
   });
 
   test("Model: save within change event", function () {
@@ -322,12 +322,12 @@ $(document).ready(function() {
       lastError = error;
     }});
 
-    equals(lastError, "Can't change admin status.");
+    equal(lastError, "Can't change admin status.");
   });
 
   test("Model: save", function() {
     doc.save({title : "Henry V"});
-    equals(lastRequest[0], 'update');
+    equal(lastRequest[0], 'update');
     ok(_.isEqual(lastRequest[1], doc));
   });
 
@@ -337,7 +337,7 @@ $(document).ready(function() {
       options.success();
     };
     model.save('title', 'Twelfth Night');
-    equals(model.get('title'), 'Twelfth Night');
+    equal(model.get('title'), 'Twelfth Night');
   });
 
   test("Model: fetch", function() {
@@ -348,7 +348,7 @@ $(document).ready(function() {
 
   test("Model: destroy", function() {
     doc.destroy();
-    equals(lastRequest[0], 'delete');
+    equal(lastRequest[0], 'delete');
     ok(_.isEqual(lastRequest[1], doc));
   });
 
@@ -370,16 +370,16 @@ $(document).ready(function() {
       lastError = error;
     });
     var result = model.set({a: 100});
-    equals(result, model);
-    equals(model.get('a'), 100);
-    equals(lastError, undefined);
+    equal(result, model);
+    equal(model.get('a'), 100);
+    equal(lastError, undefined);
     result = model.set({admin: true}, {silent: true});
-    equals(lastError, undefined);
-    equals(model.get('admin'), true);
+    equal(lastError, undefined);
+    equal(model.get('admin'), true);
     result = model.set({a: 200, admin: true});
-    equals(result, false);
-    equals(model.get('a'), 100);
-    equals(lastError, "Can't change admin status.");
+    equal(result, false);
+    equal(model.get('a'), 100);
+    equal(lastError, "Can't change admin status.");
   });
 
   test("Model: validate on unset and clear", function() {
@@ -394,16 +394,16 @@ $(document).ready(function() {
       }
     };
     model.set({name: "Two"});
-    equals(model.get('name'), 'Two');
-    equals(error, undefined);
+    equal(model.get('name'), 'Two');
+    equal(error, undefined);
     model.unset('name');
-    equals(error, true);
-    equals(model.get('name'), 'Two');
+    equal(error, true);
+    equal(model.get('name'), 'Two');
     model.clear();
-    equals(model.get('name'), 'Two');
+    equal(model.get('name'), 'Two');
     delete model.validate;
     model.clear();
-    equals(model.get('name'), undefined);
+    equal(model.get('name'), undefined);
   });
 
   test("Model: validate with error callback", function() {
@@ -419,22 +419,22 @@ $(document).ready(function() {
       boundError = true;
     });
     var result = model.set({a: 100}, {error: callback});
-    equals(result, model);
-    equals(model.get('a'), 100);
-    equals(lastError, undefined);
-    equals(boundError, undefined);
+    equal(result, model);
+    equal(model.get('a'), 100);
+    equal(lastError, undefined);
+    equal(boundError, undefined);
     result = model.set({a: 200, admin: true}, {error: callback});
-    equals(result, false);
-    equals(model.get('a'), 100);
-    equals(lastError, "Can't change admin status.");
-    equals(boundError, undefined);
+    equal(result, false);
+    equal(model.get('a'), 100);
+    equal(lastError, "Can't change admin status.");
+    equal(boundError, undefined);
   });
 
   test("Model: defaults always extend attrs (#459)", function() {
     var Defaulted = Backbone.Model.extend({
       defaults: {one: 1},
       initialize : function(attrs, opts) {
-        equals(this.attributes.one, 1);
+        equal(this.attributes.one, 1);
       }
     });
     var providedattrs = new Defaulted({});
@@ -455,10 +455,10 @@ $(document).ready(function() {
     var adult = new Parent;
     var kid   = new Child;
 
-    equals(Child.classProp, Parent.classProp);
+    equal(Child.classProp, Parent.classProp);
     notEqual(Child.classProp, undefined);
 
-    equals(kid.instancePropSame, adult.instancePropSame);
+    equal(kid.instancePropSame, adult.instancePropSame);
     notEqual(kid.instancePropSame, undefined);
 
     notEqual(Child.prototype.instancePropDiff, Parent.prototype.instancePropDiff);
@@ -469,8 +469,8 @@ $(document).ready(function() {
     var A = Backbone.Model.extend({
       initialize: function() {
         this.on("change:state", function(a, newState) {
-          equals(a.previous('state'), undefined);
-          equals(newState, 'hello');
+          equal(a.previous('state'), undefined);
+          equal(newState, 'hello');
           // Fire a nested change event.
           this.set({ other: "whatever" });
         });
@@ -480,8 +480,8 @@ $(document).ready(function() {
     var B = Backbone.Model.extend({
       initialize: function() {
         this.get("a").on("change:state", function(a, newState) {
-          equals(a.previous('state'), undefined);
-          equals(newState, 'hello');
+          equal(a.previous('state'), undefined);
+          equal(newState, 'hello');
         });
       }
     });
@@ -519,9 +519,9 @@ $(document).ready(function() {
     var model = new Backbone.Model;
 
     var assertion = function() {
-      equals(model.get('a'), 'a');
-      equals(model.get('b'), 'b');
-      equals(model.get('c'), 'c');
+      equal(model.get('a'), 'a');
+      equal(model.get('b'), 'b');
+      equal(model.get('c'), 'c');
     };
 
     model.on('change:a', assertion);
@@ -529,6 +529,30 @@ $(document).ready(function() {
     model.on('change:c', assertion);
 
     model.set({a: 'a', b: 'b', c: 'c'});
+  });
+
+  test("#871, set with attributes property", function() {
+    var model = new Backbone.Model();
+    model.set({attributes: true});
+    ok(model.has('attributes'));
+  });
+
+  test("set value regardless of equality/change", function() {
+    var model = new Backbone.Model({x: []});
+    var a = [];
+    model.set({x: a});
+    ok(model.get('x') === a);
+  });
+
+  test("unset fires change for undefined attributes", 1, function() {
+    var model = new Backbone.Model({x: undefined});
+    model.bind('change:x', function(){ ok(true); });
+    model.unset('x');
+  });
+
+  test("set: undefined values", function() {
+    var model = new Backbone.Model({x: undefined});
+    ok('x' in model.attributes);
   });
 
 });

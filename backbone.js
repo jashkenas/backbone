@@ -220,7 +220,7 @@
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
-      if (attrs.attributes) attrs = attrs.attributes;
+      if (attrs instanceof Backbone.Model) attrs = attrs.attributes;
       if (options.unset) for (var attr in attrs) attrs[attr] = void 0;
       var now = this.attributes, escaped = this._escapedAttributes;
 
@@ -239,11 +239,11 @@
       for (attr in attrs) {
         val = attrs[attr];
         if (!_.isEqual(now[attr], val) || (options.unset && (attr in now))) {
-          options.unset ? delete now[attr] : now[attr] = val;
           delete escaped[attr];
           this._changed = true;
           changes[attr] = val;
         }
+        options.unset ? delete now[attr] : now[attr] = val;
       }
 
       // Fire `change:attribute` events.
@@ -364,7 +364,7 @@
 
     // Create a new model with identical attributes to this one.
     clone: function() {
-      return new this.constructor(this);
+      return new this.constructor(this.attributes);
     },
 
     // A model is new if it has never been saved to the server, and lacks an id.
@@ -468,43 +468,45 @@
     },
 
     // Add a model, or list of models to the set. Pass **silent** to avoid
-    // firing the `added` event for every new model.
+    // firing the `add` event for every new model.
     add: function(models, options) {
-      var i, index, length;
+      var i, index, length, model, cids = {};
       options || (options = {});
-      if (!_.isArray(models)) models = [models];
-      models = slice.call(models);
+      models = _.isArray(models) ? models.slice() : [models];
       for (i = 0, length = models.length; i < length; i++) {
-        var model = models[i] = this._prepareModel(models[i], options);
-        if (!model) {
+        if (!(model = models[i] = this._prepareModel(models[i], options))) {
           throw new Error("Can't add an invalid model to a collection");
         }
         var hasId = model.id != null;
         if (this._byCid[model.cid] || (hasId && this._byId[model.id])) {
           throw new Error("Can't add the same model to a collection twice");
         }
+      }
+      for (i = 0; i < length; i++) {
+        (model = models[i]).on('all', this._onModelEvent, this);
         this._byCid[model.cid] = model;
-        if (hasId) this._byId[model.id] = model;
-        model.on('all', this._onModelEvent, this);
+        if (model.id != null) this._byId[model.id] = model;
+        cids[model.cid] = true;
       }
       this.length += length;
       index = options.at != null ? options.at : this.models.length;
       splice.apply(this.models, [index, 0].concat(models));
       if (this.comparator) this.sort({silent: true});
       if (options.silent) return this;
-      for (i = 0; i < length; i++) {
-        options.index = index + i;
-        models[i].trigger('add', models[i], this, options);
+      for (i = 0, length = this.models.length; i < length; i++) {
+        if (!cids[(model = this.models[i]).cid]) continue;
+        options.index = i;
+        model.trigger('add', model, this, options);
       }
       return this;
     },
 
     // Remove a model, or a list of models from the set. Pass silent to avoid
-    // firing the `removed` event for every model removed.
+    // firing the `remove` event for every model removed.
     remove: function(models, options) {
       var i, index, model;
       options || (options = {});
-      models = _.isArray(models) ? slice.call(models) : [models];
+      models = _.isArray(models) ? models.slice() : [models];
       for (i = 0, l = models.length; i < l; i++) {
         model = this.getByCid(models[i]) || this.get(models[i]);
         if (!model) continue;
@@ -561,7 +563,7 @@
 
     // When you have more items than you want to add or remove individually,
     // you can reset the entire set with a new list of models, without firing
-    // any `added` or `removed` events. Fires `reset` when finished.
+    // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
       models  || (models = []);
       options || (options = {});
