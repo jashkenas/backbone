@@ -161,7 +161,9 @@
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
-    this.set(attributes, {silent: true});
+    if (!this.set(attributes, {silent: true})) {
+      throw new Error("Can't create an invalid model");
+    }
     this._changed = false;
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
@@ -225,7 +227,7 @@
       var now = this.attributes, escaped = this._escapedAttributes;
 
       // Run validation.
-      if (!options.silent && this.validate && !this._performValidation(attrs, options)) return false;
+      if (this.validate && !this._performValidation(attrs, options)) return false;
 
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
@@ -422,7 +424,8 @@
     // if all is well. If a specific `error` callback has been passed,
     // call that instead of firing the general `"error"` event.
     _performValidation: function(attrs, options) {
-      var error = this.validate(attrs, options);
+      var newAttrs = _.extend({}, this.attributes, attrs);
+      var error = this.validate(newAttrs, options);
       if (error) {
         if (options.error) {
           options.error(this, error, options);

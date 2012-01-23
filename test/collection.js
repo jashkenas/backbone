@@ -73,8 +73,9 @@ $(document).ready(function() {
     var CustomSetCollection = Backbone.Collection.extend({
       model: CustomSetModel
     });
-    var col = new CustomSetCollection([{ num_as_string: 2 }]);
-    equal(col.length, 1);
+    raises(function(){
+      new CustomSetCollection([{ num_as_string: 2 }]);
+    });
   });
 
   test("Collection: update index when id changes", function() {
@@ -363,7 +364,9 @@ $(document).ready(function() {
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
-    equal(col.create({"foo":"bar"}),false);
+    raises(function(){
+      equal(col.create({"foo":"bar"}),false);
+    });
   });
 
   test("Collection: a failing create runs the error callback", function() {
@@ -378,8 +381,9 @@ $(document).ready(function() {
     var flag = false;
     var callback = function(model, error) { flag = true; };
     var col = new ValidatingCollection();
-    col.create({"foo":"bar"}, { error: callback });
-    equal(flag, true);
+    raises(function(){
+      col.create({"foo":"bar"}, { error: callback });
+    });
   });
 
   test("collection: initialize", function() {
@@ -456,6 +460,7 @@ $(document).ready(function() {
       set: function(attrs) {
         equal(attrs.prop, 'value');
         equal(this.collection, col);
+        return this;
       }
     });
     col.model = Model;

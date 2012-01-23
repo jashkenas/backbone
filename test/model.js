@@ -177,10 +177,10 @@ $(document).ready(function() {
     ok(changeCount == 1, "Change count should NOT have incremented.");
 
     a.validate = function(attrs) {
-      equal(attrs.foo, void 0, 'ignore values when unsetting');
+      equal(attrs.foo, void 0, "don't ignore values when unsetting");
     };
     a.unset('foo');
-    ok(a.get('foo') == null, "Foo should have changed");
+    equal(a.get('foo'), void 0, "Foo should have changed");
     delete a.validate;
     ok(changeCount == 2, "Change count should have incremented for unset.");
 
@@ -364,7 +364,7 @@ $(document).ready(function() {
     var lastError;
     var model = new Backbone.Model();
     model.validate = function(attrs) {
-      if (attrs.admin) return "Can't change admin status.";
+      if (attrs.admin != this.get('admin')) return "Can't change admin status.";
     };
     model.on('error', function(model, error) {
       lastError = error;
@@ -374,23 +374,20 @@ $(document).ready(function() {
     equal(model.get('a'), 100);
     equal(lastError, undefined);
     result = model.set({admin: true}, {silent: true});
-    equal(lastError, undefined);
-    equal(model.get('admin'), true);
+    equal(lastError, "Can't change admin status.");
+    equal(model.get('admin'), void 0);
     result = model.set({a: 200, admin: true});
     equal(result, false);
     equal(model.get('a'), 100);
-    equal(lastError, "Can't change admin status.");
   });
 
   test("Model: validate on unset and clear", function() {
     var error;
     var model = new Backbone.Model({name: "One"});
     model.validate = function(attrs) {
-      if ("name" in attrs) {
-        if (!attrs.name) {
-          error = true;
-          return "No thanks.";
-        }
+      if (!attrs.name) {
+        error = true;
+        return "No thanks.";
       }
     };
     model.set({name: "Two"});
