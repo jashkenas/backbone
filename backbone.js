@@ -447,7 +447,7 @@
     if (options.comparator) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
-    if (models) this.reset(models, {silent: true});
+    if (models) this.reset(models, _.extend(options, {silent: true}));
   };
 
   // Define the Collection's inheritable methods.
