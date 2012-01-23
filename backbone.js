@@ -836,7 +836,7 @@
       } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
         $(window).bind('hashchange', this.checkUrl);
       } else if (this._wantsHashChange) {
-        setInterval(this.checkUrl, this.interval);
+        this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
 
       // Determine if we need to change the base url, for a pushState link
@@ -858,6 +858,14 @@
       if (!this.options.silent) {
         return this.loadUrl();
       }
+    },
+
+    // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
+    // but possibly useful for unit testing Routers.
+    stop: function() {
+      $(window).unbind('popstate', this.checkUrl).unbind('hashchange', this.checkUrl);
+      clearInterval(this._checkUrlInterval);
+      historyStarted = false;
     },
 
     // Add a route to be tested when the fragment changes. Routes added later
@@ -898,6 +906,7 @@
     // route callback be fired (not usually desirable), or `replace: true`, if
     // you which to modify the current URL without adding an entry to the history.
     navigate: function(fragment, options) {
+      if (!historyStarted) return false;
       if (!options || options === true) options = {trigger: options};
       var frag = (fragment || '').replace(routeStripper, '');
       if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
