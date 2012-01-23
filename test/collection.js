@@ -435,6 +435,35 @@ $(document).ready(function() {
     ok(_.isEqual(col.last().attributes, a.attributes));
   });
 
+  test("Collection: update", function() {
+    var l = col.last();
+
+    col.update(col.models);
+    equals(col.length, 4);
+    equals(col.last(), l);
+
+    col.update([{id: 3, label: 'updated'}])
+    equals(col.length, 4);
+    ok(col.last() === l);
+    equals(col.get(3).attributes.label, 'updated');
+
+
+    var aUpdated = new Backbone.Model({id: 3, label: 'updatedAgain'});
+    col.update([aUpdated])
+    equals(col.length, 4);
+    ok(col.last() === l);
+    equals(col.last().attributes.label, 'updatedAgain');
+
+    col.update([{id: 9, label: 'new'}]);
+    equals(col.length, 5);
+    equals(col.last().attributes.label, 'new');
+
+    col.update([{id: 3, label: 'a'}], {removeMissing: true})
+    equals(col.length, 1);
+    ok(col.last() === l);
+    equals(col.last().attributes.label, 'a');
+  });
+
   test("Collection: trigger custom events on models", function() {
     var fired = null;
     a.bind("custom", function() { fired = true; });
