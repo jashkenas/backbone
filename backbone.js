@@ -1086,6 +1086,9 @@
   Backbone.Model.extend = Backbone.Collection.extend =
     Backbone.Router.extend = Backbone.View.extend = extend;
 
+  // Backbone.sync
+  // -------------
+
   // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
   var methodMap = {
     'create': 'POST',
@@ -1093,9 +1096,6 @@
     'delete': 'DELETE',
     'read':   'GET'
   };
-
-  // Backbone.sync
-  // -------------
 
   // Override this function to change the manner in which Backbone persists
   // models to the server. You will be passed the type of request, and the
