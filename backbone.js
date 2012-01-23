@@ -281,8 +281,14 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(model.parse(resp, xhr), options)) return false;
-        if (success) success(model, resp);
+    	var attributes = model.parse(resp, xhr);
+    	if (!attributes) {
+    		options.error && options.error(xhr, 'backbone-parse');
+    	}
+    	else if (!model.set(attributes, options)) {
+        	options.error && options.error(xhr, 'backbone-set');
+        }
+    	else if (success) success(model, resp);
       };
       options.error = Backbone.wrapError(options.error, model, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
@@ -585,8 +591,14 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
-        if (success) success(collection, resp);
+    	var models = collection.parse(resp, xhr);
+    	if (!models) {
+    		options.error && options.error(xhr, 'backbone-parse');
+    		return false;
+    	} else {
+	        collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
+	        if (success) success(collection, resp);
+    	}
       };
       options.error = Backbone.wrapError(options.error, collection, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
