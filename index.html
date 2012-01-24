@@ -324,6 +324,7 @@
       <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
       <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
       <li>– <a href="#FAQ-this">Binding "this"</a></li>
+      <li>– <a href="#FAQ-rails">Working with Rails</a></li>
     </ul>
 
     <a class="toc_title" href="#changelog">
@@ -2916,6 +2917,34 @@ var MessageList = Backbone.View.extend({
 
 Inbox.messages.add(newMessage);
 </pre>
+
+    <p id="FAQ-rails">
+      <b class="header">Working with Rails</b>
+      <br />
+      Backbone.js was originally extracted from 
+      <a href="http://www.documentcloud.org">a Rails application</a>; getting
+      your client-side (Backbone) Models to sync correctly with your server-side
+      (Rails) Models is painless, but there are still a few things to be aware of.
+    </p>
+    
+    <p>
+      By default, Rails adds an extra layer of wrapping around the JSON representation
+      of models. You can disable this wrapping by setting:
+    </p>
+    
+<pre>
+ActiveRecord::Base.include_root_in_json = false  
+</pre>
+
+    <p>
+      ... in your configuration. Otherwise, override 
+      <a href="#Model-parse">parse</a> to pull model attributes out of the 
+      wrapper. Similarly, Backbone PUTs and POSTs direct JSON representations 
+      of models, where by default Rails expcects namespaced attributes. You can 
+      have your controllers filter attributes directly from <tt>params</tt>, or 
+      you can override <a href="#Model-toJSON">toJSON</a> in Backbone to add 
+      the extra wrapping Rails expects.
+    </p>
 
     <h2 id="changelog">Change Log</h2>
 
