@@ -9,10 +9,12 @@
   // Initial Setup
   // -------------
 
-  // Save a reference to the global object.
+  // Save a reference to the global object (`window` in the browser, `global`
+  // on the server).
   var root = this;
 
-  // Save the previous value of the `Backbone` variable.
+  // Save the previous value of the `Backbone` variable, so that it can be
+  // restored later on, if `noConflict` is used.
   var previousBackbone = root.Backbone;
 
   // Create a local reference to slice/splice.
@@ -476,6 +478,9 @@
       var i, index, length, model, cids = {};
       options || (options = {});
       models = _.isArray(models) ? models.slice() : [models];
+
+      // Begin by turning bare objects into model references, and preventing
+      // invalid models or duplicate models from being added.
       for (i = 0, length = models.length; i < length; i++) {
         if (!(model = models[i] = this._prepareModel(models[i], options))) {
           throw new Error("Can't add an invalid model to a collection");
@@ -485,12 +490,18 @@
           throw new Error("Can't add the same model to a collection twice");
         }
       }
+
+      // Listen to added models' events, and index models for lookup by
+      // `id` and by `cid`.
       for (i = 0; i < length; i++) {
         (model = models[i]).on('all', this._onModelEvent, this);
         this._byCid[model.cid] = model;
         if (model.id != null) this._byId[model.id] = model;
         cids[model.cid] = true;
       }
+
+      // Insert models into the collection, re-sorting if needed, and triggering
+      // `add` events unless silenced.
       this.length += length;
       index = options.at != null ? options.at : this.models.length;
       splice.apply(this.models, [index, 0].concat(models));
@@ -638,7 +649,7 @@
       this._byCid = {};
     },
 
-    // Prepare a model to be added to this collection
+    // Prepare a model or hash of attributes to be added to this collection.
     _prepareModel: function(model, options) {
       if (!(model instanceof Backbone.Model)) {
         var attrs = model;
@@ -848,11 +859,17 @@
       historyStarted = true;
       var loc = window.location;
       var atRoot  = loc.pathname == this.options.root;
+
+      // If we've started off with a route from a `pushState`-enabled browser,
+      // but we're currently in a browser that doesn't support it...
       if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
         window.location.replace(this.options.root + '#' + this.fragment);
         // Return immediately as browser will do redirect to new url
         return true;
+
+      // Or if we've started out with a hash-based route, but we're currently
+      // in a browser where it could be `pushState`-based instead...
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
         this.fragment = loc.hash.replace(routeStripper, '');
         window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
@@ -913,10 +930,15 @@
       if (!options || options === true) options = {trigger: options};
       var frag = (fragment || '').replace(routeStripper, '');
       if (this.fragment == frag || this.fragment == decodeURIComponent(frag)) return;
+
+      // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
         this.fragment = frag;
         window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, frag);
+
+      // If hash changes haven't been explicitly disabled, update the hash
+      // fragment to store history.
       } else if (this._wantsHashChange) {
         this.fragment = frag;
         this._updateHash(window.location, frag, options.replace);
@@ -926,6 +948,9 @@
           if(!options.replace) this.iframe.document.open().close();
           this._updateHash(this.iframe.location, frag, options.replace);
         }
+
+      // If you've told us that you explicitly don't want fallback hashchange-
+      // based history, then `navigate` becomes a page refresh.
       } else {
         window.location.assign(this.options.root + fragment);
       }
@@ -1004,6 +1029,8 @@
       return el;
     },
 
+    // Change the view's element (`this.el` property), including event
+    // re-delegation.
     setElement: function(element, delegate) {
       this.$el = $(element);
       this.el = this.$el[0];
@@ -1045,6 +1072,8 @@
     },
 
     // Clears all callbacks previously bound to the view with `delegateEvents`.
+    // You usually don't need to use this, but may wish to if you have multiple
+    // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
       this.$el.unbind('.delegateEvents' + this.cid);
     },
