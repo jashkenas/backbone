@@ -504,7 +504,7 @@
     // Remove a model, or a list of models from the set. Pass silent to avoid
     // firing the `remove` event for every model removed.
     remove : function(models, options) {
-      var i, index, model;
+      var i, index, model, l;
       options || (options = {});
       models = _.isArray(models) ? models.slice() : [models];
       for (i = 0, l = models.length; i < l; i++) {
