@@ -239,23 +239,16 @@
       this._changing = true;
 
       // Update attributes.
-      var changes = {};
       for (attr in attrs) {
         val = attrs[attr];
         if (!_.isEqual(now[attr], val) || (options.unset && (attr in now))) {
           delete escaped[attr];
           this._changed = true;
-          changes[attr] = val;
         }
         options.unset ? delete now[attr] : now[attr] = val;
       }
 
-      // Fire `change:attribute` events.
-      for (var attr in changes) {
-        if (!options.silent) this.trigger('change:' + attr, this, changes[attr], options);
-      }
-
-      // Fire the `"change"` event, if the model has been changed.
+      // Fire the `"change"` events, if the model has been changed.
       if (!alreadyChanging) {
         if (!options.silent && this._changed) this.change(options);
         this._changing = false;
@@ -379,6 +372,10 @@
     // Call this method to manually fire a `change` event for this model.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
+      var changes = this.changedAttributes();
+      for (var attr in changes) {
+        this.trigger('change:' + attr, this, changes[attr], options);
+      }
       this.trigger('change', this, options);
       this._previousAttributes = _.clone(this.attributes);
       this._changed = false;

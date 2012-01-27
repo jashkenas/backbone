@@ -552,4 +552,11 @@ $(document).ready(function() {
     ok('x' in model.attributes);
   });
 
+  test("change fires change:attr", 1, function() {
+    var model = new Backbone.Model({x: 1});
+    model.set({x: 2}, {silent: true});
+    model.on('change:x', function(){ ok(true); });
+    model.change();
+  });
+
 });
