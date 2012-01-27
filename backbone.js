@@ -369,7 +369,8 @@
       return this.id == null;
     },
 
-    // Call this method to manually fire a `change` event for this model.
+    // Call this method to manually fire a `"change"` event for this model and
+    // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
       var changes = this.changedAttributes();

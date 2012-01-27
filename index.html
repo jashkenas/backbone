@@ -382,7 +382,7 @@
 
     <p>
       Backbone.js gives structure to your serious JavaScript web applications
-      by supplying <b>models</b> with key-value binding and custom events, 
+      by supplying <b>models</b> with key-value binding and custom events,
       <b>collections</b> with a rich API of enumerable functions,
       <b>views</b> with declarative event handling, and connects it all to your
       existing API over a RESTful JSON interface.
@@ -392,7 +392,7 @@
       The project is <a href="http://github.com/documentcloud/backbone/">hosted on GitHub</a>,
       and the <a href="docs/backbone.html">annotated source code</a> is available,
       as well as an online <a href="test/test.html">test suite</a>,
-      an <a href="examples/todos/index.html">example application</a>, 
+      an <a href="examples/todos/index.html">example application</a>,
       a <a href="https://github.com/documentcloud/backbone/wiki/Tutorials%2C-blog-posts-and-example-sites">list of tutorials</a>
       and a <a href="#examples">long list of real-world projects</a> that use Backbone.
     </p>
@@ -1036,8 +1036,9 @@ ActiveRecord::Base.include_root_in_json = false
     <p id="Model-change">
       <b class="header">change</b><code>model.change()</code>
       <br />
-      Manually trigger the <tt>"change"</tt> event.
-      If you've been passing <tt>{silent: true}</tt> to the <a href="#Model-set">set</a> function in order to
+      Manually trigger the <tt>"change"</tt> event and a <tt>"change:attribute"</tt>
+      event for each attribute that has changed. If you've been passing
+      <tt>{silent: true}</tt> to the <a href="#Model-set">set</a> function in order to
       aggregate rapid changes to a model, you'll want to call <tt>model.change()</tt>
       when you're all finished.
     </p>
@@ -2964,28 +2965,28 @@ Inbox.messages.add(newMessage);
     <p id="FAQ-rails">
       <b class="header">Working with Rails</b>
       <br />
-      Backbone.js was originally extracted from 
+      Backbone.js was originally extracted from
       <a href="http://www.documentcloud.org">a Rails application</a>; getting
       your client-side (Backbone) Models to sync correctly with your server-side
       (Rails) Models is painless, but there are still a few things to be aware of.
     </p>
-    
+
     <p>
       By default, Rails adds an extra layer of wrapping around the JSON representation
       of models. You can disable this wrapping by setting:
     </p>
-    
+
 <pre>
-ActiveRecord::Base.include_root_in_json = false  
+ActiveRecord::Base.include_root_in_json = false
 </pre>
 
     <p>
-      ... in your configuration. Otherwise, override 
-      <a href="#Model-parse">parse</a> to pull model attributes out of the 
-      wrapper. Similarly, Backbone PUTs and POSTs direct JSON representations 
-      of models, where by default Rails expcects namespaced attributes. You can 
-      have your controllers filter attributes directly from <tt>params</tt>, or 
-      you can override <a href="#Model-toJSON">toJSON</a> in Backbone to add 
+      ... in your configuration. Otherwise, override
+      <a href="#Model-parse">parse</a> to pull model attributes out of the
+      wrapper. Similarly, Backbone PUTs and POSTs direct JSON representations
+      of models, where by default Rails expcects namespaced attributes. You can
+      have your controllers filter attributes directly from <tt>params</tt>, or
+      you can override <a href="#Model-toJSON">toJSON</a> in Backbone to add
       the extra wrapping Rails expects.
     </p>
 
