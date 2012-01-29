@@ -996,7 +996,7 @@
     // jQuery delegate for element lookup, scoped to DOM elements within the
     // current view. This should be prefered to global lookups where possible.
     $: function(selector) {
-      return $(selector, this.el);
+      return $(this.el).find(selector);
     },
 
     // Initialize is an empty function by default. Override it with your own
