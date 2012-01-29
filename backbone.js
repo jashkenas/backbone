@@ -977,10 +977,10 @@
     this.cid = _.uniqueId('view');
     this._configure(options || {});
     this._ensureElement();
-    this.initialize.apply(this, arguments);
-    this.delegateEvents();
     this._subviews = [];
     this._namedSubviews = {};
+    this.initialize.apply(this, arguments);
+    this.delegateEvents();
   };
 
   // Cached regex to split keys for `delegate`.
@@ -1017,7 +1017,7 @@
     // a reference to that subview on an identity map;
     // names are unique and adding a view with the same name destroys 
     // the old view automatically making it easy to replace views
-    // one can retrieve a nameged view using the `getSubview` method and passing view's name
+    // one can retrieve a named view using the `getSubview` method and passing view's name
     addSubview: function(subview, name) {
       // add reference to superview to create vertical view hierarchy
       subview._parent = this;
@@ -1042,10 +1042,10 @@
     // be handled by overwriting the `onRemove` method
     remove: function() {
       this.$el.remove();
-      // trigger the cleanup
-      this._remove();
       // clear refs from parent view
       this._parent && this._parent._cleanRefs(this);
+      // trigger the cleanup
+      this._remove();
       return this;
     },
 
@@ -1081,7 +1081,7 @@
     // being reattached it's better to play safe and use remove and just recreate the view when required
     detach: function() {
       this.detached = true;
-      $(this.el).detach();
+      this.$el.detach();
       return this;
     },
 
