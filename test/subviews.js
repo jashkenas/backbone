@@ -32,7 +32,7 @@ $(document).ready(function() {
     equal(fixture.find('.test-subview').length, 1, "Subview should be added to DOM");
   });
 
-  test("View: Add multiple views using addSubview", function() {
+  test("View: Add multiple views", function() {
     var view = new (Backbone.View.extend({
       className: 'test-view',
       render: function() {
