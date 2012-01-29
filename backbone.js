@@ -1189,7 +1189,7 @@
       this._namedSubviews = null;
       // if element isn't attached to the view we need to manualy take care of cleaning up all the jQuery refs
       // if view was detached, we check if it was reattached to the DOM if not we manualy clean up the jquery refs
-      this.detached && jQuery.cleanData([this.$el]); 
+      this.detached && jQuery.cleanData(this.$el); 
       // call the onRemove callback to do user defined cleanup
       this.onRemove();
       // unbind any events that could have been possibly bound to this view as handlers may keep the view in the memory

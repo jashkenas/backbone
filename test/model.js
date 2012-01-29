@@ -102,8 +102,8 @@ $(document).ready(function() {
 
   test("Model: clone", function() {
     attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
-    a = new Backbone.Model(attrs);
-    b = a.clone();
+    var a = new Backbone.Model(attrs);
+    var b = a.clone();
     equal(a.get('foo'), 1);
     equal(a.get('bar'), 2);
     equal(a.get('baz'), 3);
