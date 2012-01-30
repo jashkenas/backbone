@@ -731,11 +731,13 @@
         this.trigger.apply(this, ['route:' + name].concat(args));
         Backbone.history.trigger('route', this, name, args);
       }, this));
+	  return this;
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate: function(fragment, options) {
       Backbone.history.navigate(fragment, options);
+	  return this;
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
