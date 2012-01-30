@@ -966,6 +966,8 @@
     this.cid = _.uniqueId('view');
     this._configure(options || {});
     this._ensureElement();
+    this._subviews = [];
+    this._namedSubviews = {};
     this.initialize.apply(this, arguments);
     this.delegateEvents();
   };
@@ -974,7 +976,7 @@
   var eventSplitter = /^(\S+)\s*(.*)$/;
 
   // List of view options to be merged as properties.
-  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName'];
+  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'detached'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(Backbone.View.prototype, Backbone.Events, {
@@ -999,10 +1001,76 @@
       return this;
     },
 
+    // adds a subview to the hierarchy and returns it for further use
+    // if passed second optional name parameter adds a subview and stores 
+    // a reference to that subview on an identity map;
+    // names are unique and adding a view with the same name destroys 
+    // the old view automatically making it easy to replace views
+    // one can retrieve a named view using the `getSubview` method and passing view's name
+    addSubview: function(subview, name) {
+      // add reference to superview to create vertical view hierarchy
+      subview._parent = this;
+      this._subviews.push(subview);
+      // if it is a named view add the view to the named subviews collection
+      if (name) {
+        subview._name = name;
+        this._namedSubviews[name] && this.removeSubview(name);
+        this._namedSubviews[name] = subview;
+      }
+      return subview;
+    },
+
+    // returns a subview with a given name
+    getSubview: function(name) {
+      return this._namedSubviews[name];
+    },
+
     // Remove this view from the DOM. Note that the view isn't present in the
     // DOM by default, so calling this method may be a no-op.
+    // remove shouldn't be altered - any changes user wants to make during the removal should
+    // be handled by overwriting the `onRemove` method
     remove: function() {
       this.$el.remove();
+      // clear refs from parent view
+      this._parent && this._parent._cleanRefs(this);
+      // trigger the cleanup
+      this._remove();
+      return this;
+    },
+
+    // removes references to and removes subview given by reference or name
+    removeSubview: function(nameOrView) {
+      var subview = nameOrView instanceof Backbone.View ? nameOrView : this._namedSubviews[nameOrView];
+      subview && subview.remove();
+      return subview;
+    },
+
+    // removes and cleans up all the subviews in hierarchy without removing the view
+    removeSubviews: function() {
+      _.invoke(this._subviews, 'remove');
+    },
+
+    // onRemove will be automatically called on all the subviews, onRemove is called before 
+    // element is removed from the view and after all the subviews were destroyed/cleaned up first
+    // it should be overwritten by user - can be used to clean up bindings to global objects, 
+    // persistant collections and models, nullify references or trigger custom events etc.
+    onRemove: function() {},
+
+    // Detach maps to jQuery detach method and marks the view as detached
+    // it's very important when it comes to memory menagement and helping the garbage collector as 
+    // all the jquery events, backbone event delegations and jquery data won't be cleaned up if the 
+    // superview is removed while subview is detached from the DOM structure.
+    // Because of that we are marking the the view as detached so later on in the `_onDestroy` method we can manualy call
+    // the `cleanData` method to make sure we are not leaving any references to jquery events and data for elements that are
+    // never making it back to the DOM.
+    // Also sometimes we pre-create views on initialization or as content for some popoup/dialog jquery plugins -
+    // if we use subviews like that we should mark views as detached ourselves as if they aren't children to the DOM
+    // tree of the parent view they will never get cleaned up properly
+    // If you know superview is not going to be removed any time soon (or at all) or that the view have a small chance of
+    // being reattached it's better to play safe and use remove and just recreate the view when required
+    detach: function() {
+      this.detached = true;
+      this.$el.detach();
       return this;
     },
 
@@ -1067,6 +1135,12 @@
       this.$el.unbind('.delegateEvents' + this.cid);
     },
 
+    // maps to jquery cleanData to properly clean up detached view
+    cleanData: function() {
+      $.cleanData(this.el.getElementsByTagName("*"));
+      $.cleanData([this.el]);
+    },
+
     // Performs the initial configuration of a View with a set of options.
     // Keys with special meaning *(model, collection, id, className)*, are
     // attached directly to the view.
@@ -1092,8 +1166,46 @@
       } else {
         this.setElement(this.el, false);
       }
-    }
+    },
 
+    // `_remove` is a private method and shouldn't be altered to make sure it is always working as intended,
+    // this method invokes the `_remove` method on all view's subviews and calls the onRemove to clean up any 
+    // backbone references or trigger custom actions if user has overriden the `onRemove` method on given view and
+    // all the subviews in its view hierarchy
+    _remove: function() {
+      // we are calling only _remove on the subviews as we don't want to remove every single subview 
+      // from the DOM tree one by one - we want to clean up all the refs and trigger the onRemove if
+      // any kind of custom cleaning up is required, all hierarchy references are cleaned up after 
+      // _remove is invoked on all the subviews
+      _.invoke(this._subviews, '_remove');
+      // cleanup the view hierarchy references after the _remove on all the children was called
+      this._parent = null;
+      this._subviews = null;
+      this._namedSubviews = null;
+      // if element isn't attached to the view we need to manualy take care of cleaning up all the jQuery refs
+      // if view was detached, we check if it was reattached to the DOM if not we manualy clean up the jquery refs
+      this.detached && this.cleanData(); 
+      // call the onRemove callback to do user defined cleanup
+      this.onRemove();
+      // unbind any events that could have been possibly bound to this view as handlers may keep the view in the memory
+      this.unbind();
+      // clear references to model and collection in case these were persistent, also clears the references to options 
+      // as often we are passing references to persistent or external objects that might persist beyond the life of the view
+      // needs to be last in case onRemove call needed access to these properties.
+      this.model = null;
+      this.collection = null;
+      this.options = null;
+      this.el = null;
+      this.$el = null;
+    },
+
+    // cleans the references between parent view and subview
+    _cleanRefs: function(subview) {
+      // removes name references
+      subview._name && (delete this._namedSubviews[subview._name]);
+      // remove the subview from the subviews collection
+      this._subviews = _.without(this._subviews, subview);
+    }
   });
 
   // The self-propagating extend function that Backbone classes use.
