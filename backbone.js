@@ -223,7 +223,7 @@
       options || (options = {});
       if (!attrs) return this;
       if (attrs instanceof Backbone.Model) attrs = attrs.attributes;
-      if (options.unset) for (var attr in attrs) attrs[attr] = void 0;
+      if (options.unset) for (attr in attrs) attrs[attr] = void 0;
 
       // Run validation.
       if (this.validate && !this._performValidation(attrs, options)) return false;
@@ -1187,7 +1187,7 @@
   // Wrap an optional error callback with a fallback error event.
   Backbone.wrapError = function(onError, originalModel, options) {
     return function(model, resp) {
-      var resp = model === originalModel ? resp : model;
+      resp = model === originalModel ? resp : model;
       if (onError) {
         onError(model, resp, options);
       } else {
