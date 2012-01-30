@@ -447,7 +447,7 @@
 
     <p>
       Backbone's only hard dependency is
-      <a href="http://documentcloud.github.com/underscore/">Underscore.js</a>.
+      <a href="http://documentcloud.github.com/underscore/">Underscore.js</a> <small>( > 1.3.1)</small>.
       For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
       and DOM manipulation with <a href="#View">Backbone.View</a>, include
       <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
@@ -509,6 +509,10 @@
       <li>
         If you have been writing a fair amount of <tt>$(view.el)</tt>, there's now
         a cached reference for that jQuery object: <a href="#View-$el">$el</a>.
+      </li>
+      <li>
+        If you're upgrading, make sure you also upgrade your version of Underscore.js
+        to the latest &mdash; 1.3.1 or greater.
       </li>
     </ul>
 
