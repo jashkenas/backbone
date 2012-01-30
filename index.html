@@ -83,9 +83,16 @@
       }
       div.container ul {
         list-style: circle;
-        font-size: 12px;
         padding-left: 15px;
+        font-size: 13px;
+        line-height: 18px;
       }
+        div.container ul li {
+          margin-bottom: 10px;
+        }
+        div.container ul.small {
+          font-size: 12px;
+        }
     a, a:visited {
       color: #444;
     }
@@ -191,19 +198,23 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.5.3)</span>
+      Backbone.js <span class="version">(0.9.0)</span>
     </a>
 
-    <a class="toc_title" href="#Introduction">
+    <a class="toc_title" href="#introduction">
       Introduction
+    </a>
+    
+    <a class="toc_title" href="#upgrading">
+      Upgrading
     </a>
 
     <a class="toc_title" href="#Events">
       Events
     </a>
     <ul class="toc_section">
-      <li>– <a href="#Events-bind">bind</a></li>
-      <li>– <a href="#Events-unbind">unbind</a></li>
+      <li>– <a href="#Events-on">on</a></li>
+      <li>– <a href="#Events-off">off</a></li>
       <li>– <a href="#Events-trigger">trigger</a></li>
     </ul>
 
@@ -250,7 +261,7 @@
       <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-toJSON">toJSON</a></li>
-      <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (26)</b></a></li>
+      <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (28)</b></a></li>
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
       <li>– <a href="#Collection-get">get</a></li>
@@ -301,11 +312,15 @@
       <li>– <a href="#View-extend">extend</a></li>
       <li>– <a href="#View-constructor">constructor / initialize</a></li>
       <li>– <a href="#View-el">el</a></li>
+      <li>– <a href="#View-$el">$el</a></li>
+      <li>– <a href="#View-setElement">setElement</a></li>
+      <li>– <a href="#View-attributes">attributes</a></li>
       <li>– <a href="#View-dollar">$ (jQuery or Zepto)</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
       <li>– <a href="#View-make">make</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
+      <li>– <a href="#View-undelegateEvents">undelegateEvents</a></li>
     </ul>
 
     <a class="toc_title" href="#Utility">
@@ -421,12 +436,12 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (0.5.3)</a></td>
-        <td><i>41kb, Full Source with Comments</i></td>
+        <td><a class="punch" href="backbone.js">Development Version (0.9.0)</a></td>
+        <td><i>47kb, Full source, lots of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (0.5.3)</a></td>
-        <td><i>4.6kb, Packed and Gzipped</i></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (0.9.0)</a></td>
+        <td><i>5.3kb, Packed and gzipped</i></td>
       </tr>
     </table>
 
@@ -440,7 +455,7 @@
       <a href="http://zeptojs.com/">Zepto</a>.
     </p>
 
-    <h2 id="Introduction">Introduction</h2>
+    <h2 id="introduction">Introduction</h2>
 
     <p>
       When working on a web application that involves a lot of JavaScript, one
@@ -469,6 +484,33 @@
       Many of the examples that follow are runnable. Click the <i>play</i> button
       to execute them.
     </p>
+    
+    <h2 id="upgrading">Upgrading to 0.9</h2>
+    
+    <p>
+      Backbone's <b>0.9</b> series should be considered as a release candidate
+      for an upcoming <b>1.0</b>. Some APIs have changed, and while there is a 
+      <a href="#changelog">change log</a> available, and many new features to
+      take advantage of, there are a few specific changes where you'll need 
+      to take care:
+    </p>
+    
+    <ul>
+      <li>
+        If you've ever manually set <tt>this.el</tt> in a Backbone View to be a 
+        particular DOM element, you'll want to use 
+        <a href="#View-setElement">setElement</a> instead. 
+      </li>
+      <li>
+        Creating and destroying models is now optimistic. Pass <tt>{wait: true}</tt>
+        if you need the previous behavior of waiting for the server to acknowledge
+        success. You can now also pass <tt>{wait: true}</tt> to <a href="#Model-save">save</a> calls.
+      </li>
+      <li>
+        If you have been writing a fair amount of <tt>$(view.el)</tt>, there's now
+        a cached reference for that jQuery object: <a href="#View-$el">$el</a>.
+      </li>
+    </ul>
 
     <h2 id="Events">Backbone.Events</h2>
 
@@ -484,7 +526,7 @@ var object = {};
 
 _.extend(object, Backbone.Events);
 
-object.bind("alert", function(msg) {
+object.on("alert", function(msg) {
   alert("Triggered " + msg);
 });
 
@@ -496,8 +538,8 @@ object.trigger("alert", "an event");
       among different areas of your application: <tt>var dispatcher = _.clone(Backbone.Events)</tt>
     </p>
 
-    <p id="Events-bind">
-      <b class="header">bind</b><code>object.bind(event, callback, [context])</code>
+    <p id="Events-on">
+      <b class="header">on</b><code>object.on(event, callback, [context])</code><span class="alias">Alias: bind</span>
       <br />
       Bind a <b>callback</b> function to an object. The callback will be invoked
       whenever the <b>event</b> (specified by an arbitrary string identifier) is fired.
@@ -507,7 +549,7 @@ object.trigger("alert", "an event");
 
     <p>
       To supply a <b>context</b> value for <tt>this</tt> when the callback is invoked,
-      pass the optional third argument: <tt>model.bind('change', this.render, this)</tt>
+      pass the optional third argument: <tt>model.on('change', this.render, this)</tt>
     </p>
 
     <p>
@@ -518,26 +560,28 @@ object.trigger("alert", "an event");
     </p>
 
 <pre>
-proxy.bind("all", function(eventName) {
+proxy.on("all", function(eventName) {
   object.trigger(eventName);
 });
 </pre>
 
-    <p id="Events-unbind">
-      <b class="header">unbind</b><code>object.unbind([event], [callback])</code>
+    <p id="Events-off">
+      <b class="header">off</b><code>object.off([event], [callback], [context])</code><span class="alias">Alias: unbind</span>
       <br />
       Remove a previously-bound <b>callback</b> function from an object. If no
+      <b>context</b> is specified, all of the versions of the callback with
+      different contexts will be removed. If no
       callback is specified, all callbacks for the <b>event</b> will be
       removed. If no event is specified, <i>all</i> event callbacks on the object
       will be removed.
     </p>
 
 <pre>
-object.unbind("change", onChange);  // Removes just the onChange callback.
+object.off("change", onChange);  // Removes just the onChange callback.
 
-object.unbind("change");            // Removes all "change" callbacks.
+object.off("change");            // Removes all "change" callbacks.
 
-object.unbind();                    // Removes all callbacks on object.
+object.off();                    // Removes all callbacks on object.
 </pre>
 
     <p id="Events-trigger">
@@ -575,7 +619,7 @@ var Sidebar = Backbone.Model.extend({
 
 window.sidebar = new Sidebar;
 
-sidebar.bind('change:color', function(model, color) {
+sidebar.on('change:color', function(model, color) {
   $('#sidebar').css({background: color});
 });
 
@@ -674,11 +718,14 @@ new Book({
       change the models state, a <tt>"change"</tt> event will be triggered, unless
       <tt>{silent: true}</tt> is passed as an option. Change events for specific
       attributes are also triggered, and you can bind to those as well, for example:
-      <tt>change:title</tt>, and <tt>change:content</tt>.
+      <tt>change:title</tt>, and <tt>change:content</tt>. You may also pass
+      individual keys and values.
     </p>
 
 <pre>
-note.set({title: "October 12", content: "Lorem Ipsum Dolor Sit Amet..."});
+note.set({title: "March 20", content: "In his eyes she eclipses..."});
+
+book.set("title", "A Scandal in Bohemia");
 </pre>
 
     <p>
@@ -854,11 +901,19 @@ setInterval(function() {
       hash (as in <a href="#Model-set">set</a>) should contain the attributes
       you'd like to change &mdash; keys that aren't mentioned won't be altered &mdash; but,
       a <i>complete representation</i> of the resource will be sent to the server.
+      As with <tt>set</tt>, you may pass individual keys and values instead of a hash.
       If the model has a <a href="#Model-validate">validate</a>
       method, and validation fails, the model will not be saved. If the model
       <a href="#Model-isNew">isNew</a>, the save will be a <tt>"create"</tt>
       (HTTP <tt>POST</tt>), if the model already
       exists on the server, the save will be an <tt>"update"</tt> (HTTP <tt>PUT</tt>).
+    </p>
+    
+    <p>
+      Calling <tt>save</tt> with new attributes will cause a <tt>"change"</tt>
+      event immediately, and a <tt>"sync"</tt> event after the server has acknowledged
+      the successful change. Pass <tt>{wait: true}</tt> if you'd like to wait
+      for the server before setting the new attributes on the model.
     </p>
 
     <p>
@@ -894,7 +949,7 @@ book.save({author: "Teddy"});
     </p>
 
 <pre>
-book.save({author: "F.D.R."}, {error: function(){ ... }});
+book.save("author", "F.D.R.", {error: function(){ ... }});
 </pre>
 
     <p id="Model-destroy">
@@ -904,7 +959,10 @@ book.save({author: "F.D.R."}, {error: function(){ ... }});
       request to <a href="#Sync">Backbone.sync</a>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
-      through any collections that contain it.
+      through any collections that contain it, and a <tt>"sync"</tt> event, after
+      the server has successfully acknowledged the model's deletion. Pass
+      <tt>{wait: true}</tt> if you'd like to wait for the server to respond 
+      before removing the model from the collection.
     </p>
 
 <pre>
@@ -941,7 +999,7 @@ var one = new Chapter({
   title : "Chapter One: The Beginning"
 });
 
-one.bind("error", function(model, error) {
+one.on("error", function(model, error) {
   alert(model.get("title") + " " + error);
 });
 
@@ -989,7 +1047,8 @@ account.set({access: "unlimited"}, {
       <br />
       Specify a <tt>urlRoot</tt> if you're using a model outside of a collection,
       to enable the default <a href="#Model-url">url</a> function to generate
-      URLs based on the model id. <tt>"/[urlRoot]/id"</tt>
+      URLs based on the model id. <tt>"/[urlRoot]/id"</tt><br /> 
+      Note that <tt>urlRoot</tt> may also be defined as a function.
     </p>
 
 <pre class="runnable">
@@ -1058,7 +1117,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
 <pre>
-book.bind("change", function() {
+book.on("change", function() {
   if (book.hasChanged("title")) {
     ...
   }
@@ -1087,7 +1146,7 @@ var bill = new Backbone.Model({
   name: "Bill Smith"
 });
 
-bill.bind("change:name", function(model, name) {
+bill.on("change:name", function(model, name) {
   alert("Changed name from " + bill.previous("name") + " to " + name);
 });
 
@@ -1117,7 +1176,7 @@ bill.set({name : "Bill Jones"});
       triggered on the collection directly, for convenience.
       This allows you to listen for changes to specific attributes in any
       model in a collection, for example:
-      <tt>Documents.bind("change:selected", ...)</tt>
+      <tt>Documents.on("change:selected", ...)</tt>
     </p>
 
     <p id="Collection-extend">
@@ -1187,14 +1246,14 @@ alert(JSON.stringify(collection));
 </pre>
 
     <p id="Collection-Underscore-Methods">
-      <b class="header">Underscore Methods (26)</b>
+      <b class="header">Underscore Methods (28)</b>
       <br />
-      Backbone proxies to <b>Underscore.js</b> to provide 26 iteration functions
+      Backbone proxies to <b>Underscore.js</b> to provide 28 iteration functions
       on <b>Backbone.Collection</b>. They aren't all documented here, but
       you can take a look at the Underscore documentation for the full details&hellip;
     </p>
 
-    <ul>
+    <ul class="small">
       <li><a href="http://documentcloud.github.com/underscore/#each">forEach (each)</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#map">map</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#reduce">reduce (foldl, inject)</a></li>
@@ -1211,9 +1270,11 @@ alert(JSON.stringify(collection));
       <li><a href="http://documentcloud.github.com/underscore/#sortBy">sortBy</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#groupBy">groupBy</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#sortedIndex">sortedIndex</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#shuffle">shuffle</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#toArray">toArray</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#size">size</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#first">first</a></li>
+      <li><a href="http://documentcloud.github.com/underscore/#initial">initial</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#rest">rest</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#last">last</a></li>
       <li><a href="http://documentcloud.github.com/underscore/#without">without</a></li>
@@ -1249,13 +1310,15 @@ var alphabetical = Books.sortBy(function(book) {
       <a href="#Collection-model">model</a> property is defined, you may also pass
       raw attributes objects, and have them be vivified as instances of the model.
       Pass <tt>{at: index}</tt> to splice the model into the collection at the
-      specified <tt>index</tt>.
+      specified <tt>index</tt>. Likewise, if you're a callback listening to a
+      collection's <tt>"add"</tt> event, <tt>options.index</tt> will tell you the
+      index at which the model is being added to the collection.
     </p>
 
 <pre class="runnable">
 var ships = new Backbone.Collection;
 
-ships.bind("add", function(ship) {
+ships.on("add", function(ship) {
   alert("Ahoy " + ship.get("name") + "!");
 });
 
@@ -1270,7 +1333,9 @@ ships.add([
       <br />
       Remove a model (or an array of models) from the collection. Fires a
       <tt>"remove"</tt> event, which you can use <tt>silent</tt>
-      to suppress.
+      to suppress. If you're a callback listening to the <tt>"remove"</tt> event,
+      the index at which the model is being removed from the collection is available
+      as <tt>options.index</tt>.
     </p>
 
     <p id="Collection-get">
@@ -1314,8 +1379,20 @@ var book = Library.get(110);
       If you define a comparator, it will be used to maintain
       the collection in sorted order. This means that as models are added,
       they are inserted at the correct index in <tt>collection.models</tt>.
-      Comparator functions take a model and return a numeric or string value
-      by which the model should be ordered relative to others.
+      Comparator function can be defined as either a
+      <a href="http://underscorejs.org/#sortBy">sortBy</a>
+      (pass a function that takes a single argument),
+      or as a 
+      <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
+      (pass a comparator function that expects two arguments).
+    </p>
+    
+    <p>
+      "sort" comparator functions take a model and return a numeric or string
+      value by which the model should be ordered relative to others.
+      "sortBy" comparator functions take two models, and return <tt>-1</tt> if 
+      the first model should come before the second, <tt>0</tt> if they are of
+      the same rank and <tt>1</tt> if the first model should come after.
     </p>
 
     <p>
@@ -1337,12 +1414,6 @@ chapters.add(new Chapter({page: 1, title: "The Beginning"}));
 
 alert(chapters.pluck('title'));
 </pre>
-
-    <p class="warning">
-      Brief aside: This comparator function is different than JavaScript's regular
-      "sort", which must return <tt>0</tt>, <tt>1</tt>, or <tt>-1</tt>,
-      and is more similar to a <tt>sortBy</tt> &mdash; a much nicer API.
-    </p>
 
     <p class="warning">
       Collections with comparator functions will not automatically re-sort if you
@@ -1410,7 +1481,9 @@ var Notes = Backbone.Collection.extend({
       the array of model attributes to be <a href="#Collection-add">added</a>
       to the collection. The default implementation is a no-op, simply passing
       through the JSON response. Override this if you need to work with a
-      preexisting API, or better namespace your responses.
+      preexisting API, or better namespace your responses. Note that afterwards, 
+      if your model class already has a <tt>parse</tt> function, it will be 
+      run against each fetched model.
     </p>
 
 <pre>
@@ -1508,6 +1581,13 @@ Accounts.fetch();
       <a href="#Collection-model">model</a> property of the collection.
       The <b>create</b> method can accept either an attributes hash or an
       existing, unsaved model object.
+    </p>
+    
+    <p>
+      Creating a model will cause an immediate <tt>"add"</tt> event to be
+      triggered on the collection, as well as a <tt>"sync"</tt> event, once the
+      model has been successfully created on the server. Pass <tt>{wait: true}</tt>
+      if you'd like to wait for the server before adding the new model to the collection.
     </p>
 
 <pre>
@@ -1608,7 +1688,7 @@ routes: {
 </pre>
 
 <pre>
-router.bind("route:help", function(page) {
+router.on("route:help", function(page) {
   ...
 });
 </pre>
@@ -1911,12 +1991,6 @@ new DocumentRow({
       if specified. If not, <b>el</b> is an empty <tt>div</tt>.
     </p>
 
-    <p>
-      You may assign <b>el</b> directly if the view is being
-      created for an element that already exists in the DOM. Use either a
-      reference to a real DOM element, or a css selector string.
-    </p>
-
 <pre class="runnable">
 var ItemView = Backbone.View.extend({
   tagName: 'li'
@@ -1931,6 +2005,35 @@ var body = new BodyView();
 
 alert(item.el + ' ' + body.el);
 </pre>
+
+    <p id="View-$el">
+      <b class="header">$el</b><code>view.$el</code>
+      <br />
+      A cached jQuery (or Zepto) object for the view's element. A handy 
+      reference instead of re-wrapping the DOM element all the time.
+    </p>
+    
+<pre>
+view.$el.show();
+
+listView.$el.append(itemView.el);
+</pre>
+
+    <p id="View-setElement">
+      <b class="header">setElement</b><code>view.setElement(element)</code>
+      <br />
+      If you'd like to apply a Backbone view to a different DOM element, use 
+      <b>setElement</b>, which will also create the cached <tt>$el</tt> reference
+      and move the view's delegated events from the old element to the new one.
+    </p>
+
+    <p id="View-attributes">
+      <b class="header">attributes</b><code>view.attributes</code>
+      <br />
+      A hash of attributes that will be set as HTML DOM element attributes on the
+      view's <tt>el</tt> (id, class, data-properties, etc.), or a function that 
+      returns such a hash.
+    </p>
 
     <p id="View-dollar">
       <b class="header">$ (jQuery or Zepto)</b><code>view.$(selector)</code>
@@ -2027,6 +2130,8 @@ $("#make-demo").append(el);
       for DOM events within a view.
       If an <b>events</b> hash is not passed directly, uses <tt>this.events</tt>
       as the source. Events are written in the format <tt>{"event selector": "callback"}</tt>.
+      The callback may be either the name of a method on the view, or a direct 
+      function body.
       Omitting the <tt>selector</tt> causes the event to be bound to the view's
       root element (<tt>this.el</tt>). By default, <tt>delegateEvents</tt> is called
       within the View's constructor for you, so if you have a simple <tt>events</tt>
@@ -2084,6 +2189,13 @@ var DocumentView = Backbone.View.extend({
 
 });
 </pre>
+
+    <p id="View-undelegateEvents">
+      <b class="header">undelegateEvents</b><code>undelegateEvents()</code>
+      <br />
+      Removes all of the view's delegated events. Useful if you want to disable
+      or remove a view from the DOM temporarily.
+    </p>
 
     <h2 id="Utility">Utility Functions</h2>
 
@@ -2738,13 +2850,14 @@ var model = localBackbone.Model.extend(...);
       see fit.
     </p>
 
-    <ul>
+    <ul class="small">
       <li><b>"add"</b> (model, collection) &mdash; when a model is added to a collection. </li>
       <li><b>"remove"</b> (model, collection) &mdash; when a model is removed from a collection. </li>
       <li><b>"reset"</b> (collection) &mdash; when the collection's entire contents have been replaced. </li>
       <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destroy"</b> (model, collection) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
+      <li><b>"sync"</b> (model, collection) &mdash; triggers whenever a model has been successfully synced to the server. </li>
       <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
       <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
@@ -2788,8 +2901,8 @@ var model = localBackbone.Model.extend(...);
       <b>Feel free to define your own events.</b> <a href="#Events">Backbone.Events</a>
       is designed so that you can mix it in to any JavaScript object or prototype.
       Since you can use any string as an event, it's often handy to bind
-      and trigger your own custom events: <tt>model.bind("selected:true")</tt> or
-      <tt>model.bind("editing")</tt>
+      and trigger your own custom events: <tt>model.on("selected:true")</tt> or
+      <tt>model.on("editing")</tt>
     </p>
 
     <p>
@@ -2821,7 +2934,7 @@ var Mailbox = Backbone.Model.extend({
   initialize: function() {
     this.messages = new Messages;
     this.messages.url = '/mailbox/' + this.id + '/messages';
-    this.messages.bind("reset", this.updateCounts);
+    this.messages.on("reset", this.updateCounts);
   },
 
   ...
@@ -2974,9 +3087,9 @@ var MessageList = Backbone.View.extend({
 
   initialize: function() {
     var messages = this.collection;
-    messages.bind("reset", this.render, this);
-    messages.bind("add", this.addMessage, this);
-    messages.bind("remove", this.removeMessage, this);
+    messages.on("reset", this.render, this);
+    messages.on("add", this.addMessage, this);
+    messages.on("remove", this.removeMessage, this);
   }
 
 });
@@ -3015,6 +3128,87 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <b class="header">0.9.0</b> &mdash; <small><i>Jan. 30, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.5.3...0.9.0">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Creating and destroying models with <tt>create</tt> and <tt>destroy</tt>
+        are now optimistic by default. Pass <tt>{wait: true}</tt> as an option
+        if you'd like them to wait for a successful server response to proceed.
+      </li>
+      <li>
+        Two new properties on views: <tt>$el</tt> &mdash; a cached jQuery (or Zepto)
+        reference to the view's element, and <tt>setElement</tt>, which should
+        be used instead of manually setting a view's <tt>el</tt>. It will
+        both set <tt>view.el</tt> and <tt>view.$el</tt> correctly, as well as 
+        re-delegating events on the new DOM element.
+      </li>
+      <li>
+        When you don't know the key in advance, you may now call 
+        <tt>model.set(key, value)</tt> as well as <tt>save</tt>.
+      </li>
+      <li>
+        Multiple models with the same <tt>id</tt> are no longer allowed in a 
+        single collection.
+      </li>
+      <li>
+        Added a <tt>"sync"</tt> event, which triggers whenever a model's state
+        has been successfully synced with the server (create, save, destroy).
+      </li>
+      <li>
+        <tt>bind</tt> and <tt>unbind</tt> have been renamed to <tt>on</tt>
+        and <tt>off</tt> for clarity, following jQuery's lead. 
+        The old names are also still supported.
+      </li>
+      <li>
+        A Backbone collection's <tt>comparator</tt> function may now behave
+        either like a <a href="http://underscorejs.org/#sortBy">sortBy</a>
+        (pass a function that takes a single argument),
+        or like a <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
+        (pass a comparator function that expects two arguments). The comparator
+        function is also now bound by default to the collection &mdash; so you
+        can refer to <tt>this</tt> within it.
+      </li>
+      <li>
+        A view's <tt>events</tt> hash may now also contain direct function 
+        values as well as the string names of existing view methods.
+      </li>
+      <li>
+        Added <tt>shuffle</tt> and <tt>initial</tt> to collections, proxied 
+        from Underscore.
+      </li>
+      <li>
+        <tt>Model#urlRoot</tt> may now be defined as a function as well as a 
+        value.
+      </li>
+      <li>
+        <tt>View#attributes</tt> may now be defined as a function as well as a 
+        value.
+      </li>
+      <li>
+        Calling <tt>fetch</tt> on a collection will now cause all fetched JSON
+        to be run through the collection's model's <tt>parse</tt> function, if
+        one is defined.
+      </li>
+      <li>
+        You may now tell a router to <tt>navigate(fragment, {replace: true})</tt>,
+        which will either use <tt>history.replaceState</tt> or 
+        <tt>location.hash.replace</tt>, in order to change the URL without adding
+        a history entry.
+      </li>
+      <li>
+        Within a collection's <tt>add</tt> and <tt>remove</tt> events, the index
+        of the model being added or removed is now available as <tt>options.index</tt>.
+      </li>
+      <li>
+        Added an <tt>undelegateEvents</tt> to views, allowing you to manually
+        remove all configured event delegations.
+      </li>
+      <li>
+        Although you shouldn't be writing your routes with them in any case &mdash;
+        leading slashes (<tt>/</tt>) are now stripped from routes.
+      </li>
+    </ul>
 
     <p>
       <b class="header">0.5.3</b> &mdash; <small><i>August 9, 2011</i></small><br />
