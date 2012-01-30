@@ -151,10 +151,11 @@
   // Create a new model, with defined attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
   Backbone.Model = function(attributes, options) {
-    var defaults;
+  	var defaults;
     attributes || (attributes = {});
     if (options && options.parse) attributes = this.parse(attributes);
-    if (defaults = getValue(this, 'defaults')) {
+    if (defaults = this.defaults) {
+      if (_.isFunction(defaults)) defaults = defaults.call(this);
       attributes = _.extend({}, defaults, attributes);
     }
     if (options && options.collection) this.collection = options.collection;
@@ -176,6 +177,8 @@
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
     idAttribute : 'id',
+    
+    defaults : {},
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -961,6 +964,8 @@
     $ : function(selector) {
       return $(selector, this.el);
     },
+    
+    defaults : {},
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -1200,7 +1205,8 @@
 
     // Set a convenience property in case the parent's prototype is needed later.
     child.__super__ = parent.prototype;
-
+	child.prototype.__super__ = parent.prototype;
+	
     return child;
   };
 
@@ -1224,6 +1230,13 @@
   // then wrap a proxy function and replace the _super function with its parent function
   var classExtend = function(c, prop) {
   	var _super = c.prototype;
+    var _defaults = _super.defaults || {};
+  	var defaults = prop.defaults || {};
+  	if (defaults) {
+      if (_.isFunction(defaults)) defaults = defaults.call(this);
+      defaults = _.extend({}, _defaults, defaults);
+    }
+    prop.defaults = defaults;
   	var prototype = new ctor();
   	// Copy the properties over onto the new prototype
     for (var name in prop) {
