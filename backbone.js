@@ -163,19 +163,17 @@
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
+    this._changed = {};
     if (!this.set(attributes, {silent: true})) {
       throw new Error("Can't create an invalid model");
     }
-    this._changed = false;
+    this._changed = {};
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
   };
 
   // Attach all inheritable methods to the Model prototype.
   _.extend(Backbone.Model.prototype, Backbone.Events, {
-
-    // Has the item been changed since the last `"change"` event?
-    _changed: false,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -226,7 +224,6 @@
       if (!attrs) return this;
       if (attrs instanceof Backbone.Model) attrs = attrs.attributes;
       if (options.unset) for (var attr in attrs) attrs[attr] = void 0;
-      var now = this.attributes, escaped = this._escapedAttributes;
 
       // Run validation.
       if (this.validate && !this._performValidation(attrs, options)) return false;
@@ -234,30 +231,26 @@
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
-      // We're about to start triggering change events.
+      var now = this.attributes;
+      var escaped = this._escapedAttributes;
+      var prev = this._previousAttributes || {};
       var alreadyChanging = this._changing;
       this._changing = true;
 
       // Update attributes.
-      var changes = {};
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(now[attr], val) || (options.unset && (attr in now))) {
-          delete escaped[attr];
-          this._changed = true;
-          changes[attr] = val;
-        }
+        if (!_.isEqual(now[attr], val)) delete escaped[attr];
         options.unset ? delete now[attr] : now[attr] = val;
+        delete this._changed[attr];
+        if (!_.isEqual(prev[attr], val) || (_.has(now, attr) != _.has(prev, attr))) {
+          this._changed[attr] = val;
+        }
       }
 
-      // Fire `change:attribute` events.
-      for (var attr in changes) {
-        if (!options.silent) this.trigger('change:' + attr, this, changes[attr], options);
-      }
-
-      // Fire the `"change"` event, if the model has been changed.
+      // Fire the `"change"` events, if the model has been changed.
       if (!alreadyChanging) {
-        if (!options.silent && this._changed) this.change(options);
+        if (!options.silent && this.hasChanged()) this.change(options);
         this._changing = false;
       }
       return this;
@@ -376,19 +369,23 @@
       return this.id == null;
     },
 
-    // Call this method to manually fire a `change` event for this model.
+    // Call this method to manually fire a `"change"` event for this model and
+    // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
+      for (var attr in this._changed) {
+        this.trigger('change:' + attr, this, this._changed[attr], options);
+      }
       this.trigger('change', this, options);
       this._previousAttributes = _.clone(this.attributes);
-      this._changed = false;
+      this._changed = {};
     },
 
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (attr) return !_.isEqual(this._previousAttributes[attr], this.attributes[attr]);
-      return this._changed;
+      if (attr) return _.has(this._changed, attr);
+      return !_.isEmpty(this._changed);
     },
 
     // Return an object containing all the attributes that have changed, or
@@ -396,17 +393,8 @@
     // parts of a view need to be updated and/or what attributes need to be
     // persisted to the server. Unset attributes will be set to undefined.
     changedAttributes: function(now) {
-      if (!this._changed) return false;
-      now || (now = this.attributes);
-      var changed = false, old = this._previousAttributes;
-      for (var attr in now) {
-        if (_.isEqual(old[attr], now[attr])) continue;
-        (changed || (changed = {}))[attr] = now[attr];
-      }
-      for (var attr in old) {
-        if (!(attr in now)) (changed || (changed = {}))[attr] = void 0;
-      }
-      return changed;
+      if (!this.hasChanged()) return false;
+      return _.clone(this._changed);
     },
 
     // Get the previous value of an attribute, recorded at the time the last
