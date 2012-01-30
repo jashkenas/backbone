@@ -279,6 +279,13 @@ $(document).ready(function() {
     equal(model.get('name'), 'Rob');
   });
 
+  test("Model: changedAttributes", function() {
+    var model = new Backbone.Model({a: 'a', b: 'b'});
+    equal(model.changedAttributes(), false);
+    equal(model.changedAttributes({a: 'a'}), false);
+    equal(model.changedAttributes({a: 'b'}).a, 'b');
+  });
+
   test("Model: change with options", function() {
     var value;
     var model = new Backbone.Model({name: 'Rob'});

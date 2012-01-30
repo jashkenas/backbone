@@ -392,9 +392,20 @@
     // false if there are no changed attributes. Useful for determining what
     // parts of a view need to be updated and/or what attributes need to be
     // persisted to the server. Unset attributes will be set to undefined.
-    changedAttributes: function(now) {
-      if (!this.hasChanged()) return false;
-      return _.clone(this._changed);
+    // You can also pass an attributes object to diff against the model,
+    // determining if there *would be* a change.
+    changedAttributes: function(diff) {
+      var changed = false, old = this._previousAttributes;
+      if (diff) {
+        for (var attr in diff) {
+          if (_.isEqual(old[attr], diff[attr])) continue;
+          (changed || (changed = {}))[attr] = diff[attr];
+        }
+        return changed;
+      } else {
+        if (!this.hasChanged()) return false;
+        return _.clone(this._changed);
+      }
     },
 
     // Get the previous value of an attribute, recorded at the time the last
