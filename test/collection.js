@@ -527,4 +527,11 @@ $(document).ready(function() {
     equal(col.length, 0);
   });
 
+  test("Collection: multiple copies of the same model", function() {
+    var col = new Backbone.Collection();
+    var model = new Backbone.Model();
+    raises(function() { col.add([model, model]) });
+    raises(function() { col.add([{id: 1}, {id: 1}]); });
+  });
+
 });
