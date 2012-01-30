@@ -395,17 +395,16 @@
     // You can also pass an attributes object to diff against the model,
     // determining if there *would be* a change.
     changedAttributes: function(diff) {
-      var changed = false, old = this._previousAttributes;
       if (diff) {
+        var val, changed = false, old = this._previousAttributes;
         for (var attr in diff) {
-          if (_.isEqual(old[attr], diff[attr])) continue;
-          (changed || (changed = {}))[attr] = diff[attr];
+          if (_.isEqual(old[attr], (val = diff[attr]))) continue;
+          (changed || (changed = {}))[attr] = val;
         }
         return changed;
-      } else {
-        if (!this.hasChanged()) return false;
-        return _.clone(this._changed);
       }
+      if (!this.hasChanged()) return false;
+      return _.clone(this._changed);
     },
 
     // Get the previous value of an attribute, recorded at the time the last
