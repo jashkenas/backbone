@@ -559,4 +559,13 @@ $(document).ready(function() {
     model.change();
   });
 
+  test("hasChanged is false after original values are set", function() {
+    var model = new Backbone.Model({x: 1});
+    model.on('change:x', function(){ ok(false); });
+    model.set({x: 2}, {silent: true});
+    ok(model.hasChanged());
+    model.set({x: 1}, {silent: true});
+    ok(!model.hasChanged());
+  });
+
 });
