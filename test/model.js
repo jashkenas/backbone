@@ -543,7 +543,7 @@ $(document).ready(function() {
 
   test("unset fires change for undefined attributes", 1, function() {
     var model = new Backbone.Model({x: undefined});
-    model.bind('change:x', function(){ ok(true); });
+    model.on('change:x', function(){ ok(true); });
     model.unset('x');
   });
 
@@ -566,6 +566,14 @@ $(document).ready(function() {
     ok(model.hasChanged());
     model.set({x: 1}, {silent: true});
     ok(!model.hasChanged());
+  });
+
+  test("set/hasChanged object prototype props", function() {
+    var model = new Backbone.Model();
+    ok(!model.hasChanged('toString'));
+    model.set({toString: undefined});
+    model.unset('toString', {silent: true});
+    ok(model.hasChanged());
   });
 
 });

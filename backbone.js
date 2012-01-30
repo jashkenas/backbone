@@ -240,14 +240,12 @@
       // Update attributes.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(now[attr], val) || (options.unset && (attr in now))) {
-          delete escaped[attr];
-        }
+        if (!_.isEqual(now[attr], val)) delete escaped[attr];
+        options.unset ? delete now[attr] : now[attr] = val;
         delete this._changed[attr];
-        if (!_.isEqual(prev[attr], val) || (options.unset && (attr in prev))) {
+        if (!_.isEqual(prev[attr], val) || (_.has(now, attr) != _.has(prev, attr))) {
           this._changed[attr] = val;
         }
-        options.unset ? delete now[attr] : now[attr] = val;
       }
 
       // Fire the `"change"` events, if the model has been changed.
@@ -386,7 +384,7 @@
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (attr) return attr in this._changed;
+      if (attr) return _.has(this._changed, attr);
       return !_.isEmpty(this._changed);
     },
 
