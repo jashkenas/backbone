@@ -851,7 +851,8 @@ setInterval(function() {
       Save a model to your database (or alternative persistence layer),
       by delegating to <a href="#Sync">Backbone.sync</a>. The <b>attributes</b>
       hash (as in <a href="#Model-set">set</a>) should contain the attributes
-      you'd like to change -- keys that aren't mentioned won't be altered.
+      you'd like to change &mdash; keys that aren't mentioned won't be altered &mdash; but,
+      a <i>complete representation</i> of the resource will be sent to the server.
       If the model has a <a href="#Model-validate">validate</a>
       method, and validation fails, the model will not be saved. If the model
       <a href="#Model-isNew">isNew</a>, the save will be a <tt>"create"</tt>
