@@ -190,7 +190,7 @@ $(function(){
     // appending its element to the `<ul>`.
     addOne: function(todo) {
       var view = new TodoView({model: todo});
-      this.$("#todo-list").append(view.render().el);
+      $("#todo-list").append(view.render().el);
     },
 
     // Add all items in the **Todos** collection at once.
