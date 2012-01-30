@@ -330,10 +330,12 @@
       <li>– <a href="#examples-groupon">Groupon Now!</a></li>
       <li>– <a href="#examples-basecamp">Basecamp Mobile</a></li>
       <li>– <a href="#examples-slavery-footprint">Slavery Footprint</a></li>
+      <li>- <a href="#examples-stripe">Stripe</a></li>
       <li>– <a href="#examples-diaspora">Diaspora</a></li>
       <li>– <a href="#examples-trajectory">Trajectory</a></li>
       <li>– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
       <li>– <a href="#examples-pandora">Pandora</a></li>
+      <li>- <a href="#examples-code-school">Code School</a></li>
       <li>– <a href="#examples-cloudapp">CloudApp</a></li>
       <li>– <a href="#examples-seatgeek">SeatGeek</a></li>
       <li>– <a href="#examples-grove">Grove.io</a></li>
@@ -343,13 +345,11 @@
       <li>– <a href="#examples-salon">Salon.io</a></li>
       <li>– <a href="#examples-quoteroller">Quote Roller</a></li>
       <li>– <a href="#examples-tilemill">TileMill</a></li>
-      <li>– <a href="#examples-rround">rround.me</a></li>
       <li>- <a href="#examples-blossom">Blossom</a></li>
       <li>- <a href="#examples-animoto">Animoto</a></li>
       <li>- <a href="#examples-decide">Decide</a></li>
       <li>- <a href="#examples-trello">Trello</a></li>
       <li>- <a href="#examples-bittorrent">BitTorrent</a></li>
-      <li>- <a href="#examples-picplum">Picplum</a></li>
       <li>- <a href="#examples-ducksboard">Ducksboard</a></li>
       <li>- <a href="#examples-quietwrite">QuietWrite</a></li>
       <li>- <a href="#examples-tzigla">Tzigla</a></li>
@@ -2305,7 +2305,27 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/slavery-footprint.png" alt="Slavery Footprint" class="example_image" />
       </a>
     </div>
+    
+    <h2 id="examples-stripe">Stripe</h2>
 
+    <p>
+      <a href="https://stripe.com">Stripe</a> provides an API for accepting 
+      credit cards on the web. Stripe's 
+      <a href="https://manage.stripe.com">management interface</a> was recently 
+      rewritten from scratch in Coffeescript using Backbone.js as the primary 
+      framework, Eco for templates, Sass for stylesheets, and Stitch to package 
+      everything together as CommonJS modules. The new app uses 
+      <a href="https://stripe.com/docs/api">Stripe's API</a> directly for the 
+      majority of its actions; Backbone.js models made it simple to map 
+      client-side models to their corresponding RESTful resources.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="https://stripe.com">
+        <img src="docs/images/stripe.png" alt="Stripe" class="example_image" />
+      </a>
+    </div>
+    
     <h2 id="examples-diaspora">Diaspora</h2>
 
     <p>
@@ -2382,7 +2402,27 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/pandora.png" alt="Pandora" class="example_image" />
       </a>
     </div>
+    
+    <h2 id="examples-code-school">Code School</h2>
 
+    <p>
+      <a href="http://www.codeschool.com">Code School</a> courses teach people 
+      about various programming topics like CoffeeScript, CSS, Ruby on Rails, 
+      and more. The new Code School course 
+      <a href="http://coffeescript.codeschool.com/levels/1/challenges/1">challenge page</a>
+      is built from the ground up on Backbone.js, using 
+      everything it has to offer: the router, collections, models, and complex 
+      event handling. Before, the page was a mess of jQuery DOM manipulation 
+      and manual Ajax calls. Backbone.js helped introduce a new way to 
+      think about developing an organized front-end application in Javascript.  
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://www.codeschool.com">
+        <img src="docs/images/code-school.png" alt="Code School" class="example_image" />
+      </a>
+    </div>
+    
     <h2 id="examples-cloudapp">CloudApp</h2>
 
     <p>
@@ -2536,24 +2576,6 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
 
-    <h2 id="examples-rround">rround.me</h2>
-
-    <p>
-      <a href="http://rround.me">rround.me</a> uses the HTML
-      <a href="http://diveintohtml5.org/geolocation.html">Geolocation API</a>
-      to discover tweets, YouTube videos, Instagram photos, Foursquare spots, and other happenings
-      posted by people close to you. The site is a single-page app built on Backbone.js,
-      with people, locations and events all represented by Backbone Models.
-      Backbone Views listen for changes in the underlying data as you adjust
-      the range (distance) of your search.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="http://rround.me/">
-        <img src="docs/images/rround.png" alt="rround.me" class="example_image" />
-      </a>
-    </div>
-
     <h2 id="examples-blossom">Blossom</h2>
 
     <p>
@@ -2638,23 +2660,6 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://www.bittorrent.com/chrysalis/">
         <img src="docs/images/bittorrent.jpg" alt="BitTorrent" class="example_image" />
-      </a>
-    </div>
-
-    <h2 id="examples-picplum">Picplum</h2>
-
-    <p>
-      <a href="https://www.picplum.com/">Picplum</a> makes it easy to
-      automatically send high quality photo prints to
-      your close family and friends. The entire app is built in Backbone.js
-      using Handlebars.js templates.
-      <a href="http://pusher.com/">Pusher</a> enables real-time
-      uploading that makes the photo import process fast and reactive.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="https://www.picplum.com/">
-        <img src="docs/images/picplum.jpg" alt="Picplum" class="example_image" />
       </a>
     </div>
 
