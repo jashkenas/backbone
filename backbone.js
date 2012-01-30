@@ -470,7 +470,7 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
-      var i, index, length, model, cids = {};
+      var i, index, length, model, cids = {}, ids = {};
       options || (options = {});
       models = _.isArray(models) ? models.slice() : [models];
 
@@ -480,10 +480,11 @@
         if (!(model = models[i] = this._prepareModel(models[i], options))) {
           throw new Error("Can't add an invalid model to a collection");
         }
-        var hasId = model.id != null;
-        if (this._byCid[model.cid] || (hasId && this._byId[model.id])) {
+        if (cids[cid = model.cid] || this._byCid[cid] ||
+          (((id = model.id) != null) && (ids[id] || this._byId[id]))) {
           throw new Error("Can't add the same model to a collection twice");
         }
+        cids[cid] = ids[id] = model;
       }
 
       // Listen to added models' events, and index models for lookup by
@@ -492,7 +493,6 @@
         (model = models[i]).on('all', this._onModelEvent, this);
         this._byCid[model.cid] = model;
         if (model.id != null) this._byId[model.id] = model;
-        cids[model.cid] = true;
       }
 
       // Insert models into the collection, re-sorting if needed, and triggering
