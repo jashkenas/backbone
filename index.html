@@ -363,6 +363,7 @@
       <li>– <a href="#FAQ-tim-toady">More Than One Way To Do It</a></li>
       <li>– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
       <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
+      <li>– <a href="#FAQ-extending">Extending Backbone</a></li>
       <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
       <li>– <a href="#FAQ-this">Binding "this"</a></li>
       <li>– <a href="#FAQ-rails">Working with Rails</a></li>
@@ -2889,6 +2890,25 @@ Inbox.messages.fetch();
   Projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
 &lt;/script&gt;
 </pre>
+
+    <p id="FAQ-extending">
+      <b class="header">Extending Backbone</b>
+      <br />
+      Many JavaScript libraries are meant to be insular and self-enclosed, 
+      where you interact with them by calling their public API, but never peek
+      inside at the guts. Backbone.js is <i>not</i> that kind of library.
+    </p>
+    
+    <p>
+      Because it serves as a foundation for your application, you're meant to 
+      extend and enhance it in the ways you see fit &mdash; the entire source
+      code is <a href="docs/backbone.html">annotated</a> to make this easier
+      for you. You'll find that there's very little there apart from core 
+      functions, and most of those can be overriden or augmented should you find
+      the need. If you catch yourself adding methods to <tt>Backbone.Model.prototype</tt>,
+      or creating your own base subclass, don't worry &mdash; that's how things are 
+      supposed to work.
+    </p>
 
     <p id="FAQ-mvc">
       <b class="header">How does Backbone relate to "traditional" MVC?</b>
