@@ -546,10 +546,15 @@ object.trigger("alert", "an event");
       <b class="header">on</b><code>object.on(event, callback, [context])</code><span class="alias">Alias: bind</span>
       <br />
       Bind a <b>callback</b> function to an object. The callback will be invoked
-      whenever the <b>event</b> (specified by an arbitrary string identifier) is fired.
+      whenever the <b>event</b> is fired.
       If you have a large number of different events on a page, the convention is to use colons to
-      namespace them: <tt>"poll:start"</tt>, or <tt>"change:selection"</tt>
+      namespace them: <tt>"poll:start"</tt>, or <tt>"change:selection"</tt>.
+      The event string may also be a space-delimited list of several events...
     </p>
+    
+<pre>
+book.on("change:title change:author", ...);
+</pre>
 
     <p>
       To supply a <b>context</b> value for <tt>this</tt> when the callback is invoked,
@@ -591,8 +596,9 @@ object.off();                    // Removes all callbacks on object.
     <p id="Events-trigger">
       <b class="header">trigger</b><code>object.trigger(event, [*args])</code>
       <br />
-      Trigger callbacks for the given <b>event</b>. Subsequent arguments to
-      <b>trigger</b> will be passed along to the event callbacks.
+      Trigger callbacks for the given <b>event</b>, or space-delimited list of events. 
+      Subsequent arguments to <b>trigger</b> will be passed along to the 
+      event callbacks.
     </p>
 
     <h2 id="Model">Backbone.Model</h2>
@@ -3148,6 +3154,10 @@ ActiveRecord::Base.include_root_in_json = false
         re-delegating events on the new DOM element.
       </li>
       <li>
+        You can now bind and trigger multiple spaced-delimited events at once.
+        For example: <tt>model.on("change:name change:age", ...)</tt>
+      </li>
+      <li>
         When you don't know the key in advance, you may now call 
         <tt>model.set(key, value)</tt> as well as <tt>save</tt>.
       </li>
@@ -3176,6 +3186,11 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         A view's <tt>events</tt> hash may now also contain direct function 
         values as well as the string names of existing view methods.
+      </li>
+      <li>
+        Validation has gotten an overhaul &mdash; a model's <tt>validate</tt> function
+        will now be run even for silent changes, and you can no longer create 
+        a model in an initially invalid state.
       </li>
       <li>
         Added <tt>shuffle</tt> and <tt>initial</tt> to collections, proxied 
@@ -3211,6 +3226,10 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Although you shouldn't be writing your routes with them in any case &mdash;
         leading slashes (<tt>/</tt>) are now stripped from routes.
+      </li>
+      <li>
+        Calling <tt>clone</tt> on a model now only passes the attributes
+        for duplication, not a reference to the model itself.
       </li>
     </ul>
 
