@@ -299,7 +299,7 @@
       }
 
       options = options ? _.clone(options) : {};
-      if (attrs && !this[options.wait ? '_performValidation' : 'set'](attrs, options)) return false;
+      if (attrs && !this[(options.wait && this.validate) ? '_performValidation' : 'set'](attrs, options)) return false;
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
