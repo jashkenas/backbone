@@ -583,4 +583,10 @@ $(document).ready(function() {
     ok(model.hasChanged());
   });
 
+  test("save with `wait` succeeds without `validate`", function() {
+    var model = new Backbone.Model();
+    model.save({x: 1}, {wait: true});
+    ok(lastRequest[1] === model);
+  });
+
 });
