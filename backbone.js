@@ -44,7 +44,7 @@
   // Set the javascript library that will be used for the selector work
   // (a.k.a. the `$` variable).
   //
-  // By default Backbone will use: jQuery, Zepto, or Ender; but the `use()`
+  // By default Backbone will use: jQuery, Zepto, or Ender; but the `setjQuery()`
   // method let's you inject an alternate javascript library (or a mock
   // library for testing your views outside of a browser). This is also useful
   // if you are using a packaging library -- to add support for `require()`
@@ -52,9 +52,9 @@
   // support `require()`, prevents Backbone from automatically loading the
   // default javascript library.
   //
-  //     Backbone.use(jQuery)
+  //     Backbone.setjQuery(jQuery)
   //
-  Backbone.use = function(lib) {
+  Backbone.setjQuery = function(lib) {
     $ = lib;
   };
 
