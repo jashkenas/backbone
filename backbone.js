@@ -1233,7 +1233,7 @@
     var _defaults = _super.defaults || {};
   	var defaults = prop.defaults || {};
   	if (defaults) {
-      if (_.isFunction(defaults)) defaults = defaults.call(this);
+      if (_.isFunction(defaults)) defaults = defaults.call();
       defaults = _.extend({}, _defaults, defaults);
     }
     prop.defaults = defaults;
