@@ -535,6 +535,15 @@ $(document).ready(function() {
     model.set({a: 'a', b: 'b', c: 'c'});
   });
 
+  test("nested change:attr events fire when attrs are set individually", function() {
+    var model = new Backbone.Model();
+    model.on('change:a', function(){model.set('b', 'b');}, model);
+    model.on('change:b', function(){model.set('c', 'c');}, model);
+
+    model.set('a', 'a');
+    ok(model.has('c'));
+  });
+
   test("#871, set with attributes property", function() {
     var model = new Backbone.Model();
     model.set({attributes: true});
