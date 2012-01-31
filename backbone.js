@@ -215,6 +215,7 @@
         attrs = key;
         options = value;
       } else {
+        var singleAttrBeingSet = key;
         attrs = {};
         attrs[key] = value;
       }
@@ -252,6 +253,8 @@
       if (!alreadyChanging) {
         if (!options.silent && this.hasChanged()) this.change(options);
         this._changing = false;
+      } else if (!options.silent && this.hasChanged() && singleAttrBeingSet) {
+        this.trigger('change:' + singleAttrBeingSet, this, this._changed[singleAttrBeingSet], options);
       }
       return this;
     },
