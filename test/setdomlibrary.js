@@ -9,22 +9,22 @@ $(document).ready(function() {
     };
   };
 
-  var viewAttrs = { id: 'test-setjquery', className: 'test-setjquery' }
+  var viewAttrs = { id: 'test-setdomlibrary', className: 'test-setdomlibrary' }
 
-  module("Backbone.setjQuery");
+  module("Backbone.setDomLibrary");
 
   test('Changing jQuery library to custom library', function() {
-    Backbone.setjQuery(myLib);
+    Backbone.setDomLibrary(myLib);
     var view = new Backbone.View(viewAttrs);
 
-    ok(view.$el.hasClass('test-setjquery') === 'spam');
+    ok(view.$el.hasClass('test-setdomlibrary') === 'spam');
   });
 
   test('Changing jQuery library back to global jQuery', function() {
-    Backbone.setjQuery(jQuery);
+    Backbone.setDomLibrary(jQuery);
     var view = new Backbone.View(viewAttrs);
 
-    ok(view.$el.hasClass('test-setjquery'));
+    ok(view.$el.hasClass('test-setdomlibrary'));
   });
 
 });
