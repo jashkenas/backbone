@@ -163,11 +163,10 @@
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
-    this._changed = {};
     if (!this.set(attributes, {silent: true})) {
       throw new Error("Can't create an invalid model");
     }
-    this._changed = {};
+    delete this._changed;
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
   };
@@ -235,6 +234,7 @@
       var escaped = this._escapedAttributes;
       var prev = this._previousAttributes || {};
       var alreadyChanging = this._changing;
+      this._changed || (this._changed = {});
       this._changing = true;
 
       // Update attributes.
@@ -378,13 +378,13 @@
       }
       this.trigger('change', this, options);
       this._previousAttributes = _.clone(this.attributes);
-      this._changed = {};
+      delete this._changed;
     },
 
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (attr) return _.has(this._changed, attr);
+      if (attr) return this._changed && _.has(this._changed, attr);
       return !_.isEmpty(this._changed);
     },
 
