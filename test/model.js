@@ -589,4 +589,18 @@ $(document).ready(function() {
     ok(lastRequest[1] === model);
   });
 
+  test("`hasChanged` for falsey keys", function() {
+    var model = new Backbone.Model();
+    model.set({x: true}, {silent: true});
+    ok(!model.hasChanged(0));
+    ok(!model.hasChanged(''));
+  });
+
+  test("`previous` for falsey keys", function() {
+    var model = new Backbone.Model({0: true, '': true});
+    model.set({0: false, '': false}, {silent: true});
+    equal(model.previous(0), true);
+    equal(model.previous(''), true);
+  });
+
 });
