@@ -167,7 +167,6 @@
     if (!this.set(attributes, {silent: true})) {
       throw new Error("Can't create an invalid model");
     }
-    this._changed = {};
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
   };
