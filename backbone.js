@@ -1,4 +1,5 @@
-//     Backbone.js 0.9.0
+//     Backbone.js 0.9.1
+
 //     (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -31,7 +32,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.9.0';
+  Backbone.VERSION = '0.9.1';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
@@ -673,7 +674,7 @@
         var attrs = model;
         options.collection = this;
         model = new this.model(attrs, options);
-        if (!model._validate(model.attributes, options)) model = false;
+        if (!options.silent && !model._validate(model.attributes, options)) model = false;
       } else if (!model.collection) {
         model.collection = this;
       }
