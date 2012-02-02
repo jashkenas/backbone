@@ -343,6 +343,18 @@ $(document).ready(function() {
     equal(lastError, "Can't change admin status.");
   });
 
+  test("Model: isValid", function() {
+    var model = new Backbone.Model({valid: true});
+    model.validate = function(attrs) {
+      if (!attrs.valid) return "invalid";
+    };
+    equal(model.isValid(), true);
+    equal(model.set({valid: false}), false);
+    equal(model.isValid(), true);
+    ok(model.set('valid', false, {silent: true}));
+    equal(model.isValid(), false);
+  });
+
   test("Model: save", function() {
     doc.save({title : "Henry V"});
     equal(lastRequest[0], 'update');
