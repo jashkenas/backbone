@@ -173,9 +173,7 @@
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
-    if (!this.set(attributes, {silent: true})) {
-      throw new Error("Can't create an invalid model");
-    }
+    this.set(attributes, {silent: true});
     delete this._changed;
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
