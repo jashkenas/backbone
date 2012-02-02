@@ -1,12 +1,21 @@
 $(document).ready(function() {
 
-  module("Backbone.Collection");
+  var lastRequest = null;
+  var sync = Backbone.sync;
 
-  window.lastRequest = null;
+  module("Backbone.Collection", {
 
-  Backbone.sync = function() {
-    lastRequest = _.toArray(arguments);
-  };
+    setup: function() {
+      Backbone.sync = function() {
+        lastRequest = _.toArray(arguments);
+      };
+    },
+
+    teardown: function() {
+      Backbone.sync = sync;
+    }
+
+  });
 
   var a         = new Backbone.Model({id: 3, label: 'a'});
   var b         = new Backbone.Model({id: 2, label: 'b'});
@@ -364,9 +373,7 @@ $(document).ready(function() {
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
-    raises(function(){
-      equal(col.create({"foo":"bar"}),false);
-    });
+    equal(col.create({"foo":"bar"}), false);
   });
 
   test("Collection: a failing create runs the error callback", function() {
@@ -381,9 +388,8 @@ $(document).ready(function() {
     var flag = false;
     var callback = function(model, error) { flag = true; };
     var col = new ValidatingCollection();
-    raises(function(){
-      col.create({"foo":"bar"}, { error: callback });
-    });
+    col.create({"foo":"bar"}, { error: callback });
+    equal(flag, true);
   });
 
   test("collection: initialize", function() {
@@ -530,7 +536,7 @@ $(document).ready(function() {
   test("Collection: multiple copies of the same model", function() {
     var col = new Backbone.Collection();
     var model = new Backbone.Model();
-    raises(function() { col.add([model, model]) });
+    raises(function() { col.add([model, model]); });
     raises(function() { col.add([{id: 1}, {id: 1}]); });
   });
 

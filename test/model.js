@@ -1,16 +1,32 @@
 $(document).ready(function() {
 
-  module("Backbone.Model");
-
   // Variable to catch the last request.
-  window.lastRequest = null;
+  var lastRequest = null;
+  // Variable to catch ajax params.
+  var ajaxParams = null;
+  var sync = Backbone.sync;
+  var ajax = $.ajax;
+  var urlRoot = null;
 
-  window.originalSync = Backbone.sync;
+  module("Backbone.Model", {
 
-  // Stub out Backbone.request...
-  Backbone.sync = function() {
-    lastRequest = _.toArray(arguments);
-  };
+    setup: function() {
+      Backbone.sync = function() {
+        lastRequest = _.toArray(arguments);
+        sync.apply(this, arguments);
+      };
+      $.ajax = function(params) { ajaxParams = params; };
+      urlRoot = Backbone.Model.prototype.urlRoot;
+      Backbone.Model.prototype.urlRoot = '/';
+    },
+
+    teardown: function() {
+      Backbone.sync = sync;
+      $.ajax = ajax;
+      Backbone.Model.prototype.urlRoot = urlRoot;
+    }
+
+  });
 
   var attrs = {
     id     : '1-the-tempest',
@@ -67,13 +83,8 @@ $(document).ready(function() {
     doc.collection.url = '/collection/';
     equal(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;
-    var failed = false;
-    try {
-      doc.url();
-    } catch (e) {
-      failed = true;
-    }
-    equal(failed, true);
+    doc.urlRoot = null;
+    raises(function() { doc.url(); });
     doc.collection = collection;
   });
 
@@ -332,6 +343,18 @@ $(document).ready(function() {
     equal(lastError, "Can't change admin status.");
   });
 
+  test("Model: isValid", function() {
+    var model = new Backbone.Model({valid: true});
+    model.validate = function(attrs) {
+      if (!attrs.valid) return "invalid";
+    };
+    equal(model.isValid(), true);
+    equal(model.set({valid: false}), false);
+    equal(model.isValid(), true);
+    ok(model.set('valid', false, {silent: true}));
+    equal(model.isValid(), false);
+  });
+
   test("Model: save", function() {
     doc.save({title : "Henry V"});
     equal(lastRequest[0], 'update');
@@ -381,9 +404,9 @@ $(document).ready(function() {
     equal(model.get('a'), 100);
     equal(lastError, undefined);
     result = model.set({admin: true}, {silent: true});
+    equal(model.get('admin'), true);
+    result = model.set({a: 200, admin: false});
     equal(lastError, "Can't change admin status.");
-    equal(model.get('admin'), void 0);
-    result = model.set({a: 200, admin: true});
     equal(result, false);
     equal(model.get('a'), 100);
   });
@@ -495,17 +518,6 @@ $(document).ready(function() {
     a.set({state: 'hello'});
   });
 
-  test("Model: Multiple nested calls to set", function() {
-    var counter = 0, model = new Backbone.Model({});
-    model.on('change', function() {
-      counter++;
-      model.set({b: 1});
-      model.set({a: 1});
-    })
-    .set({a: 1});
-    equal(counter, 1, 'change is only triggered once');
-  });
-
   test("hasChanged/set should use same comparison", function() {
     expect(2);
     var changed = 0, model = new Backbone.Model({a: null});
@@ -581,6 +593,88 @@ $(document).ready(function() {
     model.set({toString: undefined});
     model.unset('toString', {silent: true});
     ok(model.hasChanged());
+  });
+
+  test("save with `wait` succeeds without `validate`", function() {
+    var model = new Backbone.Model();
+    model.save({x: 1}, {wait: true});
+    ok(lastRequest[1] === model);
+  });
+
+  test("`hasChanged` for falsey keys", function() {
+    var model = new Backbone.Model();
+    model.set({x: true}, {silent: true});
+    ok(!model.hasChanged(0));
+    ok(!model.hasChanged(''));
+  });
+
+  test("`previous` for falsey keys", function() {
+    var model = new Backbone.Model({0: true, '': true});
+    model.set({0: false, '': false}, {silent: true});
+    equal(model.previous(0), true);
+    equal(model.previous(''), true);
+  });
+
+  test("`save` with `wait` sends correct attributes", function() {
+    var changed = 0;
+    var model = new Backbone.Model({x: 1, y: 2});
+    model.on('change:x', function() { changed++; });
+    model.save({x: 3}, {wait: true});
+    deepEqual(JSON.parse(ajaxParams.data), {x: 3, y: 2});
+    equal(model.get('x'), 1);
+    equal(changed, 0);
+    lastRequest[2].success({});
+    equal(model.get('x'), 3);
+    equal(changed, 1);
+  });
+
+  test("nested `set` during `'change:attr'`", 1, function() {
+    var model = new Backbone.Model();
+    model.on('change:x', function() { ok(true); });
+    model.on('change:y', function() {
+      model.set({x: true});
+      // only fires once
+      model.set({x: true});
+    });
+    model.set({y: true});
+  });
+
+  test("nested `change` only fires once", 1, function() {
+    var model = new Backbone.Model();
+    model.on('change', function() {
+      ok(true);
+      model.change();
+    });
+    model.set({x: true});
+  });
+
+  test("no `'change'` event if no changes", function() {
+    var model = new Backbone.Model();
+    model.on('change', function() { ok(false); });
+    model.change();
+  });
+
+  test("nested `set` suring `'change'`", 3, function() {
+    var count = 0;
+    var model = new Backbone.Model();
+    model.on('change', function() {
+      switch(count++) {
+        case 0:
+          deepEqual(this.changedAttributes(), {x: true});
+          model.set({y: true});
+          break;
+        case 1:
+          deepEqual(this.changedAttributes(), {x: true, y: true});
+          model.set({z: true});
+          break;
+        case 2:
+          deepEqual(this.changedAttributes(), {x: true, y: true, z: true});
+          break;
+        default:
+          ok(false);
+      }
+    });
+    model.set({x: true});
   });
 
 });
