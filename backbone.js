@@ -226,7 +226,7 @@
       if (options.unset) for (attr in attrs) attrs[attr] = void 0;
 
       // Run validation.
-      if (!options.silent && !this._validate(attrs, options)) return false;
+      if (!this._validate(attrs, options)) return false;
 
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
@@ -446,7 +446,7 @@
     // if all is well. If a specific `error` callback has been passed,
     // call that instead of firing the general `"error"` event.
     _validate: function(attrs, options) {
-      if (!_.isFunction(this.validate)) return true;
+      if (options.silent || !this.validate) return true;
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;
@@ -674,7 +674,7 @@
         var attrs = model;
         options.collection = this;
         model = new this.model(attrs, options);
-        if (!options.silent && !model._validate(model.attributes, options)) model = false;
+        if (!model._validate(model.attributes, options)) model = false;
       } else if (!model.collection) {
         model.collection = this;
       }
