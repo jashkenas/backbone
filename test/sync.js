@@ -1,11 +1,21 @@
 $(document).ready(function() {
 
-  module("Backbone.sync", {setup : function() {
-    window.lastRequest = null;
-    $.ajax = function(obj) {
-      lastRequest = obj;
-    };
-  }});
+  var ajax = $.ajax
+  var lastRequest = null;
+
+  module("Backbone.sync", {
+
+    setup : function() {
+      $.ajax = function(obj) {
+        lastRequest = obj;
+      };
+    },
+
+    teardown: function() {
+      $.ajax = ajax;
+    }
+
+  });
 
   var Library = Backbone.Collection.extend({
     url : function() { return '/library'; }
@@ -20,7 +30,6 @@ $(document).ready(function() {
   };
 
   test("sync: read", function() {
-    Backbone.sync = originalSync;
     library.fetch();
     equal(lastRequest.url, '/library');
     equal(lastRequest.type, 'GET');
