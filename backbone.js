@@ -289,7 +289,7 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, value, options) {
-      var attrs;
+      var attrs, current;
       if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
@@ -299,7 +299,11 @@
       }
 
       options = options ? _.clone(options) : {};
-      if (attrs && !this[options.wait ? '_validate' : 'set'](attrs, options)) return false;
+      if (options.wait) current = _.clone(this.attributes);
+      var silentOptions = _.extend({}, options, {silent: true});
+      if (attrs && !this.set(attrs, options.wait ? silentOptions : options)) {
+        return false;
+      }
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -314,7 +318,9 @@
       };
       options.error = Backbone.wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
-      return (this.sync || Backbone.sync).call(this, method, this, options);
+      var xhr = (this.sync || Backbone.sync).call(this, method, this, options);
+      if (options.wait) this.set(current, silentOptions);
+      return xhr;
     },
 
     // Destroy this model on the server if it was already persisted.
