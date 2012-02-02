@@ -225,7 +225,7 @@
       if (options.unset) for (attr in attrs) attrs[attr] = void 0;
 
       // Run validation.
-      if (!this._validate(attrs, options)) return false;
+      if (!options.silent && !this._validate(attrs, options)) return false;
 
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];

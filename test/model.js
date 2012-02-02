@@ -392,9 +392,9 @@ $(document).ready(function() {
     equal(model.get('a'), 100);
     equal(lastError, undefined);
     result = model.set({admin: true}, {silent: true});
+    equal(model.get('admin'), true);
+    result = model.set({a: 200, admin: false});
     equal(lastError, "Can't change admin status.");
-    equal(model.get('admin'), void 0);
-    result = model.set({a: 200, admin: true});
     equal(result, false);
     equal(model.get('a'), 100);
   });
