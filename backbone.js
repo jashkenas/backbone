@@ -832,8 +832,8 @@
           fragment = window.location.hash;
         }
       }
-      fragment = decodeURIComponent(fragment.replace(routeStripper, ''));
       if (!fragment.indexOf(this.options.root)) fragment = fragment.substr(this.options.root.length);
+      fragment = decodeURIComponent(fragment.replace(routeStripper, ''));
       return fragment;
     },
 
