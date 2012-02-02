@@ -341,13 +341,11 @@
 
       if (this.isNew()) return triggerDestroy();
       options.success = function(resp) {
-        var col = model.collection;
         if (options.wait) triggerDestroy();
         if (success) {
           success(model, resp);
         } else {
           model.trigger('sync', model, resp, options);
-          if (col) col.trigger('sync', model, resp, options);
         }
       };
       options.error = Backbone.wrapError(options.error, model, options);
