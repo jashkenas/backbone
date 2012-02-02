@@ -6,8 +6,12 @@ $(document).ready(function() {
   module("Backbone.Collection", {
 
     setup: function() {
-      Backbone.sync = function() {
-        lastRequest = _.toArray(arguments);
+      Backbone.sync = function(method, model, options) {
+        lastRequest = {
+          method: method,
+          model: model,
+          options: options
+        };
       };
     },
 
@@ -319,18 +323,18 @@ $(document).ready(function() {
 
   test("Collection: fetch", function() {
     col.fetch();
-    equal(lastRequest[0], 'read');
-    equal(lastRequest[1], col);
-    equal(lastRequest[2].parse, true);
+    equal(lastRequest.method, 'read');
+    equal(lastRequest.model, col);
+    equal(lastRequest.options.parse, true);
 
     col.fetch({parse: false});
-    equal(lastRequest[2].parse, false);
+    equal(lastRequest.options.parse, false);
   });
 
   test("Collection: create", function() {
     var model = col.create({label: 'f'}, {wait: true});
-    equal(lastRequest[0], 'create');
-    equal(lastRequest[1], model);
+    equal(lastRequest.method, 'create');
+    equal(lastRequest.model, model);
     equal(model.get('label'), 'f');
     equal(model.collection, col);
   });
