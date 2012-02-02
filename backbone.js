@@ -233,15 +233,19 @@
       var now = this.attributes;
       var escaped = this._escapedAttributes;
       var prev = this._previousAttributes || {};
-      var alreadyChanging = this._changing;
+      var alreadySetting = this._setting;
       this._changed || (this._changed = {});
-      this._changing = true;
+      this._setting = true;
 
       // Update attributes.
       for (attr in attrs) {
         val = attrs[attr];
         if (!_.isEqual(now[attr], val)) delete escaped[attr];
         options.unset ? delete now[attr] : now[attr] = val;
+        if (this._changing && !_.isEqual(this._changed[attr], val)) {
+          this.trigger('change:' + attr, this, val, options);
+          this._moreChanges = true;
+        }
         delete this._changed[attr];
         if (!_.isEqual(prev[attr], val) || (_.has(now, attr) != _.has(prev, attr))) {
           this._changed[attr] = val;
@@ -249,9 +253,9 @@
       }
 
       // Fire the `"change"` events, if the model has been changed.
-      if (!alreadyChanging) {
+      if (!alreadySetting) {
         if (!options.silent && this.hasChanged()) this.change(options);
-        this._changing = false;
+        this._setting = false;
       }
       return this;
     },
@@ -379,12 +383,19 @@
     // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
+      if (this._changing || !this.hasChanged()) return this;
+      this._changing = true;
       for (var attr in this._changed) {
         this.trigger('change:' + attr, this, this._changed[attr], options);
       }
-      this.trigger('change', this, options);
+      do {
+        this._moreChanges = false;
+        this.trigger('change', this, options);
+      } while (this._moreChanges);
       this._previousAttributes = _.clone(this.attributes);
       delete this._changed;
+      this._changing = false;
+      return this;
     },
 
     // Determine if the model has changed since the last `"change"` event.
