@@ -385,13 +385,14 @@
     change: function(options) {
       if (this._changing || !this.hasChanged()) return this;
       this._changing = true;
+      this._moreChanges = true;
       for (var attr in this._changed) {
         this.trigger('change:' + attr, this, this._changed[attr], options);
       }
-      do {
+      while (this._moreChanges) {
         this._moreChanges = false;
         this.trigger('change', this, options);
-      } while (this._moreChanges);
+      }
       this._previousAttributes = _.clone(this.attributes);
       delete this._changed;
       this._changing = false;
