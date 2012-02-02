@@ -506,17 +506,6 @@ $(document).ready(function() {
     a.set({state: 'hello'});
   });
 
-  test("Model: Multiple nested calls to set", function() {
-    var counter = 0, model = new Backbone.Model({});
-    model.on('change', function() {
-      counter++;
-      model.set({b: 1});
-      model.set({a: 1});
-    })
-    .set({a: 1});
-    equal(counter, 1, 'change is only triggered once');
-  });
-
   test("hasChanged/set should use same comparison", function() {
     expect(2);
     var changed = 0, model = new Backbone.Model({a: null});
@@ -625,6 +614,55 @@ $(document).ready(function() {
     lastRequest[2].success({});
     equal(model.get('x'), 3);
     equal(changed, 1);
+  });
+
+  test("nested `set` during `'change:attr'`", 1, function() {
+    var model = new Backbone.Model();
+    model.on('change:x', function() { ok(true); });
+    model.on('change:y', function() {
+      model.set({x: true});
+      // only fires once
+      model.set({x: true});
+    });
+    model.set({y: true});
+  });
+
+  test("nested `change` only fires once", 1, function() {
+    var model = new Backbone.Model();
+    model.on('change', function() {
+      ok(true);
+      model.change();
+    });
+    model.set({x: true});
+  });
+
+  test("no `'change'` event if no changes", function() {
+    var model = new Backbone.Model();
+    model.on('change', function() { ok(false); });
+    model.change();
+  });
+
+  test("nested `set` suring `'change'`", 3, function() {
+    var count = 0;
+    var model = new Backbone.Model();
+    model.on('change', function() {
+      switch(count++) {
+        case 0:
+          deepEqual(this.changedAttributes(), {x: true});
+          model.set({y: true});
+          break;
+        case 1:
+          deepEqual(this.changedAttributes(), {x: true, y: true});
+          model.set({z: true});
+          break;
+        case 2:
+          deepEqual(this.changedAttributes(), {x: true, y: true, z: true});
+          break;
+        default:
+          ok(false);
+      }
+    });
+    model.set({x: true});
   });
 
 });
