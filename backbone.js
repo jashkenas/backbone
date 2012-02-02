@@ -163,11 +163,10 @@
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
-    this._changed = {};
     if (!this.set(attributes, {silent: true})) {
       throw new Error("Can't create an invalid model");
     }
-    this._changed = {};
+    delete this._changed;
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
   };
@@ -235,6 +234,7 @@
       var escaped = this._escapedAttributes;
       var prev = this._previousAttributes || {};
       var alreadyChanging = this._changing;
+      this._changed || (this._changed = {});
       this._changing = true;
 
       // Update attributes.
@@ -289,7 +289,7 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, value, options) {
-      var attrs;
+      var attrs, current;
       if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
@@ -299,7 +299,11 @@
       }
 
       options = options ? _.clone(options) : {};
-      if (attrs && !this[options.wait ? '_validate' : 'set'](attrs, options)) return false;
+      if (options.wait) current = _.clone(this.attributes);
+      var silentOptions = _.extend({}, options, {silent: true});
+      if (attrs && !this.set(attrs, options.wait ? silentOptions : options)) {
+        return false;
+      }
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -314,7 +318,9 @@
       };
       options.error = Backbone.wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
-      return (this.sync || Backbone.sync).call(this, method, this, options);
+      var xhr = (this.sync || Backbone.sync).call(this, method, this, options);
+      if (options.wait) this.set(current, silentOptions);
+      return xhr;
     },
 
     // Destroy this model on the server if it was already persisted.
@@ -378,14 +384,14 @@
       }
       this.trigger('change', this, options);
       this._previousAttributes = _.clone(this.attributes);
-      this._changed = {};
+      delete this._changed;
     },
 
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (attr) return _.has(this._changed, attr);
-      return !_.isEmpty(this._changed);
+      if (!arguments.length) return !_.isEmpty(this._changed);
+      return this._changed && _.has(this._changed, attr);
     },
 
     // Return an object containing all the attributes that have changed, or
@@ -407,7 +413,7 @@
     // Get the previous value of an attribute, recorded at the time the last
     // `"change"` event was fired.
     previous: function(attr) {
-      if (!attr || !this._previousAttributes) return null;
+      if (!arguments.length || !this._previousAttributes) return null;
       return this._previousAttributes[attr];
     },
 
@@ -1030,6 +1036,7 @@
       this.$el = $(element);
       this.el = this.$el[0];
       if (delegate !== false) this.delegateEvents();
+      return this;
     },
 
     // Set callbacks, where `this.events` is a hash of

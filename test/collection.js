@@ -1,12 +1,21 @@
 $(document).ready(function() {
 
-  module("Backbone.Collection");
+  var lastRequest = null;
+  var sync = Backbone.sync;
 
-  window.lastRequest = null;
+  module("Backbone.Collection", {
 
-  Backbone.sync = function() {
-    lastRequest = _.toArray(arguments);
-  };
+    setup: function() {
+      Backbone.sync = function() {
+        lastRequest = _.toArray(arguments);
+      };
+    },
+
+    teardown: function() {
+      Backbone.sync = sync;
+    }
+
+  });
 
   var a         = new Backbone.Model({id: 3, label: 'a'});
   var b         = new Backbone.Model({id: 2, label: 'b'});
