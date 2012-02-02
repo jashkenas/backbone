@@ -240,6 +240,7 @@
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
+      <li>– <a href="#Model-isValid">isValid</a></li>
       <li>– <a href="#Model-url">url</a></li>
       <li>– <a href="#Model-urlRoot">urlRoot</a></li>
       <li>– <a href="#Model-parse">parse</a></li>
@@ -328,6 +329,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Utility-noConflict">noConflict</a></li>
+      <li>– <a href="#Utility-setDomLibrary">setDomLibrary</a></li>
     </ul>
 
     <a class="toc_title" href="#examples">
@@ -1034,6 +1036,15 @@ account.set({access: "unlimited"}, {
 });
 </pre>
 
+    <p id="Model-isValid">
+      <b class="header">isValid</b><code>model.isValid()</code>
+      <br />
+      Models may enter an invalid state if you make changes to them silently
+      ... useful when dealing with form input. Call <tt>model.isValid()</tt>
+      to check if the model is currently in a valid state, according to your
+      <tt>validate</tt> function.
+    </p>
+      
     <p id="Model-url">
       <b class="header">url</b><code>model.url()</code>
       <br />
@@ -2209,10 +2220,6 @@ var DocumentView = Backbone.View.extend({
 
     <h2 id="Utility">Utility Functions</h2>
 
-    <p>
-
-    </p>
-
     <p id="Utility-noConflict">
       <b class="header">noConflict</b><code>var backbone = Backbone.noConflict();</code>
       <br />
@@ -2226,6 +2233,14 @@ var DocumentView = Backbone.View.extend({
 var localBackbone = Backbone.noConflict();
 var model = localBackbone.Model.extend(...);
 </pre>
+
+    <p id="Utility-setDomLibrary">
+      <b class="header">setDomLibrary</b><code>Backbone.setDomLibrary(jQueryNew);</code>
+      <br />
+      If you have multiple copies of <tt>jQuery</tt> on the page, or simply want
+      to tell Backbone to use a particular object as it's DOM / Ajax library, 
+      this is the function for you.
+    </p>
 
     <h2 id="examples">Examples</h2>
     
@@ -3144,6 +3159,24 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <b class="header">0.9.1</b> &mdash; <small><i>Feb. 2, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.0...0.9.1">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Reverted to 0.5.3-esque behavior for validating models. Silent changes
+        no longer trigger validation (making it easier to work with forms).
+        Added an <tt>isValid</tt> function that you can use to check if a model
+        is currently in a valid state.
+      </li>
+      <li>
+        If you're have multiple versions of jQuery on the page, you can now tell
+        Backbone which one to use with <tt>Backbone.setDomLibrary</tt>.
+      </li>
+      <li>
+        Fixes regressions in <b>0.9.0</b> for routing with "root", saving with
+        both "wait" and "validate", and the order of nested "change" events.
+      </li>
+    </ul>
     
     <b class="header">0.9.0</b> &mdash; <small><i>Jan. 30, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.5.3...0.9.0">Diff</a><br />
     <ul style="margin-top: 5px;">
