@@ -681,4 +681,22 @@ $(document).ready(function() {
     model.set({x: true});
   });
 
+  test("Backbone.wrapError triggers `'error'`", 12, function() {
+    var resp = {};
+    var options = {};
+    var model = new Backbone.Model();
+    model.on('error', error);
+    var callback = Backbone.wrapError(null, model, options);
+    callback(model, resp);
+    callback(resp);
+    callback = Backbone.wrapError(error, model, options);
+    callback(model, resp);
+    callback(resp);
+    function error(_model, _resp, _options) {
+      ok(model === _model);
+      ok(resp === _resp);
+      ok(options === _options);
+    }
+  });
+
 });
