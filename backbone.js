@@ -84,7 +84,7 @@
 
     // Bind an event, specified by a string name, `ev`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
-    on: function(events, callback, context) {
+    on: function(events, callback, context, callOnce) {
       var ev;
       events = events.split(/\s+/);
       var calls = this._callbacks || (this._callbacks = {});
@@ -96,6 +96,7 @@
         var tail = list.tail || (list.tail = list.next = {});
         tail.callback = callback;
         tail.context = context;
+        tail.callOnce = callOnce;
         list.tail = tail.next = {};
       }
       return this;
@@ -146,6 +147,9 @@
         args = node.event ? [node.event].concat(rest) : rest;
         while ((node = node.next) !== tail) {
           node.callback.apply(node.context || this, args);
+          if (node.callOnce) {
+            this.off(node.event, node.callOnce, node.context);
+          }
         }
       }
       return this;
