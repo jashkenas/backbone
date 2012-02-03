@@ -11,8 +11,12 @@ $(document).ready(function() {
   module("Backbone.Model", {
 
     setup: function() {
-      Backbone.sync = function() {
-        lastRequest = _.toArray(arguments);
+      Backbone.sync = function(method, model, options) {
+        lastRequest = {
+          method: method,
+          model: model,
+          options: options
+        };
         sync.apply(this, arguments);
       };
       $.ajax = function(params) { ajaxParams = params; };
@@ -323,7 +327,7 @@ $(document).ready(function() {
     var model = new Backbone.Model({firstName : "Taylor", lastName: "Swift"});
     model.on('change', function () {
       model.save();
-      ok(_.isEqual(lastRequest[1], model));
+      ok(_.isEqual(lastRequest.model, model));
     });
     model.set({lastName: 'Hicks'});
   });
@@ -357,8 +361,8 @@ $(document).ready(function() {
 
   test("Model: save", function() {
     doc.save({title : "Henry V"});
-    equal(lastRequest[0], 'update');
-    ok(_.isEqual(lastRequest[1], doc));
+    equal(lastRequest.method, 'update');
+    ok(_.isEqual(lastRequest.model, doc));
   });
 
   test("Model: save in positional style", function() {
@@ -372,14 +376,14 @@ $(document).ready(function() {
 
   test("Model: fetch", function() {
     doc.fetch();
-    equal(lastRequest[0], 'read');
-    ok(_.isEqual(lastRequest[1], doc));
+    equal(lastRequest.method, 'read');
+    ok(_.isEqual(lastRequest.model, doc));
   });
 
   test("Model: destroy", function() {
     doc.destroy();
-    equal(lastRequest[0], 'delete');
-    ok(_.isEqual(lastRequest[1], doc));
+    equal(lastRequest.method, 'delete');
+    ok(_.isEqual(lastRequest.model, doc));
   });
 
   test("Model: non-persisted destroy", function() {
@@ -598,7 +602,7 @@ $(document).ready(function() {
   test("save with `wait` succeeds without `validate`", function() {
     var model = new Backbone.Model();
     model.save({x: 1}, {wait: true});
-    ok(lastRequest[1] === model);
+    ok(lastRequest.model === model);
   });
 
   test("`hasChanged` for falsey keys", function() {
@@ -623,7 +627,7 @@ $(document).ready(function() {
     deepEqual(JSON.parse(ajaxParams.data), {x: 3, y: 2});
     equal(model.get('x'), 1);
     equal(changed, 0);
-    lastRequest[2].success({});
+    lastRequest.options.success({});
     equal(model.get('x'), 3);
     equal(changed, 1);
   });
