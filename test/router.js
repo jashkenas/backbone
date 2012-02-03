@@ -200,4 +200,12 @@ $(document).ready(function() {
     }
   });
 
+  test("#933, #908 - leading slash", function() {
+    var history = new Backbone.History();
+    history.options = {root: '/root'};
+    equal(history.getFragment('/root/foo'), 'foo');
+    history.options.root = '/root/';
+    equal(history.getFragment('/root/foo'), 'foo');
+  });
+
 });
