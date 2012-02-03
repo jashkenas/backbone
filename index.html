@@ -204,7 +204,7 @@
     <a class="toc_title" href="#introduction">
       Introduction
     </a>
-    
+
     <a class="toc_title" href="#upgrading">
       Upgrading
     </a>
@@ -482,9 +482,9 @@
       and update the HTML manually
       &mdash; when the model changes, the views simply update themselves.
     </p>
-    
+
     <p>
-      If you're new here, and aren't yet quite sure what Backbone is for, start by 
+      If you're new here, and aren't yet quite sure what Backbone is for, start by
       browsing the <a href="#examples">list of Backbone-based projects</a>.
     </p>
 
@@ -492,22 +492,22 @@
       Many of the examples that follow are runnable. Click the <i>play</i> button
       to execute them.
     </p>
-    
+
     <h2 id="upgrading">Upgrading to 0.9</h2>
-    
+
     <p>
       Backbone's <b>0.9</b> series should be considered as a release candidate
-      for an upcoming <b>1.0</b>. Some APIs have changed, and while there is a 
+      for an upcoming <b>1.0</b>. Some APIs have changed, and while there is a
       <a href="#changelog">change log</a> available, and many new features to
-      take advantage of, there are a few specific changes where you'll need 
+      take advantage of, there are a few specific changes where you'll need
       to take care:
     </p>
-    
+
     <ul>
       <li>
-        If you've ever manually set <tt>this.el</tt> in a Backbone View to be a 
-        particular DOM element, you'll want to use 
-        <a href="#View-setElement">setElement</a> instead. 
+        If you've ever manually set <tt>this.el</tt> in a Backbone View to be a
+        particular DOM element, you'll want to use
+        <a href="#View-setElement">setElement</a> instead.
       </li>
       <li>
         Creating and destroying models is now optimistic. Pass <tt>{wait: true}</tt>
@@ -521,6 +521,10 @@
       <li>
         If you're upgrading, make sure you also upgrade your version of Underscore.js
         to the latest &mdash; 1.3.1 or greater.
+      </li>
+      <li>
+        <tt>model.set</tt> will no longer trigger change events when setting a value
+        with <tt>{silent: true}</tt> then setting it back to it's original value.
       </li>
     </ul>
 
@@ -559,7 +563,7 @@ object.trigger("alert", "an event");
       namespace them: <tt>"poll:start"</tt>, or <tt>"change:selection"</tt>.
       The event string may also be a space-delimited list of several events...
     </p>
-    
+
 <pre>
 book.on("change:title change:author", ...);
 </pre>
@@ -604,8 +608,8 @@ object.off();                    // Removes all callbacks on object.
     <p id="Events-trigger">
       <b class="header">trigger</b><code>object.trigger(event, [*args])</code>
       <br />
-      Trigger callbacks for the given <b>event</b>, or space-delimited list of events. 
-      Subsequent arguments to <b>trigger</b> will be passed along to the 
+      Trigger callbacks for the given <b>event</b>, or space-delimited list of events.
+      Subsequent arguments to <b>trigger</b> will be passed along to the
       event callbacks.
     </p>
 
@@ -926,7 +930,7 @@ setInterval(function() {
       (HTTP <tt>POST</tt>), if the model already
       exists on the server, the save will be an <tt>"update"</tt> (HTTP <tt>PUT</tt>).
     </p>
-    
+
     <p>
       Calling <tt>save</tt> with new attributes will cause a <tt>"change"</tt>
       event immediately, and a <tt>"sync"</tt> event after the server has acknowledged
@@ -979,7 +983,7 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
       through any collections that contain it, and a <tt>"sync"</tt> event, after
       the server has successfully acknowledged the model's deletion. Pass
-      <tt>{wait: true}</tt> if you'd like to wait for the server to respond 
+      <tt>{wait: true}</tt> if you'd like to wait for the server to respond
       before removing the model from the collection.
     </p>
 
@@ -1050,7 +1054,7 @@ account.set({access: "unlimited"}, {
       to check if the model is currently in a valid state, according to your
       <tt>validate</tt> function.
     </p>
-      
+
     <p id="Model-url">
       <b class="header">url</b><code>model.url()</code>
       <br />
@@ -1074,7 +1078,7 @@ account.set({access: "unlimited"}, {
       <br />
       Specify a <tt>urlRoot</tt> if you're using a model outside of a collection,
       to enable the default <a href="#Model-url">url</a> function to generate
-      URLs based on the model id. <tt>"/[urlRoot]/id"</tt><br /> 
+      URLs based on the model id. <tt>"/[urlRoot]/id"</tt><br />
       Note that <tt>urlRoot</tt> may also be defined as a function.
     </p>
 
@@ -1409,15 +1413,15 @@ var book = Library.get(110);
       Comparator function can be defined as either a
       <a href="http://underscorejs.org/#sortBy">sortBy</a>
       (pass a function that takes a single argument),
-      or as a 
+      or as a
       <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
       (pass a comparator function that expects two arguments).
     </p>
-    
+
     <p>
       "sort" comparator functions take a model and return a numeric or string
       value by which the model should be ordered relative to others.
-      "sortBy" comparator functions take two models, and return <tt>-1</tt> if 
+      "sortBy" comparator functions take two models, and return <tt>-1</tt> if
       the first model should come before the second, <tt>0</tt> if they are of
       the same rank and <tt>1</tt> if the first model should come after.
     </p>
@@ -1508,8 +1512,8 @@ var Notes = Backbone.Collection.extend({
       the array of model attributes to be <a href="#Collection-add">added</a>
       to the collection. The default implementation is a no-op, simply passing
       through the JSON response. Override this if you need to work with a
-      preexisting API, or better namespace your responses. Note that afterwards, 
-      if your model class already has a <tt>parse</tt> function, it will be 
+      preexisting API, or better namespace your responses. Note that afterwards,
+      if your model class already has a <tt>parse</tt> function, it will be
       run against each fetched model.
     </p>
 
@@ -1609,7 +1613,7 @@ Accounts.fetch();
       The <b>create</b> method can accept either an attributes hash or an
       existing, unsaved model object.
     </p>
-    
+
     <p>
       Creating a model will cause an immediate <tt>"add"</tt> event to be
       triggered on the collection, as well as a <tt>"sync"</tt> event, once the
@@ -2036,10 +2040,10 @@ alert(item.el + ' ' + body.el);
     <p id="View-$el">
       <b class="header">$el</b><code>view.$el</code>
       <br />
-      A cached jQuery (or Zepto) object for the view's element. A handy 
+      A cached jQuery (or Zepto) object for the view's element. A handy
       reference instead of re-wrapping the DOM element all the time.
     </p>
-    
+
 <pre>
 view.$el.show();
 
@@ -2049,7 +2053,7 @@ listView.$el.append(itemView.el);
     <p id="View-setElement">
       <b class="header">setElement</b><code>view.setElement(element)</code>
       <br />
-      If you'd like to apply a Backbone view to a different DOM element, use 
+      If you'd like to apply a Backbone view to a different DOM element, use
       <b>setElement</b>, which will also create the cached <tt>$el</tt> reference
       and move the view's delegated events from the old element to the new one.
     </p>
@@ -2058,7 +2062,7 @@ listView.$el.append(itemView.el);
       <b class="header">attributes</b><code>view.attributes</code>
       <br />
       A hash of attributes that will be set as HTML DOM element attributes on the
-      view's <tt>el</tt> (id, class, data-properties, etc.), or a function that 
+      view's <tt>el</tt> (id, class, data-properties, etc.), or a function that
       returns such a hash.
     </p>
 
@@ -2157,7 +2161,7 @@ $("#make-demo").append(el);
       for DOM events within a view.
       If an <b>events</b> hash is not passed directly, uses <tt>this.events</tt>
       as the source. Events are written in the format <tt>{"event selector": "callback"}</tt>.
-      The callback may be either the name of a method on the view, or a direct 
+      The callback may be either the name of a method on the view, or a direct
       function body.
       Omitting the <tt>selector</tt> causes the event to be bound to the view's
       root element (<tt>this.el</tt>). By default, <tt>delegateEvents</tt> is called
@@ -2244,15 +2248,15 @@ var model = localBackbone.Model.extend(...);
       <b class="header">setDomLibrary</b><code>Backbone.setDomLibrary(jQueryNew);</code>
       <br />
       If you have multiple copies of <tt>jQuery</tt> on the page, or simply want
-      to tell Backbone to use a particular object as it's DOM / Ajax library, 
+      to tell Backbone to use a particular object as it's DOM / Ajax library,
       this is the function for you.
     </p>
 
     <h2 id="examples">Examples</h2>
-    
+
     <p>
-      The list of examples that follows, while long, is not exhaustive. If you've 
-      worked on an app that uses Backbone, please add it to the 
+      The list of examples that follows, while long, is not exhaustive. If you've
+      worked on an app that uses Backbone, please add it to the
       <a href="https://github.com/documentcloud/backbone/wiki/Projects-and-Companies-using-Backbone">wiki page of Backbone apps</a>.
     </p>
 
@@ -2360,14 +2364,14 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/foursquare.png" alt="Foursquare" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-wunderkit">Wunderkit</h2>
 
     <p>
-      <a href="http://get.wunderkit.com/">Wunderkit</a> is a productivity and 
+      <a href="http://get.wunderkit.com/">Wunderkit</a> is a productivity and
       social collaboration platform. It
-      uses Backbone.js as the foundation for the single-page application, 
-      which is backed by a RESTful Rails API. 
+      uses Backbone.js as the foundation for the single-page application,
+      which is backed by a RESTful Rails API.
       The freedom and agility that Backbone gives to developers
       made it possible to build Wunderkit in a very short time and
       extend it with custom features: a write-through cache using HTML5
@@ -2496,18 +2500,18 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/slavery-footprint.png" alt="Slavery Footprint" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-stripe">Stripe</h2>
 
     <p>
-      <a href="https://stripe.com">Stripe</a> provides an API for accepting 
-      credit cards on the web. Stripe's 
-      <a href="https://manage.stripe.com">management interface</a> was recently 
-      rewritten from scratch in Coffeescript using Backbone.js as the primary 
-      framework, Eco for templates, Sass for stylesheets, and Stitch to package 
-      everything together as CommonJS modules. The new app uses 
-      <a href="https://stripe.com/docs/api">Stripe's API</a> directly for the 
-      majority of its actions; Backbone.js models made it simple to map 
+      <a href="https://stripe.com">Stripe</a> provides an API for accepting
+      credit cards on the web. Stripe's
+      <a href="https://manage.stripe.com">management interface</a> was recently
+      rewritten from scratch in Coffeescript using Backbone.js as the primary
+      framework, Eco for templates, Sass for stylesheets, and Stitch to package
+      everything together as CommonJS modules. The new app uses
+      <a href="https://stripe.com/docs/api">Stripe's API</a> directly for the
+      majority of its actions; Backbone.js models made it simple to map
       client-side models to their corresponding RESTful resources.
     </p>
 
@@ -2516,7 +2520,7 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/stripe.png" alt="Stripe" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-diaspora">Diaspora</h2>
 
     <p>
@@ -2576,19 +2580,19 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/pandora.png" alt="Pandora" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-code-school">Code School</h2>
 
     <p>
-      <a href="http://www.codeschool.com">Code School</a> courses teach people 
-      about various programming topics like CoffeeScript, CSS, Ruby on Rails, 
-      and more. The new Code School course 
+      <a href="http://www.codeschool.com">Code School</a> courses teach people
+      about various programming topics like CoffeeScript, CSS, Ruby on Rails,
+      and more. The new Code School course
       <a href="http://coffeescript.codeschool.com/levels/1/challenges/1">challenge page</a>
-      is built from the ground up on Backbone.js, using 
-      everything it has to offer: the router, collections, models, and complex 
-      event handling. Before, the page was a mess of jQuery DOM manipulation 
-      and manual Ajax calls. Backbone.js helped introduce a new way to 
-      think about developing an organized front-end application in Javascript.  
+      is built from the ground up on Backbone.js, using
+      everything it has to offer: the router, collections, models, and complex
+      event handling. Before, the page was a mess of jQuery DOM manipulation
+      and manual Ajax calls. Backbone.js helped introduce a new way to
+      think about developing an organized front-end application in Javascript.
     </p>
 
     <div style="text-align: center;">
@@ -2596,7 +2600,7 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/code-school.png" alt="Code School" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-cloudapp">CloudApp</h2>
 
     <p>
@@ -2753,11 +2757,11 @@ var model = localBackbone.Model.extend(...);
     <h2 id="examples-animoto">Animoto</h2>
 
     <p>
-      <a href="http://animoto.com">Animoto</a> is a web-based video creation 
-      platform, where users can upload their own photos, video clips and music 
-      and create beautifully orchestrated slideshows. The video editor app is 
-      built with Backbone.js and jQuery and interfaces with a Ruby on Rails 
-      backend. Backbone has provided structure which helps the Animoto team 
+      <a href="http://animoto.com">Animoto</a> is a web-based video creation
+      platform, where users can upload their own photos, video clips and music
+      and create beautifully orchestrated slideshows. The video editor app is
+      built with Backbone.js and jQuery and interfaces with a Ruby on Rails
+      backend. Backbone has provided structure which helps the Animoto team
       iterate quickly on the codebase while reducing the risk of regressions.
     </p>
 
@@ -3052,19 +3056,19 @@ Inbox.messages.fetch();
     <p id="FAQ-extending">
       <b class="header">Extending Backbone</b>
       <br />
-      Many JavaScript libraries are meant to be insular and self-enclosed, 
+      Many JavaScript libraries are meant to be insular and self-enclosed,
       where you interact with them by calling their public API, but never peek
       inside at the guts. Backbone.js is <i>not</i> that kind of library.
     </p>
-    
+
     <p>
-      Because it serves as a foundation for your application, you're meant to 
+      Because it serves as a foundation for your application, you're meant to
       extend and enhance it in the ways you see fit &mdash; the entire source
       code is <a href="docs/backbone.html">annotated</a> to make this easier
-      for you. You'll find that there's very little there apart from core 
+      for you. You'll find that there's very little there apart from core
       functions, and most of those can be overriden or augmented should you find
       the need. If you catch yourself adding methods to <tt>Backbone.Model.prototype</tt>,
-      or creating your own base subclass, don't worry &mdash; that's how things are 
+      or creating your own base subclass, don't worry &mdash; that's how things are
       supposed to work.
     </p>
 
@@ -3173,7 +3177,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
-    
+
     <b class="header">0.9.1</b> &mdash; <small><i>Feb. 2, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.0...0.9.1">Diff</a><br />
     <ul style="margin-top: 5px;">
       <li>
@@ -3191,7 +3195,7 @@ ActiveRecord::Base.include_root_in_json = false
         both "wait" and "validate", and the order of nested "change" events.
       </li>
     </ul>
-    
+
     <b class="header">0.9.0</b> &mdash; <small><i>Jan. 30, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.5.3...0.9.0">Diff</a><br />
     <ul style="margin-top: 5px;">
       <li>
@@ -3203,7 +3207,7 @@ ActiveRecord::Base.include_root_in_json = false
         Two new properties on views: <tt>$el</tt> &mdash; a cached jQuery (or Zepto)
         reference to the view's element, and <tt>setElement</tt>, which should
         be used instead of manually setting a view's <tt>el</tt>. It will
-        both set <tt>view.el</tt> and <tt>view.$el</tt> correctly, as well as 
+        both set <tt>view.el</tt> and <tt>view.$el</tt> correctly, as well as
         re-delegating events on the new DOM element.
       </li>
       <li>
@@ -3211,11 +3215,11 @@ ActiveRecord::Base.include_root_in_json = false
         For example: <tt>model.on("change:name change:age", ...)</tt>
       </li>
       <li>
-        When you don't know the key in advance, you may now call 
+        When you don't know the key in advance, you may now call
         <tt>model.set(key, value)</tt> as well as <tt>save</tt>.
       </li>
       <li>
-        Multiple models with the same <tt>id</tt> are no longer allowed in a 
+        Multiple models with the same <tt>id</tt> are no longer allowed in a
         single collection.
       </li>
       <li>
@@ -3224,7 +3228,7 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
       <li>
         <tt>bind</tt> and <tt>unbind</tt> have been renamed to <tt>on</tt>
-        and <tt>off</tt> for clarity, following jQuery's lead. 
+        and <tt>off</tt> for clarity, following jQuery's lead.
         The old names are also still supported.
       </li>
       <li>
@@ -3237,24 +3241,24 @@ ActiveRecord::Base.include_root_in_json = false
         can refer to <tt>this</tt> within it.
       </li>
       <li>
-        A view's <tt>events</tt> hash may now also contain direct function 
+        A view's <tt>events</tt> hash may now also contain direct function
         values as well as the string names of existing view methods.
       </li>
       <li>
         Validation has gotten an overhaul &mdash; a model's <tt>validate</tt> function
-        will now be run even for silent changes, and you can no longer create 
+        will now be run even for silent changes, and you can no longer create
         a model in an initially invalid state.
       </li>
       <li>
-        Added <tt>shuffle</tt> and <tt>initial</tt> to collections, proxied 
+        Added <tt>shuffle</tt> and <tt>initial</tt> to collections, proxied
         from Underscore.
       </li>
       <li>
-        <tt>Model#urlRoot</tt> may now be defined as a function as well as a 
+        <tt>Model#urlRoot</tt> may now be defined as a function as well as a
         value.
       </li>
       <li>
-        <tt>View#attributes</tt> may now be defined as a function as well as a 
+        <tt>View#attributes</tt> may now be defined as a function as well as a
         value.
       </li>
       <li>
@@ -3264,7 +3268,7 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
       <li>
         You may now tell a router to <tt>navigate(fragment, {replace: true})</tt>,
-        which will either use <tt>history.replaceState</tt> or 
+        which will either use <tt>history.replaceState</tt> or
         <tt>location.hash.replace</tt>, in order to change the URL without adding
         a history entry.
       </li>
