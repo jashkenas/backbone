@@ -819,7 +819,7 @@
   };
 
   // Cached regex for cleaning leading hashes and slashes .
-  var routeStripper = /^[#\/]/;
+  var routeStripper = /^[#/]/;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
