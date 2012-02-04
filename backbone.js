@@ -104,23 +104,43 @@
     // Remove one or many callbacks. If `context` is null, removes all callbacks
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `ev` is null, removes all bound callbacks for all events.
-    off: function(events, callback, context) {
-      var ev, calls, node;
-      if (!events) {
-        delete this._callbacks;
+    off: function() {
+      var ev, calls, node, events, callback, context;
+      if (arguments.length === 0) {
+        delete this._callbacks
       } else if (calls = this._callbacks) {
-        events = events.split(/\s+/);
+        for (i = 0, length = arguments.length; i < length; i++) {
+          switch (typeof arguments[i]) {
+             case 'string':
+                events = arguments[i].split(/\s+/); break;
+             case 'function':
+                callback = arguments[i]; break;
+             case 'object':
+                context = arguments[i]; break;
+          }
+        }
+        if (!events) {
+          events = [];
+          for (ev in calls) {
+            events.push(ev)
+          }
+        }
         while (ev = events.shift()) {
           node = calls[ev];
           delete calls[ev];
-          if (!callback || !node) continue;
+          if (!node) continue;
+          //if (!callback || !node) continue;
           // Create a new list, omitting the indicated event/context pairs.
           while ((node = node.next) && node.next) {
-            if (node.callback === callback &&
+            if (ev === 'an_event') {
+              if ((!callback || node.callback === callback) &&
+                (!context || node.context === context)) console.log("off");
+            }
+            if ((!callback || node.callback === callback) &&
               (!context || node.context === context)) continue;
             this.on(ev, node.callback, node.context);
           }
-        }
+        }  
       }
       return this;
     },
