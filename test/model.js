@@ -699,7 +699,7 @@ $(document).ready(function() {
     }
   });
 
-  test("Setting an attribute with options:true during change event propagation should not lock the application in infinite loop", function() {
+  test("#959 Setting an attribute with options silent:true during change event propagation should not lock the application in infinite loop", function() {
     var count = 0;
     var Model = Backbone.Model.extend({
       initialize: function() {
@@ -709,7 +709,6 @@ $(document).ready(function() {
       silentlySetAttribute: function() {
         count++;
         if(count > 10) {// to prevent infinite loop
-          this.silentlySetAttribute = function(){};
           return;
         } 
         this.set({'a': Math.random() * 1000}, {silent: true});
