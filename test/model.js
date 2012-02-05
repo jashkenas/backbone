@@ -699,4 +699,24 @@ $(document).ready(function() {
     }
   });
 
+  test("Setting an attribute with options:true during change event propagation should not lock the application in infinite loop", function() {
+    var count = 0;
+    var Model = Backbone.Model.extend({
+      initialize: function() {
+        this.bind('change', _.bind(this.silentlySetAttribute, this));
+        this.set({'a': 1});
+      },
+      silentlySetAttribute: function() {
+        count++;
+        if(count > 10) {// to prevent infinite loop
+          this.silentlySetAttribute = function(){};
+          return;
+        } 
+        this.set({'a': Math.random() * 1000}, {silent: true});
+      }
+    });
+    var m = new Model();
+    equal(count, 1, "Callback should be called once");
+  });
+
 });
