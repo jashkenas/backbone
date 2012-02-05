@@ -250,7 +250,7 @@
         val = attrs[attr];
         if (!_.isEqual(now[attr], val)) delete escaped[attr];
         options.unset ? delete now[attr] : now[attr] = val;
-        if (this._changing && !_.isEqual(this._changed[attr], val)) {
+        if (!options.silent && this._changing && !_.isEqual(this._changed[attr], val)) {
           this.trigger('change:' + attr, this, val, options);
           this._moreChanges = true;
         }
