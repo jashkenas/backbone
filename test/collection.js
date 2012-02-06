@@ -516,4 +516,10 @@ $(document).ready(function() {
     raises(function() { col.add([{id: 1}, {id: 1}]); });
   });
 
+  test("#964 - collection.get return in consistent", function() {
+    var c = new Backbone.Collection();
+    ok(c.get(null) === undefined);
+    ok(c.get() === undefined);
+  });
+
 });
