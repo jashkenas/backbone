@@ -566,7 +566,7 @@
 
     // Get a model from the set by id.
     get: function(id) {
-      if (id == null) return null;
+      if (id == null) return void 0;
       return this._byId[id.id != null ? id.id : id];
     },
 
