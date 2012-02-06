@@ -251,7 +251,6 @@
         if (!_.isEqual(now[attr], val)) delete escaped[attr];
         options.unset ? delete now[attr] : now[attr] = val;
         if (!options.silent && this._changing && !_.isEqual(this._changed[attr], val)) {
-          this.trigger('change:' + attr, this, val, options);
           this._moreChanges = true;
         }
         delete this._changed[attr];
@@ -394,12 +393,12 @@
       if (this._changing || !this.hasChanged()) return this;
       this._changing = true;
       this._moreChanges = true;
-      for (var attr in this._changed) {
-        this.trigger('change:' + attr, this, this._changed[attr], options);
-      }
       while (this._moreChanges) {
         this._moreChanges = false;
         this.trigger('change', this, options);
+      }
+      for (var attr in this._changed) {
+        this.trigger('change:' + attr, this, this._changed[attr], options);
       }
       this._previousAttributes = _.clone(this.attributes);
       delete this._changed;
