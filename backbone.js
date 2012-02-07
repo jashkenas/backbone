@@ -994,6 +994,15 @@
       }
     }
   });
+  
+  
+  // Backbone.Notifier
+  //------------------
+  
+  //Creates a Backbone Level Notifier object that allows Views to publish/subscribe to events
+  //in a decoupled way
+  //hat tip to http://lostechies.com/derickbailey/2011/07/19/references-routing-and-the-event-aggregator-coordinating-views-in-backbone-js/
+  Backbone.Notifier = _.extend({}, Backbone.Events);
 
   // Backbone.View
   // -------------
