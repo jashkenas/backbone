@@ -951,7 +951,7 @@
     //
     // The options object can contain `trigger: true` if you wish to have the
     // route callback be fired (not usually desirable), or `replace: true`, if
-    // you which to modify the current URL without adding an entry to the history.
+    // you wish to modify the current URL without adding an entry to the history.
     navigate: function(fragment, options) {
       if (!historyStarted) return false;
       if (!options || options === true) options = {trigger: options};
