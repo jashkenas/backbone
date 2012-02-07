@@ -208,4 +208,12 @@ $(document).ready(function() {
     equal(history.getFragment('/root/foo'), 'foo');
   });
 
+  asyncTest("#945 - URI malformed error when decoding %25 ", function() {
+    window.location.hash = '/search?q=foo%25&baz';
+    setTimeout(function() {
+      start();
+      window.location.hash = '/search?q=bar';
+    }, 10);
+  });
+
 });

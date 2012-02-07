@@ -820,6 +820,7 @@
 
   // Cached regex for cleaning leading hashes and slashes .
   var routeStripper = /^[#/]/;
+  var invalidUriDecode = /[%][a-zA-Z0-9]{0,1}/;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
@@ -846,7 +847,7 @@
           fragment = window.location.hash;
         }
       }
-      fragment = decodeURIComponent(fragment);
+      fragment = decodeURIComponent(fragment.replace(invalidUriDecode, ''));
       if (!fragment.indexOf(this.options.root)) fragment = fragment.substr(this.options.root.length);
       return fragment.replace(routeStripper, '');
     },
