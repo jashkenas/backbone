@@ -366,11 +366,10 @@
       <li>- <a href="#examples-animoto">Animoto</a></li>
       <li>- <a href="#examples-decide">Decide</a></li>
       <li>- <a href="#examples-trello">Trello</a></li>
-      <li>- <a href="#examples-bittorrent">BitTorrent</a></li>
       <li>- <a href="#examples-ducksboard">Ducksboard</a></li>
+      <li>- <a href="#examples-picklive">Picklive</a></li>
       <li>- <a href="#examples-quietwrite">QuietWrite</a></li>
       <li>- <a href="#examples-tzigla">Tzigla</a></li>
-      <li>- <a href="#examples-picklive">Picklive</a></li>
     </ul>
 
     <a class="toc_title" href="#faq">
@@ -2809,24 +2808,6 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
 
-    <h2 id="examples-bittorrent">BitTorrent</h2>
-
-    <p>
-      <a href="http://www.bittorrent.com">BitTorrent</a> used Backbone to
-      completely rework an existing Win32 UI. Models normalize access to the
-      client's data and views rely heavily on the <tt>change</tt> events to keep
-      the UI state current. Using Backbone and SCSS,
-      <a href="http://www.bittorrent.com/chrysalis/">our new design</a> and UX
-      prototypes are considerably easier to iterate, test and work with than
-      the original Win32 UI.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="http://www.bittorrent.com/chrysalis/">
-        <img src="docs/images/bittorrent.jpg" alt="BitTorrent" class="example_image" />
-      </a>
-    </div>
-
     <h2 id="examples-ducksboard">Ducksboard</h2>
 
     <p>
@@ -2846,6 +2827,24 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://ducksboard.com/">
         <img src="docs/images/ducksboard.png" alt="Ducksboard" class="example_image" />
+      </a>
+    </div>
+    
+    <h2 id="examples-picklive">Picklive</h2>
+
+    <p>
+      <a href="http://twitter.com/timruffles">Tim Ruffles</a> and <a href="http://twitter.com/timparker">Tim Parker</a>
+      created the game client for <a href="https://free.picklive.com">Picklive</a>, a real-time fantasy-soccer game.
+      The client is written in <a href="http://coffeescript.org">CoffeeScript</a>, organised into
+      modules via <a href="http://requirejs.org">require.js</a>, tested with 
+      <a href="http://code.google.com/p/js-test-driver">jsTestDriver</a> and uses
+      <a href="http://mustache.github.com">Mustache.js</a> for templating. Backbone's model and sync layer separation
+      manages the complexity of mixed polling and web-sockets based synchronisation.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="https://free.picklive.com/">
+        <img src="docs/images/picklive.png" alt="picklive" class="example_image" />
       </a>
     </div>
 
@@ -2888,24 +2887,6 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://www.tzigla.com/">
         <img src="docs/images/tzigla.png" alt="Tzigla" class="example_image" />
-      </a>
-    </div>
-
-    <h2 id="examples-picklive">Picklive</h2>
-
-    <p>
-      <a href="http://twitter.com/timruffles">Tim Ruffles</a> and <a href="http://twitter.com/timparker">Tim Parker</a>
-      created the game client for <a href="https://free.picklive.com">Picklive</a>, a real-time fantasy-soccer game.
-      The client is written in <a href="http://coffeescript.org">CoffeeScript</a>, organised into
-      modules via <a href="http://requirejs.org">require.js</a>, tested with 
-      <a href="http://code.google.com/p/js-test-driver">jsTestDriver</a> and uses
-      <a href="http://mustache.github.com">Mustache.js</a> for templating. Backbone's model and sync layer separation
-      manages the complexity of mixed polling and web-sockets based synchronisation.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="https://free.picklive.com/">
-        <img src="docs/images/picklive.png" alt="picklive" class="example_image" />
       </a>
     </div>
 
