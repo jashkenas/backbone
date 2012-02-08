@@ -163,10 +163,11 @@
   // Create a new model, with defined attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
   Backbone.Model = function(attributes, options) {
-    var defaults;
+  	var defaults;
     attributes || (attributes = {});
     if (options && options.parse) attributes = this.parse(attributes);
-    if (defaults = getValue(this, 'defaults')) {
+    if (defaults = this.defaults) {
+      if (_.isFunction(defaults)) defaults = defaults.call(this);
       attributes = _.extend({}, defaults, attributes);
     }
     if (options && options.collection) this.collection = options.collection;
@@ -184,6 +185,7 @@
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
+
     idAttribute: 'id',
 
     // Initialize is an empty function by default. Override it with your own
@@ -1025,6 +1027,8 @@
     $: function(selector) {
       return this.$el.find(selector);
     },
+    
+    defaults : {},
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -1259,7 +1263,7 @@
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
-    if (protoProps) _.extend(child.prototype, protoProps);
+    if (protoProps) classExtend(child, protoProps);
 
     // Add static properties to the constructor function, if supplied.
     if (staticProps) _.extend(child, staticProps);
@@ -1269,7 +1273,8 @@
 
     // Set a convenience property in case the parent's prototype is needed later.
     child.__super__ = parent.prototype;
-
+	child.prototype.__super__ = parent.prototype;
+	
     return child;
   };
 
@@ -1284,5 +1289,48 @@
   var urlError = function() {
     throw new Error('A "url" property or function must be specified');
   };
+  
+  // Validate if is a function
+  var fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+  
+  // Extend Properties
+  // If is a function and the function exists in the parent
+  // then wrap a proxy function and replace the _super function with its parent function
+  var classExtend = function(c, prop) {
+  	var _super = c.prototype;
+    var _defaults = _super.defaults || {};
+  	var defaults = prop.defaults || {};
+  	if (defaults) {
+      if (_.isFunction(defaults)) defaults = defaults.call();
+      defaults = _.extend({}, _defaults, defaults);
+    }
+    prop.defaults = defaults;
+  	var prototype = new ctor();
+  	// Copy the properties over onto the new prototype
+    for (var name in prop) {
+      // Check if we're overwriting an existing function
+      prototype[name] = typeof prop[name] == "function" && 
+        typeof _super[name] == "function" && fnTest.test(prop[name]) ?
+        (function(name, fn){
+          return function() {
+            var tmp = this._super;
+            
+            // Add a new ._super() method that is the same method
+            // but on the super-class
+            this._super = _super[name];
+            
+            // The method only need to be bound temporarily, so we
+            // remove it when we're done executing
+            var ret = fn.apply(this, arguments);        
+            this._super = tmp;
+            
+            return ret;
+          };
+        })(name, prop[name]) :
+        prop[name];
+    }
+    // Populate our constructed prototype object
+    c.prototype = prototype;
+  }
 
 }).call(this);
