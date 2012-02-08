@@ -117,11 +117,17 @@ $(document).ready(function() {
     router.navigate('search/counter', {trigger: true});
     router.navigate('counter', {trigger: true});
     equal(router.count, 2);
+    Backbone.history.stop();
+    router.navigate('search/counter', {trigger: true});
+    router.navigate('counter', {trigger: true});
+    equal(router.count, 2);
+    Backbone.history.start();
+    equal(router.count, 3);
   });
 
   test("Router: use implicit callback if none provided", function() {
     router.count = 0;
-    router.navigate('implicit', {trigger: true})
+    router.navigate('implicit', {trigger: true});
     equal(router.count, 1);
   });
 
@@ -192,6 +198,14 @@ $(document).ready(function() {
     } catch (err) {
       ok(false, "an exception was thrown trying to fire the router event with no router handler callback");
     }
+  });
+
+  test("#933, #908 - leading slash", function() {
+    var history = new Backbone.History();
+    history.options = {root: '/root'};
+    equal(history.getFragment('/root/foo'), 'foo');
+    history.options.root = '/root/';
+    equal(history.getFragment('/root/foo'), 'foo');
   });
 
 });
