@@ -57,7 +57,7 @@ $(document).ready(function() {
       idAttribute: '_id'
     });
     var model = new MongoModel({_id: 100});
-    col.add(model);
+    col.push(model);
     equal(col.get(100), model);
     model.set({_id: 101});
     equal(col.get(101), model);
@@ -128,7 +128,7 @@ $(document).ready(function() {
       // no id, same cid
       var a2 = new Backbone.Model({label: a.label});
       a2.cid = a.cid;
-      col.add(a2);
+      col.push(a2);
       ok(false, "duplicate; expected add to fail");
     }, "Can't add the same model to a collection twice");
   });
@@ -136,7 +136,7 @@ $(document).ready(function() {
   test("Collection: can't add different model with same id to collection twice", function() {
     raises(function(){
       var col = new Backbone.Collection;
-      col.add({id: 101});
+      col.unshift({id: 101});
       col.add({id: 101});
       ok(false, "duplicate; expected add to fail");
     }, "Can't add the same model to a collection twice");
@@ -226,6 +226,12 @@ $(document).ready(function() {
     equal(col.length, 4);
     equal(col.first(), d);
     equal(otherRemoved, null);
+  });
+
+  test("Collection: shift and pop", function() {
+    var col = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
+    equal(col.shift().get('a'), 'a');
+    equal(col.pop().get('c'), 'c');
   });
 
   test("Collection: events are unbound on remove", function() {
