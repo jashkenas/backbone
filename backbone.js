@@ -250,7 +250,8 @@
         val = attrs[attr];
         if (!_.isEqual(now[attr], val)) delete escaped[attr];
         options.unset ? delete now[attr] : now[attr] = val;
-        if (this._changing && !_.isEqual(this._changed[attr], val)) {
+
+        if (this._changing && !_.isEqual(this._changed[attr], val) && !options.mute) {
           this.trigger('change:' + attr, this, val, options);
           this._moreChanges = true;
         }
@@ -258,6 +259,12 @@
         if (!_.isEqual(prev[attr], val) || (_.has(now, attr) != _.has(prev, attr))) {
           this._changed[attr] = val;
         }
+      }
+
+      // Replicates the old silent option and stops the change events.
+      if (options.mute) {
+        this._moreChanges = false;
+        this._changed = {};
       }
 
       // Fire the `"change"` events, if the model has been changed.
