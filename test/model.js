@@ -699,4 +699,40 @@ $(document).ready(function() {
     }
   });
 
+  test("#959 Setting an attribute with options silent:true during change event propagation should not lock the application in infinite loop", function() {
+    var count = 0;
+    var acount = 0;
+    var bcount = 0;
+    var Model = Backbone.Model.extend({
+      initialize: function() {
+        this.bind('change', _.bind(this.silentlySetAttribute, this));
+        this.bind('change:a', _.bind(this.aChange, this));
+        this.bind('change:b', _.bind(this.bChange, this));
+        this.set({'a': 1});
+      },
+      silentlySetAttribute: function() {
+        count++;
+        if(count > 10) {// to prevent infinite loop
+          return;
+        } 
+        this.set({'a': Math.random() * 1000}, {silent: true});
+        this.set({'b': Math.random() * 1000}, {silent: true});
+      },
+      aChange: function() {
+        acount++;
+      },
+      bChange: function() {
+        bcount++;
+      }
+    });
+    var m = new Model();
+    equal(count, 1, "Callback should be called once");
+    equal(acount, 1, "change:a call count should be 1");
+    equal(bcount, 1, "change:b call count should be 1");
+    m.set('a', 10, { silent: true });
+    equal(acount, 1, "change:a call count should be 1");
+    m.change();
+    equal(acount, 2, "change:a call count should be 2");
+  });
+
 });
