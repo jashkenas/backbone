@@ -1,12 +1,25 @@
 $(document).ready(function() {
 
-  module("Backbone.Collection");
+  var lastRequest = null;
+  var sync = Backbone.sync;
 
-  window.lastRequest = null;
+  module("Backbone.Collection", {
 
-  Backbone.sync = function() {
-    lastRequest = _.toArray(arguments);
-  };
+    setup: function() {
+      Backbone.sync = function(method, model, options) {
+        lastRequest = {
+          method: method,
+          model: model,
+          options: options
+        };
+      };
+    },
+
+    teardown: function() {
+      Backbone.sync = sync;
+    }
+
+  });
 
   var a         = new Backbone.Model({id: 3, label: 'a'});
   var b         = new Backbone.Model({id: 2, label: 'b'});
@@ -44,37 +57,10 @@ $(document).ready(function() {
       idAttribute: '_id'
     });
     var model = new MongoModel({_id: 100});
-    col.add(model);
+    col.push(model);
     equal(col.get(100), model);
     model.set({_id: 101});
     equal(col.get(101), model);
-  });
-
-  test("Collection: add model with attributes modified by set", function() {
-    var CustomSetModel = Backbone.Model.extend({
-      defaults: {
-        number_as_string: null //presence of defaults forces extend
-      },
-
-      validate: function (attributes) {
-        if (!_.isString(attributes.num_as_string)) {
-          return 'fail';
-        }
-      },
-
-      set: function (attributes, options) {
-        if (attributes.num_as_string) {
-          attributes.num_as_string = attributes.num_as_string.toString();
-        }
-        Backbone.Model.prototype.set.call(this, attributes, options);
-      }
-    });
-
-    var CustomSetCollection = Backbone.Collection.extend({
-      model: CustomSetModel
-    });
-    var col = new CustomSetCollection([{ num_as_string: 2 }]);
-    equal(col.length, 1);
   });
 
   test("Collection: update index when id changes", function() {
@@ -142,7 +128,7 @@ $(document).ready(function() {
       // no id, same cid
       var a2 = new Backbone.Model({label: a.label});
       a2.cid = a.cid;
-      col.add(a2);
+      col.push(a2);
       ok(false, "duplicate; expected add to fail");
     }, "Can't add the same model to a collection twice");
   });
@@ -150,7 +136,7 @@ $(document).ready(function() {
   test("Collection: can't add different model with same id to collection twice", function() {
     raises(function(){
       var col = new Backbone.Collection;
-      col.add({id: 101});
+      col.unshift({id: 101});
       col.add({id: 101});
       ok(false, "duplicate; expected add to fail");
     }, "Can't add the same model to a collection twice");
@@ -240,6 +226,12 @@ $(document).ready(function() {
     equal(col.length, 4);
     equal(col.first(), d);
     equal(otherRemoved, null);
+  });
+
+  test("Collection: shift and pop", function() {
+    var col = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
+    equal(col.shift().get('a'), 'a');
+    equal(col.pop().get('c'), 'c');
   });
 
   test("Collection: events are unbound on remove", function() {
@@ -337,18 +329,18 @@ $(document).ready(function() {
 
   test("Collection: fetch", function() {
     col.fetch();
-    equal(lastRequest[0], 'read');
-    equal(lastRequest[1], col);
-    equal(lastRequest[2].parse, true);
+    equal(lastRequest.method, 'read');
+    equal(lastRequest.model, col);
+    equal(lastRequest.options.parse, true);
 
     col.fetch({parse: false});
-    equal(lastRequest[2].parse, false);
+    equal(lastRequest.options.parse, false);
   });
 
   test("Collection: create", function() {
     var model = col.create({label: 'f'}, {wait: true});
-    equal(lastRequest[0], 'create');
-    equal(lastRequest[1], model);
+    equal(lastRequest.method, 'create');
+    equal(lastRequest.model, model);
     equal(model.get('label'), 'f');
     equal(model.collection, col);
   });
@@ -363,7 +355,7 @@ $(document).ready(function() {
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
-    equal(col.create({"foo":"bar"}),false);
+    equal(col.create({"foo":"bar"}), false);
   });
 
   test("Collection: a failing create runs the error callback", function() {
@@ -456,6 +448,7 @@ $(document).ready(function() {
       set: function(attrs) {
         equal(attrs.prop, 'value');
         equal(this.collection, col);
+        return this;
       }
     });
     col.model = Model;
@@ -520,6 +513,19 @@ $(document).ready(function() {
     ok(!col.getByCid(model.cid));
     ok(!col.get(1));
     equal(col.length, 0);
+  });
+
+  test("Collection: multiple copies of the same model", function() {
+    var col = new Backbone.Collection();
+    var model = new Backbone.Model();
+    raises(function() { col.add([model, model]); });
+    raises(function() { col.add([{id: 1}, {id: 1}]); });
+  });
+
+  test("#964 - collection.get return in consistent", function() {
+    var c = new Backbone.Collection();
+    ok(c.get(null) === undefined);
+    ok(c.get() === undefined);
   });
 
 });
