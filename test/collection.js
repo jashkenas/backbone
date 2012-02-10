@@ -427,6 +427,27 @@ $(document).ready(function() {
     ok(_.isEqual(col.last().attributes, a.attributes));
   });
 
+  test("Collection: update", function() {
+    var col = new Backbone.Collection;
+    var models = [a,b,c,d];
+    col.update(models)
+    equals(col.length, 4);
+    var e = new Backbone.Model({id: 5, title: 'e'});
+    e.sync = function(method, model, options) { options.success({}); };
+    col.update([e]);
+    equals(col.length, 5);
+    col.update([e], {prune: true});
+    equals(col.length, 1);
+    col.update(models);
+    equals(col.length, 5);
+    col.update(models, {prune: true});
+    equals(col.length, 4);
+    col.update([]);
+    equals(col.length, 4);
+    col.update([], {prune: true});
+    equals(col.length, 0);
+  });
+
   test("Collection: trigger custom events on models", function() {
     var fired = null;
     a.bind("custom", function() { fired = true; });
