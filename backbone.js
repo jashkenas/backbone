@@ -608,7 +608,7 @@
     // Get a model from the set by the column.
     getBy: function(column, value){
       return this.find(function(resource){
-        return resource.attributes[column] == value;
+        return resource.get(column) == value;
       });
     },
     // Get the model at the given index.
