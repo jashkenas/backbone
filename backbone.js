@@ -605,6 +605,12 @@
       return cid && this._byCid[cid.cid || cid];
     },
 
+    // Get a model from the set by the column.
+    getBy: function(column, value){
+      return this.find(function(resource){
+        return resource.attributes[column] == value;
+      });
+    },
     // Get the model at the given index.
     at: function(index) {
       return this.models[index];

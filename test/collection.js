@@ -51,6 +51,11 @@ $(document).ready(function() {
     equal(col.getByCid(col.first().cid), col.first());
   });
 
+  test("Collection: getBy", function() {
+    equal(col.getBy("label", "c"), c);
+    equal(col.getBy("label", "d"), d);
+  });
+
   test("Collection: get with non-default ids", function() {
     var col = new Backbone.Collection();
     var MongoModel = Backbone.Model.extend({
