@@ -124,22 +124,15 @@ $(document).ready(function() {
   });
 
   test("Collection: can't add model to collection twice", function() {
-    raises(function(){
-      // no id, same cid
-      var a2 = new Backbone.Model({label: a.label});
-      a2.cid = a.cid;
-      col.push(a2);
-      ok(false, "duplicate; expected add to fail");
-    }, "Can't add the same model to a collection twice");
+    var col = new Backbone.Collection([{id: 1}, {id: 2}, {id: 1}, {id: 2}, {id: 3}]);
+    equal(col.pluck('id').join(' '), '1 2 3');
   });
 
   test("Collection: can't add different model with same id to collection twice", function() {
-    raises(function(){
-      var col = new Backbone.Collection;
-      col.unshift({id: 101});
-      col.add({id: 101});
-      ok(false, "duplicate; expected add to fail");
-    }, "Can't add the same model to a collection twice");
+    var col = new Backbone.Collection;
+    col.unshift({id: 101});
+    col.add({id: 101});
+    equal(col.length, 1);
   });
 
   test("Collection: add model to multiple collections", function() {
@@ -518,8 +511,11 @@ $(document).ready(function() {
   test("Collection: multiple copies of the same model", function() {
     var col = new Backbone.Collection();
     var model = new Backbone.Model();
-    raises(function() { col.add([model, model]); });
-    raises(function() { col.add([{id: 1}, {id: 1}]); });
+    col.add([model, model]);
+    equal(col.length, 1);
+    col.add([{id: 1}, {id: 1}]);
+    equal(col.length, 2);
+    equal(col.last().id, 1);
   });
 
   test("#964 - collection.get return in consistent", function() {

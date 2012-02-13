@@ -501,7 +501,7 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
-      var i, index, length, model, cid, id, cids = {}, ids = {};
+      var i, index, length, model, cid, id, cids = {}, ids = {}, dups = [];
       options || (options = {});
       models = _.isArray(models) ? models.slice() : [models];
 
@@ -513,14 +513,21 @@
         }
         if (cids[cid = model.cid] || this._byCid[cid] ||
           (((id = model.id) != null) && (ids[id] || this._byId[id]))) {
-          throw new Error("Can't add the same model to a collection twice");
+          dups.push(i);
+          continue;
         }
         cids[cid] = ids[id] = model;
       }
 
+      // Remove duplicates.
+      i = dups.length;
+      while (i--) {
+        models.splice(dups[i], 1);
+      }
+
       // Listen to added models' events, and index models for lookup by
       // `id` and by `cid`.
-      for (i = 0; i < length; i++) {
+      for (i = 0, length = models.length; i < length; i++) {
         (model = models[i]).on('all', this._onModelEvent, this);
         this._byCid[model.cid] = model;
         if (model.id != null) this._byId[model.id] = model;
@@ -705,6 +712,7 @@
 
     // Prepare a model or hash of attributes to be added to this collection.
     _prepareModel: function(model, options) {
+      options || (options = {});
       if (!(model instanceof Backbone.Model)) {
         var attrs = model;
         options.collection = this;
