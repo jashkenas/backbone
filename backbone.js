@@ -149,6 +149,16 @@
         }
       }
       return this;
+    },
+
+    //proxy all events from the source object to the current object
+    proxy: function(source, events) {
+      _.each(events.split(/\s+/), function(eventName) {
+        source.on(eventName, function() {
+          this.trigger.apply(this, [eventName].concat(_.toArray(arguments)));
+        }, this);
+      }, this);
+      return this;
     }
 
   };
