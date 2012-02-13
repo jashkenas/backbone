@@ -145,4 +145,18 @@ $(document).ready(function() {
     equal(counter, 2, 'unbind does not alter callback list');
   });
 
+  test("Events: proxy events from one object to another", function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var counter = 0;
+    b.proxy(a, 'event:a event:b')
+      .bind('event:a event:b', function(argOne, argTwo) {
+        equal(argOne, 'one');
+        equal(argTwo, 'two');
+        ++counter;
+      });
+    a.trigger('event:a event:b', 'one', 'two');
+    equal(counter, 2);
+  });
+
 });
