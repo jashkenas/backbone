@@ -86,6 +86,7 @@
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
       var ev;
+      if (!callback) return this;
       events = events.split(/\s+/);
       var calls = this._callbacks || (this._callbacks = {});
       while (ev = events.shift()) {
