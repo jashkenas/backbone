@@ -699,4 +699,24 @@ $(document).ready(function() {
     }
   });
 
+  test("Model: deep toJSON", function() {
+
+    var m = new Backbone.Model({foo:"One", bar:"Two"});
+    var iCollection = new Backbone.Collection([{id:"1"}, {id:"2"}]);
+    var iModel = new Backbone.Model({innerFoo:"One", innerBar:"Two"});
+
+    m.set("innerModel", iModel);
+    m.set("innerCol", iCollection);
+
+    var json = m.toJSON();
+
+    deepEqual(json, {
+        foo:"One",
+        bar: "Two",
+        innerModel: { innerFoo : "One", innerBar : "Two" },
+        innerCol: [{id:"1"},{id:"2"}]
+    });
+
+  });
+
 });
