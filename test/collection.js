@@ -54,8 +54,8 @@ $(document).ready(function() {
   test("Collection: getBy", function() {
     var c2 = new Backbone.Model({id: 5, label: 'c'});
     col.add(c2);
-    same(col.getBy("label", "c"), [c, c2]);
-    same(col.getBy("label", "d"), [d]);
+    same(col.getBy("label", "c"), [c, c2], "should get c and c2 record");
+    same(col.getBy("label", "d"), [d]), "should get only d record");
     col.remove(c2);
   });
 
