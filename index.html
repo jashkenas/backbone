@@ -1597,7 +1597,7 @@ Accounts.fetch();
 
 <pre>
 &lt;script&gt;
-  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  accounts.reset(&lt;%= @accounts.to_json %&gt;);
 &lt;/script&gt;
 </pre>
 
@@ -3054,8 +3054,8 @@ Inbox.messages.fetch();
 
 <pre>
 &lt;script&gt;
-  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
-  Projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
+  accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
 &lt;/script&gt;
 </pre>
 
