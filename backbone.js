@@ -192,7 +192,11 @@
 
     // Return a copy of the model's `attributes` object.
     toJSON: function() {
-      return _.clone(this.attributes);
+      var deep = {}, temp;
+      for (prop in this.attributes) {
+        if ((temp = this.attributes[prop]) && (temp instanceof Backbone.Model || temp instanceof Backbone.Collection)) deep[prop] = temp.toJSON();
+      }  
+      return _.extend({}, this.attributes, deep);
     },
 
     // Get the value of an attribute.
