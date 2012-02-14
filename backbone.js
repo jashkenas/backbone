@@ -607,10 +607,11 @@
 
     // Get a model from the set by the column.
     getBy: function(column, value){
-      return this.find(function(resource){
-        return resource.get(column) == value;
-      });
+      return _.compact(this.map(function(resource){
+        if(resource.get(column) == value) return resource;
+      }));
     },
+
     // Get the model at the given index.
     at: function(index) {
       return this.models[index];

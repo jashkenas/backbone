@@ -52,8 +52,11 @@ $(document).ready(function() {
   });
 
   test("Collection: getBy", function() {
-    equal(col.getBy("label", "c"), c);
-    equal(col.getBy("label", "d"), d);
+    var c2 = new Backbone.Model({id: 5, label: 'c'});
+    col.add(c2);
+    same(col.getBy("label", "c"), [c, c2]);
+    same(col.getBy("label", "d"), [d]);
+    col.remove(c2);
   });
 
   test("Collection: get with non-default ids", function() {
