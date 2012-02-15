@@ -867,7 +867,10 @@
 
   // Set up all inheritable **Backbone.History** properties and methods.
   _.extend(Backbone.History.prototype, Backbone.Events, {
-
+    // Expose a method to test for history being started
+    isHistoryStarted: function(){
+        return historyStarted;
+    },
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
     interval: 50,
