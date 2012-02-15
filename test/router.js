@@ -37,6 +37,9 @@ $(document).ready(function() {
       "counter":                    "counter",
       "search/:query":              "search",
       "search/:query/p:page":       "search",
+      "contacts":                   "contacts",
+      "contacts/new":               "newContact",
+      "contacts/:id":               "loadContact",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
@@ -59,6 +62,18 @@ $(document).ready(function() {
     search : function(query, page) {
       this.query = query;
       this.page = page;
+    },
+
+    contacts: function(){
+      this.contact = 'index';
+    },
+
+    newContact: function(){
+      this.contact = 'new';
+    },
+
+    loadContact: function(){
+      this.contact = 'load';
     },
 
     splat : function(args) {
@@ -118,6 +133,18 @@ $(document).ready(function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equal(router.query, 'manhattan');
     equal(router.page, '20');
+  });
+
+  test("Router: route precedence via navigate", 6, function(){
+    // check both 0.9.x and backwards-compatibility options
+    _.each([ { trigger: true }, true ], function( options ){
+      Backbone.history.navigate('contacts', options);
+      equal(router.contact, 'index');
+      Backbone.history.navigate('contacts/new', options);
+      equal(router.contact, 'new');
+      Backbone.history.navigate('contacts/foo', options);
+      equal(router.contact, 'load');
+    });
   });
 
   test("Router: doesn't fire routes to the same place twice", function() {
