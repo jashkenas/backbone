@@ -1597,6 +1597,7 @@ Accounts.fetch();
 
 <pre>
 &lt;script&gt;
+  var Accounts = new Backbone.Collection;
   Accounts.reset(&lt;%= @accounts.to_json %&gt;);
 &lt;/script&gt;
 </pre>
@@ -3054,7 +3055,9 @@ Inbox.messages.fetch();
 
 <pre>
 &lt;script&gt;
+  var Accounts = new Backbone.Collection;
   Accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  var Projects = new Backbone.Collection;
   Projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
 &lt;/script&gt;
 </pre>
