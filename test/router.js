@@ -208,4 +208,11 @@ $(document).ready(function() {
     equal(history.getFragment('/root/foo'), 'foo');
   });
 
+  test("Router: route callback gets passed non-decoded values", function() {
+    var route = 'has%2Fslash/complex-has%23hash/has%20space';
+    Backbone.history.navigate(route, {trigger: true});
+    equal(router.first, 'has%2Fslash');
+    equal(router.part, 'has%23hash');
+    equal(router.rest, 'has%20space');
+  });
 });
