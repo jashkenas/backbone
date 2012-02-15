@@ -1,6 +1,32 @@
 $(document).ready(function() {
 
-  module("Backbone.Router");
+  var router = null;
+  var lsatRoute = null;
+  var lastArgs = [];
+
+  function onRoute(router, route, args) {
+    lastRoute = route;
+    lastArgs = args;
+  }
+
+  module("Backbone.Router", {
+
+    setup: function() {
+      Backbone.history = null;
+      router = new Router({testing: 101});
+      Backbone.history.interval = 9;
+      Backbone.history.start({pushState: false});
+      lastRoute = null;
+      lastArgs = [];
+      Backbone.history.on('route', onRoute);
+    },
+
+    teardown: function() {
+      Backbone.history.stop();
+      Backbone.history.off('route', onRoute);
+    }
+
+  });
 
   var Router = Backbone.Router.extend({
 
@@ -56,19 +82,6 @@ $(document).ready(function() {
 
     // do not provide a callback method for the noCallback route
 
-  });
-
-  Backbone.history = null;
-  var router = new Router({testing: 101});
-
-  Backbone.history.interval = 9;
-  Backbone.history.start({pushState: false});
-
-  var lastRoute = null;
-  var lastArgs = [];
-  Backbone.history.bind('route', function(router, route, args) {
-    lastRoute = route;
-    lastArgs = args;
   });
 
   test("Router: initialize", function() {
@@ -206,6 +219,13 @@ $(document).ready(function() {
     equal(history.getFragment('/root/foo'), 'foo');
     history.options.root = '/root/';
     equal(history.getFragment('/root/foo'), 'foo');
+  });
+
+  test("#1003 - History is started before navigate is called", function() {
+    var history = new Backbone.History();
+    history.navigate = function(){ ok(Backbone.History.started); };
+    Backbone.history.stop();
+    history.start();
   });
 
 });
