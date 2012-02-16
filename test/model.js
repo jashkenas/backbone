@@ -304,7 +304,7 @@ $(document).ready(function() {
   test("Model: change with options", function() {
     var value;
     var model = new Backbone.Model({name: 'Rob'});
-    model.on('change', function(model, options) {
+    model.on('change', function(model, changed, options) {
       value = options.prefix + model.get('name');
     });
     model.set({name: 'Bob'}, {silent: true});
