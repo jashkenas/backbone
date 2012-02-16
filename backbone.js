@@ -400,7 +400,7 @@
       }
       while (this._moreChanges) {
         this._moreChanges = false;
-        this.trigger('change', this, options);
+        this.trigger('change', this, this._changed, options);
       }
       this._previousAttributes = _.clone(this.attributes);
       delete this._changed;
