@@ -186,15 +186,15 @@
   _.extend(Backbone.Model.prototype, Backbone.Events, {
 
     // A hash of attributes whose current and previous value differ.
-    _changed: void 0,
+    _changed: null,
 
     // A hash of attributes that have silently changed since the last time
     // `change` was called.  Will become pending attributes on the next call.
-    _silent: void 0,
+    _silent: null,
 
     // A hash of attributes that have changed since the last `'change'` event
     // began.
-    _pending: void 0,
+    _pending: null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
