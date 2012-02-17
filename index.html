@@ -238,6 +238,7 @@
       <li>– <a href="#Model-idAttribute">idAttribute</a></li>
       <li>– <a href="#Model-cid">cid</a></li>
       <li>– <a href="#Model-attributes">attributes</a></li>
+      <li>– <a href="#Model-changed">changed</a></li>
       <li>– <a href="#Model-defaults">defaults</a></li>
       <li>– <a href="#Model-toJSON">toJSON</a></li>
       <li>– <a href="#Model-fetch">fetch</a></li>
@@ -855,6 +856,17 @@ alert("Cake id: " + cake.id);
       state. Please use <a href="#Model-set">set</a> to update the attributes instead of modifying
       them directly. If you'd like to retrieve and munge a copy of the model's
       attributes, use <a href="#Model-toJSON">toJSON</a> instead.
+    </p>
+
+    <p id="Model-changed">
+      <b class="header">changed</b><code>model.changed</code>
+      <br />
+      The <b>changed</b> property is the internal hash containing all the attributes
+      that have changed since the last <tt>"change"</tt> event was triggered.
+      Please do not update <b>changed</b> directly.  It's state is maintained internally
+      by <a href="#Model-set">set</a> and <a href="#Model-change">change</a>.
+      A copy of <b>changed</b> can be acquired from
+      <a href="#Model-changedAttributes">changedAttributes</a>.
     </p>
 
     <p id="Model-defaults">
@@ -2392,18 +2404,18 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/wunderkit.png" alt="Wunderkit" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-khan-academy">Khan Academy</h2>
 
     <p>
-      <a href="http://www.khanacademy.org">Khan Academy</a> is on a mission to 
-      provide a free world-class education to anyone anywhere. With thousands of 
-      videos, hundreds of JavaScript-driven exercises, and big plans for the 
-      future, Khan Academy uses Backbone to keep frontend code modular and organized. 
-      <a href="https://khanacademy.kilnhg.com/Code/Website/Group/stable/Files/javascript/profile-package?rev=tip">User profiles</a> 
-      and <a href="https://khanacademy.kilnhg.com/Code/Website/Group/stable/File/javascript/shared-package/goals.js?rev=tip">goal setting</a> 
-      are implemented with Backbone, jQuery and Handlebars, and most new feature 
-      work is being pushed to the client side, greatly increasing the quality of 
+      <a href="http://www.khanacademy.org">Khan Academy</a> is on a mission to
+      provide a free world-class education to anyone anywhere. With thousands of
+      videos, hundreds of JavaScript-driven exercises, and big plans for the
+      future, Khan Academy uses Backbone to keep frontend code modular and organized.
+      <a href="https://khanacademy.kilnhg.com/Code/Website/Group/stable/Files/javascript/profile-package?rev=tip">User profiles</a>
+      and <a href="https://khanacademy.kilnhg.com/Code/Website/Group/stable/File/javascript/shared-package/goals.js?rev=tip">goal setting</a>
+      are implemented with Backbone, jQuery and Handlebars, and most new feature
+      work is being pushed to the client side, greatly increasing the quality of
       <a href="https://github.com/Khan/khan-api/">the API</a>.
     </p>
 
@@ -2835,14 +2847,14 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/ducksboard.png" alt="Ducksboard" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-picklive">Picklive</h2>
 
     <p>
       <a href="http://twitter.com/timruffles">Tim Ruffles</a> and <a href="http://twitter.com/timparker">Tim Parker</a>
       created the game client for <a href="https://free.picklive.com">Picklive</a>, a real-time fantasy-soccer game.
       The client is written in <a href="http://coffeescript.org">CoffeeScript</a>, organised into
-      modules via <a href="http://requirejs.org">require.js</a>, tested with 
+      modules via <a href="http://requirejs.org">require.js</a>, tested with
       <a href="http://code.google.com/p/js-test-driver">jsTestDriver</a> and uses
       <a href="http://mustache.github.com">Mustache.js</a> for templating. Backbone's model and sync layer separation
       manages the complexity of mixed polling and web-sockets based synchronisation.

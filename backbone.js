@@ -174,14 +174,31 @@
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
+    this.changed = {};
+    this._silent = {};
+    this._pending = {};
     this.set(attributes, {silent: true});
-    delete this._changed;
+    // Reset change tracking.
+    this.changed = {};
+    this._silent = {};
+    this._pending = {};
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
   };
 
   // Attach all inheritable methods to the Model prototype.
   _.extend(Backbone.Model.prototype, Backbone.Events, {
+
+    // A hash of attributes whose current and previous value differ.
+    changed: null,
+
+    // A hash of attributes that have silently changed since the last time
+    // `change` was called.  Will become pending attributes on the next call.
+    _silent: null,
+
+    // A hash of attributes that have changed since the last `'change'` event
+    // began.
+    _pending: null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -239,33 +256,33 @@
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
+      var changes = options.changes = {};
       var now = this.attributes;
       var escaped = this._escapedAttributes;
       var prev = this._previousAttributes || {};
-      var alreadySetting = this._setting;
-      this._changed || (this._changed = {});
-      this._setting = true;
 
-      // Update attributes.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(now[attr], val)) delete escaped[attr];
-        options.unset ? delete now[attr] : now[attr] = val;
-        if (this._changing && !_.isEqual(this._changed[attr], val)) {
-          this.trigger('change:' + attr, this, val, options);
-          this._moreChanges = true;
+        // If the new and current value differ, record the change.
+        if (!_.isEqual(now[attr], val) || (options.unset && _.has(now, attr))) {
+          delete escaped[attr];
+          (options.silent ? this._silent : changes)[attr] = true;
         }
-        delete this._changed[attr];
+        // Update the current value.
+        options.unset ? delete now[attr] : now[attr] = val;
+        // If the new and previous value differ, record the change.  If not,
+        // then remove changes for this attribute.
         if (!_.isEqual(prev[attr], val) || (_.has(now, attr) != _.has(prev, attr))) {
-          this._changed[attr] = val;
+          this.changed[attr] = val;
+          if (!options.silent) this._pending[attr] = true;
+        } else {
+          delete this.changed[attr];
+          delete this._pending[attr];
         }
       }
 
-      // Fire the `"change"` events, if the model has been changed.
-      if (!alreadySetting) {
-        if (!options.silent && this.hasChanged()) this.change(options);
-        this._setting = false;
-      }
+      // Fire the `"change"` events.
+      if (!options.silent) this.change(options);
       return this;
     },
 
@@ -392,18 +409,29 @@
     // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
-      if (this._changing || !this.hasChanged()) return this;
+      options || (options = {});
+      var changing = this._changing;
       this._changing = true;
-      this._moreChanges = true;
-      for (var attr in this._changed) {
-        this.trigger('change:' + attr, this, this._changed[attr], options);
+      // Silent changes become pending changes.
+      for (var attr in this._silent) this._pending[attr] = true;
+      // Silent changes are triggered.
+      var changes = _.extend({}, options.changes, this._silent);
+      this._silent = {};
+      for (var attr in changes) {
+        this.trigger('change:' + attr, this, this.attributes[attr], options);
       }
-      while (this._moreChanges) {
-        this._moreChanges = false;
+      if (changing) return this;
+      // Continue firing `"change"` events while there are pending changes.
+      while (!_.isEmpty(this._pending)) {
+        this._pending = {};
         this.trigger('change', this, options);
+        // Pending and silent changes still remain.
+        for (var attr in this.changed) {
+          if (this._pending[attr] || this._silent[attr]) continue;
+          delete this.changed[attr];
+        }
+        this._previousAttributes = _.clone(this.attributes);
       }
-      this._previousAttributes = _.clone(this.attributes);
-      delete this._changed;
       this._changing = false;
       return this;
     },
@@ -411,8 +439,8 @@
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (!arguments.length) return !_.isEmpty(this._changed);
-      return this._changed && _.has(this._changed, attr);
+      if (!arguments.length) return !_.isEmpty(this.changed);
+      return _.has(this.changed, attr);
     },
 
     // Return an object containing all the attributes that have changed, or
@@ -422,7 +450,7 @@
     // You can also pass an attributes object to diff against the model,
     // determining if there *would be* a change.
     changedAttributes: function(diff) {
-      if (!diff) return this.hasChanged() ? _.clone(this._changed) : false;
+      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
       var val, changed = false, old = this._previousAttributes;
       for (var attr in diff) {
         if (_.isEqual(old[attr], (val = diff[attr]))) continue;
