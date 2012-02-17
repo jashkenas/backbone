@@ -517,8 +517,8 @@ $(document).ready(function() {
       }
     });
 
-    a = new A();
-    b = new B({a: a});
+    var a = new A();
+    var b = new B({a: a});
     a.set({state: 'hello'});
   });
 
@@ -632,15 +632,21 @@ $(document).ready(function() {
     equal(changed, 1);
   });
 
-  test("nested `set` during `'change:attr'`", 1, function() {
+  test("nested `set` during `'change:attr'`", function() {
+    var events = [];
     var model = new Backbone.Model();
-    model.on('change:x', function() { ok(true); });
-    model.on('change:y', function() {
-      model.set({x: true});
-      // only fires once
-      model.set({x: true});
+    model.on('all', function(event) { events.push(event); });
+    model.on('change', function() {
+      model.set({z: true}, {silent:true});
     });
-    model.set({y: true});
+    model.on('change:x', function() {
+      model.set({y: true});
+    });
+    model.set({x: true});
+    deepEqual(events, ['change:y', 'change:x', 'change']);
+    events = [];
+    model.change();
+    deepEqual(events, ['change:z', 'change']);
   });
 
   test("nested `change` only fires once", 1, function() {
@@ -658,27 +664,100 @@ $(document).ready(function() {
     model.change();
   });
 
-  test("nested `set` suring `'change'`", 3, function() {
+  test("nested `set` during `'change'`", 6, function() {
     var count = 0;
     var model = new Backbone.Model();
     model.on('change', function() {
       switch(count++) {
         case 0:
           deepEqual(this.changedAttributes(), {x: true});
+          equal(model.previous('x'), undefined);
           model.set({y: true});
           break;
         case 1:
-          deepEqual(this.changedAttributes(), {x: true, y: true});
+          deepEqual(this.changedAttributes(), {y: true});
+          equal(model.previous('x'), true);
           model.set({z: true});
           break;
         case 2:
-          deepEqual(this.changedAttributes(), {x: true, y: true, z: true});
+          deepEqual(this.changedAttributes(), {z: true});
+          equal(model.previous('y'), true);
           break;
         default:
           ok(false);
       }
     });
     model.set({x: true});
+  });
+
+  test("nested `'change'` with silent", 3, function() {
+    var count = 0;
+    var model = new Backbone.Model();
+    model.on('change:y', function() { ok(true); });
+    model.on('change', function() {
+      switch(count++) {
+        case 0:
+          deepEqual(this.changedAttributes(), {x: true});
+          model.set({y: true}, {silent: true});
+          break;
+        case 1:
+          deepEqual(this.changedAttributes(), {y: true, z: true});
+          break;
+        default:
+          ok(false);
+      }
+    });
+    model.set({x: true});
+    model.set({z: true});
+  });
+
+  test("nested `'change:attr'` with silent", 1, function() {
+    var model = new Backbone.Model();
+    model.on('change:y', function(){ ok(true); });
+    model.on('change', function() {
+      model.set({y: true}, {silent: true});
+      model.set({z: true});
+    });
+    model.set({x: true});
+  });
+
+  test("multiple nested changes with silent", 1, function() {
+    var model = new Backbone.Model();
+    model.on('change:x', function() {
+      model.set({y: 1}, {silent: true});
+      model.set({y: 2});
+    });
+    model.on('change:y', function(model, val) {
+      equal(val, 2);
+    });
+    model.set({x: true});
+    model.change();
+  });
+
+  test("multiple nested changes with silent", function() {
+    var changes = [];
+    var model = new Backbone.Model();
+    model.on('change:b', function(model, val) { changes.push(val); });
+    model.on('change', function() {
+      model.set({b: 1});
+      model.set({b: 2}, {silent: true});
+    });
+    model.set({b: 0});
+    deepEqual(changes, [0, 1, 1]);
+    model.change();
+    deepEqual(changes, [0, 1, 1, 2, 1]);
+  });
+
+  test("nested set multiple times", 1, function() {
+    var model = new Backbone.Model();
+    model.on('change:b', function() {
+      ok(true);
+    });
+    model.on('change:a', function() {
+      model.set({b: true});
+      model.set({b: true});
+    });
+    model.set({a: true});
   });
 
   test("Backbone.wrapError triggers `'error'`", 12, function() {
