@@ -1112,6 +1112,7 @@
     //       'mousedown .title':  'edit',
     //       'click .button':     'save'
     //       'click .open':       function(e) { ... }
+    //       'collection reset':  'render'
     //     }
     //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
@@ -1119,6 +1120,7 @@
     // Omitting the selector binds the event to `this.el`.
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
+    // It can also be bound to a collection or model (check the example above)
     delegateEvents: function(events) {
       if (!(events || (events = getValue(this, 'events')))) return;
       this.undelegateEvents();
@@ -1128,12 +1130,21 @@
         if (!method) throw new Error('Method "' + events[key] + '" does not exist');
         var match = key.match(eventSplitter);
         var eventName = match[1], selector = match[2];
-        method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.bind(eventName, method);
-        } else {
-          this.$el.delegate(selector, eventName, method);
+        switch (eventName) {
+          case 'collection':
+            this.collection.on(selector, method, this);
+            break;
+          case 'model':
+            this.model.on(selector, method, this);
+            break;
+          default:
+            method = _.bind(method, this);
+            eventName += '.delegateEvents' + this.cid;
+            if (selector === '') {
+              this.$el.bind(eventName, method);
+            } else {
+              this.$el.delegate(selector, eventName, method);
+            }
         }
       }
     },
@@ -1143,6 +1154,24 @@
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
       this.$el.unbind('.delegateEvents' + this.cid);
+      var events = getValue(this, 'events');
+      for (var key in events) {
+        var match = key.match(eventSplitter);
+        var target = match[1], eventName = match[2];
+
+        var method = events[key];
+        if (!_.isFunction(method)) method = this[events[key]];
+        if (!method) throw new Error('Method "' + events[key] + '" does not exist');
+
+        switch (target) {
+          case 'collection':
+            this.collection.off(eventName, method, this);
+            break;
+          case 'model':
+            this.model.off(eventName, method, this);
+            break;
+        }
+      }
     },
 
     // Performs the initial configuration of a View with a set of options.
