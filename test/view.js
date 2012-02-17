@@ -178,4 +178,49 @@ $(document).ready(function() {
     equal(count, 2);
   });
 
+  test("View: collection and model events", function() {
+    var count = 0;
+    var ModelClass = Backbone.Model.extend({});
+    var CollectionClass = Backbone.Collection.extend({
+      model: ModelClass
+    });
+    var ViewClass = Backbone.View.extend({
+      events: {
+        'collection reset': 'collReset',
+        'model change': 'modelChange'
+      },
+
+      collReset: function() {
+        count++;
+      },
+
+      modelChange: function() {
+        count++;
+      }
+    });
+
+    var view = new ViewClass({
+      collection: new CollectionClass(),
+      model: new ModelClass()
+    });
+    view.model.trigger('change');
+    equal(count, 1);
+    view.collection.trigger('reset');
+    equal(count, 2);
+    view.undelegateEvents();
+    view.model.trigger('change');
+    view.collection.trigger('reset');
+    equal(count, 2);
+
+    view.delegateEvents();
+    view.collection.on('reset', function() {
+      count++;
+    });
+    view.collection.trigger('reset');
+    equal(count, 4);
+    view.undelegateEvents();
+    view.collection.trigger('reset');
+    equal(count, 5);
+  });
+
 });
