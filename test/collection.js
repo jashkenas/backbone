@@ -420,6 +420,20 @@ $(document).ready(function() {
     ok(_.isEqual(col.last().attributes, a.attributes));
   });
 
+  test("Collection: reset passes caller options", function() {
+    var Model = Backbone.Model.extend({
+      initialize: function(attrs, options) {
+        this.model_parameter = options.model_parameter;
+      }
+    });
+    var col = new (Backbone.Collection.extend({ model: Model }))();
+    col.reset([{ astring: "green", anumber: 1 }, { astring: "blue", anumber: 2 }], { model_parameter: 'model parameter' });
+    equal(col.length, 2);
+    col.each(function(model) {
+      equal(model.model_parameter, 'model parameter');
+    });
+  });
+
   test("Collection: trigger custom events on models", function() {
     var fired = null;
     a.bind("custom", function() { fired = true; });
