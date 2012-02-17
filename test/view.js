@@ -4,7 +4,9 @@ $(document).ready(function() {
 
   var view = new Backbone.View({
     id        : 'test-view',
-    className : 'test-view'
+    className : 'test-view',
+    someCollection : new Backbone.Collection,
+    someModel : new Backbone.Model
   });
 
   test("View: constructor", function() {
@@ -12,6 +14,8 @@ $(document).ready(function() {
     equal(view.el.className, 'test-view');
     equal(view.options.id, 'test-view');
     equal(view.options.className, 'test-view');
+    ok(view.someCollection instanceof Backbone.Collection);
+    ok(view.someModel instanceof Backbone.Model);
   });
 
   test("View: jQuery", function() {
