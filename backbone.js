@@ -82,71 +82,76 @@
   //
   Backbone.Events = {
 
-    // Bind an event, specified by a string name, `ev`, to a `callback`
+    // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
-      var ev;
+      var calls, event, node, tail, list;
       if (!callback) return this;
       events = events.split(/\s+/);
-      var calls = this._callbacks || (this._callbacks = {});
-      while (ev = events.shift()) {
+      calls = this._callbacks || (this._callbacks = {});
+      while (event = events.shift()) {
         // Create an immutable callback list, allowing traversal during
         // modification.  The tail is an empty object that will always be used
         // as the next node.
-        var list  = calls[ev] || (calls[ev] = {});
-        var tail = list.tail || (list.tail = list.next = {});
-        tail.callback = callback;
-        tail.context = context;
-        list.tail = tail.next = {};
+        list = calls[event];
+        node = list ? list.tail : {};
+        node.next = tail = {};
+        node.context = context;
+        node.callback = callback;
+        calls[event] = {tail: tail, next: list ? list.next : node};
       }
       return this;
     },
 
     // Remove one or many callbacks. If `context` is null, removes all callbacks
     // with that function. If `callback` is null, removes all callbacks for the
-    // event. If `ev` is null, removes all bound callbacks for all events.
+    // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
-      var ev, calls, node;
+      var event, calls, node, tail, cb, ctx;
       if (!events) {
         delete this._callbacks;
       } else if (calls = this._callbacks) {
         events = events.split(/\s+/);
-        while (ev = events.shift()) {
-          node = calls[ev];
-          delete calls[ev];
+        while (event = events.shift()) {
+          node = calls[event];
+          delete calls[event];
           if (!callback || !node) continue;
-          // Create a new list, omitting the indicated event/context pairs.
-          while ((node = node.next) && node.next) {
-            if (node.callback === callback &&
-              (!context || node.context === context)) continue;
-            this.on(ev, node.callback, node.context);
+          // Create a new list, omitting the indicated callbacks.
+          tail = node.tail;
+          while ((node = node.next) !== tail) {
+            cb = node.callback;
+            ctx = node.context;
+            if (cb !== callback || (context && ctx !== context)) {
+              this.on(event, cb, ctx);
+            }
           }
         }
       }
       return this;
     },
 
-    // Trigger an event, firing all bound callbacks. Callbacks are passed the
-    // same arguments as `trigger` is, apart from the event name.
+    // Trigger one more many events, firing all bound callbacks. Callbacks are
+    // passed the same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
     trigger: function(events) {
       var event, node, calls, tail, args, all, rest;
       if (!(calls = this._callbacks)) return this;
-      all = calls['all'];
-      (events = events.split(/\s+/)).push(null);
-      // Save references to the current heads & tails.
-      while (event = events.shift()) {
-        if (all) events.push({next: all.next, tail: all.tail, event: event});
-        if (!(node = calls[event])) continue;
-        events.push({next: node.next, tail: node.tail});
-      }
-      // Traverse each list, stopping when the saved tail is reached.
+      all = calls.all;
+      events = events.split(/\s+/);
       rest = slice.call(arguments, 1);
-      while (node = events.pop()) {
-        tail = node.tail;
-        args = node.event ? [node.event].concat(rest) : rest;
-        while ((node = node.next) !== tail) {
-          node.callback.apply(node.context || this, args);
+      while (event = events.shift()) {
+        if (node = calls[event]) {
+          tail = node.tail;
+          while ((node = node.next) !== tail) {
+            node.callback.apply(node.context || this, rest);
+          }
+        }
+        if (node = all) {
+          tail = node.tail;
+          args = [event].concat(rest);
+          while ((node = node.next) !== tail) {
+            node.callback.apply(node.context || this, args);
+          }
         }
       }
       return this;
@@ -766,12 +771,12 @@
     // Sets need to update their indexes when models change ids. All other
     // events simply proxy through. "add" and "remove" events that originate
     // in other collections are ignored.
-    _onModelEvent: function(ev, model, collection, options) {
-      if ((ev == 'add' || ev == 'remove') && collection != this) return;
-      if (ev == 'destroy') {
+    _onModelEvent: function(event, model, collection, options) {
+      if ((event == 'add' || event == 'remove') && collection != this) return;
+      if (event == 'destroy') {
         this.remove(model, options);
       }
-      if (model && ev === 'change:' + model.idAttribute) {
+      if (model && event === 'change:' + model.idAttribute) {
         delete this._byId[model.previous(model.idAttribute)];
         this._byId[model.id] = model;
       }
