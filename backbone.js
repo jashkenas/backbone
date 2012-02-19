@@ -1340,7 +1340,8 @@
     child.prototype.constructor = child;
 
     // Set a convenience property in case the parent's prototype is needed later.
-    child.__super__ = parent.prototype;
+    child.__super__ = parent;
+    child.prototype.__super__ = parent.prototype;
 
     return child;
   };
