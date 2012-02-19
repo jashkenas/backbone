@@ -1259,6 +1259,9 @@
     if (!options.data && model && (method == 'create' || method == 'update')) {
       params.contentType = 'application/json';
       params.data = JSON.stringify(model.toJSON());
+      // See: http://bugs.jquery.com/ticket/8417
+      params.jsonp = false;
+      delete params.dataType;
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
