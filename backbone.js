@@ -102,6 +102,16 @@
       }
       return this;
     },
+    
+    // Bind an event, specified by a string name, `ev`, to a `callback` function.
+    // The `callback` is only fired the first time the event is triggered.
+    bindOnce : function(ev, callback) {
+      var fn = function() {
+        this.unbind(ev, fn);
+        callback.apply(this, arguments);
+      }
+      this.bind(ev, fn);
+    },
 
     // Remove one or many callbacks. If `context` is null, removes all callbacks
     // with that function. If `callback` is null, removes all callbacks for the
