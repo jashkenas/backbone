@@ -80,7 +80,7 @@
   //     object.on('expand', function(){ alert('expanded'); });
   //     object.trigger('expand');
   //
-  Backbone.Events = {
+  var Events = Backbone.Events = {
 
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
@@ -160,15 +160,15 @@
   };
 
   // Aliases for backwards compatibility.
-  Backbone.Events.bind   = Backbone.Events.on;
-  Backbone.Events.unbind = Backbone.Events.off;
+  Events.bind   = Events.on;
+  Events.unbind = Events.off;
 
   // Backbone.Model
   // --------------
 
   // Create a new model, with defined attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
-  Backbone.Model = function(attributes, options) {
+  var Model = Backbone.Model = function(attributes, options) {
     var defaults;
     attributes || (attributes = {});
     if (options && options.parse) attributes = this.parse(attributes);
@@ -192,7 +192,7 @@
   };
 
   // Attach all inheritable methods to the Model prototype.
-  _.extend(Backbone.Model.prototype, Backbone.Events, {
+  _.extend(Model.prototype, Events, {
 
     // A hash of attributes whose current and previous value differ.
     changed: null,
@@ -252,7 +252,7 @@
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
-      if (attrs instanceof Backbone.Model) attrs = attrs.attributes;
+      if (attrs instanceof Model) attrs = attrs.attributes;
       if (options.unset) for (attr in attrs) attrs[attr] = void 0;
 
       // Run validation.
@@ -507,7 +507,7 @@
   // Provides a standard collection class for our sets of models, ordered
   // or unordered. If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
-  Backbone.Collection = function(models, options) {
+  var Collection = Backbone.Collection = function(models, options) {
     options || (options = {});
     if (options.comparator) this.comparator = options.comparator;
     this._reset();
@@ -516,11 +516,11 @@
   };
 
   // Define the Collection's inheritable methods.
-  _.extend(Backbone.Collection.prototype, Backbone.Events, {
+  _.extend(Collection.prototype, Events, {
 
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
-    model: Backbone.Model,
+    model: Model,
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -748,7 +748,7 @@
     // Prepare a model or hash of attributes to be added to this collection.
     _prepareModel: function(model, options) {
       options || (options = {});
-      if (!(model instanceof Backbone.Model)) {
+      if (!(model instanceof Model)) {
         var attrs = model;
         options.collection = this;
         model = new this.model(attrs, options);
@@ -794,7 +794,7 @@
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
   _.each(methods, function(method) {
-    Backbone.Collection.prototype[method] = function() {
+    Collection.prototype[method] = function() {
       return _[method].apply(_, [this.models].concat(_.toArray(arguments)));
     };
   });
@@ -804,7 +804,7 @@
 
   // Routers map faux-URLs to actions, and fire events when routes are
   // matched. Creating a new one sets its `routes` hash, if not set statically.
-  Backbone.Router = function(options) {
+  var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
@@ -818,7 +818,7 @@
   var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
-  _.extend(Backbone.Router.prototype, Backbone.Events, {
+  _.extend(Router.prototype, Events, {
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -831,7 +831,7 @@
     //     });
     //
     route: function(route, name, callback) {
-      Backbone.history || (Backbone.history = new Backbone.History);
+      Backbone.history || (Backbone.history = new History);
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (!callback) callback = this[name];
       Backbone.history.route(route, _.bind(function(fragment) {
@@ -899,7 +899,7 @@
   History.started = false;
 
   // Set up all inheritable **Backbone.History** properties and methods.
-  _.extend(History.prototype, Backbone.Events, {
+  _.extend(History.prototype, Events, {
 
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
@@ -1072,7 +1072,7 @@
 
   // Creating a Backbone.View creates its initial element outside of the DOM,
   // if an existing element is not provided...
-  Backbone.View = function(options) {
+  var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
     this._configure(options || {});
     this._ensureElement();
@@ -1087,7 +1087,7 @@
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
-  _.extend(Backbone.View.prototype, Backbone.Events, {
+  _.extend(View.prototype, Events, {
 
     // The default `tagName` of a View's element is `"div"`.
     tagName: 'div',
@@ -1215,8 +1215,7 @@
   };
 
   // Set up inheritance for the model, collection, and view.
-  Backbone.Model.extend = Backbone.Collection.extend =
-    Backbone.Router.extend = Backbone.View.extend = extend;
+  Model.extend = Collection.extend = Router.extend = View.extend = extend;
 
   // Backbone.sync
   // -------------
