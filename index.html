@@ -1023,7 +1023,8 @@ book.destroy({success: function(model, response) {
       can be as simple as a string error message to be displayed, or a complete
       error object that describes the error programmatically. <tt>set</tt> and
       <tt>save</tt> will not continue if <b>validate</b> returns an error.
-      Failed validations trigger an <tt>"error"</tt> event.
+      Failed validations trigger an <tt>"error"</tt> event, in which case a
+      <tt>"change"</tt> event won't be triggered.
     </p>
 
 <pre class="runnable">
