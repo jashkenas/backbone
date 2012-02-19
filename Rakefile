@@ -2,6 +2,8 @@ require 'rubygems'
 
 HEADER = /((^\s*\/\/.*\n)+)/
 
+task :default => []
+
 desc "rebuild the backbone-min.js files for distribution"
 task :build do
   begin
