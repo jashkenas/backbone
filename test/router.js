@@ -255,4 +255,27 @@ $(document).ready(function() {
     history.start();
   });
 
+  test("#868 - checkUrl: URI malformed error", function() {
+    Backbone.history.stop();
+
+    var history = new Backbone.History();
+    history.options = {root: '/'};
+
+    var q = "fat:1.5%";
+
+    // need to populate history with some hisory events containing URI special chars
+    window.location.hash = "#fat";
+    history.checkUrl();
+    window.location.hash = "#"+ encodeURIComponent(q);
+    history.checkUrl();
+
+    try{
+        window.location.hash = "#fat";
+        history.checkUrl();
+        ok(true, "all passed");
+    } catch(err){
+        ok(false, "failed with error:" + err);
+    }
+  });
+
 });
