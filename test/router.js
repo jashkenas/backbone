@@ -274,7 +274,6 @@ $(document).ready(function() {
         history.checkUrl();
         ok(true, "all passed");
     } catch(err){
-        console.log(err);
         ok(false, "failed with error:" + err);
     }
   });
