@@ -533,6 +533,11 @@
         Similarly, after changing an attribute silently, that <tt>change:attribute</tt>
         event <i>will</i> fire during the next change.
       </li>
+      <li>
+        Since <tt>view.$(selector)</tt> is now equivalent to <tt>view.$el.find(selector)</tt>
+        rather than <tt>$(selector, view.el)</tt> it can no longer be used when
+        <tt>selector</tt> is an HTML string or DOM element.
+      </li>
     </ul>
 
     <h2 id="Events">Backbone.Events</h2>
@@ -2092,7 +2097,7 @@ listView.$el.append(itemView.el);
       <b>$</b> function that runs queries scoped within the view's element. If you use this
       scoped jQuery function, you don't have to use model ids as part of your query
       to pull out specific elements in a list, and can rely much more on HTML class
-      attributes. It's equivalent to running: <tt>$(selector, this.el)</tt>
+      attributes. It's equivalent to running: <tt>view.$el.find(selector)</tt>
     </p>
 
 <pre>
