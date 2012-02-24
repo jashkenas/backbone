@@ -1131,7 +1131,7 @@
     // Change the view's element (`this.el` property), including event
     // re-delegation.
     setElement: function(element, delegate) {
-      this.$el = $(element);
+      this.$el = (element instanceof $) ? element : $(element);
       this.el = this.$el[0];
       if (delegate !== false) this.delegateEvents();
       return this;
