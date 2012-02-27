@@ -254,5 +254,18 @@ $(document).ready(function() {
     Backbone.history.stop();
     history.start();
   });
+  
+  asyncTest("Router: correctly handles URLs with % (#868)", 3, function() {
+	    window.location.hash = 'search/fat%3A1.5%25';
+	    setTimeout(function() {
+	    	window.location.hash = 'search/fat';
+		    setTimeout(function() {
+			      equal(router.query, 'fat');
+			      equal(router.page, undefined);
+			      equal(lastRoute, 'search');
+			      start();
+			    }, 100);	    	
+	    }, 100);
+	  });  
 
 });
