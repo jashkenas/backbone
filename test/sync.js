@@ -131,12 +131,18 @@ $(document).ready(function() {
   });
 
   test("sync: urlError", function() {
-    model = new Backbone.Model();
+    var model = new Backbone.Model();
     raises(function() {
       model.fetch();
     });
     model.fetch({url: '/one/two'});
     equal(lastRequest.url, '/one/two');
+  });
+
+  test("#1052 - `options` is optional.", function() {
+    var model = new Backbone.Model();
+    model.url = '/test';
+    Backbone.sync('create', model);
   });
 
 });

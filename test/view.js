@@ -178,4 +178,12 @@ $(document).ready(function() {
     equal(count, 2);
   });
 
+  test("#1048 - setElement uses provided object.", function() {
+    var $el = $('body');
+    var view = new Backbone.View({el: $el});
+    ok(view.$el === $el);
+    view.setElement($el = $($el));
+    ok(view.$el === $el);
+  });
+
 });
