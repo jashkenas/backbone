@@ -591,14 +591,6 @@ $(document).ready(function() {
     ok(!model.hasChanged());
   });
 
-  test("set/hasChanged object prototype props", function() {
-    var model = new Backbone.Model();
-    ok(!model.hasChanged('toString'));
-    model.set({toString: undefined});
-    model.unset('toString', {silent: true});
-    ok(model.hasChanged());
-  });
-
   test("save with `wait` succeeds without `validate`", function() {
     var model = new Backbone.Model();
     model.save({x: 1}, {wait: true});
