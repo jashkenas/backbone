@@ -186,4 +186,16 @@ $(document).ready(function() {
     ok(view.$el === $el);
   });
 
+  test("#986 - Undelegate before changing element.", 1, function() {
+    var a = $('<button></button>');
+    var b = $('<button></button>');
+    var View = Backbone.View.extend({
+      events: {click: function(e) { ok(view.el === e.target); }}
+    });
+    var view = new View({el: a});
+    view.setElement(b);
+    a.trigger('click');
+    b.trigger('click');
+  });
+
 });
