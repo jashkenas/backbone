@@ -917,7 +917,6 @@
           fragment = window.location.hash;
         }
       }
-      fragment = decodeURIComponent(fragment);
       if (!fragment.indexOf(this.options.root)) fragment = fragment.substr(this.options.root.length);
       return fragment.replace(routeStripper, '');
     },
@@ -998,7 +997,7 @@
     checkUrl: function(e) {
       var current = this.getFragment();
       if (current == this.fragment && this.iframe) current = this.getFragment(this.iframe.location.hash);
-      if (current == this.fragment || current == decodeURIComponent(this.fragment)) return false;
+      if (current == this.fragment) return false;
       if (this.iframe) this.navigate(current);
       this.loadUrl() || this.loadUrl(window.location.hash);
     },
