@@ -569,12 +569,15 @@
       }
 
       // Insert models into the collection, re-sorting if needed, and triggering
-      // `add` events unless silenced.
+      // `add` events unless silenced. Silent additions are queued for later trigger.
       this.length += length;
       index = options.at != null ? options.at : this.models.length;
       splice.apply(this.models, [index, 0].concat(models));
       if (this.comparator) this.sort({silent: true});
-      if (options.silent) return this;
+      if (options.silent) {
+        this._addedModels = this._addedModels.concat(models);
+        return this;
+      }
       for (i = 0, length = this.models.length; i < length; i++) {
         if (!cids[(model = this.models[i]).cid]) continue;
         options.index = i;
@@ -682,6 +685,7 @@
       }
       this._reset();
       this.add(models, {silent: true, parse: options.parse});
+      this._addedModels = [];
       if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
@@ -737,10 +741,26 @@
       return _(this.models).chain();
     },
 
+    // Call this method to manually fire a `"add"` event for each model
+    // silently added to the collection since the last non-silent add
+    added: function(options) {
+      while (added = this._addedModels.shift()) {
+        model = this.getByCid(added.cid) || this.get(added.id);
+        model.trigger('add', model, this, options);     
+      }
+    },
+    
+    // Return models added since last `"add"` non-silent add
+    addedModels: function() {
+      if(this._addedModels.length) return this._addedModels;
+      return false;
+    },
+    
     // Reset all internal state. Called when the collection is reset.
     _reset: function(options) {
       this.length = 0;
       this.models = [];
+      this._addedModels = [];
       this._byId  = {};
       this._byCid = {};
     },

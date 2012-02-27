@@ -135,6 +135,26 @@ $(document).ready(function() {
     equal(col.length, 1);
   });
 
+  test("Collection: add silent", function() {
+    var triggered = false,
+      col = new Backbone.Collection([{id: 1}, {id: 2}]);
+    col.bind('add', function(model, collection, options){
+      triggered = true;
+    });
+    col.add({id: 3}, {silent: true});
+    equal(triggered, false);
+    equal(col.addedModels().length, 1);
+    equal(col.addedModels()[0].id, 3);
+    col.added();
+    equal(triggered,true);
+    col.add({id: 4});
+    col.add([{id: 5},{id: 6}], {silent:true});
+    equal(col.addedModels().length, 2);
+    equal(col.addedModels()[1].id, 6);
+    col.reset();
+    equal(col.addedModels(), []);
+  });
+  
   test("Collection: add model to multiple collections", function() {
     var counter = 0;
     var e = new Backbone.Model({id: 10, label : 'e'});
