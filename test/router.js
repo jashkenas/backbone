@@ -263,7 +263,6 @@ $(document).ready(function() {
     equal(router.rest, 'has%20space');
   });
 
-
   asyncTest("Router: correctly handles URLs with % (#868)", 3, function() {
     window.location.hash = 'search/fat%3A1.5%25';
     setTimeout(function() {
