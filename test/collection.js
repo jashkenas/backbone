@@ -2,17 +2,18 @@ $(document).ready(function() {
 
   var lastRequest = null;
   var sync = Backbone.sync;
+  var syncFunction = function(method, model, options) {
+    lastRequest = {
+      method: method,
+      model: model,
+      options: options
+    };
+  };
 
   module("Backbone.Collection", {
 
     setup: function() {
-      Backbone.sync = function(method, model, options) {
-        lastRequest = {
-          method: method,
-          model: model,
-          options: options
-        };
-      };
+      Backbone.sync = syncFunction;
     },
 
     teardown: function() {
@@ -331,11 +332,15 @@ $(document).ready(function() {
   });
 
   test("Collection: create", function() {
+    col.sync = syncFunction;
     var model = col.create({label: 'f'}, {wait: true});
     equal(lastRequest.method, 'create');
     equal(lastRequest.model, model);
     equal(model.get('label'), 'f');
     equal(model.collection, col);
+    equal(model.sync, col.sync);
+    ok(model.sync);
+    col.sync = false;
   });
 
   test("Collection: create enforces validation", function() {
