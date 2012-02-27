@@ -1246,6 +1246,9 @@
   Backbone.sync = function(method, model, options) {
     var type = methodMap[method];
 
+    // Default options to an empty object.
+    options = options || {};
+
     // Default JSON-request options.
     var params = {type: type, dataType: 'json'};
 
