@@ -330,6 +330,16 @@ $(document).ready(function() {
     equal(lastRequest.options.parse, false);
   });
 
+  test("Collection: fetch with non-object options argumen should trigger reset", function() {
+    var fired = null;
+    var col2 = new Backbone.Collection();
+    col2.bind("reset", function() { fired = true; });
+    col2.fetch(["test"]);
+    lastRequest.options.success();
+    equal(fired, true);
+    lastRequest = null;
+  });
+
   test("Collection: create", function() {
     var model = col.create({label: 'f'}, {wait: true});
     equal(lastRequest.method, 'create');
