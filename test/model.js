@@ -176,6 +176,18 @@ $(document).ready(function() {
       a.set({'name': value});
       equal(a.has("name"), false);
     });
+    
+    b = new Backbone.Model(attrs);
+    equal(b.has("name1", "name2"), false);
+    _([true, "Truth!", 1, false, '', 0]).each(function(value) {
+      b.unset('name1');
+      b.unset('name2');
+      equal(b.has('name1', 'name2'), false);
+      b.set({'name1': value});
+      equal(b.has('name1', 'name2'), false);
+      b.set({'name2': value});
+      equal(b.has('name1', 'name2'), true);
+    });
   });
 
   test("Model: set and unset", function() {
