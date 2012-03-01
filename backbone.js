@@ -231,10 +231,13 @@
       return this._escapedAttributes[attr] = _.escape(val == null ? '' : '' + val);
     },
 
-    // Returns `true` if the attribute contains a value that is not null
+    // Returns `true` if all of the passed attributes contain values that are not null
     // or undefined.
-    has: function(attr) {
-      return this.attributes[attr] != null;
+    has: function() {
+      var attributes = this.attributes;
+      return _.all(arguments, function(attr) {
+        return attributes[attr] != null
+      });
     },
 
     // Set a hash of model attributes on the object, firing `"change"` unless
