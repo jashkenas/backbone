@@ -235,9 +235,11 @@
     // or undefined.
     has: function() {
       var attributes = this.attributes;
-      return _.all(arguments, function(attr) {
-        return attributes[attr] != null
-      });
+      var i = arguments.length;
+      while (i--) {
+        if (attributes[arguments[i]] == null) return false;
+      }
+      return true;
     },
 
     // Set a hash of model attributes on the object, firing `"change"` unless
