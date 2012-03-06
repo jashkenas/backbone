@@ -6,7 +6,7 @@
   // Set up Backbone appropriately for the environment.
   if (typeof define === 'function' && define.amd) {
     // AMD
-    define(['underscore', 'Backbone'], function(_, Backbone) {
+    define(['underscore', 'backbone'], function(_, Backbone) {
       // Export global even in AMD case in case this script is loaded with others
       return root.Store = factory(root, _, Backbone);
     });
