@@ -1024,12 +1024,14 @@ book.destroy({success: function(model, response) {
       This method is left undefined, and you're encouraged to override it with
       your custom validation logic, if you have any that can be performed
       in JavaScript. <b>validate</b> is called before <tt>set</tt> and
-      <tt>save</tt>, and is passed the attributes that are about to be updated.
-      If the model and attributes are valid, don't return anything from <b>validate</b>;
-      if the attributes are invalid, return an error of your choosing. It
+      <tt>save</tt>, and is passed the model attributes updated with the values
+      from <tt>set</tt> or <tt>save</tt>.
+      If the attributes are valid, don't return anything from <b>validate</b>;
+      if they are invalid, return an error of your choosing. It
       can be as simple as a string error message to be displayed, or a complete
-      error object that describes the error programmatically. <tt>set</tt> and
-      <tt>save</tt> will not continue if <b>validate</b> returns an error.
+      error object that describes the error programmatically. If <b>validate</b>
+      returns an error, <tt>set</tt> and <tt>save</tt> will not continue, and the
+      model attributes will not be modified.
       Failed validations trigger an <tt>"error"</tt> event.
     </p>
 
