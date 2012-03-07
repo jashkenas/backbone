@@ -770,4 +770,15 @@ $(document).ready(function() {
     }
   });
 
+  test("#1074 - set/clear/unset do not alter options", function() {
+    var options = {};
+    var model = new Backbone.Model();
+    model.unset('foo', options);
+    strictEqual(_.keys(options).length, 0);
+    model.clear(options);
+    strictEqual(_.keys(options).length, 0);
+    model.set({foo: true}, options)
+    strictEqual(_.keys(options).length, 0);
+  });
+
 });
