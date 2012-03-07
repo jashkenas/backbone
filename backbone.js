@@ -686,6 +686,38 @@
       return this;
     },
 
+    // When you want to update a subset of models for this collection,
+    // adding missing models, update existing and and optionally remove missing models.
+    // If `prune: true` is passed, the collection is pruned of the models not present in
+    // the method's models argument.
+    update : function(models, options) {
+      var i, index, length, dummyModel, model, index, stack = [];
+      options = options ? _.clone(options) : {};
+      models = _.isArray(models) ? models.slice() : [models];
+      if (this.models.length) {
+        for (i = 0, length = this.models.length; i < length; i++) {
+          stack.push(this.models[i].id);
+        }
+      }
+      for (i = 0, length = models.length; i < length; i++) {
+        dummyModel = this._prepareModel(models[i], options);
+        model = this.get(dummyModel);
+        if (model) {
+          model.set(models[i], options);
+          index = _.indexOf(stack, model.id);
+          stack.splice(index, 1);
+        } else {
+          this.add(dummyModel, options);
+        }
+      }
+      if (options.prune) {
+        for (i = 0, length = stack.length; i < length; i++) {
+          this.remove( stack[i] );
+        }
+      }
+      return this;
+    },
+
     // Fetch the default set of models for this collection, resetting the
     // collection when they arrive. If `add: true` is passed, appends the
     // models to the collection instead of resetting.
@@ -695,7 +727,7 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
+        collection[options.update ? 'update' : options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp);
       };
       options.error = Backbone.wrapError(options.error, collection, options);

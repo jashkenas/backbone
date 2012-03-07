@@ -281,6 +281,7 @@
       <li>– <a href="#Collection-parse">parse</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
       <li>– <a href="#Collection-reset">reset</a></li>
+      <li>– <a href="#Collection-update">update</a></li>
       <li>– <a href="#Collection-create">create</a></li>
     </ul>
 
@@ -1249,8 +1250,8 @@ bill.set({name : "Bill Jones"});
       Override this property to specify the model class that the collection
       contains. If defined, you can pass raw attributes objects (and arrays) to
       <a href="#Collection-add">add</a>, <a href="#Collection-create">create</a>,
-      and <a href="#Collection-reset">reset</a>, and the attributes will be
-      converted into a model of the proper type.
+      <a href="#Collection-reset">reset</a> and <a href="#Collection-update">update</a>,
+      after which the attributes will be converted into a model of the proper type.
     </p>
 
 <pre>
@@ -1580,7 +1581,14 @@ Accounts.fetch();
     <p>
       If you'd like to add the incoming models to the current collection, instead
       of replacing the collection's contents, pass <tt>{add: true}</tt> as an
-      option to <b>fetch</b>.
+      option to <b>fetch</b>. Note that the <tt>"reset"</tt> event will not trigger.
+    </p>
+
+    <p>
+      Alternatively, if you'd like to update existing models in the collection instead,
+      pass <tt>{update: true}</tt> as an option to <b>fetch</b>. In addition if you would like
+      to prune models from the collection missing in the response, pass <tt>{prune: true}</tt>
+      to remove them.
     </p>
 
     <p>
@@ -1626,6 +1634,15 @@ Accounts.fetch();
       will empty the entire collection.
     </p>
 
+    <p id="Collection-update">
+      <b class="header">update</b><code>collection.update(models, [options])</code>
+      <br />
+      Updates a model (or an array of models) on the collection; contrary to the <b>reset</b>
+      method, the <b>update</b> method doesn't replace the existing models. On receiving the response,
+      a missing model will be added, triggering an <tt>"add"</tt> event on the collection, whereas an
+      updated model will have its attributes overloaded and trigger a <tt>"change"</tt> event.
+    </p>
+
     <p id="Collection-create">
       <b class="header">create</b><code>collection.create(attributes, [options])</code>
       <br />
@@ -1641,10 +1658,10 @@ Accounts.fetch();
     </p>
 
     <p>
-      Creating a model will cause an immediate <tt>"add"</tt> event to be
-      triggered on the collection, as well as a <tt>"sync"</tt> event, once the
-      model has been successfully created on the server. Pass <tt>{wait: true}</tt>
-      if you'd like to wait for the server before adding the new model to the collection.
+      Creating a model will cause an immediate <tt>"add"</tt> event to trigger on the collection,
+      as well as a <tt>"sync"</tt> event, once the model has been successfully created on the server.
+      Pass <tt>{wait: true}</tt> if you'd like to wait for the server before adding the new model
+      to the collection.
     </p>
 
 <pre>
