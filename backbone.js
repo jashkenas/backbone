@@ -250,7 +250,7 @@
       }
 
       // Extract attributes and options.
-      options || (options = {});
+      options = options ? _.clone(options) : {};
       if (!attrs) return this;
       if (attrs instanceof Model) attrs = attrs.attributes;
       if (options.unset) for (attr in attrs) attrs[attr] = void 0;
@@ -294,14 +294,16 @@
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
     unset: function(attr, options) {
-      (options || (options = {})).unset = true;
+      options = options ? _.clone(options) : {};
+      options.unset = true;
       return this.set(attr, null, options);
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
     // to silence it.
     clear: function(options) {
-      (options || (options = {})).unset = true;
+      options = options ? _.clone(options) : {};
+      options.unset = true;
       return this.set(_.clone(this.attributes), options);
     },
 
