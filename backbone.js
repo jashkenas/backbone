@@ -1258,7 +1258,7 @@
     options || (options = {});
 
     // Default JSON-request options.
-    var params = {type: type, dataType: 'json'};
+    var params = {type: type, dataType: 'json', contentType: 'application/json'};
 
     // Ensure that we have a URL.
     if (!options.url) {
