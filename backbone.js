@@ -255,6 +255,9 @@
       if (attrs instanceof Model) attrs = attrs.attributes;
       if (options.unset) for (attr in attrs) attrs[attr] = void 0;
 
+      // Normalize attributes
+      if (this.normalize) this.normalize(attrs, options);
+
       // Run validation.
       if (!this._validate(attrs, options)) return false;
 

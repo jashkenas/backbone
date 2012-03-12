@@ -513,6 +513,22 @@ $(document).ready(function() {
     a.set({state: 'hello'});
   });
 
+  test("Model: normalize", function() {
+    var Model = Backbone.Model.extend({
+      normalize: function(attrs) {
+        attrs.num = parseInt(attrs.num);
+      }
+    });
+    var model = new Model({ num: '10' });
+    strictEqual(model.get('num'), 10);
+
+    model.set('num', '20');
+    strictEqual(model.get('num'), 20);
+
+    model.set({ num: '30' });
+    strictEqual(model.get('num'), 30);
+  });
+
   test("hasChanged/set should use same comparison", function() {
     expect(2);
     var changed = 0, model = new Backbone.Model({a: null});
