@@ -3,9 +3,19 @@ $(document).ready(function() {
   var lastRequest = null;
   var sync = Backbone.sync;
 
+  var a, b, c, d, e, col, otherCol;
+
   module("Backbone.Collection", {
 
     setup: function() {
+      a         = new Backbone.Model({id: 3, label: 'a'});
+      b         = new Backbone.Model({id: 2, label: 'b'});
+      c         = new Backbone.Model({id: 1, label: 'c'});
+      d         = new Backbone.Model({id: 0, label: 'd'});
+      e         = null;
+      col       = new Backbone.Collection([a,b,c,d]);
+      otherCol  = new Backbone.Collection();
+
       Backbone.sync = function(method, model, options) {
         lastRequest = {
           method: method,
@@ -20,14 +30,6 @@ $(document).ready(function() {
     }
 
   });
-
-  var a         = new Backbone.Model({id: 3, label: 'a'});
-  var b         = new Backbone.Model({id: 2, label: 'b'});
-  var c         = new Backbone.Model({id: 1, label: 'c'});
-  var d         = new Backbone.Model({id: 0, label: 'd'});
-  var e         = null;
-  var col       = new Backbone.Collection([a,b,c,d]);
-  var otherCol  = new Backbone.Collection();
 
   test("Collection: new and sort", function() {
     equal(col.first(), a, "a should be first");
@@ -77,15 +79,16 @@ $(document).ready(function() {
   });
 
   test("Collection: at", function() {
-    equal(col.at(2), b);
+    equal(col.at(2), c);
   });
 
   test("Collection: pluck", function() {
-    equal(col.pluck('label').join(' '), 'd c b a');
+    equal(col.pluck('label').join(' '), 'a b c d');
   });
 
   test("Collection: add", function() {
-    var added = opts = secondAdded = null;
+    var added, opts, secondAdded;
+    added = opts = secondAdded = null;
     e = new Backbone.Model({id: 10, label : 'e'});
     otherCol.add(e);
     otherCol.bind('add', function() {
@@ -206,18 +209,19 @@ $(document).ready(function() {
   });
 
   test("Collection: remove", function() {
-    var removed = otherRemoved = null;
+    var removed = null;
+    var otherRemoved = null;
     col.bind('remove', function(model, col, options) {
       removed = model.get('label');
-      equal(options.index, 4);
+      equal(options.index, 3);
     });
     otherCol.bind('remove', function(model, col, options) {
       otherRemoved = true;
     });
-    col.remove(e);
-    equal(removed, 'e');
-    equal(col.length, 4);
-    equal(col.first(), d);
+    col.remove(d);
+    equal(removed, 'd');
+    equal(col.length, 3);
+    equal(col.first(), a);
     equal(otherRemoved, null);
   });
 
@@ -378,14 +382,14 @@ $(document).ready(function() {
   });
 
   test("Collection: toJSON", function() {
-    equal(JSON.stringify(col), '[{"id":0,"label":"d"},{"id":1,"label":"c"},{"id":2,"label":"b"},{"id":3,"label":"a"}]');
+    equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });
 
   test("Collection: Underscore methods", function() {
-    equal(col.map(function(model){ return model.get('label'); }).join(' '), 'd c b a');
+    equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equal(col.any(function(model){ return model.id === 100; }), false);
     equal(col.any(function(model){ return model.id === 0; }), true);
-    equal(col.indexOf(b), 2);
+    equal(col.indexOf(b), 1);
     equal(col.size(), 4);
     equal(col.rest().length, 3);
     ok(!_.include(col.rest()), a);
@@ -398,7 +402,7 @@ $(document).ready(function() {
             .filter(function(o){ return o.id % 2 === 0; })
             .map(function(o){ return o.id * 2; })
             .value(),
-         [0, 4]);
+         [4, 0]);
   });
 
   test("Collection: reset", function() {
@@ -412,12 +416,12 @@ $(document).ready(function() {
     col.reset(models);
     equal(resetCount, 2);
     equal(col.length, 4);
-    equal(col.last(), a);
+    equal(col.last(), d);
     col.reset(_.map(models, function(m){ return m.attributes; }));
     equal(resetCount, 3);
     equal(col.length, 4);
-    ok(col.last() !== a);
-    ok(_.isEqual(col.last().attributes, a.attributes));
+    ok(col.last() !== d);
+    ok(_.isEqual(col.last().attributes, d.attributes));
   });
 
   test("Collection: trigger custom events on models", function() {
