@@ -1909,6 +1909,12 @@ $(function(){
       (<a href="#Collection#fetch">Collection#fetch</a>), send down an array
       of model attribute objects.
     </p>
+    
+    <p>
+      The <b>sync</b> function may be overriden globally as <tt>Backbone.sync</tt>,
+      or at a finer-grained level, by adding a <tt>sync</tt> function to a Backbone
+      collection or to an individual model.
+    </p>
 
     <p>
       The default <b>sync</b> handler maps CRUD to REST like so:
