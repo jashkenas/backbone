@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
   var router = null;
-  var lsatRoute = null;
+  var lastRoute = null;
   var lastArgs = [];
 
   function onRoute(router, route, args) {

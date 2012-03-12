@@ -8,9 +8,24 @@ $(document).ready(function() {
   var ajax = $.ajax;
   var urlRoot = null;
 
+  var proxy = Backbone.Model.extend();
+  var klass = Backbone.Collection.extend({
+    url : function() { return '/collection'; }
+  });
+  var doc, collection;
+
   module("Backbone.Model", {
 
     setup: function() {
+      doc = new proxy({
+        id     : '1-the-tempest',
+        title  : "The Tempest",
+        author : "Bill Shakespeare",
+        length : 123
+      });
+      collection = new klass();
+      collection.add(doc);
+
       Backbone.sync = function(method, model, options) {
         lastRequest = {
           method: method,
@@ -31,23 +46,6 @@ $(document).ready(function() {
     }
 
   });
-
-  var attrs = {
-    id     : '1-the-tempest',
-    title  : "The Tempest",
-    author : "Bill Shakespeare",
-    length : 123
-  };
-
-  var proxy = Backbone.Model.extend();
-  var doc = new proxy(attrs);
-
-  var klass = Backbone.Collection.extend({
-    url : function() { return '/collection'; }
-  });
-
-  var collection = new klass();
-  collection.add(doc);
 
   test("Model: initialize", function() {
     var Model = Backbone.Model.extend({
@@ -116,9 +114,8 @@ $(document).ready(function() {
   });
 
   test("Model: clone", function() {
-    attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
-    a = new Backbone.Model(attrs);
-    b = a.clone();
+    var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
+    var b = a.clone();
     equal(a.get('foo'), 1);
     equal(a.get('bar'), 2);
     equal(a.get('baz'), 3);
@@ -131,14 +128,11 @@ $(document).ready(function() {
   });
 
   test("Model: isNew", function() {
-    attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
-    a = new Backbone.Model(attrs);
+    var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
     ok(a.isNew(), "it should be new");
-    attrs = { 'foo': 1, 'bar': 2, 'baz': 3, 'id': -5 };
-    a = new Backbone.Model(attrs);
+    a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3, 'id': -5 });
     ok(!a.isNew(), "any defined ID is legal, negative or positive");
-    attrs = { 'foo': 1, 'bar': 2, 'baz': 3, 'id': 0 };
-    a = new Backbone.Model(attrs);
+    a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3, 'id': 0 });
     ok(!a.isNew(), "any defined ID is legal, including zero");
     ok( new Backbone.Model({          }).isNew(), "is true when there is no id");
     ok(!new Backbone.Model({ 'id': 2  }).isNew(), "is false for a positive integer");
@@ -163,8 +157,7 @@ $(document).ready(function() {
   });
 
   test("Model: has", function() {
-    attrs = {};
-    a = new Backbone.Model(attrs);
+    var a = new Backbone.Model();
     equal(a.has("name"), false);
     _([true, "Truth!", 1, false, '', 0]).each(function(value) {
       a.set({'name': value});
@@ -180,8 +173,7 @@ $(document).ready(function() {
 
   test("Model: set and unset", function() {
     expect(8);
-    attrs = {id: 'id', foo: 1, bar: 2, baz: 3};
-    a = new Backbone.Model(attrs);
+    var a = new Backbone.Model({id: 'id', foo: 1, bar: 2, baz: 3});
     var changeCount = 0;
     a.on("change:foo", function() { changeCount += 1; });
     a.set({'foo': 2});
@@ -387,8 +379,7 @@ $(document).ready(function() {
   });
 
   test("Model: non-persisted destroy", function() {
-    attrs = { 'foo': 1, 'bar': 2, 'baz': 3};
-    a = new Backbone.Model(attrs);
+    var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
     a.sync = function() { throw "should not be called"; };
     a.destroy();
     ok(true, "non-persisted model should not call sync");
