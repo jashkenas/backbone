@@ -241,6 +241,7 @@
       <li>– <a href="#Model-changed">changed</a></li>
       <li>– <a href="#Model-defaults">defaults</a></li>
       <li>– <a href="#Model-toJSON">toJSON</a></li>
+      <li>– <a href="#Model-getData">getData</a></li>
       <li>– <a href="#Model-fetch">fetch</a></li>
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
@@ -920,6 +921,22 @@ var artist = new Backbone.Model({
 artist.set({birthday: "December 16, 1866"});
 
 alert(JSON.stringify(artist));
+</pre>
+
+    <p id="Model-getData">
+      <b class="header">getData</b><code>model.getData()</code>
+      <br />
+      Return a copy of the model's <a href="#Model-attributes">attributes</a>.  This
+      method is used internally to get a snapshot of the model attribute state.
+    </p>
+
+<pre class="runnable">
+var artist = new Backbone.Model({
+  firstName: "Wassily",
+  lastName: "Kandinsky"
+});
+
+alert(artist.getData().firstName);
 </pre>
 
     <p id="Model-fetch">
