@@ -1,10 +1,16 @@
 $(document).ready(function() {
 
-  module("Backbone.View");
+  var view;
 
-  var view = new Backbone.View({
-    id        : 'test-view',
-    className : 'test-view'
+  module("Backbone.View", {
+
+    setup: function() {
+      view = new Backbone.View({
+        id        : 'test-view',
+        className : 'test-view'
+      });
+    }
+
   });
 
   test("View: constructor", function() {
@@ -38,7 +44,8 @@ $(document).ready(function() {
   });
 
   test("View: delegateEvents", function() {
-    var counter = counter2 = 0;
+    var counter = 0;
+    var counter2 = 0;
     view.setElement(document.body);
     view.increment = function(){ counter++; };
     view.$el.bind('click', function(){ counter2++; });
@@ -71,7 +78,8 @@ $(document).ready(function() {
   });
 
   test("View: undelegateEvents", function() {
-    var counter = counter2 = 0;
+    var counter = 0;
+    var counter2 = 0;
     view.setElement(document.body);
     view.increment = function(){ counter++; };
     $(view.el).unbind('click');
