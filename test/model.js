@@ -81,11 +81,11 @@ $(document).ready(function() {
   });
 
   test("Model: url", function() {
+    doc.urlRoot = null;
     equal(doc.url(), '/collection/1-the-tempest');
     doc.collection.url = '/collection/';
     equal(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;
-    doc.urlRoot = null;
     raises(function() { doc.url(); });
     doc.collection = collection;
   });
