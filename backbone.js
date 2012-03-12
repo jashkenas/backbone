@@ -1164,7 +1164,12 @@
       if (!(events || (events = getValue(this, 'events')))) return;
       this.undelegateEvents();
       for (var key in events) {
+        var eventData;
         var method = events[key];
+        if (_.isString(method)) {
+            method = method.match(eventSplitter);
+            eventData = method[2]; method = method[1];
+        }
         if (!_.isFunction(method)) method = this[events[key]];
         if (!method) throw new Error('Method "' + events[key] + '" does not exist');
         var match = key.match(eventSplitter);
@@ -1172,9 +1177,9 @@
         method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
-          this.$el.bind(eventName, method);
+          this.$el.bind(eventName, eventData, method);
         } else {
-          this.$el.delegate(selector, eventName, method);
+          this.$el.delegate(selector, eventName, eventData, method);
         }
       }
     },
