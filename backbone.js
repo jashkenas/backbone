@@ -187,7 +187,7 @@
     this.changed = {};
     this._silent = {};
     this._pending = {};
-    this._previousAttributes = this.getData();
+    this._previousAttributes = this._cloneAttributes();
     this.initialize.apply(this, arguments);
   };
 
@@ -215,12 +215,7 @@
 
     // Returns a copy of the model attributes as an object for persistence, serialization, etc.
     toJSON: function() {
-      return this.getData();
-    },
-
-    // Return a copy of the model's `attributes` object.
-    getData: function() {
-      return _.clone(this.attributes);
+      return this._cloneAttributes();
     },
 
     // Get the value of an attribute.
@@ -307,7 +302,7 @@
     // to silence it.
     clear: function(options) {
       (options || (options = {})).unset = true;
-      return this.set(this.getData(), options);
+      return this.set(this._cloneAttributes(), options);
     },
 
     // Fetch the model from the server. If the server's representation of the
@@ -339,7 +334,7 @@
       }
 
       options = options ? _.clone(options) : {};
-      if (options.wait) current = this.getData();
+      if (options.wait) current = this._cloneAttributes();
       var silentOptions = _.extend({}, options, {silent: true});
       if (attrs && !this.set(attrs, options.wait ? silentOptions : options)) {
         return false;
@@ -440,7 +435,7 @@
           if (this._pending[attr] || this._silent[attr]) continue;
           delete this.changed[attr];
         }
-        this._previousAttributes = this.getData();
+        this._previousAttributes = this._cloneAttributes();
       }
       this._changing = false;
       return this;
@@ -493,7 +488,7 @@
     // been passed, call that instead of firing the general `"error"` event.
     _validate: function(attrs, options) {
       if (options.silent || !this.validate) return true;
-      attrs = _.extend(this.getData(), attrs);
+      attrs = _.extend(this._cloneAttributes(), attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;
       if (options && options.error) {
@@ -502,6 +497,11 @@
         this.trigger('error', this, error, options);
       }
       return false;
+    },
+
+    // Return a copy of the model's `attributes` object.
+    _cloneAttributes: function() {
+      return _.clone(this.attributes);
     }
 
   });
