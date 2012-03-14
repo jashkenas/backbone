@@ -214,7 +214,7 @@
     initialize: function(){},
 
     // Return a copy of the model's `attributes` object.
-    toJSON: function() {
+    toJSON: function(options) {
       return _.clone(this.attributes);
     },
 
@@ -528,8 +528,8 @@
 
     // The JSON representation of a Collection is an array of the
     // models' attributes.
-    toJSON: function() {
-      return this.map(function(model){ return model.toJSON(); });
+    toJSON: function(options) {
+      return this.map(function(model){ return model.toJSON(options); });
     },
 
     // Add a model, or list of models to the set. Pass **silent** to avoid
