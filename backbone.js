@@ -532,7 +532,8 @@
     // The JSON representation of a Collection is an array of the
     // models' attributes.
     toJSON: function() {
-      return this.map(function(model){ return model.toJSON(); });
+      var self_arguments = arguments;
+      return this.map(function(model){ return model.toJSON.apply(model,self_arguments); });
     },
 
     // Add a model, or list of models to the set. Pass **silent** to avoid
