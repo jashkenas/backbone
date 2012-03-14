@@ -190,7 +190,7 @@
     this.changed = {};
     this._silent = {};
     this._pending = {};
-    this._previousAttributes = _.clone(this.attributes);
+    this._previousAttributes = this._cloneAttributes();
     this.initialize.apply(this, arguments);
   };
 
@@ -216,9 +216,9 @@
     // initialization logic.
     initialize: function(){},
 
-    // Return a copy of the model's `attributes` object.
+    // Returns a copy of the model attributes as an object for persistence, serialization, etc.
     toJSON: function() {
-      return _.clone(this.attributes);
+      return this._cloneAttributes();
     },
 
     // Get the value of an attribute.
@@ -230,14 +230,14 @@
     escape: function(attr) {
       var html;
       if (html = this._escapedAttributes[attr]) return html;
-      var val = this.attributes[attr];
+      var val = this.get(attr);
       return this._escapedAttributes[attr] = _.escape(val == null ? '' : '' + val);
     },
 
     // Returns `true` if the attribute contains a value that is not null
     // or undefined.
     has: function(attr) {
-      return this.attributes[attr] != null;
+      return this.get(attr) != null;
     },
 
     // Set a hash of model attributes on the object, firing `"change"` unless
@@ -305,7 +305,7 @@
     // to silence it.
     clear: function(options) {
       (options || (options = {})).unset = true;
-      return this.set(_.clone(this.attributes), options);
+      return this.set(this._cloneAttributes(), options);
     },
 
     // Fetch the model from the server. If the server's representation of the
@@ -337,7 +337,7 @@
       }
 
       options = options ? _.clone(options) : {};
-      if (options.wait) current = _.clone(this.attributes);
+      if (options.wait) current = this._cloneAttributes();
       var silentOptions = _.extend({}, options, {silent: true});
       if (attrs && !this.set(attrs, options.wait ? silentOptions : options)) {
         return false;
@@ -426,7 +426,7 @@
       var changes = _.extend({}, options.changes, this._silent);
       this._silent = {};
       for (var attr in changes) {
-        this.trigger('change:' + attr, this, this.attributes[attr], options);
+        this.trigger('change:' + attr, this, this.get(attr), options);
       }
       if (changing) return this;
       // Continue firing `"change"` events while there are pending changes.
@@ -438,7 +438,7 @@
           if (this._pending[attr] || this._silent[attr]) continue;
           delete this.changed[attr];
         }
-        this._previousAttributes = _.clone(this.attributes);
+        this._previousAttributes = this._cloneAttributes();
       }
       this._changing = false;
       return this;
@@ -491,7 +491,7 @@
     // been passed, call that instead of firing the general `"error"` event.
     _validate: function(attrs, options) {
       if (options.silent || !this.validate) return true;
-      attrs = _.extend({}, this.attributes, attrs);
+      attrs = _.extend(this._cloneAttributes(), attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;
       if (options && options.error) {
@@ -500,6 +500,11 @@
         this.trigger('error', this, error, options);
       }
       return false;
+    },
+
+    // Return a copy of the model's `attributes` object.
+    _cloneAttributes: function() {
+      return _.clone(this.attributes);
     }
 
   });
