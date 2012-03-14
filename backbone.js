@@ -71,6 +71,9 @@
   // Backbone.Events
   // -----------------
 
+  // Regular expression used to split event strings
+  var eventSplitter = /\s+/;
+
   // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may bind with `on` or remove with `off` callback functions
   // to an event; trigger`-ing an event fires all callbacks in succession.
@@ -87,7 +90,7 @@
     on: function(events, callback, context) {
       var calls, event, node, tail, list;
       if (!callback) return this;
-      events = events.split(/\s+/);
+      events = events.split(eventSplitter);
       calls = this._callbacks || (this._callbacks = {});
       while (event = events.shift()) {
         // Create an immutable callback list, allowing traversal during
@@ -111,7 +114,7 @@
       if (!events) {
         delete this._callbacks;
       } else if (calls = this._callbacks) {
-        events = events.split(/\s+/);
+        events = events.split(eventSplitter);
         while (event = events.shift()) {
           node = calls[event];
           delete calls[event];
@@ -137,7 +140,7 @@
       var event, node, calls, tail, args, all, rest;
       if (!(calls = this._callbacks)) return this;
       all = calls.all;
-      events = events.split(/\s+/);
+      events = events.split(eventSplitter);
       rest = slice.call(arguments, 1);
       while (event = events.shift()) {
         if (node = calls[event]) {
@@ -1088,7 +1091,7 @@
   };
 
   // Cached regex to split keys for `delegate`.
-  var eventSplitter = /^(\S+)\s*(.*)$/;
+  var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
   // List of view options to be merged as properties.
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName'];
@@ -1167,7 +1170,7 @@
         var method = events[key];
         if (!_.isFunction(method)) method = this[events[key]];
         if (!method) throw new Error('Method "' + events[key] + '" does not exist');
-        var match = key.match(eventSplitter);
+        var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
         method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
