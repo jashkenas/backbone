@@ -276,8 +276,19 @@
           delete escaped[attr];
           (options.silent ? this._silent : changes)[attr] = true;
         }
-        // Update the current value.
-        options.unset ? delete now[attr] : now[attr] = val;
+
+        // Update the current value
+        if (options.unset) {
+          // if there is a default value for attribute
+          if (typeof(this.defaults[attr]) !== "undefined") {
+            now[attr] = this.defaults[attr];
+          } else {
+            delete now[attr];
+          }
+        } else {
+          now[attr] = val;
+        }
+
         // If the new and previous value differ, record the change.  If not,
         // then remove changes for this attribute.
         if (!_.isEqual(prev[attr], val) || (_.has(now, attr) != _.has(prev, attr))) {
