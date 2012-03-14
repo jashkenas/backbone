@@ -4,14 +4,23 @@ $(document).ready(function() {
   var sync = Backbone.sync;
 
   var a, b, c, d, e, col, otherCol;
+  
+  var TestModel = Backbone.Model.extend({
+    toJSON: function(opts) {
+      var obj     = Backbone.Model.prototype.toJSON.call(this),
+          noId    = (opts && opts.noId === true);
+      if (noId) delete obj.id;
+      return obj;
+    }
+  });
 
   module("Backbone.Collection", {
 
     setup: function() {
-      a         = new Backbone.Model({id: 3, label: 'a'});
-      b         = new Backbone.Model({id: 2, label: 'b'});
-      c         = new Backbone.Model({id: 1, label: 'c'});
-      d         = new Backbone.Model({id: 0, label: 'd'});
+      a         = new TestModel({id: 3, label: 'a'});
+      b         = new TestModel({id: 2, label: 'b'});
+      c         = new TestModel({id: 1, label: 'c'});
+      d         = new TestModel({id: 0, label: 'd'});
       e         = null;
       col       = new Backbone.Collection([a,b,c,d]);
       otherCol  = new Backbone.Collection();
@@ -383,6 +392,7 @@ $(document).ready(function() {
 
   test("Collection: toJSON", function() {
     equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
+    equal(JSON.stringify(col.toJSON({noId:true})), '[{"label":"a"},{"label":"b"},{"label":"c"},{"label":"d"}]');
   });
 
   test("Collection: Underscore methods", function() {
