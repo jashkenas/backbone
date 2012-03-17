@@ -933,7 +933,8 @@ alert(JSON.stringify(artist));
       latest server state. A <tt>"change"</tt> event will be triggered if the
       server's state differs from the current attributes. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response)</tt> as arguments.
+      are passed <tt>(model, response)</tt> as arguments.  Delegates to
+      <a href="#Sync">Backbone.sync</a> and returns its result.
     </p>
 
 <pre>
@@ -947,7 +948,9 @@ setInterval(function() {
       <b class="header">save</b><code>model.save([attributes], [options])</code>
       <br />
       Save a model to your database (or alternative persistence layer),
-      by delegating to <a href="#Sync">Backbone.sync</a>. The <b>attributes</b>
+      by delegating to <a href="#Sync">Backbone.sync</a>.  Returns the result of
+      <a href="#Sync">Backbone.sync</a> if
+      validation is successful and <tt>false</tt> otherwise. The <b>attributes</b>
       hash (as in <a href="#Model-set">set</a>) should contain the attributes
       you'd like to change &mdash; keys that aren't mentioned won't be altered &mdash; but,
       a <i>complete representation</i> of the resource will be sent to the server.
@@ -1012,7 +1015,9 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       through any collections that contain it, and a <tt>"sync"</tt> event, after
       the server has successfully acknowledged the model's deletion. Pass
       <tt>{wait: true}</tt> if you'd like to wait for the server to respond
-      before removing the model from the collection.
+      before removing the model from the collection.  Returns <tt>undefined</tt>
+      if the model <a href="#Model-isNew">isNew</a> and the result of
+      <a href="#Sync">Backbone.sync</a> otherwise.
     </p>
 
 <pre>
@@ -1566,7 +1571,7 @@ var Tweets = Backbone.Collection.extend({
       When the model data returns from the server, the collection will
       <a href="#Collection-reset">reset</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
-      under the covers, for custom persistence strategies.
+      under the covers for custom persistence strategies and returns its result.
       The server handler for <b>fetch</b> requests should return a JSON array of
       models.
     </p>
@@ -1589,7 +1594,7 @@ Accounts.fetch();
     </p>
 
     <p>
-      <b>jQuery.ajax</b> options can also be passed directly as <b>fetch</b> options,
+      <b>$.ajax</b> options can also be passed directly as <b>fetch</b> options,
       so to fetch a specific page of a paginated collection:
       <tt>Documents.fetch({data: {page: 3}})</tt>
     </p>
@@ -1642,7 +1647,9 @@ Accounts.fetch();
       model from being created. In order for this to work, you should set the
       <a href="#Collection-model">model</a> property of the collection.
       The <b>create</b> method can accept either an attributes hash or an
-      existing, unsaved model object.
+      existing, unsaved model object.  Delegates to <a href="#Sync">Backbone.sync</a>
+      and returns its result if validation is successful. Returns <tt>false</tt>
+      otherwise.
     </p>
 
     <p>
@@ -1892,7 +1899,8 @@ $(function(){
       attempts to read or save a model to the server. By default, it uses
       <tt>(jQuery/Zepto).ajax</tt> to make a RESTful JSON request. You can override
       it in order to use a different persistence strategy, such as WebSockets,
-      XML transport, or Local Storage.
+      XML transport, or Local Storage.  The result of <tt>$.ajax</tt> is returned
+      to the caller.
     </p>
 
     <p>
