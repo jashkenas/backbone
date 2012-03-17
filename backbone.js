@@ -896,7 +896,17 @@
   var routeStripper = /^[#\/]/;
 
   // Cached regex for detecting MSIE.
-  var isExplorer = /msie [\w.]+/;
+   // Cached regex for detecting MSIE.
+  var isExplorer = /MSIE ([0-9])/;
+  
+  var supportsHashChange = function() {
+    var docMode = document.documentMode;
+    var ieVer  = parseInt((isExplorer.exec(navigator.userAgent) || [,])[1]);
+    var oldIE = (ieVer && (ieVer <= 7));
+    var compatIE = (ieVer && docMode && ieVer > docMode);
+    return ('onhashchange' in window) && !oldIE && !compatIE;
+  };
+
 
   // Has the history handling already been started?
   History.started = false;
@@ -945,10 +955,9 @@
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && window.history && window.history.pushState);
       var fragment          = this.getFragment();
-      var docMode           = document.documentMode;
-      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 8));
+      var useHashChange     = supportsHashChange();
 
-      if (oldIE) {
+      if (!useHashChange) {
         this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
         this.navigate(fragment);
       }
@@ -957,7 +966,7 @@
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
         $(window).bind('popstate', this.checkUrl);
-      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
+      } else if (this._wantsHashChange && useHashChange) {
         $(window).bind('hashchange', this.checkUrl);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
