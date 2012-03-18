@@ -743,9 +743,9 @@
     // Reset all internal state. Called when the collection is reset.
     _reset: function(options) {
       this.length = 0;
-      this.models = [];
-      this._byId  = {};
-      this._byCid = {};
+      this.models.length = 0;
+      this._byId  = _.wipe(this._byId);
+      this._byCid = _.wipe(this._byCid);
     },
 
     // Prepare a model or hash of attributes to be added to this collection.
