@@ -385,6 +385,22 @@ $(document).ready(function() {
     equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });
 
+  test("Collection: where", function() {
+    var coll = new Backbone.Collection([
+      {a: 1},
+      {a: 1},
+      {a: 1, b: 2},
+      {a: 2, b: 2},
+      {a: 3}
+    ]);
+    equal(coll.where({a: 1}).length, 3);
+    equal(coll.where({a: 2}).length, 1);
+    equal(coll.where({a: 3}).length, 1);
+    equal(coll.where({b: 1}).length, 0);
+    equal(coll.where({b: 2}).length, 2);
+    equal(coll.where({a: 1, b: 2}).length, 1);
+  });
+
   test("Collection: Underscore methods", function() {
     equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equal(col.any(function(model){ return model.id === 100; }), false);
@@ -529,7 +545,7 @@ $(document).ready(function() {
   });
 
   test("#1112 - passing options.model sets collection.model", function() {
-    var Model = Backbone.Model.extend({})
+    var Model = Backbone.Model.extend({});
     var c = new Backbone.Collection([{id: 1}], {model: Model});
     ok(c.model === Model);
     ok(c.at(0) instanceof Model);

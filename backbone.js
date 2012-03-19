@@ -658,6 +658,17 @@
       return this.models[index];
     },
 
+    // Return models with matching attributes. Useful for simple cases of `filter`.
+    where: function(attrs) {
+      if (_.isEmpty(attrs)) return [];
+      return this.filter(function(model) {
+        for (var key in attrs) {
+          if (attrs[key] !== model.get(key)) return false;
+        }
+        return true;
+      });
+    },
+
     // Force the collection to re-sort itself. You don't need to call this under
     // normal circumstances, as the set will maintain sort order as each item
     // is added.
