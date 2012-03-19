@@ -337,7 +337,10 @@
       }
 
       options = options ? _.clone(options) : {};
-      if (options.wait) current = _.clone(this.attributes);
+      if (options.wait) {
+        if (!this._validate(attrs, options)) return false;
+        current = _.clone(this.attributes);
+      }
       var silentOptions = _.extend({}, options, {silent: true});
       if (attrs && !this.set(attrs, options.wait ? silentOptions : options)) {
         return false;

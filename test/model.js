@@ -615,6 +615,12 @@ $(document).ready(function() {
     equal(changed, 1);
   });
 
+  test("save with wait validates attributes", 1, function() {
+    var model = new Backbone.Model();
+    model.validate = function() { ok(true); };
+    model.save({x: 1}, {wait: true});
+  });
+
   test("nested `set` during `'change:attr'`", function() {
     var events = [];
     var model = new Backbone.Model();
