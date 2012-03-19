@@ -514,6 +514,9 @@
     options || (options = {});
     if (options.model) this.model = options.model;
     if (options.comparator) this.comparator = options.comparator;
+    this.models = [];
+    this._byId = {};
+    this._byCid = {};
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, {silent: true, parse: options.parse});
@@ -744,9 +747,9 @@
     // Reset all internal state. Called when the collection is reset.
     _reset: function(options) {
       this.length = 0;
-      this.models = [];
-      this._byId  = {};
-      this._byCid = {};
+      this.models.length = 0;
+      _.wipe(this._byId);
+      _.wipe(this._byCid);
     },
 
     // Prepare a model or hash of attributes to be added to this collection.

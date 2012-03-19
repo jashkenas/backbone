@@ -407,7 +407,7 @@ $(document).ready(function() {
 
   test("Collection: reset", function() {
     var resetCount = 0;
-    var models = col.models;
+    var models = _.clone(col.models);
     col.bind('reset', function() { resetCount += 1; });
     col.reset([]);
     equal(resetCount, 1);
