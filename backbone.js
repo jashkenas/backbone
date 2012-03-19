@@ -513,6 +513,9 @@
   var Collection = Backbone.Collection = function(models, options) {
     options || (options = {});
     if (options.comparator) this.comparator = options.comparator;
+    this.models = [];
+    this._byId = {};
+    this._byCid = {};
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, {silent: true, parse: options.parse});
@@ -744,8 +747,8 @@
     _reset: function(options) {
       this.length = 0;
       this.models.length = 0;
-      this._byId  = _.wipe(this._byId);
-      this._byCid = _.wipe(this._byCid);
+      _.wipe(this._byId);
+      _.wipe(this._byCid);
     },
 
     // Prepare a model or hash of attributes to be added to this collection.
