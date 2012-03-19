@@ -653,6 +653,13 @@
       return cid && this._byCid[cid.cid || cid];
     },
 
+    // Get a model from the set by the key.
+    getBy: function(attr, value){
+      return this.filter(function(resource){
+        return resource.get(attr) == value
+      });
+    },
+
     // Get the model at the given index.
     at: function(index) {
       return this.models[index];

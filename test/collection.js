@@ -53,6 +53,14 @@ $(document).ready(function() {
     equal(col.getByCid(col.first().cid), col.first());
   });
 
+  test("Collection: getBy", function() {
+    var c2 = new Backbone.Model({id: 5, label: 'c'});
+    col.add(c2);
+    same(col.getBy("label", "c"), [c, c2], "should get c and c2 record");
+    same(col.getBy("label", "d"), [d], "should get only d record");
+    col.remove(c2);
+  });
+
   test("Collection: get with non-default ids", function() {
     var col = new Backbone.Collection();
     var MongoModel = Backbone.Model.extend({
