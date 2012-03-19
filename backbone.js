@@ -111,22 +111,23 @@
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
       var event, calls, node, tail, cb, ctx;
-      if (!events) {
+      if (!(calls = this._callbacks)) return;
+      if (!(events || callback || context)) {
         delete this._callbacks;
-      } else if (calls = this._callbacks) {
-        events = events.split(eventSplitter);
-        while (event = events.shift()) {
-          node = calls[event];
-          delete calls[event];
-          if (!callback || !node) continue;
-          // Create a new list, omitting the indicated callbacks.
-          tail = node.tail;
-          while ((node = node.next) !== tail) {
-            cb = node.callback;
-            ctx = node.context;
-            if (cb !== callback || (context && ctx !== context)) {
-              this.on(event, cb, ctx);
-            }
+        return this;
+      }
+      events = events ? events.split(eventSplitter) : _.keys(calls);
+      while (event = events.shift()) {
+        node = calls[event];
+        delete calls[event];
+        if (!node || !(callback || context)) continue;
+        // Create a new list, omitting the indicated callbacks.
+        tail = node.tail;
+        while ((node = node.next) !== tail) {
+          cb = node.callback;
+          ctx = node.context;
+          if ((callback && cb !== callback) || (context && ctx !== context)) {
+            this.on(event, cb, ctx);
           }
         }
       }

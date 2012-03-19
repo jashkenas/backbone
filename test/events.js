@@ -149,4 +149,22 @@ $(document).ready(function() {
     _.extend({}, Backbone.Events).bind('test').trigger('test');
   });
 
+  test("remove all events for a specific context", 4, function() {
+    var obj = _.extend({}, Backbone.Events);
+    obj.on('x y all', function() { ok(true); });
+    obj.on('x y all', function() { ok(false); }, obj);
+    obj.off(null, null, obj);
+    obj.trigger('x y');
+  });
+
+  test("remove all events for a specific callback", 4, function() {
+    var obj = _.extend({}, Backbone.Events);
+    var success = function() { ok(true); };
+    var fail = function() { ok(false); };
+    obj.on('x y all', success);
+    obj.on('x y all', fail);
+    obj.off(null, fail);
+    obj.trigger('x y');
+  });
+
 });
