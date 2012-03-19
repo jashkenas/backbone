@@ -617,6 +617,10 @@ object.off("change", onChange);  // Removes just the onChange callback.
 
 object.off("change");            // Removes all "change" callbacks.
 
+object.off(null, onChange);      // Removes the onChange callback for all events.
+
+object.off(null, null, context); // Removes all callbacks for context for all events.
+
 object.off();                    // Removes all callbacks on object.
 </pre>
 
@@ -1914,7 +1918,7 @@ $(function(){
       (<a href="#Collection#fetch">Collection#fetch</a>), send down an array
       of model attribute objects.
     </p>
-    
+
     <p>
       The <b>sync</b> function may be overriden globally as <tt>Backbone.sync</tt>,
       or at a finer-grained level, by adding a <tt>sync</tt> function to a Backbone
@@ -2557,15 +2561,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/stripe.png" alt="Stripe" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-airbnb">Airbnb Mobile</h2>
 
     <p>
-      <a href="http://airbnb.com">Airbnb</a> used Backbone.js and 
-      <a href="http://coffeescript.org">CoffeeScript</a> to quickly build 
-      <a href="http://m.airbnb.com">Airbnb Mobile</a> 
-      in six weeks with a team of three. The mobile version of Airbnb lets you 
-      discover and book rental spaces directly from your phone: from a private 
+      <a href="http://airbnb.com">Airbnb</a> used Backbone.js and
+      <a href="http://coffeescript.org">CoffeeScript</a> to quickly build
+      <a href="http://m.airbnb.com">Airbnb Mobile</a>
+      in six weeks with a team of three. The mobile version of Airbnb lets you
+      discover and book rental spaces directly from your phone: from a private
       apartment to a private island...
     </p>
 
@@ -2824,15 +2828,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/animoto.png" alt="Tzigla" class="Animoto Video Editor" />
       </a>
     </div>
-    
+
     <h2 id="examples-chaincal">ChainCal</h2>
 
     <p>
-      <a href="http://chaincalapp.com/">ChainCal</a> 
-      is an iPhone app that helps you to track your daily goals in a 
-      minimalist, visual way. The app is written almost entirely in <a href="http://coffeescript.org/">CoffeeScript</a>, 
-      Backbone handles the models, collections and views, and persistence is 
-      done with a Backbone.sync localStorage adapter. Templates are written in 
+      <a href="http://chaincalapp.com/">ChainCal</a>
+      is an iPhone app that helps you to track your daily goals in a
+      minimalist, visual way. The app is written almost entirely in <a href="http://coffeescript.org/">CoffeeScript</a>,
+      Backbone handles the models, collections and views, and persistence is
+      done with a Backbone.sync localStorage adapter. Templates are written in
       <a href="https://github.com/sstephenson/eco">Eco</a> and the app is packaged with <a href="http://brunch.io/">Brunch</a> and deployed with <a href="http://phonegap.com/">Phonegap</a>.
     </p>
 
@@ -2841,16 +2845,16 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/chaincal.png" alt="ChainCal" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-attictv">AtticTV</h2>
 
     <p>
-      <a href="http://attictv.com/">AtticTV</a> is MTV for the Youtube Generation: 
-      kick back and relax while watching the best 
-      music videos of your favorite genre. The videos are synced across the 
-      world, so, you're never watching alone on AtticTV. AtticTV is served by 
-      <a href="http://nodejs.org/">NodeJS</a> written in <a href="http://coffeescript.org/">CoffeeScript</a> with <a href="http://socket.io/">Socket.IO</a> as data transport. The 
-      frontend is built with Backbone.js with pushstate support, <a href="http://jquery.com/">jQuery</a>, and 
+      <a href="http://attictv.com/">AtticTV</a> is MTV for the Youtube Generation:
+      kick back and relax while watching the best
+      music videos of your favorite genre. The videos are synced across the
+      world, so, you're never watching alone on AtticTV. AtticTV is served by
+      <a href="http://nodejs.org/">NodeJS</a> written in <a href="http://coffeescript.org/">CoffeeScript</a> with <a href="http://socket.io/">Socket.IO</a> as data transport. The
+      frontend is built with Backbone.js with pushstate support, <a href="http://jquery.com/">jQuery</a>, and
       <a href="http://jade-lang.com/">Jade templates</a>.
     </p>
 
@@ -3146,8 +3150,8 @@ Inbox.messages.fetch();
 
     <p>You have to <a href="http://mathiasbynens.be/notes/etago">escape</a>
     <tt>&lt;/</tt> within the JSON string, to prevent javascript injection
-    attacks.  
-    
+    attacks.
+
     <p id="FAQ-extending">
       <b class="header">Extending Backbone</b>
       <br />
