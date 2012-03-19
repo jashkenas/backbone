@@ -528,4 +528,11 @@ $(document).ready(function() {
     ok(c.get() === undefined);
   });
 
+  test("#1112 - passing options.model sets collection.model", function() {
+    var Model = Backbone.Model.extend({})
+    var c = new Backbone.Collection([{id: 1}], {model: Model});
+    ok(c.model === Model);
+    ok(c.at(0) instanceof Model);
+  });
+
 });
