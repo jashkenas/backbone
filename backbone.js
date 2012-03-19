@@ -512,6 +512,7 @@
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
     options || (options = {});
+    if (options.model) this.model = options.model;
     if (options.comparator) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
