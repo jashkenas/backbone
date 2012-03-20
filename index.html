@@ -932,7 +932,10 @@ alert(JSON.stringify(artist));
     <p id="Model-fetch">
       <b class="header">fetch</b><code>model.fetch([options])</code>
       <br />
-      Resets the model's state from the server. Useful if the model has never
+      Resets the model's state from the server by delegating to
+      <a href="#Sync">Backbone.sync</a>. Returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
+      Useful if the model has never
       been populated with data, or if you'd like to ensure that you have the
       latest server state. A <tt>"change"</tt> event will be triggered if the
       server's state differs from the current attributes. Accepts
@@ -951,7 +954,9 @@ setInterval(function() {
       <b class="header">save</b><code>model.save([attributes], [options])</code>
       <br />
       Save a model to your database (or alternative persistence layer),
-      by delegating to <a href="#Sync">Backbone.sync</a>. The <b>attributes</b>
+      by delegating to <a href="#Sync">Backbone.sync</a>.  Returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> if
+      validation is successful and <tt>false</tt> otherwise. The <b>attributes</b>
       hash (as in <a href="#Model-set">set</a>) should contain the attributes
       you'd like to change &mdash; keys that aren't mentioned won't be altered &mdash; but,
       a <i>complete representation</i> of the resource will be sent to the server.
@@ -1010,7 +1015,9 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       <b class="header">destroy</b><code>model.destroy([options])</code>
       <br />
       Destroys the model on the server by delegating an HTTP <tt>DELETE</tt>
-      request to <a href="#Sync">Backbone.sync</a>. Accepts
+      request to <a href="#Sync">Backbone.sync</a>. Returns <tt>undefined</tt>
+      if the model <a href="#Model-isNew">isNew</a> and a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> otherwise.  Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
       through any collections that contain it, and a <tt>"sync"</tt> event, after
@@ -1570,7 +1577,8 @@ var Tweets = Backbone.Collection.extend({
       When the model data returns from the server, the collection will
       <a href="#Collection-reset">reset</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
-      under the covers, for custom persistence strategies.
+      under the covers for custom persistence strategies and returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
       The server handler for <b>fetch</b> requests should return a JSON array of
       models.
     </p>
@@ -1639,6 +1647,9 @@ Accounts.fetch();
       <b class="header">create</b><code>collection.create(attributes, [options])</code>
       <br />
       Convenience to create a new instance of a model within a collection.
+      Delegates to <a href="#Sync">Backbone.sync</a> and returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> if validation
+      is successful; returns <tt>false</tt> otherwise.
       Equivalent to instantiating a model with a hash of attributes,
       saving the model to the server, and adding the model to the set after being
       successfully created. Returns
@@ -1894,7 +1905,8 @@ $(function(){
     <p>
       <b>Backbone.sync</b> is the function that Backbone calls every time it
       attempts to read or save a model to the server. By default, it uses
-      <tt>(jQuery/Zepto).ajax</tt> to make a RESTful JSON request. You can override
+      <tt>(jQuery/Zepto).ajax</tt> to make a RESTful JSON request and returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>. You can override
       it in order to use a different persistence strategy, such as WebSockets,
       XML transport, or Local Storage.
     </p>
