@@ -928,13 +928,15 @@ alert(JSON.stringify(artist));
     <p id="Model-fetch">
       <b class="header">fetch</b><code>model.fetch([options])</code>
       <br />
-      Resets the model's state from the server. Useful if the model has never
+      Resets the model's state from the server by delegating to
+      <a href="#Sync">Backbone.sync</a>. Returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
+      Useful if the model has never
       been populated with data, or if you'd like to ensure that you have the
       latest server state. A <tt>"change"</tt> event will be triggered if the
       server's state differs from the current attributes. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response)</tt> as arguments.  Delegates to
-      <a href="#Sync">Backbone.sync</a> and returns its result.
+      are passed <tt>(model, response)</tt> as arguments.
     </p>
 
 <pre>
@@ -948,8 +950,8 @@ setInterval(function() {
       <b class="header">save</b><code>model.save([attributes], [options])</code>
       <br />
       Save a model to your database (or alternative persistence layer),
-      by delegating to <a href="#Sync">Backbone.sync</a>.  Returns the result of
-      <a href="#Sync">Backbone.sync</a> if
+      by delegating to <a href="#Sync">Backbone.sync</a>.  Returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> if
       validation is successful and <tt>false</tt> otherwise. The <b>attributes</b>
       hash (as in <a href="#Model-set">set</a>) should contain the attributes
       you'd like to change &mdash; keys that aren't mentioned won't be altered &mdash; but,
@@ -1009,15 +1011,15 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       <b class="header">destroy</b><code>model.destroy([options])</code>
       <br />
       Destroys the model on the server by delegating an HTTP <tt>DELETE</tt>
-      request to <a href="#Sync">Backbone.sync</a>. Accepts
+      request to <a href="#Sync">Backbone.sync</a>. Returns <tt>undefined</tt>
+      if the model <a href="#Model-isNew">isNew</a> and a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> otherwise.  Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
       through any collections that contain it, and a <tt>"sync"</tt> event, after
       the server has successfully acknowledged the model's deletion. Pass
       <tt>{wait: true}</tt> if you'd like to wait for the server to respond
-      before removing the model from the collection.  Returns <tt>undefined</tt>
-      if the model <a href="#Model-isNew">isNew</a> and the result of
-      <a href="#Sync">Backbone.sync</a> otherwise.
+      before removing the model from the collection.
     </p>
 
 <pre>
@@ -1571,7 +1573,8 @@ var Tweets = Backbone.Collection.extend({
       When the model data returns from the server, the collection will
       <a href="#Collection-reset">reset</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
-      under the covers for custom persistence strategies and returns its result.
+      under the covers for custom persistence strategies and returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
       The server handler for <b>fetch</b> requests should return a JSON array of
       models.
     </p>
@@ -1594,7 +1597,7 @@ Accounts.fetch();
     </p>
 
     <p>
-      <b>$.ajax</b> options can also be passed directly as <b>fetch</b> options,
+      <b>jQuery.ajax</b> options can also be passed directly as <b>fetch</b> options,
       so to fetch a specific page of a paginated collection:
       <tt>Documents.fetch({data: {page: 3}})</tt>
     </p>
@@ -1640,6 +1643,9 @@ Accounts.fetch();
       <b class="header">create</b><code>collection.create(attributes, [options])</code>
       <br />
       Convenience to create a new instance of a model within a collection.
+      Delegates to <a href="#Sync">Backbone.sync</a> and returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> if validation
+      is successful; returns <tt>false</tt> otherwise.
       Equivalent to instantiating a model with a hash of attributes,
       saving the model to the server, and adding the model to the set after being
       successfully created. Returns
@@ -1647,9 +1653,7 @@ Accounts.fetch();
       model from being created. In order for this to work, you should set the
       <a href="#Collection-model">model</a> property of the collection.
       The <b>create</b> method can accept either an attributes hash or an
-      existing, unsaved model object.  Delegates to <a href="#Sync">Backbone.sync</a>
-      and returns its result if validation is successful. Returns <tt>false</tt>
-      otherwise.
+      existing, unsaved model object.
     </p>
 
     <p>
@@ -1897,10 +1901,10 @@ $(function(){
     <p>
       <b>Backbone.sync</b> is the function that Backbone calls every time it
       attempts to read or save a model to the server. By default, it uses
-      <tt>(jQuery/Zepto).ajax</tt> to make a RESTful JSON request. You can override
+      <tt>(jQuery/Zepto).ajax</tt> to make a RESTful JSON request and returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>. You can override
       it in order to use a different persistence strategy, such as WebSockets,
-      XML transport, or Local Storage.  The result of <tt>$.ajax</tt> is returned
-      to the caller.
+      XML transport, or Local Storage.
     </p>
 
     <p>
@@ -1922,7 +1926,7 @@ $(function(){
       (<a href="#Collection#fetch">Collection#fetch</a>), send down an array
       of model attribute objects.
     </p>
-    
+
     <p>
       The <b>sync</b> function may be overriden globally as <tt>Backbone.sync</tt>,
       or at a finer-grained level, by adding a <tt>sync</tt> function to a Backbone
@@ -2565,15 +2569,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/stripe.png" alt="Stripe" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-airbnb">Airbnb Mobile</h2>
 
     <p>
-      <a href="http://airbnb.com">Airbnb</a> used Backbone.js and 
-      <a href="http://coffeescript.org">CoffeeScript</a> to quickly build 
-      <a href="http://m.airbnb.com">Airbnb Mobile</a> 
-      in six weeks with a team of three. The mobile version of Airbnb lets you 
-      discover and book rental spaces directly from your phone: from a private 
+      <a href="http://airbnb.com">Airbnb</a> used Backbone.js and
+      <a href="http://coffeescript.org">CoffeeScript</a> to quickly build
+      <a href="http://m.airbnb.com">Airbnb Mobile</a>
+      in six weeks with a team of three. The mobile version of Airbnb lets you
+      discover and book rental spaces directly from your phone: from a private
       apartment to a private island...
     </p>
 
@@ -2832,15 +2836,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/animoto.png" alt="Tzigla" class="Animoto Video Editor" />
       </a>
     </div>
-    
+
     <h2 id="examples-chaincal">ChainCal</h2>
 
     <p>
-      <a href="http://chaincalapp.com/">ChainCal</a> 
-      is an iPhone app that helps you to track your daily goals in a 
-      minimalist, visual way. The app is written almost entirely in <a href="http://coffeescript.org/">CoffeeScript</a>, 
-      Backbone handles the models, collections and views, and persistence is 
-      done with a Backbone.sync localStorage adapter. Templates are written in 
+      <a href="http://chaincalapp.com/">ChainCal</a>
+      is an iPhone app that helps you to track your daily goals in a
+      minimalist, visual way. The app is written almost entirely in <a href="http://coffeescript.org/">CoffeeScript</a>,
+      Backbone handles the models, collections and views, and persistence is
+      done with a Backbone.sync localStorage adapter. Templates are written in
       <a href="https://github.com/sstephenson/eco">Eco</a> and the app is packaged with <a href="http://brunch.io/">Brunch</a> and deployed with <a href="http://phonegap.com/">Phonegap</a>.
     </p>
 
@@ -2849,16 +2853,16 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/chaincal.png" alt="ChainCal" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-attictv">AtticTV</h2>
 
     <p>
-      <a href="http://attictv.com/">AtticTV</a> is MTV for the Youtube Generation: 
-      kick back and relax while watching the best 
-      music videos of your favorite genre. The videos are synced across the 
-      world, so, you're never watching alone on AtticTV. AtticTV is served by 
-      <a href="http://nodejs.org/">NodeJS</a> written in <a href="http://coffeescript.org/">CoffeeScript</a> with <a href="http://socket.io/">Socket.IO</a> as data transport. The 
-      frontend is built with Backbone.js with pushstate support, <a href="http://jquery.com/">jQuery</a>, and 
+      <a href="http://attictv.com/">AtticTV</a> is MTV for the Youtube Generation:
+      kick back and relax while watching the best
+      music videos of your favorite genre. The videos are synced across the
+      world, so, you're never watching alone on AtticTV. AtticTV is served by
+      <a href="http://nodejs.org/">NodeJS</a> written in <a href="http://coffeescript.org/">CoffeeScript</a> with <a href="http://socket.io/">Socket.IO</a> as data transport. The
+      frontend is built with Backbone.js with pushstate support, <a href="http://jquery.com/">jQuery</a>, and
       <a href="http://jade-lang.com/">Jade templates</a>.
     </p>
 
@@ -3154,8 +3158,8 @@ Inbox.messages.fetch();
 
     <p>You have to <a href="http://mathiasbynens.be/notes/etago">escape</a>
     <tt>&lt;/</tt> within the JSON string, to prevent javascript injection
-    attacks.  
-    
+    attacks.
+
     <p id="FAQ-extending">
       <b class="header">Extending Backbone</b>
       <br />
