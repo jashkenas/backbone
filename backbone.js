@@ -349,6 +349,8 @@
     // state will be `set` again.
     save: function(key, value, options) {
       var attrs, current;
+
+      // Handle both `("key", value)` and `({key: value})` -style calls.
       if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
@@ -356,16 +358,22 @@
         attrs = {};
         attrs[key] = value;
       }
-
       options = options ? _.clone(options) : {};
+
+      // If we're "wait"-ing to set changed attributes, validate early.
       if (options.wait) {
         if (!this._validate(attrs, options)) return false;
         current = _.clone(this.attributes);
       }
+
+      // Regular saves `set` attributes before persisting to the server.
       var silentOptions = _.extend({}, options, {silent: true});
       if (attrs && !this.set(attrs, options.wait ? silentOptions : options)) {
         return false;
       }
+
+      // After a successful server-side save, the client is (optionally)
+      // updated with the server-side state.
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
@@ -381,6 +389,8 @@
           model.trigger('sync', model, resp, options);
         }
       };
+
+      // Finish configuring and sending the Ajax request.
       options.error = Backbone.wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
       var xhr = (this.sync || Backbone.sync).call(this, method, this, options);
@@ -413,6 +423,7 @@
           model.trigger('sync', model, resp, options);
         }
       };
+
       options.error = Backbone.wrapError(options.error, model, options);
       var xhr = (this.sync || Backbone.sync).call(this, 'delete', this, options);
       if (!options.wait) triggerDestroy();
@@ -451,8 +462,10 @@
       options || (options = {});
       var changing = this._changing;
       this._changing = true;
+
       // Silent changes become pending changes.
       for (var attr in this._silent) this._pending[attr] = true;
+
       // Silent changes are triggered.
       var changes = _.extend({}, options.changes, this._silent);
       this._silent = {};
@@ -460,6 +473,7 @@
         this.trigger('change:' + attr, this, this.get(attr), options);
       }
       if (changing) return this;
+
       // Continue firing `"change"` events while there are pending changes.
       while (!_.isEmpty(this._pending)) {
         this._pending = {};
@@ -471,6 +485,7 @@
         }
         this._previousAttributes = _.clone(this.attributes);
       }
+
       this._changing = false;
       return this;
     },
