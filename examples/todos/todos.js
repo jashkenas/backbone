@@ -12,10 +12,13 @@ $(function(){
   // Our basic **Todo** model has `title`, `order`, and `done` attributes.
   var Todo = Backbone.Model.extend({
 
-    // Default attributes for the todo.
-    defaults: {
-      title: "empty todo...",
-      done: false
+    // Default attributes for the todo item.
+    defaults: function() {
+      return {
+        title: "empty todo...",
+        order: Todos.nextOrder(),
+        done: false
+      };
     },
 
     // Ensure that each todo created has `title`.
@@ -108,10 +111,8 @@ $(function(){
 
     // Re-render the titles of the todo item.
     render: function() {
-      var $el = $(this.el);
-      $el.html(this.template(this.model.toJSON()));
-      $el.toggleClass('done', this.model.get('done'));
-
+      this.$el.html(this.template(this.model.toJSON()));
+      this.$el.toggleClass('done', this.model.get('done'));
       this.input = this.$('.edit');
       return this;
     },
@@ -123,19 +124,16 @@ $(function(){
 
     // Switch this view into `"editing"` mode, displaying the input field.
     edit: function() {
-      $(this.el).addClass("editing");
+      this.$el.addClass("editing");
       this.input.focus();
     },
 
     // Close the `"editing"` mode, saving changes to the todo.
     close: function() {
-      var value = this.input.val().trim();
-
-      if (!value)
-        this.clear();
-        
+      var value = this.input.val();
+      if (!value) this.clear();
       this.model.save({title: value});
-      $(this.el).removeClass("editing");
+      this.$el.removeClass("editing");
     },
 
     // If you hit `enter`, we're through editing the item.
@@ -182,8 +180,8 @@ $(function(){
       Todos.bind('reset', this.addAll, this);
       Todos.bind('all', this.render, this);
 
-      this.$footer = this.$('footer');
-      this.$main = $('#main');
+      this.footer = this.$('footer');
+      this.main = $('#main');
 
       Todos.fetch();
     },
@@ -195,16 +193,12 @@ $(function(){
       var remaining = Todos.remaining().length;
 
       if (Todos.length) {
-          this.$main.show();
-          this.$footer.show();
-
-          this.$footer.html(this.statsTemplate({
-            done:       done,
-            remaining:  remaining
-          }));
+        this.main.show();
+        this.footer.show();
+        this.footer.html(this.statsTemplate({done: done, remaining: remaining}));
       } else {
-          this.$main.hide();
-          this.$footer.hide();
+        this.main.hide();
+        this.footer.hide();
       }
 
       this.allCheckbox.checked = !remaining;
@@ -222,22 +216,13 @@ $(function(){
       Todos.each(this.addOne);
     },
 
-    // Generate the attributes for a new Todo item.
-    newAttributes: function() {
-      return {
-        title: this.input.val().trim(),
-        order: Todos.nextOrder(),
-        done: false
-      };
-    },
-
     // If you hit return in the main input field, create new **Todo** model,
     // persisting it to *localStorage*.
     createOnEnter: function(e) {
       if (e.keyCode != 13) return;
-      if (!this.input.val().trim()) return;
+      if (!this.input.val()) return;
 
-      Todos.create(this.newAttributes());
+      Todos.create({title: this.input.val()});
       this.input.val('');
     },
 
