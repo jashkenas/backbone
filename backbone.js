@@ -88,14 +88,16 @@
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
+
       var calls, event, node, tail, list;
       if (!callback) return this;
       events = events.split(eventSplitter);
       calls = this._callbacks || (this._callbacks = {});
+
+      // Create an immutable callback list, allowing traversal during
+      // modification.  The tail is an empty object that will always be used
+      // as the next node.
       while (event = events.shift()) {
-        // Create an immutable callback list, allowing traversal during
-        // modification.  The tail is an empty object that will always be used
-        // as the next node.
         list = calls[event];
         node = list ? list.tail : {};
         node.next = tail = {};
@@ -103,6 +105,7 @@
         node.callback = callback;
         calls[event] = {tail: tail, next: list ? list.next : node};
       }
+
       return this;
     },
 
@@ -111,11 +114,16 @@
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
       var event, calls, node, tail, cb, ctx;
+
+      // No events, or removing *all* events.
       if (!(calls = this._callbacks)) return;
       if (!(events || callback || context)) {
         delete this._callbacks;
         return this;
       }
+
+      // Loop through the listed events and contexts, splicing them out of the
+      // linked list of callbacks if appropriate.
       events = events ? events.split(eventSplitter) : _.keys(calls);
       while (event = events.shift()) {
         node = calls[event];
@@ -131,18 +139,23 @@
           }
         }
       }
+
       return this;
     },
 
-    // Trigger one more many events, firing all bound callbacks. Callbacks are
-    // passed the same arguments as `trigger` is, apart from the event name.
-    // Listening for `"all"` passes the true event name as the first argument.
+    // Trigger one or many events, firing all bound callbacks. Callbacks are
+    // passed the same arguments as `trigger` is, apart from the event name
+    // (unless you're listening on `"all"`, which will cause your callback to
+    // receive the true name of the event as the first argument).
     trigger: function(events) {
       var event, node, calls, tail, args, all, rest;
       if (!(calls = this._callbacks)) return this;
       all = calls.all;
       events = events.split(eventSplitter);
       rest = slice.call(arguments, 1);
+
+      // For each event, walk through the linked list of callbacks twice,
+      // first to trigger the event, then to trigger any `"all"` callbacks.
       while (event = events.shift()) {
         if (node = calls[event]) {
           tail = node.tail;
@@ -158,6 +171,7 @@
           }
         }
       }
+
       return this;
     }
 
@@ -245,6 +259,8 @@
     // you choose to silence it.
     set: function(key, value, options) {
       var attrs, attr, val;
+
+      // Handle both
       if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
@@ -270,15 +286,19 @@
       var escaped = this._escapedAttributes;
       var prev = this._previousAttributes || {};
 
+      // For each `set` attribute...
       for (attr in attrs) {
         val = attrs[attr];
+
         // If the new and current value differ, record the change.
         if (!_.isEqual(now[attr], val) || (options.unset && _.has(now, attr))) {
           delete escaped[attr];
           (options.silent ? this._silent : changes)[attr] = true;
         }
-        // Update the current value.
+
+        // Update or delete the current value.
         options.unset ? delete now[attr] : now[attr] = val;
+
         // If the new and previous value differ, record the change.  If not,
         // then remove changes for this attribute.
         if (!_.isEqual(prev[attr], val) || (_.has(now, attr) != _.has(prev, attr))) {
