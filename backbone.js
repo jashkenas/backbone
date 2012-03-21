@@ -231,14 +231,14 @@
     escape: function(attr) {
       var html;
       if (html = this._escapedAttributes[attr]) return html;
-      var val = this.attributes[attr];
+      var val = this.get(attr);
       return this._escapedAttributes[attr] = _.escape(val == null ? '' : '' + val);
     },
 
     // Returns `true` if the attribute contains a value that is not null
     // or undefined.
     has: function(attr) {
-      return this.attributes[attr] != null;
+      return this.get(attr) != null;
     },
 
     // Set a hash of model attributes on the object, firing `"change"` unless
@@ -437,7 +437,7 @@
       var changes = _.extend({}, options.changes, this._silent);
       this._silent = {};
       for (var attr in changes) {
-        this.trigger('change:' + attr, this, this.attributes[attr], options);
+        this.trigger('change:' + attr, this, this.get(attr), options);
       }
       if (changing) return this;
       // Continue firing `"change"` events while there are pending changes.
