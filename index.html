@@ -198,11 +198,11 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.9.1)</span>
+      Backbone.js <span class="version">(0.9.2)</span>
     </a>
     <ul class="toc_section">
-      <li>➢ <a href="http://github.com/documentcloud/backbone">github repo</a></li>
-      <li>– <a href="docs/backbone.html">annotated source</a></li>
+      <li>&raquo; <a href="http://github.com/documentcloud/backbone">GitHub Repository</a></li>
+      <li>&raquo; <a href="docs/backbone.html">Annotated Source</a></li>
     </ul>
 
     <a class="toc_title" href="#introduction">
@@ -273,10 +273,15 @@
       <li>– <a href="#Collection-get">get</a></li>
       <li>– <a href="#Collection-getByCid">getByCid</a></li>
       <li>– <a href="#Collection-at">at</a></li>
+      <li>– <a href="#Collection-push">push</a></li>
+      <li>– <a href="#Collection-pop">pop</a></li>
+      <li>– <a href="#Collection-unshift">unshift</a></li>
+      <li>– <a href="#Collection-shift">shift</a></li>
       <li>– <a href="#Collection-length">length</a></li>
       <li>– <a href="#Collection-comparator">comparator</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
+      <li>– <a href="#Collection-where">where</a></li>
       <li>– <a href="#Collection-url">url</a></li>
       <li>– <a href="#Collection-parse">parse</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
@@ -447,12 +452,12 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (0.9.1)</a></td>
-        <td><i>47kb, Full source, lots of comments</i></td>
+        <td><a class="punch" href="backbone.js">Development Version (0.9.2)</a></td>
+        <td><i>52kb, Full source, lots of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (0.9.1)</a></td>
-        <td><i>5.3kb, Packed and gzipped</i></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (0.9.2)</a></td>
+        <td><i>5.6kb, Packed and gzipped</i></td>
       </tr>
     </table>
 
@@ -613,15 +618,20 @@ proxy.on("all", function(eventName) {
     </p>
 
 <pre>
-object.off("change", onChange);  // Removes just the onChange callback.
+// Removes just the `onChange` callback.
+object.off("change", onChange);
 
-object.off("change");            // Removes all "change" callbacks.
+// Removes all "change" callbacks.
+object.off("change");         
 
-object.off(null, onChange);      // Removes the onChange callback for all events.
+// Removes the `onChange` callback for all events.
+object.off(null, onChange);
 
-object.off(null, null, context); // Removes all callbacks for context for all events.
+// Removes all callbacks for `context` for all events.
+object.off(null, null, context);
 
-object.off();                    // Removes all callbacks on object.
+// Removes all callbacks on `object`.
+object.off();
 </pre>
 
     <p id="Events-trigger">
@@ -1436,6 +1446,34 @@ var book = Library.get(110);
       is sorted, and if your collection isn't sorted, <b>at</b> will still
       retrieve models in insertion order.
     </p>
+    
+    <p id="Collection-push">
+      <b class="header">push</b><code>collection.push(model, [options])</code>
+      <br />
+      Add a model at the end of a collection. Takes the same options as 
+      <a href="#Collection-add">add</a>.
+    </p>
+    
+    <p id="Collection-pop">
+      <b class="header">pop</b><code>collection.pop([options])</code>
+      <br />
+      Remove and return the last model from a collection. Takes the same options as 
+      <a href="#Collection-remove">remove</a>.
+    </p>
+    
+    <p id="Collection-unshift">
+      <b class="header">unshift</b><code>collection.unshift(model, [options])</code>
+      <br />
+      Add a model at the beginning of a collection. Takes the same options as 
+      <a href="#Collection-add">add</a>.
+    </p>
+    
+    <p id="Collection-shift">
+      <b class="header">shift</b><code>collection.shift([options])</code>
+      <br />
+      Remove and return the first model from a collection. Takes the same options as 
+      <a href="#Collection-remove">remove</a>.
+    </p>
 
     <p id="Collection-length">
       <b class="header">length</b><code>collection.length</code>
@@ -1512,14 +1550,34 @@ alert(chapters.pluck('title'));
 
 <pre class="runnable">
 var stooges = new Backbone.Collection([
-  new Backbone.Model({name: "Curly"}),
-  new Backbone.Model({name: "Larry"}),
-  new Backbone.Model({name: "Moe"})
+  {name: "Curly"},
+  {name: "Larry"},
+  {name: "Moe"}
 ]);
 
 var names = stooges.pluck("name");
 
 alert(JSON.stringify(names));
+</pre>
+
+    <p id="Collection-where">
+      <b class="header">where</b><code>collection.where(attributes)</code>
+      <br />
+      Return an array of all the models in a collection that match the
+      passed <b>attributes</b>. Useful for simple cases of <tt>filter</tt>.
+    </p>
+
+<pre class="runnable">
+var friends = new Backbone.Collection([
+  {name: "Athos",      job: "Musketeer"},
+  {name: "Porthos",    job: "Musketeer"},
+  {name: "Aramis",     job: "Musketeer"},
+  {name: "d'Artagnan", job: "Guard"},
+]);
+
+var musketeers = friends.where({job: "Musketeer"});
+
+alert(musketeers.length);
 </pre>
 
     <p id="Collection-url">
@@ -3288,6 +3346,48 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <b class="header">0.9.2</b> &mdash; <small><i>March 21, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.1...0.9.2">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Instead of throwing an error when adding duplicate models to a collection,
+        Backbone will now silently skip them instead.
+      </li>
+      <li>
+        Added <a href="#Collection-push">push</a>, 
+        <a href="#Collection-pop">pop</a>, 
+        <a href="#Collection-unshift">unshift</a>, and 
+        <a href="#Collection-shift">shift</a> to collections. 
+      </li>
+      <li>
+        A model's <a href="#Model-changed">changed</a> hash is now exposed for
+        easy reading of the changed attribute delta, since the model's last
+        <tt>"change"</tt> event.
+      </li>
+      <li>
+        Added <a href="#Collection-where">where</a> to collections for simple 
+        filtering.
+      </li>
+      <li>
+        You can now use a single <a href="#Events-off">off</a> call 
+        to remove all callbacks bound to a specific object.
+      </li>
+      <li>
+        Bug fixes for nested individual change events, some of which may be 
+        "silent".
+      </li>
+      <li>
+        Bug fixes for URL encoding in <tt>location.hash</tt> fragments.
+      </li>
+      <li>
+        Bug fix for client-side validation in advance of a <tt>save</tt> call
+        with <tt>{wait: true}</tt>.
+      </li>
+      <li>
+        Updated / refreshed the example 
+        <a href="examples/todos/index.html">Todo List</a> app.
+      </li>
+    </ul>
 
     <b class="header">0.9.1</b> &mdash; <small><i>Feb. 2, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.0...0.9.1">Diff</a><br />
     <ul style="margin-top: 5px;">
