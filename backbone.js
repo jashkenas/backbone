@@ -350,7 +350,10 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         var serverAttrs = model.parse(resp, xhr);
-        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
+        if (options.wait) {
+          delete options.wait;
+          serverAttrs = _.extend(attrs || {}, serverAttrs);
+        }
         if (!model.set(serverAttrs, options)) return false;
         if (success) {
           success(model, resp);

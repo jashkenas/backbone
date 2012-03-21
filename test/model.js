@@ -366,6 +366,8 @@ $(document).ready(function() {
     equal(model.get('title'), 'Twelfth Night');
   });
 
+
+
   test("Model: fetch", function() {
     doc.fetch();
     equal(lastRequest.method, 'read');
@@ -614,6 +616,18 @@ $(document).ready(function() {
     equal(model.get('x'), 1);
     equal(changed, 0);
     lastRequest.options.success({});
+    equal(model.get('x'), 3);
+    equal(changed, 1);
+  });
+
+  test("`save` with `wait` results in correct attributes if success is called during sync", function() {
+    var changed = 0;
+    var model = new Backbone.Model({x: 1, y: 2});
+    model.sync = function(method, model, options) {
+      options.success();
+    };
+    model.on("change:x", function() { changed++; });
+    model.save({x: 3}, {wait: true});
     equal(model.get('x'), 3);
     equal(changed, 1);
   });
