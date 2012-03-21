@@ -33,6 +33,11 @@ $(document).ready(function() {
     equal($(div).text(), 'one two three');
   });
 
+  test("View: make can take an argument of 0", function() {
+    var div = view.make('div', {id: 'test-div'}, 0);
+    equal($(div).text(), '0');
+  });
+
   test("View: initialize", function() {
     var View = Backbone.View.extend({
       initialize: function() {
