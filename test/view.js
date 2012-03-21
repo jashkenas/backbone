@@ -33,6 +33,14 @@ $(document).ready(function() {
     equal($(div).text(), 'one two three');
   });
 
+  test("View: make can take falsy values for content", function() {
+    var div = view.make('div', {id: 'test-div'}, 0);
+    equal($(div).text(), '0');
+
+    var div = view.make('div', {id: 'test-div'}, '');
+    equal($(div).text(), '');
+  });
+
   test("View: initialize", function() {
     var View = Backbone.View.extend({
       initialize: function() {
