@@ -376,6 +376,9 @@ $(document).ready(function() {
     doc.destroy();
     equal(lastRequest.method, 'delete');
     ok(_.isEqual(lastRequest.model, doc));
+
+    var newModel = new Backbone.Model;
+    equal(newModel.destroy(), false);
   });
 
   test("Model: non-persisted destroy", function() {

@@ -377,7 +377,11 @@
         model.trigger('destroy', model, model.collection, options);
       };
 
-      if (this.isNew()) return triggerDestroy();
+      if (this.isNew()) {
+        triggerDestroy();
+        return false;
+      }
+
       options.success = function(resp) {
         if (options.wait) triggerDestroy();
         if (success) {

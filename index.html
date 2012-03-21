@@ -1015,9 +1015,9 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       <b class="header">destroy</b><code>model.destroy([options])</code>
       <br />
       Destroys the model on the server by delegating an HTTP <tt>DELETE</tt>
-      request to <a href="#Sync">Backbone.sync</a>. Returns <tt>undefined</tt>
-      if the model <a href="#Model-isNew">isNew</a> and a
-      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> otherwise.  Accepts
+      request to <a href="#Sync">Backbone.sync</a>. Returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> object, or
+      <tt>false</tt> if the model <a href="#Model-isNew">isNew</a>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
       through any collections that contain it, and a <tt>"sync"</tt> event, after
@@ -1649,7 +1649,7 @@ Accounts.fetch();
       Convenience to create a new instance of a model within a collection.
       Delegates to <a href="#Sync">Backbone.sync</a> and returns a
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> if validation
-      is successful; returns <tt>false</tt> otherwise.
+      is successful, and <tt>false</tt> otherwise.
       Equivalent to instantiating a model with a hash of attributes,
       saving the model to the server, and adding the model to the set after being
       successfully created. Returns
