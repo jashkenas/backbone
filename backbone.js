@@ -176,7 +176,7 @@
     var defaults;
     attributes || (attributes = {});
     if (options && options.parse) attributes = this.parse(attributes);
-    if (defaults = getValue(this, 'defaults')) {
+    if (defaults = _.result(this, 'defaults')) {
       attributes = _.extend({}, defaults, attributes);
     }
     if (options && options.collection) this.collection = options.collection;
@@ -396,7 +396,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url: function() {
-      var base = getValue(this, 'urlRoot') || getValue(this.collection, 'url') || urlError();
+      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -1180,7 +1180,7 @@
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents: function(events) {
-      if (!(events || (events = getValue(this, 'events')))) return;
+      if (!(events || (events = _.result(this, 'events')))) return;
       this.undelegateEvents();
       for (var key in events) {
         var method = events[key];
@@ -1223,7 +1223,7 @@
     // an element from the `id`, `className` and `tagName` properties.
     _ensureElement: function() {
       if (!this.el) {
-        var attrs = getValue(this, 'attributes') || {};
+        var attrs = _.result(this, 'attributes') || {};
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
         this.setElement(this.make(this.tagName, attrs), false);
@@ -1281,7 +1281,7 @@
 
     // Ensure that we have a URL.
     if (!options.url) {
-      params.url = getValue(model, 'url') || urlError();
+      params.url = _.result(model, 'url') || urlError();
     }
 
     // Ensure that we have the appropriate request data.
@@ -1372,13 +1372,6 @@
     child.__super__ = parent.prototype;
 
     return child;
-  };
-
-  // Helper function to get a value from a Backbone object as a property
-  // or as a function.
-  var getValue = function(object, prop) {
-    if (!(object && object[prop])) return null;
-    return _.isFunction(object[prop]) ? object[prop]() : object[prop];
   };
 
   // Throw an error when a URL is needed, and none is supplied.
