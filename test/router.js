@@ -1,6 +1,32 @@
 $(document).ready(function() {
 
-  module("Backbone.Router");
+  var router = null;
+  var lastRoute = null;
+  var lastArgs = [];
+
+  function onRoute(router, route, args) {
+    lastRoute = route;
+    lastArgs = args;
+  }
+
+  module("Backbone.Router", {
+
+    setup: function() {
+      Backbone.history = null;
+      router = new Router({testing: 101});
+      Backbone.history.interval = 9;
+      Backbone.history.start({pushState: false});
+      lastRoute = null;
+      lastArgs = [];
+      Backbone.history.on('route', onRoute);
+    },
+
+    teardown: function() {
+      Backbone.history.stop();
+      Backbone.history.off('route', onRoute);
+    }
+
+  });
 
   var Router = Backbone.Router.extend({
 
@@ -11,6 +37,9 @@ $(document).ready(function() {
       "counter":                    "counter",
       "search/:query":              "search",
       "search/:query/p:page":       "search",
+      "contacts":                   "contacts",
+      "contacts/new":               "newContact",
+      "contacts/:id":               "loadContact",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
@@ -35,6 +64,18 @@ $(document).ready(function() {
       this.page = page;
     },
 
+    contacts: function(){
+      this.contact = 'index';
+    },
+
+    newContact: function(){
+      this.contact = 'new';
+    },
+
+    loadContact: function(){
+      this.contact = 'load';
+    },
+
     splat : function(args) {
       this.args = args;
     },
@@ -56,19 +97,6 @@ $(document).ready(function() {
 
     // do not provide a callback method for the noCallback route
 
-  });
-
-  Backbone.history = null;
-  var router = new Router({testing: 101});
-
-  Backbone.history.interval = 9;
-  Backbone.history.start({pushState: false});
-
-  var lastRoute = null;
-  var lastArgs = [];
-  Backbone.history.bind('route', function(router, route, args) {
-    lastRoute = route;
-    lastArgs = args;
   });
 
   test("Router: initialize", function() {
@@ -105,6 +133,18 @@ $(document).ready(function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equal(router.query, 'manhattan');
     equal(router.page, '20');
+  });
+
+  test("Router: route precedence via navigate", 6, function(){
+    // check both 0.9.x and backwards-compatibility options
+    _.each([ { trigger: true }, true ], function( options ){
+      Backbone.history.navigate('contacts', options);
+      equal(router.contact, 'index');
+      Backbone.history.navigate('contacts/new', options);
+      equal(router.contact, 'new');
+      Backbone.history.navigate('contacts/foo', options);
+      equal(router.contact, 'load');
+    });
   });
 
   test("Router: doesn't fire routes to the same place twice", function() {
@@ -198,6 +238,42 @@ $(document).ready(function() {
     } catch (err) {
       ok(false, "an exception was thrown trying to fire the router event with no router handler callback");
     }
+  });
+
+  test("#933, #908 - leading slash", function() {
+    var history = new Backbone.History();
+    history.options = {root: '/root'};
+    equal(history.getFragment('/root/foo'), 'foo');
+    history.options.root = '/root/';
+    equal(history.getFragment('/root/foo'), 'foo');
+  });
+
+  test("#1003 - History is started before navigate is called", function() {
+    var history = new Backbone.History();
+    history.navigate = function(){ ok(Backbone.History.started); };
+    Backbone.history.stop();
+    history.start();
+  });
+
+  test("Router: route callback gets passed non-decoded values", function() {
+    var route = 'has%2Fslash/complex-has%23hash/has%20space';
+    Backbone.history.navigate(route, {trigger: true});
+    equal(router.first, 'has%2Fslash');
+    equal(router.part, 'has%23hash');
+    equal(router.rest, 'has%20space');
+  });
+
+  asyncTest("Router: correctly handles URLs with % (#868)", 3, function() {
+    window.location.hash = 'search/fat%3A1.5%25';
+    setTimeout(function() {
+      window.location.hash = 'search/fat';
+      setTimeout(function() {
+          equal(router.query, 'fat');
+          equal(router.page, undefined);
+          equal(lastRoute, 'search');
+          start();
+        }, 50);
+    }, 50);
   });
 
 });

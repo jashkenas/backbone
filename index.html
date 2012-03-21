@@ -198,8 +198,12 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.9.1)</span>
+      Backbone.js <span class="version">(0.9.2)</span>
     </a>
+    <ul class="toc_section">
+      <li>&raquo; <a href="http://github.com/documentcloud/backbone">GitHub Repository</a></li>
+      <li>&raquo; <a href="docs/backbone.html">Annotated Source</a></li>
+    </ul>
 
     <a class="toc_title" href="#introduction">
       Introduction
@@ -234,8 +238,9 @@
       <li>– <a href="#Model-idAttribute">idAttribute</a></li>
       <li>– <a href="#Model-cid">cid</a></li>
       <li>– <a href="#Model-attributes">attributes</a></li>
+      <li>– <a href="#Model-changed">changed</a></li>
       <li>– <a href="#Model-defaults">defaults</a></li>
-      <li>- <a href="#Model-toJSON">toJSON</a></li>
+      <li>– <a href="#Model-toJSON">toJSON</a></li>
       <li>– <a href="#Model-fetch">fetch</a></li>
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
@@ -268,10 +273,15 @@
       <li>– <a href="#Collection-get">get</a></li>
       <li>– <a href="#Collection-getByCid">getByCid</a></li>
       <li>– <a href="#Collection-at">at</a></li>
+      <li>– <a href="#Collection-push">push</a></li>
+      <li>– <a href="#Collection-pop">pop</a></li>
+      <li>– <a href="#Collection-unshift">unshift</a></li>
+      <li>– <a href="#Collection-shift">shift</a></li>
       <li>– <a href="#Collection-length">length</a></li>
       <li>– <a href="#Collection-comparator">comparator</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
+      <li>– <a href="#Collection-where">where</a></li>
       <li>– <a href="#Collection-url">url</a></li>
       <li>– <a href="#Collection-parse">parse</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
@@ -342,8 +352,8 @@
       <li>– <a href="#examples-flow">Flow</a></li>
       <li>– <a href="#examples-audiovroom">AudioVroom</a></li>
       <li>– <a href="#examples-foursquare">Foursquare</a></li>
-      <li>- <a href="#examples-wunderkit">Wunderkit</a></li>
-      <li>- <a href="#examples-khan-academy">Khan Academy</a></li>
+      <li>– <a href="#examples-wunderkit">Wunderkit</a></li>
+      <li>– <a href="#examples-khan-academy">Khan Academy</a></li>
       <li>– <a href="#examples-do">Do</a></li>
       <li>– <a href="#examples-posterous">Posterous Spaces</a></li>
       <li>– <a href="#examples-groupon">Groupon Now!</a></li>
@@ -354,7 +364,7 @@
       <li>– <a href="#examples-diaspora">Diaspora</a></li>
       <li>– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
       <li>– <a href="#examples-pandora">Pandora</a></li>
-      <li>- <a href="#examples-code-school">Code School</a></li>
+      <li>– <a href="#examples-code-school">Code School</a></li>
       <li>– <a href="#examples-cloudapp">CloudApp</a></li>
       <li>– <a href="#examples-seatgeek">SeatGeek</a></li>
       <li>– <a href="#examples-grove">Grove.io</a></li>
@@ -416,6 +426,7 @@
       an <a href="examples/todos/index.html">example application</a>,
       a <a href="https://github.com/documentcloud/backbone/wiki/Tutorials%2C-blog-posts-and-example-sites">list of tutorials</a>
       and a <a href="#examples">long list of real-world projects</a> that use Backbone.
+      Backbone is available for use under the <a href="http://github.com/documentcloud/backbone/blob/master/LICENSE">MIT software license</a>.
     </p>
 
     <p>
@@ -423,7 +434,7 @@
       <a href="http://github.com/documentcloud/backbone/issues">GitHub issues page</a>,
       on Freenode IRC in the <tt>#documentcloud</tt> channel, post questions to the
       <a href="https://groups.google.com/forum/#!forum/backbonejs">Google Group</a>,
-      add pages to the a <a href="https://github.com/documentcloud/backbone/wiki">wiki</a>
+      add pages to the <a href="https://github.com/documentcloud/backbone/wiki">wiki</a>
       or send tweets to <a href="http://twitter.com/documentcloud">@documentcloud</a>.
     </p>
 
@@ -441,12 +452,12 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (0.9.1)</a></td>
-        <td><i>47kb, Full source, lots of comments</i></td>
+        <td><a class="punch" href="backbone.js">Development Version (0.9.2)</a></td>
+        <td><i>52kb, Full source, lots of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (0.9.1)</a></td>
-        <td><i>5.3kb, Packed and gzipped</i></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (0.9.2)</a></td>
+        <td><i>5.6kb, Packed and gzipped</i></td>
       </tr>
     </table>
 
@@ -607,11 +618,20 @@ proxy.on("all", function(eventName) {
     </p>
 
 <pre>
-object.off("change", onChange);  // Removes just the onChange callback.
+// Removes just the `onChange` callback.
+object.off("change", onChange);
 
-object.off("change");            // Removes all "change" callbacks.
+// Removes all "change" callbacks.
+object.off("change");         
 
-object.off();                    // Removes all callbacks on object.
+// Removes the `onChange` callback for all events.
+object.off(null, onChange);
+
+// Removes all callbacks for `context` for all events.
+object.off(null, null, context);
+
+// Removes all callbacks on `object`.
+object.off();
 </pre>
 
     <p id="Events-trigger">
@@ -767,6 +787,8 @@ book.set("title", "A Scandal in Bohemia");
       You may also pass an <tt>error</tt>
       callback in the options, which will be invoked instead of triggering an
       <tt>"error"</tt> event, should validation fail.
+      If <tt>{silent: true}</tt> is passed as an option, the validation is deferred
+      until the next change.
     </p>
 
     <p id="Model-escape">
@@ -860,6 +882,17 @@ alert("Cake id: " + cake.id);
       attributes, use <a href="#Model-toJSON">toJSON</a> instead.
     </p>
 
+    <p id="Model-changed">
+      <b class="header">changed</b><code>model.changed</code>
+      <br />
+      The <b>changed</b> property is the internal hash containing all the attributes
+      that have changed since the last <tt>"change"</tt> event was triggered.
+      Please do not update <b>changed</b> directly.  Its state is maintained internally
+      by <a href="#Model-set">set</a> and <a href="#Model-change">change</a>.
+      A copy of <b>changed</b> can be acquired from
+      <a href="#Model-changedAttributes">changedAttributes</a>.
+    </p>
+
     <p id="Model-defaults">
       <b class="header">defaults</b><code>model.defaults or model.defaults()</code>
       <br />
@@ -909,7 +942,10 @@ alert(JSON.stringify(artist));
     <p id="Model-fetch">
       <b class="header">fetch</b><code>model.fetch([options])</code>
       <br />
-      Resets the model's state from the server. Useful if the model has never
+      Resets the model's state from the server by delegating to
+      <a href="#Sync">Backbone.sync</a>. Returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
+      Useful if the model has never
       been populated with data, or if you'd like to ensure that you have the
       latest server state. A <tt>"change"</tt> event will be triggered if the
       server's state differs from the current attributes. Accepts
@@ -928,7 +964,9 @@ setInterval(function() {
       <b class="header">save</b><code>model.save([attributes], [options])</code>
       <br />
       Save a model to your database (or alternative persistence layer),
-      by delegating to <a href="#Sync">Backbone.sync</a>. The <b>attributes</b>
+      by delegating to <a href="#Sync">Backbone.sync</a>.  Returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> if
+      validation is successful and <tt>false</tt> otherwise. The <b>attributes</b>
       hash (as in <a href="#Model-set">set</a>) should contain the attributes
       you'd like to change &mdash; keys that aren't mentioned won't be altered &mdash; but,
       a <i>complete representation</i> of the resource will be sent to the server.
@@ -987,7 +1025,9 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       <b class="header">destroy</b><code>model.destroy([options])</code>
       <br />
       Destroys the model on the server by delegating an HTTP <tt>DELETE</tt>
-      request to <a href="#Sync">Backbone.sync</a>. Accepts
+      request to <a href="#Sync">Backbone.sync</a>. Returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> object, or
+      <tt>false</tt> if the model <a href="#Model-isNew">isNew</a>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
       through any collections that contain it, and a <tt>"sync"</tt> event, after
@@ -1008,12 +1048,14 @@ book.destroy({success: function(model, response) {
       This method is left undefined, and you're encouraged to override it with
       your custom validation logic, if you have any that can be performed
       in JavaScript. <b>validate</b> is called before <tt>set</tt> and
-      <tt>save</tt>, and is passed the attributes that are about to be updated.
-      If the model and attributes are valid, don't return anything from <b>validate</b>;
-      if the attributes are invalid, return an error of your choosing. It
+      <tt>save</tt>, and is passed the model attributes updated with the values
+      from <tt>set</tt> or <tt>save</tt>.
+      If the attributes are valid, don't return anything from <b>validate</b>;
+      if they are invalid, return an error of your choosing. It
       can be as simple as a string error message to be displayed, or a complete
-      error object that describes the error programmatically. <tt>set</tt> and
-      <tt>save</tt> will not continue if <b>validate</b> returns an error.
+      error object that describes the error programmatically. If <b>validate</b>
+      returns an error, <tt>set</tt> and <tt>save</tt> will not continue, and the
+      model attributes will not be modified.
       Failed validations trigger an <tt>"error"</tt> event.
     </p>
 
@@ -1404,6 +1446,34 @@ var book = Library.get(110);
       is sorted, and if your collection isn't sorted, <b>at</b> will still
       retrieve models in insertion order.
     </p>
+    
+    <p id="Collection-push">
+      <b class="header">push</b><code>collection.push(model, [options])</code>
+      <br />
+      Add a model at the end of a collection. Takes the same options as 
+      <a href="#Collection-add">add</a>.
+    </p>
+    
+    <p id="Collection-pop">
+      <b class="header">pop</b><code>collection.pop([options])</code>
+      <br />
+      Remove and return the last model from a collection. Takes the same options as 
+      <a href="#Collection-remove">remove</a>.
+    </p>
+    
+    <p id="Collection-unshift">
+      <b class="header">unshift</b><code>collection.unshift(model, [options])</code>
+      <br />
+      Add a model at the beginning of a collection. Takes the same options as 
+      <a href="#Collection-add">add</a>.
+    </p>
+    
+    <p id="Collection-shift">
+      <b class="header">shift</b><code>collection.shift([options])</code>
+      <br />
+      Remove and return the first model from a collection. Takes the same options as 
+      <a href="#Collection-remove">remove</a>.
+    </p>
 
     <p id="Collection-length">
       <b class="header">length</b><code>collection.length</code>
@@ -1480,14 +1550,34 @@ alert(chapters.pluck('title'));
 
 <pre class="runnable">
 var stooges = new Backbone.Collection([
-  new Backbone.Model({name: "Curly"}),
-  new Backbone.Model({name: "Larry"}),
-  new Backbone.Model({name: "Moe"})
+  {name: "Curly"},
+  {name: "Larry"},
+  {name: "Moe"}
 ]);
 
 var names = stooges.pluck("name");
 
 alert(JSON.stringify(names));
+</pre>
+
+    <p id="Collection-where">
+      <b class="header">where</b><code>collection.where(attributes)</code>
+      <br />
+      Return an array of all the models in a collection that match the
+      passed <b>attributes</b>. Useful for simple cases of <tt>filter</tt>.
+    </p>
+
+<pre class="runnable">
+var friends = new Backbone.Collection([
+  {name: "Athos",      job: "Musketeer"},
+  {name: "Porthos",    job: "Musketeer"},
+  {name: "Aramis",     job: "Musketeer"},
+  {name: "d'Artagnan", job: "Guard"},
+]);
+
+var musketeers = friends.where({job: "Musketeer"});
+
+alert(musketeers.length);
 </pre>
 
     <p id="Collection-url">
@@ -1545,7 +1635,8 @@ var Tweets = Backbone.Collection.extend({
       When the model data returns from the server, the collection will
       <a href="#Collection-reset">reset</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
-      under the covers, for custom persistence strategies.
+      under the covers for custom persistence strategies and returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
       The server handler for <b>fetch</b> requests should return a JSON array of
       models.
     </p>
@@ -1614,6 +1705,9 @@ Accounts.fetch();
       <b class="header">create</b><code>collection.create(attributes, [options])</code>
       <br />
       Convenience to create a new instance of a model within a collection.
+      Delegates to <a href="#Sync">Backbone.sync</a> and returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> if validation
+      is successful, and <tt>false</tt> otherwise.
       Equivalent to instantiating a model with a hash of attributes,
       saving the model to the server, and adding the model to the set after being
       successfully created. Returns
@@ -1869,7 +1963,8 @@ $(function(){
     <p>
       <b>Backbone.sync</b> is the function that Backbone calls every time it
       attempts to read or save a model to the server. By default, it uses
-      <tt>(jQuery/Zepto).ajax</tt> to make a RESTful JSON request. You can override
+      <tt>(jQuery/Zepto).ajax</tt> to make a RESTful JSON request and returns a
+      <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>. You can override
       it in order to use a different persistence strategy, such as WebSockets,
       XML transport, or Local Storage.
     </p>
@@ -1894,6 +1989,12 @@ $(function(){
       of model attribute objects.
     </p>
     
+    <p>
+      The <b>sync</b> function may be overriden globally as <tt>Backbone.sync</tt>,
+      or at a finer-grained level, by adding a <tt>sync</tt> function to a Backbone
+      collection or to an individual model.
+    </p>
+
     <p>
       The <b>sync</b> function may be overriden globally as <tt>Backbone.sync</tt>,
       or at a finer-grained level, by adding a <tt>sync</tt> function to a Backbone
@@ -2401,7 +2502,7 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/wunderkit.png" alt="Wunderkit" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-khan-academy">Khan Academy</h2>
 
     <p>
@@ -2536,15 +2637,13 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/stripe.png" alt="Stripe" class="example_image" />
       </a>
     </div>
-    
-    <h2 id="examples-airbnb">Airbnb Mobile</h2>
 
     <p>
-      <a href="http://airbnb.com">Airbnb</a> used Backbone.js and 
-      <a href="http://coffeescript.org">CoffeeScript</a> to quickly build 
-      <a href="http://m.airbnb.com">Airbnb Mobile</a> 
-      in six weeks with a team of three. The mobile version of Airbnb lets you 
-      discover and book rental spaces directly from your phone: from a private 
+      <a href="http://airbnb.com">Airbnb</a> used Backbone.js and
+      <a href="http://coffeescript.org">CoffeeScript</a> to quickly build
+      <a href="http://m.airbnb.com">Airbnb Mobile</a>
+      in six weeks with a team of three. The mobile version of Airbnb lets you
+      discover and book rental spaces directly from your phone: from a private
       apartment to a private island...
     </p>
 
@@ -2806,12 +2905,14 @@ var model = localBackbone.Model.extend(...);
     
     <h2 id="examples-chaincal">ChainCal</h2>
 
+    <h2 id="examples-chaincal">ChainCal</h2>
+
     <p>
-      <a href="http://chaincalapp.com/">ChainCal</a> 
-      is an iPhone app that helps you to track your daily goals in a 
-      minimalist, visual way. The app is written almost entirely in <a href="http://coffeescript.org/">CoffeeScript</a>, 
-      Backbone handles the models, collections and views, and persistence is 
-      done with a Backbone.sync localStorage adapter. Templates are written in 
+      <a href="http://chaincalapp.com/">ChainCal</a>
+      is an iPhone app that helps you to track your daily goals in a
+      minimalist, visual way. The app is written almost entirely in <a href="http://coffeescript.org/">CoffeeScript</a>,
+      Backbone handles the models, collections and views, and persistence is
+      done with a Backbone.sync localStorage adapter. Templates are written in
       <a href="https://github.com/sstephenson/eco">Eco</a> and the app is packaged with <a href="http://brunch.io/">Brunch</a> and deployed with <a href="http://phonegap.com/">Phonegap</a>.
     </p>
 
@@ -2820,16 +2921,16 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/chaincal.png" alt="ChainCal" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-attictv">AtticTV</h2>
 
     <p>
-      <a href="http://attictv.com/">AtticTV</a> is MTV for the Youtube Generation: 
-      kick back and relax while watching the best 
-      music videos of your favorite genre. The videos are synced across the 
-      world, so, you're never watching alone on AtticTV. AtticTV is served by 
-      <a href="http://nodejs.org/">NodeJS</a> written in <a href="http://coffeescript.org/">CoffeeScript</a> with <a href="http://socket.io/">Socket.IO</a> as data transport. The 
-      frontend is built with Backbone.js with pushstate support, <a href="http://jquery.com/">jQuery</a>, and 
+      <a href="http://attictv.com/">AtticTV</a> is MTV for the Youtube Generation:
+      kick back and relax while watching the best
+      music videos of your favorite genre. The videos are synced across the
+      world, so, you're never watching alone on AtticTV. AtticTV is served by
+      <a href="http://nodejs.org/">NodeJS</a> written in <a href="http://coffeescript.org/">CoffeeScript</a> with <a href="http://socket.io/">Socket.IO</a> as data transport. The
+      frontend is built with Backbone.js with pushstate support, <a href="http://jquery.com/">jQuery</a>, and
       <a href="http://jade-lang.com/">Jade templates</a>.
     </p>
 
@@ -2896,14 +2997,14 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/ducksboard.png" alt="Ducksboard" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-picklive">Picklive</h2>
 
     <p>
       <a href="http://twitter.com/timruffles">Tim Ruffles</a> and <a href="http://twitter.com/timparker">Tim Parker</a>
       created the game client for <a href="https://free.picklive.com">Picklive</a>, a real-time fantasy-soccer game.
       The client is written in <a href="http://coffeescript.org">CoffeeScript</a>, organised into
-      modules via <a href="http://requirejs.org">require.js</a>, tested with 
+      modules via <a href="http://requirejs.org">require.js</a>, tested with
       <a href="http://code.google.com/p/js-test-driver">jsTestDriver</a> and uses
       <a href="http://mustache.github.com">Mustache.js</a> for templating. Backbone's model and sync layer separation
       manages the complexity of mixed polling and web-sockets based synchronisation.
@@ -3125,8 +3226,8 @@ Inbox.messages.fetch();
 
     <p>You have to <a href="http://mathiasbynens.be/notes/etago">escape</a>
     <tt>&lt;/</tt> within the JSON string, to prevent javascript injection
-    attacks.  
-    
+    attacks.
+
     <p id="FAQ-extending">
       <b class="header">Extending Backbone</b>
       <br />
@@ -3251,6 +3352,48 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+    
+    <b class="header">0.9.2</b> &mdash; <small><i>March 21, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.1...0.9.2">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Instead of throwing an error when adding duplicate models to a collection,
+        Backbone will now silently skip them instead.
+      </li>
+      <li>
+        Added <a href="#Collection-push">push</a>, 
+        <a href="#Collection-pop">pop</a>, 
+        <a href="#Collection-unshift">unshift</a>, and 
+        <a href="#Collection-shift">shift</a> to collections. 
+      </li>
+      <li>
+        A model's <a href="#Model-changed">changed</a> hash is now exposed for
+        easy reading of the changed attribute delta, since the model's last
+        <tt>"change"</tt> event.
+      </li>
+      <li>
+        Added <a href="#Collection-where">where</a> to collections for simple 
+        filtering.
+      </li>
+      <li>
+        You can now use a single <a href="#Events-off">off</a> call 
+        to remove all callbacks bound to a specific object.
+      </li>
+      <li>
+        Bug fixes for nested individual change events, some of which may be 
+        "silent".
+      </li>
+      <li>
+        Bug fixes for URL encoding in <tt>location.hash</tt> fragments.
+      </li>
+      <li>
+        Bug fix for client-side validation in advance of a <tt>save</tt> call
+        with <tt>{wait: true}</tt>.
+      </li>
+      <li>
+        Updated / refreshed the example 
+        <a href="examples/todos/index.html">Todo List</a> app.
+      </li>
+    </ul>
 
     <b class="header">0.9.1</b> &mdash; <small><i>Feb. 2, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.0...0.9.1">Diff</a><br />
     <ul style="margin-top: 5px;">
