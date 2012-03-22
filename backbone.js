@@ -260,7 +260,7 @@
     set: function(key, value, options) {
       var attrs, attr, val;
 
-      // Handle both
+      // Handle both `"key", value` and `{key: value}` -style arguments.
       if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
