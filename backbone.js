@@ -747,6 +747,14 @@
       return this;
     },
 
+    merge: function(models, options) {
+      models || (models = []);
+      options || (options = {});
+      models = _.isArray(models) ? models.slice() : [models];
+      Backbone.merge(this, models, options);
+      return this;
+    },
+
     // Fetch the default set of models for this collection, resetting the
     // collection when they arrive. If `add: true` is passed, appends the
     // models to the collection instead of resetting.
@@ -755,8 +763,11 @@
       if (options.parse === undefined) options.parse = true;
       var collection = this;
       var success = options.success;
+      var method = 'reset';
+      if(options.add) method = 'add';
+      if(options.merge) method = 'merge';
       options.success = function(resp, status, xhr) {
-        collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
+        collection[method](collection.parse(resp, xhr), options);
         if (success) success(collection, resp);
       };
       options.error = Backbone.wrapError(options.error, collection, options);
@@ -1369,6 +1380,65 @@
         originalModel.trigger('error', originalModel, resp, options);
       }
     };
+  };
+
+  // Backbone.merge
+  // --------------
+  
+  // Collection merge strategy where newData, if in conflict, always takes presidence.
+  // Model comparison is done using the model id.
+
+  // Options:
+  //   add: append new items that do not already exist, or do not have an id, to the targetCollection
+  //        Default: true
+  //
+  //   update: if the new item contains an id property and the id exists in the targetCollection,
+  //           the properties on the existing model will be set
+  //        Default: true
+  //
+  //   delete: delete the existing models that are not found in newData
+  //        Default: false
+  Backbone.merge = function(targetCollection, newData, options) {
+    _.defaults(options, {"add": true, "update": true, "delete": false});
+    
+    var doAdd    = options['add'],
+        doUpdate = options['update'],
+        doDelete = options['delete'];
+    
+    // If add, update, and delete options are false, or
+    // if there is no data to merge, do nothing.
+    if((!doAdd && !doUpdate && !doDelete) ||
+       (targetCollection.length === 0 && newData.length === 0)) return targetCollection;
+
+    // Mark the records for deletion
+    var deleteCollection = { };
+    if(doDelete) targetCollection.each(function(item){ if(item.id) deleteCollection[item.id] = item; });
+
+    // Add and Update pass
+    for (var i = newData.length - 1; i >= 0; i--) {
+
+      // If the new item does not contain an id, add it to the collection.
+      if(!newData[i].id) {
+        if(doAdd) targetCollection.add(newData[i]);
+        continue;
+      }
+      
+      var target = targetCollection.get(newData[i].id);
+
+      if(target) { // Update
+        if(doUpdate) target.set(newData[i]);
+        if(doDelete) delete deleteCollection[newData[i].id];
+      } else if(doAdd) { // Add
+        targetCollection.add(newData[i]);
+      }
+    }
+
+    if(doDelete) { // Delete
+      var deletes = _.values(deleteCollection);
+      if(deletes.length > 0) targetCollection.remove(deletes);
+    }
+
+    return targetCollection;
   };
 
   // Helpers
