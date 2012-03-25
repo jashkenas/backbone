@@ -1,10 +1,16 @@
 $(document).ready(function() {
 
-  module("Backbone.View");
+  var view;
 
-  var view = new Backbone.View({
-    id        : 'test-view',
-    className : 'test-view'
+  module("Backbone.View", {
+
+    setup: function() {
+      view = new Backbone.View({
+        id        : 'test-view',
+        className : 'test-view'
+      });
+    }
+
   });
 
   test("View: constructor", function() {
@@ -27,6 +33,14 @@ $(document).ready(function() {
     equal($(div).text(), 'one two three');
   });
 
+  test("View: make can take falsy values for content", function() {
+    var div = view.make('div', {id: 'test-div'}, 0);
+    equal($(div).text(), '0');
+
+    var div = view.make('div', {id: 'test-div'}, '');
+    equal($(div).text(), '');
+  });
+
   test("View: initialize", function() {
     var View = Backbone.View.extend({
       initialize: function() {
@@ -38,7 +52,8 @@ $(document).ready(function() {
   });
 
   test("View: delegateEvents", function() {
-    var counter = counter2 = 0;
+    var counter = 0;
+    var counter2 = 0;
     view.setElement(document.body);
     view.increment = function(){ counter++; };
     view.$el.bind('click', function(){ counter2++; });
@@ -71,7 +86,8 @@ $(document).ready(function() {
   });
 
   test("View: undelegateEvents", function() {
-    var counter = counter2 = 0;
+    var counter = 0;
+    var counter2 = 0;
     view.setElement(document.body);
     view.increment = function(){ counter++; };
     $(view.el).unbind('click');
@@ -176,6 +192,26 @@ $(document).ready(function() {
     $('body').unbind('.namespaced');
     $('body').trigger('fake$event');
     equal(count, 2);
+  });
+
+  test("#1048 - setElement uses provided object.", function() {
+    var $el = $('body');
+    var view = new Backbone.View({el: $el});
+    ok(view.$el === $el);
+    view.setElement($el = $($el));
+    ok(view.$el === $el);
+  });
+
+  test("#986 - Undelegate before changing element.", 1, function() {
+    var a = $('<button></button>');
+    var b = $('<button></button>');
+    var View = Backbone.View.extend({
+      events: {click: function(e) { ok(view.el === e.target); }}
+    });
+    var view = new View({el: a});
+    view.setElement(b);
+    a.trigger('click');
+    b.trigger('click');
   });
 
 });
