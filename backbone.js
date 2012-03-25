@@ -936,7 +936,8 @@
     // extracted parameters. Also, making sure to reset our RegExp.
     _extractParameters: function(route, fragment) {
       route.lastIndex = 0;
-      return route.exec(fragment).slice(1);
+      var route = route.exec(fragment);
+      return route[1] ? route.slice(1) : route.slice(0);
     }
 
   });
