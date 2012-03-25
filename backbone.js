@@ -933,8 +933,9 @@
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
-    // extracted parameters.
+    // extracted parameters. Also, making sure to reset our RegExp.
     _extractParameters: function(route, fragment) {
+      route.lastIndex = 0;
       return route.exec(fragment).slice(1);
     }
 
