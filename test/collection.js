@@ -125,6 +125,19 @@ $(document).ready(function() {
       equal(col.at(i).get('at'), i);
     }
   });
+  
+  test("Collection: add; at should have preference over comparator", function() {
+    var Col = Backbone.Collection.extend({
+      comparator: function(a,b) {
+        return a.id > b.id ? -1 : 1;
+      }
+    });
+    
+    var col = new Col([{id: 2}, {id: 3}]);
+    col.add(new Backbone.Model({id: 1}), {at:   1});
+    
+    equal(col.pluck('id').join(' '), '3 1 2');
+  });
 
   test("Collection: can't add model to collection twice", function() {
     var col = new Backbone.Collection([{id: 1}, {id: 2}, {id: 1}, {id: 2}, {id: 3}]);
