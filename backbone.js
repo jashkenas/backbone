@@ -189,11 +189,12 @@
   var Model = Backbone.Model = function(attributes, options) {
     var defaults;
     attributes || (attributes = {});
-    if (options && options.parse) attributes = this.parse(attributes);
+    options || (options = {});
+    if (options.parse) attributes = this.parse(attributes);
     if (defaults = getValue(this, 'defaults')) {
       attributes = _.extend({}, defaults, attributes);
     }
-    if (options && options.collection) this.collection = options.collection;
+    if (options.collection) this.collection = options.collection;
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
@@ -206,7 +207,7 @@
     this._silent = {};
     this._pending = {};
     this._previousAttributes = _.clone(this.attributes);
-    this.initialize.apply(this, arguments);
+    this.initialize.apply(this, [attributes, options].concat(slice.call(arguments, 2)));
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -561,7 +562,7 @@
     if (options.model) this.model = options.model;
     if (options.comparator) this.comparator = options.comparator;
     this._reset();
-    this.initialize.apply(this, arguments);
+    this.initialize.apply(this, [models, options].concat(slice.call(arguments, 2)));
     if (models) this.reset(models, {silent: true, parse: options.parse});
   };
 
