@@ -48,6 +48,7 @@ $(document).ready(function() {
 
     initialize : function(options) {
       this.testing = options.testing;
+      this.route(/(reg exp)/, 'regexp');
       this.route('implicit', 'implicit');
     },
 
@@ -93,6 +94,10 @@ $(document).ready(function() {
 
     anything : function(whatever) {
       this.anything = whatever;
+    },
+
+    regexp : function(regexp) {
+      this.regexp = regexp;
     }
 
     // do not provide a callback method for the noCallback route
@@ -261,6 +266,14 @@ $(document).ready(function() {
     equal(router.first, 'has%2Fslash');
     equal(router.part, 'has%23hash');
     equal(router.rest, 'has%20space');
+  });
+
+  asyncTest("Router: route url with encoded character", function() {
+    window.location.hash = 'reg exp';
+    setTimeout(function() {
+      equal(router.regexp, 'reg exp');
+      start();
+    }, 10);
   });
 
   asyncTest("Router: correctly handles URLs with % (#868)", 3, function() {
