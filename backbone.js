@@ -1330,6 +1330,12 @@
     if (!options.data && model && (method == 'create' || method == 'update')) {
       params.contentType = 'application/json';
       params.data = JSON.stringify(model.toJSON());
+    } else if (options.data && typeof(options.data) == 'object'){
+      // If data was explicitly passed in, and it is an object, then stringify it and set the header correctly.
+      params.contentType = 'application/json';
+      params.data = JSON.stringify(options.data);
+      // Remove from the options object because the options are merged with the params for the xhr call
+      delete options.data
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
