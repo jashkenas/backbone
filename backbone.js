@@ -705,7 +705,11 @@
       if (_.isEmpty(attrs)) return [];
       return this.filter(function(model) {
         for (var key in attrs) {
-          if (attrs[key] !== model.get(key)) return false;
+          if ( attrs[key] instanceof RegExp ) {
+				    if ( !attrs[key].test(model.get(key)) ) return false;
+			    } else {
+				    if ( attrs[key] !== model.get(key) ) return false;
+			    }
         }
         return true;
       });
