@@ -214,4 +214,11 @@ $(document).ready(function() {
     b.trigger('click');
   });
 
+  test("Clone attributes object", function() {
+    var View = Backbone.View.extend({attributes: {foo: 'bar'}});
+    var v1 = new View({id: 'foo'});
+    ok(v1.el.id === 'foo');
+    var v2 = new View();
+    ok(!v2.el.id);
+  });
 });
