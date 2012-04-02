@@ -735,18 +735,12 @@ var Note = Backbone.Model.extend({
 </pre>
 
     <p id="Model-constructor">
-      <b class="header">constructor / initialize</b><code>new Model([attributes])</code>
+      <b class="header">constructor / initialize</b><code>new Model([attributes], [options])</code>
       <br />
       When creating an instance of a model, you can pass in the initial values
       of the <b>attributes</b>, which will be <a href="#Model-set">set</a> on the
       model. If you define an <b>initialize</b> function, it will be invoked when
       the model is created.
-    </p>
-
-    <p>
-      Including a collection option populates the models collection property.
-      This property indicates the collection of which the model is a member and
-      is used in the <a href="#Model-url">url</a> function.
     </p>
 
 <pre>
@@ -760,6 +754,14 @@ new Book({
       In rare cases, if you're looking to get fancy,
       you may want to override <b>constructor</b>, which allows
       you to replace the actual constructor function for your model.
+    </p>
+    
+    <p>
+      If you pass a <tt>{collection: ...}</tt> as the <b>options</b>, the model
+      gains a <tt>collection</tt> property that will be used to indicate which
+      collection the model belongs to, and is used to help compute the model's
+      <a href="#Model-url">url</a>. The <tt>model.collection</tt> property is
+      otherwise added automatically when you first add a model to a collection.
     </p>
 
     <p id="Model-get">
