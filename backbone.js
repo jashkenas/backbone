@@ -1265,7 +1265,7 @@
     // an element from the `id`, `className` and `tagName` properties.
     _ensureElement: function() {
       if (!this.el) {
-        var attrs = getValue(this, 'attributes') || {};
+        var attrs = _.clone(getValue(this, 'attributes') || {});
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
         this.setElement(this.make(this.tagName, attrs), false);
