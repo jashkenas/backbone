@@ -744,7 +744,9 @@ var Note = Backbone.Model.extend({
     </p>
 
     <p>
-      Including a collection option will create a top level <a href="#FAQ-nested">nested</a> collection.
+      Including a collection option populates the models collection property.
+      This property indicates the collection of which the model is a member and
+      is used in the <a href="#Model-url">url</a> function.
     </p>
 
 <pre>
