@@ -147,6 +147,13 @@ $(document).ready(function() {
     });
   });
 
+  test("Router: navigate returns loadUrl value when {trigger: true}", 2, function() {
+    loadUrlReturn = Backbone.history.navigate('seach/manhattan/p10', {trigger: true});
+    equal(loadUrlReturn, true);
+    loadUrlReturn = Backbone.history.navigate('seach/manhattan/p10');
+    equal(loadUrlReturn, undefined);
+  });
+
   test("Router: doesn't fire routes to the same place twice", function() {
     equal(router.count, 0);
     router.navigate('counter', {trigger: true});
