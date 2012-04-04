@@ -784,4 +784,10 @@ $(document).ready(function() {
     }
   });
 
+  test("#1179 - isValid returns true in the absence of validate.", function() {
+    var model = new Backbone.Model();
+    model.validate = null;
+    ok(model.isValid());
+  });
+
 });
