@@ -529,7 +529,7 @@
     // Check if the model is currently in a valid state. It's only possible to
     // get into an *invalid* state if you're using silent changes.
     isValid: function() {
-      return !this.validate(this.attributes);
+      return !this.validate || !this.validate(this.attributes);
     },
 
     // Run validation against the next complete set of model attributes,
