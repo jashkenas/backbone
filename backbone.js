@@ -1284,7 +1284,8 @@
   };
 
   // Set up inheritance for the model, collection, and view.
-  Model.extend = Collection.extend = Router.extend = View.extend = extend;
+  // You can use extend on other "objects" too
+  Backbone.extend = Model.extend = Collection.extend = Router.extend = View.extend = extend;
 
   // Backbone.sync
   // -------------
