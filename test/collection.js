@@ -578,4 +578,14 @@ $(document).ready(function() {
     ok(c.at(0) instanceof Model);
   });
 
+  test("options in initialize should never be undefined", 2, function() {
+    var Collection = Backbone.Collection.extend({
+      initialize: function(models, options) {
+        ok(_.isObject(options));
+        equal(options.test, undefined);
+      }
+    });
+    var col = new Collection;
+  });
+
 });

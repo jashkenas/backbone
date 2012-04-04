@@ -784,4 +784,25 @@ $(document).ready(function() {
     }
   });
 
+  test("options in initialize should never be undefined", 1, function() {
+    var Model = Backbone.Model.extend({
+      initialize: function(attributes, options) {
+        ok(_.isObject(options));
+      }
+    });
+    var model = new Model;
+  });
+
+  test("attributes in initialize should always return current state of @attributes on initialize, including defaults", 2, function() {
+    var Model = Backbone.Model.extend({
+      defaults: {
+        test: true
+      },
+      initialize: function(attributes, options) {
+        ok(_.isObject(attributes));
+        ok(attributes.test);
+      }
+    });
+    var model = new Model;
+  });
 });
