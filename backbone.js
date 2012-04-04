@@ -237,8 +237,10 @@
     },
 
     // Get the value of an attribute.
-    get: function(attr) {
-      return this.attributes[attr];
+    get: function(attr, fallback) {
+      if (this.has(attr)) return this.attributes[attr];
+      if (_.isFunction(fallback)) fallback = fallback.call(this);
+      return fallback;
     },
 
     // Get the HTML-escaped value of an attribute.
@@ -252,7 +254,7 @@
     // Returns `true` if the attribute contains a value that is not null
     // or undefined.
     has: function(attr) {
-      return this.get(attr) != null;
+      return this.attributes[attr] != null;
     },
 
     // Set a hash of model attributes on the object, firing `"change"` unless
