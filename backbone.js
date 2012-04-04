@@ -116,7 +116,7 @@
       var event, calls, node, tail, cb, ctx;
 
       // No events, or removing *all* events.
-      if (!(calls = this._callbacks)) return;
+      if (!(calls = this._callbacks)) return this;
       if (!(events || callback || context)) {
         delete this._callbacks;
         return this;

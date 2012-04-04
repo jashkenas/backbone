@@ -167,4 +167,16 @@ $(document).ready(function() {
     obj.trigger('x y');
   });
 
+  test("off is chainable", function() {
+    var obj = _.extend({}, Backbone.Events);
+    // With no events
+    ok(obj.off() === obj);
+    // When removing all events
+    obj.on('event', function(){}, obj);
+    ok(obj.off() === obj);
+    // When removing some events
+    obj.on('event', function(){}, obj);
+    ok(obj.off('event') === obj);
+  });
+
 });
