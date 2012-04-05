@@ -924,7 +924,9 @@ alert("Dessert will be " + (new Meal).get('dessert'));
 
     <p class="warning">
       Remember that in JavaScript, objects are passed by reference, so if you
-      include an object as a default value, it will be shared among all instances.
+      include an object as a default value, it will be shared among all instances. 
+      Defaults containing objects passed by reference should be defined using a 
+      function if you do not wish to share these objects between all instances.
     </p>
 
     <p id="Model-toJSON">
