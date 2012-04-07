@@ -1,0 +1,15 @@
+# We aren't actually using any particular language here, so let's use Ruby
+# since that's probably the most likely Travis worker to be available
+language: ruby
+rvm:
+  - 1.8.7
+notifications:
+  email: false
+before_script:
+  # Travis needs this stuff to start Phantom1.4...
+  # When they get Phantom1.5 this section can go away
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+script:
+  # You can put the script in your repo as .phantom-qunit so it's hidden
+  - "phantomjs .phantom-qunit.js test/test.html"
