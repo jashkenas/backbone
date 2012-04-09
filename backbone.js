@@ -572,6 +572,14 @@
     // This should be overridden in most cases.
     model: Model,
 
+    // Default model creation logic for a collection. Can be overridden with
+    // custom model logic if different types of models are needed to be created
+    // on add(attributes) or fetch().
+    createModel: function(attrs, options) {
+      return new this.model(attrs, options);
+    },
+
+
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize: function(){},
@@ -812,8 +820,8 @@
       if (!(model instanceof Model)) {
         var attrs = model;
         options.collection = this;
-        model = new this.model(attrs, options);
-        if (!model._validate(model.attributes, options)) model = false;
+        model = this.createModel(attrs, options);
+        if (!model || !model._validate(model.attributes, options)) model = false;
       } else if (!model.collection) {
         model.collection = this;
       }
