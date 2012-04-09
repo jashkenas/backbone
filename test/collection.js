@@ -578,4 +578,20 @@ $(document).ready(function() {
     ok(c.at(0) instanceof Model);
   });
 
+  test("Collection: createModel can create different models on a collection", function() {
+    var A = Backbone.Model.extend({ customAttr: "a" });
+    var B = Backbone.Model.extend({ customAttr: "b" });
+    var Col = Backbone.Collection.extend({
+      createModel: function(attrs, options) {
+        if (attrs.type === 1) return new A(attrs, options);
+        if (attrs.type === 2) return new B(attrs, options);
+      }
+    });
+    var c = new Col();
+    c.create({ type: 1 });
+    c.create({ type: 2 });
+    equal(c.at(0).customAttr, "a");
+    equal(c.at(1).customAttr, "b");
+  });
+
 });
