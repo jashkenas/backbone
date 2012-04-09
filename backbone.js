@@ -821,7 +821,7 @@
         var attrs = model;
         options.collection = this;
         model = this.createModel(attrs, options);
-        if (!model._validate(model.attributes, options)) model = false;
+        if (!model || !model._validate(model.attributes, options)) model = false;
       } else if (!model.collection) {
         model.collection = this;
       }

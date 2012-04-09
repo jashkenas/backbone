@@ -594,4 +594,17 @@ $(document).ready(function() {
     equal(c.at(1).customAttr, "b");
   });
 
+  test("Collection: createModel can ignore data by returning a falsy value", function() {
+    var Col = Backbone.Collection.extend({
+      createModel: function(attrs, options) {
+        if (attrs.error) return;
+        return new this.model(attrs, options);
+      }
+    });
+    var c = new Col();
+    c.create({ error: "Bad model data" });
+    c.create({ foo: "bar" });
+    equal(c.length, 1);
+  });
+
 });
