@@ -886,9 +886,17 @@ alert("Cake id: " + cake.id);
       <b class="header">attributes</b><code>model.attributes</code>
       <br />
       The <b>attributes</b> property is the internal hash containing the model's
-      state. Please use <a href="#Model-set">set</a> to update the attributes instead of modifying
-      them directly. If you'd like to retrieve and munge a copy of the model's
-      attributes, use <a href="#Model-toJSON">toJSON</a> instead.
+      state &mdash; usually (but not necessarily) a form of the JSON object 
+      representing the model data on the server. It's often a straightforward
+      serialization of a row from the database, but it could also be client-side
+      computed state.
+    </p>
+    
+    <p>
+      Please use <a href="#Model-set">set</a> to update the <b>attributes</b> 
+      instead of modifying them directly. If you'd like to retrieve and munge a 
+      copy of the model's attributes, use <a href="#Model-toJSON">toJSON</a> 
+      instead.
     </p>
 
     <p id="Model-changed">
