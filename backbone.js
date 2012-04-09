@@ -1025,7 +1025,7 @@
       // opened by a non-pushState browser.
       this.fragment = fragment;
       var loc = window.location;
-      var atRoot  = loc.pathname == this.options.root;
+      var atRoot  = (loc.pathname == this.options.root) && !loc.search;
 
       // If we've started off with a route from a `pushState`-enabled browser,
       // but we're currently in a browser that doesn't support it...
