@@ -1120,8 +1120,7 @@
       // based history, then `navigate` becomes a page refresh.
       } else {
         if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
-        this.fragment = frag;
-        window.location.assign(frag);
+        return window.location.assign(frag);
       }
       if (options.trigger) this.loadUrl(fragment);
     },
