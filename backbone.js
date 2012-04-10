@@ -1119,7 +1119,8 @@
       // If you've told us that you explicitly don't want fallback hashchange-
       // based history, then `navigate` becomes a page refresh.
       } else {
-        window.location.assign(this.options.root + fragment);
+        if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
+        return window.location.assign(frag);
       }
       if (options.trigger) this.loadUrl(fragment);
     },
