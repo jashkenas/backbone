@@ -1097,12 +1097,12 @@
       if (!options || options === true) options = {trigger: options};
       var frag = (fragment || '').replace(routeStripper, '');
       if (this.fragment == frag) return;
+      var fullFrag = (frag.indexOf(this.options.root) != 0 ? this.options.root : '') + frag;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
-        if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
-        this.fragment = frag;
-        window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, frag);
+        this.fragment = fullFrag;
+        window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, fullFrag);
 
       // If hash changes haven't been explicitly disabled, update the hash
       // fragment to store history.
@@ -1119,8 +1119,7 @@
       // If you've told us that you explicitly don't want fallback hashchange-
       // based history, then `navigate` becomes a page refresh.
       } else {
-        if (frag.indexOf(this.options.root) != 0) frag = this.options.root + frag;
-        return window.location.assign(frag);
+        return window.location.assign(fullFrag);
       }
       if (options.trigger) this.loadUrl(fragment);
     },
