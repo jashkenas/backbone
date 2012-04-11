@@ -313,6 +313,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Sync">Backbone.sync</a></li>
+      <li>– <a href="#Sync-ajax">Backbone.ajax</a></li>
       <li>– <a href="#Sync-emulateHTTP">Backbone.emulateHTTP</a></li>
       <li>– <a href="#Sync-emulateJSON">Backbone.emulateJSON</a></li>
     </ul>
@@ -623,7 +624,7 @@ proxy.on("all", function(eventName) {
 object.off("change", onChange);
 
 // Removes all "change" callbacks.
-object.off("change");         
+object.off("change");
 
 // Removes the `onChange` callback for all events.
 object.off(null, onChange);
@@ -755,7 +756,7 @@ new Book({
       you may want to override <b>constructor</b>, which allows
       you to replace the actual constructor function for your model.
     </p>
-    
+
     <p>
       If you pass a <tt>{collection: ...}</tt> as the <b>options</b>, the model
       gains a <tt>collection</tt> property that will be used to indicate which
@@ -886,16 +887,16 @@ alert("Cake id: " + cake.id);
       <b class="header">attributes</b><code>model.attributes</code>
       <br />
       The <b>attributes</b> property is the internal hash containing the model's
-      state &mdash; usually (but not necessarily) a form of the JSON object 
+      state &mdash; usually (but not necessarily) a form of the JSON object
       representing the model data on the server. It's often a straightforward
       serialization of a row from the database, but it could also be client-side
       computed state.
     </p>
-    
+
     <p>
-      Please use <a href="#Model-set">set</a> to update the <b>attributes</b> 
-      instead of modifying them directly. If you'd like to retrieve and munge a 
-      copy of the model's attributes, use <a href="#Model-toJSON">toJSON</a> 
+      Please use <a href="#Model-set">set</a> to update the <b>attributes</b>
+      instead of modifying them directly. If you'd like to retrieve and munge a
+      copy of the model's attributes, use <a href="#Model-toJSON">toJSON</a>
       instead.
     </p>
 
@@ -932,7 +933,7 @@ alert("Dessert will be " + (new Meal).get('dessert'));
 
     <p class="warning">
       Remember that in JavaScript, objects are passed by reference, so if you
-      include an object as a default value, it will be shared among all instances. 
+      include an object as a default value, it will be shared among all instances.
       Instead, define <b>defaults</b> as a function.
     </p>
 
@@ -1464,32 +1465,32 @@ var book = Library.get(110);
       is sorted, and if your collection isn't sorted, <b>at</b> will still
       retrieve models in insertion order.
     </p>
-    
+
     <p id="Collection-push">
       <b class="header">push</b><code>collection.push(model, [options])</code>
       <br />
-      Add a model at the end of a collection. Takes the same options as 
+      Add a model at the end of a collection. Takes the same options as
       <a href="#Collection-add">add</a>.
     </p>
-    
+
     <p id="Collection-pop">
       <b class="header">pop</b><code>collection.pop([options])</code>
       <br />
-      Remove and return the last model from a collection. Takes the same options as 
+      Remove and return the last model from a collection. Takes the same options as
       <a href="#Collection-remove">remove</a>.
     </p>
-    
+
     <p id="Collection-unshift">
       <b class="header">unshift</b><code>collection.unshift(model, [options])</code>
       <br />
-      Add a model at the beginning of a collection. Takes the same options as 
+      Add a model at the beginning of a collection. Takes the same options as
       <a href="#Collection-add">add</a>.
     </p>
-    
+
     <p id="Collection-shift">
       <b class="header">shift</b><code>collection.shift([options])</code>
       <br />
-      Remove and return the first model from a collection. Takes the same options as 
+      Remove and return the first model from a collection. Takes the same options as
       <a href="#Collection-remove">remove</a>.
     </p>
 
@@ -2039,6 +2040,15 @@ end
     <p>
       One more tip for Rails integration is to disable the default namespacing for
       <tt>to_json</tt> calls on models by setting <tt>ActiveRecord::Base.include_root_in_json = false</tt>
+    </p>
+
+    <p id="Sync-ajax">
+      <b class="header">ajax</b><code>Backbone.ajax = function(settings){ ... };</code>
+      <br />
+      If you want to use a custom ajax method or your ajax method doesn't support the
+      <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a> api and you need to
+      translate the options you can do so by setting <tt>Backbone.ajax</tt>.  The method
+      you supply will be used instead of the default <tt>$.ajax</tt>.
     </p>
 
     <p id="Sync-emulateHTTP">
@@ -2706,16 +2716,16 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/soundcloud.png" alt="SoundCloud" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-artsy">Art.sy</h2>
 
     <p>
-      <a href="http://art.sy">Art.sy</a> is a place to discover art you'll 
-      love. Art.sy is built on Rails, using 
-      <a href="https://github.com/intridea/grape">Grape</a> to serve a robust 
-      <a href="http://art.sy/api">JSON API</a>. The main site is a single page 
-      app written in Coffeescript and uses Backbone to provide structure around 
-      this API. An admin panel and partner CMS have also been extracted into 
+      <a href="http://art.sy">Art.sy</a> is a place to discover art you'll
+      love. Art.sy is built on Rails, using
+      <a href="https://github.com/intridea/grape">Grape</a> to serve a robust
+      <a href="http://art.sy/api">JSON API</a>. The main site is a single page
+      app written in Coffeescript and uses Backbone to provide structure around
+      this API. An admin panel and partner CMS have also been extracted into
       their own API-consuming Backbone projects.
     </p>
 
@@ -2967,18 +2977,18 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/decide.png" alt="Decide" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-editd">EDITD</h2>
 
     <p>
-      <a href="http://editd.com">EDITD</a> aims to disrupt the fashion 
+      <a href="http://editd.com">EDITD</a> aims to disrupt the fashion
       industry with big data. The next generation of their web application
-      is based on a custom JavaScript framework that builds on top of 
-      Backbone. The back end is 
-      <a href="https://www.djangoproject.com/">Django</a> + 
-      <a href="http://www.elasticsearch.org/">Elastic Search</a>, 
-      <a href="http://handlebarsjs.com/">Handlebars.js</a> is used for templating, 
-      <a href="http://code.google.com/p/js-test-driver/">jsTestDriver</a> for testing, and 
+      is based on a custom JavaScript framework that builds on top of
+      Backbone. The back end is
+      <a href="https://www.djangoproject.com/">Django</a> +
+      <a href="http://www.elasticsearch.org/">Elastic Search</a>,
+      <a href="http://handlebarsjs.com/">Handlebars.js</a> is used for templating,
+      <a href="http://code.google.com/p/js-test-driver/">jsTestDriver</a> for testing, and
       <a href="http://jashkenas.github.com/docco/">Docco</a> for quick documentation.
     </p>
 
@@ -3363,7 +3373,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
-    
+
     <b class="header">0.9.2</b> &mdash; <small><i>March 21, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.1...0.9.2">Diff</a><br />
     <ul style="margin-top: 5px;">
       <li>
@@ -3371,10 +3381,10 @@ ActiveRecord::Base.include_root_in_json = false
         Backbone will now silently skip them instead.
       </li>
       <li>
-        Added <a href="#Collection-push">push</a>, 
-        <a href="#Collection-pop">pop</a>, 
-        <a href="#Collection-unshift">unshift</a>, and 
-        <a href="#Collection-shift">shift</a> to collections. 
+        Added <a href="#Collection-push">push</a>,
+        <a href="#Collection-pop">pop</a>,
+        <a href="#Collection-unshift">unshift</a>, and
+        <a href="#Collection-shift">shift</a> to collections.
       </li>
       <li>
         A model's <a href="#Model-changed">changed</a> hash is now exposed for
@@ -3382,15 +3392,15 @@ ActiveRecord::Base.include_root_in_json = false
         <tt>"change"</tt> event.
       </li>
       <li>
-        Added <a href="#Collection-where">where</a> to collections for simple 
+        Added <a href="#Collection-where">where</a> to collections for simple
         filtering.
       </li>
       <li>
-        You can now use a single <a href="#Events-off">off</a> call 
+        You can now use a single <a href="#Events-off">off</a> call
         to remove all callbacks bound to a specific object.
       </li>
       <li>
-        Bug fixes for nested individual change events, some of which may be 
+        Bug fixes for nested individual change events, some of which may be
         "silent".
       </li>
       <li>
@@ -3401,7 +3411,7 @@ ActiveRecord::Base.include_root_in_json = false
         with <tt>{wait: true}</tt>.
       </li>
       <li>
-        Updated / refreshed the example 
+        Updated / refreshed the example
         <a href="examples/todos/index.html">Todo List</a> app.
       </li>
     </ul>

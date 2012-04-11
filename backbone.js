@@ -1356,8 +1356,11 @@
     }
 
     // Make the request, allowing the user to override any Ajax options.
-    return $.ajax(_.extend(params, options));
+    return Backbone.ajax(_.extend(params, options));
   };
+
+  // Set the default ajax method.
+  Backbone.ajax = $.ajax;
 
   // Wrap an optional error callback with a fallback error event.
   Backbone.wrapError = function(onError, originalModel, options) {
