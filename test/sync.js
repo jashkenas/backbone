@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  var ajax = $.ajax
+  var ajax = Backbone.ajax;
   var lastRequest = null;
 
   var Library = Backbone.Collection.extend({
@@ -18,14 +18,14 @@ $(document).ready(function() {
 
     setup : function() {
       library = new Library();
-      $.ajax = function(obj) {
+      Backbone.ajax = function(obj) {
         lastRequest = obj;
       };
       library.create(attrs, {wait: false});
     },
 
     teardown: function() {
-      $.ajax = ajax;
+      Backbone.ajax = ajax;
     }
 
   });
@@ -143,6 +143,15 @@ $(document).ready(function() {
   });
 
   test("#1052 - `options` is optional.", function() {
+    var model = new Backbone.Model();
+    model.url = '/test';
+    Backbone.sync('create', model);
+  });
+
+  test("Backbone.ajax", 1, function() {
+    Backbone.ajax = function(settings){
+      strictEqual(settings.url, '/test');
+    };
     var model = new Backbone.Model();
     model.url = '/test';
     Backbone.sync('create', model);
