@@ -194,6 +194,7 @@
       attributes = _.extend({}, defaults, attributes);
     }
     if (options && options.collection) this.collection = options.collection;
+    if (options && options.isNew) this._isNew = options.isNew;
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
@@ -383,6 +384,7 @@
           serverAttrs = _.extend(attrs || {}, serverAttrs);
         }
         if (!model.set(serverAttrs, options)) return false;
+        model._isNew = false;
         if (success) {
           success(model, resp);
         } else {
@@ -452,7 +454,7 @@
 
     // A model is new if it has never been saved to the server, and lacks an id.
     isNew: function() {
-      return this.id == null;
+      return this.id == null || this._isNew;
     },
 
     // Call this method to manually fire a `"change"` event for this model and
