@@ -789,5 +789,10 @@ $(document).ready(function() {
     model.validate = null;
     ok(model.isValid());
   });
+  
+  test("isNew returns true when param is set at instantiation", function() {
+    var model = new Backbone.Model({id:1},{isNew: true});
+    ok(model.isNew());
+  });
 
 });
