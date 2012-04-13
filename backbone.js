@@ -967,7 +967,9 @@
     interval: 50,
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
-    // in Firefox where location.hash will always be decoded.
+    // in Firefox where location.hash will always be decoded:
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=483304
+    // However this workaround breaks handling unescaped spaces in Firefox
     getHash: function(windowOverride) {
       var loc = windowOverride ? windowOverride.location : window.location;
       var match = loc.href.match(/#(.*)$/);
