@@ -1038,8 +1038,8 @@
       // Or if we've started out with a hash-based route, but we're currently
       // in a browser where it could be `pushState`-based instead...
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
-        this.fragment = this.getHash().replace(routeStripper, '');
-        window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
+        this.fragment = this.getHash();
+        window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this._rootedFragment(this.fragment));
       }
 
       if (!this.options.silent) {
@@ -1095,19 +1095,19 @@
     navigate: function(fragment, options) {
       if (!History.started) return false;
       if (!options || options === true) options = {trigger: options};
-      var frag = (fragment || '').replace(routeStripper, '');
+      var frag = this.getFragment(fragment);
+      // Navigating to our current location is a no-op
       if (this.fragment == frag) return;
-      var fullFrag = (frag.indexOf(this.options.root) != 0 ? this.options.root : '') + frag;
+      this.fragment = frag;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
-        this.fragment = fullFrag;
-        window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, fullFrag);
+        if (frag.indexOf(this.options.root) != 0) frag = this._rootedFragment(frag);
+        window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, frag);
 
       // If hash changes haven't been explicitly disabled, update the hash
       // fragment to store history.
       } else if (this._wantsHashChange) {
-        this.fragment = frag;
         this._updateHash(window.location, frag, options.replace);
         if (this.iframe && (frag != this.getFragment(this.getHash(this.iframe)))) {
           // Opening and closing the iframe tricks IE7 and earlier to push a history entry on hash-tag change.
@@ -1119,9 +1119,19 @@
       // If you've told us that you explicitly don't want fallback hashchange-
       // based history, then `navigate` becomes a page refresh.
       } else {
-        return window.location.assign(fullFrag);
+        return window.location.assign(this._rootedFragment(frag));
       }
+
       if (options.trigger) this.loadUrl(fragment);
+    },
+
+    // Add the root to a fragment
+    _rootedFragment: function(fragment) {
+      if (fragment.length && this.options.root[this.options.root.length - 1] != '/') {
+        return this.options.root + '/' + fragment;
+      } else {
+        return this.options.root + fragment;
+      }
     },
 
     // Update the hash location, either replacing the current entry, or adding
