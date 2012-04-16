@@ -351,6 +351,7 @@
       <li>– <a href="#examples-todos">Todos</a></li>
       <li>– <a href="#examples-documentcloud">DocumentCloud</a></li>
       <li>– <a href="#examples-linkedin">LinkedIn Mobile</a></li>
+      <li>– <a href="#examples-rdio">Rdio</a></li>
       <li>– <a href="#examples-flow">Flow</a></li>
       <li>– <a href="#examples-audiovroom">AudioVroom</a></li>
       <li>– <a href="#examples-foursquare">Foursquare</a></li>
@@ -378,7 +379,6 @@
       <li>– <a href="#examples-tilemill">TileMill</a></li>
       <li>– <a href="#examples-blossom">Blossom</a></li>
       <li>– <a href="#examples-animoto">Animoto</a></li>
-      <li>– <a href="#examples-chaincal">ChainCal</a></li>
       <li>– <a href="#examples-decide">Decide</a></li>
       <li>– <a href="#examples-editd">EDITD</a></li>
       <li>– <a href="#examples-trello">Trello</a></li>
@@ -2432,6 +2432,27 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/dc-workspace.png" alt="DocumentCloud Workspace" class="example_image" />
       </a>
     </div>
+    
+    <h2 id="examples-rdio">Rdio</h2>
+
+    <p>
+      <a href="http://rdio.com/new">New Rdio</a> was developed from the ground 
+      up with a component based framework based on Backbone.js. Every component 
+      on the screen is dynamically loaded and rendered, with data provided by the 
+      <a href="http://developer.rdio.com/">Rdio API</a>. When changes are pushed, 
+      every component can update itself without reloading the page or interrupting 
+      the user's music. All of this relies on Backbone's views and models, 
+      and all URL routing is handled by Backbone's Router. When data changes are 
+      signaled in realtime, Backbone's Events notify the interested components 
+      in the data changes. Backbone forms the core of the new, dynamic, realtime 
+      Rdio web and <i>desktop</i> applications.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://rdio.com/new">
+        <img src="docs/images/rdio.png" alt="Rdio" class="example_image" />
+      </a>
+    </div>
 
     <h2 id="examples-linkedin">LinkedIn Mobile</h2>
 
@@ -2939,23 +2960,6 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://www.animoto.com/">
         <img src="docs/images/animoto.png" alt="Tzigla" class="Animoto Video Editor" />
-      </a>
-    </div>
-
-    <h2 id="examples-chaincal">ChainCal</h2>
-
-    <p>
-      <a href="http://chaincalapp.com/">ChainCal</a>
-      is an iPhone app that helps you to track your daily goals in a
-      minimalist, visual way. The app is written almost entirely in <a href="http://coffeescript.org/">CoffeeScript</a>,
-      Backbone handles the models, collections and views, and persistence is
-      done with a Backbone.sync localStorage adapter. Templates are written in
-      <a href="https://github.com/sstephenson/eco">Eco</a> and the app is packaged with <a href="http://brunch.io/">Brunch</a> and deployed with <a href="http://phonegap.com/">Phonegap</a>.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="http://chaincalapp.com/">
-        <img src="docs/images/chaincal.png" alt="ChainCal" class="example_image" />
       </a>
     </div>
 
