@@ -217,8 +217,13 @@ $(document).ready(function() {
   test("Clone attributes object", function() {
     var View = Backbone.View.extend({attributes: {foo: 'bar'}});
     var v1 = new View({id: 'foo'});
-    ok(v1.el.id === 'foo');
+    strictEqual(v1.el.id, 'foo');
     var v2 = new View();
     ok(!v2.el.id);
+  });
+
+  test("#1228 - tagName can be provided as a function", function() {
+    var View = Backbone.View.extend({tagName: function(){ return 'p'; }});
+    ok(new View().$el.is('p'));
   });
 });
