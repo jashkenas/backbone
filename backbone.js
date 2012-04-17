@@ -279,7 +279,7 @@
       if (!this._validate(attrs, options)) return false;
 
       // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+      if (checkNested(attrs, this.idAttribute.split('.'))) this.id = byString(attrs, this.idAttribute);
 
       var changes = options.changes = {};
       var now = this.attributes;
@@ -1429,6 +1429,35 @@
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
     throw new Error('A "url" property or function must be specified');
+  };
+
+  // Helper function to accessing nested JavaScript objects with string key
+  // via. http://stackoverflow.com/a/6491621
+  var byString = function(object, stringKey) {
+    stringKey = stringKey.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+    stringKey = stringKey.replace(/^\./, '');           // strip a leading dot
+    var a = stringKey.split('.');
+    while (a.length) {
+      var n = a.shift();
+      if (n in object) {
+        object = object[n];
+      } else {
+        return;
+      }
+    }
+    return object;
+  };
+
+  // Helper function to test the existence of multiple levels
+  // via. http://stackoverflow.com/a/2631198
+  var checkNested = function(obj, args) {
+    for (var i = 0; i < args.length; i++) {
+      if (!obj.hasOwnProperty(args[i])) {
+        return false;
+      }
+      obj = obj[args[i]];
+    }
+    return true;
   };
 
 }).call(this);
