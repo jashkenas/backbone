@@ -1268,7 +1268,7 @@
         var attrs = _.extend({}, getValue(this, 'attributes'));
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
-        this.setElement(this.make(this.tagName, attrs), false);
+        this.setElement(this.make(getValue(this, 'tagName'), attrs), false);
       } else {
         this.setElement(this.el, false);
       }
