@@ -246,7 +246,10 @@
       var html;
       if (html = this._escapedAttributes[attr]) return html;
       var val = this.get(attr);
-      return this._escapedAttributes[attr] = _.escape(val == null ? '' : '' + val);
+      if (val == null) {
+        return val;
+      }
+      return this._escapedAttributes[attr] = _.escape('' + val);
     },
 
     // Returns `true` if the attribute contains a value that is not null

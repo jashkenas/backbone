@@ -153,7 +153,7 @@ $(document).ready(function() {
     doc.set({audience: 10101});
     equal(doc.escape('audience'), '10101');
     doc.unset('audience');
-    equal(doc.escape('audience'), '');
+    equal(doc.escape('audience'), null);
   });
 
   test("Model: has", function() {
