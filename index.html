@@ -1131,8 +1131,9 @@ account.set({access: "unlimited"}, {
       <br />
       Returns the relative URL where the model's resource would be located on
       the server. If your models are located somewhere else, override this method
-      with the correct logic. Generates URLs of the form: <tt>"/[collection.url]/[id]"</tt>,
-      falling back to <tt>"/[urlRoot]/id"</tt> if the model is not part of a collection.
+      with the correct logic. Generates URLs of the form: <tt>"/[collection.url]/[id]"</tt>
+      by default, but you may override by specifying an explicit <tt>urlRoot</tt>
+      if the model's collection shouldn't be taken into account.
     </p>
 
     <p>
