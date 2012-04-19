@@ -897,9 +897,10 @@
       if (!callback) callback = this[name];
       Backbone.history.route(route, _.bind(function(fragment) {
         var args = this._extractParameters(route, fragment);
-        callback && callback.apply(this, args);
+        var chain = callback && callback.apply(this, args);
         this.trigger.apply(this, ['route:' + name].concat(args));
         Backbone.history.trigger('route', this, name, args);
+        return chain;
       }, this));
       return this;
     },
@@ -1078,8 +1079,7 @@
       var fragment = this.fragment = this.getFragment(fragmentOverride);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
+          return !handler.callback(fragment);
         }
       });
       return matched;
