@@ -607,7 +607,7 @@
       // Remove duplicates.
       i = dups.length;
       while (i--) {
-        models.splice(dups[i], 1);
+        dups[i] = models.splice(dups[i], 1)[0];
       }
 
       // Listen to added models' events, and index models for lookup by
@@ -630,6 +630,14 @@
         options.index = i;
         model.trigger('add', model, this, options);
       }
+
+      if (options.merge) {
+        for (i = 0, length = dups.length; i < length; i++) {
+          model = this._byId[dups[i].id] || this._byCid[dups[i].cid];
+          model.set(dups[i], options);
+        }
+      }
+
       return this;
     },
 
