@@ -620,6 +620,12 @@ $(document).ready(function() {
     equal(changed, 1);
   });
 
+  test("a failed `save` with `wait` doesn't leave attributes behind", function() {
+    var model = new Backbone.Model;
+    model.save({x: 1}, {wait: true});
+    equal(model.get('x'), void 0);
+  });
+
   test("`save` with `wait` results in correct attributes if success is called during sync", function() {
     var changed = 0;
     var model = new Backbone.Model({x: 1, y: 2});
