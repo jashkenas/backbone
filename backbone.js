@@ -318,14 +318,14 @@
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
     unset: function(attr, options) {
-      (options || (options = {})).unset = true;
+      options = _.extend({}, options, {unset: true});
       return this.set(attr, null, options);
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
     // to silence it.
     clear: function(options) {
-      (options || (options = {})).unset = true;
+      options = _.extend({}, options, {unset: true});
       return this.set(_.clone(this.attributes), options);
     },
 
@@ -394,7 +394,7 @@
       options.error = Backbone.wrapError(options.error, model, options);
       var method = this.isNew() ? 'create' : 'update';
       var xhr = (this.sync || Backbone.sync).call(this, method, this, options);
-      if (options.wait) this.set(current, silentOptions);
+      if (options.wait) this.clear(silentOptions).set(current, silentOptions);
       return xhr;
     },
 
