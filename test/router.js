@@ -41,6 +41,8 @@ $(document).ready(function() {
       "contacts/new":               "newContact",
       "contacts/:id":               "loadContact",
       "splat/*args/end":            "splat",
+      "chained/before":             "chainedBefore",
+      "chained/*after":             "chainedAfter",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
       "*anything":                  "anything"
@@ -78,6 +80,15 @@ $(document).ready(function() {
 
     splat : function(args) {
       this.args = args;
+    },
+
+    chainedBefore : function() {
+      this.chainedBefore = true;
+      return true;
+    },
+
+    chainedAfter : function() {
+      this.chainedAfter = true;
     },
 
     complex : function(first, part, rest) {
@@ -188,6 +199,16 @@ $(document).ready(function() {
     setTimeout(function() {
       equal(router.args, 'long-list/of/splatted_99args');
       start();
+    }, 10);
+  });
+
+  asyncTest("Router: routes (chained)", 2, function() {
+    window.location.hash = 'chained/before';
+    setTimeout(function() {
+      equal(router.chainedBefore, true);
+      equal(router.chainedAfter, true);
+      start();
+      window.location.hash = '';
     }, 10);
   });
 
