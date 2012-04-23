@@ -151,6 +151,15 @@ $(document).ready(function() {
     equal(col.length, 1);
   });
 
+  test("Collection: merge in duplicate models with {merge: true}", function() {
+    var col = new Backbone.Collection;
+    col.add([{id: 1, name: 'Moe'}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
+    col.add({id: 1, name: 'Moses'});
+    equal(col.first().get('name'), 'Moe');
+    col.add({id: 1, name: 'Moses'}, {merge: true});
+    equal(col.first().get('name'), 'Moses');
+  });
+
   test("Collection: add model to multiple collections", function() {
     var counter = 0;
     var e = new Backbone.Model({id: 10, label : 'e'});
