@@ -631,10 +631,12 @@
         model.trigger('add', model, this, options);
       }
 
+      // Merge in duplicate models.
       if (options.merge) {
         for (i = 0, length = dups.length; i < length; i++) {
-          model = this._byId[dups[i].id] || this._byCid[dups[i].cid];
-          model.set(dups[i], options);
+          if (model = this._byId[dups[i].id]) {
+            model.set(dups[i], options);
+          }
         }
       }
 
