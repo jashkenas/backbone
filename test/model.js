@@ -796,4 +796,18 @@ $(document).ready(function() {
     ok(model.isValid());
   });
 
+  test("#1122 - clear does not alter options.", function() {
+    var model = new Backbone.Model();
+    var options = {};
+    model.clear(options);
+    ok(!options.unset);
+  });
+
+  test("#1122 - unset does not alter options.", function() {
+    var model = new Backbone.Model();
+    var options = {};
+    model.unset('x', options);
+    ok(!options.unset);
+  });
+
 });
