@@ -1261,6 +1261,20 @@
     undelegateEvents: function() {
       this.$el.unbind('.delegateEvents' + this.cid);
     },
+    
+    // Replace $el's HTML, by passing another View,
+    // a jQuery/Zepto instance, a DOM Element or a string
+    html: function(element){
+      this.$el.html(element.el || element);
+      return this;
+    },
+
+    // Append an element to $el, by passing another View,
+    // a jQuery/Zepto instance or a DOM Element
+    append: function(element){
+      this.$el.append(element.el || element);
+      return this;
+    },
 
     // Performs the initial configuration of a View with a set of options.
     // Keys with special meaning *(model, collection, id, className)*, are
