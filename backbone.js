@@ -1078,11 +1078,11 @@
 
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`, normalizing across the hidden iframe.
-    checkUrl: function(e) {
+    checkUrl: function(e, navigateOptions) {
       var current = this.getFragment();
       if (current == this.fragment && this.iframe) current = this.getFragment(this.getHash(this.iframe));
       if (current == this.fragment) return false;
-      if (this.iframe) this.navigate(current);
+      if (this.iframe) this.navigate(current, navigateOptions);
       this.loadUrl() || this.loadUrl(this.getHash());
     },
 
@@ -1093,11 +1093,17 @@
       var fragment = this.fragment = this.getFragment(fragmentOverride);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
-          handler.callback(fragment);
+          this.loadUrlHandler(fragment, handler);
           return true;
         }
-      });
+      }, this);
       return matched;
+    },
+
+    // Execute the handler callback.  Provide a hook for plugins to allow access
+    // to the matched handler before callback
+    loadUrlHandler: function(fragment, handler) {
+      handler.callback(fragment);
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
@@ -1117,7 +1123,7 @@
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
         this.fragment = fullFrag;
-        window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, fullFrag);
+        window.history[options.replace ? 'replaceState' : 'pushState'](options.state || {}, document.title, fullFrag);
 
       // If hash changes haven't been explicitly disabled, update the hash
       // fragment to store history.
