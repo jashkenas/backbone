@@ -1093,17 +1093,11 @@
       var fragment = this.fragment = this.getFragment(fragmentOverride);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
-          this.loadUrlHandler(fragment, handler);
+          handler.callback(fragment);
           return true;
         }
-      }, this);
+      });
       return matched;
-    },
-
-    // Execute the handler callback.  Provide a hook for plugins to allow access
-    // to the matched handler before callback
-    loadUrlHandler: function(fragment, handler) {
-      handler.callback(fragment);
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
