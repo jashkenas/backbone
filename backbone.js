@@ -235,10 +235,21 @@
     toJSON: function(options) {
       return _.clone(this.attributes);
     },
+    
+    // Create functions to pre-process attributes prior to getting them. These
+    // should have the same name as the attribute being retrieved and will receive
+    // the current value of the attribute as argument.
+    getters: {},
 
     // Get the value of an attribute.
     get: function(attr) {
-      return this.attributes[attr];
+      var val = this.attributes[attr];
+      
+      if (_.isFunction(this.getters[attr])) {
+        return this.getters[attr].call(this, val);
+      }	
+    	
+      return val;
     },
 
     // Get the HTML-escaped value of an attribute.
@@ -254,6 +265,10 @@
     has: function(attr) {
       return this.get(attr) != null;
     },
+    
+    // Create functions to pre-process attributes prior to setting them. These
+    // should have the same name as the attribute being set.
+    setters: {},
 
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
@@ -274,6 +289,13 @@
       if (!attrs) return this;
       if (attrs instanceof Model) attrs = attrs.attributes;
       if (options.unset) for (attr in attrs) attrs[attr] = void 0;
+      
+      // Pre-process values prior to validation
+      for (attr in attrs) {
+        if (_.isFunction(this.setters[attr])) {
+          attrs[attr] = this.setters[attr].call(this, (attrs[attr]));
+        }  
+      }
 
       // Run validation.
       if (!this._validate(attrs, options)) return false;
