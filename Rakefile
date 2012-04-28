@@ -30,7 +30,7 @@ end
 
 desc "test the CoffeeScript integration"
 task :test do
-  check 'coffee', 'CoffeeScript', 'https://github.com/jashkenas/coffee-script.git'
+  check 'coffee', 'CoffeeScript', 'https://github.com/jashkenas/coffee-script'
   system "coffee test/*.coffee"
 end
 
