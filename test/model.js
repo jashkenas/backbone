@@ -138,6 +138,21 @@ $(document).ready(function() {
     ok(!new Backbone.Model({ 'id': 2  }).isNew(), "is false for a positive integer");
     ok(!new Backbone.Model({ 'id': -5 }).isNew(), "is false for a negative integer");
   });
+  
+  test("Model: getters", function() {
+    var Model = Backbone.Model.extend({
+      defaults: {
+        size: 10 
+      },
+	  getters: {
+	    size: function (attr) {
+	      return attr + 20;
+	    }
+	  }
+    });
+    var model = new Model();
+    equal(model.get('size'), 30);
+  });
 
   test("Model: get", function() {
     equal(doc.get('title'), 'The Tempest');
@@ -170,6 +185,24 @@ $(document).ready(function() {
       equal(a.has("name"), false);
     });
   });
+  
+  test("Model: setters", function() {
+    var Model = Backbone.Model.extend({
+      defaults: {
+        size: 10 
+      },
+      setters: {
+        size: function (attr) {
+    	  return attr + 20;
+        }
+      }
+    });
+    var model = new Model();
+    model.set({size: 10});
+    equal(model.get('size'), 30);
+    model.set('size', 50);
+    equal(model.get('size'), 70);
+  });  
 
   test("Model: set and unset", function() {
     expect(8);
