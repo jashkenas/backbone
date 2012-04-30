@@ -106,6 +106,34 @@ $(document).ready(function() {
     equal(counter, 2);
     equal(counter2, 3);
   });
+  
+  test("View: html with string", function(){
+    view.html('<p>Hello world</p>');
+    equal(view.$el.html(), '<p>Hello world</p>');
+  });
+  
+  test("View: html with View", function(){
+    var AnotherView = Backbone.View.extend({
+      className: 'another-view'
+    });
+    
+    view.html(new AnotherView);
+    equal(view.$el.html(), '<div class="another-view"></div>');
+  });
+  
+  test("View: append with element", function(){
+    view.append('<p>Hello world</p>');
+    equal(view.$el.html(), '<p>Hello world</p>');
+  });
+  
+  test("View: append with View", function(){
+    var AnotherView = Backbone.View.extend({
+      className: 'another-view'
+    });
+
+    view.append(new AnotherView);
+    equal(view.$el.html(), '<div class="another-view"></div>');
+  });
 
   test("View: _ensureElement with DOM node el", function() {
     var ViewClass = Backbone.View.extend({
