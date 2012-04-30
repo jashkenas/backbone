@@ -1251,6 +1251,7 @@
           this.$el.delegate(selector, eventName, method);
         }
       }
+      return this;
     },
 
     // Clears all callbacks previously bound to the view with `delegateEvents`.
@@ -1258,6 +1259,7 @@
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
       this.$el.unbind('.delegateEvents' + this.cid);
+      return this;
     },
 
     // Performs the initial configuration of a View with a set of options.
