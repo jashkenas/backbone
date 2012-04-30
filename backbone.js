@@ -995,8 +995,6 @@
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
           fragment = window.location.pathname;
-          var search = window.location.search;
-          if (search) fragment += search;
         } else {
           fragment = this.getHash();
         }
@@ -1046,7 +1044,7 @@
       // but we're currently in a browser that doesn't support it...
       if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
-        window.location.replace(this.options.root + '#' + this.fragment);
+        window.location.replace(this.options.root + window.location.search + '#' + this.fragment);
         // Return immediately as browser will do redirect to new url
         return true;
 
