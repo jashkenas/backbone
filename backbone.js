@@ -809,7 +809,7 @@
     // Proxy to _'s chain. Can't be proxied the same way the rest of the
     // underscore methods are proxied because it relies on the underscore
     // constructor.
-    chain: function () {
+    chain: function() {
       return _(this.models).chain();
     },
 
@@ -1290,7 +1290,7 @@
   });
 
   // The self-propagating extend function that Backbone classes use.
-  var extend = function (protoProps, classProps) {
+  var extend = function(protoProps, classProps) {
     var child = inherits(this, protoProps, classProps);
     child.extend = this.extend;
     return child;
