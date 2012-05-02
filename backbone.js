@@ -1132,7 +1132,12 @@
       // If you've told us that you explicitly don't want fallback hashchange-
       // based history, then `navigate` becomes a page refresh.
       } else {
-        return window.location.assign(fullFrag);
+        // To prevent infinite loops when pushState and hashChange are unavailable,
+        // only refresh the page when the full fragment is different from the current fragment.
+      	var currentFrag = window.location.pathname + window.location.search + window.location.hash;
+        if(currentFrag !== fullFrag) {
+          return window.location.assign(fullFrag);
+        }
       }
       if (options.trigger) this.loadUrl(fragment);
     },
