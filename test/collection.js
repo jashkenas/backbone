@@ -589,4 +589,14 @@ $(document).ready(function() {
     ok(c.at(0) instanceof Model);
   });
 
+  test("null and undefined are invalid ids.", function() {
+    var model = new Backbone.Model({id: 1});
+    var collection = new Backbone.Collection([model]);
+    model.set({id: null});
+    ok(!collection.get('null'));
+    model.set({id: 1});
+    model.set({id: undefined});
+    ok(!collection.get('undefined'));
+  });
+
 });
