@@ -120,13 +120,13 @@ $(document).ready(function() {
       el: "body"
     });
     var view = new ViewClass;
-    equal(view.el, document.body);
+    strictEqual(view.el, document.body);
 
     ViewClass = Backbone.View.extend({
-      el: "body > h2"
+      el: "#testElement > h1"
     });
     view = new ViewClass;
-    equal(view.el, $("#qunit-banner").get(0));
+    strictEqual(view.el, $("#testElement > h1").get(0));
 
     ViewClass = Backbone.View.extend({
       el: "#nonexistent"

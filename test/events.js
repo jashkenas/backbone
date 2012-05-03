@@ -145,7 +145,7 @@ $(document).ready(function() {
     equal(counter, 2, 'unbind does not alter callback list');
   });
 
-  test("if no callback is provided, `on` is a noop", function() {
+  test("if no callback is provided, `on` is a noop", 0, function() {
     _.extend({}, Backbone.Events).bind('test').trigger('test');
   });
 

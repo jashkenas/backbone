@@ -142,7 +142,7 @@ $(document).ready(function() {
     equal(lastRequest.url, '/one/two');
   });
 
-  test("#1052 - `options` is optional.", function() {
+  test("#1052 - `options` is optional.", 0, function() {
     var model = new Backbone.Model();
     model.url = '/test';
     Backbone.sync('create', model);
