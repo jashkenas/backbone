@@ -248,9 +248,13 @@ $(document).ready(function() {
 
   test("#1003 - History is started before navigate is called", function() {
     var history = new Backbone.History();
-    history.navigate = function(){ ok(Backbone.History.started); };
+    history.navigate = function(){
+      ok(Backbone.History.started);
+    };
     Backbone.history.stop();
     history.start();
+    // If this is not an old IE navigate will not be called.
+    if (!history.iframe) ok(true);
   });
 
   test("Router: route callback gets passed non-decoded values", function() {

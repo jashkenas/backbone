@@ -436,7 +436,7 @@ $(document).ready(function() {
     ok(!_.include(col.without(d)), d);
     equal(col.max(function(model){ return model.id; }).id, 3);
     equal(col.min(function(model){ return model.id; }).id, 0);
-    same(col.chain()
+    deepEqual(col.chain()
             .filter(function(o){ return o.id % 2 === 0; })
             .map(function(o){ return o.id * 2; })
             .value(),

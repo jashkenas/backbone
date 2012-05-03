@@ -670,7 +670,7 @@ $(document).ready(function() {
     model.set({x: true});
   });
 
-  test("no `'change'` event if no changes", function() {
+  test("no `'change'` event if no changes", 0, function() {
     var model = new Backbone.Model();
     model.on('change', function() { ok(false); });
     model.change();
