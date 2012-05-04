@@ -143,6 +143,14 @@ $(document).ready(function() {
     .bind('all', incr)
     .trigger('event');
     equal(counter, 2, 'unbind does not alter callback list');
+
+    counter = 0;
+    obj.off()
+    .on('x', function() { obj.on('y', incr).on('all', incr); })
+    .trigger('x y');
+    equal(counter, 0, 'should not alter other event callback list');
+    obj.trigger('y');
+    equal(counter, 2, 'ok now');
   });
 
   test("if no callback is provided, `on` is a noop", 0, function() {
