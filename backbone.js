@@ -88,22 +88,15 @@
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
-
-      var calls, event, node, tail, list;
       if (!callback) return this;
       events = events.split(eventSplitter);
-      calls = this._callbacks || (this._callbacks = {});
 
-      // Create an immutable callback list, allowing traversal during
-      // modification.  The tail is an empty object that will always be used
-      // as the next node.
+      var cache = this.__events || (this.__events = {});
+      var event, list;
+
       while (event = events.shift()) {
-        list = calls[event];
-        node = list ? list.tail : {};
-        node.next = tail = {};
-        node.context = context;
-        node.callback = callback;
-        calls[event] = {tail: tail, next: list ? list.next : node};
+        list = cache[event] || (cache[event] = []);
+        list.push(callback, context);
       }
 
       return this;
@@ -113,31 +106,39 @@
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
-      var event, calls, node, tail, cb, ctx;
+      var cache, event, list, newest, i, len, cb, ctx;
 
       // No events, or removing *all* events.
-      if (!(calls = this._callbacks)) return this;
+      if (!(cache = this.__events)) return this;
       if (!(events || callback || context)) {
-        delete this._callbacks;
+        delete this.__events;
         return this;
       }
 
-      // Loop through the listed events and contexts, splicing them out of the
-      // linked list of callbacks if appropriate.
-      events = events ? events.split(eventSplitter) : _.keys(calls);
+      events = events ? events.split(eventSplitter) : _.keys(cache);
+
+      // Loop through the listed events and contexts, splicing them out of
+      // the linked list of callbacks.
       while (event = events.shift()) {
-        node = calls[event];
-        delete calls[event];
-        if (!node || !(callback || context)) continue;
-        // Create a new list, omitting the indicated callbacks.
-        tail = node.tail;
-        while ((node = node.next) !== tail) {
-          cb = node.callback;
-          ctx = node.context;
-          if ((callback && cb !== callback) || (context && ctx !== context)) {
-            this.on(event, cb, ctx);
+        list = cache[event];
+        if (!list) continue;
+
+        if (!(callback || context)) {
+          delete cache[event];
+          continue;
+        }
+
+        newest = [];
+        for (i = 0, len = list.length; i < len; i += 2) {
+          cb = list[i];
+          ctx = list[i + 1];
+
+          if ((callback && cb !== callback) ||
+              (context && ctx !== context)) {
+            newest.push(cb, ctx);
           }
         }
+        cache[event] = newest;
       }
 
       return this;
@@ -148,27 +149,28 @@
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
     trigger: function(events) {
-      var event, node, calls, tail, args, all, rest;
-      if (!(calls = this._callbacks)) return this;
-      all = calls.all;
+      var cache;
+      if (!(cache = this.__events)) return this;
       events = events.split(eventSplitter);
-      rest = slice.call(arguments, 1);
+
+      var rest = slice.call(arguments, 1);
+      var event, lists = [], list, i, len, args;
+
+      // Clone all callback lists.
+      var all = cache['all'];
+      all && (all = all.concat());
+
+      while (event = events.shift()) {
+        cache[event] && lists.push(cache[event].concat(), rest);
+        all && lists.push(all, [event].concat(rest));
+      }
 
       // For each event, walk through the linked list of callbacks twice,
       // first to trigger the event, then to trigger any `"all"` callbacks.
-      while (event = events.shift()) {
-        if (node = calls[event]) {
-          tail = node.tail;
-          while ((node = node.next) !== tail) {
-            node.callback.apply(node.context || this, rest);
-          }
-        }
-        if (node = all) {
-          tail = node.tail;
-          args = [event].concat(rest);
-          while ((node = node.next) !== tail) {
-            node.callback.apply(node.context || this, args);
-          }
+      while (list = lists.shift()) {
+        args = lists.shift();
+        for (i = 0, len = list.length; i < len; i += 2) {
+          list[i].apply(list[i + 1] || this, args);
         }
       }
 
@@ -232,7 +234,7 @@
     initialize: function(){},
 
     // Return a copy of the model's `attributes` object.
-    toJSON: function(options) {
+    toJSON: function() {
       return _.clone(this.attributes);
     },
 
@@ -441,7 +443,7 @@
 
     // **parse** converts a response into the hash of attributes to be `set` on
     // the model. The default implementation is just to pass the response along.
-    parse: function(resp, xhr) {
+    parse: function(resp) {
       return resp;
     },
 
@@ -469,7 +471,7 @@
       // Silent changes are triggered.
       var changes = _.extend({}, options.changes, this._silent);
       this._silent = {};
-      for (var attr in changes) {
+      for (attr in changes) {
         this.trigger('change:' + attr, this, this.get(attr), options);
       }
       if (changing) return this;
@@ -479,7 +481,7 @@
         this._pending = {};
         this.trigger('change', this, options);
         // Pending and silent changes still remain.
-        for (var attr in this.changed) {
+        for (attr in this.changed) {
           if (this._pending[attr] || this._silent[attr]) continue;
           delete this.changed[attr];
         }
@@ -783,7 +785,7 @@
       if (!model) return false;
       if (!options.wait) coll.add(model, options);
       var success = options.success;
-      options.success = function(nextModel, resp, xhr) {
+      options.success = function(nextModel, resp) {
         if (options.wait) coll.add(nextModel, options);
         if (success) {
           success(nextModel, resp);
@@ -797,7 +799,7 @@
 
     // **parse** converts a response into a list of models to be added to the
     // collection. The default implementation is just to pass it through.
-    parse: function(resp, xhr) {
+    parse: function(resp) {
       return resp;
     },
 
@@ -814,7 +816,7 @@
     },
 
     // Reset all internal state. Called when the collection is reset.
-    _reset: function(options) {
+    _reset: function() {
       this.length = 0;
       this.models = [];
       this._byId  = {};
@@ -1076,7 +1078,7 @@
 
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`, normalizing across the hidden iframe.
-    checkUrl: function(e) {
+    checkUrl: function() {
       var current = this.getFragment();
       if (current == this.fragment && this.iframe) current = this.getFragment(this.getHash(this.iframe));
       if (current == this.fragment) return false;
