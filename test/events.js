@@ -145,6 +145,17 @@ $(document).ready(function() {
     equal(counter, 2, 'unbind does not alter callback list');
   });
 
+  test("#1282 - 'all' callback list is retrieved after each event.", function() {
+    var counter = 0;
+    var obj = _.extend({}, Backbone.Events);
+    var incr = function(){ counter++; };
+    obj.on('x', function() {
+      obj.on('y', incr).on('all', incr);
+    })
+    .trigger('x y');
+    strictEqual(counter, 2);
+  });
+
   test("if no callback is provided, `on` is a noop", 0, function() {
     _.extend({}, Backbone.Events).bind('test').trigger('test');
   });
