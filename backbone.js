@@ -158,10 +158,10 @@
 
       // Clone all callback lists.
       var all = cache['all'];
-      all && (all = all.slice());
+      all && (all = all.concat());
 
       while (event = events.shift()) {
-        cache[event] && lists.push(cache[event].slice(), rest);
+        cache[event] && lists.push(cache[event].concat(), rest);
         all && lists.push(all, [event].concat(rest));
       }
 
