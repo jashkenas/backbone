@@ -87,14 +87,14 @@
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
-      var cache, event, list;
+      var calls, event, list;
       if (!callback) return this;
 
-      cache = this.__events || (this.__events = {});
       events = events.split(eventSplitter);
+      calls = this._callbacks || (this._callbacks = {});
 
       while (event = events.shift()) {
-        list = cache[event] || (cache[event] = []);
+        list = calls[event] || (calls[event] = []);
         list.push(callback, context);
       }
 
@@ -105,31 +105,26 @@
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
-      var cache, event, list, i, len;
+      var event, calls, list, i, length;
 
       // No events, or removing *all* events.
-      if (!(cache = this.__events)) return this;
+      if (!(calls = this._callbacks)) return this;
       if (!(events || callback || context)) {
-        delete this.__events;
+        delete this._callbacks;
         return this;
       }
 
-      events = events ? events.split(eventSplitter) : _.keys(cache);
+      events = events ? events.split(eventSplitter) : _.keys(calls);
 
-      // Loop through the listed events and contexts, splicing them out of
-      // the linked list of callbacks.
+      // Loop through the callback list, splicing where appropriate.
       while (event = events.shift()) {
-        list = cache[event];
-        if (!list) continue;
-
-        if (!(callback || context)) {
-          delete cache[event];
+        if (!(list = calls[event]) || !(callback || context)) {
+          delete calls[event];
           continue;
         }
 
-        for (i = 0, len = list.length; i < len; i += 2) {
-          if (!(callback && list[i] !== callback ||
-              context && list[i + 1] !== context)) {
+        for (i = 0, length = list.length; i < length; i += 2) {
+          if (!(callback && list[i] !== callback || context && list[i + 1] !== context)) {
             list.splice(i, 2);
           }
         }
@@ -143,31 +138,33 @@
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
     trigger: function(events) {
-      var cache, event, all, list, i, len, rest = [], args;
-      if (!(cache = this.__events)) return this;
+      var event, calls, list, i, length, args, all, rest;
+      if (!(calls = this._callbacks)) return this;
 
+      rest = [];
       events = events.split(eventSplitter);
-      for (i = 1, len = arguments.length; i < len; i++) {
+      for (i = 1, length = arguments.length; i < length; i++) {
         rest[i - 1] = arguments[i];
       }
 
-      // For each event, walk through the linked list of callbacks twice,
-      // first to trigger the event, then to trigger any `"all"` callbacks.
+      // For each event, walk through the list of callbacks twice, first to
+      // trigger the event, then to trigger any `"all"` callbacks.
       while (event = events.shift()) {
-        if (all = cache.all) {
-          all = all.slice();
-        }
+        // Copy callback lists to prevent modification.
+        if (all = calls.all) all = all.slice();
+        if (list = calls[event]) list = list.slice();
 
-        if (list = cache[event]) {
-          list = list.slice();
-          for (i = 0, len = list.length; i < len; i += 2) {
+        // Execute event callbacks.
+        if (list) {
+          for (i = 0, length = list.length; i < length; i += 2) {
             list[i].apply(list[i + 1] || this, rest);
           }
         }
 
+        // Execute "all" callbacks.
         if (all) {
           args = [event].concat(rest);
-          for (i = 0, len = all.length; i < len; i += 2) {
+          for (i = 0, length = all.length; i < length; i += 2) {
             all[i].apply(all[i + 1] || this, args);
           }
         }
