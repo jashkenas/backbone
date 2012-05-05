@@ -18,8 +18,7 @@
   // restored later on, if `noConflict` is used.
   var previousBackbone = root.Backbone;
 
-  // Create a local reference to slice/splice.
-  var slice = Array.prototype.slice;
+  // Create a local reference to splice.
   var splice = Array.prototype.splice;
 
   // The top-level namespace. All public Backbone classes and modules will
@@ -88,22 +87,15 @@
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
-
-      var calls, event, node, tail, list;
+      var cache, event, list;
       if (!callback) return this;
-      events = events.split(eventSplitter);
-      calls = this._callbacks || (this._callbacks = {});
 
-      // Create an immutable callback list, allowing traversal during
-      // modification.  The tail is an empty object that will always be used
-      // as the next node.
+      cache = this.__events || (this.__events = {});
+      events = events.split(eventSplitter);
+
       while (event = events.shift()) {
-        list = calls[event];
-        node = list ? list.tail : {};
-        node.next = tail = {};
-        node.context = context;
-        node.callback = callback;
-        calls[event] = {tail: tail, next: list ? list.next : node};
+        list = cache[event] || (cache[event] = []);
+        list.push(callback, context);
       }
 
       return this;
@@ -113,29 +105,32 @@
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
-      var event, calls, node, tail, cb, ctx;
+      var cache, event, list, i, len;
 
       // No events, or removing *all* events.
-      if (!(calls = this._callbacks)) return this;
+      if (!(cache = this.__events)) return this;
       if (!(events || callback || context)) {
-        delete this._callbacks;
+        delete this.__events;
         return this;
       }
 
-      // Loop through the listed events and contexts, splicing them out of the
-      // linked list of callbacks if appropriate.
-      events = events ? events.split(eventSplitter) : _.keys(calls);
+      events = events ? events.split(eventSplitter) : _.keys(cache);
+
+      // Loop through the listed events and contexts, splicing them out of
+      // the linked list of callbacks.
       while (event = events.shift()) {
-        node = calls[event];
-        delete calls[event];
-        if (!node || !(callback || context)) continue;
-        // Create a new list, omitting the indicated callbacks.
-        tail = node.tail;
-        while ((node = node.next) !== tail) {
-          cb = node.callback;
-          ctx = node.context;
-          if ((callback && cb !== callback) || (context && ctx !== context)) {
-            this.on(event, cb, ctx);
+        list = cache[event];
+        if (!list) continue;
+
+        if (!(callback || context)) {
+          delete cache[event];
+          continue;
+        }
+
+        for (i = 0, len = list.length; i < len; i += 2) {
+          if (!(callback && list[i] !== callback ||
+              context && list[i + 1] !== context)) {
+            list.splice(i, 2);
           }
         }
       }
@@ -148,26 +143,32 @@
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
     trigger: function(events) {
-      var event, node, calls, tail, args, all, rest;
-      if (!(calls = this._callbacks)) return this;
+      var cache, event, all, list, i, len, rest = [], args;
+      if (!(cache = this.__events)) return this;
+
       events = events.split(eventSplitter);
-      rest = slice.call(arguments, 1);
+      for (i = 1, len = arguments.length; i < len; i++) {
+        rest[i - 1] = arguments[i];
+      }
 
       // For each event, walk through the linked list of callbacks twice,
       // first to trigger the event, then to trigger any `"all"` callbacks.
       while (event = events.shift()) {
-        all = calls.all;
-        if (node = calls[event]) {
-          tail = node.tail;
-          while ((node = node.next) !== tail) {
-            node.callback.apply(node.context || this, rest);
+        if (all = cache.all) {
+          all = all.slice();
+        }
+
+        if (list = cache[event]) {
+          list = list.slice();
+          for (i = 0, len = list.length; i < len; i += 2) {
+            list[i].apply(list[i + 1] || this, rest);
           }
         }
-        if (node = all) {
-          tail = node.tail;
+
+        if (all) {
           args = [event].concat(rest);
-          while ((node = node.next) !== tail) {
-            node.callback.apply(node.context || this, args);
+          for (i = 0, len = all.length; i < len; i += 2) {
+            all[i].apply(all[i + 1] || this, args);
           }
         }
       }
