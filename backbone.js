@@ -84,6 +84,8 @@
   //     object.trigger('expand');
   //
   var Events = Backbone.Events = {
+    // A flag to indicate that we are a **Backbone.Events**
+    isBackboneEvents: true,
 
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
@@ -211,6 +213,8 @@
 
   // Attach all inheritable methods to the Model prototype.
   _.extend(Model.prototype, Events, {
+    // A flag to indicate that we are a **Backbone.Model**
+    isBackboneModel: true,
 
     // A hash of attributes whose current and previous value differ.
     changed: null,
@@ -272,7 +276,7 @@
       // Extract attributes and options.
       options || (options = {});
       if (!attrs) return this;
-      if (attrs instanceof Model) attrs = attrs.attributes;
+      if (attrs.isBackboneModel) attrs = attrs.attributes;
       if (options.unset) for (attr in attrs) attrs[attr] = void 0;
 
       // Run validation.
@@ -567,6 +571,8 @@
 
   // Define the Collection's inheritable methods.
   _.extend(Collection.prototype, Events, {
+    // A flag to indicate that we are a **Backbone.Collection**
+    isBackboneCollection: true,
 
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
@@ -809,7 +815,7 @@
     // Prepare a model or hash of attributes to be added to this collection.
     _prepareModel: function(model, options) {
       options || (options = {});
-      if (!(model instanceof Model)) {
+      if (!(model.isBackboneModel)) {
         var attrs = model;
         options.collection = this;
         model = new this.model(attrs, options);
@@ -880,6 +886,8 @@
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
+    // A flag to indicate that we are a **Backbone.Router**
+    isBackboneRouter: true,
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -961,6 +969,8 @@
 
   // Set up all inheritable **Backbone.History** properties and methods.
   _.extend(History.prototype, Events, {
+    // A flag to indicate that we are a **Backbone.History**
+    isBackboneHistory: true,
 
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
@@ -1156,6 +1166,8 @@
 
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(View.prototype, Events, {
+    // A flag to indicate that we are a **Backbone.View**
+    isBackboneView: true,
 
     // The default `tagName` of a View's element is `"div"`.
     tagName: 'div',
@@ -1200,7 +1212,7 @@
     // re-delegation.
     setElement: function(element, delegate) {
       if (this.$el) this.undelegateEvents();
-      this.$el = (element instanceof $) ? element : $(element);
+      this.$el = (element && element.jquery) ? element : $(element);
       this.el = this.$el[0];
       if (delegate !== false) this.delegateEvents();
       return this;
