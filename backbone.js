@@ -820,16 +820,15 @@
     },
 
     // Prepare a model or hash of attributes to be added to this collection.
-    _prepareModel: function(model, options) {
-      options || (options = {});
-      if (!(model instanceof Model)) {
-        var attrs = model;
-        options.collection = this;
-        model = new this.model(attrs, options);
-        if (!model._validate(model.attributes, options)) model = false;
-      } else if (!model.collection) {
-        model.collection = this;
+    _prepareModel: function(attrs, options) {
+      if (attrs instanceof Model) {
+        if (!attrs.collection) attrs.collection = this;
+        return attrs;
       }
+      options || (options = {});
+      options.collection = this;
+      var model = new this.model(attrs, options);
+      if (!model._validate(model.attributes, options)) return false;
       return model;
     },
 
