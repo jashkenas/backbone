@@ -279,11 +279,15 @@ $(document).ready(function() {
       equal(model.previous('name'), 'Tim');
       ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}), 'previousAttributes is correct');
     });
+    equal(model.hasChanged(), false);
+    equal(model.hasChanged(undefined), false);
     model.set({name : 'Rob'}, {silent : true});
     equal(model.hasChanged(), true);
+    equal(model.hasChanged(undefined), true);
     equal(model.hasChanged('name'), true);
     model.change();
     equal(model.get('name'), 'Rob');
+
   });
 
   test("Model: changedAttributes", function() {

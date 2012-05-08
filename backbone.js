@@ -491,7 +491,7 @@
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (!arguments.length) return !_.isEmpty(this.changed);
+      if (!arguments.length || attr === undefined) return !_.isEmpty(this.changed);
       return _.has(this.changed, attr);
     },
 
