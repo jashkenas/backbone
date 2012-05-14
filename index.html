@@ -3583,6 +3583,9 @@ ActiveRecord::Base.include_root_in_json = false
         Calling <tt>clone</tt> on a model now only passes the attributes
         for duplication, not a reference to the model itself.
       </li>
+      <li>
+        Calling <tt>clear</tt> on a model now removes the <tt>id</tt> attribute.
+      </li>
     </ul>
 
     <p>
