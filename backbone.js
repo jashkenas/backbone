@@ -105,7 +105,7 @@
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
-      var event, calls, list, i, length;
+      var event, calls, list, i;
 
       // No events, or removing *all* events.
       if (!(calls = this._callbacks)) return this;
@@ -123,11 +123,9 @@
           continue;
         }
 
-        for (i = 0, length = list.length; i < length; i += 2) {
+        for (i = list.length - 2; i >= 0; i -= 2) {
           if (!(callback && list[i] !== callback || context && list[i + 1] !== context)) {
             list.splice(i, 2);
-            i -= 2;
-            length -= 2;
           }
         }
       }
