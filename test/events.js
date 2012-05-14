@@ -190,4 +190,12 @@ $(document).ready(function() {
     ok(obj.off('event') === obj);
   });
 
+  test("#1310 - off does not skip consecutive events", 0, function() {
+    var obj = _.extend({}, Backbone.Events);
+    obj.on('event', function() { ok(false); }, obj);
+    obj.on('event', function() { ok(false); }, obj);
+    obj.off(null, null, obj);
+    obj.trigger('event');
+  });
+
 });

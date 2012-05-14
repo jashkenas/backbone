@@ -126,6 +126,8 @@
         for (i = 0, length = list.length; i < length; i += 2) {
           if (!(callback && list[i] !== callback || context && list[i + 1] !== context)) {
             list.splice(i, 2);
+            i -= 2;
+            length -= 2;
           }
         }
       }
