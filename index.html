@@ -845,7 +845,7 @@ if (note.has("title")) {
     <p id="Model-clear">
       <b class="header">clear</b><code>model.clear([options])</code>
       <br />
-      Removes all attributes from the model. Fires a <tt>"change"</tt> event unless
+      Removes all attributes from the model, including the <tt>id</tt> attribute. Fires a <tt>"change"</tt> event unless
       <tt>silent</tt> is passed as an option.
     </p>
 
@@ -3582,6 +3582,9 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Calling <tt>clone</tt> on a model now only passes the attributes
         for duplication, not a reference to the model itself.
+      </li>
+      <li>
+        Calling <tt>clear</tt> on a model now removes the <tt>id</tt> attribute.
       </li>
     </ul>
 
