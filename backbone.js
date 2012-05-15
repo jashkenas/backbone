@@ -1370,8 +1370,12 @@
   };
 
   // If `$` is defined, set the default implementation of `Backbone.ajax` to
-  // proxy through.
-  if ($) Backbone.ajax = function(){ return $.ajax.apply($, arguments); };
+  // proxy through. Override it if you like.
+  if ($) {
+    Backbone.ajax = function() {
+      return $.ajax.apply($, arguments);
+    };
+  }
 
   // Wrap an optional error callback with a fallback error event.
   Backbone.wrapError = function(onError, originalModel, options) {
