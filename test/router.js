@@ -278,4 +278,20 @@ $(document).ready(function() {
     }, 50);
   });
 
+  asyncTest("Router: removal of routes", function() {
+    router.navigate('noCallback', {trigger:true});
+    equal(lastRoute, 'noCallback');
+    router.navigate('search/testing', {trigger:true});
+    equal(lastRoute, 'search');
+    equal(lastArgs, 'testing');
+    router.remove('noCallback');
+    router.remove('search/:test');
+    router.navigate('noCallback', {trigger:true});
+    equal(lastRoute, 'anything');
+    router.navigate('search/testing', {trigger:true});
+    equal(lastRoute, 'anything');
+    equal(lastArgs, 'search/testing');
+    start();
+  });
+
 });

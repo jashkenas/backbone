@@ -300,6 +300,7 @@
       <li>– <a href="#Router-routes">routes</a></li>
       <li>– <a href="#Router-constructor">constructor / initialize</a></li>
       <li>– <a href="#Router-route">route</a></li>
+      <li>– <a href="#Router-remove">remove</a></li>
       <li>– <a href="#Router-navigate">navigate</a></li>
     </ul>
 
@@ -1874,7 +1875,7 @@ router.on("route:help", function(page) {
       a <tt>"route:name"</tt> event whenever the route is matched.  If the
       <tt>callback</tt> argument is omitted <tt>router[name]</tt> will be used
       instead.
-    </p>
+    </p> 
 
 <pre>
 initialize: function(options) {
@@ -1889,6 +1890,26 @@ initialize: function(options) {
 
 open: function(id) { ... }
 </pre>
+
+    <p id="Router-remove">
+      <b class="header">remove</b><code>router.remove(route)</code>
+      <br />
+      Manually remove a route from the router, if you no longer wish to allow a 
+      previously defined route to trigger a method.
+    </p>   
+
+<pre>
+initialize: function(options) {
+
+  // Matches #page/10, passing "10"
+  this.route("page/:number", "page", function(number){ ... });
+
+  // #page/10 is no longer a valid route
+  this.remove("page/:number");
+
+},
+</pre>
+
 
     <p id="Router-navigate">
       <b class="header">navigate</b><code>router.navigate(fragment, [options])</code>
