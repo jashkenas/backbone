@@ -916,6 +916,13 @@
       return this;
     },
 
+    // Manually remove a single route from the router
+    remove: function(route) {
+      if (!Backbone.history) throw new Error("No routes have been added to the router.");
+      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      Backbone.history.remove(route);
+    },
+
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate: function(fragment, options) {
       Backbone.history.navigate(fragment, options);
@@ -1069,6 +1076,17 @@
     // may override previous routes.
     route: function(route, callback) {
       this.handlers.unshift({route: route, callback: callback});
+    },
+
+    // Removes a specific route from the history handlers
+    remove: function(route) {
+      for (i = 0, l = this.handlers.length; i < l; i++) {
+        if (_.isEqual(this.handlers[i].route, route)) {
+          delete this.handlers[i];
+          this.handlers.splice(i, 1);
+          l--;
+        }
+      };
     },
 
     // Checks the current URL to see if it has changed, and if it has,
