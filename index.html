@@ -342,7 +342,8 @@
       Utility
     </a>
     <ul class="toc_section">
-      <li>– <a href="#Utility-noConflict">noConflict</a></li>
+      <li>– <a href="#Utility-Backbone-noConflict">Backbone.noConflict</a></li>
+      <li>– <a href="#Utility-Backbone-$">Backbone.$</a></li>
     </ul>
 
     <a class="toc_title" href="#examples">
@@ -2374,10 +2375,10 @@ var DocumentView = Backbone.View.extend({
       or remove a view from the DOM temporarily.
     </p>
 
-    <h2 id="Utility">Utility Functions</h2>
+    <h2 id="Utility">Utility</h2>
 
-    <p id="Utility-noConflict">
-      <b class="header">noConflict</b><code>var backbone = Backbone.noConflict();</code>
+    <p id="Utility-Backbone-noConflict">
+      <b class="header">Backbone.noConflict</b><code>var backbone = Backbone.noConflict();</code>
       <br />
       Returns the <tt>Backbone</tt> object back to its original value. You can
       use the return value of <tt>Backbone.noConflict()</tt> to keep a local
@@ -2389,6 +2390,14 @@ var DocumentView = Backbone.View.extend({
 var localBackbone = Backbone.noConflict();
 var model = localBackbone.Model.extend(...);
 </pre>
+
+    <p id="Utility-Backbone-$">
+      <b class="header">Backbone.$</b><code>Backbone.$ = $;</code>
+      <br />
+      If you have multiple copies of <tt>jQuery</tt> on the page, or simply want
+      to tell Backbone to use a particular object as its DOM / Ajax library,
+      this is the property for you.
+    </p>
 
     <h2 id="examples">Examples</h2>
 
