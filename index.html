@@ -343,7 +343,6 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Utility-noConflict">noConflict</a></li>
-      <li>– <a href="#Utility-setDomLibrary">setDomLibrary</a></li>
     </ul>
 
     <a class="toc_title" href="#examples">
@@ -1654,7 +1653,7 @@ var Tweets = Backbone.Collection.extend({
       <br />
       Returns a new instance of the collection with an identical list of models.
     </p>
-    
+
     <p id="Collection-fetch">
       <b class="header">fetch</b><code>collection.fetch([options])</code>
       <br />
@@ -2391,14 +2390,6 @@ var localBackbone = Backbone.noConflict();
 var model = localBackbone.Model.extend(...);
 </pre>
 
-    <p id="Utility-setDomLibrary">
-      <b class="header">setDomLibrary</b><code>Backbone.setDomLibrary(jQueryNew);</code>
-      <br />
-      If you have multiple copies of <tt>jQuery</tt> on the page, or simply want
-      to tell Backbone to use a particular object as its DOM / Ajax library,
-      this is the function for you.
-    </p>
-
     <h2 id="examples">Examples</h2>
 
     <p>
@@ -2447,15 +2438,15 @@ var model = localBackbone.Model.extend(...);
     <h2 id="examples-rdio">Rdio</h2>
 
     <p>
-      <a href="http://rdio.com/new">New Rdio</a> was developed from the ground 
-      up with a component based framework based on Backbone.js. Every component 
-      on the screen is dynamically loaded and rendered, with data provided by the 
-      <a href="http://developer.rdio.com/">Rdio API</a>. When changes are pushed, 
-      every component can update itself without reloading the page or interrupting 
-      the user's music. All of this relies on Backbone's views and models, 
-      and all URL routing is handled by Backbone's Router. When data changes are 
-      signaled in realtime, Backbone's Events notify the interested components 
-      in the data changes. Backbone forms the core of the new, dynamic, realtime 
+      <a href="http://rdio.com/new">New Rdio</a> was developed from the ground
+      up with a component based framework based on Backbone.js. Every component
+      on the screen is dynamically loaded and rendered, with data provided by the
+      <a href="http://developer.rdio.com/">Rdio API</a>. When changes are pushed,
+      every component can update itself without reloading the page or interrupting
+      the user's music. All of this relies on Backbone's views and models,
+      and all URL routing is handled by Backbone's Router. When data changes are
+      signaled in realtime, Backbone's Events notify the interested components
+      in the data changes. Backbone forms the core of the new, dynamic, realtime
       Rdio web and <i>desktop</i> applications.
     </p>
 
@@ -2475,7 +2466,7 @@ var model = localBackbone.Model.extend(...);
       The app also uses <a href="http://zeptojs.com/">Zepto</a>,
       <a href="http://underscorejs.org/">Underscore.js</a>,
       <a href="http://sass-lang.com/">SASS</a>, <a href="http://cubiq.org/iscroll">iScroll</a>,
-      HTML5 LocalStorage and Canvas. The tech team blogged about 
+      HTML5 LocalStorage and Canvas. The tech team blogged about
       <a href="https://engineering.linkedin.com/mobile/linkedin-ipad-using-local-storage-snappy-mobile-apps">their experiences using LocalStorage</a>
       to improve mobile performance.
     </p>
@@ -2593,15 +2584,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/do.png" alt="Do" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-pitchfork">Pitchfork</h2>
 
     <p>
-      <a href="http://pitchfork.com/">Pitchfork</a> uses Backbone.js to power 
-      its site-wide audio player, <a href="http://pitchfork.com/tv/">Pitchfork.tv</a>, 
-      location routing, a write-thru page fragment cache, and more. Backbone.js 
-      (and <a href="http://underscorejs.org/">Underscore.js</a>) helps the team 
-      create clean and modular components, 
+      <a href="http://pitchfork.com/">Pitchfork</a> uses Backbone.js to power
+      its site-wide audio player, <a href="http://pitchfork.com/tv/">Pitchfork.tv</a>,
+      location routing, a write-thru page fragment cache, and more. Backbone.js
+      (and <a href="http://underscorejs.org/">Underscore.js</a>) helps the team
+      create clean and modular components,
       move very quickly, and focus on the site, not the spaghetti.
     </p>
 
@@ -2610,7 +2601,7 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/pitchfork.png" alt="Pitchfork" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-walmart">Walmart Mobile</h2>
 
     <p>
@@ -2874,15 +2865,15 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/grove.png" alt="Grove.io" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-kanogames">KANO/GAMES</h2>
 
     <p>
-      <a href="http://www.kanoapps.com/">KANO/APPS</a> used Backbone.js to create 
-      <a href="http://www.kanogames.com/">KANO/GAMES</a>, a social gaming website. 
-      KANO/GAMES relies on Backbone.js for almost every aspect of the site: 
-      for seamless page loading, to construct menus, game listings and game 
-      canvases, to build interactive HTML5 avatars, and for 
+      <a href="http://www.kanoapps.com/">KANO/APPS</a> used Backbone.js to create
+      <a href="http://www.kanogames.com/">KANO/GAMES</a>, a social gaming website.
+      KANO/GAMES relies on Backbone.js for almost every aspect of the site:
+      for seamless page loading, to construct menus, game listings and game
+      canvases, to build interactive HTML5 avatars, and for
       user and developer profiles, and live feeds.
     </p>
 
@@ -2910,14 +2901,14 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/shortmail.png" alt="Shortmail" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-scrollkit">scroll kit</h2>
 
     <p>
-      <a href="http://scrollkit.com/">scroll kit</a> is a new kind of website 
-      builder that makes designing a web page feel more like drawing. 
-      The workspace is a single-page web application built with Rails and Backbone.js. 
-      In scroll kit, every DOM element is associated with a Backbone model, so that 
+      <a href="http://scrollkit.com/">scroll kit</a> is a new kind of website
+      builder that makes designing a web page feel more like drawing.
+      The workspace is a single-page web application built with Rails and Backbone.js.
+      In scroll kit, every DOM element is associated with a Backbone model, so that
       style changes that are made to an element automatically update the model
       and propagate the change across all its views.
       <a href="http://scrollkit.com/demo">Try it out</a>.
