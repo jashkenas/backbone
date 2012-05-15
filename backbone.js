@@ -1369,10 +1369,9 @@
     return Backbone.ajax(_.extend(params, options));
   };
 
-  // Set the default ajax method if $ is defined.
-  if ($) Backbone.ajax = function () {
-    return $.ajax.apply(Backbone, arguments);
-  }
+  // If `$` is defined, set the default implementation of `Backbone.ajax` to
+  // proxy through.
+  if ($) Backbone.ajax = function(){ return $.ajax.apply($, arguments); };
 
   // Wrap an optional error callback with a fallback error event.
   Backbone.wrapError = function(onError, originalModel, options) {
