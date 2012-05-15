@@ -1370,7 +1370,9 @@
   };
 
   // Set the default ajax method if $ is defined.
-  if ($) Backbone.ajax = $.ajax;
+  if ($) Backbone.ajax = function () {
+    return $.ajax.apply(Backbone, arguments);
+  }
 
   // Wrap an optional error callback with a fallback error event.
   Backbone.wrapError = function(onError, originalModel, options) {
