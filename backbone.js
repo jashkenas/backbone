@@ -467,15 +467,19 @@
       // Silent changes are triggered.
       var changes = _.extend({}, options.changes, this._silent);
       this._silent = {};
-      for (var attr in changes) {
-        this.trigger('change:' + attr, this, this.get(attr), options);
+      if (!options.quiet) {
+        for (var attr in changes) {
+          this.trigger('change:' + attr, this, this.get(attr), options);
+        }
       }
       if (changing) return this;
 
       // Continue firing `"change"` events while there are pending changes.
       while (!_.isEmpty(this._pending)) {
         this._pending = {};
-        this.trigger('change', this, options);
+        if (!options.quiet) {
+          this.trigger('change', this, options);
+        }
         // Pending and silent changes still remain.
         for (var attr in this.changed) {
           if (this._pending[attr] || this._silent[attr]) continue;

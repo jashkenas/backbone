@@ -764,6 +764,19 @@ $(document).ready(function() {
     deepEqual(changes, [0, 1, 1, 2, 1]);
   });
 
+  test("changes with quiet", function() {
+    var previous;
+    var model = new Backbone.Model();
+    model.on('change:b', function() {
+      previous = model.previousAttributes().b;
+    });
+    model.set({b: 0});
+    model.set({b: 1}, {quiet: true});
+    equal(previous, undefined, 'previous is undefined as change event has not fired');
+    model.set({b: 0});
+    equal(previous, 1, 'change event is fired previous attribute is quietly set value');
+  });
+
   test("nested set multiple times", 1, function() {
     var model = new Backbone.Model();
     model.on('change:b', function() {
