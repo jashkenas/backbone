@@ -309,7 +309,7 @@
       }
 
       // Fire the `"change"` events.
-      if (!options.silent) this.change(options);
+      if (!options.silent && !options.quiet) this.change(options);
       return this;
     },
 
