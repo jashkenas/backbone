@@ -38,16 +38,7 @@
   if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
 
   // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
-  var $ = root.jQuery || root.Zepto || root.ender;
-
-  // Set the JavaScript library that will be used for DOM manipulation and
-  // Ajax calls (a.k.a. the `$` variable). By default Backbone will use: jQuery,
-  // Zepto, or Ender; but the `setDomLibrary()` method lets you inject an
-  // alternate JavaScript library (or a mock library for testing your views
-  // outside of a browser).
-  Backbone.setDomLibrary = function(lib) {
-    $ = lib;
-  };
+  Backbone.$ = root.jQuery || root.Zepto || root.ender;
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
@@ -1017,16 +1008,16 @@
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
       if (oldIE && this._wantsHashChange) {
-        this.iframe = $('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
+        this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
         this.navigate(fragment);
       }
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
-        $(window).bind('popstate', this.checkUrl);
+        Backbone.$(window).bind('popstate', this.checkUrl);
       } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        $(window).bind('hashchange', this.checkUrl);
+        Backbone.$(window).bind('hashchange', this.checkUrl);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
@@ -1060,7 +1051,7 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      $(window).unbind('popstate', this.checkUrl).unbind('hashchange', this.checkUrl);
+      Backbone.$(window).unbind('popstate', this.checkUrl).unbind('hashchange', this.checkUrl);
       clearInterval(this._checkUrlInterval);
       History.started = false;
     },
@@ -1201,8 +1192,8 @@
     //
     make: function(tagName, attributes, content) {
       var el = document.createElement(tagName);
-      if (attributes) $(el).attr(attributes);
-      if (content != null) $(el).html(content);
+      if (attributes) Backbone.$(el).attr(attributes);
+      if (content != null) Backbone.$(el).html(content);
       return el;
     },
 
@@ -1210,7 +1201,7 @@
     // re-delegation.
     setElement: function(element, delegate) {
       if (this.$el) this.undelegateEvents();
-      this.$el = (element instanceof $) ? element : $(element);
+      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
       this.el = this.$el[0];
       if (delegate !== false) this.delegateEvents();
       return this;
@@ -1371,7 +1362,7 @@
 
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
   Backbone.ajax = function() {
-    return $.ajax.apply($, arguments);
+    return Backbone.$.ajax.apply(Backbone.$, arguments);
   };
 
   // Wrap an optional error callback with a fallback error event.
