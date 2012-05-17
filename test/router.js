@@ -278,4 +278,16 @@ $(document).ready(function() {
     }, 50);
   });
 
+  asyncTest("History: grab specific url segments", function(){
+    router.navigate('url/item/4', {trigger: true});
+    setTimeout(function(){
+      equal(Backbone.history.segment(1), 'url');
+      equal(Backbone.history.segment(2), 'item');
+      equal(Backbone.history.segment(3), '4');
+      equal(Backbone.history.segment(4), null);
+      equal(Backbone.history.segment(4, '1'), '1');
+      start();
+    }, 50);
+  });
+
 });
