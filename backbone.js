@@ -894,16 +894,16 @@
     //       ...
     //     });
     //
-    route: function(route, name, callback) {
+    route: function(route, name, callback, context) {
       Backbone.history || (Backbone.history = new History);
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (!callback) callback = this[name];
-      Backbone.history.route(route, _.bind(function(fragment) {
+      Backbone.history.route(route, _.bind(function(fragment, routeContext) {
         var args = this._extractParameters(route, fragment);
-        callback && callback.apply(this, args);
+        callback && callback.apply((routeContext || this), args);
         this.trigger.apply(this, ['route:' + name].concat(args));
         Backbone.history.trigger('route', this, name, args);
-      }, this));
+      }, this), context);
       return this;
     },
 
@@ -1058,8 +1058,8 @@
 
     // Add a route to be tested when the fragment changes. Routes added later
     // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
+    route: function(route, callback, context) {
+      this.handlers.unshift({route: route, callback: callback, context: context});
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -1079,7 +1079,7 @@
       var fragment = this.fragment = this.getFragment(fragmentOverride);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
-          handler.callback(fragment);
+          handler.callback(fragment, handler.context);
           return true;
         }
       });

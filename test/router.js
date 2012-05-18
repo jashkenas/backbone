@@ -3,6 +3,17 @@ $(document).ready(function() {
   var router = null;
   var lastRoute = null;
   var lastArgs = [];
+  var lastContext = null;
+  var contextOne = {
+    item : function() {
+      return 'one';
+    }
+  };
+  var contextTwo = {
+    item : function() {
+      return 'two';
+    }
+  };   
 
   function onRoute(router, route, args) {
     lastRoute = route;
@@ -49,6 +60,8 @@ $(document).ready(function() {
     initialize : function(options) {
       this.testing = options.testing;
       this.route('implicit', 'implicit');
+      this.route('context', 'context', this.context, contextOne);
+      this.route('context/:id', 'context', this.context, contextTwo);
     },
 
     counter: function() {
@@ -93,6 +106,10 @@ $(document).ready(function() {
 
     anything : function(whatever) {
       this.anything = whatever;
+    },
+
+    context : function() {
+      lastContext = this.item();
     }
 
   });
@@ -276,6 +293,21 @@ $(document).ready(function() {
           start();
         }, 50);
     }, 50);
+  });
+
+  asyncTest("Router: change context of callback function", function() {
+    equal(lastContext, null);
+    setTimeout(function(){
+      window.location.hash = 'context';
+      setTimeout(function() {
+        equal(lastContext, 'one');
+        window.location.hash = 'context/2'
+        setTimeout(function() {
+          equal(lastContext, 'two');
+          start();
+        }, 50);
+      }, 50);
+    });
   });
 
 });
