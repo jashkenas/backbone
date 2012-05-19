@@ -296,7 +296,6 @@ $(document).ready(function() {
   });
 
   asyncTest("Router: change context of callback function", function() {
-    equal(lastContext, null);
     setTimeout(function(){
       window.location.hash = 'context';
       setTimeout(function() {
