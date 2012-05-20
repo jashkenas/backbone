@@ -1865,7 +1865,7 @@ router.on("route:help", function(page) {
     </p>
 
     <p id="Router-route">
-      <b class="header">route</b><code>router.route(route, name, [callback])</code>
+      <b class="header">route</b><code>router.route(route, name, [callback], [context])</code>
       <br />
       Manually create a route for the router, The <tt>route</tt> argument may
       be a <a href="#Router-routes">routing string</a> or regular expression.
@@ -1873,7 +1873,8 @@ router.on("route:help", function(page) {
       an argument to the callback. The <tt>name</tt> argument will be triggered as
       a <tt>"route:name"</tt> event whenever the route is matched.  If the
       <tt>callback</tt> argument is omitted <tt>router[name]</tt> will be used
-      instead.
+      instead. The optional <tt>context</tt> argument can be used to specify the
+      context of the callback function.
     </p>
 
 <pre>
@@ -1881,6 +1882,9 @@ initialize: function(options) {
 
   // Matches #page/10, passing "10"
   this.route("page/:number", "page", function(number){ ... });
+
+  // Matches #page/10, passing "10", with a new context for the callback
+  this.route("page/:number", "page", function(number){ ... }, Pages);
 
   // Matches /117-a/b/c/open, passing "117-a/b/c" to this.open
   this.route(/^(.*?)\/open$/, "open");
