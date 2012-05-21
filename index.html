@@ -3,6 +3,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  <meta name="viewport" content="width=device-width">
   <link rel="canonical" href="http://backbonejs.org" />
   <link rel="icon" href="docs/images/favicon.ico" />
   <title>Backbone.js</title>
@@ -64,6 +65,10 @@
       position: relative;
       width: 550px;
       margin: 40px 0 50px 260px;
+    }
+    img#logo {
+      width: 451px; 
+      height: 80px;
     }
     div.run {
       position: absolute;
@@ -193,6 +198,53 @@
       img.example_image {
         margin: 0px auto;
       }
+    @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+          only screen and (-o-min-device-pixel-ratio: 3/2),
+          only screen and (min-device-pixel-ratio: 1.5) {
+      img {
+        max-width: 290px;
+      }
+      div#sidebar {
+        -webkit-overflow-scrolling: initial;
+        position: relative;
+        width: 90%;
+        height: 120px;
+        left: 0;
+        top: -7px;
+        padding: 10px 0 10px 30px;
+        border: 0;
+      }
+      img#logo {
+        width: auto; 
+        height: auto;
+      }
+      div.container {
+        margin: 0;
+        width: 100%;
+      }
+      p, div.container ul {
+        max-width: 98%;
+        overflow-x: scroll;
+      }
+      table {
+        position: relative;
+      }
+        tr:first-child td {
+          padding-bottom: 25px;
+        }
+        td.text {
+          padding: 0;
+          position: absolute;
+          left: 0;
+          top: 48px;
+        }
+        tr:last-child td.text {
+          top: 122px;
+        }
+      pre {
+        overflow: scroll;
+      }
+    }
   </style>
 </head>
 <body>
@@ -414,7 +466,7 @@
   <div class="container">
 
     <p>
-      <img style="width: 451px; height: 80px;" src="docs/images/backbone.png" alt="Backbone.js" />
+      <img id="logo" src="docs/images/backbone.png" alt="Backbone.js" />
     </p>
 
     <p>
@@ -459,11 +511,11 @@
     <table>
       <tr>
         <td><a class="punch" href="backbone.js">Development Version (0.9.2)</a></td>
-        <td><i>52kb, Full source, lots of comments</i></td>
+        <td class="text"><i>52kb, Full source, lots of comments</i></td>
       </tr>
       <tr>
         <td><a class="punch" href="backbone-min.js">Production Version (0.9.2)</a></td>
-        <td><i>5.6kb, Packed and gzipped</i></td>
+        <td class="text"><i>5.6kb, Packed and gzipped</i></td>
       </tr>
     </table>
 
