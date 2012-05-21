@@ -185,7 +185,7 @@
     if (options && options.collection) this.collection = options.collection;
     this.attributes = {};
     this._escapedAttributes = {};
-    this.cid = _.uniqueId('c');
+    this.cid = _.uniqueId('model');
     this.changed = {};
     this._silent = {};
     this._pending = {};
@@ -549,6 +549,7 @@
     options || (options = {});
     if (options.model) this.model = options.model;
     if (options.comparator) this.comparator = options.comparator;
+    this.cid = _.uniqueId('collection');
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, {silent: true, parse: options.parse});
@@ -871,6 +872,7 @@
   var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
+    this.cid = _.uniqueId('router');
     this._bindRoutes();
     this.initialize.apply(this, arguments);
   };
