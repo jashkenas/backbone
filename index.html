@@ -66,6 +66,10 @@
       width: 550px;
       margin: 40px 0 50px 260px;
     }
+    img#logo {
+      width: 451px; 
+      height: 80px;
+    }
     div.run {
       position: absolute;
       right: 15px;
@@ -194,47 +198,53 @@
       img.example_image {
         margin: 0px auto;
       }
-      @media only screen and (max-device-width: 480px) {
-        img {
-          max-width: 290px;
-        }
-        div#sidebar {
-          -webkit-overflow-scrolling: initial;
-          position: relative;
-          width: 288px;
-          height: 120px;
-          left: -7px;
-          top: -7px;
-          padding: 10px 0 10px 30px;
-        }
-        div.container {
-          margin: 0;
-          width: 305px
-        }
-        p, div.container ul {
-          max-width: 295px;
-          overflow-x: scroll;
-        }
-        table {
-          position: relative;
-        }
-          tr:first-child td {
-            padding-bottom: 25px;
-          }
-          td.text {
-            padding: 0;
-            position: absolute;
-            left: 0;
-            top: 48px;
-          }
-          tr:last-child td.text {
-            top: 122px;
-          }
-        pre {
-          overflow: scroll;
-          width: 280px;
-        }
+    @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+          only screen and (-o-min-device-pixel-ratio: 3/2),
+          only screen and (min-device-pixel-ratio: 1.5) {
+      img {
+        max-width: 290px;
       }
+      div#sidebar {
+        -webkit-overflow-scrolling: initial;
+        position: relative;
+        width: 90%;
+        height: 120px;
+        left: 0;
+        top: -7px;
+        padding: 10px 0 10px 30px;
+        border: 0;
+      }
+      img#logo {
+        width: auto; 
+        height: auto;
+      }
+      div.container {
+        margin: 0;
+        width: 100%;
+      }
+      p, div.container ul {
+        max-width: 98%;
+        overflow-x: scroll;
+      }
+      table {
+        position: relative;
+      }
+        tr:first-child td {
+          padding-bottom: 25px;
+        }
+        td.text {
+          padding: 0;
+          position: absolute;
+          left: 0;
+          top: 48px;
+        }
+        tr:last-child td.text {
+          top: 122px;
+        }
+      pre {
+        overflow: scroll;
+      }
+    }
   </style>
 </head>
 <body>
@@ -456,7 +466,7 @@
   <div class="container">
 
     <p>
-      <img style="width: 451px; height: 80px;" src="docs/images/backbone.png" alt="Backbone.js" />
+      <img id="logo" src="docs/images/backbone.png" alt="Backbone.js" />
     </p>
 
     <p>
