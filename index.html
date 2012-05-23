@@ -1612,7 +1612,7 @@ alert(chapters.pluck('title'));
       <br />
       Force a collection to re-sort itself. You don't need to call this under
       normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a> function
-      will maintain itself in proper sort order at all times. Calling <b>sort</b>
+      will sort itself whenever a model is added. Calling <b>sort</b>
       triggers the collection's <tt>"reset"</tt> event, unless silenced by passing
       <tt>{silent: true}</tt>
     </p>
