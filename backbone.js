@@ -683,6 +683,11 @@
       return model;
     },
 
+    // Slice out a sub-array of models from the collection.
+    slice: function(begin, end) {
+      return this.models.slice(begin, end);
+    },
+
     // Get a model from the set by id.
     get: function(id) {
       if (id == null) return void 0;
