@@ -606,4 +606,18 @@ $(document).ready(function() {
     ok(!collection.get('undefined'));
   });
 
+  test("Collection: falsy comparator", function(){
+    var Col = Backbone.Collection.extend({
+      comparator: function(model){ return model.id; }
+    });
+    var col = new Col
+    var colFalse = new Col(null, {comparator: false});
+    var colNull = new Col(null, {comparator: null});
+    var colUndefined = new Col(null, {comparator: undefined});
+    ok(col.comparator);
+    ok(!colFalse.comparator);
+    ok(!colNull.comparator);
+    ok(colUndefined.comparator);
+  });
+
 });
