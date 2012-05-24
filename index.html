@@ -67,7 +67,7 @@
       margin: 40px 0 50px 260px;
     }
     img#logo {
-      width: 451px; 
+      width: 451px;
       height: 80px;
     }
     div.run {
@@ -215,7 +215,7 @@
         border: 0;
       }
       img#logo {
-        width: auto; 
+        width: auto;
         height: auto;
       }
       div.container {
@@ -1364,10 +1364,12 @@ var Library = Backbone.Collection.extend({
     <p id="Collection-constructor">
       <b class="header">constructor / initialize</b><code>new Collection([models], [options])</code>
       <br />
-      When creating a Collection, you may choose to pass in the initial array of <b>models</b>.
-      The collection's <a href="#Collection-comparator">comparator</a> function
-      may be included as an option. If you define an <b>initialize</b> function, it will be
-      invoked when the collection is created.
+      When creating a Collection, you may choose to pass in the initial array
+      of <b>models</b>.  The collection's <a href="#Collection-comparator">comparator</a>
+      function may be included as an option. Passing <tt>false</tt> as the
+      comparator option will prevent sorting. If you define an
+      <b>initialize</b> function, it will be invoked when the collection is
+      created.
     </p>
 
 <pre>
