@@ -1410,6 +1410,12 @@
     // `parent`'s constructor function.
     ctor.prototype = parent.prototype;
     child.prototype = new ctor();
+    
+    // this is for calling overrided parent methods
+    child.prototype.inherited = function( methodName, args ){
+        if ( parent[methodName] )
+            return parent[methodName].apply( this, args );
+    };
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
