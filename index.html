@@ -2302,7 +2302,7 @@ ui.Chapter = Backbone.View.extend({
 <pre>
 var Bookmark = Backbone.View.extend({
   render: function() {
-    $(this.el).html(this.template(this.model.toJSON()));
+    this.$el.html(this.template(this.model.toJSON()));
     return this;
   }
 });
@@ -2334,7 +2334,7 @@ var Bookmark = Backbone.View.extend({
       <b class="header">remove</b><code>view.remove()</code>
       <br />
       Convenience function for removing the view from the DOM. Equivalent to calling
-      <tt>$(view.el).remove();</tt>
+      <tt>view.$el.remove();</tt>
     </p>
 
     <p id="View-make">
@@ -2405,7 +2405,7 @@ var DocumentView = Backbone.View.extend({
   },
 
   render: function() {
-    $(this.el).html(this.template(this.model.toJSON()));
+    this.$el.html(this.template(this.model.toJSON()));
     return this;
   },
 
