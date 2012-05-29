@@ -1158,7 +1158,7 @@
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
   // List of view options to be merged as properties.
-  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName'];
+  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'tagNamespace'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(View.prototype, Events, {
@@ -1194,9 +1194,14 @@
     // needed, use **make** to manufacture elements, one at a time.
     //
     //     var el = this.make('li', {'class': 'row'}, this.model.escape('title'));
+    //     var svg = this.make('svg', {width: 300, height: 200}, null, 'http://www.w3.org/2000/svg');
     //
-    make: function(tagName, attributes, content) {
-      var el = document.createElement(tagName);
+    make: function(tagName, attributes, content, tagNamespace) {
+      var el;
+      if (tagNamespace)
+        el = document.createElementNS(tagNamespace, tagName);
+      else
+        el = document.createElement(tagName);
       if (attributes) Backbone.$(el).attr(attributes);
       if (content != null) Backbone.$(el).html(content);
       return el;
@@ -1274,7 +1279,8 @@
         var attrs = _.extend({}, getValue(this, 'attributes'));
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
-        this.setElement(this.make(getValue(this, 'tagName'), attrs), false);
+        var el = this.make(getValue(this, 'tagName'), attrs, null, getValue(this, 'tagNamespace'));
+        this.setElement(el, false);
       } else {
         this.setElement(this.el, false);
       }

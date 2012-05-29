@@ -41,6 +41,21 @@ $(document).ready(function() {
     equal($(div).text(), '');
   });
 
+  test("View: make can create elements with namespaces", function() {
+    var namespace = 'http://www.w3.org/2000/svg';
+    var svg = view.make('svg', null, null, namespace);
+    equal(svg.namespaceURI, namespace);
+
+    var div = view.make('div');
+    ok(div.namespaceURI != namespace);
+  });
+
+  test("View: the view constructor will accept tagNamespace as a view option", function() {
+    var namespace = 'http://www.w3.org/2000/svg';
+    var view = new Backbone.View({tagNamespace: namespace, tagName: 'svg'});
+    equal(view.el.namespaceURI, namespace);
+  });
+
   test("View: initialize", function() {
     var View = Backbone.View.extend({
       initialize: function() {
