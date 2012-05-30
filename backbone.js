@@ -373,7 +373,7 @@
         }
         if (!model.set(serverAttrs, options)) return false;
         if (success) {
-          success(model, resp);
+          success(model, resp, options);
         } else {
           model.trigger('sync', model, resp, options);
         }
@@ -407,7 +407,7 @@
       options.success = function(resp) {
         if (options.wait) triggerDestroy();
         if (success) {
-          success(model, resp);
+          success(model, resp, options);
         } else {
           model.trigger('sync', model, resp, options);
         }
@@ -780,7 +780,7 @@
       options.success = function(nextModel, resp, xhr) {
         if (options.wait) coll.add(nextModel, options);
         if (success) {
-          success(nextModel, resp);
+          success(nextModel, resp, options);
         } else {
           nextModel.trigger('sync', model, resp, options);
         }
