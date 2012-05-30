@@ -198,4 +198,32 @@ $(document).ready(function() {
     obj.trigger('event');
   });
 
+  test("remove all callbacks tagged with a group",function() {
+    var obj = _.extend({}, Backbone.Events);
+    var obj2 = _.extend({}, Backbone.Events);
+    var calls = 0;
+    var handlers = {
+      one: function() { calls += 1 },
+      two: function() { calls += 1 },
+    };
+    obj.on("event",handlers.one,null,"groupOne")
+    obj.on("event",handlers.two,null,"groupOne")
+    obj2.on("event",handlers.one,null,"groupOne")
+    obj2.on("event",handlers.two,null,"groupOne")
+
+    obj.trigger("event");
+    obj2.trigger("event")
+    ok(4 === calls);
+
+    // can handle callbacks being unbound elsewhere
+    obj.off("event",handlers.one,null)
+
+    calls = 0;
+    Backbone.Events.groupOff("groupOne")
+
+    obj.trigger("event");
+    obj2.trigger("event")
+    ok(0 === calls);
+  });
+
 });

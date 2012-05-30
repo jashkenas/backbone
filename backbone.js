@@ -64,6 +64,9 @@
   // Regular expression used to split event strings
   var eventSplitter = /\s+/;
 
+  // holds lists of functions to unbind grouped callbacks
+  var groupUnbinds = {};
+
   // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may bind with `on` or remove with `off` callback functions
   // to an event; trigger`-ing an event fires all callbacks in succession.
@@ -77,7 +80,7 @@
 
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
-    on: function(events, callback, context) {
+    on: function(events, callback, context, group) {
       var calls, event, list;
       if (!callback) return this;
 
@@ -87,6 +90,10 @@
       while (event = events.shift()) {
         list = calls[event] || (calls[event] = []);
         list.push(callback, context);
+        if(group) {
+          unbinds = groupUnbinds[group] || (groupUnbinds[group] = []);
+          unbinds.push(_.bind(this.off,this,event,callback,context));
+        }
       }
 
       return this;
@@ -162,6 +169,13 @@
       }
 
       return this;
+    },
+
+    // Unbinds all events handlers, from all objects, that were tagged
+    // with the group name.
+    groupOff: function(group) {
+      _.each(groupUnbinds[group], function(unbind) { unbind() });
+      delete groupUnbinds[group];
     }
 
   };
