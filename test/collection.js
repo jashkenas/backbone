@@ -620,4 +620,19 @@ $(document).ready(function() {
     ok(colUndefined.comparator);
   });
 
+  test("#1355 - `options` is passed to success callbacks", function(){
+    expect(2);
+    var m = new Backbone.Model({x:1});
+    var col = new Backbone.Collection();
+    var opts = {
+      success: function(collection, resp, options){
+        ok(options);
+      }
+    };
+    col.sync = m.sync = function( method, collection, options ){
+      options.success();
+    };
+    col.fetch(opts);
+    col.create(m, opts);
+  });
 });

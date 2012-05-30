@@ -814,4 +814,20 @@ $(document).ready(function() {
     ok(!options.unset);
   });
 
+  test("#1355 - `options` is passed to success callbacks", function() {
+    expect(3);
+    var model = new Backbone.Model();
+    var opts = {
+      success: function( model, resp, options ) {
+        ok(options);
+      }
+    };
+    model.sync = function(method, model, options) {
+      options.success();
+    };
+    model.save({id: 1}, opts);
+    model.fetch(opts);
+    model.destroy(opts);
+  });
+
 });
