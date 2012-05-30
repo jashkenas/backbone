@@ -327,7 +327,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
-        if (success) success(model, resp);
+        if (success) success(model, resp, options);
       };
       options.error = Backbone.wrapError(options.error, model, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
@@ -373,7 +373,7 @@
         }
         if (!model.set(serverAttrs, options)) return false;
         if (success) {
-          success(model, resp);
+          success(model, resp, options);
         } else {
           model.trigger('sync', model, resp, options);
         }
@@ -407,7 +407,7 @@
       options.success = function(resp) {
         if (options.wait) triggerDestroy();
         if (success) {
-          success(model, resp);
+          success(model, resp, options);
         } else {
           model.trigger('sync', model, resp, options);
         }
@@ -761,7 +761,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
-        if (success) success(collection, resp);
+        if (success) success(collection, resp, options);
       };
       options.error = Backbone.wrapError(options.error, collection, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
@@ -780,7 +780,7 @@
       options.success = function(nextModel, resp, xhr) {
         if (options.wait) coll.add(nextModel, options);
         if (success) {
-          success(nextModel, resp);
+          success(nextModel, resp, options);
         } else {
           nextModel.trigger('sync', model, resp, options);
         }
