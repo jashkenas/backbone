@@ -1194,12 +1194,14 @@
     //The idea is that by using this rather than object.bind(ev, callback, context) the View object
     //can clean up after itself using View#unbindFromAll.
     bindTo: function(object, ev, callback, context) {
-      object.bind(ev, callback, context || this);
+      context = (context || this);
+      object.bind(ev, callback, context);
       this._bindings || (this._bindings = []);
       this._bindings.push({
         object: object,
         ev: ev,
-        callback: callback
+        callback: callback,
+        context: context
       });
     },
 
@@ -1209,7 +1211,7 @@
     unbindFromAll: function() {
       if (!this._bindings) return;
       _.each(this._bindings, function(binding) {
-        binding.object.unbind(binding.ev, binding.callback);
+        binding.object.unbind(binding.ev, binding.callback, binding.context);
       });
       this._bindings = [];
     },
