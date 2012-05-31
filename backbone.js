@@ -1189,6 +1189,35 @@
       this.$el.remove();
       return this;
     },
+    
+    //Bind a callback to an event on an external object and tracks all the bindings that are added.
+    //The idea is that by using this rather than object.bind(ev, callback, context) the View object
+    //can clean up after itself using View#unbindFromAll.
+    bindTo: function(object, ev, callback, context) {
+      object.bind(ev, callback, context || this);
+      this._bindings || (this._bindings = []);
+      this._bindings.push({
+        object: object,
+        ev: ev,
+        callback: callback
+      });
+    },
+
+    //Remove any of the bindings we have added to external objects.
+    //The idea is that if all binding to models is done through View#bindTo that
+    //this can be used to clean up.
+    unbindFromAll: function() {
+      if (!this._bindings) return;
+      _.each(this._bindings, function(binding) {
+        binding.object.unbind(binding.ev, binding.callback);
+      });
+      this._bindings = [];
+    },
+
+    //Used to destroy the View and unbind it from any other objects it had been listening to.
+    destroy: function() {
+      this.unbindFromAll();
+    },
 
     // For small amounts of DOM Elements, where a full-blown template isn't
     // needed, use **make** to manufacture elements, one at a time.
