@@ -624,7 +624,7 @@ $(document).ready(function() {
     ok(col.contains(a));
     ok(!otherCol.contains(a));
     ok(col.include(a));
-    ok(!otherCol.contains(a));
+    ok(!otherCol.include(a));
   });
 
 });
