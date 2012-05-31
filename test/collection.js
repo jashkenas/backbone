@@ -620,4 +620,11 @@ $(document).ready(function() {
     ok(colUndefined.comparator);
   });
 
+  test("Collection: contains/include", function() {
+    ok(col.contains(a));
+    ok(!otherCol.contains(a));
+    ok(col.include(a));
+    ok(!otherCol.include(a));
+  });
+
 });
