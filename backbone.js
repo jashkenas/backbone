@@ -170,6 +170,47 @@
   Events.bind   = Events.on;
   Events.unbind = Events.off;
 
+  // A module that can be mixed in to *any object* in order to track its bindings to external
+  // objects and clean them up.
+  //
+  //     var object = {};
+  //     var model = new Backbone.Model();
+  //     _.extend(object, Backbone.Listener);
+  //     object.bindTo(model, 'change', function(){ alert('changed'); });
+  //     object.unbindFromAll();
+  //
+  var Listener = Backbone.Listener = {
+    
+    //This is the property used for tracking bindings internally
+    _bindings: [],
+    
+    //Bind a callback to an event on an external object and tracks all the bindings that are added.
+    //The idea is that by using this rather than object.on(ev, callback, context) the object
+    //can clean up after itself using #unbindFromAll.
+    bindTo: function(object, ev, callback, context) {
+      context = (context || this);
+      object.on(ev, callback, context);
+      this._bindings || (this._bindings = []);
+      this._bindings.push({
+        object: object,
+        ev: ev,
+        callback: callback,
+        context: context
+      });
+    },
+
+    //Remove any of the bindings we have added to external objects.
+    //The idea is that if all binding to models is done through #bindTo that
+    //this can be used to clean up.
+    unbindFromAll: function() {
+      if (!this._bindings) return;
+      _.each(this._bindings, function(binding) {
+        binding.object.off(binding.ev, binding.callback, binding.context);
+      });
+      this._bindings = [];
+    }
+  };
+
   // Backbone.Model
   // --------------
 
@@ -1161,7 +1202,7 @@
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
-  _.extend(View.prototype, Events, {
+  _.extend(View.prototype, Events, Listener, {
 
     // The default `tagName` of a View's element is `"div"`.
     tagName: 'div',
@@ -1190,32 +1231,6 @@
       return this;
     },
     
-    //Bind a callback to an event on an external object and tracks all the bindings that are added.
-    //The idea is that by using this rather than object.bind(ev, callback, context) the View object
-    //can clean up after itself using View#unbindFromAll.
-    bindTo: function(object, ev, callback, context) {
-      context = (context || this);
-      object.bind(ev, callback, context);
-      this._bindings || (this._bindings = []);
-      this._bindings.push({
-        object: object,
-        ev: ev,
-        callback: callback,
-        context: context
-      });
-    },
-
-    //Remove any of the bindings we have added to external objects.
-    //The idea is that if all binding to models is done through View#bindTo that
-    //this can be used to clean up.
-    unbindFromAll: function() {
-      if (!this._bindings) return;
-      _.each(this._bindings, function(binding) {
-        binding.object.unbind(binding.ev, binding.callback, binding.context);
-      });
-      this._bindings = [];
-    },
-
     //Used to destroy the View and unbind it from any other objects it had been listening to.
     destroy: function() {
       this.unbindFromAll();
