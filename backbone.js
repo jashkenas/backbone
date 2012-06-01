@@ -1372,9 +1372,13 @@
       params.data = params.data ? {model: params.data} : {};
     }
 
+    if (!options.emulateHTTP) {
+      params.emulateHTTP = Backbone.emulateHTTP;
+    }
+
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
     // And an `X-HTTP-Method-Override` header.
-    if (Backbone.emulateHTTP) {
+    if (params.emulateHTTP) {
       if (type === 'PUT' || type === 'DELETE') {
         if (Backbone.emulateJSON) params.data._method = type;
         params.type = 'POST';
