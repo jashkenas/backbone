@@ -78,9 +78,9 @@ $(document).ready(function() {
     _.extend(obj, Backbone.Events);
     var callback = function() {
       obj.counter += 1;
-      obj.unbind('event', callback);
+      obj.off('event', callback);
     };
-    obj.bind('event', callback);
+    obj.on('event', callback);
     obj.trigger('event');
     obj.trigger('event');
     obj.trigger('event');
@@ -90,10 +90,10 @@ $(document).ready(function() {
   test("Events: two binds that unbind themeselves", 2, function() {
     var obj = { counterA: 0, counterB: 0 };
     _.extend(obj,Backbone.Events);
-    var incrA = function(){ obj.counterA += 1; obj.unbind('event', incrA); };
-    var incrB = function(){ obj.counterB += 1; obj.unbind('event', incrB); };
-    obj.bind('event', incrA);
-    obj.bind('event', incrB);
+    var incrA = function(){ obj.counterA += 1; obj.off('event', incrA); };
+    var incrB = function(){ obj.counterB += 1; obj.off('event', incrB); };
+    obj.on('event', incrA);
+    obj.on('event', incrB);
     obj.trigger('event');
     obj.trigger('event');
     obj.trigger('event');
@@ -110,17 +110,17 @@ $(document).ready(function() {
     };
 
     var obj = _.extend({},Backbone.Events);
-    obj.bind('event', function () { this.assertTrue(); }, (new TestClass));
+    obj.on('event', function () { this.assertTrue(); }, (new TestClass));
     obj.trigger('event');
   });
 
   test("Events: nested trigger with unbind", 1, function () {
     var obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
-    var incr1 = function(){ obj.counter += 1; obj.unbind('event', incr1); obj.trigger('event'); };
+    var incr1 = function(){ obj.counter += 1; obj.off('event', incr1); obj.trigger('event'); };
     var incr2 = function(){ obj.counter += 1; };
-    obj.bind('event', incr1);
-    obj.bind('event', incr2);
+    obj.on('event', incr1);
+    obj.on('event', incr2);
     obj.trigger('event');
     equal(obj.counter, 3, 'counter should have been incremented three times');
   });
@@ -128,13 +128,13 @@ $(document).ready(function() {
   test("Events: callback list is not altered during trigger", 2, function () {
     var counter = 0, obj = _.extend({}, Backbone.Events);
     var incr = function(){ counter++; };
-    obj.bind('event', function(){ obj.bind('event', incr).bind('all', incr); })
+    obj.on('event', function(){ obj.on('event', incr).on('all', incr); })
     .trigger('event');
     equal(counter, 0, 'bind does not alter callback list');
-    obj.unbind()
-    .bind('event', function(){ obj.unbind('event', incr).unbind('all', incr); })
-    .bind('event', incr)
-    .bind('all', incr)
+    obj.off()
+    .on('event', function(){ obj.off('event', incr).off('all', incr); })
+    .on('event', incr)
+    .on('all', incr)
     .trigger('event');
     equal(counter, 2, 'unbind does not alter callback list');
   });
@@ -151,7 +151,7 @@ $(document).ready(function() {
   });
 
   test("if no callback is provided, `on` is a noop", 0, function() {
-    _.extend({}, Backbone.Events).bind('test').trigger('test');
+    _.extend({}, Backbone.Events).on('test').trigger('test');
   });
 
   test("remove all events for a specific context", 4, function() {

@@ -226,7 +226,7 @@ $(document).ready(function() {
     try{
       var callbackFired = false;
       var myCallback = function(){ callbackFired = true; };
-      router.bind("route:noCallback", myCallback);
+      router.on("route:noCallback", myCallback);
       window.location.hash = "noCallback";
       setTimeout(function(){
         equal(callbackFired, true);

@@ -91,10 +91,10 @@ $(document).ready(function() {
     added = opts = secondAdded = null;
     e = new Backbone.Model({id: 10, label : 'e'});
     otherCol.add(e);
-    otherCol.bind('add', function() {
+    otherCol.on('add', function() {
       secondAdded = true;
     });
-    col.bind('add', function(model, collection, options){
+    col.on('add', function(model, collection, options){
       added = model.get('label');
       equal(options.index, 4);
       opts = options;
@@ -163,7 +163,7 @@ $(document).ready(function() {
   test("Collection: add model to multiple collections", 10, function() {
     var counter = 0;
     var e = new Backbone.Model({id: 10, label : 'e'});
-    e.bind('add', function(model, collection) {
+    e.on('add', function(model, collection) {
       counter++;
       equal(e, model);
       if (counter > 1) {
@@ -173,12 +173,12 @@ $(document).ready(function() {
       }
     });
     var colE = new Backbone.Collection([]);
-    colE.bind('add', function(model, collection) {
+    colE.on('add', function(model, collection) {
       equal(e, model);
       equal(colE, collection);
     });
     var colF = new Backbone.Collection([]);
-    colF.bind('add', function(model, collection) {
+    colF.on('add', function(model, collection) {
       equal(e, model);
       equal(colF, collection);
     });
@@ -233,11 +233,11 @@ $(document).ready(function() {
   test("Collection: remove", 5, function() {
     var removed = null;
     var otherRemoved = null;
-    col.bind('remove', function(model, col, options) {
+    col.on('remove', function(model, col, options) {
       removed = model.get('label');
       equal(options.index, 3);
     });
-    otherCol.bind('remove', function(model, col, options) {
+    otherCol.on('remove', function(model, col, options) {
       otherRemoved = true;
     });
     col.remove(d);
@@ -264,7 +264,7 @@ $(document).ready(function() {
     var counter = 0;
     var dj = new Backbone.Model();
     var emcees = new Backbone.Collection([dj]);
-    emcees.bind('change', function(){ counter++; });
+    emcees.on('change', function(){ counter++; });
     dj.set({name : 'Kool'});
     equal(counter, 1);
     emcees.reset([]);
@@ -281,7 +281,7 @@ $(document).ready(function() {
     var passed = false;
     var e = new Backbone.Model(modelData);
     var f = new Backbone.Model(modelData);
-    f.bind('remove', function() {
+    f.on('remove', function() {
       passed = true;
     });
     var colE = new Backbone.Collection([e]);
@@ -300,7 +300,7 @@ $(document).ready(function() {
   test("Collection: remove same model in multiple collection", 16, function() {
     var counter = 0;
     var e = new Backbone.Model({id: 5, title: 'Othello'});
-    e.bind('remove', function(model, collection) {
+    e.on('remove', function(model, collection) {
       counter++;
       equal(e, model);
       if (counter > 1) {
@@ -310,12 +310,12 @@ $(document).ready(function() {
       }
     });
     var colE = new Backbone.Collection([e]);
-    colE.bind('remove', function(model, collection) {
+    colE.on('remove', function(model, collection) {
       equal(e, model);
       equal(colE, collection);
     });
     var colF = new Backbone.Collection([e]);
-    colF.bind('remove', function(model, collection) {
+    colF.on('remove', function(model, collection) {
       equal(e, model);
       equal(colF, collection);
     });
@@ -453,7 +453,7 @@ $(document).ready(function() {
   test("Collection: reset", 10, function() {
     var resetCount = 0;
     var models = col.models;
-    col.bind('reset', function() { resetCount += 1; });
+    col.on('reset', function() { resetCount += 1; });
     col.reset([]);
     equal(resetCount, 1);
     equal(col.length, 0);
@@ -485,7 +485,7 @@ $(document).ready(function() {
 
   test("Collection: trigger custom events on models", 1, function() {
     var fired = null;
-    a.bind("custom", function() { fired = true; });
+    a.on("custom", function() { fired = true; });
     a.trigger("custom");
     equal(fired, true);
   });
@@ -559,7 +559,7 @@ $(document).ready(function() {
 
   test("Collection: throwing during add leaves consistent state", 4, function() {
     var col = new Backbone.Collection();
-    col.bind('test', function() { ok(false); });
+    col.on('test', function() { ok(false); });
     col.model = Backbone.Model.extend({
       validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
     });
