@@ -495,8 +495,7 @@ $(document).ready(function() {
     notEqual(Child.prototype.instancePropDiff, undefined);
   });
 
-  //FIXME: can't predict the number of expectations
-  test("Model: Nested change events don't clobber previous attributes", function() {
+  test("Model: Nested change events don't clobber previous attributes", 4, function() {
     var A = Backbone.Model.extend({
       initialize: function() {
         this.on("change:state", function(a, newState) {
