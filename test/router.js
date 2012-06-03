@@ -97,7 +97,7 @@ $(document).ready(function() {
 
   });
 
-  test("Router: initialize", function() {
+  test("Router: initialize", 1, function() {
     equal(router.testing, 101);
   });
 
@@ -145,7 +145,7 @@ $(document).ready(function() {
     });
   });
 
-  test("Router: doesn't fire routes to the same place twice", function() {
+  test("Router: doesn't fire routes to the same place twice", 6, function() {
     equal(router.count, 0);
     router.navigate('counter', {trigger: true});
     equal(router.count, 1);
@@ -163,13 +163,13 @@ $(document).ready(function() {
     equal(router.count, 3);
   });
 
-  test("Router: use implicit callback if none provided", function() {
+  test("Router: use implicit callback if none provided", 1, function() {
     router.count = 0;
     router.navigate('implicit', {trigger: true});
     equal(router.count, 1);
   });
 
-  asyncTest("Router: routes via navigate with {replace: true}", function() {
+  asyncTest("Router: routes via navigate with {replace: true}", 2, function() {
     var historyLength = window.history.length;
     router.navigate('search/manhattan/start_here');
     router.navigate('search/manhattan/then_here');
@@ -183,7 +183,7 @@ $(document).ready(function() {
     }, 500);
   });
 
-  asyncTest("Router: routes (splats)", function() {
+  asyncTest("Router: routes (splats)", 1, function() {
     window.location.hash = 'splat/long-list/of/splatted_99args/end';
     setTimeout(function() {
       equal(router.args, 'long-list/of/splatted_99args');
@@ -238,7 +238,7 @@ $(document).ready(function() {
     }
   });
 
-  test("#933, #908 - leading slash", function() {
+  test("#933, #908 - leading slash", 2, function() {
     var history = new Backbone.History();
     history.options = {root: '/root'};
     equal(history.getFragment('/root/foo'), 'foo');
@@ -246,7 +246,7 @@ $(document).ready(function() {
     equal(history.getFragment('/root/foo'), 'foo');
   });
 
-  test("#1003 - History is started before navigate is called", function() {
+  test("#1003 - History is started before navigate is called", 1, function() {
     var history = new Backbone.History();
     history.navigate = function(){
       ok(Backbone.History.started);
@@ -257,7 +257,7 @@ $(document).ready(function() {
     if (!history.iframe) ok(true);
   });
 
-  test("Router: route callback gets passed non-decoded values", function() {
+  test("Router: route callback gets passed non-decoded values", 3, function() {
     var route = 'has%2Fslash/complex-has%23hash/has%20space';
     Backbone.history.navigate(route, {trigger: true});
     equal(router.first, 'has%2Fslash');
