@@ -496,29 +496,18 @@ $(document).ready(function() {
   });
 
   test("Model: Nested change events don't clobber previous attributes", 4, function() {
-    var A = Backbone.Model.extend({
-      initialize: function() {
-        this.on("change:state", function(a, newState) {
-          equal(a.previous('state'), undefined);
-          equal(newState, 'hello');
-          // Fire a nested change event.
-          this.set({ other: "whatever" });
-        });
-      }
-    });
-
-    var B = Backbone.Model.extend({
-      initialize: function() {
-        this.get("a").on("change:state", function(a, newState) {
-          equal(a.previous('state'), undefined);
-          equal(newState, 'hello');
-        });
-      }
-    });
-
-    var a = new A();
-    var b = new B({a: a});
-    a.set({state: 'hello'});
+    new Backbone.Model()
+    .on('change:state', function(model, newState) {
+      equal(model.previous('state'), undefined);
+      equal(newState, 'hello');
+      // Fire a nested change event.
+      model.set({other: 'whatever'});
+    })
+    .on('change:state', function(model, newState) {
+      equal(model.previous('state'), undefined);
+      equal(newState, 'hello');
+    })
+    .set({state: 'hello'});
   });
 
   test("hasChanged/set should use same comparison", 2, function() {
