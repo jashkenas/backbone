@@ -4,9 +4,7 @@ $(document).ready(function() {
   var lastRoute = null;
   var lastArgs = [];
 
-  var pushState = window.location.protocol !== 'file:' &&
-    window.history &&
-    window.history.pushState;
+  var pushState = window.history && window.history.pushState;
   var pathname = window.location.pathname;
 
   function onRoute(router, route, args) {
