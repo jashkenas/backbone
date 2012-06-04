@@ -715,12 +715,10 @@
       });
     },
 
-    // Return true if the collection contains the specified model.
-    contains: function(model) {
-      return !!this.getByCid(model);
+    // Returns `true` if the collection contains the specified model.
+    include: function(model) {
+      return model && this.getByCid(model.cid) != null;
     },
-
-    include: function() { return this.contains.apply(this, arguments); },
 
     // Force the collection to re-sort itself. You don't need to call this under
     // normal circumstances, as the set will maintain sort order as each item
@@ -860,6 +858,9 @@
     }
 
   });
+
+  // Alias for include.
+  Collection.prototype.contains = Collection.prototype.include;
 
   // Underscore methods that we want to implement on the Collection.
   var methods = ['forEach', 'each', 'map', 'reduce', 'reduceRight', 'find',

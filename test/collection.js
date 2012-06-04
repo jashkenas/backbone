@@ -623,6 +623,9 @@ $(document).ready(function() {
   test("Collection: contains/include", function() {
     ok(col.contains(a));
     ok(!otherCol.contains(a));
+    ok(!col.contains(null));
+    ok(!col.contains(undefined));
+    
     ok(col.include(a));
     ok(!otherCol.include(a));
   });
