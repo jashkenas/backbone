@@ -745,6 +745,7 @@
       for (var i = 0, l = this.models.length; i < l; i++) {
         this._removeReference(this.models[i]);
       }
+      options.previous = this.models;
       this._reset();
       this.add(models, _.extend({silent: true}, options));
       if (!options.silent) this.trigger('reset', this, options);
