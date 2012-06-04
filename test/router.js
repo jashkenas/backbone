@@ -4,9 +4,6 @@ $(document).ready(function() {
   var lastRoute = null;
   var lastArgs = [];
 
-  var pushState = window.history && window.history.pushState;
-  var pathname = window.location.pathname;
-
   function onRoute(router, route, args) {
     lastRoute = route;
     lastArgs = args;
@@ -27,7 +24,6 @@ $(document).ready(function() {
     teardown: function() {
       Backbone.history.stop();
       Backbone.history.off('route', onRoute);
-      if (pushState) window.history.pushState({}, document.title, pathname);
     }
 
   });
@@ -281,15 +277,5 @@ $(document).ready(function() {
         }, 50);
     }, 50);
   });
-
-  if (pushState) {
-    test('History does not prepend root to fragment.', 1, function() {
-      Backbone.History.started = false;
-      var history = new Backbone.History();
-      history.start({pushState: true});
-      history.navigate('x');
-      strictEqual(history.fragment, 'x');
-    });
-  }
 
 });
