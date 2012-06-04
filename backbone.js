@@ -716,6 +716,9 @@
     },
 
     // Returns `true` if the collection contains the specified model.
+    // This method is is performed in constant time (`O(1)`) rather than the 
+    // traditional looping through each model in the collection (which would 
+    // be `O(n)`).
     include: function(model) {
       return model && this.getByCid(model.cid) != null;
     },

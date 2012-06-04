@@ -326,6 +326,7 @@
       <li>– <a href="#Collection-remove">remove</a></li>
       <li>– <a href="#Collection-get">get</a></li>
       <li>– <a href="#Collection-getByCid">getByCid</a></li>
+      <li>– <a href="#Collection-include">include</a></li>
       <li>– <a href="#Collection-at">at</a></li>
       <li>– <a href="#Collection-push">push</a></li>
       <li>– <a href="#Collection-pop">pop</a></li>
@@ -1423,7 +1424,6 @@ alert(JSON.stringify(collection));
       <li><a href="http://underscorejs.org/#reject">reject</a></li>
       <li><a href="http://underscorejs.org/#all">every (all)</a></li>
       <li><a href="http://underscorejs.org/#any">some (any)</a></li>
-      <li><a href="http://underscorejs.org/#include">include</a></li>
       <li><a href="http://underscorejs.org/#invoke">invoke</a></li>
       <li><a href="http://underscorejs.org/#max">max</a></li>
       <li><a href="http://underscorejs.org/#min">min</a></li>
@@ -1515,6 +1515,12 @@ var book = Library.get(110);
       is the <tt>.cid</tt> property of the model, automatically assigned whenever
       a model is created. Useful for models which have not yet been saved to
       the server, and do not yet have true ids.
+    </p>
+
+    <p id="Collection-include">
+      <b class="header">include</b><code>collection.include(model)</code><span class="alias">Alias: contains</span>
+      <br />
+      Returns <tt>true</tt> if a collection contains the specified model. 
     </p>
 
     <p id="Collection-at">
