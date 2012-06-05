@@ -171,7 +171,7 @@
   Events.unbind = Events.off;
 
   // A module that can be mixed in to *any object* in order to track its bindings to external
-  // objects and clean them up.
+  // objects and clean them up.  The _bindings property is used to store this internally.
   //
   //     var object = {};
   //     var model = new Backbone.Model();
@@ -180,9 +180,6 @@
   //     object.unbindFromAll();
   //
   var Listener = Backbone.Listener = {
-    
-    //This is the property used for tracking bindings internally
-    _bindings: [],
     
     //Bind a callback to an event on an external object and tracks all the bindings that are added.
     //The idea is that by using this rather than object.on(ev, callback, context) the object
