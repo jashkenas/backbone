@@ -86,7 +86,7 @@
 
       while (event = events.shift()) {
         list = calls[event] || (calls[event] = []);
-        list.push(callback, context);
+        list.push([callback, context]);
       }
 
       return this;
@@ -96,7 +96,7 @@
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
-      var event, calls, list, i;
+      var event, calls, i, length;
 
       // No events, or removing *all* events.
       if (!(calls = this._callbacks)) return this;
@@ -109,16 +109,14 @@
 
       // Loop through the callback list, splicing where appropriate.
       while (event = events.shift()) {
-        if (!(list = calls[event]) || !(callback || context)) {
+        if (!calls[event] || !(callback || context)) {
           delete calls[event];
           continue;
         }
 
-        for (i = list.length - 2; i >= 0; i -= 2) {
-          if (!(callback && list[i] !== callback || context && list[i + 1] !== context)) {
-            list.splice(i, 2);
-          }
-        }
+        calls[event] = calls[event].filter(function(l) {
+          return (callback && l[0] !== callback || context && l[1] !== context);
+        });
       }
 
       return this;
@@ -147,16 +145,16 @@
 
         // Execute event callbacks.
         if (list) {
-          for (i = 0, length = list.length; i < length; i += 2) {
-            list[i].apply(list[i + 1] || this, rest);
+          for (i = 0, length = list.length; i < length; i += 1) {
+            list[i][0].apply(list[i][1] || this, rest);
           }
         }
 
         // Execute "all" callbacks.
         if (all) {
           args = [event].concat(rest);
-          for (i = 0, length = all.length; i < length; i += 2) {
-            all[i].apply(all[i + 1] || this, args);
+          for (i = 0, length = all.length; i < length; i += 1) {
+            all[i][0].apply(all[i][1] || this, args);
           }
         }
       }
