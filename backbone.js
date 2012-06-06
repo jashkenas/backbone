@@ -599,19 +599,12 @@
         dups[i] = models.splice(dups[i], 1)[0];
       }
 
-      // Listen to added models' events, and index models for lookup by
-      // `id` and by `cid`.
+      // Insert models into the collection, re-sorting if needed. 
+      models = this._insertModels(models, options.at);
+      cids = {};
       for (i = 0, length = models.length; i < length; i++) {
-        (model = models[i]).on('all', this._onModelEvent, this);
-        this._byCid[model.cid] = model;
-        if (model.id != null) this._byId[model.id] = model;
+        cids[models[i].cid] = models[i];
       }
-
-      // Insert models into the collection, re-sorting if needed, and triggering
-      // `add` events unless silenced.
-      this.length += length;
-      index = options.at != null ? options.at : this.models.length;
-      splice.apply(this.models, [index, 0].concat(models));
       if (this.comparator && options.at == null) this.sort({silent: true});
 
       // Merge in duplicate models.
@@ -623,6 +616,7 @@
         }
       }
 
+      // Triggering `add` events unless silenced.
       if (options.silent) return this;
       for (i = 0, length = this.models.length; i < length; i++) {
         if (!cids[(model = this.models[i]).cid]) continue;
@@ -827,6 +821,20 @@
       var model = new this.model(attrs, options);
       if (!model._validate(model.attributes, options)) return false;
       return model;
+    },
+
+    // Internal method doing the actual insertion of an array of Model instances.  
+    _insertModels: function(models, index) {
+      var i, length;
+      index = index != null ? index : this.models.length;
+      for (i = 0, length = models.length; i < length; i++) {
+        (model = models[i]).on('all', this._onModelEvent, this);
+        this._byCid[model.cid] = model;
+        if (model.id != null) this._byId[model.id] = model;
+      }
+      this.length += length;
+      splice.apply(this.models, [index, 0].concat(models));
+      return models;
     },
 
     // Internal method to remove a model's ties to a collection.

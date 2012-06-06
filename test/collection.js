@@ -151,7 +151,7 @@ $(document).ready(function() {
     equal(col.length, 1);
   });
 
-  test("Collection: merge in duplicate models with {merge: true}", 2, function() {
+  test("Collection: merge in duplicate models with {merge: true}", 3, function() {
     var col = new Backbone.Collection;
     col.add([{id: 1, name: 'Moe'}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
     col.add({id: 1, name: 'Moses'});
