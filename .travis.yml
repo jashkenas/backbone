@@ -1,0 +1,9 @@
+language: "node_js"
+node_js:
+  - "0.7"
+before_script:
+  - "export PHANTOMJS_EXECUTABLE='phantomjs --local-to-remote-url-access=yes --ignore-ssl-errors=yes'"
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+script:
+  - "phantomjs test/runner.js test/test.html"
