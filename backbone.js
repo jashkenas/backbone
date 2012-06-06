@@ -1407,8 +1407,11 @@
     // by us to simply call the parent's constructor.
     if (protoProps && protoProps.hasOwnProperty('constructor')) {
       child = protoProps.constructor;
-    } else {
+    } else if (parent === Object) {
+      // native type Object constructor has an undesirable return value
       child = function(){ parent.apply(this, arguments); };
+    } else {
+      child = function(){ return parent.apply(this, arguments); };
     }
 
     // Inherit class (static) properties from parent.
