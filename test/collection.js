@@ -158,6 +158,8 @@ $(document).ready(function() {
     equal(col.first().get('name'), 'Moe');
     col.add({id: 1, name: 'Moses'}, {merge: true});
     equal(col.first().get('name'), 'Moses');
+    col.add({id: 1, name: 'Tim'}, {merge: true, silent: true});
+    equal(col.first().get('name'), 'Tim');
   });
 
   test("Collection: add model to multiple collections", 10, function() {
