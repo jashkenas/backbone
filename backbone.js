@@ -66,7 +66,7 @@
 
   // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may bind with `on` or remove with `off` callback functions
-  // to an event; trigger`-ing an event fires all callbacks in succession.
+  // to an event; `trigger`-ing an event fires all callbacks in succession.
   //
   //     var object = {};
   //     _.extend(object, Backbone.Events);
