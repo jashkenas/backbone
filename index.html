@@ -786,7 +786,7 @@ var PrivateNote = Note.extend({
 <pre>
 var Note = Backbone.Model.extend({
   set: function(attributes, options) {
-    Backbone.Model.prototype.set.call(this, attributes, options);
+    Backbone.Model.prototype.set.apply(this, arguments);
     ...
   }
 });
