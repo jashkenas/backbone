@@ -954,9 +954,10 @@
 
   // Handles cross-browser history management, based on URL fragments. If the
   // browser does not support `onhashchange`, falls back to polling.
-  var History = Backbone.History = function() {
+  var History = Backbone.History = function(options) {
     this.handlers = [];
     _.bindAll(this, 'checkUrl');
+    this.location = options && options.location || root.location;
   };
 
   // Cached regex for cleaning leading hashes and slashes .
@@ -977,9 +978,8 @@
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
-    getHash: function(windowOverride) {
-      var loc = windowOverride ? windowOverride.location : window.location;
-      var match = loc.href.match(/#(.*)$/);
+    getHash: function(window) {
+      var match = (window || this).location.href.match(/#(.*)$/);
       return match ? match[1] : '';
     },
 
@@ -988,7 +988,7 @@
     getFragment: function(fragment, forcePushState) {
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = window.location.pathname;
+          fragment = this.location.pathname;
         } else {
           fragment = this.getHash();
         }
@@ -1031,14 +1031,14 @@
       // Determine if we need to change the base url, for a pushState link
       // opened by a non-pushState browser.
       this.fragment = fragment;
-      var loc = window.location;
+      var loc = this.location;
       var atRoot  = (loc.pathname == this.options.root) && !loc.search;
 
       // If we've started off with a route from a `pushState`-enabled browser,
       // but we're currently in a browser that doesn't support it...
       if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
-        window.location.replace(this.options.root + window.location.search + '#' + this.fragment);
+        this.location.replace(this.options.root + this.location.search + '#' + this.fragment);
         // Return immediately as browser will do redirect to new url
         return true;
 
@@ -1072,7 +1072,9 @@
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl: function(e) {
       var current = this.getFragment();
-      if (current == this.fragment && this.iframe) current = this.getFragment(this.getHash(this.iframe));
+      if (current == this.fragment && this.iframe) {
+        current = this.getFragment(this.getHash(this.iframe));
+      }
       if (current == this.fragment) return false;
       if (this.iframe) this.navigate(current);
       this.loadUrl() || this.loadUrl(this.getHash());
@@ -1115,7 +1117,7 @@
       // fragment to store history.
       } else if (this._wantsHashChange) {
         this.fragment = frag;
-        this._updateHash(window.location, frag, options.replace);
+        this._updateHash(this.location, frag, options.replace);
         if (this.iframe && (frag != this.getFragment(this.getHash(this.iframe)))) {
           // Opening and closing the iframe tricks IE7 and earlier to push a history entry on hash-tag change.
           // When replace is true, we don't want this.
@@ -1126,7 +1128,7 @@
       // If you've told us that you explicitly don't want fallback hashchange-
       // based history, then `navigate` becomes a page refresh.
       } else {
-        return window.location.assign(fullFrag);
+        return this.location.assign(fullFrag);
       }
       if (options.trigger) this.loadUrl(fragment);
     },
@@ -1135,7 +1137,7 @@
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
       if (replace) {
-        location.replace(location.toString().replace(/(javascript:|#).*$/, '') + '#' + fragment);
+        location.replace(location.href.replace(/(javascript:|#).*$/, '') + '#' + fragment);
       } else {
         location.hash = fragment;
       }
