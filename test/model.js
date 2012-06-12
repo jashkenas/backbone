@@ -157,18 +157,33 @@ $(document).ready(function() {
   });
 
   test("Model: has", 10, function() {
-    var a = new Backbone.Model();
-    equal(a.has("name"), false);
-    _([true, "Truth!", 1, false, '', 0]).each(function(value) {
-      a.set({'name': value});
-      equal(a.has("name"), true);
+    var model = new Backbone.Model();
+
+    strictEqual(model.has('name'), false);
+
+    model.set({
+      0: 0,
+      1: 1,
+      true: true,
+      false: false,
+      empty: '',
+      name: 'name',
+      null: null,
+      undefined: undefined
     });
-    a.unset('name');
-    equal(a.has('name'), false);
-    _([null, undefined]).each(function(value) {
-      a.set({'name': value});
-      equal(a.has("name"), false);
-    });
+
+    strictEqual(model.has('0'), true);
+    strictEqual(model.has('1'), true);
+    strictEqual(model.has('true'), true);
+    strictEqual(model.has('false'), true);
+    strictEqual(model.has('empty'), true);
+    strictEqual(model.has('name'), true);
+
+    model.unset('name');
+
+    strictEqual(model.has('name'), false);
+    strictEqual(model.has('null'), false);
+    strictEqual(model.has('undefined'), false);
   });
 
   test("Model: set and unset", 8, function() {
