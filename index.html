@@ -2434,7 +2434,8 @@ var DocumentView = Backbone.View.extend({
     window.open(this.model.get("viewer_url"));
   },
 
-  select: function() {
+  select: function(event) {
+    $(event.currentTarget).addClass("selected");
     this.model.set({selected: true});
   },
 
