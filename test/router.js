@@ -261,4 +261,24 @@ $(document).ready(function() {
     equal(lastRoute, 'search');
   });
 
+  test("#1185 - Use pathname when hashChange is not wanted.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/path/name#hash');
+    Backbone.history = new Backbone.History({location: location});
+    Backbone.history.start({hashChange: false});
+    var fragment = Backbone.history.getFragment();
+    strictEqual(fragment, location.pathname.replace(/^\//, ''));
+  });
+
+  test("#1206 - Strip leading slash before location.assign.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root/');
+    Backbone.history = new Backbone.History({location: location});
+    Backbone.history.start({hashChange: false, root: '/root/'});
+    location.assign = function(pathname) {
+      strictEqual(pathname, '/root/fragment');
+    };
+    Backbone.history.navigate('/fragment');
+  });
+
 });
