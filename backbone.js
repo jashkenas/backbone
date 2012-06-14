@@ -178,11 +178,11 @@
   var Model = Backbone.Model = function(attributes, options) {
     var defaults;
     attributes || (attributes = {});
+    if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attributes = this.parse(attributes);
     if (defaults = getValue(this, 'defaults')) {
       attributes = _.extend({}, defaults, attributes);
     }
-    if (options && options.collection) this.collection = options.collection;
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
