@@ -162,14 +162,14 @@ $(document).ready(function() {
     strictEqual(model.has('name'), false);
 
     model.set({
-      0: 0,
-      1: 1,
-      true: true,
-      false: false,
-      empty: '',
-      name: 'name',
-      null: null,
-      undefined: undefined
+      '0': 0,
+      '1': 1,
+      'true': true,
+      'false': false,
+      'empty': '',
+      'name': 'name',
+      'null': null,
+      'undefined': undefined
     });
 
     strictEqual(model.has('0'), true);
