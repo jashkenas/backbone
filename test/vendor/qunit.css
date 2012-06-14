@@ -1,5 +1,5 @@
 /**
- * QUnit v1.5.0 - A JavaScript Unit Testing Framework
+ * QUnit v1.8.0 - A JavaScript Unit Testing Framework
  *
  * http://docs.jquery.com/QUnit
  *
@@ -56,6 +56,7 @@
 
 #qunit-header label {
 	display: inline-block;
+	padding-left: 0.5em;
 }
 
 #qunit-banner {
