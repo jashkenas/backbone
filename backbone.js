@@ -178,11 +178,11 @@
   var Model = Backbone.Model = function(attributes, options) {
     var defaults;
     attributes || (attributes = {});
+    if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attributes = this.parse(attributes);
     if (defaults = getValue(this, 'defaults')) {
       attributes = _.extend({}, defaults, attributes);
     }
-    if (options && options.collection) this.collection = options.collection;
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
@@ -327,7 +327,11 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
-        if (success) success(model, resp, options);
+        if (success) {
+          success(model, resp, options);
+        } else {
+          model.trigger('sync', model, resp, options);
+        }
       };
       options.error = Backbone.wrapError(options.error, model, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
@@ -762,7 +766,11 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
-        if (success) success(collection, resp, options);
+        if (success) {
+          success(collection, resp, options);
+        } else {
+          collection.trigger('sync', collection, resp, options);
+        }
       };
       options.error = Backbone.wrapError(options.error, collection, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);

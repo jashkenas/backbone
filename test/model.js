@@ -162,14 +162,14 @@ $(document).ready(function() {
     strictEqual(model.has('name'), false);
 
     model.set({
-      0: 0,
-      1: 1,
-      true: true,
-      false: false,
-      empty: '',
-      name: 'name',
-      null: null,
-      undefined: undefined
+      '0': 0,
+      '1': 1,
+      'true': true,
+      'false': false,
+      'empty': '',
+      'name': 'name',
+      'null': null,
+      'undefined': undefined
     });
 
     strictEqual(model.has('0'), true);
@@ -831,4 +831,10 @@ $(document).ready(function() {
     model.destroy(opts);
   });
 
+  test('#1412 - Trigger "sync" event for fetch also', 1, function() {
+    var model = new Backbone.Model;
+    model.sync = function(method, model, options) { options.success(); };
+    model.on('sync', function() { ok(true); });
+    model.fetch();
+  });
 });
