@@ -637,14 +637,8 @@ $(document).ready(function() {
 
   test('#1412 - Trigger "sync" event for fetch also', 1, function() {
     var collection = new Backbone.Collection;
-    collection.sync = function(method, model, options) {
-      options.success();
-    };
-    var syncTriggered = false;
-    collection.on('sync', function() {
-      syncTriggered = true;
-    });
+    collection.sync = function(method, model, options) { options.success(); };
+    collection.on('sync', function() { ok(true); });
     collection.fetch();
-    ok(syncTriggered);
   });
 });
