@@ -327,7 +327,11 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
-        if (success) success(model, resp, options);
+        if (success) {
+          success(model, resp, options);
+        } else {
+          model.trigger('sync', model, resp, options);
+        }
       };
       options.error = Backbone.wrapError(options.error, model, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);
@@ -762,7 +766,11 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
-        if (success) success(collection, resp, options);
+        if (success) {
+          success(collection, resp, options);
+        } else {
+          collection.trigger('sync', collection, resp, options);
+        }
       };
       options.error = Backbone.wrapError(options.error, collection, options);
       return (this.sync || Backbone.sync).call(this, 'read', this, options);

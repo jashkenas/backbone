@@ -634,4 +634,17 @@ $(document).ready(function() {
     col.fetch(opts);
     col.create(m, opts);
   });
+
+  test('#1412 - Trigger "sync" event for fetch also', 1, function() {
+    var collection = new Backbone.Collection;
+    collection.sync = function(method, model, options) {
+      options.success();
+    };
+    var syncTriggered = false;
+    collection.on('sync', function() {
+      syncTriggered = true;
+    });
+    collection.fetch();
+    ok(syncTriggered);
+  });
 });

@@ -831,4 +831,16 @@ $(document).ready(function() {
     model.destroy(opts);
   });
 
+  test('#1412 - Trigger "sync" event for fetch also', 1, function() {
+    var model = new Backbone.Model;
+    model.sync = function(method, model, options) {
+      options.success();
+    };
+    var syncTriggered = false;
+    model.on('sync', function() {
+      syncTriggered = true;
+    });
+    model.fetch();
+    ok(syncTriggered);
+  });
 });
