@@ -966,6 +966,9 @@
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
 
+  // Cached regex for removing a trailing slash.
+  var trailingSlash = /\/$/;
+
   // Has the history handling already been started?
   History.started = false;
 
@@ -989,11 +992,12 @@
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
           fragment = this.location.pathname;
+          var root = this.options.root.replace(trailingSlash, '');
+          if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
         } else {
           fragment = this.getHash();
         }
       }
-      if (!fragment.indexOf(this.options.root)) fragment = fragment.substr(this.options.root.length);
       return fragment.replace(routeStripper, '');
     },
 
