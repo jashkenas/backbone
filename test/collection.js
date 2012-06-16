@@ -635,10 +635,17 @@ $(document).ready(function() {
     col.create(m, opts);
   });
 
-  test('#1412 - Trigger "sync" event for fetch also', 1, function() {
-    var collection = new Backbone.Collection;
+  test("#1412 - Trigger 'sync' event.", 2, function() {
+    var collection = new Backbone.Collection([], {
+      model: Backbone.Model.extend({
+        sync: function(method, model, options) {
+          options.success();
+        }
+      })
+    });
     collection.sync = function(method, model, options) { options.success(); };
     collection.on('sync', function() { ok(true); });
     collection.fetch();
+    collection.create({id: 1});
   });
 });
