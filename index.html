@@ -295,6 +295,7 @@
       <li>– <a href="#Model-changed">changed</a></li>
       <li>– <a href="#Model-defaults">defaults</a></li>
       <li>– <a href="#Model-toJSON">toJSON</a></li>
+      <li>– <a href="#Model-sync">sync</a></li>
       <li>– <a href="#Model-fetch">fetch</a></li>
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
@@ -321,6 +322,7 @@
       <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-toJSON">toJSON</a></li>
+      <li>– <a href="#Collection-sync">sync</a></li>
       <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (28)</b></a></li>
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
@@ -1016,6 +1018,13 @@ artist.set({birthday: "December 16, 1866"});
 alert(JSON.stringify(artist));
 </pre>
 
+    <p id="Model-sync">
+      <b class="header">sync</b><code>model.sync(method, model, [options])</code>
+      <br />
+      Uses <a href="#Sync">Backbone.sync</a> to persist the state of a model to
+      the server.  Can be overridden for custom behavior.
+    </p>
+
     <p id="Model-fetch">
       <b class="header">fetch</b><code>model.fetch([options])</code>
       <br />
@@ -1406,6 +1415,13 @@ var collection = new Backbone.Collection([
 
 alert(JSON.stringify(collection));
 </pre>
+
+    <p id="Collection-sync">
+      <b class="header">sync</b><code>collection.sync(method, collection, [options])</code>
+      <br />
+      Uses <a href="#Sync">Backbone.sync</a> to persist the state of a
+      collection to the server.  Can be overridden for custom behavior.
+    </p>
 
     <p id="Collection-Underscore-Methods">
       <b class="header">Underscore Methods (28)</b>
@@ -2881,22 +2897,22 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/pandora.png" alt="Pandora" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-inkling">Inkling</h2>
 
     <p>
-      <a href="http://inkling.com">Inkling</a> is a truly 
-      cross-platform way to publish interactive learning content.<br /> 
-      <a href="https://www.inkling.com/read/">Inkling for Web</a> uses Backbone.js 
-      to make hundreds of complex books &mdash; from textbooks to travel guides &mdash; more 
-      engaging on the web. Beyond your average EPUB eReader, Inkling supports 
-      WebGL-enabled 3D graphics, interactive assessments, seamless social sharing, 
-      and even a music player, all within a single page Backbone-driven app. 
-      Early on, the team decided to keep the site lightweight by using only 
-      Backbone.js and raw JavaScript. The result? Complete source code weighing 
-      in at a mere 350kb with feature-parity across the iPad, iPhone and web 
-      clients. The 
-      <a href="https://www.inkling.com/read/biology-neil-campbell-and-jane-reece-9th/chapter-1/overview-inquiring-about-life">free chapter</a> 
+      <a href="http://inkling.com">Inkling</a> is a truly
+      cross-platform way to publish interactive learning content.<br />
+      <a href="https://www.inkling.com/read/">Inkling for Web</a> uses Backbone.js
+      to make hundreds of complex books &mdash; from textbooks to travel guides &mdash; more
+      engaging on the web. Beyond your average EPUB eReader, Inkling supports
+      WebGL-enabled 3D graphics, interactive assessments, seamless social sharing,
+      and even a music player, all within a single page Backbone-driven app.
+      Early on, the team decided to keep the site lightweight by using only
+      Backbone.js and raw JavaScript. The result? Complete source code weighing
+      in at a mere 350kb with feature-parity across the iPad, iPhone and web
+      clients. The
+      <a href="https://www.inkling.com/read/biology-neil-campbell-and-jane-reece-9th/chapter-1/overview-inquiring-about-life">free chapter</a>
       in every book makes it easy for anyone to try it out and take a look.
     </p>
 
@@ -2960,16 +2976,16 @@ var model = localBackbone.Model.extend(...);
         <img src="docs/images/seatgeek.png" alt="SeatGeek" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-easel">Easel</h2>
 
     <p>
-      <a href="http://easel.io">Easel</a> is an in-browser, high fidelity web 
-      design tool that integrates with your design and development 
-      process. The Easel team uses CoffeeScript, Underscore.js and Backbone.js for 
-      their <a href="http://easel.io/demo">rich visual editor</a> as well as other 
-      management functions throughout the site. The structure of Backbone allowed 
-      the team to break the complex problem of building a visual editor into 
+      <a href="http://easel.io">Easel</a> is an in-browser, high fidelity web
+      design tool that integrates with your design and development
+      process. The Easel team uses CoffeeScript, Underscore.js and Backbone.js for
+      their <a href="http://easel.io/demo">rich visual editor</a> as well as other
+      management functions throughout the site. The structure of Backbone allowed
+      the team to break the complex problem of building a visual editor into
       manageable components and still move quickly.
     </p>
 
