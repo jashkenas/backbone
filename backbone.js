@@ -225,6 +225,11 @@
       return _.clone(this.attributes);
     },
 
+    // Proxy `Backbone.sync` by default.
+    sync: function() {
+      return Backbone.sync.apply(this, arguments);
+    },
+
     // Get the value of an attribute.
     get: function(attr) {
       return this.attributes[attr];
@@ -331,7 +336,7 @@
         model.trigger('sync', model, resp, options);
       };
       options.error = Backbone.wrapError(options.error, model, options);
-      return (this.sync || Backbone.sync).call(this, 'read', this, options);
+      return this.sync('read', this, options);
     },
 
     // Set a hash of model attributes, and sync the model to the server.
@@ -379,8 +384,7 @@
 
       // Finish configuring and sending the Ajax request.
       options.error = Backbone.wrapError(options.error, model, options);
-      var method = this.isNew() ? 'create' : 'update';
-      var xhr = (this.sync || Backbone.sync).call(this, method, this, options);
+      var xhr = this.sync(this.isNew() ? 'create' : 'update', this, options);
       if (options.wait) this.clear(silentOptions).set(current, silentOptions);
       return xhr;
     },
@@ -409,7 +413,7 @@
       };
 
       options.error = Backbone.wrapError(options.error, model, options);
-      var xhr = (this.sync || Backbone.sync).call(this, 'delete', this, options);
+      var xhr = this.sync('delete', this, options);
       if (!options.wait) triggerDestroy();
       return xhr;
     },
@@ -564,6 +568,11 @@
     // models' attributes.
     toJSON: function(options) {
       return this.map(function(model){ return model.toJSON(options); });
+    },
+
+    // Proxy `Backbone.sync` by default.
+    sync: function() {
+      return Backbone.sync.apply(this, arguments);
     },
 
     // Add a model, or list of models to the set. Pass **silent** to avoid
@@ -761,7 +770,7 @@
         collection.trigger('sync', collection, resp, options);
       };
       options.error = Backbone.wrapError(options.error, collection, options);
-      return (this.sync || Backbone.sync).call(this, 'read', this, options);
+      return this.sync('read', this, options);
     },
 
     // Create a new instance of a model in this collection. Add the model to the
