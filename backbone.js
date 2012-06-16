@@ -397,24 +397,24 @@
       var model = this;
       var success = options.success;
 
-      var triggerDestroy = function() {
+      var destroy = function() {
         model.trigger('destroy', model, model.collection, options);
       };
 
+      options.success = function(resp) {
+        if (options.wait || model.isNew()) destroy();
+        if (success) success(model, resp, options);
+        if (!model.isNew()) model.trigger('sync', model, resp, options);
+      };
+
       if (this.isNew()) {
-        triggerDestroy();
+        options.success();
         return false;
       }
 
-      options.success = function(resp) {
-        if (options.wait) triggerDestroy();
-        if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
-      };
-
       options.error = Backbone.wrapError(options.error, model, options);
       var xhr = this.sync('delete', this, options);
-      if (!options.wait) triggerDestroy();
+      if (!options.wait) destroy();
       return xhr;
     },
 
