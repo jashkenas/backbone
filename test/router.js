@@ -24,6 +24,9 @@ $(document).ready(function() {
         'fragment',
         'pathname'
       ));
+      // In IE, anchor.pathname does not contain a leading slash though
+      // window.location.pathname does.
+      if (!/^\//.test(this.pathname)) this.pathname = '/' + this.pathname;
     },
 
     toString: function() {
@@ -279,6 +282,26 @@ $(document).ready(function() {
       strictEqual(pathname, '/root/fragment');
     };
     Backbone.history.navigate('/fragment');
+  });
+
+  test("#1366 - History does not prepend root to fragment.", 2, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root/');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/root/x');
+        }
+      }
+    });
+    Backbone.history.start({
+      root: '/root/',
+      pushState: true,
+      hashChange: false
+    });
+    Backbone.history.navigate('x');
+    strictEqual(Backbone.history.fragment, 'x');
   });
 
 });
