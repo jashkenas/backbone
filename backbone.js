@@ -1194,10 +1194,17 @@
       return this;
     },
 
-    // Remove this view from the DOM. Note that the view isn't present in the
-    // DOM by default, so calling this method may be a no-op.
+    // Remove this view from the DOM. Note that calling remove will also
+    // remove all jQuery bindings, including any delegated events.
     remove: function() {
       this.$el.remove();
+      return this;
+    },
+
+    // Remove this view from the DOM, keeping jQuery bindings. Note that the view 
+    // isn't present in the DOM by default, so calling this method may be a no-op.
+    detach: function() {
+      this.$el.detach();
       return this;
     },
 
