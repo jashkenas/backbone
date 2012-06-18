@@ -1000,7 +1000,7 @@
           fragment = this.getHash();
         }
       }
-      return fragment.replace(routeStripper, '');
+      return decodeURIComponent(fragment.replace(routeStripper, ''));
     },
 
     // Start the hash change handling, returning `true` if the current URL matches
