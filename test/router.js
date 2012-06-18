@@ -298,4 +298,24 @@ $(document).ready(function() {
     strictEqual(Backbone.history.getFragment(), '');
   });
 
+  test("#1366 - History does not prepend root to fragment.", 2, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root/');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/root/x');
+        }
+      }
+    });
+    Backbone.history.start({
+      root: '/root/',
+      pushState: true,
+      hashChange: false
+    });
+    Backbone.history.navigate('x');
+    strictEqual(Backbone.history.fragment, 'x');
+  });
+
 });
