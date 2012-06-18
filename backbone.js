@@ -1299,16 +1299,14 @@
   });
 
   // The self-propagating extend function that Backbone classes use.
-  Backbone.extend = function(protoProps, classProps) {
+  var extend = function(protoProps, classProps) {
     var child = inherits(this, protoProps, classProps);
     child.extend = this.extend;
     return child;
   };
 
   // Set up inheritance for the model, collection, and view.
-  Model.extend = Collection.extend = Router.extend = View.extend = function() {
-    return Backbone.extend.apply(this, arguments)
-  };
+  Model.extend = Collection.extend = Router.extend = View.extend = extend;
 
   // Backbone.sync
   // -------------
