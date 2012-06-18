@@ -959,6 +959,7 @@
     this.handlers = [];
     _.bindAll(this, 'checkUrl');
     this.location = options && options.location || root.location;
+    this.history = options && options.history || root.history;
   };
 
   // Cached regex for cleaning leading hashes and slashes .
@@ -1009,7 +1010,7 @@
       this.options          = _.extend({}, {root: '/'}, this.options, options);
       this._wantsHashChange = this.options.hashChange !== false;
       this._wantsPushState  = !!this.options.pushState;
-      this._hasPushState    = !!(this.options.pushState && window.history && window.history.pushState);
+      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       var fragment          = this.getFragment();
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
@@ -1047,7 +1048,7 @@
       // in a browser where it could be `pushState`-based instead...
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
         this.fragment = this.getHash().replace(routeStripper, '');
-        window.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
+        this.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
       }
 
       if (!this.options.silent) {
@@ -1107,21 +1108,21 @@
       if (!options || options === true) options = {trigger: options};
       var frag = (fragment || '').replace(routeStripper, '');
       if (this.fragment == frag) return;
-      var fullFrag = (frag.indexOf(this.options.root) != 0 ? this.options.root : '') + frag;
+      this.fragment = frag;
+      var url = (frag.indexOf(this.options.root) != 0 ? this.options.root : '') + frag;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
-        this.fragment = fullFrag;
-        window.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, fullFrag);
+        this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
 
       // If hash changes haven't been explicitly disabled, update the hash
       // fragment to store history.
       } else if (this._wantsHashChange) {
-        this.fragment = frag;
         this._updateHash(this.location, frag, options.replace);
         if (this.iframe && (frag != this.getFragment(this.getHash(this.iframe)))) {
-          // Opening and closing the iframe tricks IE7 and earlier to push a history entry on hash-tag change.
-          // When replace is true, we don't want this.
+          // Opening and closing the iframe tricks IE7 and earlier to push a
+          // history entry on hash-tag change.  When replace is true, we don't
+          // want this.
           if(!options.replace) this.iframe.document.open().close();
           this._updateHash(this.iframe.location, frag, options.replace);
         }
@@ -1129,7 +1130,7 @@
       // If you've told us that you explicitly don't want fallback hashchange-
       // based history, then `navigate` becomes a page refresh.
       } else {
-        return this.location.assign(fullFrag);
+        return this.location.assign(url);
       }
       if (options.trigger) this.loadUrl(fragment);
     },
