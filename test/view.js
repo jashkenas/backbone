@@ -226,4 +226,46 @@ $(document).ready(function() {
     var View = Backbone.View.extend({tagName: function(){ return 'p'; }});
     ok(new View().$el.is('p'));
   });
+  
+  test("View: bindTo", function() {
+    var model = Backbone.Model({ foo: 'bar' });
+    view.model = model;
+
+    var params;
+    var newValue = 'newvalue';
+    var callback = function(){ params = _.toArray(arguments); };
+    view.bindTo(model, 'change', callback);
+    equal(model._callbacks.length, 1);
+    equal(view._bindings.length, 1);
+    
+    model.set({ foo: newValue });
+    equal(counter, 1);
+    equal(params, [model, newValue]);
+  });
+  
+  test("View: unbindFromAll", function() {
+    var model = Backbone.Model({ foo: 'bar' });
+    view.model = model;
+
+    var params;
+    var newValue = 'newvalue';
+    var callback = function(){ params = _.toArray(arguments); };
+    view.bindTo(model, 'change', callback);
+    view.unbindFromAll();
+    equal(view._bindings.length, 0);
+    equal(model._callbacks.length, 0);
+  });
+  
+  test("View: destroy", function() {
+    var model = Backbone.Model({ foo: 'bar' });
+    view.model = model;
+
+    var params;
+    var newValue = 'newvalue';
+    var callback = function(){ params = _.toArray(arguments); };
+    view.bindTo(model, 'change', callback);
+    view.destroy();
+    equal(view._bindings.length, 0);
+    equal(model._callbacks.length, 0);
+  });
 });
