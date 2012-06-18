@@ -318,4 +318,15 @@ $(document).ready(function() {
     strictEqual(Backbone.history.fragment, 'x');
   });
 
+  test("Decode fragment before comparison", 0, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/x%3Fy');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {pushState: function(){ ok(false); }}
+    });
+    Backbone.history.start({pushState: true, hashChange: false});
+    Backbone.history.navigate('x?y');
+  });
+
 });
