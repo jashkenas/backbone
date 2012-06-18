@@ -24,6 +24,9 @@ $(document).ready(function() {
         'fragment',
         'pathname'
       ));
+      // In IE, anchor.pathname does not contain a leading slash though
+      // window.location.pathname does.
+      if (!/^\//.test(this.pathname)) this.pathname = '/' + this.pathname;
     },
 
     toString: function() {
@@ -225,11 +228,17 @@ $(document).ready(function() {
   });
 
   test("#933, #908 - leading slash", 2, function() {
-    var history = new Backbone.History();
-    history.options = {root: '/root'};
-    equal(history.getFragment('/root/foo'), 'foo');
-    history.options.root = '/root/';
-    equal(history.getFragment('/root/foo'), 'foo');
+    location.replace('http://example.com/root/foo');
+
+    Backbone.history.stop();
+    Backbone.history = new Backbone.History({location: location});
+    Backbone.history.start({root: '/root', hashChange: false, silent: true});
+    strictEqual(Backbone.history.getFragment(), 'foo');
+
+    Backbone.history.stop();
+    Backbone.history = new Backbone.History({location: location});
+    Backbone.history.start({root: '/root/', hashChange: false, silent: true});
+    strictEqual(Backbone.history.getFragment(), 'foo');
   });
 
   test("#1003 - History is started before navigate is called", 1, function() {
@@ -279,6 +288,14 @@ $(document).ready(function() {
       strictEqual(pathname, '/root/fragment');
     };
     Backbone.history.navigate('/fragment');
+  });
+
+  test("#1387 - Root fragment without trailing slash.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root');
+    Backbone.history = new Backbone.History({location: location});
+    Backbone.history.start({hashChange: false, root: '/root/', silent: true});
+    strictEqual(Backbone.history.getFragment(), '');
   });
 
 });
