@@ -365,6 +365,18 @@ $(document).ready(function() {
     equal(lastRequest.options.parse, false);
   });
 
+  test("Collection: fetch with {merge: true} implies {add: true}", 3, function() {
+    var col = new Backbone.Collection;
+    col.sync = function(method, model, options) { 
+      options.success([{id: 1, name: 'Moses'}]);
+    }
+    col.add([{id: 1, name: 'Moe'}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
+    col.fetch({merge: true})
+    equal(col.first().get('name'), 'Moses');
+    equal(col.get(2).get('name'), 'Curly')
+    equal(col.get(3).get('name'), 'Larry')
+  });
+
   test("Collection: create", 4, function() {
     var model = col.create({label: 'f'}, {wait: true});
     equal(lastRequest.method, 'create');
