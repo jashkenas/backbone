@@ -39,7 +39,7 @@ $(document).ready(function() {
 
     var Router = Backbone.Router.extend();
     ok(_.isUndefined(lastProtoProps));
-    ok(_.isUndefined(lastClassProps));
+    ok(_.isUndefined(lastProtoProps));
   });
 
 });
