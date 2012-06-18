@@ -252,12 +252,12 @@ $(document).ready(function() {
     if (!history.iframe) ok(true);
   });
 
-  test("Router: route callback gets passed non-decoded values", 3, function() {
+  test("Router: route callback gets passed decoded values", 3, function() {
     var route = 'has%2Fslash/complex-has%23hash/has%20space';
     Backbone.history.navigate(route, {trigger: true});
-    equal(router.first, 'has%2Fslash');
-    equal(router.part, 'has%23hash');
-    equal(router.rest, 'has%20space');
+    equal(router.first, 'has/slash');
+    equal(router.part, 'has#hash');
+    equal(router.rest, 'has space');
   });
 
   test("Router: correctly handles URLs with % (#868)", 3, function() {
