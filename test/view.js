@@ -227,11 +227,4 @@ $(document).ready(function() {
     ok(new View().$el.is('p'));
   });
 
-  test("#1436 - Extended attributes are not polluted.", 2, function() {
-    var Parent = Backbone.View.extend({attributes:{title: 'title'}, tagName: 'a'});
-    var Child = Parent.extend({id: 'child'});
-    strictEqual(new Child().el.id, 'child');
-    ok(!new Parent().el.id);
-  });
-
 });
