@@ -908,7 +908,10 @@
       Backbone.history.route(route, _.bind(function(fragment) {
         var args = this._extractParameters(route, fragment);
         callback && callback.apply(this, args);
-        this.trigger.apply(this, ['route:' + name].concat(args));
+        var events = name.split(' ')
+        for (var i = events.length - 1; i >= 0; i--) {
+          this.trigger.apply(this, ['route:' + events[i]].concat(args));
+        };
         Backbone.history.trigger('route', this, name, args);
       }, this));
       return this;
