@@ -214,7 +214,7 @@ $(document).ready(function() {
     b.trigger('click');
   });
 
-  test("Clone attributes object", 2, function() {
+  test("#1172 - Clone attributes object", 2, function() {
     var View = Backbone.View.extend({attributes: {foo: 'bar'}});
     var v1 = new View({id: 'foo'});
     strictEqual(v1.el.id, 'foo');
@@ -226,4 +226,12 @@ $(document).ready(function() {
     var View = Backbone.View.extend({tagName: function(){ return 'p'; }});
     ok(new View().$el.is('p'));
   });
+
+  test("#1436 - Extended attributes are not polluted.", 2, function() {
+    var Parent = Backbone.View.extend({attributes:{title: 'title'}, tagName: 'a'});
+    var Child = Parent.extend({id: 'child'});
+    strictEqual(new Child().el.id, 'child');
+    ok(!new Parent().el.id);
+  });
+
 });
