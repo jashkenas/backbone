@@ -1155,13 +1155,19 @@
 
   // Creating a Backbone.View creates its initial element outside of the DOM,
   // if an existing element is not provided...
+  // Firing `"configure"` and firing `"initialize"` events on **Backbone.View** object
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
     this._configure(options || {});
+    View.trigger('configure', this, this.options);
     this._ensureElement();
     this.initialize.apply(this, arguments);
+    View.trigger('initialize', this);
     this.delegateEvents();
   };
+
+  // Backbone.View should be able to receive events
+  _.extend(View, Events);
 
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -1201,8 +1207,10 @@
 
     // Remove this view from the DOM. Note that the view isn't present in the
     // DOM by default, so calling this method may be a no-op.
+    // Firing `"remove"` event on **Backbone.View** object
     remove: function() {
       this.$el.remove();
+      View.trigger('remove', this, this.el);
       return this;
     },
 
@@ -1219,12 +1227,13 @@
     },
 
     // Change the view's element (`this.el` property), including event
-    // re-delegation.
+    // re-delegation. Firing `"change:element"` event on **Backbone.View** object
     setElement: function(element, delegate) {
       if (this.$el) this.undelegateEvents();
       this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
       this.el = this.$el[0];
       if (delegate !== false) this.delegateEvents();
+      View.trigger('change:element', this, this.el);
       return this;
     },
 

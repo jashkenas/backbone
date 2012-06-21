@@ -226,4 +226,34 @@ $(document).ready(function() {
     var View = Backbone.View.extend({tagName: function(){ return 'p'; }});
     ok(new View().$el.is('p'));
   });
+
+  test("triggering lifetime events", 6, function() {
+    Backbone.View.on('configure', function(targetView, options) {
+      ok(targetView instanceof Backbone.View);
+      equal(options.option, 'value');
+    });
+
+    Backbone.View.on('initialize', function(targetView) {
+      ok(targetView instanceof Backbone.View);
+    });
+
+    var view = new Backbone.View({option: 'value'});
+
+    var element = document.createElement('div');
+
+    Backbone.View.on('change:element', function(targetView, newElement) {
+      equal(targetView, view);
+      equal(newElement, element);
+    });
+
+    view.setElement(element);
+
+    Backbone.View.on('remove', function(targetView) {
+      equal(targetView, view);
+    });
+
+    view.remove();
+
+    Backbone.View.off()
+  });
 });
