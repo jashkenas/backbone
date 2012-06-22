@@ -345,8 +345,13 @@
     save: function(key, value, options) {
       var attrs, current;
 
+      // Check if only success/error callbacks passed in for save call. Otherwise
       // Handle both `("key", value)` and `({key: value})` -style calls.
-      if (_.isObject(key) || key == null) {
+      if(_.isObject(key) && _.functions(key).length > 0){
+        attrs = null;
+        options = key;
+      }
+      else if (_.isObject(key) || key == null) {
         attrs = key;
         options = value;
       } else {
