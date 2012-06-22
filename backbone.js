@@ -348,7 +348,6 @@
       // Check if only success/error callbacks passed in for save call. Otherwise
       // Handle both `("key", value)` and `({key: value})` -style calls.
       if(_.isObject(key) && _.functions(key).length > 0){
-        console.log("Lookir")
         attrs = null;
         options = key;
       }
