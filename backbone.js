@@ -367,6 +367,9 @@
         return false;
       }
 
+      // Do not persist invalid models.
+      if (!attrs && !this.isValid()) return false;
+
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
       var model = this;
