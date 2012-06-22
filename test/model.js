@@ -847,4 +847,11 @@ $(document).ready(function() {
     .destroy({ success: function(){ ok(true); }});
   });
 
+  test("#1433 - Save: An invalid model cannot be persisted.", 1, function() {
+    var model = new Backbone.Model;
+    model.validate = function(){ return 'invalid'; };
+    model.sync = function(){ ok(false); };
+    strictEqual(model.save(), false);
+  });
+
 });
