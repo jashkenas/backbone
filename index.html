@@ -1242,9 +1242,10 @@ alert(solaris.url());
     </p>
 
     <p>
-      If you're working with a Rails backend, you'll notice that Rails' default
-      <tt>to_json</tt> implementation includes a model's attributes under a
-      namespace. To disable this behavior for seamless Backbone integration, set:
+      If you're working with a Rails backend that has a version prior to 3.1,
+      you'll notice that its default <tt>to_json</tt> implementation includes
+      a model's attributes under a namespace. To disable this behavior for
+      seamless Backbone integration, set:
     </p>
 
 <pre>
@@ -2122,8 +2123,9 @@ end
 </pre>
 
     <p>
-      One more tip for Rails integration is to disable the default namespacing for
-      <tt>to_json</tt> calls on models by setting <tt>ActiveRecord::Base.include_root_in_json = false</tt>
+      One more tip for integrating Rails versions prior to 3.1 is to disable
+      the default namespacing for <tt>to_json</tt> calls on models by setting
+      <tt>ActiveRecord::Base.include_root_in_json = false</tt>
     </p>
 
     <p id="Sync-ajax">
@@ -3542,8 +3544,9 @@ Inbox.messages.add(newMessage);
     </p>
 
     <p>
-      By default, Rails adds an extra layer of wrapping around the JSON representation
-      of models. You can disable this wrapping by setting:
+      By default, Rails versions prior to 3.1 add an extra layer of wrapping
+      around the JSON representation of models. You can disable this wrapping
+      by setting:
     </p>
 
 <pre>
