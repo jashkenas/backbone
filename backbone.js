@@ -176,25 +176,8 @@
   // Create a new model, with defined attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
-    var defaults;
-    attributes || (attributes = {});
-    if (options && options.collection) this.collection = options.collection;
-    if (options && options.parse) attributes = this.parse(attributes);
-    if (defaults = getValue(this, 'defaults')) {
-      attributes = _.extend({}, defaults, attributes);
-    }
-    this.attributes = {};
-    this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
-    this.changed = {};
-    this._silent = {};
-    this._pending = {};
-    this.set(attributes, {silent: true});
-    // Reset change tracking.
-    this.changed = {};
-    this._silent = {};
-    this._pending = {};
-    this._previousAttributes = _.clone(this.attributes);
+    attributes = this._configure(attributes || {}, options || {});
     this.initialize.apply(this, arguments);
   };
 
@@ -523,6 +506,31 @@
       return !this.validate || !this.validate(this.attributes);
     },
 
+    // Performs the initial configuration of a Model with a set of attributes
+    // and options. Keys with special meaning *(collection)*, are attached
+    // directly to the model.
+    _configure: function(attributes, options) {
+      var defaults;
+      attributes || (attributes = {});
+      if (options.collection) this.collection = options.collection;
+      if (options.parse) attributes = this.parse(attributes);
+      if (defaults = getValue(this, 'defaults')) {
+        attributes = _.extend({}, defaults, attributes);
+      }
+      this.attributes = {};
+      this._escapedAttributes = {};
+      this.changed = {};
+      this._silent = {};
+      this._pending = {};
+      this.set(attributes, {silent: true});
+      // Reset change tracking.
+      this.changed = {};
+      this._silent = {};
+      this._pending = {};
+      this._previousAttributes = _.clone(this.attributes);
+      return attributes;
+    },
+
     // Run validation against the next complete set of model attributes,
     // returning `true` if all is well. If a specific `error` callback has
     // been passed, call that instead of firing the general `"error"` event.
@@ -548,9 +556,7 @@
   // or unordered. If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
-    options || (options = {});
-    if (options.model) this.model = options.model;
-    if (options.comparator !== undefined) this.comparator = options.comparator;
+    options = this._configure(options || {});
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, {silent: true, parse: options.parse});
@@ -810,6 +816,15 @@
     // constructor.
     chain: function() {
       return _(this.models).chain();
+    },
+
+    // Performs the initial configuration of a Collection with a set of options.
+    // Keys with special meaning *(model, comparator)*, are attached directly to
+    // the collection.
+    _configure: function(options) {
+      if (options.model) this.model = options.model;
+      if (options.comparator !== undefined) this.comparator = options.comparator;
+      return options;
     },
 
     // Reset all internal state. Called when the collection is reset.
