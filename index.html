@@ -387,7 +387,6 @@
       <li>– <a href="#View-dollar">$ (jQuery or Zepto)</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
-      <li>– <a href="#View-destroy">destroy</a></li>
       <li>– <a href="#View-make">make</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
       <li>– <a href="#View-undelegateEvents">undelegateEvents</a></li>
@@ -2358,26 +2357,6 @@ var Bookmark = Backbone.View.extend({
       Convenience function for removing the view from the DOM. Equivalent to calling
       <tt>view.$el.remove();</tt>
     </p>
-
-    <p id="View-destroy">
-      <b class="header">destroy</b><code>view.destroy()</code>
-      <br />
-      The default implementation of <b>destroy</b> is a no-op.  It should be
-      overridden in order to clean up any references created by a view,
-      either to itself or other objects, in order to prevent memory leaks.
-      By convention, <b>destroy</b> should <tt>return this</tt> for
-      chainability.
-    </p>
-
-<pre>
-var View = Backbone.View.extend({
-  destroy: function() {
-    if (this.model) this.model.off(null, null, this);
-    if (this.collection) this.collection.off(null, null, this);
-    return this;
-  }
-});
-</pre>
 
     <p id="View-make">
       <b class="header">make</b><code>view.make(tagName, [attributes], [content])</code>

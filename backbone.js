@@ -1202,13 +1202,6 @@
       return this;
     },
 
-    // **destroy** should clean up any references created by this view,
-    // preventing memory leaks.  The convention is for **destroy** to always
-    // return `this`.
-    destroy: function() {
-      return this;
-    },
-
     // Remove this view from the DOM. Note that the view isn't present in the
     // DOM by default, so calling this method may be a no-op.
     remove: function() {
