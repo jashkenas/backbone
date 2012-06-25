@@ -619,16 +619,20 @@
       this.length += length;
       index = options.at != null ? options.at : this.models.length;
       splice.apply(this.models, [index, 0].concat(models));
-      if (this.comparator && options.at == null) this.sort({silent: true});
+      
 
-      // Merge in duplicate models.
-      if (options.merge) {
+      // Merge in or replace duplicate models.
+      if (options.merge || options.replace ) {
         for (i = 0, length = dups.length; i < length; i++) {
           if (model = this._byId[dups[i].id]) {
+            if( options.replace ){
+                model.clear();
+            }
             model.set(dups[i], options);
           }
         }
-      }
+      } 
+      if (this.comparator && options.at == null) this.sort({silent: true});
 
       if (options.silent) return this;
       for (i = 0, length = this.models.length; i < length; i++) {
