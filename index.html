@@ -1333,6 +1333,41 @@ bill.set({name : "Bill Jones"});
       an error occurs.
     </p>
 
+    <p id="Model-dispose">
+      <b class="header">dispose</b><code>model.dispose()</code>
+      <br />
+      The default implementation of <b>dispose</b> is a no-op. It should be
+      overridden in order to clean up any references created by a model,
+      either to itself or other objects, in order to prevent memory leaks.
+      By convention, <b>dispose</b> should <tt>return this</tt> for
+      chainability.
+    </p>
+
+<pre>
+var User = Backbone.Model.extend({
+  dispose: function() {
+    // Remove all event handlers on this module
+    this.off();
+
+    // Remove the collection reference, internal attribute hashes
+    // and event handlers
+    var properties = [
+      'collection',
+      'attributes', 'changed'
+      '_escapedAttributes', '_previousAttributes',
+      '_silent', '_pending',
+      '_callbacks'
+    ];
+
+    for (var i = 0, length = properties.length; i &lt; length; i++) {
+      delete this[properties[i]];
+    }
+ 
+    return this;
+  }
+});
+</pre>
+
     <h2 id="Collection">Backbone.Collection</h2>
 
     <p>
@@ -1839,6 +1874,44 @@ var othello = NYPL.create({
   author: "William Shakespeare"
 });
 </pre>
+
+    <p id="Collection-dispose">
+      <b class="header">dispose</b><code>collection.dispose()</code>
+      <br />
+      The default implementation of <b>dispose</b> is a no-op. It should be
+      overridden in order to clean up any references created by a collection,
+      either to itself or other objects, in order to prevent memory leaks.
+      By convention, <b>dispose</b> should <tt>return this</tt> for
+      chainability.
+    </p>
+
+<pre>
+var Users = Backbone.Collection.extend({
+  dispose: function() {
+    // Empty the list silently, but do not dispose all models since
+    // they might be referenced elsewhere.
+    this.reset([], {silent: true});
+
+    // Remove all event handlers on this module
+    this.off();
+
+    // Remove model constructor reference, internal model lists
+    // and event handlers
+    var properties = [
+      'model',
+      'models', '_byId', '_byCid',
+      '_callbacks'
+    ];
+
+    for (var i = 0, length = properties.length; i &lt; length; i++) {
+      delete this[properties[i]];
+    }
+ 
+    return this;
+  }
+});
+</pre>
+
 
     <h2 id="Router">Backbone.Router</h2>
 
@@ -2359,21 +2432,21 @@ var Bookmark = Backbone.View.extend({
       <tt>view.$el.remove();</tt>
     </p>
 
-    <p id="View-destroy">
-      <b class="header">destroy</b><code>view.destroy()</code>
+    <p id="View-dispose">
+      <b class="header">dispose</b><code>view.dispose()</code>
       <br />
-      The default implementation of <b>destroy</b> is a no-op.  It should be
+      The default implementation of <b>dispose</b> is a no-op.  It should be
       overridden in order to clean up any references created by a view,
       either to itself or other objects, in order to prevent memory leaks.
-      By convention, <b>destroy</b> should <tt>return this</tt> for
+      By convention, <b>dispose</b> should <tt>return this</tt> for
       chainability.
     </p>
 
 <pre>
 var View = Backbone.View.extend({
-  destroy: function() {
-    if (this.model) this.model.off(null, null, this);
-    if (this.collection) this.collection.off(null, null, this);
+  dispose: function() {
+    if (this.model) this.model.dispose();
+    if (this.collection) this.collection.dispose();
     return this;
   }
 });
