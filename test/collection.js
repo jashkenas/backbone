@@ -162,13 +162,15 @@ $(document).ready(function() {
     equal(col.first().get('name'), 'Tim');
   });
   
-  test("Collection: replace in duplicate models with {replace: true}", 3, function() {
+  test("Collection: replace in duplicate models with {replace: true}", 5, function() {
     var col = new Backbone.Collection;
-    col.add([{id: 1, name: 'Moe'}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
+    col.add([{id: 1, name: 'Moe', liked:true}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
     col.add({id: 1, name: 'Moses'});
+	equal(col.first().get('liked'), true);
     equal(col.first().get('name'), 'Moe');
     col.add({id: 1, name: 'Moses'}, {replace: true});
     equal(col.first().get('name'), 'Moses');
+	equal(col.first().get('liked'), undefined);
     col.add({id: 1, name: 'Tim'}, {replace: true, silent: true});
     equal(col.first().get('name'), 'Tim');
   });
