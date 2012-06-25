@@ -648,4 +648,12 @@ $(document).ready(function() {
     collection.fetch();
     collection.create({id: 1});
   });
+
+  test("#1447 - create with wait adds model.", function() {
+    var collection = new Backbone.Collection;
+    var model = new Backbone.Model;
+    model.sync = function(method, model, options){ options.success(); };
+    collection.on('add', function(){ ok(true); });
+    collection.create(model, {wait: true});
+  });
 });

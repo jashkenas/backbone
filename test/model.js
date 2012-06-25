@@ -632,16 +632,14 @@ $(document).ready(function() {
     equal(model.get('x'), void 0);
   });
 
-  test("`save` with `wait` results in correct attributes if success is called during sync", 2, function() {
-    var changed = 0;
+  test("#1030 - `save` with `wait` results in correct attributes if success is called during sync", 2, function() {
     var model = new Backbone.Model({x: 1, y: 2});
     model.sync = function(method, model, options) {
       options.success();
     };
-    model.on("change:x", function() { changed++; });
+    model.on("change:x", function() { ok(true); });
     model.save({x: 3}, {wait: true});
     equal(model.get('x'), 3);
-    equal(changed, 1);
   });
 
   test("save with wait validates attributes", 1, function() {

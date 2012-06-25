@@ -343,7 +343,7 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, value, options) {
-      var attrs, current;
+      var attrs, current, done;
 
       // Handle both `("key", value)` and `({key: value})` -style calls.
       if (_.isObject(key) || key == null) {
@@ -375,11 +375,9 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
+        done = true;
         var serverAttrs = model.parse(resp, xhr);
-        if (options.wait) {
-          delete options.wait;
-          serverAttrs = _.extend(attrs || {}, serverAttrs);
-        }
+        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
@@ -388,7 +386,14 @@
       // Finish configuring and sending the Ajax request.
       options.error = Backbone.wrapError(options.error, model, options);
       var xhr = this.sync(this.isNew() ? 'create' : 'update', this, options);
-      if (options.wait) this.clear(silentOptions).set(current, silentOptions);
+
+      // When using `wait`, reset attributes to original values unless
+      // `success` has been called already.
+      if (!done && options.wait) {
+        this.clear(silentOptions);
+        this.set(current, silentOptions);
+      }
+
       return xhr;
     },
 
