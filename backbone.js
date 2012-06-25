@@ -426,6 +426,13 @@
       return xhr;
     },
 
+    // **dispose** should clean up any references created by this model,
+    // preventing memory leaks. The convention is for **dispose** to always
+    // return `this`.
+    dispose: function() {
+      return this;
+    },
+
     // Default URL for the model's representation on the server -- if you're
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
@@ -819,6 +826,13 @@
       return _(this.models).chain();
     },
 
+    // **dispose** should clean up any references created by this collection,
+    // preventing memory leaks. The convention is for **dispose** to always
+    // return `this`.
+    dispose: function() {
+      return this;
+    },
+
     // Reset all internal state. Called when the collection is reset.
     _reset: function(options) {
       this.length = 0;
@@ -1202,10 +1216,10 @@
       return this;
     },
 
-    // **destroy** should clean up any references created by this view,
-    // preventing memory leaks.  The convention is for **destroy** to always
+    // **dispose** should clean up any references created by this view,
+    // preventing memory leaks. The convention is for **dispose** to always
     // return `this`.
-    destroy: function() {
+    dispose: function() {
       return this;
     },
 
