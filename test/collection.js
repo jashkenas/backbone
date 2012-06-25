@@ -161,6 +161,17 @@ $(document).ready(function() {
     col.add({id: 1, name: 'Tim'}, {merge: true, silent: true});
     equal(col.first().get('name'), 'Tim');
   });
+  
+  test("Collection: replace in duplicate models with {replace: true}", 3, function() {
+    var col = new Backbone.Collection;
+    col.add([{id: 1, name: 'Moe'}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
+    col.add({id: 1, name: 'Moses'});
+    equal(col.first().get('name'), 'Moe');
+    col.add({id: 1, name: 'Moses'}, {replace: true});
+    equal(col.first().get('name'), 'Moses');
+    col.add({id: 1, name: 'Tim'}, {replace: true, silent: true});
+    equal(col.first().get('name'), 'Tim');
+  });
 
   test("Collection: add model to multiple collections", 10, function() {
     var counter = 0;
