@@ -624,7 +624,7 @@
       this.length += length;
       index = options.at != null ? options.at : this.models.length;
       splice.apply(this.models, [index, 0].concat(models));
-      if (this.comparator && options.at == null) this.sort({silent: true});
+      
 
       // Merge in duplicate models.
       if (options.merge) {
@@ -634,6 +634,7 @@
           }
         }
       }
+	  if (this.comparator && options.at == null) this.sort({silent: true});
 
       if (options.silent) return this;
       for (i = 0, length = this.models.length; i < length; i++) {
