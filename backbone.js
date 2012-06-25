@@ -626,9 +626,12 @@
       splice.apply(this.models, [index, 0].concat(models));
 
       // Merge in duplicate models.
-      if (options.merge) {
+      if (options.merge || options.replace) {
         for (i = 0, length = dups.length; i < length; i++) {
           if (model = this._byId[dups[i].id]) {
+			if( options.replace ){
+				model.clear();
+			}
             model.set(dups[i], options);
           }
         }
