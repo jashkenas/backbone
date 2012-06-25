@@ -177,7 +177,7 @@
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
     this.cid = _.uniqueId('c');
-    attributes = this._configure(attributes || {}, options || {});
+    this._configure(attributes || {}, options || {});
     this.initialize.apply(this, arguments);
   };
 
@@ -528,7 +528,6 @@
       this._silent = {};
       this._pending = {};
       this._previousAttributes = _.clone(this.attributes);
-      return attributes;
     },
 
     // Run validation against the next complete set of model attributes,
@@ -556,8 +555,8 @@
   // or unordered. If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
-    options = this._configure(options || {});
-    this._reset();
+    options || (options = {});
+    this._configure(models, options);
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, {silent: true, parse: options.parse});
   };
@@ -821,10 +820,10 @@
     // Performs the initial configuration of a Collection with a set of options.
     // Keys with special meaning *(model, comparator)*, are attached directly to
     // the collection.
-    _configure: function(options) {
+    _configure: function(models, options) {
       if (options.model) this.model = options.model;
       if (options.comparator !== undefined) this.comparator = options.comparator;
-      return options;
+      this._reset();
     },
 
     // Reset all internal state. Called when the collection is reset.
@@ -894,9 +893,7 @@
   // Routers map faux-URLs to actions, and fire events when routes are
   // matched. Creating a new one sets its `routes` hash, if not set statically.
   var Router = Backbone.Router = function(options) {
-    options || (options = {});
-    if (options.routes) this.routes = options.routes;
-    this._bindRoutes();
+    this._configure(options || {});
     this.initialize.apply(this, arguments);
   };
 
@@ -949,6 +946,14 @@
       for (var i = 0, l = routes.length; i < l; i++) {
         this.route(routes[i][0], routes[i][1], this[routes[i][1]]);
       }
+    },
+
+    // Performs the initial configuration of a Router with a set of options.
+    // Keys with special meaning *(routes)*, are attached directly to the
+    // router.
+    _configure: function(options) {
+      if (options.routes) this.routes = options.routes;
+      this._bindRoutes();
     },
 
     // Convert a route string into a regular expression, suitable for matching
