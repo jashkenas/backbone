@@ -656,4 +656,14 @@ $(document).ready(function() {
     collection.on('add', function(){ ok(true); });
     collection.create(model, {wait: true});
   });
+
+  test("#1448 - add sorts collection after merge.", function() {
+    var collection = new Backbone.Collection([
+      {id: 1, x: 1},
+      {id: 2, x: 2}
+    ]);
+    collection.comparator = function(model){ return model.get('x'); };
+    collection.add({id: 1, x: 3}, {merge: true});
+    deepEqual(collection.pluck('id'), [2, 1]);
+  });
 });
