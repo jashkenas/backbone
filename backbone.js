@@ -195,7 +195,9 @@
     this._silent = {};
     this._pending = {};
     this._previousAttributes = _.clone(this.attributes);
+    this.trigger('configure', this, this.attributes, options);
     this.initialize.apply(this, arguments);
+    this.trigger('initialize', this);
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -557,7 +559,9 @@
     if (options.model) this.model = options.model;
     if (options.comparator !== undefined) this.comparator = options.comparator;
     this._reset();
+    this.trigger('configure', this, options);
     this.initialize.apply(this, arguments);
+    this.trigger('initialize', this);
     if (models) this.reset(models, {silent: true, parse: options.parse});
   };
 
@@ -889,7 +893,9 @@
     options || (options = {});
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
+    this.trigger('configure', this, options);
     this.initialize.apply(this, arguments);
+    this.trigger('initialize', this);
   };
 
   // Cached regular expressions for matching named param parts and splatted
@@ -1169,7 +1175,9 @@
     this.cid = _.uniqueId('view');
     this._configure(options || {});
     this._ensureElement();
+    this.trigger('configure', this, this.options);
     this.initialize.apply(this, arguments);
+    this.trigger('initialize', this);
     this.delegateEvents();
   };
 
@@ -1198,14 +1206,16 @@
     // **render** is the core function that your view should override, in order
     // to populate its element (`this.el`), with the appropriate HTML. The
     // convention is for **render** to always return `this`.
-    render: function() {
+    render: function(options) {
+      if (options && !options.silent) this.trigger('render', this, this.$el);
       return this;
     },
 
     // Remove this view from the DOM. Note that the view isn't present in the
     // DOM by default, so calling this method may be a no-op.
-    remove: function() {
+    remove: function(options) {
       this.$el.remove();
+      if (options && !options.silent) this.trigger('remove', this, this.$el);
       return this;
     },
 
@@ -1223,11 +1233,12 @@
 
     // Change the view's element (`this.el` property), including event
     // re-delegation.
-    setElement: function(element, delegate) {
+    setElement: function(element, delegate, options) {
       if (this.$el) this.undelegateEvents();
       this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
       this.el = this.$el[0];
       if (delegate !== false) this.delegateEvents();
+      if (options && !options.silent) this.trigger('change:element', this, this.$el);
       return this;
     },
 
@@ -1293,9 +1304,9 @@
         var attrs = _.extend({}, getValue(this, 'attributes'));
         if (this.id) attrs.id = this.id;
         if (this.className) attrs['class'] = this.className;
-        this.setElement(this.make(getValue(this, 'tagName'), attrs), false);
+        this.setElement(this.make(getValue(this, 'tagName'), attrs), false, {silent:true});
       } else {
-        this.setElement(this.el, false);
+        this.setElement(this.el, false, {silent:true});
       }
     }
 
