@@ -78,18 +78,37 @@
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
-      var calls, event, list;
-      if (!callback) return this;
 
-      events = events.split(eventSplitter);
-      calls = this._callbacks || (this._callbacks = {});
+      var bindEvents = _.bind(function(events, callback, context) {
+        var calls, event, list;
+        if (!callback) return this;
 
-      while (event = events.shift()) {
-        list = calls[event] || (calls[event] = []);
-        list.push(callback, context);
+        events = events.split(eventSplitter);
+        calls = this._callbacks || (this._callbacks = {});
+
+        while (event = events.shift()) {
+          list = calls[event] || (calls[event] = []);
+          list.push(callback, context);
+        }
+
+        return this;
+      }, this);
+
+      if (_.isObject(events)) {
+        // First argument is a map of event names => handlers
+        // Second argument is a context object
+        context = callback;
+        var $this = this;
+
+        // Iterate through map of events and bind all of them
+        _.each(events, function(handler, event) {
+          bindEvents(event, handler, context);
+        });
+        return this;
+      } else {
+        // Only one callback was given, bind it!
+        return bindEvents(events, callback, context);
       }
-
-      return this;
     },
 
     // Remove one or many callbacks. If `context` is null, removes all callbacks
