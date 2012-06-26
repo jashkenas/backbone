@@ -511,7 +511,6 @@
     // directly to the model.
     _configure: function(attributes, options) {
       var defaults;
-      attributes || (attributes = {});
       if (options.collection) this.collection = options.collection;
       if (options.parse) attributes = this.parse(attributes);
       if (defaults = getValue(this, 'defaults')) {
