@@ -775,7 +775,7 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
+        collection[options.add || options.merge ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp, options);
         collection.trigger('sync', collection, resp, options);
       };
