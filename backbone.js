@@ -64,23 +64,22 @@
   // Regular expression used to split event strings
   var eventSplitter = /\s+/;
 
-  // Handles the processing that onMany requires as 
-  // each of the many events is triggered.
+  // Handles the processing that onMany requires as each of the many events 
+  // is triggered.
   var triggerMany = function(name, node) {
     node.states[name] = true;
 
     // Work out what matches we have
-    var total = 0, matched = 0;
-    if (!node.triggered) {
+    var shouldRun = node.triggered || function() {
       for (var key in node.states) {
-        total++;
-        if (node.states[key])
-          matched++;
+        if (!node.states[key])
+          return false;
       }
-    }
+      return true;
+    }();
 
     // Detect if we should trigger things
-    if (total === matched) {
+    if (shouldRun) {
       node.callback();
       node.triggered = true;
     }
@@ -100,7 +99,7 @@
     // Allows for multiple events to be registered and the callback only to be 
     // triggered at least once all the events have been executed at least once. 
     // This is useful when needing to wait for multiple events to occur before 
-    // you wan to execute the callback.
+    // you want to execute the callback.
     onMany: function() {
       var args = arguments,
           callback = args[args.length - 1],
