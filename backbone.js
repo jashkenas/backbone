@@ -64,6 +64,28 @@
   // Regular expression used to split event strings
   var eventSplitter = /\s+/;
 
+  // Handles the processing that onMany requires as 
+  // each of the many events is triggered.
+  var triggerMany = function(name, node) {
+    node.states[name] = true;
+
+    // Work out what matches we have
+    var total = 0, matched = 0;
+    if (!node.triggered) {
+      for (var key in node.states) {
+        total++;
+        if (node.states[key])
+          matched++;
+      }
+    }
+
+    // Detect if we should trigger things
+    if (total === matched) {
+      node.callback();
+      node.triggered = true;
+    }
+  };
+  
   // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may bind with `on` or remove with `off` callback functions
   // to an event; `trigger`-ing an event fires all callbacks in succession.
@@ -74,6 +96,27 @@
   //     object.trigger('expand');
   //
   var Events = Backbone.Events = {
+
+    // Allows for multiple events to be registered and the callback only to be 
+    // triggered at least once all the events have been executed at least once. 
+    // This is useful when needing to wait for multiple events to occur before 
+    // you wan to execute the callback.
+    onMany: function() {
+      var args = arguments,
+          callback = args[args.length - 1],
+          node = { states : {}, callback : callback };
+
+      // Looping through the various events setting up callback on each
+      for (var i = 0; i < args.length - 1; i++) { 
+        var name = args[i];
+
+        // Setup state
+        node.states[name] = false; 
+
+        // Register callback - becasue of loop need to setup closure correctly
+        this.on(name, (function(n) { return function() { triggerMany(n, node); }; })(name) ); 
+      }
+    },
 
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
