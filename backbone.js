@@ -177,7 +177,7 @@
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
     this.cid = _.uniqueId('c');
-    this._configure(attributes || {}, options || {});
+    this.configure(attributes || {}, options || {});
     this.initialize.apply(this, arguments);
   };
 
@@ -509,7 +509,7 @@
     // Performs the initial configuration of a Model with a set of attributes
     // and options. Keys with special meaning *(collection)*, are attached
     // directly to the model.
-    _configure: function(attributes, options) {
+    configure: function(attributes, options) {
       var defaults;
       if (options.collection) this.collection = options.collection;
       if (options.parse) attributes = this.parse(attributes);
@@ -555,7 +555,7 @@
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
     options || (options = {});
-    this._configure(models, options);
+    this.configure(models, options);
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, {silent: true, parse: options.parse});
   };
@@ -819,7 +819,7 @@
     // Performs the initial configuration of a Collection with a set of options.
     // Keys with special meaning *(model, comparator)*, are attached directly to
     // the collection.
-    _configure: function(models, options) {
+    configure: function(models, options) {
       if (options.model) this.model = options.model;
       if (options.comparator !== undefined) this.comparator = options.comparator;
       this._reset();
@@ -892,7 +892,7 @@
   // Routers map faux-URLs to actions, and fire events when routes are
   // matched. Creating a new one sets its `routes` hash, if not set statically.
   var Router = Backbone.Router = function(options) {
-    this._configure(options || {});
+    this.configure(options || {});
     this.initialize.apply(this, arguments);
   };
 
@@ -950,7 +950,7 @@
     // Performs the initial configuration of a Router with a set of options.
     // Keys with special meaning *(routes)*, are attached directly to the
     // router.
-    _configure: function(options) {
+    configure: function(options) {
       if (options.routes) this.routes = options.routes;
       this._bindRoutes();
     },
@@ -1179,7 +1179,7 @@
   // if an existing element is not provided...
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
-    this._configure(options || {});
+    this.configure(options || {});
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
@@ -1294,7 +1294,7 @@
     // Performs the initial configuration of a View with a set of options.
     // Keys with special meaning *(model, collection, id, className)*, are
     // attached directly to the view.
-    _configure: function(options) {
+    configure: function(options) {
       if (this.options) options = _.extend({}, this.options, options);
       for (var i = 0, l = viewOptions.length; i < l; i++) {
         var attr = viewOptions[i];
