@@ -176,25 +176,8 @@
   // Create a new model, with defined attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
-    var defaults;
-    attributes || (attributes = {});
-    if (options && options.collection) this.collection = options.collection;
-    if (options && options.parse) attributes = this.parse(attributes);
-    if (defaults = getValue(this, 'defaults')) {
-      attributes = _.extend({}, defaults, attributes);
-    }
-    this.attributes = {};
-    this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
-    this.changed = {};
-    this._silent = {};
-    this._pending = {};
-    this.set(attributes, {silent: true});
-    // Reset change tracking.
-    this.changed = {};
-    this._silent = {};
-    this._pending = {};
-    this._previousAttributes = _.clone(this.attributes);
+    this.configure(attributes || {}, options || {});
     this.initialize.apply(this, arguments);
   };
 
@@ -528,6 +511,29 @@
       return !this.validate || !this.validate(this.attributes);
     },
 
+    // Performs the initial configuration of a Model with a set of attributes
+    // and options. Keys with special meaning *(collection)*, are attached
+    // directly to the model.
+    configure: function(attributes, options) {
+      var defaults;
+      if (options.collection) this.collection = options.collection;
+      if (options.parse) attributes = this.parse(attributes);
+      if (defaults = getValue(this, 'defaults')) {
+        attributes = _.extend({}, defaults, attributes);
+      }
+      this.attributes = {};
+      this._escapedAttributes = {};
+      this.changed = {};
+      this._silent = {};
+      this._pending = {};
+      this.set(attributes, {silent: true});
+      // Reset change tracking.
+      this.changed = {};
+      this._silent = {};
+      this._pending = {};
+      this._previousAttributes = _.clone(this.attributes);
+    },
+
     // Run validation against the next complete set of model attributes,
     // returning `true` if all is well. If a specific `error` callback has
     // been passed, call that instead of firing the general `"error"` event.
@@ -554,9 +560,7 @@
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
     options || (options = {});
-    if (options.model) this.model = options.model;
-    if (options.comparator !== undefined) this.comparator = options.comparator;
-    this._reset();
+    this.configure(models, options);
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, {silent: true, parse: options.parse});
   };
@@ -819,6 +823,15 @@
       return _(this.models).chain();
     },
 
+    // Performs the initial configuration of a Collection with a set of options.
+    // Keys with special meaning *(model, comparator)*, are attached directly to
+    // the collection.
+    configure: function(models, options) {
+      if (options.model) this.model = options.model;
+      if (options.comparator !== undefined) this.comparator = options.comparator;
+      this._reset();
+    },
+
     // Reset all internal state. Called when the collection is reset.
     _reset: function(options) {
       this.length = 0;
@@ -886,9 +899,7 @@
   // Routers map faux-URLs to actions, and fire events when routes are
   // matched. Creating a new one sets its `routes` hash, if not set statically.
   var Router = Backbone.Router = function(options) {
-    options || (options = {});
-    if (options.routes) this.routes = options.routes;
-    this._bindRoutes();
+    this.configure(options || {});
     this.initialize.apply(this, arguments);
   };
 
@@ -941,6 +952,14 @@
       for (var i = 0, l = routes.length; i < l; i++) {
         this.route(routes[i][0], routes[i][1], this[routes[i][1]]);
       }
+    },
+
+    // Performs the initial configuration of a Router with a set of options.
+    // Keys with special meaning *(routes)*, are attached directly to the
+    // router.
+    configure: function(options) {
+      if (options.routes) this.routes = options.routes;
+      this._bindRoutes();
     },
 
     // Convert a route string into a regular expression, suitable for matching
@@ -1167,7 +1186,7 @@
   // if an existing element is not provided...
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
-    this._configure(options || {});
+    this.configure(options || {});
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
@@ -1275,7 +1294,7 @@
     // Performs the initial configuration of a View with a set of options.
     // Keys with special meaning *(model, collection, id, className)*, are
     // attached directly to the view.
-    _configure: function(options) {
+    configure: function(options) {
       if (this.options) options = _.extend({}, this.options, options);
       for (var i = 0, l = viewOptions.length; i < l; i++) {
         var attr = viewOptions[i];
