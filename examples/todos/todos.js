@@ -181,7 +181,7 @@ $(function(){
       Todos.bind('all', this.render, this);
 
       this.footer = this.$('footer');
-      this.main = $('#main');
+      this.main = this.$('#main');
 
       Todos.fetch();
     },
