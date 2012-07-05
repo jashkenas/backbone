@@ -472,7 +472,7 @@ $(document).ready(function() {
     equal(result, false);
     equal(model.get('a'), 100);
     equal(lastError, "Can't change admin status.");
-    equal(boundError, undefined);
+    equal(boundError, true);
   });
 
   test("Model: defaults always extend attrs (#459)", 2, function() {
