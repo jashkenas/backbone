@@ -776,7 +776,7 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
-  test("Backbone.wrapError triggers `'error'`", 12, function() {
+  test("Backbone.wrapError triggers `'error'`", 18, function() {
     var resp = {};
     var options = {};
     var model = new Backbone.Model();
