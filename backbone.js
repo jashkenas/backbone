@@ -888,8 +888,8 @@
   var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
-    this._bindRoutes();
     this.initialize.apply(this, arguments);
+    this._bindRoutes();
   };
 
   // Cached regular expressions for matching named param parts and splatted
