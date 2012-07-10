@@ -20,6 +20,11 @@ $(document).ready(function() {
       library = new Library();
       Backbone.ajax = function(obj) {
         lastRequest = obj;
+
+        // emulate the deferred object $.ajax returns
+        var dfd = $.Deferred();
+        dfd.abort = function(status) { dfd.reject({}, status || 'abort'); };
+        return dfd;
       };
       library.create(attrs, {wait: false});
     },
@@ -140,6 +145,38 @@ $(document).ready(function() {
     });
     model.fetch({url: '/one/two'});
     equal(lastRequest.url, '/one/two');
+  });
+
+  test("sync: abortPending with 'stale' textStatus", 5, function() {
+    var collection = new Library();
+
+    // first request will be aborted manually
+    xhr1 = collection.fetch();
+    xhr1.fail(function(xhr, textStatus){
+      equal(textStatus, 'abort');
+    });
+    xhr1.abort();
+
+    // second request will be aborted by Backbone.sync
+    // on the third call to fetch
+    xhr2 = collection.fetch();
+    xhr2.fail(function(xhr, textStatus){
+      equal(textStatus, 'stale');
+    });
+    xhr3 = collection.fetch();
+
+    equal(xhr1.state(), 'rejected');
+    equal(xhr2.state(), 'rejected');
+    equal(xhr3.state(), 'pending');
+  });
+
+  test("sync: abortPending: false", function() {
+    var collection = new Library();
+    var xhr1 = collection.fetch();
+    var xhr2 = collection.fetch({ abortPending: false });
+
+    equal(xhr1.state(), 'pending');
+    equal(xhr2.state(), 'pending');
   });
 
   test("#1052 - `options` is optional.", 0, function() {

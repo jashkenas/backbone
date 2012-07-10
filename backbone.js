@@ -195,6 +195,7 @@
     this._silent = {};
     this._pending = {};
     this._previousAttributes = _.clone(this.attributes);
+    this._lastXHRs = {};
     this.initialize.apply(this, arguments);
   };
 
@@ -556,6 +557,7 @@
     options || (options = {});
     if (options.model) this.model = options.model;
     if (options.comparator !== undefined) this.comparator = options.comparator;
+    this._lastXHRs = {};
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, {silent: true, parse: options.parse});
@@ -1346,6 +1348,13 @@
     // Default JSON-request options.
     var params = {type: type, dataType: 'json'};
 
+    var lastXHR = model._lastXHRs[method];
+
+    // Abort last request if pending with a `stale` textStatus.
+    if (options.abortPending !== false && (lastXHR && lastXHR.state() === 'pending')) {
+      lastXHR.abort('stale');
+    }
+
     // Ensure that we have a URL.
     if (!options.url) {
       params.url = getValue(model, 'url') || urlError();
@@ -1381,8 +1390,13 @@
     }
 
     // Make the request, allowing the user to override any Ajax options.
-    return Backbone.ajax(_.extend(params, options));
-  };
+    var xhr = Backbone.ajax(_.extend(params, options));
+
+    // Store the last request
+    model._lastXHRs[method] = xhr;
+
+    return xhr;
+  }
 
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
   Backbone.ajax = function() {
