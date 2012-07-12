@@ -1216,8 +1216,8 @@
     //
     make: function(tagName, attributes, content) {
       var el = document.createElement(tagName);
-      if (attributes) _.each(_.keys(attributes), function (attr) {
-        el.setAttribute(attr, attributes[attr]);
+      if (attributes) _.each(attributes, function (value, key) {
+        el.setAttribute(key, value);
       });
       if (content != null) el.innerHTML = content;
       return el;
