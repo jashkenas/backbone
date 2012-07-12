@@ -1216,8 +1216,10 @@
     //
     make: function(tagName, attributes, content) {
       var el = document.createElement(tagName);
-      if (attributes) Backbone.$(el).attr(attributes);
-      if (content != null) Backbone.$(el).html(content);
+      if (attributes) _.each(attributes, function (value, key) {
+        el.setAttribute(key, value);
+      });
+      if (content != null) el.innerHTML = content;
       return el;
     },
 
