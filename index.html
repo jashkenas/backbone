@@ -362,6 +362,8 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#History-start">start</a></li>
+      <li>– <a href="#History-getFragment">getFragment</a></li>
+      <li>– <a href="#History-segment">segment</a></li>
     </ul>
 
     <a class="toc_title" href="#Sync">
@@ -2058,6 +2060,27 @@ $(function(){
   Backbone.history.start({pushState: true});
 });
 </pre>
+
+    <p id="History-getFragment">
+      <b class="header">getFragment</b><code>Backbone.history.getFragment()</code>
+      <br />
+      Returns the cross-browser normalized URL fragment, either from the URL, the hash, or the override. 
+      This can only be used after Backbone.history.start() is called.
+    </p>
+    
+    <p id="History-segment">
+      <b class="header">segment</b><code>Backbone.history.segment(index, [default])</code>
+      <br />
+      A convenience function for grabbing a specific segment from the URL. Segments are not zero indexed
+      so <tt>Backbone.history.segment(1)</tt>, for the hash <tt>#one/two/three</tt> returns 'one'.
+    </p>
+    
+    <p>
+      <tt>Backbone.history.segment()</tt> uses <tt>Backbone.history.getFragment()</tt>, 
+      so the URL is cleaned and normalized between the hash and pushState options. If the URL 
+      segment is empty, the second argument will be returned, or null if none was provided.
+      This can only be used after Backbone.history.start() is called.
+    </p>
 
     <h2 id="Sync">Backbone.sync</h2>
 

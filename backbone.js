@@ -1013,6 +1013,13 @@
       return decodeURIComponent(fragment.replace(routeStripper, ''));
     },
 
+    // Simple function for grabbing a segment from the URL, providing a default
+    // if it does not exist, or null if there is no segment or default.
+    segment : function(index, fallback) {
+      var segments = this.getFragment().split('/');
+      return segments[index - 1] || fallback;
+    },
+
     // Start the hash change handling, returning `true` if the current URL matches
     // an existing route, and `false` otherwise.
     start: function(options) {
