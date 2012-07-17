@@ -1303,8 +1303,7 @@
 
   // The self-propagating extend function that Backbone classes use.
   var extend = function(protoProps, classProps) {
-    var child = inherits(this, protoProps, classProps);
-    return child;
+    return inherits(this, protoProps, classProps);
   };
 
   // Set up inheritance for the model, collection, and view.
