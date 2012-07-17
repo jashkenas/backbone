@@ -368,7 +368,7 @@
       }
 
       // Do not persist invalid models.
-      if (!attrs && !this.isValid()) return false;
+      if (!attrs && !this._validate(null, options)) return false;
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.

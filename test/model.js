@@ -852,4 +852,15 @@ $(document).ready(function() {
     strictEqual(model.save(), false);
   });
 
+  test("#1377 - Save without attrs triggers 'error'.", 1, function() {
+    var Model = Backbone.Model.extend({
+      url: '/test/',
+      sync: function(method, model, options){ options.success(); },
+      validate: function(){ return 'invalid'; }
+    });
+    var model = new Model({id: 1});
+    model.on('error', function(){ ok(true); });
+    model.save();
+  });
+
 });
