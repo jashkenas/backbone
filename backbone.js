@@ -628,9 +628,7 @@
       // Merge in duplicate models.
       if (options.merge) {
         for (i = 0, length = dups.length; i < length; i++) {
-          if (model = this._byId[dups[i].id]) {
-            model.set(dups[i], options);
-          }
+          if (model = this._byId[dups[i].id]) model.set(dups[i], options);
         }
       }
 
@@ -842,9 +840,7 @@
 
     // Internal method to remove a model's ties to a collection.
     _removeReference: function(model) {
-      if (this == model.collection) {
-        delete model.collection;
-      }
+      if (this == model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
     },
 
@@ -854,9 +850,7 @@
     // in other collections are ignored.
     _onModelEvent: function(event, model, collection, options) {
       if ((event == 'add' || event == 'remove') && collection != this) return;
-      if (event == 'destroy') {
-        this.remove(model, options);
-      }
+      if (event == 'destroy') this.remove(model, options);
       if (model && event === 'change:' + model.idAttribute) {
         delete this._byId[model.previous(model.idAttribute)];
         if (model.id != null) this._byId[model.id] = model;
@@ -1065,9 +1059,7 @@
         this.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
       }
 
-      if (!this.options.silent) {
-        return this.loadUrl();
-      }
+      if (!this.options.silent) return this.loadUrl();
     },
 
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
@@ -1158,6 +1150,7 @@
         location.hash = fragment;
       }
     }
+
   });
 
   // Backbone.View
