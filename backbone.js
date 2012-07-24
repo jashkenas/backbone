@@ -98,7 +98,6 @@
         // First argument is a map of event names => handlers
         // Second argument is a context object
         context = callback;
-        var $this = this;
 
         // Iterate through map of events and bind all of them
         _.each(events, function(handler, event) {
