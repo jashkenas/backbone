@@ -15,6 +15,19 @@ $(document).ready(function() {
     equal(obj.counter, 5, 'counter should be incremented five times.');
   });
 
+  test("Events: binding multiple events with different callbacks", 2, function() {
+    var obj = { a: 0, b: 0};
+    _.extend(obj,Backbone.Events);
+    obj.on({
+      "a" : function() { obj.a += 1; },
+      "b" : function() { obj.b += 1; }
+    });
+    obj.trigger('a');
+    obj.trigger('b');
+    equal(obj.a, 1, 'counter a should be incremented once.');
+    equal(obj.b, 1, 'counter b should be incremented once.');
+  });
+
   test("Events: binding and triggering multiple events", 4, function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
