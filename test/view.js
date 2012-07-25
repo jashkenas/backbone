@@ -16,8 +16,8 @@ $(document).ready(function() {
   test("View: constructor", 4, function() {
     equal(view.el.id, 'test-view');
     equal(view.el.className, 'test-view');
-    equal(view.options.id, 'test-view');
-    equal(view.options.className, 'test-view');
+    equal(view.id, 'test-view');
+    equal(view.className, 'test-view');
   });
 
   test("View: jQuery", 2, function() {
