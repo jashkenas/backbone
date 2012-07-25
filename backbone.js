@@ -533,7 +533,7 @@
     // been passed, call that instead of firing the general `"error"` event.
     _validate: function(attrs, options) {
       if (options.silent || !this.validate) return true;
-      attrs = _.extend({}, this.attributes, attrs);
+      if (!options.isolatedValidation) attrs = _.extend({}, this.attributes, attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;
       if (options && options.error) {

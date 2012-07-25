@@ -474,6 +474,23 @@ $(document).ready(function() {
     equal(lastError, "Can't change admin status.");
     equal(boundError, undefined);
   });
+  
+  test("Model: validate with isolatedValidation", 5, function() {
+    var lastError;
+    var model = new Backbone.Model();
+    model.on('error', function(model, error) {
+      lastError = error;
+    });
+    var result = model.set({a: 100});
+    equal(result, model);
+    equal(model.get('a'), 100);
+    equal(lastError, undefined);
+    model.validate = function(attrs) {
+     	equal(attrs.a, undefined);
+    };
+    result = model.set({admin: true}, {isolatedValidation: true});
+    equal(model.get('admin'), true);
+  });
 
   test("Model: defaults always extend attrs (#459)", 2, function() {
     var Defaulted = Backbone.Model.extend({
