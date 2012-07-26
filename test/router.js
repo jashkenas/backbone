@@ -326,9 +326,6 @@ $(document).ready(function() {
       history: {
         pushState: function(state, title, url) {
           strictEqual(url, '/root/fragment');
-        },
-        replaceState: function(state, title, url) {
-          strictEqual(url, 'http://example.com/root/fragment');
         }
       }
     });
@@ -343,7 +340,17 @@ $(document).ready(function() {
     location.replace('http://example.com/root#fragment');
     location.protocol = 'http:';
     location.host = 'example.com';
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(state, title, url) {},
+        replaceState: function(state, title, url) {
+          strictEqual(url, 'http://example.com/root/fragment');
+        }
+      }
+    });
     Backbone.history.start({
+      pushState: true,
       root: '/root'
     });
   });
