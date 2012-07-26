@@ -318,4 +318,55 @@ $(document).ready(function() {
     strictEqual(Backbone.history.fragment, 'x');
   });
 
+  test("Router: insert slash before fragment when root fragment has no trailing slash", 3, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/root/fragment');
+        }
+      }
+    });
+    Backbone.history.start({
+      pushState: true,
+      root: '/root',
+      hashChange: false
+    });
+    Backbone.history.navigate('fragment');
+
+    Backbone.history.stop();
+    location.replace('http://example.com/root#fragment');
+    location.protocol = 'http:';
+    location.host = 'example.com';
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(state, title, url) {},
+        replaceState: function(state, title, url) {
+          strictEqual(url, 'http://example.com/root/fragment');
+        }
+      }
+    });
+    Backbone.history.start({
+      pushState: true,
+      root: '/root'
+    });
+
+    Backbone.history.stop();
+    location.replace('http://example.com/root');
+    var backboneHistory = new Backbone.History({
+      location: location
+    });
+    backboneHistory.loadUrl = function() {
+      ok(true);
+    };
+    Backbone.history = backboneHistory;
+    Backbone.history.start({
+      pushState: true,
+      root: '/root'
+    });
+  });
+
 });
