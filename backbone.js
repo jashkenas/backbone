@@ -1056,7 +1056,8 @@
       // in a browser where it could be `pushState`-based instead...
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
         this.fragment = this.getHash().replace(routeStripper, '');
-        this.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
+        var root = (trailingSlash.test(this.options.root)) ? this.options.root : this.options.root + '/';
+        this.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + root + this.fragment);
       }
 
       if (!this.options.silent) return this.loadUrl();
@@ -1115,7 +1116,11 @@
       var frag = (fragment || '').replace(routeStripper, '');
       if (this.fragment === frag) return;
       this.fragment = frag;
-      var url = (frag.indexOf(this.options.root) !== 0 ? this.options.root : '') + frag;
+      var root = this.options.root;
+      if (frag !== root && !trailingSlash.test(root) && this._hasPushState && this._wantsPushState) {
+        root = root + '/';
+      }
+      var url = (frag.indexOf(this.options.root) !== 0 ? root : '') + frag;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
