@@ -69,6 +69,7 @@ $(document).ready(function() {
       "contacts":                   "contacts",
       "contacts/new":               "newContact",
       "contacts/:id":               "loadContact",
+      "optional[/:item]":           "optionalItem",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
@@ -103,6 +104,10 @@ $(document).ready(function() {
 
     loadContact: function(){
       this.contact = 'load';
+    },
+
+    optionalItem: function(arg){
+      this.arg = arg !== undefined ? arg : null;
     },
 
     splat : function(args) {
@@ -197,6 +202,15 @@ $(document).ready(function() {
     location.replace('http://example.com#splat/long-list/of/splatted_99args/end');
     Backbone.history.checkUrl();
     equal(router.args, 'long-list/of/splatted_99args');
+  });
+
+  test("routes (optional)", 2, function() {
+    location.replace('http://example.com#optional');
+    Backbone.history.checkUrl();
+    equal(router.arg, null);
+    location.replace('http://example.com#optional/thing');
+    Backbone.history.checkUrl();
+    equal(router.arg, 'thing');
   });
 
   test("routes (complex)", 3, function() {
