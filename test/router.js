@@ -20,9 +20,11 @@ $(document).ready(function() {
       _.extend(this, _.pick($('<a></a>', {href: href})[0],
         'href',
         'hash',
+        'host',
         'search',
         'fragment',
-        'pathname'
+        'pathname',
+        'protocol'
       ));
       // In IE, anchor.pathname does not contain a leading slash though
       // window.location.pathname does.
@@ -318,7 +320,7 @@ $(document).ready(function() {
     strictEqual(Backbone.history.fragment, 'x');
   });
 
-  test("Router: insert slash before fragment when root fragment has no trailing slash", 3, function() {
+  test("Router: Normalize root.", 1, function() {
     Backbone.history.stop();
     location.replace('http://example.com/root');
     Backbone.history = new Backbone.History({
@@ -335,11 +337,11 @@ $(document).ready(function() {
       hashChange: false
     });
     Backbone.history.navigate('fragment');
+  });
 
+  test("Router: Normalize root.", 1, function() {
     Backbone.history.stop();
     location.replace('http://example.com/root#fragment');
-    location.protocol = 'http:';
-    location.host = 'example.com';
     Backbone.history = new Backbone.History({
       location: location,
       history: {
@@ -353,16 +355,13 @@ $(document).ready(function() {
       pushState: true,
       root: '/root'
     });
+  });
 
+  test("Router: Normalize root.", 1, function() {
     Backbone.history.stop();
     location.replace('http://example.com/root');
-    var backboneHistory = new Backbone.History({
-      location: location
-    });
-    backboneHistory.loadUrl = function() {
-      ok(true);
-    };
-    Backbone.history = backboneHistory;
+    Backbone.history = new Backbone.History({location: location});
+    Backbone.history.loadUrl = function() { ok(true); };
     Backbone.history.start({
       pushState: true,
       root: '/root'
