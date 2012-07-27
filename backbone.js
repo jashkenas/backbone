@@ -132,11 +132,8 @@
       var event, calls, list, i, length, args, all, rest;
       if (!(calls = this._callbacks)) return this;
 
-      rest = [];
+      rest = [].slice.call(arguments, 1);
       events = events.split(eventSplitter);
-      for (i = 1, length = arguments.length; i < length; i++) {
-        rest[i - 1] = arguments[i];
-      }
 
       // For each event, walk through the list of callbacks twice, first to
       // trigger the event, then to trigger any `"all"` callbacks.
