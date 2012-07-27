@@ -134,6 +134,9 @@
 
       rest = [];
       events = events.split(eventSplitter);
+
+      // Fill up `rest` with the callback arguments.  Since we're only copying
+      // the tail of `arguments`, a loop is much faster than Array#slice.
       for (i = 1, length = arguments.length; i < length; i++) {
         rest[i - 1] = arguments[i];
       }
