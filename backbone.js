@@ -1202,6 +1202,52 @@
       return this;
     },
 
+    // This is the opposite method of "initialize". This method can be used in child-classes to unbind from custom events
+    outitialize: function(){
+      // override in child-class.
+    },
+    
+    // Destroy this view and remove it from the DOM.
+    destroy: function() {
+      this.undelegateEvents();
+      this.model && this.model.off(null, null, this);
+      this.collection && this.collection.off(null, null, this);
+      this.outitialize && this.outitialize();
+      this.destroyChildViews();
+      this.remove();
+    },
+    
+    destroyChildViews: function() {
+      _.each(this._childViews, function(view){
+        view.destroy(); 
+      });
+    },
+
+    // Attach a child-view to this view, so it gets removed and detroyed, when the parent-view is destroyed. 
+    attachChildViews: function(childViews, options) {
+      options || (options = {});
+      childViews = _.isArray(childViews) ? childViews.slice() : [childViews];
+      this._childViews || (this._childViews = new Array());
+
+      _.each(childViews, _.bind(function(view){
+        if (_.indexOf(this._childViews, view) === -1) this._childViews.push(view);
+        if (options.render) view.render();
+      }, this));
+    },
+
+    // Detach a child-view from a this view. The child-view will not longer be destroyed when this view is destroyed. 
+    detachChildViews: function(childViews, options) {
+      options || (options = {});
+      childViews = _.isArray(childViews) ? childViews.slice() : [childViews];
+
+      _.each(childViews, _.bind(function(view){
+        this._childViews = _.without(this._childViews, view)
+        if (options.remove) view.remove();
+        if (options.destroy) view.destroy();
+      }, this));
+
+    },
+
     // For small amounts of DOM Elements, where a full-blown template isn't
     // needed, use **make** to manufacture elements, one at a time.
     //
