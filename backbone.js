@@ -725,6 +725,7 @@
       if (_.isEmpty(attrs)) return [];
       return this.filter(function(model) {
         for (var key in attrs) {
+          if (key == 'id') return attrs[key] === model.id;
           if (attrs[key] !== model.get(key)) return false;
         }
         return true;
@@ -749,7 +750,10 @@
 
     // Pluck an attribute from each model in the collection.
     pluck: function(attr) {
-      return _.map(this.models, function(model){ return model.get(attr); });
+      return _.map(this.models, function(model) { 
+        if (attr == 'id') return model.id;
+        return model.get(attr); 
+      });
     },
 
     // When you have more items than you want to add or remove individually,
