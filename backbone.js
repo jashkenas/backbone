@@ -725,7 +725,11 @@
       if (_.isEmpty(attrs)) return [];
       return this.filter(function(model) {
         for (var key in attrs) {
-          if (attrs[key] !== model.get(key)) return false;
+          if (_.isArray(attrs[key])) {
+            if (!_.include(attrs[key], model.get(key))) return false;
+          } else {
+            if (attrs[key] !== model.get(key)) return false;
+          }
         }
         return true;
       });
