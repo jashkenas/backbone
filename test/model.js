@@ -301,7 +301,6 @@ $(document).ready(function() {
     equal(model.hasChanged('name'), true);
     model.change();
     equal(model.get('name'), 'Rob');
-
   });
 
   test("Model: changedAttributes", 3, function() {
@@ -567,9 +566,15 @@ $(document).ready(function() {
   });
 
   test("unset fires change for undefined attributes", 1, function() {
-    var model = new Backbone.Model({x: undefined});
+    var model = new Backbone.Model({x: undefined, hasOwnProperty: true});
     model.on('change:x', function(){ ok(true); });
     model.unset('x');
+  });
+
+  test('set with hasOwnProperty', 1, function() {
+    var model = new Backbone.Model({name : 'Model', hasOwnProperty: true});
+    model.set({name: 'Model'})
+    equal(model.get('name'), 'Model');
   });
 
   test("set: undefined values", 1, function() {
