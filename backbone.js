@@ -288,7 +288,7 @@
         val = attrs[attr];
 
         // If the new and current value differ, record the change.
-        if (!_.isEqual(now[attr], val) || (options.unset && _.has(now, attr))) {
+        if ((now[attr] !== val) || (options.unset && now.hasOwnProperty(attr))) {
           delete escaped[attr];
           (options.silent ? this._silent : changes)[attr] = true;
         }
@@ -298,7 +298,7 @@
 
         // If the new and previous value differ, record the change.  If not,
         // then remove changes for this attribute.
-        if (!_.isEqual(prev[attr], val) || (_.has(now, attr) !== _.has(prev, attr))) {
+        if ((prev[attr] !== val) || (now.hasOwnProperty(attr) !== prev.hasOwnProperty(attr))) {
           this.changed[attr] = val;
           if (!options.silent) this._pending[attr] = true;
         } else {
