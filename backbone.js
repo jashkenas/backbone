@@ -151,7 +151,9 @@
         // Execute event callbacks.
         if (list) {
           for (i = 0, length = list.length; i < length; i += 2) {
-            list[i].apply(list[i + 1] || this, rest);
+            try {
+              list[i].apply(list[i + 1] || this, rest);
+            } catch(e){}
           }
         }
 
@@ -159,7 +161,9 @@
         if (all) {
           args = [event].concat(rest);
           for (i = 0, length = all.length; i < length; i += 2) {
-            all[i].apply(all[i + 1] || this, args);
+            try {
+              all[i].apply(all[i + 1] || this, args);
+            } catch(e){}
           }
         }
       }
