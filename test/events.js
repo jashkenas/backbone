@@ -192,4 +192,17 @@ $(document).ready(function() {
     obj.trigger('event');
   });
 
+  test("#1527 - exceptions thrown by a listener allows other listeners to be called", 4, function(){
+    var obj = _.extend({}, Backbone.Events);
+    obj.on('event', function(){ ok(true, 'event 1 throwing exception'); throw 'BOOM!' }, obj);
+    obj.on('all', function(){ ok(true, 'event "all" 1 throwing exception'); throw 'BOOM!' }, obj);
+    obj.on('event', function(){ ok(true, 'event 2 still executed'); }, obj);
+    obj.on('all', function(){ ok(true, 'event "all" 2 still executed'); }, obj);
+    try{
+      obj.trigger('event');
+    }catch(e){
+        ok(false, 'trigger threw an exception');
+    }
+  });
+
 });
