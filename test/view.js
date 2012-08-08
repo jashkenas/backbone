@@ -136,16 +136,17 @@ $(document).ready(function() {
   });
 
   test("View: with className and id functions", 2, function() {
-    var viewClass = Backbone.View.extend({
+    var View = Backbone.View.extend({
       className: function() {
-        return 'one';
+        return 'className';
       },
       id: function() {
-        return 'two';
+        return 'id';
       }
     });
-    equal((new viewClass).el.className, 'one');
-    equal((new viewClass).el.id, 'two');
+    var view = new View();
+    strictEqual(view.el.className, 'className');
+    strictEqual(view.el.id, 'id');
   });
 
   test("View: with attributes", 2, function() {
