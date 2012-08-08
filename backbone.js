@@ -380,7 +380,7 @@
       options.success = function(resp, status, xhr) {
         done = true;
         var serverAttrs = model.parse(resp, xhr);
-        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
+        if (options.wait) serverAttrs = _.extend((attrs instanceof Model) ? attrs.attributes : attrs, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
