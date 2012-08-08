@@ -626,6 +626,34 @@ $(document).ready(function() {
     equal(changed, 1);
   });
 
+  test("`save` with `wait` correctly merges 'attrs' and 'serverAttrs' hashes", 5, function() {
+    var changed = 0;
+    var model = new Backbone.Model({x: 1, y: 2});
+    model.parse = function (resp, xhr) { return {x: 2, y: 2}; } // simulate server response w/ modified attribute
+    model.on('change:x', function() { changed++; });
+    model.save({x: 1, y: 2}, {wait: true});
+    deepEqual(JSON.parse(ajaxParams.data), {x: 1, y: 2});
+    equal(model.get('x'), 1); // 'x' shouldn't be changed to 2 until after success()
+    equal(changed, 0);
+    lastRequest.options.success({});
+    equal(model.get('x'), 2);
+    equal(changed, 1);
+  });
+
+  test("`save` with `wait` correctly merges 'attrs' Model and 'serverAttrs' hash", 5, function() {
+    var changed = 0;
+    var model = new Backbone.Model({x: 1, y: 2});
+    model.parse = function (resp, xhr) { return {x: 2, y: 2}; }  // simulate server response w/ modified attribute
+    model.on('change:x', function() { changed++; });
+    model.save(model, {wait: true});
+    deepEqual(JSON.parse(ajaxParams.data), {x: 1, y: 2});
+    equal(model.get('x'), 1); // 'x' shouldn't be changed to 2 until after success()
+    equal(changed, 0);
+    lastRequest.options.success({});
+    equal(model.get('x'), 2);
+    equal(changed, 1);
+  });
+
   test("a failed `save` with `wait` doesn't leave attributes behind", 1, function() {
     var model = new Backbone.Model;
     model.save({x: 1}, {wait: true});
