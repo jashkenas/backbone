@@ -276,7 +276,7 @@
       if (!this._validate(attrs, options)) return false;
 
       // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+      this.id = this.idFromAttributes(attrs);
 
       var changes = options.changes = {};
       var now = this.attributes;
@@ -310,6 +310,15 @@
       // Fire the `"change"` events.
       if (!options.silent) this.change(options);
       return this;
+    },
+
+    // **idFromIdAttributes** extracts an id from attrs based on this.idAttribute.
+    // The default implementation uses this.idAttribute as the lookup key in attrs
+    // and returns the value if it exists, otherwise returns the current this.id value.
+    idFromAttributes: function(attrs) {
+        if (this.idAttribute in attrs) 
+            return attrs[this.idAttribute];
+        return this.id;
     },
 
     // Remove an attribute from the model, firing `"change"` unless you choose
