@@ -1016,18 +1016,24 @@
       if (History.started) throw new Error("Backbone.history has already been started");
       History.started = true;
 
+      this.options = _.extend({}, {root: '/'}, this.options, options);
+
+      // Normalize root to always include trailing slash
+      if (!trailingSlash.test(this.options.root)) this.options.root += '/';
+
+      if (this.options.server === true) {
+        this._hasPushState = true;
+        return this.options.silent ? undefined : this.loadUrl();
+      }
+
       // Figure out the initial configuration. Do we need an iframe?
       // Is pushState desired ... is it available?
-      this.options          = _.extend({}, {root: '/'}, this.options, options);
       this._wantsHashChange = this.options.hashChange !== false;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       var fragment          = this.getFragment();
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
-
-      // Normalize root to always include trailing slash
-      if (!trailingSlash.test(this.options.root)) this.options.root += '/';
 
       if (oldIE && this._wantsHashChange) {
         this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
