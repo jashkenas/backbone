@@ -1253,14 +1253,17 @@
         if (!_.isFunction(method)) method = this[events[key]];
         if (!method) throw new Error('Method "' + events[key] + '" does not exist');
         var match = key.match(delegateEventSplitter);
-        var eventName = match[1], selector = match[2];
+        var eventTypes = match[1].split(','), selector = match[2];
         method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.bind(eventName, method);
-        } else {
-          this.$el.delegate(selector, eventName, method);
-        }
+        var self = this;
+        _(eventTypes).each(function(eventName) {
+            eventName += '.delegateEvents' + self.cid;
+            if (selector === '') {
+              self.$el.bind(eventName, method);
+            } else {
+              self.$el.delegate(selector, eventName, method);
+            }
+        });
       }
     },
 
