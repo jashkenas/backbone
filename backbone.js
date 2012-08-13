@@ -179,7 +179,7 @@
   // Create a new model, with defined attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
-    var defaults;
+    var defaults, args, i, length;
     attributes || (attributes = {});
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attributes = this.parse(attributes);
@@ -198,7 +198,15 @@
     this._silent = {};
     this._pending = {};
     this._previousAttributes = _.clone(this.attributes);
-    this.initialize.apply(this, arguments);
+
+    // Ensure that the modified version of attributes is passed to initialize.
+    // Since we're only copying the tail of `arguments`, a loop is much faster
+    // than Array#slice.
+    args = [attributes, options];
+    for (i = 2, length = arguments.length; i < length; i++) {
+      args[i] = arguments[i];
+    }
+    this.initialize.apply(this, args);
   };
 
   // Attach all inheritable methods to the Model prototype.
