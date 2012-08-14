@@ -59,6 +59,33 @@ $(document).ready(function() {
     equal(model.collection, collection);
   });
 
+  test("Model: overwritten constructors", 4, function () {
+    var saved;
+
+    var Unique = Backbone.Model.extend({
+        constructor: function (attrs, isDirect) {
+            if (isDirect)
+                return Backbone.Model.call(this, attrs);
+            return this.constructor.create(attrs);
+        }
+    }, {
+        create: function (attrs) {
+            saved = saved || new this(attrs, true);
+            return saved;
+        }
+    });
+
+    var Model = Unique.extend({});
+
+    var m1 = new Model();
+    var m2 = new Model();
+
+    strictEqual(m1, m2);
+    strictEqual(saved, m1);
+    ok(m1 instanceof Model);
+    ok(m2 instanceof Model);
+  });
+
   test("Model: initialize with attributes and options", 1, function() {
     var Model = Backbone.Model.extend({
       initialize: function(attributes, options) {
