@@ -479,7 +479,7 @@ $(document).ready(function() {
     var Defaulted = Backbone.Model.extend({
       defaults: {one: 1},
       initialize : function(attrs, opts) {
-        equal(this.attributes.one, 1);
+        equal(attrs.one, 1);
       }
     });
     var providedattrs = new Defaulted({});
