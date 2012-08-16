@@ -562,7 +562,7 @@
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) {
-      if (options && options.parse) models = this.parse(models);
+      if (options.parse) models = this.parse(models);
       this.reset(models, {silent: true, parse: options.parse});
     }
   };
