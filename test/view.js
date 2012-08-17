@@ -135,6 +135,20 @@ $(document).ready(function() {
     ok(!view.el);
   });
 
+  test("View: with className and id functions", 2, function() {
+    var View = Backbone.View.extend({
+      className: function() {
+        return 'className';
+      },
+      id: function() {
+        return 'id';
+      }
+    });
+    var view = new View();
+    strictEqual(view.el.className, 'className');
+    strictEqual(view.el.id, 'id');
+  });
+
   test("View: with attributes", 2, function() {
     var view = new Backbone.View({attributes : {'class': 'one', id: 'two'}});
     equal(view.el.className, 'one');
@@ -225,6 +239,30 @@ $(document).ready(function() {
   test("#1228 - tagName can be provided as a function", 1, function() {
     var View = Backbone.View.extend({tagName: function(){ return 'p'; }});
     ok(new View().$el.is('p'));
+  });
+
+  test("dispose", 0, function() {
+    var View = Backbone.View.extend({
+      events: {click: function(){ ok(false); }},
+      initialize: function() {
+        this.model.on('all x', function(){ ok(false); }, this);
+        this.collection.on('all x', function(){ ok(false); }, this);
+      }
+    });
+    var view = new View({
+      model: new Backbone.Model,
+      collection: new Backbone.Collection
+    });
+    view.dispose();
+    view.model.trigger('x');
+    view.collection.trigger('x');
+    view.$el.click();
+  });
+
+  test("view#remove calls dispose.", 1, function() {
+    var view = new Backbone.View();
+    view.dispose = function() { ok(true); };
+    view.remove();
   });
 
 });

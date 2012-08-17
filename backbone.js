@@ -1201,9 +1201,19 @@
       return this;
     },
 
+    // Clean up references to this view in order to prevent latent effects and
+    // memory leaks.
+    dispose: function() {
+      this.undelegateEvents();
+      if (this.model) this.model.off(null, null, this);
+      if (this.collection) this.collection.off(null, null, this);
+      return this;
+    },
+
     // Remove this view from the DOM. Note that the view isn't present in the
     // DOM by default, so calling this method may be a no-op.
     remove: function() {
+      this.dispose();
       this.$el.remove();
       return this;
     },
@@ -1290,8 +1300,8 @@
     _ensureElement: function() {
       if (!this.el) {
         var attrs = _.extend({}, getValue(this, 'attributes'));
-        if (this.id) attrs.id = this.id;
-        if (this.className) attrs['class'] = this.className;
+        if (this.id) attrs.id = getValue(this, 'id');
+        if (this.className) attrs['class'] = getValue(this, 'className');
         this.setElement(this.make(getValue(this, 'tagName'), attrs), false);
       } else {
         this.setElement(this.el, false);

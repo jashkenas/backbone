@@ -387,6 +387,7 @@
       <li>– <a href="#View-dollar">$ (jQuery or Zepto)</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
+      <li>– <a href="#View-dispose">dispose</a></li>
       <li>– <a href="#View-make">make</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
       <li>– <a href="#View-undelegateEvents">undelegateEvents</a></li>
@@ -2354,8 +2355,15 @@ var Bookmark = Backbone.View.extend({
     <p id="View-remove">
       <b class="header">remove</b><code>view.remove()</code>
       <br />
-      Convenience function for removing the view from the DOM. Equivalent to calling
-      <tt>view.$el.remove();</tt>
+      <a href="#View-dispose">Dispose</a> of the view before removing it from
+      the DOM via <tt>view.$el.remove()</tt>.
+    </p>
+
+    <p id="View-dispose">
+      <b class="header">dispose</b><code>view.dispose()</code>
+      <br />
+      Clean up any references to the view in order to prevent unwanted latent
+      effects and memory leaks.
     </p>
 
     <p id="View-make">
@@ -2575,18 +2583,18 @@ var model = localBackbone.Model.extend(...);
         <img width="550" height="416" data-original="docs/images/flow.png" alt="Flow" class="example_image" />
       </a>
     </div>
-    
-    
+
+
   	<h2 id="examples-wordpress">WordPress.com</h2>
 
   	<p>
-  		<a href="http://wordpress.com/">WordPress.com</a> is the software-as-a-service 
-  		version of <a href="http://wordpress.org">WordPress</a>. It uses Backbone.js 
-  		Models, Collections, and Views in its 
+  		<a href="http://wordpress.com/">WordPress.com</a> is the software-as-a-service
+  		version of <a href="http://wordpress.org">WordPress</a>. It uses Backbone.js
+  		Models, Collections, and Views in its
   		<a href="http://en.blog.wordpress.com/2012/05/25/notifications-refreshed/">Notifications system</a>.  Backbone.js was selected
-  		because it was easy to fit into the structure of the application, not the 
-  		other way around. <a href="http://automattic.com">Automattic</a> 
-  		(the company behind WordPress.com) is integrating Backbone.js into the 
+  		because it was easy to fit into the structure of the application, not the
+  		other way around. <a href="http://automattic.com">Automattic</a>
+  		(the company behind WordPress.com) is integrating Backbone.js into the
   		Stats tab and other features throughout the homepage.
   	</p>
 
