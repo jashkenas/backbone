@@ -302,7 +302,6 @@
           delete this.changed[attr];
           delete this._pending[attr];
         }
-
       }
 
       // Recreate or delete the id
