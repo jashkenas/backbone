@@ -275,9 +275,6 @@
       // Run validation.
       if (!this._validate(attrs, options)) return false;
 
-      // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
-
       var changes = options.changes = {};
       var now = this.attributes;
       var escaped = this._escapedAttributes;
@@ -306,6 +303,10 @@
           delete this._pending[attr];
         }
       }
+
+      // Recreate or delete the id
+      this._previousId = this.id;
+      this.id = this._generateId(now);
 
       // Fire the `"change"` events.
       if (!options.silent) this.change(options);
@@ -545,6 +546,15 @@
         this.trigger('error', this, error, options);
       }
       return false;
+    },
+
+    // Generate the ID for this model based on the current attributes
+    _generateId: function() {
+      var attrs = this.attributes, idas = this.idAttribute, vals = [], i, ida;
+      if (!_.isArray(idas)) return attrs[idas];
+      if (idas.length === 1) return attrs[idas[0]];
+      for (i in idas) if ((ida = idas[i]) in attrs) vals.push(attrs[ida]);
+      return idas.length === idas.length ? vals.join('_') : void 0;
     }
 
   });
@@ -854,8 +864,8 @@
     _onModelEvent: function(event, model, collection, options) {
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
-      if (model && event === 'change:' + model.idAttribute) {
-        delete this._byId[model.previous(model.idAttribute)];
+      if (model && event === 'change' && model.id !== model._previousId) {
+        delete this._byId[model._previousId];
         if (model.id != null) this._byId[model.id] = model;
       }
       this.trigger.apply(this, arguments);
