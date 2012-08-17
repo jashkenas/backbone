@@ -852,4 +852,19 @@ $(document).ready(function() {
     strictEqual(model.save(), false);
   });
 
+  test("Composite IDs are set appropriately", function() {
+    var Assignment = Backbone.Model.extend({
+      idAttribute: ['userId', 'taskId']
+    });
+    var assignment = new Assignment({
+      userId: 1,
+      taskId: 2
+    });
+    strictEqual(assignment.id, '1_2');
+    assignment.set({userId: 2});
+    strictEqual(assignment.id, '2_2');
+    assignment.set({taskId: 1});
+    strictEqual(assignment.id, '2_1');
+  });
+
 });

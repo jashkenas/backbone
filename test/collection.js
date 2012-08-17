@@ -666,4 +666,37 @@ $(document).ready(function() {
     collection.add({id: 1, x: 3}, {merge: true});
     deepEqual(collection.pluck('id'), [2, 1]);
   });
+
+  test("Composite IDs ensure uniqueness in collection", function() {
+    var Assignment = Backbone.Model.extend({
+      idAttribute: ['userId', 'taskId']
+    });
+    var assignmentA = new Assignment({
+      userId: 1,
+      taskId: 2
+    });
+    var assignmentB = new Assignment({
+      userId: 1,
+      taskId: 2
+    });
+    var assignments = new Backbone.Collection([assignmentA, assignmentB]);
+    strictEqual(assignments.length, 1);
+    strictEqual(assignments.first(), assignmentA)
+  });
+
+  test("Composite IDs are updated in collection index", function() {
+    var Assignment = Backbone.Model.extend({
+      idAttribute: ['userId', 'taskId']
+    });
+    var assignment = new Assignment({
+      userId: 1,
+      taskId: 2
+    });
+    var assignments = new Backbone.Collection(assignment);
+    strictEqual(assignments.get('1_2'), assignment);
+    assignment.set({userId: 2});
+    strictEqual(assignments.get('2_2'), assignment);
+    strictEqual(assignments.get('1_2'), void 0);
+  });
+
 });
