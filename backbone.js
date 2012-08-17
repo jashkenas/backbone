@@ -772,7 +772,6 @@
     // models to the collection instead of resetting.
     fetch: function(options) {
       options = options ? _.clone(options) : {};
-      if (options.parse === void 0) options.parse = true;
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
