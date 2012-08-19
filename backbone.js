@@ -1465,4 +1465,4 @@
     throw new Error('A "url" property or function must be specified');
   };
 
-}).call(this);
+}).call(new Function("return this")());
