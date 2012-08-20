@@ -279,6 +279,7 @@
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
       var changes = options.changes = {};
+      var changing = this._changing;
       var now = this.attributes;
       var escaped = this._escapedAttributes;
       var prev = this._previousAttributes || {};
@@ -302,9 +303,13 @@
           this.changed[attr] = val;
           if (!options.silent) this._pending[attr] = true;
         } else {
+          if (!changing) delete this._silent[attr];
+          delete changes[attr];
           delete this.changed[attr];
           delete this._pending[attr];
         }
+
+        if (changing != void 0 && _.isEqual(now[attr], changing[attr])) delete this._silent[attr];
       }
 
       // Fire the `"change"` events.
@@ -460,7 +465,7 @@
     change: function(options) {
       options || (options = {});
       var changing = this._changing;
-      this._changing = true;
+      this._changing = {};
 
       // Silent changes become pending changes.
       for (var attr in this._silent) this._pending[attr] = true;
@@ -469,7 +474,7 @@
       var changes = _.extend({}, options.changes, this._silent);
       this._silent = {};
       for (var attr in changes) {
-        this.trigger('change:' + attr, this, this.get(attr), options);
+        this.trigger('change:' + attr, this, (this._changing[attr] = this.get(attr)), options);
       }
       if (changing) return this;
 
@@ -484,8 +489,7 @@
         }
         this._previousAttributes = _.clone(this.attributes);
       }
-
-      this._changing = false;
+      delete this._changing;
       return this;
     },
 
