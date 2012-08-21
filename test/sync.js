@@ -20,6 +20,7 @@ $(document).ready(function() {
       library = new Library();
       Backbone.ajax = function(obj) {
         lastRequest = obj;
+        obj.success(obj.data);
       };
       library.create(attrs, {wait: false});
     },
@@ -142,6 +143,28 @@ $(document).ready(function() {
     equal(lastRequest.url, '/one/two');
   });
 
+  test("sync: Defer requests until response", 5, function() {
+    Backbone.ajax = function(obj){
+      lastRequest = obj;
+      // not calling obj.success causes running first request forever 
+    };
+    var model = new Backbone.Model({id:'1'});
+    model.url = '/test';
+    // first long running request that is not deferred
+    model.save({deferred:false});
+    // first deferred request
+    model.save({deferred:true, deferralId:1});
+    strictEqual(model._deferredRequest[1].get('deferred'), true);
+    equal(model._deferredRequest[1].get('deferralId'), 1);
+    // second request that override first deferred request
+    model.save({deferred:true, deferralId:2});
+    equal(model._deferredRequest[1].get('deferralId'), 2);
+    // last deferred request that override previous deferred requests
+    model.destroy();
+    equal(model._deferredRequest[0], 'delete');
+    equal(model._deferredRequest[1].get('deferralId'), 2);
+  });
+
   test("#1052 - `options` is optional.", 0, function() {
     var model = new Backbone.Model();
     model.url = '/test';
@@ -156,5 +179,4 @@ $(document).ready(function() {
     model.url = '/test';
     Backbone.sync('create', model);
   });
-
 });

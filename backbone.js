@@ -215,6 +215,12 @@
     // began.
     _pending: null,
 
+    // Deferred request is a request that is waiting for
+    // response of currently running model request. 
+    // Initial value is false which means 
+    // there is not an currently running request.
+    _deferredRequest: false,
+    
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
     idAttribute: 'id',
@@ -546,7 +552,6 @@
       }
       return false;
     }
-
   });
 
   // Backbone.Collection
@@ -570,7 +575,13 @@
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
     model: Model,
-
+    
+    // Deferred request is a request that is waiting for
+    // response of currently running collection request. 
+    // Initial value is false which means 
+    // there is not an currently running request.
+    _deferredRequest: false,
+    
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize: function(){},
@@ -1345,6 +1356,7 @@
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, options) {
+
     var type = methodMap[method];
 
     // Default options, unless specified.
@@ -1387,6 +1399,33 @@
       params.processData = false;
     }
 
+    var success = options.success;
+    options.success = function(){
+      var dr = model._deferredRequest;
+      // running request responsed, 
+      // there is no need to defer another request now
+      model._deferredRequest = false;
+
+      // if there is a request that deferred until response for this model
+      if (!_.isEmpty(dr)) {
+        model.sync(dr[0], dr[1], dr[2]);
+      }
+      if (success) success(arguments);
+    };
+    
+    // if there is a running request
+    if (_.isArray(model._deferredRequest)) {
+      // defer this request until response of running request.
+      // if there is another deferred request,
+      //override previous deferred request
+      model._deferredRequest = [method, model, options];
+      // FIXME: return sth look like xhr
+      return true;
+    }
+    
+    // last requests until response will defer 
+    // but now model._deferredRequest is empty array
+    model._deferredRequest = [];
     // Make the request, allowing the user to override any Ajax options.
     return Backbone.ajax(_.extend(params, options));
   };
@@ -1400,6 +1439,7 @@
   Backbone.wrapError = function(onError, originalModel, options) {
     return function(model, resp) {
       resp = model === originalModel ? resp : model;
+      resp._deferredRequest = false;
       if (onError) {
         onError(originalModel, resp, options);
       } else {
