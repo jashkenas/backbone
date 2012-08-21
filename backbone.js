@@ -1056,7 +1056,7 @@
 
       // If we've started off with a route from a `pushState`-enabled browser,
       // but we're currently in a browser that doesn't support it...
-      if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
+      if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot && !this.options.silent) {
         this.fragment = this.getFragment(null, true);
         this.location.replace(this.options.root + this.location.search + '#' + this.fragment);
         // Return immediately as browser will do redirect to new url
