@@ -335,7 +335,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
-        if (success) success(model, resp, options);
+        if (success) success.call(this, model, resp, options);
         model.trigger('sync', model, resp, options);
       };
       options.error = Backbone.wrapError(options.error, model, options);
@@ -382,7 +382,7 @@
         var serverAttrs = model.parse(resp, xhr);
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
-        if (success) success(model, resp, options);
+        if (success) success.call(this, model, resp, options);
         model.trigger('sync', model, resp, options);
       };
 
@@ -1397,7 +1397,7 @@
     return function(model, resp) {
       resp = model === originalModel ? resp : model;
       if (onError) {
-        onError(originalModel, resp, options);
+        onError.call(this, originalModel, resp, options);
       } else {
         originalModel.trigger('error', originalModel, resp, options);
       }
