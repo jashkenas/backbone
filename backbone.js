@@ -791,14 +791,14 @@
     // collection immediately, unless `wait: true` is passed, in which case we
     // wait for the server to agree.
     create: function(model, options) {
-      var coll = this;
+      var collection = this;
       options = options ? _.clone(options) : {};
       model = this._prepareModel(model, options);
       if (!model) return false;
-      if (!options.wait) coll.add(model, options);
+      if (!options.wait) collection.add(model, options);
       var success = options.success;
       options.success = function(model, resp, options) {
-        if (options.wait) coll.add(model, options);
+        if (options.wait) collection.add(model, options);
         if (success) success(model, resp, options);
       };
       model.save(null, options);
