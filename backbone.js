@@ -992,10 +992,15 @@
     // twenty times a second.
     interval: 50,
 
+    // #! == _escaped_fragment_
+    // https://developers.google.com/webmasters/ajax-crawling/docs/specification
+    uglyUrlMatcher: /#!(.*)$/,
+    normalUrlMatcher: /#(.*)$/,
+
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
     getHash: function(window) {
-      var match = (window || this).location.href.match(/#(.*)$/);
+      var match = (window || this).location.href.match(this._supportUglyUrl? this.uglyUrlMatcher: this.normalUrlMatcher);
       return match ? match[1] : '';
     },
 
@@ -1023,6 +1028,7 @@
       // Figure out the initial configuration. Do we need an iframe?
       // Is pushState desired ... is it available?
       this.options          = _.extend({}, {root: '/'}, this.options, options);
+      this._supportUglyUrl  = this.options.supportUglyUrl;
       this._wantsHashChange = this.options.hashChange !== false;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
