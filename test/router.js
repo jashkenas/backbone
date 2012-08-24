@@ -70,6 +70,7 @@ $(document).ready(function() {
       "contacts/new":               "newContact",
       "contacts/:id":               "loadContact",
       "splat/*args/end":            "splat",
+      "final/*final":               "finalSplat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
       "*anything":                  "anything"
@@ -107,6 +108,11 @@ $(document).ready(function() {
 
     splat : function(args) {
       this.args = args;
+    },
+
+    finalSplat : function(final, queryString) {
+      this.final = final;
+      this.finalQueryString = queryString;
     },
 
     complex : function(first, part, rest) {
@@ -156,6 +162,44 @@ $(document).ready(function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equal(router.query, 'manhattan');
     equal(router.page, '20');
+  });
+
+  test("Router: ignores query param", 1, function() {
+    Backbone.history.navigate('contacts?utm_source=twitter', true);
+    equal(router.contact, 'index');
+  });
+
+  test("Router: ignores multiple query params", 1, function() {
+    Backbone.history.navigate('contacts?utm_source=twitter&a=b', true);
+    equal(router.contact, 'index');
+  });
+
+  test("Router: ignores query param in a :param", 2, function() {
+    Backbone.history.navigate('search/manhattan/p20?utm_source=twitter', true);
+    equal(router.query, 'manhattan');
+    equal(router.page, '20');
+  });
+
+  test("Router: ignores multiple query params in a :param", 1, function() {
+    Backbone.history.navigate('contacts?utm_source=twitter&a=b', true);
+    equal(router.contact, 'index');
+  });
+
+  test("Router: *splat at the end of a fragment", 1, function() {
+    Backbone.history.navigate('final/bar', true);
+    equal(router.final, 'bar');
+  });
+
+  test("Router: ignores query param in a *splat", 2, function() {
+    Backbone.history.navigate('final/bar?utm_source=twitter', true);
+    equal(router.final, 'bar');
+    equal(router.finalQueryString, 'utm_source=twitter');
+  });
+
+  test("Router: ignores multiple query params in a *splat", 2, function() {
+    Backbone.history.navigate('final/bar?utm_source=twitter&a=b', true);
+    equal(router.final, 'bar');
+    equal(router.finalQueryString, 'utm_source=twitter&a=b');
   });
 
   test("Router: route precedence via navigate", 6, function(){
