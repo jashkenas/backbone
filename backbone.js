@@ -309,7 +309,7 @@
           delete this._pending[attr];
         }
 
-        if (changing != void 0 && _.isEqual(now[attr], changing[attr])) delete this._silent[attr];
+        if (changing && _.isEqual(now[attr], changing[attr])) delete this._silent[attr];
       }
 
       // Fire the `"change"` events.
@@ -464,18 +464,27 @@
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
       options || (options = {});
-      var changing = this._changing;
+      var attr, changing = this._changing;
       this._changing = {};
 
       // Silent changes become pending changes.
-      for (var attr in this._silent) this._pending[attr] = true;
+      for (attr in this._silent) this._pending[attr] = true;
 
       // Silent changes are triggered.
       var changes = _.extend({}, options.changes, this._silent);
+      var triggers = [];
       this._silent = {};
-      for (var attr in changes) {
-        this.trigger('change:' + attr, this, (this._changing[attr] = this.get(attr)), options);
+      
+      // Set the correct state for this._changing values
+      for (attr in changes) {
+        this._changing[attr] = this.get(attr);
+        triggers.push(attr);
       }
+
+      for (var i=0, l = triggers.length; i < l; i++) {
+        this.trigger('change:' + triggers[i], this, this._changing[triggers[i]], options);
+      }
+
       if (changing) return this;
 
       // Continue firing `"change"` events while there are pending changes.
@@ -483,7 +492,7 @@
         this._pending = {};
         this.trigger('change', this, options);
         // Pending and silent changes still remain.
-        for (var attr in this.changed) {
+        for (attr in this.changed) {
           if (this._pending[attr] || this._silent[attr]) continue;
           delete this.changed[attr];
         }
