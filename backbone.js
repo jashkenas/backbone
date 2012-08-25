@@ -552,6 +552,7 @@
       }
       return false;
     }
+
   });
 
   // Backbone.Collection
@@ -575,7 +576,7 @@
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
     model: Model,
-    
+
     // Deferred request is a request that is waiting for
     // response of currently running collection request. 
     // Initial value is false which means 
@@ -1356,7 +1357,6 @@
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, options) {
-
     var type = methodMap[method];
 
     // Default options, unless specified.
