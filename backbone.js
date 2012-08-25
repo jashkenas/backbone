@@ -339,6 +339,10 @@
         model.trigger('sync', model, resp, options);
       };
       options.error = Backbone.wrapError(options.error, model, options);
+      
+      // Trigger "fetch" events
+      this.trigger('fetch',this,options);
+      
       return this.sync('read', this, options);
     },
 
@@ -784,6 +788,10 @@
         collection.trigger('sync', collection, resp, options);
       };
       options.error = Backbone.wrapError(options.error, collection, options);
+      
+      // Trigger "fetch" events
+      this.trigger('fetch',this,options);
+      
       return this.sync('read', this, options);
     },
 
