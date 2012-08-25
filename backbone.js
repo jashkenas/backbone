@@ -1215,10 +1215,13 @@
     },
 
     // Remove this view from the DOM. Note that the view isn't present in the
-    // DOM by default, so calling this method may be a no-op.
-    remove: function() {
+    // DOM by default, so calling this method may be a no-op. Fires `remove`
+    // when finished.
+    remove: function(options) {
+      options || (options = {});
       this.dispose();
       this.$el.remove();
+      if (!options.silent) this.trigger('remove', this, options);
       return this;
     },
 

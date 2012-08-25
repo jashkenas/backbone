@@ -265,4 +265,12 @@ $(document).ready(function() {
     view.remove();
   });
 
+  test("view#remove fires remove", 1, function() {
+    var view = new Backbone.View();
+    view.on('remove', function() { ok(true); });
+    view.remove();
+    view.off().on('remove', function() { ok(false); });
+    view.remove({silent: true});
+  });
+
 });
