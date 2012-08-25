@@ -1410,7 +1410,7 @@
       if (!_.isEmpty(dr)) {
         model.sync(dr[0], dr[1], dr[2]);
       }
-      if (success) success(arguments);
+      if (success) success.apply(null, arguments);
     };
     
     // if there is a running request
