@@ -179,4 +179,5 @@ $(document).ready(function() {
     model.url = '/test';
     Backbone.sync('create', model);
   });
+
 });
