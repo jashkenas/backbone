@@ -739,16 +739,16 @@
     // is added.
     sort: function(options) {
       options || (options = {});
-      var comp = this.comparator;
-      if (!comp) throw new Error('Cannot sort a set without a comparator');
-      if (typeof comp === "string"){
+      var comparator = this.comparator;
+      if (!comparator) throw new Error('Cannot sort a set without a comparator');
+      if (typeof comparator === "string"){
         this.models.sort(function(o1,o2){
-          var propname = comp.replace(/\+|\-$/,"");
-          return (o2.get(propname) > o1.get(propname) ? -1 : 1)*(comp[comp.length-1] === "-" ? -1 : 1);
+          var attrName = comparator.replace(/\+|\-$/,"");
+          return (o2.get(attrName) > o1.get(attrName) ? -1 : 1)*(comparator[comparator.length-1] === "-" ? -1 : 1);
         });
       } else {
-        var boundComparator = _.bind(comp, this);
-        if (comp.length === 1) {
+        var boundComparator = _.bind(comparator, this);
+        if (comparator.length === 1) {
           this.models = this.sortBy(boundComparator);
         } else {
           this.models.sort(boundComparator);
