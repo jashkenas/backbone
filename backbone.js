@@ -739,12 +739,20 @@
     // is added.
     sort: function(options) {
       options || (options = {});
-      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
-      var boundComparator = _.bind(this.comparator, this);
-      if (this.comparator.length === 1) {
-        this.models = this.sortBy(boundComparator);
+      var comp = this.comparator;
+      if (!comp) throw new Error('Cannot sort a set without a comparator');
+      if (typeof comp === "string"){
+        this.models.sort(function(o1,o2){
+          var propname = comp.replace(/\+|\-$/,"");
+          return (o2.get(propname) > o1.get(propname) ? -1 : 1)*(comp[comp.length-1] === "-" ? -1 : 1);
+        });
       } else {
-        this.models.sort(boundComparator);
+        var boundComparator = _.bind(comp, this);
+        if (comp.length === 1) {
+          this.models = this.sortBy(boundComparator);
+        } else {
+          this.models.sort(boundComparator);
+        }
       }
       if (!options.silent) this.trigger('reset', this, options);
       return this;
