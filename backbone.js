@@ -1202,6 +1202,12 @@
     // to populate its element (`this.el`), with the appropriate HTML. The
     // convention is for **render** to always return `this`.
     render: function() {
+      if(this.emptyBeforeRender) this.$el.empty();
+      if(this.beforeRender) this.beforeRender();
+      if (this.template && this.model) {
+        this.$el.html(this.template(this.model.toJSON()));
+      }
+      if(this.afterRender) this.afterRender();
       return this;
     },
 
