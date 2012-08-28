@@ -1425,9 +1425,9 @@
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
-    function Prototype(){ this.constructor = child; };
-    Prototype.prototype = parent.prototype;
-    child.prototype = new Prototype;
+    function Surrogate(){ this.constructor = child; };
+    Surrogate.prototype = parent.prototype;
+    child.prototype = new Surrogate;
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
