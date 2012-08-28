@@ -311,6 +311,7 @@
       <li>– <a href="#Model-changedAttributes">changedAttributes</a></li>
       <li>– <a href="#Model-previous">previous</a></li>
       <li>– <a href="#Model-previousAttributes">previousAttributes</a></li>
+      <li>– <a href="#Model-dispose">dispose</a></li>
     </ul>
 
     <a class="toc_title" href="#Collection">
@@ -344,6 +345,7 @@
       <li>– <a href="#Collection-fetch">fetch</a></li>
       <li>– <a href="#Collection-reset">reset</a></li>
       <li>– <a href="#Collection-create">create</a></li>
+      <li>– <a href="#Collection-dispose">dispose</a></li>
     </ul>
 
     <a class="toc_title" href="#Router">
@@ -1338,6 +1340,13 @@ bill.set({name : "Bill Jones"});
       an error occurs.
     </p>
 
+    <p id="Model-dispose">
+      <b class="header">dispose</b><code>model.dispose()</code>
+      <br />
+      Clean up any references to the model in order to prevent unwanted latent
+      effects and memory leaks.
+    </p>
+
     <h2 id="Collection">Backbone.Collection</h2>
 
     <p>
@@ -1844,6 +1853,13 @@ var othello = NYPL.create({
   author: "William Shakespeare"
 });
 </pre>
+
+    <p id="Collection-dispose">
+      <b class="header">dispose</b><code>collection.dispose()</code>
+      <br />
+      Clean up any references to the collection in order to prevent unwanted latent
+      effects and memory leaks.
+    </p>
 
     <h2 id="Router">Backbone.Router</h2>
 
