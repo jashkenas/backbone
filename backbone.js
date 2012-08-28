@@ -429,6 +429,15 @@
       return xhr;
     },
 
+    // Clean up references to this model in order to prevent latent
+    // effects and memory leaks.
+    dispose: function() {
+      // Remove all event handlers on this module.
+      this.off();
+
+      return this;
+    },
+
     // Default URL for the model's representation on the server -- if you're
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
@@ -823,6 +832,19 @@
       return _(this.models).chain();
     },
 
+    // Clean up references to this collection in order to prevent latent
+    // effects and memory leaks.
+    dispose: function() {
+      // Empty the list silently, but do not dispose all models since
+      // they might be referenced elsewhere.
+      this.reset([], silent: true);
+
+      // Remove all event handlers on this module.
+      this.off();
+
+      return this;
+    },
+
     // Reset all internal state. Called when the collection is reset.
     _reset: function(options) {
       this.length = 0;
@@ -1209,8 +1231,8 @@
     // memory leaks.
     dispose: function() {
       this.undelegateEvents();
-      if (this.model) this.model.off(null, null, this);
-      if (this.collection) this.collection.off(null, null, this);
+      if (this.model) this.model.dispose();
+      if (this.collection) this.collection.dispose();
       return this;
     },
 
