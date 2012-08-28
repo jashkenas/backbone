@@ -823,6 +823,13 @@
       return _(this.models).chain();
     },
 
+    // Default URL for the collection's representation on the server -- if
+    // you're using Backbone's restful methods, override this to change the
+    // endpoint that will be called.
+    url: function() {
+      return getValue(this.model.prototype, 'urlRoot') || urlError();
+    },
+
     // Reset all internal state. Called when the collection is reset.
     _reset: function(options) {
       this.length = 0;

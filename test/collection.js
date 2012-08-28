@@ -689,4 +689,20 @@ $(document).ready(function() {
     collection.add({id: 1, x: 3}, {merge: true});
     deepEqual(collection.pluck('id'), [2, 1]);
   });
+
+  test("url can be implied from Model's `urlRoot`", function() {
+    var Model = Backbone.Model.extend();
+    var Collection = Backbone.Collection.extend({
+      model: Model
+    });
+    collection = new Collection;
+    raises(function() {
+      collection.url();
+    }, "raises exception when urlRoot doesn't exist");
+    Model.prototype.urlRoot = '/models';
+    ok(collection.url() === '/models', 'returns `urlRoot` when it does exist');
+    Model.prototype.urlRoot = function() { return '/models'; }
+    ok(collection.url() === '/models', 'also works for `urlRoot` functions');
+  });
+
 });
