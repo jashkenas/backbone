@@ -561,7 +561,10 @@
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
-    if (models) this.reset(models, {silent: true, parse: options.parse});
+    if (models) {
+      if (options.parse) models = this.parse(models);
+      this.reset(models, {silent: true, parse: options.parse});
+    }
   };
 
   // Define the Collection's inheritable methods.
@@ -788,14 +791,14 @@
     // collection immediately, unless `wait: true` is passed, in which case we
     // wait for the server to agree.
     create: function(model, options) {
-      var coll = this;
+      var collection = this;
       options = options ? _.clone(options) : {};
       model = this._prepareModel(model, options);
       if (!model) return false;
-      if (!options.wait) coll.add(model, options);
+      if (!options.wait) collection.add(model, options);
       var success = options.success;
       options.success = function(model, resp, options) {
-        if (options.wait) coll.add(model, options);
+        if (options.wait) collection.add(model, options);
         if (success) success(model, resp, options);
       };
       model.save(null, options);
@@ -864,11 +867,12 @@
   });
 
   // Underscore methods that we want to implement on the Collection.
-  var methods = ['forEach', 'each', 'map', 'reduce', 'reduceRight', 'find',
-    'detect', 'filter', 'select', 'reject', 'every', 'all', 'some', 'any',
-    'include', 'contains', 'invoke', 'max', 'min', 'sortBy', 'sortedIndex',
-    'toArray', 'size', 'first', 'initial', 'rest', 'last', 'without', 'indexOf',
-    'shuffle', 'lastIndexOf', 'isEmpty', 'groupBy'];
+  var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
+    'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
+    'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
+    'max', 'min', 'sortBy', 'sortedIndex', 'toArray', 'size', 'first', 'head',
+    'take', 'initial', 'rest', 'tail', 'last', 'without', 'indexOf', 'shuffle',
+    'lastIndexOf', 'isEmpty', 'groupBy'];
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
   _.each(methods, function(method) {
@@ -909,7 +913,6 @@
     //     });
     //
     route: function(route, name, callback) {
-      Backbone.history || (Backbone.history = new History);
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (!callback) callback = this[name];
       Backbone.history.route(route, _.bind(function(fragment) {
@@ -1159,6 +1162,9 @@
 
   });
 
+  // Create the default Backbone.history.
+  Backbone.history = new History;
+
   // Backbone.View
   // -------------
 
@@ -1310,14 +1316,6 @@
 
   });
 
-  // The self-propagating extend function that Backbone classes use.
-  var extend = function(protoProps, classProps) {
-    return inherits(this, protoProps, classProps);
-  };
-
-  // Set up inheritance for the model, collection, and view.
-  Model.extend = Collection.extend = Router.extend = View.extend = extend;
-
   // Backbone.sync
   // -------------
 
@@ -1411,47 +1409,44 @@
   // Helpers
   // -------
 
-  // Shared empty constructor function to aid in prototype-chain creation.
-  var ctor = function(){};
-
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
-  var inherits = function(parent, protoProps, staticProps) {
+  var extend = function(protoProps, staticProps) {
+    var parent = this;
     var child;
 
     // The constructor function for the new subclass is either defined by you
     // (the "constructor" property in your `extend` definition), or defaulted
     // by us to simply call the parent's constructor.
-    if (protoProps && protoProps.hasOwnProperty('constructor')) {
+    if (protoProps && _.has(protoProps, 'constructor')) {
       child = protoProps.constructor;
     } else {
       child = function(){ parent.apply(this, arguments); };
     }
 
-    // Inherit class (static) properties from parent.
-    _.extend(child, parent);
-
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
-    ctor.prototype = parent.prototype;
-    child.prototype = new ctor();
+    function Surrogate(){ this.constructor = child; };
+    Surrogate.prototype = parent.prototype;
+    child.prototype = new Surrogate;
 
     // Add prototype properties (instance properties) to the subclass,
     // if supplied.
     if (protoProps) _.extend(child.prototype, protoProps);
 
     // Add static properties to the constructor function, if supplied.
-    if (staticProps) _.extend(child, staticProps);
+    _.extend(child, parent, staticProps);
 
-    // Correctly set child's `prototype.constructor`.
-    child.prototype.constructor = child;
-
-    // Set a convenience property in case the parent's prototype is needed later.
+    // Set a convenience property in case the parent's prototype is needed
+    // later.
     child.__super__ = parent.prototype;
 
     return child;
   };
+
+  // Set up inheritance for the model, collection, and view.
+  Model.extend = Collection.extend = Router.extend = View.extend = extend;
 
   // Helper function to get a value from a Backbone object as a property
   // or as a function.

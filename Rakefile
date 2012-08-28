@@ -25,6 +25,7 @@ end
 
 desc "run JavaScriptLint on the source"
 task :lint do
+  check 'jsl', 'JavaScript Lint', 'http://www.javascriptlint.com/'
   system "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
 end
 
