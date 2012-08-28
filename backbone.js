@@ -743,8 +743,8 @@
       if (!comparator) throw new Error('Cannot sort a set without a comparator');
       if (typeof comparator === "string"){
         this.models.sort(function(o1,o2){
-          var attrName = comparator.replace(/\+|\-$/,"");
-          return (o2.get(attrName) > o1.get(attrName) ? -1 : 1)*(comparator[comparator.length-1] === "-" ? -1 : 1);
+          var attrName = comparator.replace(/^\+|\-/,"");
+          return (o2.get(attrName) > o1.get(attrName) ? -1 : 1)*(comparator[0] === "-" ? -1 : 1);
         });
       } else {
         var boundComparator = _.bind(comparator, this);

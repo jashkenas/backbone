@@ -46,15 +46,15 @@ $(document).ready(function() {
     equal(col.last(), a, "a should be last");
     equal(col.length, 4);
     // tests with string comparator
-    col.comparator = "label+"; // suffix "+" means ascending sort
+    col.comparator = "+label"; // prefix "+" means ascending sort
     col.sort();
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
-    col.comparator = "label-"; // suffix "-" means descending sort
+    col.comparator = "-label"; // prefix "-" means descending sort
     col.sort();
     equal(col.first(), d, "d should be first");
     equal(col.last(), a, "a should be last");
-    col.comparator = "label"; // default to ascending
+    col.comparator = "label"; // no prefix defaults to ascending
     col.sort();
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
