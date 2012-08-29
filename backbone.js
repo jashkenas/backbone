@@ -1381,7 +1381,7 @@
     };
 
     var error = options.error;
-    options.error = function(xhr, status, error) {
+    options.error = function(xhr, status, thrown) {
       if (error) error(model, xhr, options);
       model.trigger('error', model, xhr, options);
     };

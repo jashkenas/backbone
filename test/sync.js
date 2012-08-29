@@ -157,4 +157,13 @@ $(document).ready(function() {
     Backbone.sync('create', model);
   });
 
+  test("Call provided error callback on error.", 1, function() {
+    var model = new Backbone.Model;
+    model.url = '/test';
+    Backbone.sync('read', model, {
+      error: function() { ok(true); }
+    });
+    lastRequest.error();
+  });
+
 });
