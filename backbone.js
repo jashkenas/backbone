@@ -336,9 +336,7 @@
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
       };
-      options.error = Backbone.wrapError(options.error, model, options);
       return this.sync('read', this, options);
     },
 
@@ -383,11 +381,9 @@
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
       };
 
       // Finish configuring and sending the Ajax request.
-      options.error = Backbone.wrapError(options.error, model, options);
       var xhr = this.sync(this.isNew() ? 'create' : 'update', this, options);
 
       // When using `wait`, reset attributes to original values unless
@@ -415,7 +411,6 @@
       options.success = function(resp) {
         if (options.wait || model.isNew()) destroy();
         if (success) success(model, resp, options);
-        if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
       if (this.isNew()) {
@@ -423,7 +418,6 @@
         return false;
       }
 
-      options.error = Backbone.wrapError(options.error, model, options);
       var xhr = this.sync('delete', this, options);
       if (!options.wait) destroy();
       return xhr;
@@ -778,9 +772,7 @@
       options.success = function(resp, status, xhr) {
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp, options);
-        collection.trigger('sync', collection, resp, options);
       };
-      options.error = Backbone.wrapError(options.error, collection, options);
       return this.sync('read', this, options);
     },
 
@@ -1382,6 +1374,18 @@
       params.processData = false;
     }
 
+    var success = options.success;
+    options.success = function(resp, status, xhr) {
+      if (success) success(resp, status, xhr);
+      model.trigger('sync', model, resp, options);
+    };
+
+    var error = options.error;
+    options.error = function(xhr, status, error) {
+      if (error) error(model, xhr, options);
+      model.trigger('error', model, xhr, options);
+    };
+
     // Make the request, allowing the user to override any Ajax options.
     return Backbone.ajax(_.extend(params, options));
   };
@@ -1389,15 +1393,6 @@
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
   Backbone.ajax = function() {
     return Backbone.$.ajax.apply(Backbone.$, arguments);
-  };
-
-  // Wrap an optional error callback with a fallback error event.
-  Backbone.wrapError = function(onError, originalModel, options) {
-    return function(model, resp) {
-      resp = model === originalModel ? resp : model;
-      if (onError) onError(originalModel, resp, options);
-      originalModel.trigger('error', originalModel, resp, options);
-    };
   };
 
   // Helpers

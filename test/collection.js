@@ -2,6 +2,8 @@ $(document).ready(function() {
 
   var lastRequest = null;
   var sync = Backbone.sync;
+  var ajaxParams;
+  var ajax = Backbone.ajax;
 
   var a, b, c, d, e, col, otherCol;
 
@@ -22,11 +24,15 @@ $(document).ready(function() {
           model: model,
           options: options
         };
+        sync.apply(this, arguments);
       };
+
+      Backbone.ajax = function(params) { ajaxParams = params; };
     },
 
     teardown: function() {
       Backbone.sync = sync;
+      Backbone.ajax = ajax;
     }
 
   });
@@ -379,21 +385,25 @@ $(document).ready(function() {
   });
 
   test("Collection: fetch", 4, function() {
-    col.fetch();
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    collection.fetch();
     equal(lastRequest.method, 'read');
-    equal(lastRequest.model, col);
+    equal(lastRequest.model, collection);
     equal(lastRequest.options.parse, true);
 
-    col.fetch({parse: false});
+    collection.fetch({parse: false});
     equal(lastRequest.options.parse, false);
   });
 
   test("Collection: create", 4, function() {
-    var model = col.create({label: 'f'}, {wait: true});
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    var model = collection.create({label: 'f'}, {wait: true});
     equal(lastRequest.method, 'create');
     equal(lastRequest.model, model);
     equal(model.get('label'), 'f');
-    equal(model.collection, col);
+    equal(model.collection, collection);
   });
 
   test("Collection: create enforces validation", 1, function() {
@@ -524,16 +534,17 @@ $(document).ready(function() {
   });
 
   test("#714: access `model.collection` in a brand new model.", 2, function() {
-    var col = new Backbone.Collection;
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
     var Model = Backbone.Model.extend({
       set: function(attrs) {
         equal(attrs.prop, 'value');
-        equal(this.collection, col);
+        equal(this.collection, collection);
         return this;
       }
     });
-    col.model = Model;
-    col.create({prop: 'value'});
+    collection.model = Model;
+    collection.create({prop: 'value'});
   });
 
   test("#574, remove its own reference to the .models array.", 2, function() {
@@ -659,15 +670,10 @@ $(document).ready(function() {
   });
 
   test("#1412 - Trigger 'sync' event.", 2, function() {
-    var collection = new Backbone.Collection([], {
-      model: Backbone.Model.extend({
-        sync: function(method, model, options) {
-          options.success();
-        }
-      })
-    });
-    collection.sync = function(method, model, options) { options.success(); };
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
     collection.on('sync', function() { ok(true); });
+    Backbone.ajax = function(settings){ settings.success(); };
     collection.fetch();
     collection.create({id: 1});
   });
