@@ -776,24 +776,6 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
-  test("Backbone.wrapError triggers `'error'`", 18, function() {
-    var resp = {};
-    var options = {};
-    var model = new Backbone.Model();
-    model.on('error', error);
-    var callback = Backbone.wrapError(null, model, options);
-    callback(model, resp);
-    callback(resp);
-    callback = Backbone.wrapError(error, model, options);
-    callback(model, resp);
-    callback(resp);
-    function error(_model, _resp, _options) {
-      ok(model === _model);
-      ok(resp === _resp);
-      ok(options === _options);
-    }
-  });
-
   test("#1179 - isValid returns true in the absence of validate.", 1, function() {
     var model = new Backbone.Model();
     model.validate = null;
@@ -831,8 +813,8 @@ $(document).ready(function() {
 
   test("#1412 - Trigger 'sync' event.", 3, function() {
     var model = new Backbone.Model({id: 1});
-    model.sync = function(method, model, options) { options.success(); };
-    model.on('sync', function() { ok(true); });
+    model.on('sync', function(){ ok(true); });
+    Backbone.ajax = function(settings){ settings.success(); };
     model.fetch();
     model.save();
     model.destroy();
