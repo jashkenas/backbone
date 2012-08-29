@@ -472,7 +472,7 @@ $(document).ready(function() {
     equal(result, false);
     equal(model.get('a'), 100);
     equal(lastError, "Can't change admin status.");
-    equal(boundError, undefined);
+    equal(boundError, true);
   });
 
   test("Model: defaults always extend attrs (#459)", 2, function() {
@@ -776,7 +776,7 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
-  test("Backbone.wrapError triggers `'error'`", 12, function() {
+  test("Backbone.wrapError triggers `'error'`", 18, function() {
     var resp = {};
     var options = {};
     var model = new Backbone.Model();

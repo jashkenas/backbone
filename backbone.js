@@ -539,11 +539,8 @@
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;
-      if (options && options.error) {
-        options.error(this, error, options);
-      } else {
-        this.trigger('error', this, error, options);
-      }
+      if (options && options.error) options.error(this, error, options);
+      this.trigger('error', this, error, options);
       return false;
     }
 
@@ -1398,11 +1395,8 @@
   Backbone.wrapError = function(onError, originalModel, options) {
     return function(model, resp) {
       resp = model === originalModel ? resp : model;
-      if (onError) {
-        onError(originalModel, resp, options);
-      } else {
-        originalModel.trigger('error', originalModel, resp, options);
-      }
+      if (onError) onError(originalModel, resp, options);
+      originalModel.trigger('error', originalModel, resp, options);
     };
   };
 
