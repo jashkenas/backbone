@@ -18,10 +18,11 @@ $(document).ready(function() {
 
     setup: function() {
       doc = new proxy({
-        id     : '1-the-tempest',
-        title  : "The Tempest",
-        author : "Bill Shakespeare",
-        length : 123
+        id         : '1-the-tempest',
+        title      : "The Tempest",
+        author     : "Bill Shakespeare",
+        characters : ['Alonso', 'Sebastian', 'Miranda'],
+        length     : 123
       });
       collection = new klass();
       collection.add(doc);
@@ -139,9 +140,11 @@ $(document).ready(function() {
     ok(!new Backbone.Model({ 'id': -5 }).isNew(), "is false for a negative integer");
   });
 
-  test("Model: get", 2, function() {
+  test("Model: get", 4, function() {
     equal(doc.get('title'), 'The Tempest');
     equal(doc.get('author'), 'Bill Shakespeare');
+    ok(_.isEqual(doc.get('characters'), ['Alonso', 'Sebastian', 'Miranda']));
+    notEqual(doc.get('characters'), doc.attributes.characters);
   });
 
   test("Model: escape", 5, function() {
@@ -563,7 +566,7 @@ $(document).ready(function() {
     var model = new Backbone.Model({x: []});
     var a = [];
     model.set({x: a});
-    ok(model.get('x') === a);
+    ok(_.isEqual(model.get('x'), a));
   });
 
   test("unset fires change for undefined attributes", 1, function() {
