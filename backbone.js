@@ -235,7 +235,7 @@
 
     // Get the value of an attribute.
     get: function(attr) {
-      return this.attributes[attr];
+      return _.clone(this.attributes[attr]);
     },
 
     // Get the HTML-escaped value of an attribute.
