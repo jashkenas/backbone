@@ -235,7 +235,11 @@
 
     // Get the value of an attribute.
     get: function(attr) {
-      return this.attributes[attr];
+      attr = this.attributes[attr];
+      if (_.isObject(attr) || _.isArray(attr)) {
+        attr = JSON.parse(JSON.stringify(attr));
+      }
+      return attr;
     },
 
     // Get the HTML-escaped value of an attribute.
