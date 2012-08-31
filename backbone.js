@@ -739,20 +739,19 @@
     // is added.
     sort: function(options) {
       options || (options = {});
-      var comparator = this.comparator;
-      if (!comparator) throw new Error('Cannot sort a set without a comparator');
-      if (typeof comparator === "string"){
-        this.models.sort(function(o1,o2){
-          var attrName = comparator.replace(/^\+|\-/,"");
-          return (o2.get(attrName) > o1.get(attrName) ? -1 : 1)*(comparator[0] === "-" ? -1 : 1);
-        });
-      } else {
-        var boundComparator = _.bind(comparator, this);
-        if (comparator.length === 1) {
-          this.models = this.sortBy(boundComparator);
-        } else {
-          this.models.sort(boundComparator);
+      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
+      if (typeof this.comparator === "string"){
+        var compstr = this.comparator;
+        this.comparator = function(o1,o2){
+          var attrName = compstr.replace(/^\+|\-/,"");
+          return (o2.get(attrName) > o1.get(attrName) ? -1 : 1)*(compstr[0] === "-" ? -1 : 1);
         }
+      }
+      var boundComparator = _.bind(this.comparator, this);
+      if (this.comparator.length === 1) {
+        this.models = this.sortBy(boundComparator);
+      } else {
+        this.models.sort(boundComparator);
       }
       if (!options.silent) this.trigger('reset', this, options);
       return this;
