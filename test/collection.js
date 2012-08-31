@@ -54,26 +54,18 @@ $(document).ready(function() {
   });
 
   test("Collection: new and parse", 3, function() {
-    var MyCol = Backbone.Collection.extend({
-      // only save the models that have an even value.
+    var Collection = Backbone.Collection.extend({
       parse : function(data) {
-        var onlyEven = [];
-        _.each(data, function(datum) {
-          if (datum.a % 2 === 0) {
-            onlyEven.push(datum);
-          }
+        return _.filter(data, function(datum) {
+          return datum.a % 2 === 0;
         });
-
-        return onlyEven;
       }
     });
-    anotherCol  = new MyCol([
-      { a : 1 },{ a : 2 },{ a : 3 },{ a : 4 }
-    ], { parse : true });
-
-    equal(anotherCol.length, 2);
-    equal(anotherCol.first().get('a'), 2)
-    equal(anotherCol.last().get('a'), 4);
+    var models = [{a: 1}, {a: 2}, {a: 3}, {a: 4}];
+    var collection = new Collection(models, {parse: true});
+    strictEqual(collection.length, 2);
+    strictEqual(collection.first().get('a'), 2);
+    strictEqual(collection.last().get('a'), 4);
   });
 
   test("Collection: get, getByCid", 3, function() {
