@@ -1,15 +1,12 @@
 $(document).ready(function() {
 
-  var lastRequest = null;
-  var sync = Backbone.sync;
-  var ajaxParams;
-  var ajax = Backbone.ajax;
-
   var a, b, c, d, e, col, otherCol;
 
-  module("Backbone.Collection", {
+  module("Backbone.Collection", _.extend(new Environment, {
 
     setup: function() {
+      Environment.prototype.setup.apply(this, arguments);
+
       a         = new Backbone.Model({id: 3, label: 'a'});
       b         = new Backbone.Model({id: 2, label: 'b'});
       c         = new Backbone.Model({id: 1, label: 'c'});
@@ -17,25 +14,9 @@ $(document).ready(function() {
       e         = null;
       col       = new Backbone.Collection([a,b,c,d]);
       otherCol  = new Backbone.Collection();
-
-      Backbone.sync = function(method, model, options) {
-        lastRequest = {
-          method: method,
-          model: model,
-          options: options
-        };
-        sync.apply(this, arguments);
-      };
-
-      Backbone.ajax = function(params) { ajaxParams = params; };
-    },
-
-    teardown: function() {
-      Backbone.sync = sync;
-      Backbone.ajax = ajax;
     }
 
-  });
+  }));
 
   test("Collection: new and sort", 7, function() {
     equal(col.first(), a, "a should be first");
@@ -380,20 +361,20 @@ $(document).ready(function() {
     var collection = new Backbone.Collection;
     collection.url = '/test';
     collection.fetch();
-    equal(lastRequest.method, 'read');
-    equal(lastRequest.model, collection);
-    equal(lastRequest.options.parse, true);
+    equal(this.syncArgs.method, 'read');
+    equal(this.syncArgs.model, collection);
+    equal(this.syncArgs.options.parse, true);
 
     collection.fetch({parse: false});
-    equal(lastRequest.options.parse, false);
+    equal(this.syncArgs.options.parse, false);
   });
 
   test("Collection: create", 4, function() {
     var collection = new Backbone.Collection;
     collection.url = '/test';
     var model = collection.create({label: 'f'}, {wait: true});
-    equal(lastRequest.method, 'create');
-    equal(lastRequest.model, model);
+    equal(this.syncArgs.method, 'create');
+    equal(this.syncArgs.model, model);
     equal(model.get('label'), 'f');
     equal(model.collection, collection);
   });
