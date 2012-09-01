@@ -2330,7 +2330,7 @@ ui.Chapter = Backbone.View.extend({
 <pre>
 var Bookmark = Backbone.View.extend({
   render: function() {
-    this.$el.html(this.template(this.model.toJSON()));
+    this.$el.html(_.template(this.template, this.model.toJSON()));
     return this;
   }
 });
