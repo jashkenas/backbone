@@ -1434,7 +1434,7 @@
     return child;
   };
 
-  // Set up inheritance for the model, collection, and view.
+  // Set up inheritance for the model, collection, router, and view.
   Model.extend = Collection.extend = Router.extend = View.extend = extend;
 
   // Throw an error when a URL is needed, and none is supplied.
