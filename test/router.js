@@ -344,7 +344,7 @@ $(document).ready(function() {
       history: {
         pushState: function(state, title, url) {},
         replaceState: function(state, title, url) {
-          strictEqual(url, 'http://example.com/root/fragment');
+          strictEqual(url, '/root/fragment');
         }
       }
     });
@@ -362,6 +362,38 @@ $(document).ready(function() {
     Backbone.history.start({
       pushState: true,
       root: '/root'
+    });
+  });
+
+  test("Normalize root - leading slash.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){}
+      }
+    });
+    Backbone.history.start({root: 'root'});
+    strictEqual(Backbone.history.root, '/root/');
+  });
+
+  test("Transition from hashChange to pushState.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root#x/y');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(state, title, url){
+          strictEqual(url, '/root/x/y');
+        }
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true
     });
   });
 

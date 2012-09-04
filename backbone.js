@@ -965,8 +965,11 @@
     this.history = options && options.history || root.history;
   };
 
-  // Cached regex for cleaning leading hashes and slashes .
+  // Cached regex for cleaning leading hashes and slashes.
   var routeStripper = /^[#\/]/;
+
+  // Cached regex for stripping a leading and trailing slash.
+  var rootStripper = /^\/|\/$/g;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
@@ -997,7 +1000,7 @@
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
           fragment = this.location.pathname;
-          var root = this.options.root.replace(trailingSlash, '');
+          var root = this.root.replace(trailingSlash, '');
           if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
         } else {
           fragment = this.getHash();
@@ -1015,6 +1018,7 @@
       // Figure out the initial configuration. Do we need an iframe?
       // Is pushState desired ... is it available?
       this.options          = _.extend({}, {root: '/'}, this.options, options);
+      this.root             = this.options.root;
       this._wantsHashChange = this.options.hashChange !== false;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
@@ -1022,8 +1026,8 @@
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
-      // Normalize root to always include trailing slash
-      if (!trailingSlash.test(this.options.root)) this.options.root += '/';
+      // Normalize root to always include a leading and trailing slash.
+      this.root = '/' + this.root.replace(rootStripper, '') + '/';
 
       if (oldIE && this._wantsHashChange) {
         this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
@@ -1044,13 +1048,13 @@
       // opened by a non-pushState browser.
       this.fragment = fragment;
       var loc = this.location;
-      var atRoot = (loc.pathname.replace(/[^/]$/, '$&/') === this.options.root) && !loc.search;
+      var atRoot = (loc.pathname.replace(/[^/]$/, '$&/') === this.root) && !loc.search;
 
       // If we've started off with a route from a `pushState`-enabled browser,
       // but we're currently in a browser that doesn't support it...
       if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
-        this.location.replace(this.options.root + this.location.search + '#' + this.fragment);
+        this.location.replace(this.root + this.location.search + '#' + this.fragment);
         // Return immediately as browser will do redirect to new url
         return true;
 
@@ -1058,7 +1062,7 @@
       // in a browser where it could be `pushState`-based instead...
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
         this.fragment = this.getHash().replace(routeStripper, '');
-        this.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
+        this.history.replaceState({}, document.title, this.root + this.fragment);
       }
 
       if (!this.options.silent) return this.loadUrl();
@@ -1117,7 +1121,7 @@
       var frag = (fragment || '').replace(routeStripper, '');
       if (this.fragment === frag) return;
       this.fragment = frag;
-      var url = (frag.indexOf(this.options.root) !== 0 ? this.options.root : '') + frag;
+      var url = (frag.indexOf(this.root) !== 0 ? this.root : '') + frag;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
