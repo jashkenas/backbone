@@ -1027,7 +1027,13 @@
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
       // Normalize root to always include a leading and trailing slash.
-      this.root = '/' + this.root.replace(rootStripper, '') + '/';
+      // (But don't end up with '//' if stripped root is empty)
+      var strippedRoot = this.root.replace(rootStripper, '');
+      if (strippedRoot) {
+        this.root = '/' + this.root.replace(rootStripper, '') + '/';
+      } else {
+        this.root = '/';
+      }
 
       if (oldIE && this._wantsHashChange) {
         this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;

@@ -397,4 +397,37 @@ $(document).ready(function() {
     });
   });
 
+  test("#1619: Router: Normalize empty root", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){}
+      }
+    });
+    Backbone.history.start({root: ''});
+    strictEqual(Backbone.history.root, '/');
+  });
+
+  test("#1619: Router: nagivate with empty root", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/fragment');
+        }
+      }
+    });
+    Backbone.history.start({
+      pushState: true,
+      root: '',
+      hashChange: false
+    });
+    Backbone.history.navigate('fragment');
+  });
+
 });
