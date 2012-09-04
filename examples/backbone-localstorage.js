@@ -1,6 +1,17 @@
+/**
+ * Backbone localStorage Adapter
+ * https://github.com/jeromegn/Backbone.localStorage
+ */
+
+(function() {
 // A simple module to replace `Backbone.sync` with *localStorage*-based
 // persistence. Models are given GUIDS, and saved into a JSON object. Simple
 // as that.
+
+// Hold reference to Underscore.js and Backbone.js in the closure in order
+// to make things work even if they are removed from the global namespace
+var _ = this._;
+var Backbone = this.Backbone;
 
 // Generate four random hex digits.
 function S4() {
@@ -14,63 +25,85 @@ function guid() {
 
 // Our Store is represented by a single JS object in *localStorage*. Create it
 // with a meaningful name, like the name you'd give a table.
-var Store = function(name) {
+// window.Store is deprectated, use Backbone.LocalStorage instead
+Backbone.LocalStorage = window.Store = function(name) {
   this.name = name;
-  var store = localStorage.getItem(this.name);
-  this.data = (store && JSON.parse(store)) || {};
+  var store = this.localStorage().getItem(this.name);
+  this.records = (store && store.split(",")) || [];
 };
 
-_.extend(Store.prototype, {
+_.extend(Backbone.LocalStorage.prototype, {
 
   // Save the current state of the **Store** to *localStorage*.
   save: function() {
-    localStorage.setItem(this.name, JSON.stringify(this.data));
+    this.localStorage().setItem(this.name, this.records.join(","));
   },
 
   // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
   // have an id of it's own.
   create: function(model) {
-    if (!model.id) model.set(model.idAttribute, guid());
-    this.data[model.id] = model;
+    if (!model.id) {
+        model.id = guid();
+        model.set(model.idAttribute, model.id);
+    }
+    this.localStorage().setItem(this.name+"-"+model.id, JSON.stringify(model));
+    this.records.push(model.id.toString());
     this.save();
-    return model;
+    return model.toJSON();
   },
 
   // Update a model by replacing its copy in `this.data`.
   update: function(model) {
-    this.data[model.id] = model;
-    this.save();
-    return model;
+    this.localStorage().setItem(this.name+"-"+model.id, JSON.stringify(model));
+    if (!_.include(this.records, model.id.toString())) this.records.push(model.id.toString()); this.save();
+    return model.toJSON();
   },
 
   // Retrieve a model from `this.data` by id.
   find: function(model) {
-    return this.data[model.id];
+    return JSON.parse(this.localStorage().getItem(this.name+"-"+model.id));
   },
 
   // Return the array of all models currently in storage.
   findAll: function() {
-    return _.values(this.data);
+    return _(this.records).chain()
+        .map(function(id){return JSON.parse(this.localStorage().getItem(this.name+"-"+id));}, this)
+        .compact()
+        .value();
   },
 
   // Delete a model from `this.data`, returning it.
   destroy: function(model) {
-    delete this.data[model.id];
+    this.localStorage().removeItem(this.name+"-"+model.id);
+    this.records = _.reject(this.records, function(record_id){return record_id == model.id.toString();});
     this.save();
     return model;
+  },
+
+  localStorage: function() {
+      return localStorage;
   }
 
 });
 
-// Override `Backbone.sync` to use delegate to the model or collection's
+// localSync delegate to the model or collection's
 // *localStorage* property, which should be an instance of `Store`.
-Backbone.sync = function(method, model, options) {
-
-  var resp;
+// window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStorage.sync instead
+Backbone.LocalStorage.sync = window.Store.sync = Backbone.localSync = function(method, model, options, error) {
   var store = model.localStorage || model.collection.localStorage;
 
+  // Backwards compatibility with Backbone <= 0.3.3
+  if (typeof options == 'function') {
+    options = {
+      success: options,
+      error: error
+    };
+  }
+
+  var resp;
+
   switch (method) {
-    case "read":    resp = model.id ? store.find(model) : store.findAll(); break;
+    case "read":    resp = model.id != undefined ? store.find(model) : store.findAll(); break;
     case "create":  resp = store.create(model);                            break;
     case "update":  resp = store.update(model);                            break;
     case "delete":  resp = store.destroy(model);                           break;
@@ -82,3 +115,22 @@ Backbone.sync = function(method, model, options) {
     options.error("Record not found");
   }
 };
+
+Backbone.ajaxSync = Backbone.sync;
+
+Backbone.getSyncMethod = function(model) {
+	if(model.localStorage || (model.collection && model.collection.localStorage))
+	{
+		return Backbone.localSync;
+	}
+
+	return Backbone.ajaxSync;
+};
+
+// Override 'Backbone.sync' to default to localSync,
+// the original 'Backbone.sync' is still available in 'Backbone.ajaxSync'
+Backbone.sync = function(method, model, options, error) {
+	return Backbone.getSyncMethod(model).apply(this, [method, model, options, error]);
+};
+
+})();
