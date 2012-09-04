@@ -430,4 +430,23 @@ $(document).ready(function() {
     Backbone.history.navigate('fragment');
   });
 
+  test("Transition from pushState to hashChange.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root/x/y?a=b');
+    location.replace = function(url) {
+      strictEqual(url, '/root/?a=b#x/y');
+    };
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: null,
+        replaceState: null
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true
+    });
+  });
+
 });
