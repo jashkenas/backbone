@@ -18,8 +18,10 @@
   // restored later on, if `noConflict` is used.
   var previousBackbone = root.Backbone;
 
-  // Create a local reference to splice.
-  var splice = Array.prototype.splice;
+  // Create a local reference to array methods.
+  var ArrayProto = Array.prototype;
+  var slice = ArrayProto.slice;
+  var splice = ArrayProto.splice;
 
   // The top-level namespace. All public Backbone classes and modules will
   // be attached to this. Exported for both CommonJS and the browser.
@@ -866,7 +868,9 @@
   // Mix in each Underscore method as a proxy to `Collection#models`.
   _.each(methods, function(method) {
     Collection.prototype[method] = function() {
-      return _[method].apply(_, [this.models].concat(_.toArray(arguments)));
+      var args = slice.call(arguments);
+      args.unshift(this.models);
+      return _[method].apply(_, args);
     };
   });
 
