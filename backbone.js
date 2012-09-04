@@ -968,8 +968,8 @@
   // Cached regex for cleaning leading hashes and slashes.
   var routeStripper = /^[#\/]/;
 
-  // Cached regex for stripping a leading and trailing slash.
-  var rootStripper = /^\/|\/$/g;
+  // Cached regex for stripping leading and trailing slashes.
+  var rootStripper = /^\/+|\/+$/g;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
@@ -1027,13 +1027,7 @@
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
       // Normalize root to always include a leading and trailing slash.
-      // (But don't end up with '//' if stripped root is empty)
-      var strippedRoot = this.root.replace(rootStripper, '');
-      if (strippedRoot) {
-        this.root = '/' + this.root.replace(rootStripper, '') + '/';
-      } else {
-        this.root = '/';
-      }
+      this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
       if (oldIE && this._wantsHashChange) {
         this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
