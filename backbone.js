@@ -224,7 +224,7 @@
     initialize: function(){},
 
     // Return a copy of the model's `attributes` object.
-    toJSON: function(options) {
+    toJSON: function() {
       return _.clone(this.attributes);
     },
 
@@ -571,8 +571,8 @@
 
     // The JSON representation of a Collection is an array of the
     // models' attributes.
-    toJSON: function(options) {
-      return this.map(function(model){ return model.toJSON(options); });
+    toJSON: function() {
+      return this.map(function(model){ return model.toJSON(); });
     },
 
     // Proxy `Backbone.sync` by default.
