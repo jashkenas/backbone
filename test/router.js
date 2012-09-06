@@ -1,6 +1,7 @@
 $(document).ready(function() {
 
   var router = null;
+  var stoppedRouter = null;
   var location = null;
   var lastRoute = null;
   var lastArgs = [];
@@ -43,6 +44,7 @@ $(document).ready(function() {
       location = new Location('http://example.com');
       Backbone.history = new Backbone.History({location: location});
       router = new Router({testing: 101});
+      stoppedRouter = new StoppingRouter();
       Backbone.history.interval = 9;
       Backbone.history.start({pushState: false});
       lastRoute = null;
@@ -124,6 +126,20 @@ $(document).ready(function() {
       this.anything = whatever;
     }
 
+  });
+
+  var StoppingRouter = Backbone.Router.extend({
+    routes: {
+      "stopped": "stopped"
+    },
+
+    initialize: function(){
+      this.stoppedWasCalled = false;
+    },
+
+    stopped: function(){
+      this.stoppedWasCalled = true;
+    }
   });
 
   test("initialize", 1, function() {
@@ -449,4 +465,15 @@ $(document).ready(function() {
     });
   });
 
+  test("Stop a router.", 1, function(){
+    Backbone.history.stop();
+    Backbone.history.start();
+
+    stoppedRouter.stop();
+
+    location.replace('http://example.com#stopped');
+    Backbone.history.checkUrl();
+
+    strictEqual(stoppedRouter.stoppedWasCalled, false);
+  });
 });
