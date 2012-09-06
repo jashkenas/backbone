@@ -128,9 +128,9 @@
     },
 
     // Bind an event like `on`, but unbind the event following the first trigger.
-	  once: function(events, callback, context) {
+    once: function(events, callback, context) {
       // Bind the original events.
-		  this.on(events, callback, context);
+      this.on(events, callback, context);
 
       // Bind a new event immediately preceeding the original to unbind the original once called.
       this.on(events, function unbind() {
@@ -139,7 +139,7 @@
       }, this);
 
       return this;
-	  },
+    },
 
     // Trigger one or many events, firing all bound callbacks. Callbacks are
     // passed the same arguments as `trigger` is, apart from the event name
