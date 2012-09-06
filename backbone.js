@@ -906,7 +906,7 @@
     //     });
     //
     route: function(route, name, callback) {
-      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      if (!_.isRegExp(route)) route = routeToRegExp(route);
       if (!callback) callback = this[name];
       Backbone.history.route(route, _.bind(function(fragment) {
         var args = this._extractParameters(route, fragment);
@@ -922,6 +922,14 @@
       Backbone.history.navigate(fragment, options);
     },
 
+    // Remove all routes and handler for this router, from Backbone.history.
+    stop: function(){
+      if (!this.routes) return;
+      for (var route in this.routes) {
+        Backbone.history.removeRoute(route);
+      }
+    },
+
     // Bind all defined routes to `Backbone.history`. We have to reverse the
     // order of the routes here to support behavior where the most general
     // routes can be defined at the bottom of the route map.
@@ -934,15 +942,6 @@
       for (var i = 0, l = routes.length; i < l; i++) {
         this.route(routes[i][0], routes[i][1], this[routes[i][1]]);
       }
-    },
-
-    // Convert a route string into a regular expression, suitable for matching
-    // against the current location hash.
-    _routeToRegExp: function(route) {
-      route = route.replace(escapeRegExp, '\\$&')
-                   .replace(namedParam, '([^\/]+)')
-                   .replace(splatParam, '(.*?)');
-      return new RegExp('^' + route + '$');
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
@@ -1080,6 +1079,20 @@
     // may override previous routes.
     route: function(route, callback) {
       this.handlers.unshift({route: route, callback: callback});
+    },
+
+    // Removes a route from the route configuration, stopping it
+    removeRoute: function(routePath){
+      var index;
+
+      var routeConfig = _.find(this.handlers, function(routeConfig){ 
+        var routeRegEx = routeToRegExp(routePath);
+        return routeConfig.route.source === routeRegEx.source;
+      });
+
+      if (routeConfig){
+        this.handlers = _.without(this.handlers, routeConfig);
+      }
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -1448,6 +1461,15 @@
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
     throw new Error('A "url" property or function must be specified');
+  };
+
+  // Convert a route string into a regular expression, suitable for matching
+  // against the current location hash.
+  routeToRegExp = function(route) {
+    route = route.replace(escapeRegExp, '\\$&')
+                 .replace(namedParam, '([^\/]+)')
+                 .replace(splatParam, '(.*?)');
+    return new RegExp('^' + route + '$');
   };
 
 }).call(this);
