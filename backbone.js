@@ -127,15 +127,23 @@
       return this;
     },
 
-    // Bind an event like bind(), but unbind the callback after the first time
-    // its called.
-	  once : function(ev, callback, context) {
-		  var bindCallback = _.bind(function() {
-			  this.unbind(ev, bindCallback);
-			  callback.apply(context || this, arguments);
-		  }, this);
+    // Bind an event like `on`, but unbind the event following the first trigger.
+	  once: function(events, callback, context) {
+      // Ensure proper context.
+      context = context || this;
 
-		  this.bind(ev, bindCallback);
+      // Save the unbind function reference to allow for specific unbinding.
+      var unbind = function() {
+        // Remove the original event.
+        this.off(events, callback, context);
+        // Remove the watcher event.
+        this.off(events, unbind, context);
+      };
+
+      // Bind the original event.
+		  this.on(events, callback, context);
+      // Unbind the previous event and this after it is invoked.
+      this.on(events, unbind, context);
 	  },
 
     // Trigger one or many events, firing all bound callbacks. Callbacks are
