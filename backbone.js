@@ -135,8 +135,8 @@
       // Bind a new event immediately preceeding the original to unbind the original once called.
       this.on(events, function unbind() {
         // Remove the original event and the cleanup event.
-        this.off(events, callback, context).off(events, unbind, context);
-      }, context);
+        this.off(events, callback, context).off(events, unbind);
+      }, this);
 
       return this;
 	  },
