@@ -129,21 +129,16 @@
 
     // Bind an event like `on`, but unbind the event following the first trigger.
 	  once: function(events, callback, context) {
-      // Ensure proper context.
-      context = context || this;
-
-      // Save the unbind function reference to allow for specific unbinding.
-      var unbind = function() {
-        // Remove the original event.
-        this.off(events, callback, context);
-        // Remove the watcher event.
-        this.off(events, unbind, context);
-      };
-
-      // Bind the original event.
+      // Bind the original events.
 		  this.on(events, callback, context);
-      // Unbind the previous event and this after it is invoked.
-      this.on(events, unbind, context);
+
+      // Bind a new event immediately preceeding the original to unbind the original once called.
+      this.on(events, function unbind() {
+        // Remove the original event and the cleanup event.
+        this.off(events, callback, context).off(events, unbind, context);
+      }, context);
+
+      return this;
 	  },
 
     // Trigger one or many events, firing all bound callbacks. Callbacks are
