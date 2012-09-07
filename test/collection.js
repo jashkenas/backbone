@@ -670,7 +670,7 @@ $(document).ready(function() {
   });
 
   test("#1604 - Account for model removal during add.", 0, function() {
-    collection = new Backbone.Collection([{}]);
+    var collection = new Backbone.Collection([{}]);
     collection.on('add', function() {
       collection.at(0).destroy();
     });
