@@ -816,4 +816,29 @@ $(document).ready(function() {
     strictEqual(model.save(), false);
   });
 
+  test("Test fallback on model get", 8, function() {
+    var model = new Backbone.Model()
+    model.set({
+      x: 1234,
+      y: undefined,
+      j: null,
+      a: 'String'
+    });
+
+    strictEqual(model.get('x'), 1234);
+    strictEqual(model.get('x', 'fallback'), 1234);
+
+    strictEqual(model.get('y'), undefined);
+    strictEqual(model.get('y', 'fallback'), 'fallback');
+
+    strictEqual(model.get('j'), null);
+    strictEqual(model.get('j', 'hello'), 'hello');
+
+    strictEqual(model.get('a', 'Boo'), 'String');
+
+    strictEqual(model.get('hello', 'world'), 'world');
+
+
+  });
+
 });
