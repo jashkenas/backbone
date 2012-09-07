@@ -828,10 +828,14 @@ new Book({
     </p>
 
     <p id="Model-get">
-      <b class="header">get</b><code>model.get(attribute)</code>
+      <b class="header">get</b><code>model.get(attribute, [fallback])</code>
       <br />
       Get the current value of an attribute from the model. For example:
       <tt>note.get("title")</tt>
+      <br />
+      <br />
+      Pass a fallback so when the return of the property is either undefined or null
+      <tt>note.get("readCount", "1")</tt>
     </p>
 
     <p id="Model-set">

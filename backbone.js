@@ -236,8 +236,8 @@
     },
 
     // Get the value of an attribute.
-    get: function(attr) {
-      return this.attributes[attr];
+    get: function(attr, fallback) {
+      return ((this.attributes[attr] != null) || (_.isUndefined(fallback))) ? this.attributes[attr] : fallback;
     },
 
     // Get the HTML-escaped value of an attribute.
