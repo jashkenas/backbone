@@ -1,3 +1,5 @@
 raw
 *.sw?
 .DS_Store
+zz_3rd_party
+.gitignore
