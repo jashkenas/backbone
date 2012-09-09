@@ -237,6 +237,11 @@
 
     // Get the value of an attribute.
     get: function(attr) {
+      if( _.isArray( attr ) ){
+        var tmp = {}, that = this;
+        _.map(attr, function(attribute){ tmp[attribute] = that.attributes[attribute]; });
+        return tmp;
+      }
       return this.attributes[attr];
     },
 
@@ -718,10 +723,15 @@
 
     // Return models with matching attributes. Useful for simple cases of `filter`.
     where: function(attrs) {
-      if (_.isEmpty(attrs)) return [];
+      if( _.isFunction( attrs) ){
+        return this.filter(function(model) {
+          return attrs(model);
+        });
+      }
+      if (_.isEmpty(attrs)){ return []; }
       return this.filter(function(model) {
         for (var key in attrs) {
-          if (attrs[key] !== model.get(key)) return false;
+          if (attrs[key] !== model.get(key)){ return false; }
         }
         return true;
       });
