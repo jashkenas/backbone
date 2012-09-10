@@ -1442,8 +1442,28 @@
     return child;
   };
 
+  var include = function(props) {
+    var parent = this;
+
+    // Loop through each of the properties and add them to the prototype
+    // if they don't already exist on the object
+    _(props).each(function(value, key){
+      if( key === 'included' ||  parent.prototype[key] ) return;
+      parent.prototype[key] = value;
+    });
+
+    // Call the callback function to give the mixin the ability to modify
+    // the object that we're mixing into.
+    if( typeof props.included === 'function' ) {
+      props.included.call(this);
+    }
+  };
+
   // Set up inheritance for the model, collection, router, and view.
   Model.extend = Collection.extend = Router.extend = View.extend = extend;
+
+  // Set up mixin ability
+  Model.include = Collection.include = Router.include = View.include = include;
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
