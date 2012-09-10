@@ -1,4 +1,4 @@
-$(document).ready(function() {
+ $(document).ready(function() {
 
   var a, b, c, d, e, col, otherCol;
 
@@ -668,4 +668,24 @@ $(document).ready(function() {
     collection.add({id: 1, x: 3}, {merge: true});
     deepEqual(collection.pluck('id'), [2, 1]);
   });
+
+  test("mixin properties from an object", function() {
+    var TestCollection = Backbone.Collection.extend();
+    var mixin = {
+      foo: true,
+      included: function(){
+        this.bar = true;
+        this.prototype.initialize = function(){
+          this.raz = true;
+        };
+      }
+    };
+    TestCollection.include(mixin);
+    equal(TestCollection.prototype.foo, true);
+    equal(TestCollection.bar, true);
+    equal(TestCollection.prototype.included, undefined);
+    var collection = new TestCollection();
+    equal(collection.raz, true);
+  });
+
 });
