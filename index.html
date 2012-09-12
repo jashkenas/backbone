@@ -1610,7 +1610,8 @@ var book = Library.get(110);
       <li>
         Finally the comparator can also be a <b>string</b> containing the name of the model
         attribute we wish to sort by. If you wish the sort to be descending, prepend the
-        comparator string with a <tt>-</tt> character.
+        comparator string with a <tt>-</tt> character. The collection will automatically 
+        resort itself whenever a model changes the attribute.
       </li>
     </ul>
 
@@ -1659,8 +1660,9 @@ alert(chapters.pluck('title'));
 
     <p class="warning">
       Collections with a comparator will not automatically re-sort if you
-      later change model attributes, so you may wish to call <tt>sort</tt> after
-      changing model attributes that would affect the order.
+      later change model attributes (except for when the comparator was
+      set as a string value with an attribute name), so you may wish to call
+      <tt>sort</tt> after changing model attributes that would affect the order.
     </p>
 
     <p id="Collection-sort">
