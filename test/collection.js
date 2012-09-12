@@ -668,4 +668,16 @@ $(document).ready(function() {
     collection.add({id: 1, x: 3}, {merge: true});
     deepEqual(collection.pluck('id'), [2, 1]);
   });
+
+  test("#1587 - set sort option.", function() {
+    var collection = new Backbone.Collection([
+      {x: 1},
+      {x: 2}
+    ]);
+    collection.comparator = function(model){ return model.get('x'); };
+    collection.at(0).set({x: 3});
+    equal(collection.at(0).get('x'), 3);
+    collection.at(0).set({x: 4}, {sort: true});
+    equal(collection.at(0).get('x'), 2);
+  });
 });
