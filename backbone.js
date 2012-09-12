@@ -635,8 +635,9 @@
       if (this.comparator && options.at == null) this.sort({silent: true});
 
       if (options.silent) return this;
-      for (i = 0, length = this.models.length; i < length; i++) {
-        if (!cids[(model = this.models[i]).cid]) continue;
+      var clone = this.models.slice();
+      for (i = 0, length = clone.length; i < length; i++) {
+        if (!cids[(model = clone[i]).cid]) continue;
         options.index = i;
         model.trigger('add', model, this, options);
       }

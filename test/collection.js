@@ -668,4 +668,25 @@ $(document).ready(function() {
     collection.add({id: 1, x: 3}, {merge: true});
     deepEqual(collection.pluck('id'), [2, 1]);
   });
+
+  test("#1604 - Account for model removal during add.", 0, function() {
+    var collection = new Backbone.Collection([{}]);
+    collection.on('add', function() {
+      collection.at(0).destroy();
+    });
+    collection.add({}, {at: 0});
+  });
+
+  test("#1638 - sort on add triggers correctly.", function() {
+    var collection = new Backbone.Collection;
+    collection.comparator = function(model) { return model.get('x'); };
+    var added = [];
+    collection.on('add', function(model) {
+      model.set({x: 3});
+      collection.sort();
+      added.push(model.id);
+    });
+    collection.add([{id: 1, x: 1}, {id: 2, x: 2}]);
+    deepEqual(added, [1, 2]);
+  });
 });
