@@ -31,7 +31,7 @@ $(document).ready(function() {
 
   });
 
-  test("Collection: new and sort", 15, function() {
+  test("Collection: new and sort", 13, function() {
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
     col.comparator = function(a, b) {
@@ -58,10 +58,6 @@ $(document).ready(function() {
     col.sort();
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
-    a.set("label","e"); // should resort when sorting attr changes
-    equal(col.first(), b, "b should be first");
-    equal(col.last(), a, "a (now with label 'e') should be last");
-    a.set("label",a); // clean up for later tests
   });
 
   test("Collection: new and parse", 3, function() {
