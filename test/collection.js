@@ -61,6 +61,7 @@ $(document).ready(function() {
     a.set("label","e"); // should resort when sorting attr changes
     equal(col.first(), b, "b should be first");
     equal(col.last(), a, "a (now with label 'e') should be last");
+    a.set("label",a); // clean up for later tests
   });
 
   test("Collection: new and parse", 3, function() {
