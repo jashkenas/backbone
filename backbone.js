@@ -848,6 +848,10 @@
     _onModelEvent: function(event, model, collection, options) {
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
+      // `collection` is the `options` object for the `change` event
+      if (event === 'change' && collection && collection.sort) {
+        if (this.comparator) this.sort();
+      }
       if (model && event === 'change:' + model.idAttribute) {
         delete this._byId[model.previous(model.idAttribute)];
         if (model.id != null) this._byId[model.id] = model;
