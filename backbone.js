@@ -742,6 +742,9 @@
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
       if (typeof this.comparator === "string"){
         var compstr = this.comparator, attrName = compstr.replace(/^\+|\-/,"");
+        this.on("change:"+attrName,function(){
+          this.sort();
+        },this);
         this.comparator = function(o1,o2){
           return (o2.get(attrName) > o1.get(attrName) ? -1 : 1)*(compstr[0] === "-" ? -1 : 1);
         }
