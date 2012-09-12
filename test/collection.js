@@ -668,4 +668,12 @@ $(document).ready(function() {
     collection.add({id: 1, x: 3}, {merge: true});
     deepEqual(collection.pluck('id'), [2, 1]);
   });
+
+  test("#1604 - Account for model removal during add.", 0, function() {
+    var collection = new Backbone.Collection([{}]);
+    collection.on('add', function() {
+      collection.at(0).destroy();
+    });
+    collection.add({}, {at: 0});
+  });
 });
