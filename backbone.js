@@ -442,10 +442,10 @@
 
     // Create a new model with identical attributes to this one.
     clone: function() {
-      var attrs = this.attributes;
-  		attrs[this.idAttribute] = null;
+      var clonedModel = new this.constructor(attrs);
+      clonedModel[this.model.idAttribute] = null;
 
-      return new this.constructor(attrs);
+      return clonedModel;
     },
 
     // A model is new if it has never been saved to the server, and lacks an id.
