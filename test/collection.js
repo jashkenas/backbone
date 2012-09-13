@@ -231,7 +231,7 @@ $(document).ready(function() {
     equal(col.indexOf(tom), 2);
   });
 
-  test("comparator that depends on `this`", 1, function() {
+  test("comparator that depends on `this`", 2, function() {
     var col = new Backbone.Collection;
     col.negative = function(num) {
       return -num;
@@ -240,7 +240,12 @@ $(document).ready(function() {
       return this.negative(a.id);
     };
     col.add([{id: 1}, {id: 2}, {id: 3}]);
-    equal(col.pluck('id').join(' '), '3 2 1');
+    deepEqual(col.pluck('id'), [3, 2, 1]);
+    col.comparator = function(a, b) {
+      return this.negative(b.id) - this.negative(a.id);
+    };
+    col.sort();
+    deepEqual(col.pluck('id'), [1, 2, 3]);
   });
 
   test("remove", 5, function() {
