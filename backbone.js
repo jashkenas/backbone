@@ -443,7 +443,7 @@
     // Create a new model with identical attributes to this one.
     clone: function() {
       var attrs = this.attributes;
-  		delete attrs[this.idAttribute];
+  		attrs[this.idAttribute] = null;
 
       return new this.constructor(attrs);
     },
