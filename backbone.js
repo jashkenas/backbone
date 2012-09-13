@@ -129,16 +129,10 @@
 
     // Bind an event like `on`, but unbind the event following the first trigger.
     once: function(events, callback, context) {
-      // Bind the original events.
-      this.on(events, callback, context);
+      // Mark the callback for future removal.
+      callback.__once__ = true;
 
-      // Bind a new event immediately preceeding the original to unbind the original once called.
-      this.on(events, function unbind() {
-        // Remove the original event and the cleanup event.
-        this.off(events, callback, context).off(events, unbind);
-      }, this);
-
-      return this;
+      return this.on.apply(this, arguments);
     },
 
     // Trigger one or many events, firing all bound callbacks. Callbacks are
@@ -169,6 +163,9 @@
         if (list) {
           for (i = 0, length = list.length; i < length; i += 2) {
             list[i].apply(list[i + 1] || this, rest);
+
+            // Remove the special `once` event immediately after triggering..
+            list[i].__once__ && delete calls[event];
           }
         }
 
