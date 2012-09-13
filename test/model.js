@@ -100,6 +100,7 @@ $(document).ready(function() {
     a.set({foo : 100});
     equal(a.get('foo'), 100);
     equal(b.get('foo'), 1, "Changing a parent attribute does not change the clone.");
+    equal(b.get('id'), null, "id attribute is null in the clone");
   });
 
   test("isNew", 6, function() {
