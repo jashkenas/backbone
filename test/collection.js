@@ -18,7 +18,7 @@ $(document).ready(function() {
 
   }));
 
-  test("new and sort", 9, function() {
+  test("new and sort", 7, function() {
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
     col.comparator = function(a, b) {
@@ -32,11 +32,15 @@ $(document).ready(function() {
     equal(col.first(), d, "d should be first");
     equal(col.last(), a, "a should be last");
     equal(col.length, 4);
-    // tests with string comparator
-    col.comparator = "label";
-    col.sort();
-    equal(col.first(), a, "a should be first");
-    equal(col.last(), d, "d should be last");
+  });
+
+  test("String comparator.", 1, function() {
+    var collection = new Backbone.Collection([
+      {id: 3},
+      {id: 1},
+      {id: 2}
+    ], {comparator: 'id'});
+    deepEqual(collection.pluck('id'), [1, 2, 3]);
   });
 
   test("new and parse", 3, function() {
