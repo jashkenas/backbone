@@ -1386,7 +1386,7 @@ var Library = Backbone.Collection.extend({
       <br />
       When creating a Collection, you may choose to pass in the initial array
       of <b>models</b>.  The collection's <a href="#Collection-comparator">comparator</a>
-      function may be included as an option. Passing <tt>false</tt> as the
+      may be included as an option. Passing <tt>false</tt> as the
       comparator option will prevent sorting. If you define an
       <b>initialize</b> function, it will be invoked when the collection is
       created.
@@ -1590,29 +1590,33 @@ var book = Library.get(110);
     <p id="Collection-comparator">
       <b class="header">comparator</b><code>collection.comparator</code>
       <br />
-      By default there is no <b>comparator</b> function on a collection.
+      By default there is no <b>comparator</b> on a collection.
       If you define a comparator, it will be used to maintain
       the collection in sorted order. This means that as models are added,
       they are inserted at the correct index in <tt>collection.models</tt>.
-      Comparator function can be defined as either a
-      <a href="http://underscorejs.org/#sortBy">sortBy</a>
-      (pass a function that takes a single argument),
-      or as a
-      <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
-      (pass a comparator function that expects two arguments).
+      Comparators come in three different forms:
     </p>
-
-    <p>
-      "sortBy" comparator functions take a model and return a numeric or string
-      value by which the model should be ordered relative to others.
-      "sort" comparator functions take two models, and return <tt>-1</tt> if
-      the first model should come before the second, <tt>0</tt> if they are of
-      the same rank and <tt>1</tt> if the first model should come after.
-    </p>
+    <ul>
+      <li>
+        A <a href="http://underscorejs.org/#sortBy">sortBy</a> comparator
+        is a function that takes a model parameter and returns a numeric or string
+        value by which the model should be ordered relative to others.
+      </li>
+      <li>
+        A <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
+        comparator function takes two models, and return <tt>-1</tt> if the first
+        model should come before the second, <tt>0</tt> if they are of the same rank
+        and <tt>1</tt> if the first model should come after.
+      </li>
+      <li>
+        Finally the comparator can also be a <b>string</b> containing the name of the model
+        attribute we wish to sort by.
+      </li>
+    </ul>
 
     <p>
       Note how even though all of the chapters in this example are added backwards,
-      they come out in the proper order:
+      they come out in the proper order thanks to the comparator:
     </p>
 
 <pre class="runnable">
@@ -1630,17 +1634,36 @@ chapters.add(new Chapter({page: 1, title: "The Beginning"}));
 alert(chapters.pluck('title'));
 </pre>
 
+    <p>
+      As no special computation was done on the model attribute, the previous example also works
+      with a comparator string naming the desired sorting attribute:
+    </p>
+
+<pre class="runnable">
+var Chapter  = Backbone.Model;
+var chapters = new Backbone.Collection;
+
+chapters.comparator = "page";
+
+chapters.add(new Chapter({page: 9, title: "The End"}));
+chapters.add(new Chapter({page: 5, title: "The Middle"}));
+chapters.add(new Chapter({page: 1, title: "The Beginning"}));
+
+alert(chapters.pluck('title'));
+
+</pre>    
+
     <p class="warning">
-      Collections with comparator functions will not automatically re-sort if you
-      later change model attributes, so you may wish to call <tt>sort</tt> after
-      changing model attributes that would affect the order.
+      Collections with a comparator will not automatically re-sort if you
+      later change model attributes, so you may wish to call
+      <tt>sort</tt> after changing model attributes that would affect the order.
     </p>
 
     <p id="Collection-sort">
       <b class="header">sort</b><code>collection.sort([options])</code>
       <br />
       Force a collection to re-sort itself. You don't need to call this under
-      normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a> function
+      normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a>
       will sort itself whenever a model is added. Calling <b>sort</b>
       triggers the collection's <tt>"reset"</tt> event, unless silenced by passing
       <tt>{silent: true}</tt>

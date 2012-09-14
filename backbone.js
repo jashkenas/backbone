@@ -733,6 +733,12 @@
     sort: function(options) {
       options || (options = {});
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
+      if (typeof this.comparator === "string"){
+        var attrName = this.comparator;
+        this.comparator = function(o){
+          return o.get(attrName);
+        };
+      }
       var boundComparator = _.bind(this.comparator, this);
       if (this.comparator.length === 1) {
         this.models = this.sortBy(boundComparator);
