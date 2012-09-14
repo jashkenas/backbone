@@ -741,10 +741,10 @@
       options || (options = {});
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
       if (typeof this.comparator === "string"){
-        var compstr = this.comparator, attrName = compstr.replace(/^\+|\-/,"");
-        this.comparator = function(o1,o2){
-          return (o2.get(attrName) > o1.get(attrName) ? -1 : 1)*(compstr[0] === "-" ? -1 : 1);
-        }
+        var attrName = this.comparator;
+        this.comparator = function(o){
+          return o.get(attrName);
+        };
       }
       var boundComparator = _.bind(this.comparator, this);
       if (this.comparator.length === 1) {

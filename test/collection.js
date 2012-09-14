@@ -31,7 +31,7 @@ $(document).ready(function() {
 
   });
 
-  test("Collection: new and sort", 13, function() {
+  test("Collection: new and sort", 9, function() {
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
     col.comparator = function(a, b) {
@@ -46,15 +46,7 @@ $(document).ready(function() {
     equal(col.last(), a, "a should be last");
     equal(col.length, 4);
     // tests with string comparator
-    col.comparator = "+label"; // prefix "+" means ascending sort
-    col.sort();
-    equal(col.first(), a, "a should be first");
-    equal(col.last(), d, "d should be last");
-    col.comparator = "-label"; // prefix "-" means descending sort
-    col.sort();
-    equal(col.first(), d, "d should be first");
-    equal(col.last(), a, "a should be last");
-    col.comparator = "label"; // no prefix defaults to ascending
+    col.comparator = "label";
     col.sort();
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
