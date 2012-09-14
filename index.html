@@ -491,7 +491,7 @@
     <p>
       The project is <a href="http://github.com/documentcloud/backbone/">hosted on GitHub</a>,
       and the <a href="docs/backbone.html">annotated source code</a> is available,
-      as well as an online <a href="test/test.html">test suite</a>,
+      as well as an online <a href="test/">test suite</a>,
       an <a href="examples/todos/index.html">example application</a>,
       a <a href="https://github.com/documentcloud/backbone/wiki/Tutorials%2C-blog-posts-and-example-sites">list of tutorials</a>
       and a <a href="#examples">long list of real-world projects</a> that use Backbone.
@@ -1398,7 +1398,7 @@ var Library = Backbone.Collection.extend({
       <br />
       When creating a Collection, you may choose to pass in the initial array
       of <b>models</b>.  The collection's <a href="#Collection-comparator">comparator</a>
-      function may be included as an option. Passing <tt>false</tt> as the
+      may be included as an option. Passing <tt>false</tt> as the
       comparator option will prevent sorting. If you define an
       <b>initialize</b> function, it will be invoked when the collection is
       created.
@@ -1602,16 +1602,17 @@ var book = Library.get(110);
     <p id="Collection-comparator">
       <b class="header">comparator</b><code>collection.comparator</code>
       <br />
-      By default there is no <b>comparator</b> function on a collection.
+      By default there is no <b>comparator</b> for a collection.
       If you define a comparator, it will be used to maintain
       the collection in sorted order. This means that as models are added,
       they are inserted at the correct index in <tt>collection.models</tt>.
-      Comparator function can be defined as either a
+      A comparator can be defined as a
       <a href="http://underscorejs.org/#sortBy">sortBy</a>
       (pass a function that takes a single argument),
-      or as a
+      as a
       <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
-      (pass a comparator function that expects two arguments).
+      (pass a comparator function that expects two arguments),
+      or as a string indicating the attribute to sort by.
     </p>
 
     <p>
@@ -1643,16 +1644,16 @@ alert(chapters.pluck('title'));
 </pre>
 
     <p class="warning">
-      Collections with comparator functions will not automatically re-sort if you
-      later change model attributes, so you may wish to call <tt>sort</tt> after
-      changing model attributes that would affect the order.
+      Collections with a comparator will not automatically re-sort if you
+      later change model attributes, so you may wish to call
+      <tt>sort</tt> after changing model attributes that would affect the order.
     </p>
 
     <p id="Collection-sort">
       <b class="header">sort</b><code>collection.sort([options])</code>
       <br />
       Force a collection to re-sort itself. You don't need to call this under
-      normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a> function
+      normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a>
       will sort itself whenever a model is added. Calling <b>sort</b>
       triggers the collection's <tt>"reset"</tt> event, unless silenced by passing
       <tt>{silent: true}</tt>
@@ -2341,6 +2342,7 @@ ui.Chapter = Backbone.View.extend({
 
 <pre>
 var Bookmark = Backbone.View.extend({
+  template: _.template(…),
   render: function() {
     this.$el.html(this.template(this.model.toJSON()));
     return this;

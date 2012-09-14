@@ -18,8 +18,10 @@
   // restored later on, if `noConflict` is used.
   var previousBackbone = root.Backbone;
 
-  // Create a local reference to splice.
-  var splice = Array.prototype.splice;
+  // Create a local reference to array methods.
+  var ArrayProto = Array.prototype;
+  var slice = ArrayProto.slice;
+  var splice = ArrayProto.splice;
 
   // The top-level namespace. All public Backbone classes and modules will
   // be attached to this. Exported for both CommonJS and the browser.
@@ -183,7 +185,7 @@
     attributes || (attributes = {});
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attributes = this.parse(attributes);
-    if (defaults = getValue(this, 'defaults')) {
+    if (defaults = _.result(this, 'defaults')) {
       attributes = _.extend({}, defaults, attributes);
     }
     this.attributes = {};
@@ -336,9 +338,7 @@
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
       };
-      options.error = Backbone.wrapError(options.error, model, options);
       return this.sync('read', this, options);
     },
 
@@ -383,11 +383,9 @@
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
       };
 
       // Finish configuring and sending the Ajax request.
-      options.error = Backbone.wrapError(options.error, model, options);
       var xhr = this.sync(this.isNew() ? 'create' : 'update', this, options);
 
       // When using `wait`, reset attributes to original values unless
@@ -415,7 +413,6 @@
       options.success = function(resp) {
         if (options.wait || model.isNew()) destroy();
         if (success) success(model, resp, options);
-        if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
       if (this.isNew()) {
@@ -423,7 +420,6 @@
         return false;
       }
 
-      options.error = Backbone.wrapError(options.error, model, options);
       var xhr = this.sync('delete', this, options);
       if (!options.wait) destroy();
       return xhr;
@@ -433,7 +429,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url: function() {
-      var base = getValue(this, 'urlRoot') || getValue(this.collection, 'url') || urlError();
+      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -527,8 +523,8 @@
 
     // Check if the model is currently in a valid state. It's only possible to
     // get into an *invalid* state if you're using silent changes.
-    isValid: function() {
-      return !this.validate || !this.validate(this.attributes);
+    isValid: function(options) {
+      return !this.validate || !this.validate(this.attributes, options);
     },
 
     // Run validation against the next complete set of model attributes,
@@ -539,11 +535,8 @@
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;
-      if (options && options.error) {
-        options.error(this, error, options);
-      } else {
-        this.trigger('error', this, error, options);
-      }
+      if (options && options.error) options.error(this, error, options);
+      this.trigger('error', this, error, options);
       return false;
     }
 
@@ -740,6 +733,13 @@
     sort: function(options) {
       options || (options = {});
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
+
+      // If provided an attribute name, use it to sort the collection.
+      if (_.isString(this.comparator)) {
+        var attr = this.comparator;
+        this.comparator = function(model){ return model.get(attr); };
+      }
+
       var boundComparator = _.bind(this.comparator, this);
       if (this.comparator.length === 1) {
         this.models = this.sortBy(boundComparator);
@@ -781,9 +781,7 @@
       options.success = function(resp, status, xhr) {
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp, options);
-        collection.trigger('sync', collection, resp, options);
       };
-      options.error = Backbone.wrapError(options.error, collection, options);
       return this.sync('read', this, options);
     },
 
@@ -877,7 +875,9 @@
   // Mix in each Underscore method as a proxy to `Collection#models`.
   _.each(methods, function(method) {
     Collection.prototype[method] = function() {
-      return _[method].apply(_, [this.models].concat(_.toArray(arguments)));
+      var args = slice.call(arguments);
+      args.unshift(this.models);
+      return _[method].apply(_, args);
     };
   });
 
@@ -972,8 +972,11 @@
     this.history = options && options.history || root.history;
   };
 
-  // Cached regex for cleaning leading hashes and slashes .
+  // Cached regex for cleaning leading hashes and slashes.
   var routeStripper = /^[#\/]/;
+
+  // Cached regex for stripping leading and trailing slashes.
+  var rootStripper = /^\/+|\/+$/g;
 
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
@@ -1004,7 +1007,7 @@
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
           fragment = this.location.pathname;
-          var root = this.options.root.replace(trailingSlash, '');
+          var root = this.root.replace(trailingSlash, '');
           if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
         } else {
           fragment = this.getHash();
@@ -1022,6 +1025,7 @@
       // Figure out the initial configuration. Do we need an iframe?
       // Is pushState desired ... is it available?
       this.options          = _.extend({}, {root: '/'}, this.options, options);
+      this.root             = this.options.root;
       this._wantsHashChange = this.options.hashChange !== false;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
@@ -1029,8 +1033,8 @@
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
-      // Normalize root to always include trailing slash
-      if (!trailingSlash.test(this.options.root)) this.options.root += '/';
+      // Normalize root to always include a leading and trailing slash.
+      this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
       if (oldIE && this._wantsHashChange) {
         this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
@@ -1051,13 +1055,13 @@
       // opened by a non-pushState browser.
       this.fragment = fragment;
       var loc = this.location;
-      var atRoot = (loc.pathname.replace(/[^/]$/, '$&/') === this.options.root) && !loc.search;
+      var atRoot = (loc.pathname.replace(/[^/]$/, '$&/') === this.root) && !loc.search;
 
       // If we've started off with a route from a `pushState`-enabled browser,
       // but we're currently in a browser that doesn't support it...
       if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
-        this.location.replace(this.options.root + this.location.search + '#' + this.fragment);
+        this.location.replace(this.root + this.location.search + '#' + this.fragment);
         // Return immediately as browser will do redirect to new url
         return true;
 
@@ -1065,7 +1069,7 @@
       // in a browser where it could be `pushState`-based instead...
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
         this.fragment = this.getHash().replace(routeStripper, '');
-        this.history.replaceState({}, document.title, loc.protocol + '//' + loc.host + this.options.root + this.fragment);
+        this.history.replaceState({}, document.title, this.root + this.fragment);
       }
 
       if (!this.options.silent) return this.loadUrl();
@@ -1121,10 +1125,10 @@
     navigate: function(fragment, options) {
       if (!History.started) return false;
       if (!options || options === true) options = {trigger: options};
-      var frag = (fragment || '').replace(routeStripper, '');
-      if (this.fragment === frag) return;
-      this.fragment = frag;
-      var url = (frag.indexOf(this.options.root) !== 0 ? this.options.root : '') + frag;
+      fragment = this.getFragment(fragment || '');
+      if (this.fragment === fragment) return;
+      this.fragment = fragment;
+      var url = (fragment.indexOf(this.root) !== 0 ? this.root : '') + fragment;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
@@ -1133,13 +1137,13 @@
       // If hash changes haven't been explicitly disabled, update the hash
       // fragment to store history.
       } else if (this._wantsHashChange) {
-        this._updateHash(this.location, frag, options.replace);
-        if (this.iframe && (frag !== this.getFragment(this.getHash(this.iframe)))) {
+        this._updateHash(this.location, fragment, options.replace);
+        if (this.iframe && (fragment !== this.getFragment(this.getHash(this.iframe)))) {
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
           if(!options.replace) this.iframe.document.open().close();
-          this._updateHash(this.iframe.location, frag, options.replace);
+          this._updateHash(this.iframe.location, fragment, options.replace);
         }
 
       // If you've told us that you explicitly don't want fallback hashchange-
@@ -1154,7 +1158,8 @@
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
       if (replace) {
-        location.replace(location.href.replace(/(javascript:|#).*$/, '') + '#' + fragment);
+        var href = location.href.replace(/(javascript:|#).*$/, '');
+        location.replace(href + '#' + fragment);
       } else {
         location.hash = fragment;
       }
@@ -1262,7 +1267,7 @@
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents: function(events) {
-      if (!(events || (events = getValue(this, 'events')))) return;
+      if (!(events || (events = _.result(this, 'events')))) return;
       this.undelegateEvents();
       for (var key in events) {
         var method = events[key];
@@ -1305,10 +1310,10 @@
     // an element from the `id`, `className` and `tagName` properties.
     _ensureElement: function() {
       if (!this.el) {
-        var attrs = _.extend({}, getValue(this, 'attributes'));
-        if (this.id) attrs.id = getValue(this, 'id');
-        if (this.className) attrs['class'] = getValue(this, 'className');
-        this.setElement(this.make(getValue(this, 'tagName'), attrs), false);
+        var attrs = _.extend({}, _.result(this, 'attributes'));
+        if (this.id) attrs.id = _.result(this, 'id');
+        if (this.className) attrs['class'] = _.result(this, 'className');
+        this.setElement(this.make(_.result(this, 'tagName'), attrs), false);
       } else {
         this.setElement(this.el, false);
       }
@@ -1353,7 +1358,7 @@
 
     // Ensure that we have a URL.
     if (!options.url) {
-      params.url = getValue(model, 'url') || urlError();
+      params.url = _.result(model, 'url') || urlError();
     }
 
     // Ensure that we have the appropriate request data.
@@ -1385,6 +1390,18 @@
       params.processData = false;
     }
 
+    var success = options.success;
+    options.success = function(resp, status, xhr) {
+      if (success) success(resp, status, xhr);
+      model.trigger('sync', model, resp, options);
+    };
+
+    var error = options.error;
+    options.error = function(xhr, status, thrown) {
+      if (error) error(model, xhr, options);
+      model.trigger('error', model, xhr, options);
+    };
+
     // Make the request, allowing the user to override any Ajax options.
     return Backbone.ajax(_.extend(params, options));
   };
@@ -1392,18 +1409,6 @@
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
   Backbone.ajax = function() {
     return Backbone.$.ajax.apply(Backbone.$, arguments);
-  };
-
-  // Wrap an optional error callback with a fallback error event.
-  Backbone.wrapError = function(onError, originalModel, options) {
-    return function(model, resp) {
-      resp = model === originalModel ? resp : model;
-      if (onError) {
-        onError(originalModel, resp, options);
-      } else {
-        originalModel.trigger('error', originalModel, resp, options);
-      }
-    };
   };
 
   // Helpers
@@ -1445,15 +1450,8 @@
     return child;
   };
 
-  // Set up inheritance for the model, collection, and view.
+  // Set up inheritance for the model, collection, router, and view.
   Model.extend = Collection.extend = Router.extend = View.extend = extend;
-
-  // Helper function to get a value from a Backbone object as a property
-  // or as a function.
-  var getValue = function(object, prop) {
-    if (!(object && object[prop])) return null;
-    return _.isFunction(object[prop]) ? object[prop]() : object[prop];
-  };
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {

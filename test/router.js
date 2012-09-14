@@ -126,11 +126,11 @@ $(document).ready(function() {
 
   });
 
-  test("Router: initialize", 1, function() {
+  test("initialize", 1, function() {
     equal(router.testing, 101);
   });
 
-  test("Router: routes (simple)", 4, function() {
+  test("routes (simple)", 4, function() {
     location.replace('http://example.com#search/news');
     Backbone.history.checkUrl();
     equal(router.query, 'news');
@@ -139,26 +139,26 @@ $(document).ready(function() {
     equal(lastArgs[0], 'news');
   });
 
-  test("Router: routes (two part)", 2, function() {
+  test("routes (two part)", 2, function() {
     location.replace('http://example.com#search/nyc/p10');
     Backbone.history.checkUrl();
     equal(router.query, 'nyc');
     equal(router.page, '10');
   });
 
-  test("Router: routes via navigate", 2, function() {
+  test("routes via navigate", 2, function() {
     Backbone.history.navigate('search/manhattan/p20', {trigger: true});
     equal(router.query, 'manhattan');
     equal(router.page, '20');
   });
 
-  test("Router: routes via navigate for backwards-compatibility", 2, function() {
+  test("routes via navigate for backwards-compatibility", 2, function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equal(router.query, 'manhattan');
     equal(router.page, '20');
   });
 
-  test("Router: route precedence via navigate", 6, function(){
+  test("route precedence via navigate", 6, function(){
     // check both 0.9.x and backwards-compatibility options
     _.each([ { trigger: true }, true ], function( options ){
       Backbone.history.navigate('contacts', options);
@@ -178,13 +178,13 @@ $(document).ready(function() {
     Backbone.history.navigate('/route');
   });
 
-  test("Router: use implicit callback if none provided", 1, function() {
+  test("use implicit callback if none provided", 1, function() {
     router.count = 0;
     router.navigate('implicit', {trigger: true});
     equal(router.count, 1);
   });
 
-  test("Router: routes via navigate with {replace: true}", 1, function() {
+  test("routes via navigate with {replace: true}", 1, function() {
     location.replace('http://example.com#start_here');
     Backbone.history.checkUrl();
     location.replace = function(href) {
@@ -193,13 +193,13 @@ $(document).ready(function() {
     Backbone.history.navigate('end_here', {replace: true});
   });
 
-  test("Router: routes (splats)", 1, function() {
+  test("routes (splats)", 1, function() {
     location.replace('http://example.com#splat/long-list/of/splatted_99args/end');
     Backbone.history.checkUrl();
     equal(router.args, 'long-list/of/splatted_99args');
   });
 
-  test("Router: routes (complex)", 3, function() {
+  test("routes (complex)", 3, function() {
     location.replace('http://example.com#one/two/three/complex-part/four/five/six/seven');
     Backbone.history.checkUrl();
     equal(router.first, 'one/two/three');
@@ -207,7 +207,7 @@ $(document).ready(function() {
     equal(router.rest, 'four/five/six/seven');
   });
 
-  test("Router: routes (query)", 5, function() {
+  test("routes (query)", 5, function() {
     location.replace('http://example.com#mandel?a=b&c=d');
     Backbone.history.checkUrl();
     equal(router.entity, 'mandel');
@@ -217,13 +217,13 @@ $(document).ready(function() {
     equal(lastArgs[1], 'a=b&c=d');
   });
 
-  test("Router: routes (anything)", 1, function() {
+  test("routes (anything)", 1, function() {
     location.replace('http://example.com#doesnt-match-a-route');
     Backbone.history.checkUrl();
     equal(router.anything, 'doesnt-match-a-route');
   });
 
-  test("Router: fires event when router doesn't have callback on it", 1, function() {
+  test("fires event when router doesn't have callback on it", 1, function() {
     router.on("route:noCallback", function(){ ok(true); });
     location.replace('http://example.com#noCallback');
     Backbone.history.checkUrl();
@@ -244,17 +244,14 @@ $(document).ready(function() {
   });
 
   test("#1003 - History is started before navigate is called", 1, function() {
-    var history = new Backbone.History();
-    history.navigate = function(){
-      ok(Backbone.History.started);
-    };
     Backbone.history.stop();
-    history.start();
+    Backbone.history.navigate = function(){ ok(Backbone.History.started); };
+    Backbone.history.start();
     // If this is not an old IE navigate will not be called.
-    if (!history.iframe) ok(true);
+    if (!Backbone.history.iframe) ok(true);
   });
 
-  test("Router: route callback gets passed decoded values", 3, function() {
+  test("route callback gets passed decoded values", 3, function() {
     var route = 'has%2Fslash/complex-has%23hash/has%20space';
     Backbone.history.navigate(route, {trigger: true});
     equal(router.first, 'has/slash');
@@ -262,7 +259,7 @@ $(document).ready(function() {
     equal(router.rest, 'has space');
   });
 
-  test("Router: correctly handles URLs with % (#868)", 3, function() {
+  test("correctly handles URLs with % (#868)", 3, function() {
     location.replace('http://example.com#search/fat%3A1.5%25');
     Backbone.history.checkUrl();
     location.replace('http://example.com#search/fat');
@@ -320,7 +317,7 @@ $(document).ready(function() {
     strictEqual(Backbone.history.fragment, 'x');
   });
 
-  test("Router: Normalize root.", 1, function() {
+  test("Normalize root.", 1, function() {
     Backbone.history.stop();
     location.replace('http://example.com/root');
     Backbone.history = new Backbone.History({
@@ -339,7 +336,7 @@ $(document).ready(function() {
     Backbone.history.navigate('fragment');
   });
 
-  test("Router: Normalize root.", 1, function() {
+  test("Normalize root.", 1, function() {
     Backbone.history.stop();
     location.replace('http://example.com/root#fragment');
     Backbone.history = new Backbone.History({
@@ -347,7 +344,7 @@ $(document).ready(function() {
       history: {
         pushState: function(state, title, url) {},
         replaceState: function(state, title, url) {
-          strictEqual(url, 'http://example.com/root/fragment');
+          strictEqual(url, '/root/fragment');
         }
       }
     });
@@ -357,7 +354,7 @@ $(document).ready(function() {
     });
   });
 
-  test("Router: Normalize root.", 1, function() {
+  test("Normalize root.", 1, function() {
     Backbone.history.stop();
     location.replace('http://example.com/root');
     Backbone.history = new Backbone.History({location: location});
@@ -365,6 +362,90 @@ $(document).ready(function() {
     Backbone.history.start({
       pushState: true,
       root: '/root'
+    });
+  });
+
+  test("Normalize root - leading slash.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){}
+      }
+    });
+    Backbone.history.start({root: 'root'});
+    strictEqual(Backbone.history.root, '/root/');
+  });
+
+  test("Transition from hashChange to pushState.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root#x/y');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(state, title, url){
+          strictEqual(url, '/root/x/y');
+        }
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true
+    });
+  });
+
+  test("#1619: Router: Normalize empty root", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){}
+      }
+    });
+    Backbone.history.start({root: ''});
+    strictEqual(Backbone.history.root, '/');
+  });
+
+  test("#1619: Router: nagivate with empty root", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/');
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/fragment');
+        }
+      }
+    });
+    Backbone.history.start({
+      pushState: true,
+      root: '',
+      hashChange: false
+    });
+    Backbone.history.navigate('fragment');
+  });
+
+  test("Transition from pushState to hashChange.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root/x/y?a=b');
+    location.replace = function(url) {
+      strictEqual(url, '/root/?a=b#x/y');
+    };
+    Backbone.history = new Backbone.History({
+      location: location,
+      history: {
+        pushState: null,
+        replaceState: null
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true
     });
   });
 

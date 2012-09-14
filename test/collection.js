@@ -1,13 +1,12 @@
 $(document).ready(function() {
 
-  var lastRequest = null;
-  var sync = Backbone.sync;
-
   var a, b, c, d, e, col, otherCol;
 
-  module("Backbone.Collection", {
+  module("Backbone.Collection", _.extend(new Environment, {
 
     setup: function() {
+      Environment.prototype.setup.apply(this, arguments);
+
       a         = new Backbone.Model({id: 3, label: 'a'});
       b         = new Backbone.Model({id: 2, label: 'b'});
       c         = new Backbone.Model({id: 1, label: 'c'});
@@ -15,23 +14,11 @@ $(document).ready(function() {
       e         = null;
       col       = new Backbone.Collection([a,b,c,d]);
       otherCol  = new Backbone.Collection();
-
-      Backbone.sync = function(method, model, options) {
-        lastRequest = {
-          method: method,
-          model: model,
-          options: options
-        };
-      };
-    },
-
-    teardown: function() {
-      Backbone.sync = sync;
     }
 
-  });
+  }));
 
-  test("Collection: new and sort", 7, function() {
+  test("new and sort", 7, function() {
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
     col.comparator = function(a, b) {
@@ -47,36 +34,37 @@ $(document).ready(function() {
     equal(col.length, 4);
   });
 
-  test("Collection: new and parse", 3, function() {
-    var MyCol = Backbone.Collection.extend({
-      // only save the models that have an even value.
-      parse : function(data) {
-        var onlyEven = [];
-        _.each(data, function(datum) {
-          if (datum.a % 2 === 0) {
-            onlyEven.push(datum);
-          }
-        });
-
-        return onlyEven;
-      }
-    });
-    anotherCol  = new MyCol([
-      { a : 1 },{ a : 2 },{ a : 3 },{ a : 4 }
-    ], { parse : true });
-
-    equal(anotherCol.length, 2);
-    equal(anotherCol.first().get('a'), 2)
-    equal(anotherCol.last().get('a'), 4);
+  test("String comparator.", 1, function() {
+    var collection = new Backbone.Collection([
+      {id: 3},
+      {id: 1},
+      {id: 2}
+    ], {comparator: 'id'});
+    deepEqual(collection.pluck('id'), [1, 2, 3]);
   });
 
-  test("Collection: get, getByCid", 3, function() {
+  test("new and parse", 3, function() {
+    var Collection = Backbone.Collection.extend({
+      parse : function(data) {
+        return _.filter(data, function(datum) {
+          return datum.a % 2 === 0;
+        });
+      }
+    });
+    var models = [{a: 1}, {a: 2}, {a: 3}, {a: 4}];
+    var collection = new Collection(models, {parse: true});
+    strictEqual(collection.length, 2);
+    strictEqual(collection.first().get('a'), 2);
+    strictEqual(collection.last().get('a'), 4);
+  });
+
+  test("get, getByCid", 3, function() {
     equal(col.get(0), d);
     equal(col.get(2), b);
     equal(col.getByCid(col.first().cid), col.first());
   });
 
-  test("Collection: get with non-default ids", 2, function() {
+  test("get with non-default ids", 2, function() {
     var col = new Backbone.Collection();
     var MongoModel = Backbone.Model.extend({
       idAttribute: '_id'
@@ -88,7 +76,7 @@ $(document).ready(function() {
     equal(col.get(101), model);
   });
 
-  test("Collection: update index when id changes", 3, function() {
+  test("update index when id changes", 3, function() {
     var col = new Backbone.Collection();
     col.add([
       {id : 0, name : 'one'},
@@ -101,15 +89,15 @@ $(document).ready(function() {
     equal(col.get(101).get('name'), 'one');
   });
 
-  test("Collection: at", 1, function() {
+  test("at", 1, function() {
     equal(col.at(2), c);
   });
 
-  test("Collection: pluck", 1, function() {
+  test("pluck", 1, function() {
     equal(col.pluck('label').join(' '), 'a b c d');
   });
 
-  test("Collection: add", 11, function() {
+  test("add", 11, function() {
     var added, opts, secondAdded;
     added = opts = secondAdded = null;
     e = new Backbone.Model({id: 10, label : 'e'});
@@ -141,7 +129,7 @@ $(document).ready(function() {
     equal(atCol.last(), h);
   });
 
-  test("Collection: add multiple models", 6, function() {
+  test("add multiple models", 6, function() {
     var col = new Backbone.Collection([{at: 0}, {at: 1}, {at: 9}]);
     col.add([{at: 2}, {at: 3}, {at: 4}, {at: 5}, {at: 6}, {at: 7}, {at: 8}], {at: 2});
     for (var i = 0; i <= 5; i++) {
@@ -149,7 +137,7 @@ $(document).ready(function() {
     }
   });
 
-  test("Collection: add; at should have preference over comparator", 1, function() {
+  test("add; at should have preference over comparator", 1, function() {
     var Col = Backbone.Collection.extend({
       comparator: function(a,b) {
         return a.id > b.id ? -1 : 1;
@@ -162,19 +150,19 @@ $(document).ready(function() {
     equal(col.pluck('id').join(' '), '3 1 2');
   });
 
-  test("Collection: can't add model to collection twice", function() {
+  test("can't add model to collection twice", function() {
     var col = new Backbone.Collection([{id: 1}, {id: 2}, {id: 1}, {id: 2}, {id: 3}]);
     equal(col.pluck('id').join(' '), '1 2 3');
   });
 
-  test("Collection: can't add different model with same id to collection twice", 1, function() {
+  test("can't add different model with same id to collection twice", 1, function() {
     var col = new Backbone.Collection;
     col.unshift({id: 101});
     col.add({id: 101});
     equal(col.length, 1);
   });
 
-  test("Collection: merge in duplicate models with {merge: true}", 3, function() {
+  test("merge in duplicate models with {merge: true}", 3, function() {
     var col = new Backbone.Collection;
     col.add([{id: 1, name: 'Moe'}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
     col.add({id: 1, name: 'Moses'});
@@ -185,7 +173,7 @@ $(document).ready(function() {
     equal(col.first().get('name'), 'Tim');
   });
 
-  test("Collection: add model to multiple collections", 10, function() {
+  test("add model to multiple collections", 10, function() {
     var counter = 0;
     var e = new Backbone.Model({id: 10, label : 'e'});
     e.on('add', function(model, collection) {
@@ -213,7 +201,7 @@ $(document).ready(function() {
     equal(e.collection, colE);
   });
 
-  test("Collection: add model with parse", 1, function() {
+  test("add model with parse", 1, function() {
     var Model = Backbone.Model.extend({
       parse: function(obj) {
         obj.value += 1;
@@ -227,7 +215,7 @@ $(document).ready(function() {
     equal(col.at(0).get('value'), 2);
   });
 
-  test("Collection: add model to collection with sort()-style comparator", 3, function() {
+  test("add model to collection with sort()-style comparator", 3, function() {
     var col = new Backbone.Collection;
     col.comparator = function(a, b) {
       return a.get('name') < b.get('name') ? -1 : 1;
@@ -243,7 +231,7 @@ $(document).ready(function() {
     equal(col.indexOf(tom), 2);
   });
 
-  test("Collection: comparator that depends on `this`", 1, function() {
+  test("comparator that depends on `this`", 1, function() {
     var col = new Backbone.Collection;
     col.negative = function(num) {
       return -num;
@@ -255,7 +243,7 @@ $(document).ready(function() {
     equal(col.pluck('id').join(' '), '3 2 1');
   });
 
-  test("Collection: remove", 5, function() {
+  test("remove", 5, function() {
     var removed = null;
     var otherRemoved = null;
     col.on('remove', function(model, col, options) {
@@ -272,20 +260,20 @@ $(document).ready(function() {
     equal(otherRemoved, null);
   });
 
-  test("Collection: shift and pop", 2, function() {
+  test("shift and pop", 2, function() {
     var col = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
     equal(col.shift().get('a'), 'a');
     equal(col.pop().get('c'), 'c');
   });
 
-  test("Collection: slice", 2, function() {
+  test("slice", 2, function() {
     var col = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
     var array = col.slice(1, 3);
     equal(array.length, 2);
     equal(array[0].get('b'), 'b');
   });
 
-  test("Collection: events are unbound on remove", 3, function() {
+  test("events are unbound on remove", 3, function() {
     var counter = 0;
     var dj = new Backbone.Model();
     var emcees = new Backbone.Collection([dj]);
@@ -298,7 +286,7 @@ $(document).ready(function() {
     equal(counter, 1);
   });
 
-  test("Collection: remove in multiple collections", 7, function() {
+  test("remove in multiple collections", 7, function() {
     var modelData = {
       id : 5,
       title : 'Othello'
@@ -322,7 +310,7 @@ $(document).ready(function() {
     equal(passed, true);
   });
 
-  test("Collection: remove same model in multiple collection", 16, function() {
+  test("remove same model in multiple collection", 16, function() {
     var counter = 0;
     var e = new Backbone.Model({id: 5, title: 'Othello'});
     e.on('remove', function(model, collection) {
@@ -356,7 +344,7 @@ $(document).ready(function() {
     equal(counter, 2);
   });
 
-  test("Collection: model destroy removes from all collections", 3, function() {
+  test("model destroy removes from all collections", 3, function() {
     var e = new Backbone.Model({id: 5, title: 'Othello'});
     e.sync = function(method, model, options) { options.success({}); };
     var colE = new Backbone.Collection([e]);
@@ -378,25 +366,29 @@ $(document).ready(function() {
     equal(undefined, e.collection);
   });
 
-  test("Collection: fetch", 4, function() {
-    col.fetch();
-    equal(lastRequest.method, 'read');
-    equal(lastRequest.model, col);
-    equal(lastRequest.options.parse, true);
+  test("fetch", 4, function() {
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    collection.fetch();
+    equal(this.syncArgs.method, 'read');
+    equal(this.syncArgs.model, collection);
+    equal(this.syncArgs.options.parse, true);
 
-    col.fetch({parse: false});
-    equal(lastRequest.options.parse, false);
+    collection.fetch({parse: false});
+    equal(this.syncArgs.options.parse, false);
   });
 
-  test("Collection: create", 4, function() {
-    var model = col.create({label: 'f'}, {wait: true});
-    equal(lastRequest.method, 'create');
-    equal(lastRequest.model, model);
+  test("create", 4, function() {
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    var model = collection.create({label: 'f'}, {wait: true});
+    equal(this.syncArgs.method, 'create');
+    equal(this.syncArgs.model, model);
     equal(model.get('label'), 'f');
-    equal(model.collection, col);
+    equal(model.collection, collection);
   });
 
-  test("Collection: create enforces validation", 1, function() {
+  test("create enforces validation", 1, function() {
     var ValidatingModel = Backbone.Model.extend({
       validate: function(attrs) {
         return "fail";
@@ -409,7 +401,7 @@ $(document).ready(function() {
     equal(col.create({"foo":"bar"}), false);
   });
 
-  test("Collection: a failing create runs the error callback", 1, function() {
+  test("a failing create runs the error callback", 1, function() {
     var ValidatingModel = Backbone.Model.extend({
       validate: function(attrs) {
         return "fail";
@@ -425,7 +417,7 @@ $(document).ready(function() {
     equal(flag, true);
   });
 
-  test("collection: initialize", 1, function() {
+  test("initialize", 1, function() {
     var Collection = Backbone.Collection.extend({
       initialize: function() {
         this.one = 1;
@@ -435,11 +427,11 @@ $(document).ready(function() {
     equal(coll.one, 1);
   });
 
-  test("Collection: toJSON", 1, function() {
+  test("toJSON", 1, function() {
     equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });
 
-  test("Collection: where", 6, function() {
+  test("where", 6, function() {
     var coll = new Backbone.Collection([
       {a: 1},
       {a: 1},
@@ -455,7 +447,7 @@ $(document).ready(function() {
     equal(coll.where({a: 1, b: 2}).length, 1);
   });
 
-  test("Collection: Underscore methods", 13, function() {
+  test("Underscore methods", 13, function() {
     equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equal(col.any(function(model){ return model.id === 100; }), false);
     equal(col.any(function(model){ return model.id === 0; }), true);
@@ -475,7 +467,7 @@ $(document).ready(function() {
          [4, 0]);
   });
 
-  test("Collection: reset", 10, function() {
+  test("reset", 10, function() {
     var resetCount = 0;
     var models = col.models;
     col.on('reset', function() { resetCount += 1; });
@@ -494,7 +486,7 @@ $(document).ready(function() {
     ok(_.isEqual(col.last().attributes, d.attributes));
   });
 
-  test("Collection: reset passes caller options", 3, function() {
+  test("reset passes caller options", 3, function() {
     var Model = Backbone.Model.extend({
       initialize: function(attrs, options) {
         this.model_parameter = options.model_parameter;
@@ -508,14 +500,14 @@ $(document).ready(function() {
     });
   });
 
-  test("Collection: trigger custom events on models", 1, function() {
+  test("trigger custom events on models", 1, function() {
     var fired = null;
     a.on("custom", function() { fired = true; });
     a.trigger("custom");
     equal(fired, true);
   });
 
-  test("Collection: add does not alter arguments", 2, function(){
+  test("add does not alter arguments", 2, function(){
     var attrs = {};
     var models = [attrs];
     new Backbone.Collection().add(models);
@@ -524,16 +516,17 @@ $(document).ready(function() {
   });
 
   test("#714: access `model.collection` in a brand new model.", 2, function() {
-    var col = new Backbone.Collection;
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
     var Model = Backbone.Model.extend({
       set: function(attrs) {
         equal(attrs.prop, 'value');
-        equal(this.collection, col);
+        equal(this.collection, collection);
         return this;
       }
     });
-    col.model = Model;
-    col.create({prop: 'value'});
+    collection.model = Model;
+    collection.create({prop: 'value'});
   });
 
   test("#574, remove its own reference to the .models array.", 2, function() {
@@ -565,7 +558,7 @@ $(document).ready(function() {
     });
   });
 
-  test("Collection: index with comparator", 4, function() {
+  test("index with comparator", 4, function() {
     var counter = 0;
     var col = new Backbone.Collection([{id: 2}, {id: 4}], {
       comparator: function(model){ return model.id; }
@@ -582,7 +575,7 @@ $(document).ready(function() {
     col.add([{id: 3}, {id: 1}]);
   });
 
-  test("Collection: throwing during add leaves consistent state", 4, function() {
+  test("throwing during add leaves consistent state", 4, function() {
     var col = new Backbone.Collection();
     col.on('test', function() { ok(false); });
     col.model = Backbone.Model.extend({
@@ -596,7 +589,7 @@ $(document).ready(function() {
     equal(col.length, 0);
   });
 
-  test("Collection: multiple copies of the same model", 3, function() {
+  test("multiple copies of the same model", 3, function() {
     var col = new Backbone.Collection();
     var model = new Backbone.Model();
     col.add([model, model]);
@@ -629,7 +622,7 @@ $(document).ready(function() {
     ok(!collection.get('undefined'));
   });
 
-  test("Collection: falsy comparator", 4, function(){
+  test("falsy comparator", 4, function(){
     var Col = Backbone.Collection.extend({
       comparator: function(model){ return model.id; }
     });
@@ -659,15 +652,10 @@ $(document).ready(function() {
   });
 
   test("#1412 - Trigger 'sync' event.", 2, function() {
-    var collection = new Backbone.Collection([], {
-      model: Backbone.Model.extend({
-        sync: function(method, model, options) {
-          options.success();
-        }
-      })
-    });
-    collection.sync = function(method, model, options) { options.success(); };
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
     collection.on('sync', function() { ok(true); });
+    Backbone.ajax = function(settings){ settings.success(); };
     collection.fetch();
     collection.create({id: 1});
   });
