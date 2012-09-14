@@ -1745,7 +1745,7 @@ var Tweets = Backbone.Collection.extend({
       <tt>success</tt> and <tt>error</tt>
       callbacks which will be passed <tt>(collection, response)</tt> as arguments.
       When the model data returns from the server, the collection will
-      <a href="#Collection-reset">reset</a>.
+      <a href="#Collection-reset">reset</a> and fire a <tt>"reset"</tt> event, which you can pass <tt>{silent: true}</tt> to suppress.
       Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers for custom persistence strategies and returns a
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
