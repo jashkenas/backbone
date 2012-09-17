@@ -971,11 +971,15 @@
 
   // Handles cross-browser history management, based on URL fragments. If the
   // browser does not support `onhashchange`, falls back to polling.
-  var History = Backbone.History = function(options) {
+  var History = Backbone.History = function() {
     this.handlers = [];
     _.bindAll(this, 'checkUrl');
-    this.location = options && options.location || root.location;
-    this.history = options && options.history || root.history;
+
+    // #1653 - Ensure that `History` can be used outside of the browser.
+    if (typeof window !== 'undefined') {
+      this.location = window.location;
+      this.history = window.history;
+    }
   };
 
   // Cached regex for cleaning leading hashes and slashes.
