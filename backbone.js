@@ -1160,7 +1160,8 @@
         var href = location.href.replace(/(javascript:|#).*$/, '');
         location.replace(href + '#' + fragment);
       } else {
-        location.hash = fragment;
+        // #1649 - Some browsers require that `hash` contains a leading #.
+        location.hash = '#' + fragment;
       }
     }
 
