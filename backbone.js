@@ -735,13 +735,7 @@
         throw new Error('Cannot sort a set without a comparator');
       }
 
-      // If provided an attribute name, use it to sort the collection.
-      if (_.isString(this.comparator)) {
-        var attr = this.comparator;
-        this.comparator = function(model){ return model.get(attr); };
-      }
-
-      if (this.comparator.length === 1) {
+      if (_.isString(this.comparator) || this.comparator.length === 1) {
         this.models = this.sortBy(this.comparator, this);
       } else {
         this.models.sort(_.bind(this.comparator, this));
@@ -753,7 +747,7 @@
 
     // Pluck an attribute from each model in the collection.
     pluck: function(attr) {
-      return _.map(this.models, function(model){ return model.get(attr); });
+      return _.invoke(this.models, 'get', attr);
     },
 
     // When you have more items than you want to add or remove individually,
@@ -867,9 +861,9 @@
   var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
     'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
     'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
-    'max', 'min', 'sortBy', 'sortedIndex', 'toArray', 'size', 'first', 'head',
-    'take', 'initial', 'rest', 'tail', 'last', 'without', 'indexOf', 'shuffle',
-    'lastIndexOf', 'isEmpty', 'groupBy'];
+    'max', 'min', 'sortedIndex', 'toArray', 'size', 'first', 'head', 'take',
+    'initial', 'rest', 'tail', 'last', 'without', 'indexOf', 'shuffle',
+    'lastIndexOf', 'isEmpty'];
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
   _.each(methods, function(method) {
@@ -877,6 +871,19 @@
       var args = slice.call(arguments);
       args.unshift(this.models);
       return _[method].apply(_, args);
+    };
+  });
+
+  // Underscore methods that take a property name as an argument.
+  var attributeMethods = ['groupBy', 'countBy', 'sortBy'];
+
+  // Use attributes instead of properties.
+  _.each(attributeMethods, function(method) {
+    Collection.prototype[method] = function(value, context) {
+      var iterator = _.isFunction(value) ? value : function(model) {
+        return model.get(value);
+      };
+      return _[method](this.models, iterator, context);
     };
   });
 
