@@ -741,8 +741,9 @@ $(document).ready(function() {
     });
     model.set({b: 0});
     deepEqual(changes, [0, 1, 1]);
+    changes = [];
     model.change();
-    deepEqual(changes, [0, 1, 1, 2, 1]);
+    deepEqual(changes, [2, 1]);
   });
 
   test("nested set multiple times", 1, function() {
@@ -814,6 +815,13 @@ $(document).ready(function() {
     model.validate = function(){ return 'invalid'; };
     model.sync = function(){ ok(false); };
     strictEqual(model.save(), false);
+  });
+
+  test("#1478 - Set to original value.", 0, function() {
+    var model = new Backbone.Model({x: 1});
+    model.on('change change:x', function(){ ok(false); });
+    model.set({x: 2}, {silent: true});
+    model.set({x: 1});
   });
 
 });
