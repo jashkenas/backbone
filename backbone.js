@@ -1343,7 +1343,7 @@
     var type = methodMap[method];
 
     // JSON-request options & default options
-    options = _.extend({type: type, dataType: 'json'}, (options || {}));
+    options = _.extend({type: type, dataType: 'json'}, options);
 
     // Ensure that we have a URL.
     if (!options.url) {
