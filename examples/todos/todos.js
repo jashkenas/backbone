@@ -131,9 +131,12 @@ $(function(){
     // Close the `"editing"` mode, saving changes to the todo.
     close: function() {
       var value = this.input.val();
-      if (!value) this.clear();
-      this.model.save({title: value});
-      this.$el.removeClass("editing");
+      if (!value){
+        this.clear();
+      }else{
+        this.model.save({title: value});
+        this.$el.removeClass("editing");
+      }
     },
 
     // If you hit `enter`, we're through editing the item.
