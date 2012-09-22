@@ -689,4 +689,16 @@ $(document).ready(function() {
     collection.add({}, {at: 0});
   });
 
+  test("#1638 - `sort` during `add` triggers correctly.", function() {
+    var collection = new Backbone.Collection;
+    collection.comparator = function(model) { return model.get('x'); };
+    var added = [];
+    collection.on('add', function(model) {
+      model.set({x: 3});
+      collection.sort();
+      added.push(model.id);
+    });
+    collection.add([{id: 1, x: 1}, {id: 2, x: 2}]);
+    deepEqual(added, [1, 2]);
+  });
 });
