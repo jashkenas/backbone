@@ -31,11 +31,6 @@ $(function(){
     // Toggle the `done` state of this todo item.
     toggle: function() {
       this.save({done: !this.get("done")});
-    },
-
-    // Remove this Todo from *localStorage* and delete its view.
-    clear: function() {
-      this.destroy();
     }
 
   });
@@ -131,9 +126,9 @@ $(function(){
     // Close the `"editing"` mode, saving changes to the todo.
     close: function() {
       var value = this.input.val();
-      if (!value){
+      if (!value) {
         this.clear();
-      }else{
+      } else {
         this.model.save({title: value});
         this.$el.removeClass("editing");
       }
@@ -146,7 +141,7 @@ $(function(){
 
     // Remove the item, destroy the model.
     clear: function() {
-      this.model.clear();
+      this.model.destroy();
     }
 
   });
@@ -231,7 +226,7 @@ $(function(){
 
     // Clear all done todo items, destroying their models.
     clearCompleted: function() {
-      _.each(Todos.done(), function(todo){ todo.clear(); });
+      _.invoke(Todos.done(), 'destroy');
       return false;
     },
 
