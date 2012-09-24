@@ -972,6 +972,9 @@
   // Cached regex for cleaning leading hashes and slashes .
   var routeStripper = /^[#\/]/;
 
+  // Removes query parameters from the route
+  var routeSanitizer = /\?.*/;
+
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
 
@@ -1000,7 +1003,7 @@
     getFragment: function(fragment, forcePushState) {
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = this.location.pathname + (this.location.search || '');
+          fragment = this.location.pathname;
           var root = this.options.root.replace(trailingSlash, '');
           if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
         } else {
@@ -1118,7 +1121,7 @@
     navigate: function(fragment, options) {
       if (!History.started) return false;
       if (!options || options === true) options = {trigger: options};
-      var frag = (fragment || '').replace(routeStripper, '');
+      var frag = (fragment || '').replace(routeSanitizer, '').replace(routeStripper, '');
       if (this.fragment === frag) return;
       this.fragment = frag;
       var url = (frag.indexOf(this.options.root) !== 0 ? this.options.root : '') + frag;
