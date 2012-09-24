@@ -217,7 +217,34 @@ $(document).ready(function() {
     equal(lastArgs[1], 'a=b&c=d');
   });
 
-  test("Router: routes (anything)", 1, function() {
+  test("Router: routes (query) pushstate", 5, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root/x?a=b&c=d');
+    Backbone.history = new Backbone.History({
+      location: location,
+        history: {
+          pushState: function(state, title, url) {
+            strictEqual(url, '/root/x?a=d&c=b');
+          }
+        }
+    });
+    var myRouter = new Router({testing: 101});
+    Backbone.history.start({
+      root: '/root/',
+      pushState: true,
+      hashChange: false
+    });
+    strictEqual(Backbone.history.fragment, 'x?a=b&c=d');
+    Backbone.history.navigate('x?a=d&c=b');
+    strictEqual(Backbone.history.fragment, 'x?a=d&c=b');
+    // simulate back button
+    location.replace('http://example.com/root/x?a=b&c=d');
+    Backbone.history.checkUrl();
+    equal(myRouter.entity, 'x');
+    equal(myRouter.queryArgs, 'a=b&c=d');
+  });
+
+    test("Router: routes (anything)", 1, function() {
     location.replace('http://example.com#doesnt-match-a-route');
     Backbone.history.checkUrl();
     equal(router.anything, 'doesnt-match-a-route');
