@@ -178,7 +178,7 @@ $(document).ready(function() {
     a.unset('foo');
     equal(a.get('foo'), void 0, "Foo should have changed");
     delete a.validate;
-    ok(changeCount == 2, "Change count should have incremented for unset.");
+    ok(changeCount == 2, "Change count should have incremented for unset. (value = " + changeCount+")");
 
     a.unset('id');
     equal(a.id, undefined, "Unsetting the id should remove the id property.");
@@ -605,6 +605,38 @@ $(document).ready(function() {
     equal(changed, 1);
   });
 
+  test("#1478 non blocking `save` with `wait` should not raise events for " +
+       "changes occurred before any handler was attached", 1, function() {
+    var events = [], env = this, done = false;
+    this.sync = function(method, model, options){
+      setTimeout(function(){
+        options.success({x: true});
+      },0);
+    }
+    var model = new Backbone.Model();
+    model.fetch({
+      success: function(){
+        model.on("all", function(event){ events.push(event); });
+      }
+    });
+    setTimeout(function(){
+      model.save({y:true}, {
+        wait:true,
+        success: function(){
+          deepEqual(events, ["change:y", "change"], "change:x should not be listed");
+          done = true; start();
+        }
+      });
+    }, 0);
+    setTimeout(function(){
+      if(!done){
+        ok(false, "Time out expired while waiting non blocking test");
+        start();
+      }
+    }, 1000);
+    stop();
+  });
+  
   test("a failed `save` with `wait` doesn't leave attributes behind", 1, function() {
     var model = new Backbone.Model;
     model.url = '/test';
@@ -740,9 +772,15 @@ $(document).ready(function() {
       model.set({b: 2}, {silent: true});
     });
     model.set({b: 0});
-    deepEqual(changes, [0, 1, 1]);
-    model.change();
-    deepEqual(changes, [0, 1, 1, 2, 1]);
+    if("_updateChanged" in model){ // new version
+      deepEqual(changes, [0, 1]);
+      model.change();
+      deepEqual(changes, [0, 1, 2, 1]);
+    } else {                          // original
+      deepEqual(changes, [0, 1, 1]);
+      model.change();
+      deepEqual(changes, [0, 1, 1, 2, 1]);
+    }
   });
 
   test("nested set multiple times", 1, function() {
@@ -814,6 +852,16 @@ $(document).ready(function() {
     model.validate = function(){ return 'invalid'; };
     model.sync = function(){ ok(false); };
     strictEqual(model.save(), false);
+  });
+
+  test("#1664 - change:attribute should not be raised on unchanged attributes", 1, function() {
+    var model = new Backbone.Model();
+    model.on("change:mod", function(m, mod){
+      notEqual(model.previous("mod"), mod);
+    });
+    model.set("mod", 7);
+    model.set("mod", 8, {silent:true});
+    model.set("mod", 7);
   });
 
 });
