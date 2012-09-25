@@ -1138,7 +1138,7 @@
       fragment = this.getFragment(fragment || '');
       if (this.fragment === fragment) return;
       this.fragment = fragment;
-      var url = (fragment.indexOf(this.root) !== 0 ? this.root : '') + fragment;
+      var url = this.root + fragment;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
