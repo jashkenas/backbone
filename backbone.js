@@ -1071,18 +1071,20 @@
       // but we're currently in a browser that doesn't support it...
       if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
-        this.location.replace(this.root + this.location.search + '#' + this.fragment);
-        // Return immediately as browser will do redirect to new url
-        return true;
-
+        // Only change the current URL if we have a matching route.  Otherwise assume it's a normal page load.
+        if (!this.options.silent && this.loadUrl(this.fragment)) {
+            this.location.replace(this.root + this.location.search + '#' + this.fragment);
+            // Return immediately as browser will do redirect to new url
+            return true;
+        }
       // Or if we've started out with a hash-based route, but we're currently
       // in a browser where it could be `pushState`-based instead...
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
         this.fragment = this.getHash().replace(routeStripper, '');
         this.history.replaceState({}, document.title, this.root + this.fragment);
+        if (!this.options.silent) return this.loadUrl();
       }
 
-      if (!this.options.silent) return this.loadUrl();
     },
 
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
