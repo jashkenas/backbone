@@ -436,7 +436,7 @@ $(document).ready(function() {
     equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });
 
-  test("where", 6, function() {
+  test("where", 8, function() {
     var coll = new Backbone.Collection([
       {a: 1},
       {a: 1},
@@ -450,6 +450,8 @@ $(document).ready(function() {
     equal(coll.where({b: 1}).length, 0);
     equal(coll.where({b: 2}).length, 2);
     equal(coll.where({a: 1, b: 2}).length, 1);
+    equal(coll.where({b: /\d/}).length, 2);
+    equal(coll.where({a: /1/, b: 2}).length, 1);
   });
 
   test("Underscore methods", 13, function() {
