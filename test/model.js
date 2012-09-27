@@ -772,15 +772,9 @@ $(document).ready(function() {
       model.set({b: 2}, {silent: true});
     });
     model.set({b: 0});
-    if("_updateChanged" in model){ // new version
-      deepEqual(changes, [0, 1]);
-      model.change();
-      deepEqual(changes, [0, 1, 2, 1]);
-    } else {                          // original
-      deepEqual(changes, [0, 1, 1]);
-      model.change();
-      deepEqual(changes, [0, 1, 1, 2, 1]);
-    }
+    deepEqual(changes, [0, 1]);
+    model.change();
+    deepEqual(changes, [0, 1, 2, 1]);
   });
 
   test("nested set multiple times", 1, function() {
@@ -855,13 +849,54 @@ $(document).ready(function() {
   });
 
   test("#1664 - change:attribute should not be raised on unchanged attributes", 1, function() {
-    var model = new Backbone.Model();
+    var changes = [], model = new Backbone.Model();
     model.on("change:mod", function(m, mod){
-      notEqual(model.previous("mod"), mod);
+      changes.push([model.previous("mod"), mod]);
     });
     model.set("mod", 7);
     model.set("mod", 8, {silent:true});
     model.set("mod", 7);
+    deepEqual(changes, [[undefined, 7]]);
   });
 
+  test("silent changes in parallel nested `change:attr` should be commited ONLY "+
+       "from the parent branch or the general change event", 4, function() {
+    var results = [], model = new Backbone.Model({x:0, y:0, x1:0, y1:0});
+    model.on("change:x", function(m, x){
+      var x1 = model.get("x1");
+      model.set({x1:x1+7});
+      x1 = model.get("x1");
+      model.set({x1:x1+4}, {silent:true});
+    });
+    model.on("change:y", function(m, y){
+      var y1 = model.get("y1");
+      model.set({y1:y1+8});
+      y1 = model.get("y1");
+      model.set({y1:y1+5}, {silent:true});
+    });
+    model.on("change:x1", function(m, x1){
+      results.push(x1);
+    });
+    model.on("change:y1", function(m, y1){
+      results.push(y1);
+    });
+    // Two parallel "change:attr" branches
+    model.set({x:1, y:1});
+    results.sort();     // sorting cause the is no guaranteed change:attr order
+    deepEqual(results, [7, 8]); // should contain only NO silent results
+    results = [];
+    // Commit silents via top level (parent of all branches)
+    model.change();
+    results.sort();     
+    deepEqual(results, [11, 13]); // should contain only silent results
+    results = [];
+    // Commit silents via general change
+    model.on("change", function(){ model.set({x:3, y:3});});
+    model.set({x:3, y:3});
+    results.sort();     
+    deepEqual(results, [18, 21, 22, 26]); // should contain every result
+    results = [];
+    model.change();
+    deepEqual(results, []);
+  });
 });

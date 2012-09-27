@@ -192,12 +192,12 @@
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
 
-    this._attriQueue = [];
+    this._pending = {};
     this.changed = {};
     this._previousAttributes = {};
     this.set(attributes, {silent: true});
     // Reset change tracking.
-    this._attriQueue = [];
+    this._pending = {};
     this.changed = {};
     this._previousAttributes = _.extend({}, this.attributes);
     this.initialize.apply(this, arguments);
@@ -208,10 +208,6 @@
 
     // A hash of attributes whose current and previous value differ.
     changed: null,
-
-    // A hash of attributes that have silently changed since the last time
-    // `change` was called.  Will become pending attributes on the next call.
-    _silent: null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -266,6 +262,7 @@
 
       // Extract attributes and options.
       options || (options = {});
+      options.changes = {};
       if (!attrs) return this;
       if (attrs instanceof Model) attrs = attrs.attributes;
       if (options.unset) for (attr in attrs) attrs[attr] = void 0;
@@ -277,7 +274,7 @@
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
         
-      var changes = options.changes = {};
+      var changes = {};
       var now = this.attributes;
       var prev = this._previousAttributes;
       var escaped = this._escapedAttributes;
@@ -285,28 +282,22 @@
       // For each `set` attribute...
       for (attr in attrs) {
         val = attrs[attr];
-        // Queue changed attribute names.
+        // check for changes.
         if (!_.isEqual(now[attr], val) || (options.unset && _.has(now, attr))) {
           delete escaped[attr];
-          // Remove duplicates. This overlaps any previous silent changes
-          this._attriQueue = _.filter(this._attriQueue, function(item){ 
-                                        return item !== attr});
-          this._attriQueue.push(attr);
-          // for backward compatibility reasons only
-          if(!options.silent) changes[attr] = true;
+          changes[attr] = true;
         }
         // Update or delete the current value.
         options.unset ? delete now[attr] : now[attr] = val;        
       }
+      // Merge current changes with previous silent to fire `"change"` events
+      _.extend(this._pending, changes);
+      // If no events for now, just keep hasChanged and changedAttributes informed
+      if (options.silent) return this._updateChanged();
+      // for backward compatibility
+      options.changes = changes;
       // Fire the `"change"` events.
-      if (!options.silent) {
-        this.change(options);
-      } else {
-        // Update model.changed to keep model.hasChanged and 
-        // model.changedAttributes informed
-        this._updateChanged();
-      }
-      return this;
+      return this.change(options);
     },
 
     // Remove an attribute from the model, firing `"change"` unless you choose
@@ -461,16 +452,16 @@
             delete this.changed[attr];
           }
         }
+        return this;
       },
 
-    // Generate previous state considering the remaining silent changes in queue.
+    // Generate previous state considering the remaining silent changes in pending.
     _generatePrevious: function(){
       var silent,
-          queue = this._attriQueue,
+          pending = this._pending,
           prev = this._previousAttributes,      
           result = _.extend({}, this.attributes);          
-      for(var i = 0, len = queue.length; i < len; i++){
-        silent = queue[i];
+      for(silent in pending){
         (silent in prev)? result[silent]=prev[silent] : delete result[silent];
       }
       return result;
@@ -481,23 +472,28 @@
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
       var attr, val, 
-          attriQueue =  this._attriQueue,
+          pending =  this._pending,
+          nextPending = {},
           changing = this._changing;
       this._changing = true;
-      this._attriQueue = [];
+      this._pending = {};
       options = options || {};
       // We are inside a "change" event
       if(this._onChangeAtrs){
         this._previousAttributes = this._onChangeAtrs;
       }      
       this._updateChanged();
-      while(attriQueue.length){
-        attr = attriQueue.pop();
+      for(attr in pending){
+        // Skip silent changes that were restored loudly.
         if(!(attr in this.changed)) continue;
         val =this.changed[attr];
         this.trigger('change:' + attr, this, val, options);
+        // Collect any silent pending
+        _.extend(nextPending, this._pending);
+        // Prevent parallel branches to commit silent changes from each other
+        this._pending = {};
       }
-
+      _.extend(this._pending, nextPending);
       if(!(changing || _.isEmpty(this.changed))){
         this._changing = false;
         this._onChangeAtrs = this._generatePrevious();
