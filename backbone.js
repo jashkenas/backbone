@@ -494,13 +494,17 @@
         // Prevent parallel branches to commit silent changes from each other
         this._pending = {};
       }
+      // propagate all pendings to the next general change
       _.extend(this._pending, nextPending);
       if(!(changing || _.isEmpty(this.changed))){
         this._changing = false;
         this._onChangeAtrs = this._generatePrevious();
         this.trigger('change', this, options);
-        this._onChangeAtrs = null;
-        this._previousAttributes = this._generatePrevious();
+        // No nested "change" have been commited so onChangeAtrs is a valid previousAttributes
+        if(this._onChangeAtrs){
+          this._previousAttributes = this._onChangeAtrs;
+          this._onChangeAtrs = null;
+        } // else any nested "change" should have informed the _previousAttributes properly.
       }
       this._changing = changing;
       return this;
