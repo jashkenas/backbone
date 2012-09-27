@@ -440,10 +440,10 @@
 
     // Set change state to current
     _updateChanged: function(){
-        var prev, attr, val, sum;
-        prev = this._previousAttributes;
-        now =  this.attributes;
-        sum = _.extend({}, now, prev);
+        var attr, val,
+            prev = this._previousAttributes,
+            now =  this.attributes,
+            sum = _.extend({}, now, prev);
         this.changed = {};
         for(attr in sum){
           val = now[attr];
