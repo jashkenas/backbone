@@ -449,8 +449,6 @@
           val = now[attr];
           if (!_.isEqual(prev[attr], val) || (_.has(now, attr) !== _.has(prev, attr))) {
             this.changed[attr] = val;
-          } else {
-            delete this.changed[attr];
           }
         }
         return this;
