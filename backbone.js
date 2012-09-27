@@ -493,7 +493,7 @@
         this._pending = {};
       }
       // propagate all pendings to the next general change
-      _.extend(this._pending, nextPending);
+      this._pending = nextPending;
       if(!(changing || _.isEmpty(this.changed))){
         this._changing = false;
         this._onChangeAtrs = this._generatePrevious();
