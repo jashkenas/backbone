@@ -204,6 +204,24 @@
       img.example_image {
         margin: 0px auto;
       }
+    @media only screen and (-webkit-max-device-pixel-ratio: 1) and (max-width: 600px) {
+      div#sidebar {
+        display: none;
+      }
+      img#logo {
+        max-width: 451px;
+        width: 100%;
+        height: auto;
+      }
+      div.container {
+        width: auto;
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+        p, div.container ul {
+          width: auto;
+        }
+    }
     @media only screen and (-webkit-min-device-pixel-ratio: 1.5) and (max-width: 640px),
           only screen and (-o-min-device-pixel-ratio: 3/2) and (max-width: 640px),
           only screen and (min-device-pixel-ratio: 1.5) and (max-width: 640px) {
