@@ -896,7 +896,7 @@
   // parts of route strings.
   var namedParam    = /:\w+/g;
   var splatParam    = /\*\w+/g;
-  var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
+  var escapeRegExp  = /[-\[\]{}()+?.,\\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
@@ -1059,7 +1059,7 @@
       // opened by a non-pushState browser.
       this.fragment = fragment;
       var loc = this.location;
-      var atRoot = (loc.pathname.replace(/[^/]$/, '$&/') === this.root) && !loc.search;
+      var atRoot = (loc.pathname.replace(/[^\/]$/, '$&/') === this.root) && !loc.search;
 
       // If we've started off with a route from a `pushState`-enabled browser,
       // but we're currently in a browser that doesn't support it...
@@ -1437,7 +1437,7 @@
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
-    function Surrogate(){ this.constructor = child; };
+    function Surrogate(){ this.constructor = child; }
     Surrogate.prototype = parent.prototype;
     child.prototype = new Surrogate;
 
