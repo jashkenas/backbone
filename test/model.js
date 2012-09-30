@@ -816,4 +816,81 @@ $(document).ready(function() {
     strictEqual(model.save(), false);
   });
 
+  test("#1478 - Changing from one value, silently to another, back to original does not trigger change.", 0, function() {
+    var model = new Backbone.Model({x:1});
+    model.on('change:x', function() { ok(false); });
+    model.set({x:2},{silent:true});
+    model.set({x:3},{silent:true});
+    model.set({x:1});
+  });
+
+  test("#1478 - multiple silent changes nested inside a change event", 2, function() {
+    var changes = [];
+    
+    var model = new Backbone.Model();
+    
+    model.on('change', function() {
+      model.set({a:'c'}, {silent:true});
+      model.set({b:2}, {silent:true});
+      model.unset('c', {silent:true});
+      
+      model.set({a:'a'}, {silent:true});
+      model.set({b:1}, {silent:true});
+      model.set({c:'item'}, {silent:true});
+    });
+
+    model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
+    
+    model.set({a:'a', b:1, c:'item'});
+    deepEqual(changes, ['a',1,'item']);
+    model.change();
+    deepEqual(changes, ['a',1,'item']);
+  });
+
+  asyncTest("#1478 - Model `save` does not trigger change on unchanged attributes", 0, function() {
+    var Model = Backbone.Model.extend({
+      sync: function(method, model, options) {
+        setTimeout(function(){
+          options.success();
+          start();
+        }, 0);
+      }
+    });
+    new Model({x: true})
+    .on('change:x', function(){ ok(false); })
+    .save(null, {wait: true});
+  });
+
+  test("Multiple layers of nested/silent changes", 2, function() {
+    var model = new Backbone.Model({b:1, c:'item'});
+    var changes = [];
+
+    model.on('change:a change:b change:c', function(model, val){
+      changes.push(val);
+    });
+
+    model.on('change:c', function(){
+      model.set({c:'item3'}, {silent:true});
+      model.set({c:'item4'}, {silent:true});
+    });
+
+    model.on('change:b', function(){
+      model.set({b:3}, {silent:true});
+      model.set({b:4}, {silent:true});
+      model.set({c:'item2'}, {silent:true});
+      model.set({b:2}, {silent:true});
+    });
+
+    model.on('change:a', function() {
+      model.set({a:'b'}, {silent:true});
+      model.set({a:'c'}, {silent:true});
+      model.set({b:2});
+    });
+    
+    model.set({a:'a'});
+    deepEqual(changes, ["a", 2, "c", "item2"]);
+    model.change();
+    deepEqual(changes, ["a", 2, "c", "item2", "item4"]);
+  });
+
 });
