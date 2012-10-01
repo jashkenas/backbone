@@ -189,18 +189,18 @@
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.extend({}, defaults, attrs);
     }
+    this._allAttributes = {};
+    this._previousAttributes = {};
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
     this.changed = {};
-    this._silent = {};
     this._pending = {};
     this.set(attrs, {silent: true});
     // Reset change tracking.
     this.changed = {};
-    this._silent = {};
     this._pending = {};
-    this._previousAttributes = _.clone(this.attributes);
+    this._previousAttributes = _.extend({}, this.attributes);
     this.initialize.apply(this, arguments);
   };
 
@@ -209,14 +209,6 @@
 
     // A hash of attributes whose current and previous value differ.
     changed: null,
-
-    // A hash of attributes that have silently changed since the last time
-    // `change` was called.  Will become pending attributes on the next call.
-    _silent: null,
-
-    // A hash of attributes that have changed since the last `'change'` event
-    // began.
-    _pending: null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -271,48 +263,60 @@
 
       // Extract attributes and options.
       options || (options = {});
+      options.changes = {};
       if (!attrs) return this;
       if (attrs instanceof Model) attrs = attrs.attributes;
-      if (options.unset) for (attr in attrs) attrs[attr] = void 0;
-
-      // Run validation.
-      if (!this._validate(attrs, options)) return false;
-
+      
+      if (this.validate && !options.silent){
+        if(options.unset) for (attr in attrs) attrs[attr] = void 0;
+        // Run validation.
+        if (!this._validate(attrs, options)) return false;
+      }
       // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
-
-      var changes = options.changes = {};
-      var now = this.attributes;
-      var escaped = this._escapedAttributes;
-      var prev = this._previousAttributes || {};
-
+      if (this.idAttribute in attrs) 
+        this.id = options.unset? void 0 : attrs[this.idAttribute];
+        
+      var changes = {},
+          now = this.attributes,
+          prev = this._previousAttributes,
+          escaped = this._escapedAttributes,
+          all = this._allAttributes,
+          hadBefore;
+          
       // For each `set` attribute...
       for (attr in attrs) {
-        val = attrs[attr];
-
-        // If the new and current value differ, record the change.
-        if (!_.isEqual(now[attr], val) || (options.unset && _.has(now, attr))) {
-          delete escaped[attr];
-          (options.silent ? this._silent : changes)[attr] = true;
-        }
-
+        val = now[attr];
         // Update or delete the current value.
-        options.unset ? delete now[attr] : now[attr] = val;
-
-        // If the new and previous value differ, record the change.  If not,
-        // then remove changes for this attribute.
-        if (!_.isEqual(prev[attr], val) || (_.has(now, attr) !== _.has(prev, attr))) {
-          this.changed[attr] = val;
-          if (!options.silent) this._pending[attr] = true;
+        if(options.unset) {
+          if(!_.has(now, attr)) continue;
+          delete now[attr];
+          hadBefore = true;
         } else {
-          delete this.changed[attr];
-          delete this._pending[attr];
+          now[attr] = attrs[attr];
+          // Do not count on hadBefore at the next check
+          hadBefore = false;
+        }
+        // check for changes.
+        if ( hadBefore || !_.isEqual(now[attr], val) ) {
+          escaped[attr] = void 0;
+          // Merge current pending flags with previous(silent) ones to fire `"change"` events
+          changes[attr] = this._pending[attr] = true;
+          all[attr] = options.unset;
+        } 
+        if(options.silent){
+          // No events for now. Just keep hasChanged and changedAttributes informed
+          if (!_.isEqual(prev[attr], now[attr]) || (_.has(now, attr) !== _.has(prev, attr))) {
+            this.changed[attr] = now[attr];
+          } else {
+            delete this.changed[attr];
+          }
         }
       }
-
+      if (options.silent) return this;
+      // for backward compatibility
+      options.changes = changes;
       // Fire the `"change"` events.
-      if (!options.silent) this.change(options);
-      return this;
+      return this.change(options);
     },
 
     // Remove an attribute from the model, firing `"change"` unless you choose
@@ -332,6 +336,7 @@
     // Fetch the model from the server. If the server's representation of the
     // model differs from its current attributes, they will be overriden,
     // triggering a `"change"` event.
+
     fetch: function(options) {
       options = options ? _.clone(options) : {};
       var model = this;
@@ -451,38 +456,90 @@
       return this.id == null;
     },
 
+    // Set change state to current
+    _updateChanged: function(){
+      var attr, val,
+          pending = this._pending,
+          prev = this._previousAttributes
+          now = this.attributes,
+          all = this._allAttributes,
+          allArray = [],
+          events = [];
+      this.changed = {};
+
+      for(attr in all){
+        // all[attr] contains the value of options.unset
+        all[attr] && delete all[attr];
+        // Using allArray cause for(i++) is faster than for(in)
+        allArray.push(attr);
+        val = now[attr];
+        // Skip silent changes that were restored loudly.
+        if (!_.isEqual(prev[attr], val) || (_.has(now, attr) !== _.has(prev, attr))) {
+          this.changed[attr] = val;
+          _.has(pending, attr) && events.push([attr, val]);
+        }
+      }
+      return {all: allArray, events: events};
+    },
+
+    // Generate previous state considering the remaining silent changes in pending.
+    _generatePrevious: function(allArray){
+      var attr, i, len,
+          pending = this._pending,
+          prev = this._previousAttributes,      
+          now = this.attributes,
+          result = {};
+      for(i = 0, len = allArray.length; i < len; i++){
+        attr = allArray[i];
+        if(_.has(pending, attr)){
+          _.has(prev, attr) && (result[attr] = prev[attr]);
+        } else {
+          _.has(now, attr)  && (result[attr] =  now[attr]);
+        }
+      }
+      return result;
+    },
+
     // Call this method to manually fire a `"change"` event for this model and
     // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
-      options || (options = {});
-      var changing = this._changing;
+      var i, len, attr, allArray, resp, events,
+          nextPending = {},
+          changing = this._changing;
       this._changing = true;
-
-      // Silent changes become pending changes.
-      for (var attr in this._silent) this._pending[attr] = true;
-
-      // Silent changes are triggered.
-      var changes = _.extend({}, options.changes, this._silent);
-      this._silent = {};
-      for (var attr in changes) {
-        this.trigger('change:' + attr, this, this.get(attr), options);
+      options = options || {};
+      // We are inside a "change" event
+      if(this._onChangeAtrs){
+        this._previousAttributes = this._onChangeAtrs;
       }
-      if (changing) return this;
 
-      // Continue firing `"change"` events while there are pending changes.
-      while (!_.isEmpty(this._pending)) {
+      resp = this._updateChanged();
+      allArray = resp.all;
+      events   = resp.events;
+      
+      this._pending = {};
+      for(i = 0, len = events.length; i < len; i++){
+        this.trigger('change:' + events[i][0], this, events[i][1], options);
+        // Collect any silent pending
+        for(attr in this._pending) nextPending[attr] = this._pending[attr];
+        // Prevent parallel branches to commit silent changes from each other
         this._pending = {};
-        this.trigger('change', this, options);
-        // Pending and silent changes still remain.
-        for (var attr in this.changed) {
-          if (this._pending[attr] || this._silent[attr]) continue;
-          delete this.changed[attr];
-        }
-        this._previousAttributes = _.clone(this.attributes);
       }
-
-      this._changing = false;
+      // propagate all pendings to the next general change
+      this._pending = nextPending;
+      if(!changing && len){
+        this._changing = false;
+        // Prepare the next version of _previousAttributes
+        this._onChangeAtrs = this._generatePrevious(allArray);
+        this.trigger('change', this, options);
+        // No nested "change" have been commited so onChangeAtrs is a valid previousAttributes
+        if(this._onChangeAtrs){
+          this._previousAttributes = this._onChangeAtrs;
+          this._onChangeAtrs = null;
+        } // else any nested "change" should have inform the _previousAttributes properly.
+      }
+      this._changing = changing;
       return this;
     },
 
