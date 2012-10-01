@@ -899,4 +899,16 @@ $(document).ready(function() {
     model.change();
     deepEqual(results, []);
   });
+
+  test("#1545 - `undefined` can be passed to a model constructor without coersion", function() {
+    var Model = Backbone.Model.extend({
+      defaults: { one: 1 },
+      initialize : function(attrs, opts) {
+        equal(attrs, undefined);
+      }
+    });
+    var emptyattrs = new Model();
+    var undefinedattrs = new Model(undefined);
+  });
+
 });
