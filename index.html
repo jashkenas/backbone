@@ -455,6 +455,7 @@
     <ul class="toc_section">
       <li>– <a href="#FAQ-events">Catalog of Events</a></li>
       <li>– <a href="#FAQ-tim-toady">More Than One Way To Do It</a></li>
+      <li>– <a href="#FAQ-attributes">Some Attributes Can Be Functions</a></li>
       <li>– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
       <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
       <li>– <a href="#FAQ-extending">Extending Backbone</a></li>
@@ -2235,7 +2236,7 @@ listView.$el.append(itemView.el);
     </p>
 
     <p id="View-attributes">
-      <b class="header">attributes</b><code>view.attributes</code>
+      <b class="header">attributes</b><code>view.attributes or view.attributes()</code>
       <br />
       A hash of attributes that will be set as HTML DOM element attributes on the
       view's <tt>el</tt> (id, class, data-properties, etc.), or a function that
@@ -3304,6 +3305,26 @@ var model = localBackbone.Model.extend(...);
       appropriate in the same app, depending on the quantity of data involved,
       and the complexity of the UI.
     </p>
+
+    <p id="FAQ-attributes">
+      <b class="header">Some Attributes Can Be Functions</b>
+      <br />
+      There are multiple attributes, which can also be functions. If you need
+      to calculate their values dynamically, or need access to <tt>this</tt>,
+      define them as functions. Here's the list of them.
+    </p>
+
+    <ul class="small">
+      <li><a href="#Model-defaults">Model#defaults</a></li>
+      <li><a href="#Model-urlRoot">Model#urlRoot</a></li>
+      <li><a href="#Model-url">Model#url</a></li>
+      <li><a href="#Collection-url">Collection#url</a></li>
+      <li><a href="#View-events">View#events</a></li>
+      <li><a href="#View-attributes">View#attributes</a></li>
+      <li><a href="#View-id">View#id</a></li>
+      <li><a href="#View-className">View#className</a></li>
+      <li><a href="#View-tagName">View#tagName</a></li>
+    </ul>
 
     <p id="FAQ-nested">
       <b class="header">Nested Models &amp; Collections</b>
