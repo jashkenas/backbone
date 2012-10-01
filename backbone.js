@@ -1221,8 +1221,8 @@
     // memory leaks.
     dispose: function() {
       this.undelegateEvents();
-      if (this.model) this.model.off(null, null, this);
-      if (this.collection) this.collection.off(null, null, this);
+      if (this.model instanceof Model) this.model.off(null, null, this);
+      if (this.collection instanceof Collection) this.collection.off(null, null, this);
       return this;
     },
 
