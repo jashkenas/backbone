@@ -1320,7 +1320,7 @@
         if (this.className) attrs['class'] = _.result(this, 'className');
         this.setElement(this.make(_.result(this, 'tagName'), attrs), false);
       } else {
-        this.setElement(this.el, false);
+        this.setElement(_.result(this, 'el'), false);
       }
     }
 
