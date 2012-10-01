@@ -1059,7 +1059,7 @@
       // opened by a non-pushState browser.
       this.fragment = fragment;
       var loc = this.location;
-      var atRoot = (loc.pathname.replace(/[^/]$/, '$&/') === this.root) && !loc.search;
+      var atRoot = (loc.pathname.replace(/[^\/]$/, '$&/') === this.root) && !loc.search;
 
       // If we've started off with a route from a `pushState`-enabled browser,
       // but we're currently in a browser that doesn't support it...
