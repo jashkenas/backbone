@@ -183,11 +183,11 @@
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
     var defaults;
-    attributes || (attributes = {});
+    var attrs = attributes || {};
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attributes = this.parse(attributes);
     if (defaults = _.result(this, 'defaults')) {
-      attributes = _.extend({}, defaults, attributes);
+      attrs = _.extend({}, defaults, attrs);
     }
     this.attributes = {};
     this._escapedAttributes = {};
@@ -195,7 +195,7 @@
     this.changed = {};
     this._silent = {};
     this._pending = {};
-    this.set(attributes, {silent: true});
+    this.set(attrs, {silent: true});
     // Reset change tracking.
     this.changed = {};
     this._silent = {};
