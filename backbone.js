@@ -267,9 +267,9 @@
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
       if (!_.isObject(attrs)) {
-	key = attrs;
-	(attrs = {})[key] = options;
-	options = arguments[2];
+        key = attrs;
+        (attrs = {})[key] = options;
+        options = arguments[2];
       }
 
       // Extract attributes and options.
@@ -294,26 +294,26 @@
         val = attrs[attr];
 
         // If the new and current value differ, record the change.
-	if (!_.isEqual(now[attr], val) || (unset && _.has(now, attr))) {
+        if (!_.isEqual(now[attr], val) || (unset && _.has(now, attr))) {
           delete escaped[attr];
-	  this._changes[attr] = true;
+          this._changes[attr] = true;
         }
 
         // Update or delete the current value.
-	unset ? delete now[attr] : now[attr] = val;
+        unset ? delete now[attr] : now[attr] = val;
 
         // If the new and previous value differ, record the change.  If not,
         // then remove changes for this attribute.
         if (!_.isEqual(prev[attr], val) || (_.has(now, attr) !== _.has(prev, attr))) {
           this.changed[attr] = val;
-	  if (!silent) this._pending[attr] = true;
+          if (!silent) this._pending[attr] = true;
         } else {
           delete this.changed[attr];
           delete this._pending[attr];
-	  if (!changing) delete this._changes[attr];
+          if (!changing) delete this._changes[attr];
         }
 
-	if (changing && _.isEqual(now[attr], changing[attr])) delete this._changes[attr];
+        if (changing && _.isEqual(now[attr], changing[attr])) delete this._changes[attr];
       }
 
       // Fire the `"change"` events.
@@ -357,9 +357,9 @@
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
       if (attrs != null && !_.isObject(attrs)) {
-	key = attrs;
-	(attrs = {})[key] = options;
-	options = arguments[2];
+        key = attrs;
+        (attrs = {})[key] = options;
+        options = arguments[2];
       }
       options = options ? _.clone(options) : {};
 
@@ -472,12 +472,12 @@
       // Set the correct state for this._changing values
       var triggers = [];
       for (var attr in changes) {
-	current[attr] = this.get(attr);
-	triggers.push(attr);
+        current[attr] = this.get(attr);
+        triggers.push(attr);
       }
 
       for (var i=0, l=triggers.length; i < l; i++) {
-	this.trigger('change:' + triggers[i], this, current[triggers[i]], options);
+        this.trigger('change:' + triggers[i], this, current[triggers[i]], options);
       }
       if (changing) return this;
 
@@ -487,7 +487,7 @@
         this.trigger('change', this, options);
         // Pending and silent changes still remain.
         for (var attr in this.changed) {
-	  if (this._pending[attr] || this._changes[attr]) continue;
+          if (this._pending[attr] || this._changes[attr]) continue;
           delete this.changed[attr];
         }
         this._previousAttributes = _.clone(this.attributes);
