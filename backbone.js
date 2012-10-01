@@ -183,23 +183,23 @@
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
     var defaults;
-    attributes || (attributes = {});
+    var attrs = attributes || {};
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attributes = this.parse(attributes);
     if (defaults = _.result(this, 'defaults')) {
-      attributes = _.extend({}, defaults, attributes);
+      attrs = _.extend({}, defaults, attrs);
     }
+    this._allAttributes = {};
+    this._previousAttributes = {};
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
-
-    this._pending = {};
     this.changed = {};
-    this._previousAttributes = {};
-    this.set(attributes, {silent: true});
+    this._pending = {};
+    this.set(attrs, {silent: true});
     // Reset change tracking.
-    this._pending = {};
     this.changed = {};
+    this._pending = {};
     this._previousAttributes = _.extend({}, this.attributes);
     this.initialize.apply(this, arguments);
   };
@@ -266,35 +266,53 @@
       options.changes = {};
       if (!attrs) return this;
       if (attrs instanceof Model) attrs = attrs.attributes;
-      if (options.unset) for (attr in attrs) attrs[attr] = void 0;
-
-      // Run validation.
-      if (!this._validate(attrs, options)) return false;
-
+      
+      if (this.validate && !options.silent){
+        if(options.unset) for (attr in attrs) attrs[attr] = void 0;
+        // Run validation.
+        if (!this._validate(attrs, options)) return false;
+      }
       // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
-
+      if (this.idAttribute in attrs) 
+        this.id = options.unset? void 0 : attrs[this.idAttribute];
         
-      var changes = {};
-      var now = this.attributes;
-      var prev = this._previousAttributes;
-      var escaped = this._escapedAttributes;
-
+      var changes = {},
+          now = this.attributes,
+          prev = this._previousAttributes,
+          escaped = this._escapedAttributes,
+          all = this._allAttributes,
+          hadBefore;
+          
       // For each `set` attribute...
       for (attr in attrs) {
-        val = attrs[attr];
-        // check for changes.
-        if (!_.isEqual(now[attr], val) || (options.unset && _.has(now, attr))) {
-          delete escaped[attr];
-          changes[attr] = true;
-        }
+        val = now[attr];
         // Update or delete the current value.
-        options.unset ? delete now[attr] : now[attr] = val;        
+        if(options.unset) {
+          if(!_.has(now, attr)) continue;
+          delete now[attr];
+          hadBefore = true;
+        } else {
+          now[attr] = attrs[attr];
+          // Do not count on hadBefore at the next check
+          hadBefore = false;
+        }
+        // check for changes.
+        if ( hadBefore || !_.isEqual(now[attr], val) ) {
+          escaped[attr] = void 0;
+          // Merge current pending flags with previous(silent) ones to fire `"change"` events
+          changes[attr] = this._pending[attr] = true;
+          all[attr] = options.unset;
+        } 
+        if(options.silent){
+          // No events for now. Just keep hasChanged and changedAttributes informed
+          if (!_.isEqual(prev[attr], now[attr]) || (_.has(now, attr) !== _.has(prev, attr))) {
+            this.changed[attr] = now[attr];
+          } else {
+            delete this.changed[attr];
+          }
+        }
       }
-      // Merge current changes with previous silent to fire `"change"` events
-      _.extend(this._pending, changes);
-      // If no events for now, just keep hasChanged and changedAttributes informed
-      if (options.silent) return this._updateChanged();
+      if (options.silent) return this;
       // for backward compatibility
       options.changes = changes;
       // Fire the `"change"` events.
@@ -440,28 +458,44 @@
 
     // Set change state to current
     _updateChanged: function(){
-        var attr, val,
-            prev = this._previousAttributes,
-            now =  this.attributes,
-            sum = _.extend({}, now, prev);
-        this.changed = {};
-        for(attr in sum){
-          val = now[attr];
-          if (!_.isEqual(prev[attr], val) || (_.has(now, attr) !== _.has(prev, attr))) {
-            this.changed[attr] = val;
-          }
+      var attr, val,
+          pending = this._pending,
+          prev = this._previousAttributes
+          now = this.attributes,
+          all = this._allAttributes,
+          allArray = [],
+          events = [];
+      this.changed = {};
+
+      for(attr in all){
+        // all[attr] contains the value of options.unset
+        all[attr] && delete all[attr];
+        // Using allArray cause for(i++) is faster than for(in)
+        allArray.push(attr);
+        val = now[attr];
+        // Skip silent changes that were restored loudly.
+        if (!_.isEqual(prev[attr], val) || (_.has(now, attr) !== _.has(prev, attr))) {
+          this.changed[attr] = val;
+          _.has(pending, attr) && events.push([attr, val]);
         }
-        return this;
-      },
+      }
+      return {all: allArray, events: events};
+    },
 
     // Generate previous state considering the remaining silent changes in pending.
-    _generatePrevious: function(){
-      var silent,
+    _generatePrevious: function(allArray){
+      var attr, i, len,
           pending = this._pending,
           prev = this._previousAttributes,      
-          result = _.extend({}, this.attributes);          
-      for(silent in pending){
-        (silent in prev)? result[silent]=prev[silent] : delete result[silent];
+          now = this.attributes,
+          result = {};
+      for(i = 0, len = allArray.length; i < len; i++){
+        attr = allArray[i];
+        if(_.has(pending, attr)){
+          _.has(prev, attr) && (result[attr] = prev[attr]);
+        } else {
+          _.has(now, attr)  && (result[attr] =  now[attr]);
+        }
       }
       return result;
     },
@@ -470,39 +504,40 @@
     // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
-      var attr, val, 
-          pending =  this._pending,
+      var i, len, attr, allArray, resp, events,
           nextPending = {},
           changing = this._changing;
       this._changing = true;
-      this._pending = {};
       options = options || {};
       // We are inside a "change" event
       if(this._onChangeAtrs){
         this._previousAttributes = this._onChangeAtrs;
-      }      
-      this._updateChanged();
-      for(attr in pending){
-        // Skip silent changes that were restored loudly.
-        if(!(attr in this.changed)) continue;
-        val =this.changed[attr];
-        this.trigger('change:' + attr, this, val, options);
+      }
+
+      resp = this._updateChanged();
+      allArray = resp.all;
+      events   = resp.events;
+      
+      this._pending = {};
+      for(i = 0, len = events.length; i < len; i++){
+        this.trigger('change:' + events[i][0], this, events[i][1], options);
         // Collect any silent pending
-        _.extend(nextPending, this._pending);
+        for(attr in this._pending) nextPending[attr] = this._pending[attr];
         // Prevent parallel branches to commit silent changes from each other
         this._pending = {};
       }
       // propagate all pendings to the next general change
       this._pending = nextPending;
-      if(!(changing || _.isEmpty(this.changed))){
+      if(!changing && len){
         this._changing = false;
-        this._onChangeAtrs = this._generatePrevious();
+        // Prepare the next version of _previousAttributes
+        this._onChangeAtrs = this._generatePrevious(allArray);
         this.trigger('change', this, options);
         // No nested "change" have been commited so onChangeAtrs is a valid previousAttributes
         if(this._onChangeAtrs){
           this._previousAttributes = this._onChangeAtrs;
           this._onChangeAtrs = null;
-        } // else any nested "change" should have informed the _previousAttributes properly.
+        } // else any nested "change" should have inform the _previousAttributes properly.
       }
       this._changing = changing;
       return this;
