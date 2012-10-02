@@ -449,4 +449,22 @@ $(document).ready(function() {
     });
   });
 
+  test("#1695 - hashChange to pushState with search.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root?a=b#x/y');
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(state, title, url){
+          strictEqual(url, '/root/x/y?a=b');
+        }
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true
+    });
+  });
+
 });
