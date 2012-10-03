@@ -892,4 +892,16 @@ $(document).ready(function() {
     deepEqual(changes, ['a',1,'item']);
   });
 
+  test("stealth changes allow setting attributes with no recorded changes, resetting the model state", 1, function () {
+    var model = new Backbone.Model({a:1});
+    model.on('change', function(){
+      ok(false);
+    });
+    model.set({a:2},{silent:true});
+    model.set({a:3},{silent:true});
+    model.set({a:4},{silent:true});
+    model.set({a:'test'},{stealth:true});
+    equal(model.get('a'), 'test');
+  });
+
 });
