@@ -219,7 +219,7 @@
     _pending: null,
 
     // A hash of attributes with the current model state to determine if
-    // a `change` should be recorded within a nested `change` block
+    // a `change` should be recorded within a nested `change` block.
     _changing : null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
