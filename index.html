@@ -204,7 +204,8 @@
       img.example_image {
         margin: 0px auto;
       }
-    @media only screen and (-webkit-max-device-pixel-ratio: 1) and (max-width: 600px) {
+    @media only screen and (-webkit-max-device-pixel-ratio: 1) and (max-width: 600px),
+           only screen and (max--moz-device-pixel-ratio: 1) and (max-width: 600px) {
       div#sidebar {
         display: none;
       }
