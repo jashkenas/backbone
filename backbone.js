@@ -200,13 +200,13 @@
   // Attach all inheritable methods to the Model prototype.
   _.extend(Model.prototype, Events, {
 
-    // A hash of attributes whose current and previous value differ
+    // A hash of attributes whose current and previous value differ.
     changed: null,
 
-    // Whether there is a pending request to fire in the final `change` loop
+    // Whether there is a pending request to fire in the final `change` loop.
     _pending: false,
 
-    // Whether the model is in the midst of a change cycle
+    // Whether the model is in the midst of a change cycle.
     _changing: false,
 
     // Whether there has been a `set` call since the last
@@ -292,13 +292,13 @@
       for (attr in attrs) {
         val = attrs[attr];
 
-        // If an escaped attr exists, and the new and current value differ remove the escaped attr
+        // If an escaped attr exists, and the new and current value differ remove the escaped attr.
         if (esc[attr] && !_.isEqual(now[attr], val) || (unset && _.has(now, attr))) delete esc[attr];
 
         // Update or delete the current value.
         unset ? delete now[attr] : now[attr] = val;
 
-        // Stealth overrides any sort of model event change being registered
+        // Stealth overrides any sort of model event change being registered.
         if (!stealth) this._modelState.push(attr, val, unset);
       }
 
@@ -308,7 +308,7 @@
         if (!silent) this.change(options);
       } else {
         // A stealth change automatically resets the _currentState,
-        // _modelState, and _previousAttributes of a model
+        // _modelState, and _previousAttributes of a model.
         this._modelState = [];
         this._currentState = _.clone(this.attributes);
         this._previousAttributes = _.clone(this.attributes);
@@ -458,20 +458,18 @@
       this._changing = true;
       this.changed = {};
 
-      // All changes triggered on the model
+      // All changes triggered on the model.
       this._pending = this._changeCenter(true, options);
 
       if (changing) return this;
 
-      // Trigger a change if there were any attributes triggered to change
+      // Trigger a change while there is a pending change call.
       while (this._pending) {
         this._pending = false;
         this.trigger('change', this, options);
         this._previousAttributes = _.clone(this.attributes);
       }
 
-      // Set the previous attributes to the current attributes before the last change block -
-      // as any silent changes in the final change will cause an inaccurate model state
       this._changing = false;
       return this;
     },
@@ -502,33 +500,33 @@
 
     // Accurately and quickly calculates and records any changes
     // for a model. Either checks against `this._currentState` (in a change block)
-    // or `this._previousAttributes` in a changedAttributes call, firing the changes.
+    // or a clone of `this._currentState` in a changedAttributes call, firing the changes.
     _changeCenter: function (block, options) {
 
       var modelState   = block ? this._modelState : _.clone(this._modelState);
-      var currentState = block ? this._currentState : _.clone(this._previousAttributes);
+      var currentState = block ? this._currentState : _.clone(this._currentState);
 
-      var unsets       = [];
-      var triggers     = [];
+      var unsets = [];
+      var triggers = [];
 
       // Used locally to stores all of the changes that have
       // happened in the current loop, to ensure only the latest pending
-      // changes are applied to the model
-      var local  = {};
+      // changes are applied to the model.
+      var local = {};
 
-      // Loop through the current queue of model attributes being set
+      // Loop through the current queue of potential model changes.
       for (var i = modelState.length - 3; i >= 0; i -= 3) {
 
         var key = modelState[i];
         var val = modelState[i+1];
         var unset = modelState[i+2];
 
-        // If the item hasn't been set locally this round
+        // If the item hasn't been set locally this round, then process.
         if (!local[key]) {
           local[key] = val;
           
           // Check if the item has changed since the last state
-          // if not, and we're only checking for changes, remove the item from this.changed
+          // If not, and we're only checking for changes, remove the item from `this.changed`.
           if (currentState[key] !== val || (_.has(currentState, key) && unset)) {
             triggers.push(key, val);
           } else {
@@ -536,7 +534,7 @@
           }
 
           // Check if this is an unset call, and add the key to the list of
-          // items to delete... otherwise, set this._currentState to the value
+          // items to delete... otherwise, set `this._currentState` to the value.
           if (!val && unset) {
             unsets.push(key);
           } else {
@@ -547,24 +545,24 @@
         modelState.splice(i,3);
       }
 
-      // For each item that is unset, remove it from the currentState
+      // For each item that is unset, remove it from the currentState.
       for (var i = 0, l = unsets.length; i < l; i++) {
         delete currentState[unsets[i]];
       }
       
       // The current state (for comparison purposes) is now the changed state
       // inside of a `change` call. In a non `change` call, set this.changed to an
-      // empty object and fill it with any triggered changes
+      // empty object and fill it with any triggered changes.
       for (i = triggers.length - 2; i >= 0; i -= 2) {
         if (block) {
           this.trigger('change:' + triggers[i], this, triggers[i+1], options);
         }
 
-        // Set the changed attribtue regardless
+        // Set the changed attribtue regardless.
         this.changed[triggers[i]] = triggers[i+1];
       }
 
-      // Signal that the this.changed is current to prevent duplicate calls
+      // Signal that the this.changed is current to prevent duplicate calls.
       this._cleanChange = true;
       return triggers.length;
     },
