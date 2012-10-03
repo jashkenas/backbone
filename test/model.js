@@ -878,4 +878,18 @@ $(document).ready(function() {
     deepEqual(changes, ['a',1,'item']);
   });
 
+  test("#1664 - silent changes on changing attributes triggered by other attributes", 2, function() {
+    var changes = [];
+    var model = new Backbone.Model();
+    model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
+    model.on('change', function() {
+      model.set({a:'c'}, {silent:true});
+    });
+    model.set({a:'a', b:1, c:'item'});
+    deepEqual(changes, ['a',1,'item']);
+    model.set({a:'a'}, {silent:true});
+    model.change();
+    deepEqual(changes, ['a',1,'item']);
+  });
+
 });
