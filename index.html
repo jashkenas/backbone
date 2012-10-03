@@ -726,6 +726,11 @@ object.off(null, null, context);
 object.off();
 </pre>
 
+    <p>
+      Note that calling <tt>model.off()</tt>, for example, will indeed remove <i>all</i> events
+      on the model &mdash; including events that Backbone uses for internal bookkeeping.
+    </p>
+
     <p id="Events-trigger">
       <b class="header">trigger</b><code>object.trigger(event, [*args])</code>
       <br />
