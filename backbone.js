@@ -894,10 +894,10 @@
 
   // Cached regular expressions for matching named param parts and splatted
   // parts of route strings.
-  var optionalParam = /\[(.*?)\]/g;
+  var optionalParam = /\((.*?)\)/g;
   var namedParam    = /:\w+/g;
   var splatParam    = /\*\w+/g;
-  var escapeRegExp  = /[-{}()+?.,\\^$|#\s]/g;
+  var escapeRegExp  = /[-{}[\]+?.,\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
@@ -949,7 +949,6 @@
     _routeToRegExp: function(route) {
       route = route.replace(escapeRegExp, '\\$&')
                    .replace(optionalParam, '(?:$1)?')
-                   .replace(/[[\]]/g, '\\$&')
                    .replace(namedParam, '([^\/]+)')
                    .replace(splatParam, '(.*?)');
       return new RegExp('^' + route + '$');

@@ -69,7 +69,7 @@ $(document).ready(function() {
       "contacts":                   "contacts",
       "contacts/new":               "newContact",
       "contacts/:id":               "loadContact",
-      "optional[/:item]":           "optionalItem",
+      "optional(/:item)":           "optionalItem",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
