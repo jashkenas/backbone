@@ -1936,15 +1936,27 @@ var Workspace = Backbone.Router.extend({
       similar to the <a href="#View">View</a>'s <a href="#View-delegateEvents">events hash</a>.
       Routes can contain parameter parts, <tt>:param</tt>, which match a single URL
       component between slashes; and splat parts <tt>*splat</tt>, which can match
-      any number of URL components.
+      any number of URL components. Part of a route can be made optional by
+      surrounding it in parentheses <tt>(/:optional)</tt>.
     </p>
 
     <p>
       For example, a route of <tt>"search/:query/p:page"</tt> will match
       a fragment of <tt>#search/obama/p2</tt>, passing <tt>"obama"</tt>
-      and <tt>"2"</tt> to the action. A route of <tt>"file/*path"</tt> will
-      match <tt>#file/nested/folder/file.txt</tt>,
-      passing <tt>"nested/folder/file.txt"</tt> to the action.
+      and <tt>"2"</tt> to the action.
+    </p>
+
+    <p>
+      A route of <tt>"file/*path"</tt> will match
+      <tt>#file/nested/folder/file.txt</tt>, passing
+      <tt>"nested/folder/file.txt"</tt> to the action.
+    </p>
+
+    <p>
+      A route of <tt>"docs/:section(/:subsection)"</tt> will match
+      <tt>#docs/faq</tt> and <tt>#docs/faq/installing</tt>, passing
+      <tt>"faq"</tt> to the action in the first case, and passing <tt>"faq"</tt>
+      and <tt>"installing"</tt> to the action in the second.
     </p>
 
     <p>
