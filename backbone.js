@@ -749,6 +749,13 @@
       return this;
     },
 
+    // Reverse the order of the models
+    reverse: function(options) {
+      this.models.reverse();
+      if (!options || !options.silent) this.trigger('reset', this, options);
+      return this;
+    },
+
     // Pluck an attribute from each model in the collection.
     pluck: function(attr) {
       return _.invoke(this.models, 'get', attr);
