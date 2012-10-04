@@ -189,18 +189,11 @@
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.extend({}, defaults, attrs);
     }
-    this.attributes = {};
-    this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
     this.changed = {};
-    this._changes = {};
-    this._pending = {};
-    this.set(attrs, {silent: true});
-    // Reset change tracking.
-    this.changed = {};
-    this._changes = {};
-    this._pending = {};
-    this._previousAttributes = _.clone(this.attributes);
+    this.attributes = {};
+    this._escapedAttributes = {};
+    this.set(attrs, {stealth: true});
     this.initialize.apply(this, arguments);
   };
 
@@ -210,17 +203,23 @@
     // A hash of attributes whose current and previous value differ.
     changed: null,
 
-    // A hash of attributes that have changed since the last time `change`
-    // was called.
-    _changes: null,
+    // Whether there is a pending request to fire in the final `change` loop.
+    _pending: false,
 
-    // A hash of attributes that have changed since the last `change` event
-    // began.
-    _pending: null,
+    // Whether the model is in the midst of a change cycle.
+    _changing: false,
 
-    // A hash of attributes with the current model state to determine if
-    // a `change` should be recorded within a nested `change` block.
-    _changing : null,
+    // Whether there has been a `set` call since the last
+    // calculation of the changed hash, for efficiency.
+    _cleanChange: true,
+
+    // The model state used for comparison in determining if a
+    // change should be fired.
+    _currentState: null,
+
+    // An array queue of all changes attributed to a model
+    // on the next non-silent change event.
+    _modelState: null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -274,7 +273,9 @@
 
       // Extract attributes and options.
       var silent = options && options.silent;
+      var stealth = options && options.stealth;
       var unset = options && options.unset;
+
       if (attrs instanceof Model) attrs = attrs.attributes;
       if (unset) for (attr in attrs) attrs[attr] = void 0;
 
@@ -284,40 +285,34 @@
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
-      var changing = this._changing;
       var now = this.attributes;
-      var escaped = this._escapedAttributes;
-      var prev = this._previousAttributes || {};
+      var esc = this._escapedAttributes;
 
       // For each `set` attribute...
       for (attr in attrs) {
         val = attrs[attr];
 
-        // If the new and current value differ, record the change.
-        if (!_.isEqual(now[attr], val) || (unset && _.has(now, attr))) {
-          delete escaped[attr];
-          this._changes[attr] = true;
-        }
+        // If an escaped attr exists, and the new and current value differ remove the escaped attr.
+        if (esc[attr] && !_.isEqual(now[attr], val) || (unset && _.has(now, attr))) delete esc[attr];
 
         // Update or delete the current value.
         unset ? delete now[attr] : now[attr] = val;
 
-        // If the new and previous value differ, record the change.  If not,
-        // then remove changes for this attribute.
-        if (!_.isEqual(prev[attr], val) || (_.has(now, attr) !== _.has(prev, attr))) {
-          this.changed[attr] = val;
-          if (!silent) this._pending[attr] = true;
-        } else {
-          delete this.changed[attr];
-          delete this._pending[attr];
-          if (!changing) delete this._changes[attr];
-        }
-
-        if (changing && _.isEqual(now[attr], changing[attr])) delete this._changes[attr];
+        // Stealth overrides any sort of model event change being registered.
+        if (!stealth) this._modelState.push(attr, val, unset);
       }
 
       // Fire the `"change"` events.
-      if (!silent) this.change(options);
+      if (!stealth) {
+        this._cleanChange = false;
+        if (!silent) this.change(options);
+      } else {
+        // A stealth change automatically resets the _currentState,
+        // _modelState, and _previousAttributes of a model.
+        this._modelState = [];
+        this._currentState = _.clone(this.attributes);
+        this._previousAttributes = _.clone(this.attributes);
+      }
       return this;
     },
 
@@ -460,46 +455,29 @@
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
       var changing = this._changing;
-      var current = this._changing = {};
+      this._changing = true;
+      this.changed = {};
 
-      // Silent changes become pending changes.
-      for (var attr in this._changes) this._pending[attr] = true;
+      // All changes triggered on the model.
+      this._pending = this._changeCenter(true, options);
 
-      // Trigger 'change:attr' for any new or silent changes.
-      var changes = this._changes;
-      this._changes = {};
-
-      // Set the correct state for this._changing values
-      var triggers = [];
-      for (var attr in changes) {
-        current[attr] = this.get(attr);
-        triggers.push(attr);
-      }
-
-      for (var i=0, l=triggers.length; i < l; i++) {
-        this.trigger('change:' + triggers[i], this, current[triggers[i]], options);
-      }
       if (changing) return this;
 
-      // Continue firing `"change"` events while there are pending changes.
-      while (!_.isEmpty(this._pending)) {
-        this._pending = {};
+      // Trigger a change while there is a pending change call.
+      while (this._pending) {
+        this._pending = false;
         this.trigger('change', this, options);
-        // Pending and silent changes still remain.
-        for (var attr in this.changed) {
-          if (this._pending[attr] || this._changes[attr]) continue;
-          delete this.changed[attr];
-        }
         this._previousAttributes = _.clone(this.attributes);
       }
 
-      this._changing = null;
+      this._changing = false;
       return this;
     },
 
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
+      if (!this._cleanChange) this._changeCenter(false);
       if (attr == null) return !_.isEmpty(this.changed);
       return _.has(this.changed, attr);
     },
@@ -518,6 +496,75 @@
         (changed || (changed = {}))[attr] = val;
       }
       return changed;
+    },
+
+    // Accurately and quickly calculates and records any changes
+    // for a model. Either checks against `this._currentState` (in a change block)
+    // or a clone of `this._currentState` in a changedAttributes call, firing the changes.
+    _changeCenter: function (block, options) {
+
+      var modelState   = block ? this._modelState : _.clone(this._modelState);
+      var currentState = block ? this._currentState : _.clone(this._currentState);
+
+      var unsets = [];
+      var triggers = [];
+
+      // Used locally to stores all of the changes that have
+      // happened in the current loop, to ensure only the latest pending
+      // changes are applied to the model.
+      var local = {};
+
+      // Loop through the current queue of potential model changes.
+      for (var i = modelState.length - 3; i >= 0; i -= 3) {
+
+        var key = modelState[i];
+        var val = modelState[i+1];
+        var unset = modelState[i+2];
+
+        // If the item hasn't been set locally this round, then process.
+        if (!local[key]) {
+          local[key] = val;
+          
+          // Check if the item has changed since the last state
+          // If not, and we're only checking for changes, remove the item from `this.changed`.
+          if (currentState[key] !== val || (_.has(currentState, key) && unset)) {
+            triggers.push(key, val);
+          } else {
+            delete this.changed[key];
+          }
+
+          // Check if this is an unset call, and add the key to the list of
+          // items to delete... otherwise, set `this._currentState` to the value.
+          if (!val && unset) {
+            unsets.push(key);
+          } else {
+            currentState[key] = val;
+          }
+        }
+        
+        modelState.splice(i,3);
+      }
+
+      // For each item that is unset, remove it from the currentState.
+      for (var i = 0, l = unsets.length; i < l; i++) {
+        delete currentState[unsets[i]];
+      }
+      
+      // The current state (for comparison purposes) is now the changed state
+      // inside of a `change` call. In a non `change` call, set this.changed to an
+      // empty object and fill it with any triggered changes.
+      for (i = triggers.length - 2; i >= 0; i -= 2) {
+        if (block) {
+          this.trigger('change:' + triggers[i], this, triggers[i+1], options);
+        }
+
+        // Set the changed attribtue regardless.
+        this.changed[triggers[i]] = triggers[i+1];
+      }
+
+      // Signal that the this.changed is current to prevent duplicate calls.
+      this._cleanChange = true;
+      return triggers.length;
     },
 
     // Get the previous value of an attribute, recorded at the time the last
@@ -543,7 +590,8 @@
     // returning `true` if all is well. If a specific `error` callback has
     // been passed, call that instead of firing the general `"error"` event.
     _validate: function(attrs, options) {
-      if (options && options.silent || !this.validate) return true;
+      var silent = options && (options.silent || options.stealth);
+      if (silent || !this.validate) return true;
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;
