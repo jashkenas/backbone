@@ -18,7 +18,7 @@ $(document).ready(function() {
 
   }));
 
-  test("new and sort", 7, function() {
+  test("new, sort and reverse", 11, function() {
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
     col.comparator = function(a, b) {
@@ -32,6 +32,12 @@ $(document).ready(function() {
     equal(col.first(), d, "d should be first");
     equal(col.last(), a, "a should be last");
     equal(col.length, 4);
+    col.reverse();
+    equal(col.first(), a, "a should be first");
+    equal(col.last(), d, "d should be last");
+    col.reverse();
+    equal(col.first(), d, "d should be first");
+    equal(col.last(), a, "a should be last");
   });
 
   test("String comparator.", 1, function() {
