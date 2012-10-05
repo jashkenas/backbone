@@ -878,4 +878,18 @@ $(document).ready(function() {
     deepEqual(changes, ['a',1,'item']);
   });
 
+  test("silent changes in last `change` event back to original does not trigger change", 2, function() {
+    var changes = [];
+    var model = new Backbone.Model();
+    model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
+    model.on('change', function() {
+      model.set({a:'c'}, {silent:true});
+    });
+    model.set({a:'a'});
+    deepEqual(changes, ['a']);
+    model.set({a:'a'}, {silent:true});
+    model.change();
+    deepEqual(changes, ['a']);
+  });
+
 });
