@@ -2,8 +2,13 @@ require 'rubygems'
 
 HEADER = /((^\s*\/\/.*\n)+)/
 
-desc "rebuild the backbone-min.js files for distribution"
+desc "build backbone.js from source files"
 task :build do
+  `./build > backbone.js`
+end
+
+desc "rebuild the backbone-min.js files for distribution"
+task :min => :build do
   begin
     require 'closure-compiler'
   rescue LoadError
