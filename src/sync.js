@@ -23,7 +23,7 @@ var methodMap = {
 // instead of `application/json` with the model in a param named `model`.
 // Useful when interfacing with server-side languages like **PHP** that make
 // it difficult to read the body of `PUT` requests.
-exports.sync = function(method, model, options) {
+module.exports = exports = function(method, model, options) {
   var type = methodMap[method];
 
   // Default options, unless specified.
@@ -79,7 +79,7 @@ exports.sync = function(method, model, options) {
   };
 
   // Make the request, allowing the user to override any Ajax options.
-  return Backbone.ajax(_.extend(params, options));
+  return exports.ajax(_.extend(params, options));
 };
 
 // Set the default implementation of `Backbone.ajax` to proxy through to `$`.

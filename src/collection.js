@@ -1,6 +1,7 @@
 var Events = require('./events'),
     Model = require('./model'),
-    helpers = require('./helpers');
+    helpers = require('./helpers'),
+    sync = require('./sync');
 
 // Provides a standard collection class for our sets of models, ordered
 // or unordered. If a `comparator` is specified, the Collection will maintain
@@ -36,9 +37,9 @@ _.extend(exports.prototype, Events, {
     return this.map(function(model){ return model.toJSON(options); });
   },
 
-  // Proxy `Backbone.sync` by default.
+  // Proxy `./sync.js` by default.
   sync: function() {
-    return Backbone.sync.apply(this, arguments);
+    return sync.apply(this, arguments);
   },
 
   // Add a model, or list of models to the set. Pass **silent** to avoid

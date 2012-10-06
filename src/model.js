@@ -1,5 +1,6 @@
 var Events = require('./events'),
-    helpers = require('./helpers');
+    helpers = require('./helpers'),
+    sync = require('./sync');
 
 // Create a new model, with defined attributes. A client id (`cid`)
 // is automatically generated and assigned for you.
@@ -59,9 +60,9 @@ _.extend(exports.prototype, Events, {
     return _.clone(this.attributes);
   },
 
-  // Proxy `Backbone.sync` by default.
+  // Proxy `./sync.js` by default.
   sync: function() {
-    return Backbone.sync.apply(this, arguments);
+    return sync.apply(this, arguments);
   },
 
   // Get the value of an attribute.

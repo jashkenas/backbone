@@ -1,5 +1,6 @@
 var Events = require('./events'),
-    helpers = require('./helpers');
+    helpers = require('./helpers'),
+    history = require('./history');
 
 // Routers map faux-URLs to actions, and fire events when routes are
 // matched. Creating a new one sets its `routes` hash, if not set statically.
@@ -26,6 +27,9 @@ _.extend(exports.prototype, Events, {
   // initialization logic.
   initialize: function(){},
 
+  // Proxy `./history.js` by default.
+  history: history,
+
   // Manually bind a single named route to a callback. For example:
   //
   //     this.route('search/:query/p:num', 'search', function(query, num) {
@@ -35,18 +39,18 @@ _.extend(exports.prototype, Events, {
   route: function(route, name, callback) {
     if (!_.isRegExp(route)) route = this._routeToRegExp(route);
     if (!callback) callback = this[name];
-    Backbone.history.route(route, _.bind(function(fragment) {
+    this.history.route(route, _.bind(function(fragment) {
       var args = this._extractParameters(route, fragment);
       callback && callback.apply(this, args);
       this.trigger.apply(this, ['route:' + name].concat(args));
-      Backbone.history.trigger('route', this, name, args);
+      this.history.trigger('route', this, name, args);
     }, this));
     return this;
   },
 
   // Simple proxy to `Backbone.history` to save a fragment into the history.
   navigate: function(fragment, options) {
-    Backbone.history.navigate(fragment, options);
+    this.history.navigate(fragment, options);
     return this;
   },
 
