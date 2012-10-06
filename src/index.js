@@ -5,7 +5,6 @@
 //     For all details and documentation:
 //     http://backbonejs.org
 
-
 // Save a reference to the global object (`window` in the browser, `global`
 // on the server).
 var root = this;
@@ -16,23 +15,24 @@ var previousBackbone = root.Backbone;
 
 // The top-level namespace. All public Backbone classes and modules will
 // be attached to this. Exported for both CommonJS and the browser.
-var Backbone;
-if (typeof exports !== 'undefined') {
-  Backbone = exports;
-} else {
-  Backbone = root.Backbone = {};
-}
+module.exports = exports = {
+  Events: require('./events'),
+  Model: require('./model'),
+  Collection: require('./collection'),
+  Router: require('./router'),
+  View: require('./view'),
+  history: require('./history'),
+  sync: require('./sync'),
 
-// Current version of the library. Keep in sync with `package.json`.
-Backbone.VERSION = '0.9.2';
+  // Current version of the library. Keep in sync with `package.json`.
+  VERSION: '0.9.2',
 
-// Require Underscore, if we're on the server, and it's not already present.
-var _ = root._;
-if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
-
-// Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
-// to its previous owner. Returns a reference to this Backbone object.
-Backbone.noConflict = function() {
-  root.Backbone = previousBackbone;
-  return this;
+  // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
+  // to its previous owner. Returns a reference to this Backbone object.
+  noConflict: function() {
+    root.Backbone = previousBackbone;
+    return this;
+  }
 };
+
+if (typeof window !== 'undefined') root.Backbone = exports;
