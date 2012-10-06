@@ -36,9 +36,6 @@ Backbone.VERSION = '0.9.2';
 var _ = root._;
 if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
 
-// For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
-Backbone.$ = root.jQuery || root.Zepto || root.ender;
-
 // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
 // to its previous owner. Returns a reference to this Backbone object.
 Backbone.noConflict = function() {

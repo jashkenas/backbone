@@ -1,4 +1,5 @@
-var Events = require('./events');
+var Events = require('./events'),
+    helpers = require('./helpers');
 
 // Handles cross-browser history management, based on URL fragments. If the
 // browser does not support `onhashchange`, falls back to polling.
@@ -78,16 +79,16 @@ _.extend(History.prototype, Events, {
     this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
     if (oldIE && this._wantsHashChange) {
-      this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
+      this.iframe = helpers.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
       this.navigate(fragment);
     }
 
     // Depending on whether we're using pushState or hashes, and whether
     // 'onhashchange' is supported, determine how we check the URL state.
     if (this._hasPushState) {
-      Backbone.$(window).bind('popstate', this.checkUrl);
+      helpers.$(window).bind('popstate', this.checkUrl);
     } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-      Backbone.$(window).bind('hashchange', this.checkUrl);
+      helpers.$(window).bind('hashchange', this.checkUrl);
     } else if (this._wantsHashChange) {
       this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
     }
@@ -119,7 +120,7 @@ _.extend(History.prototype, Events, {
   // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
   // but possibly useful for unit testing Routers.
   stop: function() {
-    Backbone.$(window).unbind('popstate', this.checkUrl).unbind('hashchange', this.checkUrl);
+    helpers.$(window).unbind('popstate', this.checkUrl).unbind('hashchange', this.checkUrl);
     clearInterval(this._checkUrlInterval);
     History.started = false;
   },

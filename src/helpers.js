@@ -1,3 +1,10 @@
+// Save a reference to the global object (`window` in the browser, `global`
+// on the server).
+var root = this;
+
+// For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
+exports.$ = root.jQuery || root.Zepto || root.ender;
+
 // Helper function to correctly set up the prototype chain, for subclasses.
 // Similar to `goog.inherits`, but uses a hash of prototype properties and
 // class properties to be extended.

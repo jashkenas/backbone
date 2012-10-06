@@ -1,4 +1,4 @@
-var urlError = require('./helpers').urlError;
+var helpers = require('./helpers');
 
 // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
 var methodMap = {
@@ -34,7 +34,7 @@ module.exports = exports = function(method, model, options) {
 
   // Ensure that we have a URL.
   if (!options.url) {
-    params.url = _.result(model, 'url') || urlError();
+    params.url = _.result(model, 'url') || helpers.urlError();
   }
 
   // Ensure that we have the appropriate request data.
@@ -95,5 +95,5 @@ exports.emulateJSON = false;
 
 // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
 exports.ajax = function() {
-  return Backbone.$.ajax.apply(Backbone.$, arguments);
+  return helpers.$.ajax.apply(helpers.$, arguments);
 };

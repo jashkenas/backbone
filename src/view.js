@@ -66,8 +66,8 @@ _.extend(exports.prototype, Events, {
   //
   make: function(tagName, attributes, content) {
     var el = document.createElement(tagName);
-    if (attributes) Backbone.$(el).attr(attributes);
-    if (content != null) Backbone.$(el).html(content);
+    if (attributes) helpers.$(el).attr(attributes);
+    if (content != null) helpers.$(el).html(content);
     return el;
   },
 
@@ -75,7 +75,7 @@ _.extend(exports.prototype, Events, {
   // re-delegation.
   setElement: function(element, delegate) {
     if (this.$el) this.undelegateEvents();
-    this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
+    this.$el = element instanceof helpers.$ ? element : helpers.$(element);
     this.el = this.$el[0];
     if (delegate !== false) this.delegateEvents();
     return this;
