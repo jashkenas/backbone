@@ -44,16 +44,16 @@ module.exports = exports = function(method, model, options) {
   }
 
   // For older servers, emulate JSON by encoding the request into an HTML-form.
-  if (Backbone.emulateJSON) {
+  if (exports.emulateJSON) {
     params.contentType = 'application/x-www-form-urlencoded';
     params.data = params.data ? {model: params.data} : {};
   }
 
   // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
   // And an `X-HTTP-Method-Override` header.
-  if (Backbone.emulateHTTP) {
+  if (exports.emulateHTTP) {
     if (type === 'PUT' || type === 'DELETE') {
-      if (Backbone.emulateJSON) params.data._method = type;
+      if (exports.emulateJSON) params.data._method = type;
       params.type = 'POST';
       params.beforeSend = function(xhr) {
         xhr.setRequestHeader('X-HTTP-Method-Override', type);
@@ -62,7 +62,7 @@ module.exports = exports = function(method, model, options) {
   }
 
   // Don't process data on a non-GET request.
-  if (params.type !== 'GET' && !Backbone.emulateJSON) {
+  if (params.type !== 'GET' && !exports.emulateJSON) {
     params.processData = false;
   }
 
@@ -81,6 +81,17 @@ module.exports = exports = function(method, model, options) {
   // Make the request, allowing the user to override any Ajax options.
   return exports.ajax(_.extend(params, options));
 };
+
+// Turn on `emulateHTTP` to support legacy HTTP servers. Setting this option
+// will fake `"PUT"` and `"DELETE"` requests via the `_method` parameter and
+// set a `X-Http-Method-Override` header.
+exports.emulateHTTP = false;
+
+// Turn on `emulateJSON` to support legacy servers that can't deal with direct
+// `application/json` requests ... will encode the body as
+// `application/x-www-form-urlencoded` instead and will send the model in a
+// form param named `model`.
+exports.emulateJSON = false;
 
 // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
 exports.ajax = function() {
