@@ -1,7 +1,8 @@
 var Events = require('./events'),
     Model = require('./model'),
     helpers = require('./helpers'),
-    sync = require('./sync');
+    sync = require('./sync'),
+    ArrayProto = Array.prototype;
 
 // Provides a standard collection class for our sets of models, ordered
 // or unordered. If a `comparator` is specified, the Collection will maintain
@@ -80,8 +81,8 @@ _.extend(exports.prototype, Events, {
     // Update `length` and splice in new models.
     this.length += models.length;
     args = [at != null ? at : this.models.length, 0];
-    push.apply(args, models);
-    splice.apply(this.models, args);
+    ArrayProto.push.apply(args, models);
+    ArrayProto.splice.apply(this.models, args);
 
     // Sort the collection if appropriate.
     if (this.comparator && at == null) this.sort({silent: true});
@@ -320,7 +321,7 @@ var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
 // Mix in each Underscore method as a proxy to `Collection#models`.
 _.each(methods, function(method) {
   exports.prototype[method] = function() {
-    var args = slice.call(arguments);
+    var args = ArrayProto.slice.call(arguments);
     args.unshift(this.models);
     return _[method].apply(_, args);
   };
