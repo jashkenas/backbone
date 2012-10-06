@@ -1,7 +1,7 @@
 // Helper function to correctly set up the prototype chain, for subclasses.
 // Similar to `goog.inherits`, but uses a hash of prototype properties and
 // class properties to be extended.
-var extend = function(protoProps, staticProps) {
+exports.extend = function(protoProps, staticProps) {
   var parent = this;
   var child;
 
@@ -34,10 +34,7 @@ var extend = function(protoProps, staticProps) {
   return child;
 };
 
-// Set up inheritance for the model, collection, router, and view.
-Model.extend = Collection.extend = Router.extend = View.extend = extend;
-
 // Throw an error when a URL is needed, and none is supplied.
-var urlError = function() {
+exports.urlError = function() {
   throw new Error('A "url" property or function must be specified');
 };

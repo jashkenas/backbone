@@ -1,6 +1,8 @@
+var Events = require('./events');
+
 // Handles cross-browser history management, based on URL fragments. If the
 // browser does not support `onhashchange`, falls back to polling.
-var History = Backbone.History = function() {
+module.exports = exports = function() {
   this.handlers = [];
   _.bindAll(this, 'checkUrl');
 
@@ -24,10 +26,10 @@ var isExplorer = /msie [\w.]+/;
 var trailingSlash = /\/$/;
 
 // Has the history handling already been started?
-History.started = false;
+exports.started = false;
 
 // Set up all inheritable **Backbone.History** properties and methods.
-_.extend(History.prototype, Events, {
+_.extend(exports.prototype, Events, {
 
   // The default interval to poll for hash changes, if necessary, is
   // twenty times a second.
@@ -58,8 +60,8 @@ _.extend(History.prototype, Events, {
   // Start the hash change handling, returning `true` if the current URL matches
   // an existing route, and `false` otherwise.
   start: function(options) {
-    if (History.started) throw new Error("Backbone.history has already been started");
-    History.started = true;
+    if (exports.started) throw new Error("Backbone.history has already been started");
+    exports.started = true;
 
     // Figure out the initial configuration. Do we need an iframe?
     // Is pushState desired ... is it available?
@@ -119,7 +121,7 @@ _.extend(History.prototype, Events, {
   stop: function() {
     Backbone.$(window).unbind('popstate', this.checkUrl).unbind('hashchange', this.checkUrl);
     clearInterval(this._checkUrlInterval);
-    History.started = false;
+    exports.started = false;
   },
 
   // Add a route to be tested when the fragment changes. Routes added later
@@ -162,7 +164,7 @@ _.extend(History.prototype, Events, {
   // route callback be fired (not usually desirable), or `replace: true`, if
   // you wish to modify the current URL without adding an entry to the history.
   navigate: function(fragment, options) {
-    if (!History.started) return false;
+    if (!exports.started) return false;
     if (!options || options === true) options = {trigger: options};
     fragment = this.getFragment(fragment || '');
     if (this.fragment === fragment) return;
@@ -206,6 +208,3 @@ _.extend(History.prototype, Events, {
   }
 
 });
-
-// Create the default Backbone.history.
-Backbone.history = new History;

@@ -10,7 +10,7 @@ var eventSplitter = /\s+/;
 //     object.on('expand', function(){ alert('expanded'); });
 //     object.trigger('expand');
 //
-var Events = Backbone.Events = {
+module.exports = exports = {
 
   // Bind one or more space separated events, `events`, to a `callback`
   // function. Passing `"all"` will bind the callback to all events fired.
@@ -107,5 +107,5 @@ var Events = Backbone.Events = {
 };
 
 // Aliases for backwards compatibility.
-Events.bind   = Events.on;
-Events.unbind = Events.off;
+exports.bind   = exports.on;
+exports.unbind = exports.off;

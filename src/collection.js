@@ -1,7 +1,11 @@
+var Events = require('./events'),
+    Model = require('./model'),
+    helpers = require('./helpers');
+
 // Provides a standard collection class for our sets of models, ordered
 // or unordered. If a `comparator` is specified, the Collection will maintain
 // its models in sort order, as they're added and removed.
-var Collection = Backbone.Collection = function(models, options) {
+module.exports = exports = function(models, options) {
   options || (options = {});
   if (options.model) this.model = options.model;
   if (options.comparator !== void 0) this.comparator = options.comparator;
@@ -13,8 +17,10 @@ var Collection = Backbone.Collection = function(models, options) {
   }
 };
 
+exports.extend = helpers.extend;
+
 // Define the Collection's inheritable methods.
-_.extend(Collection.prototype, Events, {
+_.extend(exports.prototype, Events, {
 
   // The default model for a collection is just a **Backbone.Model**.
   // This should be overridden in most cases.
@@ -312,7 +318,7 @@ var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
 
 // Mix in each Underscore method as a proxy to `Collection#models`.
 _.each(methods, function(method) {
-  Collection.prototype[method] = function() {
+  exports.prototype[method] = function() {
     var args = slice.call(arguments);
     args.unshift(this.models);
     return _[method].apply(_, args);
@@ -324,7 +330,7 @@ var attributeMethods = ['groupBy', 'countBy', 'sortBy'];
 
 // Use attributes instead of properties.
 _.each(attributeMethods, function(method) {
-  Collection.prototype[method] = function(value, context) {
+  exports.prototype[method] = function(value, context) {
     var iterator = _.isFunction(value) ? value : function(model) {
       return model.get(value);
     };

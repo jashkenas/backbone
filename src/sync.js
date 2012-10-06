@@ -1,3 +1,5 @@
+var urlError = require('./helpers').urlError;
+
 // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
 var methodMap = {
   'create': 'POST',
@@ -21,7 +23,7 @@ var methodMap = {
 // instead of `application/json` with the model in a param named `model`.
 // Useful when interfacing with server-side languages like **PHP** that make
 // it difficult to read the body of `PUT` requests.
-Backbone.sync = function(method, model, options) {
+exports.sync = function(method, model, options) {
   var type = methodMap[method];
 
   // Default options, unless specified.
@@ -81,6 +83,6 @@ Backbone.sync = function(method, model, options) {
 };
 
 // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
-Backbone.ajax = function() {
+exports.ajax = function() {
   return Backbone.$.ajax.apply(Backbone.$, arguments);
 };

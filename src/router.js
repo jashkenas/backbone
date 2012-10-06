@@ -1,11 +1,16 @@
+var Events = require('./events'),
+    helpers = require('./helpers');
+
 // Routers map faux-URLs to actions, and fire events when routes are
 // matched. Creating a new one sets its `routes` hash, if not set statically.
-var Router = Backbone.Router = function(options) {
+module.exports = exports = function(options) {
   options || (options = {});
   if (options.routes) this.routes = options.routes;
   this._bindRoutes();
   this.initialize.apply(this, arguments);
 };
+
+exports.extend = helpers.extend;
 
 // Cached regular expressions for matching named param parts and splatted
 // parts of route strings.
@@ -15,7 +20,7 @@ var splatParam    = /\*\w+/g;
 var escapeRegExp  = /[-{}[\]+?.,\\^$|#\s]/g;
 
 // Set up all inheritable **Backbone.Router** properties and methods.
-_.extend(Router.prototype, Events, {
+_.extend(exports.prototype, Events, {
 
   // Initialize is an empty function by default. Override it with your own
   // initialization logic.

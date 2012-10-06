@@ -1,6 +1,9 @@
+var Events = require('./events'),
+    helpers = require('./helpers');
+
 // Create a new model, with defined attributes. A client id (`cid`)
 // is automatically generated and assigned for you.
-var Model = Backbone.Model = function(attributes, options) {
+module.exports = exports = function(attributes, options) {
   var defaults;
   var attrs = attributes || {};
   if (options && options.collection) this.collection = options.collection;
@@ -23,8 +26,10 @@ var Model = Backbone.Model = function(attributes, options) {
   this.initialize.apply(this, arguments);
 };
 
+exports.extend = helpers.extend;
+
 // Attach all inheritable methods to the Model prototype.
-_.extend(Model.prototype, Events, {
+_.extend(exports.prototype, Events, {
 
   // A hash of attributes whose current and previous value differ.
   changed: null,
@@ -94,7 +99,7 @@ _.extend(Model.prototype, Events, {
     // Extract attributes and options.
     var silent = options && options.silent;
     var unset = options && options.unset;
-    if (attrs instanceof Model) attrs = attrs.attributes;
+    if (attrs instanceof exports) attrs = attrs.attributes;
     if (unset) for (attr in attrs) attrs[attr] = void 0;
 
     // Run validation.
@@ -253,7 +258,7 @@ _.extend(Model.prototype, Events, {
   // using Backbone's restful methods, override this to change the endpoint
   // that will be called.
   url: function() {
-    var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
+    var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || helpers.urlError();
     if (this.isNew()) return base;
     return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
   },

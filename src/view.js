@@ -1,12 +1,17 @@
+var Events = require('./events'),
+    helpers = require('./helpers');
+
 // Creating a Backbone.View creates its initial element outside of the DOM,
 // if an existing element is not provided...
-var View = Backbone.View = function(options) {
+module.exports = exports = function(options) {
   this.cid = _.uniqueId('view');
   this._configure(options || {});
   this._ensureElement();
   this.initialize.apply(this, arguments);
   this.delegateEvents();
 };
+
+exports.extend = helpers.extend;
 
 // Cached regex to split keys for `delegate`.
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -15,7 +20,7 @@ var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName'];
 
 // Set up all inheritable **Backbone.View** properties and methods.
-_.extend(View.prototype, Events, {
+_.extend(exports.prototype, Events, {
 
   // The default `tagName` of a View's element is `"div"`.
   tagName: 'div',
