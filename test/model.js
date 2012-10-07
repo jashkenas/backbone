@@ -1,4 +1,8 @@
-$(document).ready(function() {
+define('model', function(require, e, mod) {
+
+  var Environment = require('environment');
+
+mod.exports = function() {
 
   var proxy = Backbone.Model.extend();
   var klass = Backbone.Collection.extend({
@@ -877,5 +881,7 @@ $(document).ready(function() {
     model.change();
     deepEqual(changes, ['a',1,'item']);
   });
+
+};
 
 });

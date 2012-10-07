@@ -1,4 +1,6 @@
-$(document).ready(function() {
+define('noconflict', function(require, e, mod) {
+
+mod.exports = function() {
 
   module("Backbone.noConflict");
 
@@ -8,5 +10,7 @@ $(document).ready(function() {
     window.Backbone = noconflictBackbone;
     equal(window.Backbone, noconflictBackbone, 'Backbone is still pointing to the original Backbone');
   });
+
+};
 
 });

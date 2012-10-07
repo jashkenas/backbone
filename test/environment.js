@@ -1,8 +1,8 @@
-(function() {
+define('environment', function(require, exports, mod) {
 
-  var Environment = this.Environment = function(){};
+  mod.exports = exports = function(){};
 
-  _.extend(Environment.prototype, {
+  _.extend(exports.prototype, {
 
     ajax: Backbone.sync.ajax,
 
@@ -48,4 +48,4 @@
 
   });
 
-})();
+});

@@ -1,4 +1,8 @@
-$(document).ready(function() {
+define('sync', function(require, e, mod) {
+
+  var Environment = require('environment');
+
+mod.exports = function() {
 
   var Library = Backbone.Collection.extend({
     url : function() { return '/library'; }
@@ -156,5 +160,7 @@ $(document).ready(function() {
     });
     this.ajaxSettings.error();
   });
+
+};
 
 });

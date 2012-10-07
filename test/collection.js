@@ -1,4 +1,8 @@
-$(document).ready(function() {
+define('collection', function(require, e, mod) {
+
+  var Environment = require('environment');
+
+mod.exports = function() {
 
   var a, b, c, d, e, col, otherCol;
 
@@ -701,4 +705,7 @@ $(document).ready(function() {
     collection.add([{id: 1, x: 1}, {id: 2, x: 2}]);
     deepEqual(added, [1, 2]);
   });
+
+};
+
 });

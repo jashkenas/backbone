@@ -1,4 +1,6 @@
-$(document).ready(function() {
+define('router', function(require, e, mod) {
+
+mod.exports = function() {
 
   var History = Backbone.history.History;
   var router = null;
@@ -481,5 +483,7 @@ $(document).ready(function() {
       pushState: true
     });
   });
+
+};
 
 });
