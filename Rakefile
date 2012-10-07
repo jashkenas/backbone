@@ -34,10 +34,12 @@ task :lint do
   system "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
 end
 
-desc "test the CoffeeScript integration"
+desc "test the CoffeeScript integration and run dev server"
 task :test do
   check 'coffee', 'CoffeeScript', 'http://coffeescript.org/'
   system "coffee test/*.coffee"
+  puts 'open localhost:3000/test/ in a browser to run tests'
+  system 'node dev_server.js'
 end
 
 # Check for the existence of an executable.
