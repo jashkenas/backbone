@@ -642,7 +642,7 @@ $(document).ready(function() {
     var collection = new Backbone.Collection;
     collection.url = '/test';
     collection.on('sync', function() { ok(true); });
-    Backbone.ajax = function(settings){ settings.success(); };
+    Backbone.sync.ajax = function(settings){ settings.success(); };
     collection.fetch();
     collection.create({id: 1});
   });
