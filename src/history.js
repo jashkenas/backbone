@@ -210,4 +210,5 @@ _.extend(History.prototype, Events, {
 
 });
 
-module.exports = new History;
+module.exports = exports = new History;
+exports.History = History;

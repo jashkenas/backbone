@@ -61,9 +61,7 @@ _.extend(exports.prototype, Events, {
   },
 
   // Proxy `./sync.js` by default.
-  sync: function() {
-    return sync.apply(this, arguments);
-  },
+  sync: sync,
 
   // Get the value of an attribute.
   get: function(attr) {

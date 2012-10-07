@@ -39,9 +39,7 @@ _.extend(exports.prototype, Events, {
   },
 
   // Proxy `./sync.js` by default.
-  sync: function() {
-    return sync.apply(this, arguments);
-  },
+  sync: sync,
 
   // Add a model, or list of models to the set. Pass **silent** to avoid
   // firing the `add` event for every new model.

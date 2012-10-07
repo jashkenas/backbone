@@ -13,16 +13,28 @@ var root = this;
 // restored later on, if `noConflict` is used.
 var previousBackbone = root.Backbone;
 
+var Collection = require('./collection'),
+    Model = require('./model'),
+    Router = require('./router');
+
 // The top-level namespace. All public Backbone classes and modules will
 // be attached to this. Exported for both CommonJS and the browser.
 module.exports = exports = {
   Events: require('./events'),
-  Model: require('./model'),
-  Collection: require('./collection'),
-  Router: require('./router'),
+  Model: Model,
+  Collection: Collection,
+  Router: Router,
   View: require('./view'),
   history: require('./history'),
   sync: require('./sync'),
+
+  setHistory: function(history) {
+    exports.history = Router.prototype.history = history;
+  },
+
+  setSync: function(sync) {
+    exports.sync = Collection.prototype.sync = Model.prototype.sync = sync;
+  },
 
   // Current version of the library. Keep in sync with `package.json`.
   VERSION: '0.9.2',
