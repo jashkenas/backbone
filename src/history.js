@@ -1,4 +1,5 @@
-var Events = require('./events'),
+var _ = require('underscore'),
+    Events = require('./events'),
     helpers = require('./helpers');
 
 // Handles cross-browser history management, based on URL fragments. If the

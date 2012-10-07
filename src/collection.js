@@ -1,4 +1,5 @@
-var Events = require('./events'),
+var _ = require('underscore'),
+    Events = require('./events'),
     Model = require('./model'),
     helpers = require('./helpers'),
     sync = require('./sync'),

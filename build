@@ -24,8 +24,7 @@ echo '//     Backbone.js 0.9.2
 //     http://backbonejs.org
 (function() {'
 
-cat src/vaccine.js   # Output vaccine.js separately
-
+echo 'function vaccineDefines() {'
 for file in $sources
 do
   name="$app_name/$(echo "$file" | sed -e "s#^$source_dir/##" -e 's/\.js//')"
@@ -34,5 +33,10 @@ do
   cat $file
   echo '});'
 done
+echo '}'
+
+# Must be last
+cat src/vaccine.js   # Output vaccine.js separately
+
 
 echo '}());'

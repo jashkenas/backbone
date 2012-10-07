@@ -1,4 +1,5 @@
-var Events = require('./events'),
+var _ = require('underscore'),
+    Events = require('./events'),
     helpers = require('./helpers');
 
 // Creating a Backbone.View creates its initial element outside of the DOM,

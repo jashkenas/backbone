@@ -1,4 +1,5 @@
-var helpers = require('./helpers');
+var _ = require('underscore'),
+    helpers = require('./helpers');
 
 // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
 var methodMap = {

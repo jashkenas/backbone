@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 // Save a reference to the global object (`window` in the browser, `global`
 // on the server).
 var root = this;

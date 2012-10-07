@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 // Regular expression used to split event strings
 var eventSplitter = /\s+/;
 
