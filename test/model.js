@@ -1,4 +1,8 @@
-$(document).ready(function() {
+define('model', function(require, e, mod) {
+
+  var Environment = require('environment');
+
+mod.exports = function() {
 
   var proxy = Backbone.Model.extend();
   var klass = Backbone.Collection.extend({
@@ -796,7 +800,7 @@ $(document).ready(function() {
     var model = new Backbone.Model({id: 1});
     model.url = '/test';
     model.on('sync', function(){ ok(true); });
-    Backbone.ajax = function(settings){ settings.success(); };
+    Backbone.sync.ajax = function(settings){ settings.success(); };
     model.fetch();
     model.save();
     model.destroy();
@@ -877,5 +881,7 @@ $(document).ready(function() {
     model.change();
     deepEqual(changes, ['a',1,'item']);
   });
+
+};
 
 });

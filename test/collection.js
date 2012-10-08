@@ -1,4 +1,8 @@
-$(document).ready(function() {
+define('collection', function(require, e, mod) {
+
+  var Environment = require('environment');
+
+mod.exports = function() {
 
   var a, b, c, d, e, col, otherCol;
 
@@ -642,7 +646,7 @@ $(document).ready(function() {
     var collection = new Backbone.Collection;
     collection.url = '/test';
     collection.on('sync', function() { ok(true); });
-    Backbone.ajax = function(settings){ settings.success(); };
+    Backbone.sync.ajax = function(settings){ settings.success(); };
     collection.fetch();
     collection.create({id: 1});
   });
@@ -701,4 +705,7 @@ $(document).ready(function() {
     collection.add([{id: 1, x: 1}, {id: 2, x: 2}]);
     deepEqual(added, [1, 2]);
   });
+
+};
+
 });

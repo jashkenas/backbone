@@ -1,4 +1,6 @@
-$(document).ready(function() {
+define('events', function(require, e, mod) {
+
+mod.exports = function() {
 
   module("Backbone.Events");
 
@@ -191,5 +193,7 @@ $(document).ready(function() {
     obj.off(null, null, obj);
     obj.trigger('event');
   });
+
+};
 
 });

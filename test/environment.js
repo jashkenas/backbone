@@ -1,39 +1,51 @@
-(function() {
+define('environment', function(require, exports, mod) {
 
-  var Environment = this.Environment = function(){};
+  mod.exports = exports = function(){};
 
-  _.extend(Environment.prototype, {
+  _.extend(exports.prototype, {
 
-    ajax: Backbone.ajax,
+    ajax: Backbone.sync.ajax,
 
     sync: Backbone.sync,
+
+    emulateHTTP: Backbone.sync.emulateHTTP,
+
+    emulateJSON: Backbone.sync.emulateJSON,
 
     setup: function() {
       var env = this;
 
-      // Capture ajax settings for comparison.
-      Backbone.ajax = function(settings) {
-        env.ajaxSettings = settings;
-      };
-
       // Capture the arguments to Backbone.sync for comparison.
-      Backbone.sync = function(method, model, options) {
+      Backbone.setSync(function(method, model, options) {
         env.syncArgs = {
           method: method,
           model: model,
           options: options
         };
+
+        // Ensure that ajax and emulate settings are correct.
+        env.sync.ajax = Backbone.sync.ajax;
+        env.sync.emulateHTTP = Backbone.sync.emulateHTTP;
+        env.sync.emulateJSON = Backbone.sync.emulateJSON;
+
         env.sync.apply(this, arguments);
+      });
+
+      // Capture ajax settings for comparison.
+      Backbone.sync.ajax = function(settings) {
+        env.ajaxSettings = settings;
       };
     },
 
     teardown: function() {
       this.syncArgs = null;
       this.ajaxSettings = null;
-      Backbone.sync = this.sync;
-      Backbone.ajax = this.ajax;
+      Backbone.setSync(this.sync);
+      Backbone.sync.ajax = this.ajax;
+      Backbone.sync.emulateHTTP = this.emulateHTTP;
+      Backbone.sync.emulateJSON = this.emulateJSON;
     }
 
   });
 
-})();
+});

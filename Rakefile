@@ -2,8 +2,13 @@ require 'rubygems'
 
 HEADER = /((^\s*\/\/.*\n)+)/
 
-desc "rebuild the backbone-min.js files for distribution"
+desc "build backbone.js from source files"
 task :build do
+  `./build > backbone.js`
+end
+
+desc "rebuild the backbone-min.js files for distribution"
+task :min => :build do
   begin
     require 'closure-compiler'
   rescue LoadError
@@ -29,10 +34,12 @@ task :lint do
   system "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
 end
 
-desc "test the CoffeeScript integration"
+desc "test the CoffeeScript integration and run dev server"
 task :test do
   check 'coffee', 'CoffeeScript', 'http://coffeescript.org/'
   system "coffee test/*.coffee"
+  puts 'open localhost:3000/test/ in a browser to run tests'
+  system 'node dev_server.js'
 end
 
 # Check for the existence of an executable.

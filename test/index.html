@@ -9,17 +9,9 @@
   <script src="vendor/qunit.js"></script>
   <script src="vendor/jslitmus.js"></script>
   <script src="vendor/underscore.js"></script>
-  <script src="../backbone.js"></script>
 
-  <script src="environment.js"></script>
-  <script src="noconflict.js"></script>
-  <script src="events.js"></script>
-  <script src="model.js"></script>
-  <script src="collection.js"></script>
-  <script src="router.js"></script>
-  <script src="view.js"></script>
-  <script src="sync.js"></script>
-  <script src="speed.js"></script>
+  <script src="vaccine_loader.js"></script>
+
 </head>
 <body>
   <div id="qunit"></div>
@@ -32,5 +24,8 @@
   <br>
   <h1 id="qunit-header"><a href="#">Backbone Speed Suite</a></h1>
   <div id="jslitmus_container" style="margin: 20px 10px;"></div>
+  <script>
+    vaccine_load('test.js');
+  </script>
 </body>
 </html>

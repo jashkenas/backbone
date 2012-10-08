@@ -1,4 +1,6 @@
-(function(){
+define('speed', function(require, e, mod) {
+
+mod.exports = function() {
 
   var object = {};
   _.extend(object, Backbone.Events);
@@ -42,4 +44,6 @@
     keyModel.set({number: Math.random()});
   });
 
-})();
+};
+
+});

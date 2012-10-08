@@ -1,4 +1,6 @@
-$(document).ready(function() {
+define('view', function(require, e, mod) {
+
+mod.exports = function() {
 
   var view;
 
@@ -327,5 +329,7 @@ $(document).ready(function() {
     var view = new View;
     ok(view.$el.is('p:has(a)'));
   });
+
+};
 
 });

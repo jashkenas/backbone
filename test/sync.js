@@ -1,4 +1,8 @@
-$(document).ready(function() {
+define('sync', function(require, e, mod) {
+
+  var Environment = require('environment');
+
+mod.exports = function() {
 
   var Library = Backbone.Collection.extend({
     url : function() { return '/library'; }
@@ -59,7 +63,7 @@ $(document).ready(function() {
   });
 
   test("update with emulateHTTP and emulateJSON", 7, function() {
-    Backbone.emulateHTTP = Backbone.emulateJSON = true;
+    Backbone.sync.emulateHTTP = Backbone.sync.emulateJSON = true;
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
     equal(this.ajaxSettings.type, 'POST');
@@ -69,11 +73,11 @@ $(document).ready(function() {
     equal(data.id, '2-the-tempest');
     equal(data.author, 'Tim Shakespeare');
     equal(data.length, 123);
-    Backbone.emulateHTTP = Backbone.emulateJSON = false;
+    Backbone.sync.emulateHTTP = Backbone.sync.emulateJSON = false;
   });
 
   test("update with just emulateHTTP", 6, function() {
-    Backbone.emulateHTTP = true;
+    Backbone.sync.emulateHTTP = true;
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
     equal(this.ajaxSettings.type, 'POST');
@@ -82,11 +86,11 @@ $(document).ready(function() {
     equal(data.id, '2-the-tempest');
     equal(data.author, 'Tim Shakespeare');
     equal(data.length, 123);
-    Backbone.emulateHTTP = false;
+    Backbone.sync.emulateHTTP = false;
   });
 
   test("update with just emulateJSON", 6, function() {
-    Backbone.emulateJSON = true;
+    Backbone.sync.emulateJSON = true;
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
     equal(this.ajaxSettings.type, 'PUT');
@@ -95,7 +99,7 @@ $(document).ready(function() {
     equal(data.id, '2-the-tempest');
     equal(data.author, 'Tim Shakespeare');
     equal(data.length, 123);
-    Backbone.emulateJSON = false;
+    Backbone.sync.emulateJSON = false;
   });
 
   test("read model", 3, function() {
@@ -116,12 +120,12 @@ $(document).ready(function() {
 
   test("destroy with emulateHTTP", 3, function() {
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
-    Backbone.emulateHTTP = Backbone.emulateJSON = true;
+    Backbone.sync.emulateHTTP = Backbone.sync.emulateJSON = true;
     library.first().destroy();
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
     equal(this.ajaxSettings.type, 'POST');
     equal(JSON.stringify(this.ajaxSettings.data), '{"_method":"DELETE"}');
-    Backbone.emulateHTTP = Backbone.emulateJSON = false;
+    Backbone.sync.emulateHTTP = Backbone.sync.emulateJSON = false;
   });
 
   test("urlError", 2, function() {
@@ -139,8 +143,8 @@ $(document).ready(function() {
     Backbone.sync('create', model);
   });
 
-  test("Backbone.ajax", 1, function() {
-    Backbone.ajax = function(settings){
+  test("Backbone.sync.ajax", 1, function() {
+    Backbone.sync.ajax = function(settings){
       strictEqual(settings.url, '/test');
     };
     var model = new Backbone.Model();
@@ -156,5 +160,7 @@ $(document).ready(function() {
     });
     this.ajaxSettings.error();
   });
+
+};
 
 });
