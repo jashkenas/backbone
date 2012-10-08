@@ -542,8 +542,8 @@ $(document).ready(function() {
     equal(col.length, 0);
   });
 
-  test("#861, adding models to a collection which do not pass validation", 1, function() {
-    raises(function() {
+  test("#861, adding models to a collection which do not pass validation", 2, function() {
+      var fired = null;
       var Model = Backbone.Model.extend({
         validate: function(attrs) {
           if (attrs.id == 3) return "id can't be 3";
@@ -555,25 +555,26 @@ $(document).ready(function() {
       });
 
       var col = new Collection;
+      col.on("error", function() { fired = true; });
 
       col.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}]);
-    }, function(e) {
-      return e.message === "Can't add an invalid model to a collection";
-    });
+      equal(fired, true);
+      equal(col.length, 5);
   });
 
-  test("throwing during add leaves consistent state", 4, function() {
+  test("invalid models are discarded and only valid models are added to a collection", 5, function() {
     var col = new Backbone.Collection();
-    col.on('test', function() { ok(false); });
+    col.on('test', function() { ok(true); });
     col.model = Backbone.Model.extend({
       validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
     });
     var model = new col.model({id: 1, valid: true});
-    raises(function() { col.add([model, {id: 2}]); });
+    col.add([model, {id: 2}]);;
     model.trigger('test');
-    ok(!col.getByCid(model.cid));
-    ok(!col.get(1));
-    equal(col.length, 0);
+    ok(col.getByCid(model.cid));
+    ok(col.get(1));
+    ok(!col.get(2));
+    equal(col.length, 1);
   });
 
   test("multiple copies of the same model", 3, function() {
