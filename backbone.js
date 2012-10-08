@@ -597,31 +597,31 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
-      var i, args, length, model, existing;
+      var i, args, length, model, existing, valid;
       var at = options && options.at;
       models = _.isArray(models) ? models.slice() : [models];
 
       // Begin by turning bare objects into model references, and preventing
       // invalid models from being added.
+      valid = [];
       for (i = 0, length = models.length; i < length; i++) {
-        if (models[i] = this._prepareModel(models[i], options)) continue;
-        throw new Error("Can't add an invalid model to a collection");
-      }
+        model = this._prepareModel(models[i], options);
+        if(!model) {
+            this.trigger("error", this, "Can't add an invalid model to a collection", models[i]);
+            continue;
+        }
 
-      for (i = models.length - 1; i >= 0; i--) {
-        model = models[i];
         existing = model.id != null && this._byId[model.id];
-
-        // If a duplicate is found, splice it out and optionally merge it into
-        // the existing model.
+        // If a duplicate is found, prevent it from being added and
+        // optionally merge it into the existing model.
         if (existing || this._byCid[model.cid]) {
           if (options && options.merge && existing) {
             existing.set(model, options);
           }
-          models.splice(i, 1);
           continue;
         }
 
+        valid.push(model);
         // Listen to added models' events, and index models for lookup by
         // `id` and by `cid`.
         model.on('all', this._onModelEvent, this);
@@ -630,9 +630,9 @@
       }
 
       // Update `length` and splice in new models.
-      this.length += models.length;
+      this.length += valid.length;
       args = [at != null ? at : this.models.length, 0];
-      push.apply(args, models);
+      push.apply(args, valid);
       splice.apply(this.models, args);
 
       // Sort the collection if appropriate.
@@ -641,7 +641,7 @@
       if (options && options.silent) return this;
 
       // Trigger `add` events.
-      while (model = models.shift()) {
+      while (model = valid.shift()) {
         model.trigger('add', model, this, options);
       }
 
