@@ -61,6 +61,11 @@
   // form param named `model`.
   Backbone.emulateJSON = false;
 
+  // The name of the csrftoken cookie to use for POST, PUT, and DELETE methods.
+  // If a cookie with this name exists, an `X-CSRFToken` header will be set.
+  // Setting this to false will disable checking for the csrftoken cookie.
+  Backbone.csrftokenCookieName = 'csrftoken';
+
   // Backbone.Events
   // -----------------
 
@@ -1400,6 +1405,30 @@
         params.beforeSend = function(xhr) {
           xhr.setRequestHeader('X-HTTP-Method-Override', type);
         };
+      }
+    }
+
+    // And an `X-CSRFToken` header if a csrf token cookie exists.
+    // Taken from the Django Cross Site Request Forgery protection docs
+    // https://docs.djangoproject.com/en/dev/ref/contrib/csrf/#ajax
+    if (Backbone.csrftokenCookieName) {
+      if (type === 'POST' || type === 'PUT' || type === 'DELETE') {
+        if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var cookie in cookies) {
+            cookie = $.trim(cookie);
+            if (cookie.substring(0, Backbone.csrftokenCookieName.length + 1) === (Backbone.csrftokenCookieName + '=')) {
+              var csrftoken = decodeURIComponent(cookie.substring(Backbone.csrftokenCookieName.length + 1));
+              var original = params.beforeSend;
+              params.beforeSend = function(xhr) {
+                xhr.setRequestHeader('X-CSRFToken', csrftoken);
+                if (original) original();
+                return true;
+              };
+              break;
+            }
+          }
+        }
       }
     }
 
