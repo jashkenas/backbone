@@ -597,7 +597,7 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
-      var i, args, length, model, existing;
+      var i, args, length, model, changedModels = [], existing;
       var at = options && options.at;
       models = _.isArray(models) ? models.slice() : [models];
 
@@ -616,7 +616,8 @@
         // the existing model.
         if (existing || this._byCid[model.cid]) {
           if (options && options.merge && existing) {
-            existing.set(model, options);
+            changedModels.push(model);
+            existing.set(model, _.extend(options, {silent: true}));
           }
           models.splice(i, 1);
           continue;
@@ -640,6 +641,10 @@
 
       if (options && options.silent) return this;
 
+      while (model = changedModels.shift()) {
+        model.change();
+      }
+      
       // Trigger `add` events.
       while (model = models.shift()) {
         model.trigger('add', model, this, options);
