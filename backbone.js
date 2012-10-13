@@ -725,7 +725,7 @@
       if (_.isEmpty(attrs)) return [];
       return this.filter(function(model) {
         for (var key in attrs) {
-          if (attrs[key] !== model.get(key)) return false;
+          if (attrs[key] !== model.attributes[key]) return false;
         }
         return true;
       });
@@ -885,7 +885,7 @@
   _.each(attributeMethods, function(method) {
     Collection.prototype[method] = function(value, context) {
       var iterator = _.isFunction(value) ? value : function(model) {
-        return model.get(value);
+        return model.attributes[value];
       };
       return _[method](this.models, iterator, context);
     };
