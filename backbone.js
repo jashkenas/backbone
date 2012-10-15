@@ -185,7 +185,7 @@
     var defaults;
     var attrs = attributes || {};
     if (options && options.collection) this.collection = options.collection;
-    if (options && options.parse) attributes = this.parse(attributes);
+    if (options && options.parse) attrs = this.parse(attrs);
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.extend({}, defaults, attrs);
     }
