@@ -946,12 +946,10 @@
     // routes can be defined at the bottom of the route map.
     _bindRoutes: function() {
       if (!this.routes) return;
-      var routes = [];
-      for (var route in this.routes) {
-        routes.unshift([route, this.routes[route]]);
-      }
-      for (var i = 0, l = routes.length; i < l; i++) {
-        this.route(routes[i][0], routes[i][1], this[routes[i][1]]);
+      var route, routes = _.keys(this.routes);
+      while (route = routes.pop()) {
+        var name = this.routes[route];
+        this.route(route, name, this[name]);
       }
     },
 
