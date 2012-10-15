@@ -1563,7 +1563,7 @@ ships.add([
     <p id="Collection-get">
       <b class="header">get</b><code>collection.get(id)</code>
       <br />
-      Get a model from a collection, specified by <b>id</b>.
+      Get a model from a collection, specified by an <b>id</b> or a <b>model</b>.
     </p>
 
 <pre>
@@ -1573,10 +1573,8 @@ var book = Library.get(110);
     <p id="Collection-getByCid">
       <b class="header">getByCid</b><code>collection.getByCid(cid)</code>
       <br />
-      Get a model from a collection, specified by client id. The client id
-      is the <tt>.cid</tt> property of the model, automatically assigned whenever
-      a model is created. Useful for models which have not yet been saved to
-      the server, and do not yet have true ids.
+      Get a model from a collection, specified by
+      <a href="#Model-cid"><b>cid</b></a> or <b>model</b>.
     </p>
 
     <p id="Collection-at">
@@ -2623,15 +2621,15 @@ var model = localBackbone.Model.extend(...);
         <img width="550" height"454" data-original="docs/images/linkedin-mobile.png" alt="LinkedIn Mobile" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-hulu">Hulu</h2>
 
     <p>
-      <a href="http://hulu.com">Hulu</a> used Backbone.js to build its next 
+      <a href="http://hulu.com">Hulu</a> used Backbone.js to build its next
       generation online video experience. With Backbone as a foundation, the
       web interface was rewritten from scratch so that all page content can
       be loaded dynamically with smooth transitions as you navigate.
-      Backbone makes it easy to move through the app quickly without the 
+      Backbone makes it easy to move through the app quickly without the
       reloading of scripts and embedded videos, while also offering models and
       collections for additional data manipulation support.
     </p>
@@ -2693,18 +2691,18 @@ var model = localBackbone.Model.extend(...);
         <img width="550" height="427" data-original="docs/images/foursquare.png" alt="Foursquare" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-bitbucket">Bitbucket</h2>
 
     <p>
-      <a href="http://www.bitbucket.org">Bitbucket</a> is a free source code hosting 
-      service for Git and Mercurial. Through its models and collections, 
-      Backbone.js has proved valuable in supporting Bitbucket's 
-      <a href="https://api.bitbucket.org">REST API</a>, as well as newer 
-      components such as in-line code comments and approvals for pull requests. 
-      Mustache templates provide server and client-side rendering, while a custom 
+      <a href="http://www.bitbucket.org">Bitbucket</a> is a free source code hosting
+      service for Git and Mercurial. Through its models and collections,
+      Backbone.js has proved valuable in supporting Bitbucket's
+      <a href="https://api.bitbucket.org">REST API</a>, as well as newer
+      components such as in-line code comments and approvals for pull requests.
+      Mustache templates provide server and client-side rendering, while a custom
       <a href="https://developers.google.com/closure/library/">Google Closure</a>
-      inspired life-cycle for widgets allows Bitbucketto decorate existing DOM 
+      inspired life-cycle for widgets allows Bitbucketto decorate existing DOM
       trees and insert new ones.
     </p>
 
@@ -2848,11 +2846,11 @@ var model = localBackbone.Model.extend(...);
     <h2 id="examples-basecamp">Basecamp</h2>
 
     <p>
-      <a href="http://37signals.com/">37Signals</a> chose Backbone.js to create 
-      the <a href="http://basecamp.com/calendar">calendar feature</a> of its 
-      popular project management software <a href="http://basecamp.com/">Basecamp</a>. 
-      The Basecamp Calendar uses Backbone.js models and views in conjunction with the 
-      <a href="https://github.com/sstephenson/eco">Eco</a> templating system to 
+      <a href="http://37signals.com/">37Signals</a> chose Backbone.js to create
+      the <a href="http://basecamp.com/calendar">calendar feature</a> of its
+      popular project management software <a href="http://basecamp.com/">Basecamp</a>.
+      The Basecamp Calendar uses Backbone.js models and views in conjunction with the
+      <a href="https://github.com/sstephenson/eco">Eco</a> templating system to
       present a polished, highly interactive group scheduling interface.
     </p>
 
@@ -3002,18 +3000,18 @@ var model = localBackbone.Model.extend(...);
     <h2 id="examples-inkling">Inkling</h2>
 
     <p>
-      <a href="http://inkling.com/">Inkling</a> is a cross-platform way to 
-      publish interactive learning content. 
-      <a href="https://www.inkling.com/read/">Inkling for Web</a> uses Backbone.js 
-      to make hundreds of complex books — from student textbooks to travel guides and 
-      programming manuals — engaging and accessible on the web. Inkling supports 
-      WebGL-enabled 3D graphics, interactive assessments, social sharing, 
-      and a system for running practice code right 
-      in the book, all within a single page Backbone-driven app. Early on, the 
-      team decided to keep the site lightweight by using only Backbone.js and 
-      raw JavaScript. The result? Complete source code weighing in at a mere 
-      350kb with feature-parity across the iPad, iPhone and web clients. 
-      Give it a try with  
+      <a href="http://inkling.com/">Inkling</a> is a cross-platform way to
+      publish interactive learning content.
+      <a href="https://www.inkling.com/read/">Inkling for Web</a> uses Backbone.js
+      to make hundreds of complex books — from student textbooks to travel guides and
+      programming manuals — engaging and accessible on the web. Inkling supports
+      WebGL-enabled 3D graphics, interactive assessments, social sharing,
+      and a system for running practice code right
+      in the book, all within a single page Backbone-driven app. Early on, the
+      team decided to keep the site lightweight by using only Backbone.js and
+      raw JavaScript. The result? Complete source code weighing in at a mere
+      350kb with feature-parity across the iPad, iPhone and web clients.
+      Give it a try with
       <a href="https://www.inkling.com/read/javascript-definitive-guide-david-flanagan-6th/chapter-4/function-definition-expressions">this excerpt from JavaScript: The Definitive Guide</a>.
     </p>
 
