@@ -1467,7 +1467,7 @@
   };
 
   // Set up inheritance for the model, collection, router, and view.
-  Model.extend = Collection.extend = Router.extend = View.extend = extend;
+  Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
