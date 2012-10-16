@@ -275,7 +275,7 @@
       // Extract attributes and options.
       var silent = options && options.silent;
       var unset = options && options.unset;
-      if (attrs instanceof Model) attrs = attrs.attributes;
+      if (attrs instanceof Model) attrs = _.clone(attrs.attributes);
       if (unset) for (attr in attrs) attrs[attr] = void 0;
 
       // Run validation.
