@@ -20,10 +20,11 @@ $(document).ready(function() {
     equal(view.options.className, 'test-view');
   });
 
-  test("jQuery", 1, function() {
+  test("jQuery", 2, function() {
     var view = new Backbone.View;
     view.setElement('<p><a><b>test</b></a></p>');
     strictEqual(view.$('a b').html(), 'test');
+    strictEqual(view.$('b', 'a').html(), 'test');
   });
 
   test("make", 3, function() {

@@ -1213,7 +1213,10 @@
 
     // jQuery delegate for element lookup, scoped to DOM elements within the
     // current view. This should be prefered to global lookups where possible.
-    $: function(selector) {
+    $: function(selector, context) {
+      if (typeof context !== 'undefined') {
+        return this.$el.find(context).find(selector);
+      }
       return this.$el.find(selector);
     },
 
