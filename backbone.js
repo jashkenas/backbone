@@ -947,7 +947,7 @@
     _bindRoutes: function() {
       if (!this.routes) return;
       var route, routes = _.keys(this.routes);
-      while (route = routes.pop()) {
+      while (typeof (route = routes.pop()) !== 'undefined') {
         var name = this.routes[route];
         this.route(route, name, this[name]);
       }
