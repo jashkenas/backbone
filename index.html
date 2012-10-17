@@ -432,6 +432,7 @@
     <ul class="toc_section">
       <li>– <a href="#examples-todos">Todos</a></li>
       <li>– <a href="#examples-documentcloud">DocumentCloud</a></li>
+      <li>– <a href="#examples-usa-today">USA Today</a></li>
       <li>– <a href="#examples-rdio">Rdio</a></li>
       <li>– <a href="#examples-linkedin">LinkedIn Mobile</a></li>
       <li>– <a href="#examples-hulu">Hulu</a></li>
@@ -460,7 +461,6 @@
       <li>– <a href="#examples-seatgeek">SeatGeek</a></li>
       <li>– <a href="#examples-easel">Easel</a></li>
       <li>– <a href="#examples-prose">Prose</a></li>
-      <li>– <a href="#examples-grove">Grove.io</a></li>
       <li>– <a href="#examples-kanogames">KANO/GAMES</a></li>
       <li>– <a href="#examples-shortmail">Shortmail</a></li>
       <li>– <a href="#examples-scrollkit">scroll kit</a></li>
@@ -2579,6 +2579,25 @@ var model = localBackbone.Model.extend(...);
         <img width="550" height="453" data-original="docs/images/dc-workspace.png" alt="DocumentCloud Workspace" class="example_image" />
       </a>
     </div>
+    
+    <h2 id="examples-usa-today">USA Today</h2>
+
+    <p>
+      <a href="http://usatoday.com">USA Today</a> takes advantage of the modularity of 
+      Backbone's data/model lifecycle &mdash; which makes it simple to create, inherit,
+      isolate, and link application objects &mdash; to keep the codebase both manageable and efficient. 
+      The new website also makes heavy use of the Backbone Router to control the 
+      page for both pushState-capable and legacy browsers. 
+      Finally, the team took advantage of Backbone's Event module to create a 
+      PubSub API that allows third parties and analytics packages to hook into the 
+      heart of the app.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://usatoday.com">
+        <img width="550" height="532" data-original="docs/images/usa-today.png" alt="USA Today" class="example_image" />
+      </a>
+    </div>
 
     <h2 id="examples-rdio">Rdio</h2>
 
@@ -3111,21 +3130,6 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://prose.io">
         <img width="550" height="447" data-original="docs/images/prose.png" alt="Prose" class="example_image" />
-      </a>
-    </div>
-
-
-    <h2 id="examples-grove">Grove.io</h2>
-
-    <p>
-      <a href="http://grove.io">Grove.io</a> provides hosted IRC for teams.
-      Backbone.js powers Grove's web client together with <a href="http://handlebarsjs.com/">Handlebars.js templating</a>.
-      Updates to chat stream are pulled in realtime using long-polling.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="http://grove.io">
-        <img width="550" height="415" data-original="docs/images/grove.png" alt="Grove.io" class="example_image" />
       </a>
     </div>
 
