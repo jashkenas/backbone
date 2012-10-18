@@ -668,6 +668,10 @@
         }
         this._removeReference(model);
       }
+      //this.length = 0;
+      //this.models = [];
+      //this._byId  = {};
+      //this._byCid = {};
       return this;
     },
 
@@ -758,11 +762,9 @@
     // you can reset the entire set with a new list of models, without firing
     // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
-      for (var i = 0, l = this.models.length; i < l; i++) {
-        this._removeReference(this.models[i]);
-      }
-      this._reset();
-      if (models) this.add(models, _.extend({silent: true}, options));
+      var silentlyByDefault = _.extend({silent: true}, options);
+      this.remove(this.models, silentlyByDefault);
+      if (models) this.add(models, silentlyByDefault);
       if (!options || !options.silent) this.trigger('reset', this, options);
       return this;
     },
