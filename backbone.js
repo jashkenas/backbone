@@ -668,10 +668,6 @@
         }
         this._removeReference(model);
       }
-      //this.length = 0;
-      //this.models = [];
-      //this._byId  = {};
-      //this._byCid = {};
       return this;
     },
 
@@ -761,11 +757,33 @@
     // When you have more items than you want to add or remove individually,
     // you can reset the entire set with a new list of models, without firing
     // any `add` or `remove` events. Fires `reset` when finished.
+    // The opposite is also possible, eg: fire `add`/`change` or `remove` events
+    // individually, without firing `reset` by passing **merge** option.
     reset: function(models, options) {
-      var silentlyByDefault = _.extend({silent: true}, options);
-      this.remove(this.models, silentlyByDefault);
-      if (models) this.add(models, silentlyByDefault);
-      if (!options || !options.silent) this.trigger('reset', this, options);
+      options || (options = {});
+
+      var modelsToRemove;
+      var voiceOptions; // either noisy or silently by default
+      if (options.merge) {
+        models = _.isArray(models) ? models.slice() : [models];
+        var ids = _.pluck(models, 'id');
+        var cids = _.pluck(models, 'cid');
+        var outdatedModels = _.reject(this.models, function (model, i) {
+          return model.id && _.contains(ids, model.id) || model.cid && _.contains(cids, model.cid);
+        });
+
+        modelsToRemove = outdatedModels;
+        voiceOptions = _.extend({silent: false}, options); // noisy
+      } else {
+        // All
+        modelsToRemove = this.models;
+        voiceOptions = _.extend({silent: true}, options); // silently
+      }
+      this.remove(modelsToRemove, voiceOptions);
+      
+      if (models) this.add(models, voiceOptions);
+
+      if (!options.merge && !options.silent) this.trigger('reset', this, options);
       return this;
     },
 

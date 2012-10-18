@@ -504,6 +504,55 @@ $(document).ready(function() {
     });
   });
 
+  test("reset and merge", 24, function() {
+    var models = col.models.slice();
+
+    var removeCount = 0;
+    var addCount = 0;
+    var changeCount = 0;
+    var resetCount = 0;
+    col.on('remove', function() { removeCount += 1; });
+    col.on('add', function() { addCount += 1; });
+    col.on('change', function() { changeCount += 1; });
+    col.on('reset', function() { resetCount += 1; });
+
+    // Remove a, b, c, d
+    col.reset([], {merge: true});
+    equal(removeCount, 4); // +4
+    equal(addCount, 0);
+    equal(changeCount, 0);
+    equal(resetCount, 0);
+    equal(col.length, 0);
+    equal(col.last(), null);
+
+    // Add a, b, c, d
+    col.reset(models, {merge: true});
+    equal(removeCount, 4);
+    equal(addCount, 4); // +4
+    equal(changeCount, 0);
+    equal(resetCount, 0);
+    equal(col.length, 4);
+    equal(col.last(), d);
+
+    // Change a
+    col.reset({id: 3, label: 'aa'}, {merge: true});
+    equal(removeCount, 7); // +3
+    equal(addCount, 4);
+    equal(changeCount, 1); // +1
+    equal(resetCount, 0);
+    equal(col.length, 1);
+    equal(col.last(), a);
+
+    // Be quiet!
+    col.reset([], {merge: true, silent: true});
+    equal(removeCount, 7); // +0
+    equal(addCount, 4);
+    equal(changeCount, 1);
+    equal(resetCount, 0);
+    equal(col.length, 0);
+    equal(col.last(), null);
+  });
+
   test("trigger custom events on models", 1, function() {
     var fired = null;
     a.on("custom", function() { fired = true; });
