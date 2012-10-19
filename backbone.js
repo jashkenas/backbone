@@ -1397,7 +1397,7 @@
       var beforeSend = options.beforeSend;
       options.beforeSend = function(xhr) {
         xhr.setRequestHeader('X-HTTP-Method-Override', type);
-        if (beforeSend) beforeSend.apply(this, arguments);
+        if (beforeSend) return beforeSend.apply(this, arguments);
       };
     }
 
