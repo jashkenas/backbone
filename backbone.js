@@ -1396,8 +1396,8 @@
         if (Backbone.emulateJSON) params.data._method = type;
         params.type = 'POST';
         var beforeSend = Backbone.$.ajaxSettings.beforeSend;
-        params.beforeSend = function(xhr, settings) {
-          beforeSend && beforeSend(xhr, settings);
+        params.beforeSend = function(xhr) {
+          beforeSend && beforeSend.apply(this, arguments);
           xhr.setRequestHeader('X-HTTP-Method-Override', type);
         };
       }
