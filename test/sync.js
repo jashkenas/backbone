@@ -162,7 +162,7 @@ $(document).ready(function() {
     this.ajaxSettings.error();
   });
 
-  test("#1756 - Call user provided beforeSend function.", 3, function() {
+  test("#1756 - Call user provided beforeSend function.", 4, function() {
     Backbone.emulateHTTP = true;
     var model = new Backbone.Model;
     model.url = '/test';
@@ -175,9 +175,10 @@ $(document).ready(function() {
     model.sync('delete', model, {
       beforeSend: function(_xhr) {
         ok(_xhr === xhr);
+        return false;
       }
     });
-    this.ajaxSettings.beforeSend(xhr);
+    strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
 
 });
