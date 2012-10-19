@@ -617,7 +617,7 @@
         // If a duplicate is found, splice it out and optionally merge it into
         // the existing model.
         if (existing || this._byCid[model.cid]) {
-          if (options && options.merge && existing) {
+          if (options && options.merge && existing && model !== existing) {
             existing.set(model, options);
             merged = true;
           }
