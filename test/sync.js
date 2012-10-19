@@ -180,4 +180,23 @@ $(document).ready(function() {
     this.ajaxSettings.beforeSend(xhr);
   });
 
+  test("Call global beforeSend function.", 3, function() {
+    Backbone.emulateHTTP = true;
+    var model = new Backbone.Model;
+    model.url = '/test';
+    var xhr = {
+      setRequestHeader: function(header, value) {
+        strictEqual(header, 'X-HTTP-Method-Override');
+        strictEqual(value, 'DELETE');
+      }
+    };
+    $.ajaxSetup({
+      beforeSend: function (_xhr) {
+          ok(_xhr === xhr);
+      }
+    });
+    model.sync('delete', model);
+    this.ajaxSettings.beforeSend(xhr);
+  });
+
 });
