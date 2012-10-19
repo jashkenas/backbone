@@ -1395,7 +1395,9 @@
       if (type === 'PUT' || type === 'DELETE') {
         if (Backbone.emulateJSON) params.data._method = type;
         params.type = 'POST';
-        params.beforeSend = function(xhr) {
+        var beforeSend = Backbone.$.ajaxSettings.beforeSend;
+        params.beforeSend = function(xhr, settings) {
+          beforeSend && beforeSend(xhr, settings);
           xhr.setRequestHeader('X-HTTP-Method-Override', type);
         };
       }
