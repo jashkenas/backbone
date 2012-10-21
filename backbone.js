@@ -62,7 +62,7 @@
   Backbone.emulateJSON = false;
 
   // Backbone.Events
-  // -----------------
+  // ---------------
 
   // Regular expression used to split event strings
   var eventSplitter = /\s+/;
@@ -892,7 +892,7 @@
   });
 
   // Backbone.Router
-  // -------------------
+  // ---------------
 
   // Routers map faux-URLs to actions, and fire events when routes are
   // matched. Creating a new one sets its `routes` hash, if not set statically.
@@ -1466,7 +1466,7 @@
     return child;
   };
 
-  // Set up inheritance for the model, collection, router, and view.
+  // Set up inheritance for the model, collection, router, view and history.
   Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
 
   // Throw an error when a URL is needed, and none is supplied.
