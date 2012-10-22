@@ -1313,10 +1313,7 @@
     // attached directly to the view.
     _configure: function(options) {
       if (this.options) options = _.extend({}, this.options, options);
-      for (var i = 0, l = viewOptions.length; i < l; i++) {
-        var attr = viewOptions[i];
-        if (options[attr]) this[attr] = options[attr];
-      }
+      _.extend(this, _.pick(options, viewOptions));
       this.options = options;
     },
 
