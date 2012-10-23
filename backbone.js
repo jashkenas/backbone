@@ -268,15 +268,16 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
-    set: function(attrs, options) {
-      var attr, key, val;
-      if (attrs == null) return this;
+    set: function(key, val, options) {
+      var attr, attrs;
+      if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (!_.isObject(attrs)) {
-        key = attrs;
-        (attrs = {})[key] = options;
-        options = arguments[2];
+      if (_.isObject(key)) {
+	attrs = key;
+	options = val;
+      } else {
+	(attrs = {})[key] = val;
       }
 
       // Extract attributes and options.
