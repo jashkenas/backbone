@@ -195,6 +195,25 @@ $(document).ready(function() {
     equal(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
+  test("Model: Disallow invalid value", function() {
+    var lastError, model = new Backbone.Model();
+    model.validate = function(attrs) {
+      return 'Invalid';
+    };
+
+    ok(model.set('field', 'value') === false, "An invalid value was allowed.");
+    ok(model.set('field', 'value', {allowInvalid: false}) === false, "An invalid value was allowed.");
+  });
+
+  test("Model: Allow invalid value", function() {
+    var lastError, model = new Backbone.Model();
+    model.validate = function(attrs) {
+      return 'Invalid';
+    };
+
+    ok(model.set('field', 'value', {allowInvalid: true}) === model, "An invalid value was not allowed.");
+  });
+
   test("Model: multiple unsets", function() {
     var i = 0;
     var counter = function(){ i++; };
