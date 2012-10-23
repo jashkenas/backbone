@@ -274,10 +274,10 @@
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
       if (_.isObject(key)) {
-	attrs = key;
-	options = val;
+        attrs = key;
+        options = val;
       } else {
-	(attrs = {})[key] = val;
+        (attrs = {})[key] = val;
       }
 
       // Extract attributes and options.
@@ -349,14 +349,15 @@
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
-    save: function(attrs, options) {
-      var key, current, done;
+    save: function(key, val, options) {
+      var attrs, current, done;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (attrs != null && !_.isObject(attrs)) {
-        key = attrs;
-        (attrs = {})[key] = options;
-        options = arguments[2];
+      if (key == null || _.isObject(key)) {
+        attrs = key;
+        options = val;
+      } else if (key != null) {
+        (attrs = {})[key] = val;
       }
       options = options ? _.clone(options) : {};
 
