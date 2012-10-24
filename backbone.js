@@ -950,8 +950,7 @@
       if (!this.routes) return;
       var route, routes = _.keys(this.routes);
       while ((route = routes.pop()) != null) {
-        var name = this.routes[route];
-        this.route(route, name, this[name]);
+        this.route(route, this.routes[route]);
       }
     },
 
