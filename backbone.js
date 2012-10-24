@@ -10,7 +10,7 @@
   // Initial Setup
   // -------------
 
-  // Save a reference to the global object (`window` in the browser, `global`
+  // Save a reference to the global object (`window` in the browser, `exports`
   // on the server).
   var root = this;
 
@@ -62,7 +62,7 @@
   Backbone.emulateJSON = false;
 
   // Backbone.Events
-  // -----------------
+  // ---------------
 
   // Regular expression used to split event strings
   var eventSplitter = /\s+/;
@@ -261,15 +261,16 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
-    set: function(attrs, options) {
-      var attr, key, val;
-      if (attrs == null) return this;
+    set: function(key, val, options) {
+      var attr, attrs;
+      if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (!_.isObject(attrs)) {
-        key = attrs;
-        (attrs = {})[key] = options;
-        options = arguments[2];
+      if (_.isObject(key)) {
+        attrs = key;
+        options = val;
+      } else {
+        (attrs = {})[key] = val;
       }
 
       // Extract attributes and options.
@@ -352,14 +353,15 @@
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
-    save: function(attrs, options) {
-      var key, current, done;
+    save: function(key, val, options) {
+      var attrs, current, done;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (attrs != null && !_.isObject(attrs)) {
-        key = attrs;
-        (attrs = {})[key] = options;
-        options = arguments[2];
+      if (key == null || _.isObject(key)) {
+        attrs = key;
+        options = val;
+      } else if (key != null) {
+        (attrs = {})[key] = val;
       }
       options = options ? _.clone(options) : {};
 
@@ -892,7 +894,7 @@
   });
 
   // Backbone.Router
-  // -------------------
+  // ---------------
 
   // Routers map faux-URLs to actions, and fire events when routes are
   // matched. Creating a new one sets its `routes` hash, if not set statically.
@@ -1313,10 +1315,7 @@
     // attached directly to the view.
     _configure: function(options) {
       if (this.options) options = _.extend({}, this.options, options);
-      for (var i = 0, l = viewOptions.length; i < l; i++) {
-        var attr = viewOptions[i];
-        if (options[attr]) this[attr] = options[attr];
-      }
+      _.extend(this, _.pick(options, viewOptions));
       this.options = options;
     },
 
@@ -1391,14 +1390,14 @@
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
     // And an `X-HTTP-Method-Override` header.
-    if (Backbone.emulateHTTP) {
-      if (type === 'PUT' || type === 'DELETE') {
-        if (Backbone.emulateJSON) params.data._method = type;
-        params.type = 'POST';
-        params.beforeSend = function(xhr) {
-          xhr.setRequestHeader('X-HTTP-Method-Override', type);
-        };
-      }
+    if (Backbone.emulateHTTP && (type === 'PUT' || type === 'DELETE')) {
+      params.type = 'POST';
+      if (Backbone.emulateJSON) params.data._method = type;
+      var beforeSend = options.beforeSend;
+      options.beforeSend = function(xhr) {
+        xhr.setRequestHeader('X-HTTP-Method-Override', type);
+        if (beforeSend) return beforeSend.apply(this, arguments);
+      };
     }
 
     // Don't process data on a non-GET request.
@@ -1466,7 +1465,7 @@
     return child;
   };
 
-  // Set up inheritance for the model, collection, router, and view.
+  // Set up inheritance for the model, collection, router, view and history.
   Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
 
   // Throw an error when a URL is needed, and none is supplied.
