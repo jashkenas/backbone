@@ -331,6 +331,26 @@ $(document).ready(function() {
     strictEqual(Backbone.history.fragment, 'x');
   });
 
+  test("History does not prepend root to fragment if root is already there.", 2, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root/');
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/root/x');
+        }
+      }
+    });
+    Backbone.history.start({
+      root: '/root/',
+      pushState: true,
+      hashChange: false
+    });
+    Backbone.history.navigate('/root/x');
+    strictEqual(Backbone.history.fragment, 'x');
+  });
+
   test("Normalize root.", 1, function() {
     Backbone.history.stop();
     location.replace('http://example.com/root');

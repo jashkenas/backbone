@@ -1028,6 +1028,15 @@
           fragment = this.getHash();
         }
       }
+      if (this.root !== '/') {
+        if (this.root === fragment.substr(0, this.root.length)) {
+          fragment = fragment.substr(this.root.length);
+        }
+        else if (this.root.substr(0, 1) === '/'
+                 && this.root.substr(1) === fragment.substr(0, this.root.length - 1)) {
+          fragment = fragment.substr(this.root.length - 1);
+        }
+      }
       return decodeURIComponent(fragment.replace(routeStripper, ''));
     },
 
