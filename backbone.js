@@ -1422,7 +1422,17 @@
 
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
   Backbone.ajax = function() {
-    return Backbone.$.ajax.apply(Backbone.$, arguments);
+    var xhr = Backbone.$.ajax.apply(Backbone.$, arguments);
+    var self = this;
+
+    // modify the deferred to invoke callbacks with the Backbone object
+    // as the first parameter
+    return xhr.always(function() {
+      var cbArgs = [self];
+      cbArgs.push.apply(cbArgs, arguments);
+      var deferred = Backbone.$.Deferred();
+      return Backbone.$.extend(this, deferred.resolve.apply(deferred, cbArgs));
+    });
   };
 
   // Helpers
