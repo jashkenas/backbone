@@ -42,4 +42,14 @@
     keyModel.set({number: Math.random()});
   });
 
+  var silentModel = new Backbone.Model;
+  silentModel.on('change', fn);
+
+  JSLitmus.test('Model: silent sets with rand(), with an attribute observer', function () {
+    for (var i=0;i<10;i++) {
+      silentModel.set({number:Math.random()}, {silent:true});
+    }
+    silentModel.set({number:'one'});
+  });
+
 })();
