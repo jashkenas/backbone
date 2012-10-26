@@ -1421,8 +1421,7 @@
 
     // modify the deferred to invoke callbacks with the Backbone object
     // as the first parameter
-    if (!_.isFunction(xhr.pipe)) return xhr;
-    else {
+    if (xhr && _.isFunction(xhr.pipe)) {
       var self = this;
       var deferred = xhr.pipe(function() {
         var cbArgs = [self];
@@ -1431,8 +1430,9 @@
         return deferred.resolve.apply(deferred, cbArgs);
       });
 
-      return $.extend(xhr, deferred);
+      $.extend(xhr, deferred); 
     }
+    return xhr;
   };
 
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.

@@ -14,6 +14,11 @@
       // Capture ajax settings for comparison.
       Backbone.ajax = function(settings) {
         env.ajaxSettings = settings;
+        return {
+          pipe:function(){
+            env.pipArgs = arguments;
+          }
+        }
       };
 
       // Capture the arguments to Backbone.sync for comparison.
