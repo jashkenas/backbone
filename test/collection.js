@@ -716,14 +716,19 @@ $(document).ready(function() {
     this.ajaxSettings.success([model]);
   });
 
-  test("#1639 - add do not sorts collection if all models were duplicates and we don't merge them.", 1, function() {
+
+  test("#1754 - add do not sorts collection if all models were duplicates and we don't merge them.", 1, function() {
+    var sortHappened = false;
     var collection = new Backbone.Collection([
       {id: 1, x: 1},
       {id: 2, x: 2}
     ]);
-    collection.comparator = function(model){ return model.get('x'); };
+    collection.comparator = function(model) {
+      sortHappened = true;
+      return model.get('x');
+    };
     collection.add({id: 1, x: 3}, {merge: false});
-    deepEqual(collection.pluck('id'), [1, 2]);
+    strictEqual(sortHappened, false);
   });
 
 });
