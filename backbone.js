@@ -1417,7 +1417,22 @@
     };
 
     // Make the request, allowing the user to override any Ajax options.
-    return Backbone.ajax(_.extend(params, options));
+    var xhr = Backbone.ajax(_.extend(params, options));
+
+    // modify the deferred to invoke callbacks with the Backbone object
+    // as the first parameter
+    if (xhr && _.isFunction(xhr.pipe)) {
+      var self = this;
+      var deferred = xhr.pipe(function() {
+        var cbArgs = [self];
+        cbArgs.push.apply(cbArgs, arguments);
+        var deferred = new $.Deferred();
+        return deferred.resolve.apply(deferred, cbArgs);
+      });
+
+      $.extend(xhr, deferred); 
+    }
+    return xhr;
   };
 
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
