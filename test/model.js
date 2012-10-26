@@ -894,6 +894,15 @@ $(document).ready(function() {
     model.change();
     deepEqual(changes, ['a',1,'item']);
   });
+  
+  test("silent changes should not have their change:attr event be triggered by a later change to a different attribute", 0, function() {
+    var model = new Backbone.Model({"a":1,"b":2});
+    model.on("change", function() {});
+    model.on("change:a", function() {});
+    model.on("change:b", function() { ok(false); });
+    model.set({"b":22},{silent:true});
+    model.set({"a":11});
+  });
 
   test("#1791 - `attributes` is available for `parse`", function() {
     var Model = Backbone.Model.extend({
