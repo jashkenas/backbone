@@ -162,10 +162,10 @@
         // Execute event callbacks.
         if (list) {
           for (i = 0, length = list.length; i < length; i += 2) {
-            list[i].apply(list[i + 1] || this, rest);
-
-            // Remove the special `once` event immediately after triggering..
+            // Remove the special `once` event immediately before triggering..
             list[i].__once__ && delete calls[event];
+
+            list[i].apply(list[i + 1] || this, rest);
           }
         }
 

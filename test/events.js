@@ -105,7 +105,7 @@ $(document).ready(function() {
     // Same as the previous test, but we use bindOnce rather than having to explicitly unbind
     var obj = { counterA: 0, counterB: 0 };
     _.extend(obj,Backbone.Events);
-    var incrA = function(){ obj.counterA += 1 };
+    var incrA = function(){ obj.counterA += 1; obj.trigger('event'); };
     var incrB = function(){ obj.counterB += 1 };
     obj.once('event', incrA);
     obj.once('event', incrB);
