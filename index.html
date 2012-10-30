@@ -1818,6 +1818,12 @@ Accounts.fetch();
       toggled open and closed.
     </p>
 
+    <p>
+      <b>fetch</b> will call <b>reset</b> on success, which in turn will trigger
+      the <tt>"reset"</tt> event. Pass <tt>{silent: true}</tt> to suppress the
+      <tt>"reset"</tt> event.
+    </p>
+
     <p id="Collection-reset">
       <b class="header">reset</b><code>collection.reset(models, [options])</code>
       <br />
