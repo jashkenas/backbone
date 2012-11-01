@@ -10,9 +10,13 @@
   // Initial Setup
   // -------------
 
-  // Save a reference to the global object (`window` in the browser, `exports`
-  // on the server).
+  // Save a reference to the current `this` object (usually `window` in the
+  // browser and `exports` on the server).
   var root = this;
+
+  // Save a reference to the true global object, which may differ from `this`.
+  // How this works: http://stackoverflow.com/a/3277192
+  var global = Function('return this')();
 
   // Save the previous value of the `Backbone` variable, so that it can be
   // restored later on, if `noConflict` is used.
@@ -37,11 +41,11 @@
   Backbone.VERSION = '0.9.2';
 
   // Require Underscore, if we're on the server, and it's not already present.
-  var _ = root._;
+  var _ = global._;
   if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
 
   // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
-  Backbone.$ = root.jQuery || root.Zepto || root.ender;
+  Backbone.$ = global.jQuery || global.Zepto || global.ender;
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
