@@ -127,6 +127,18 @@
       return this;
     },
 
+    proxy: function(events, target) {
+      var proxy = _.bind(target.trigger, target, events);
+      this.on(events, proxy);
+      return this;
+    },
+
+    proxyAll: function(target) {
+      var proxy = _.bind(target.trigger, target);
+      this.on("all", proxy);
+      return this;
+    },
+
     // Trigger one or many events, firing all bound callbacks. Callbacks are
     // passed the same arguments as `trigger` is, apart from the event name
     // (unless you're listening on `"all"`, which will cause your callback to
