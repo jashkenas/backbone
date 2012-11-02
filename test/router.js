@@ -492,7 +492,7 @@ $(document).ready(function() {
     new Router;
   });
 
-  test("#1793 Trailing spaces (pushState:false).", 1, function() {
+  test("#1794 Trailing spaces (pushState:false).", 1, function() {
     var count = 0;
 
     Backbone.history.stop();
@@ -517,7 +517,7 @@ $(document).ready(function() {
     router.off("route:search"); //unbind events
   });
 
-  test("#1793 Trailing spaces using browser location (pushState: false).", 1, function() {
+  test("#1794 Trailing spaces using browser location (pushState: false).", 1, function() {
     var count = 0;
 
     Backbone.history.stop();
