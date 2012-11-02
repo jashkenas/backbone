@@ -492,59 +492,9 @@ $(document).ready(function() {
     new Router;
   });
 
-  test("#1794 Trailing spaces (pushState:false).", 1, function() {
-    var count = 0;
-
-    Backbone.history.stop();
-
-    // restart History with pushState:false
-    Backbone.history.start({
-      pushState: false
-    });
-
-    router.on("route:search", function(page) {
-      count = count + 1;
-    });
-
-    // navigate to the search route with trailing space in the query string
-    Backbone.history.navigate('search/space ', {trigger: true});
-
-    // manually fire checkUrl
-    Backbone.history.checkUrl();
-
-    equal(count, 1); // route event should be fired once
-
-    router.off("route:search"); //unbind events
-  });
-
-  test("#1794 Trailing spaces using browser location (pushState: false).", 1, function() {
-    var count = 0;
-
-    Backbone.history.stop();
-    Backbone.history.location = window.location; // Use browser location
-
-    // restart History with pushState:false
-    Backbone.history.start({
-      pushState: false
-    });
-
-    router.on("route:search", function(page) {
-      count = count + 1;
-    });
-
-    // navigate to the search route with trailing space in the query string
-    Backbone.history.navigate('search/space ', {trigger: true});
-
-    // manually fire checkUrl
-    Backbone.history.checkUrl();
-
-    equal(count, 1); // route event should be fired only once
-
-    router.off("route:search"); //unbind events
-
-    // restore location hash
-    window.location.hash = '';
-
+  test("#1794 - Trailing space in fragments.", 1, function() {
+    var history = new Backbone.History;
+    strictEqual(history.getFragment('fragment   '), 'fragment');
   });
 
 });

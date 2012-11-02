@@ -989,7 +989,7 @@
   };
 
   // Cached regex for cleaning leading hashes and slashes.
-  var routeStripper = /^[#\/]/;
+  var routeStripper = /^[#\/]|\s+$/;
 
   // Cached regex for stripping leading and trailing slashes.
   var rootStripper = /^\/+|\/+$/g;
@@ -1167,7 +1167,7 @@
       } else {
         return this.location.assign(url);
       }
-      if (options.trigger) this.loadUrl(this.getFragment() || fragment);
+      if (options.trigger) this.loadUrl(fragment);
     },
 
     // Update the hash location, either replacing the current entry, or adding
