@@ -1167,7 +1167,7 @@
       } else {
         return this.location.assign(url);
       }
-      if (options.trigger) this.loadUrl(fragment);
+      if (options.trigger) this.loadUrl(this.getFragment() || fragment);
     },
 
     // Update the hash location, either replacing the current entry, or adding
