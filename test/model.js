@@ -183,12 +183,12 @@ $(document).ready(function() {
     ok(a.get('foo') == 2, "Foo should NOT have changed, still 2");
     ok(changeCount == 1, "Change count should NOT have incremented.");
 
-    a.validate = function(attrs) {
+    a.validator = function(attrs) {
       equal(attrs.foo, void 0, "don't ignore values when unsetting");
     };
     a.unset('foo');
     equal(a.get('foo'), void 0, "Foo should have changed");
-    delete a.validate;
+    delete a.validator;
     ok(changeCount == 2, "Change count should have incremented for unset.");
 
     a.unset('id');
@@ -332,7 +332,7 @@ $(document).ready(function() {
 
   test("validate after save", 1, function() {
     var lastError, model = new Backbone.Model();
-    model.validate = function(attrs) {
+    model.validator = function(attrs) {
       if (attrs.admin) return "Can't change admin status.";
     };
     model.sync = function(method, model, options) {
@@ -347,7 +347,7 @@ $(document).ready(function() {
 
   test("isValid", 5, function() {
     var model = new Backbone.Model({valid: true});
-    model.validate = function(attrs) {
+    model.validator = function(attrs) {
       if (!attrs.valid) return "invalid";
     };
     equal(model.isValid(), true);
@@ -399,7 +399,7 @@ $(document).ready(function() {
   test("validate", 7, function() {
     var lastError;
     var model = new Backbone.Model();
-    model.validate = function(attrs) {
+    model.validator = function(attrs) {
       if (attrs.admin != this.get('admin')) return "Can't change admin status.";
     };
     model.on('error', function(model, error) {
@@ -420,7 +420,7 @@ $(document).ready(function() {
   test("validate on unset and clear", 6, function() {
     var error;
     var model = new Backbone.Model({name: "One"});
-    model.validate = function(attrs) {
+    model.validator = function(attrs) {
       if (!attrs.name) {
         error = true;
         return "No thanks.";
@@ -434,7 +434,7 @@ $(document).ready(function() {
     equal(model.get('name'), 'Two');
     model.clear();
     equal(model.get('name'), 'Two');
-    delete model.validate;
+    delete model.validator;
     model.clear();
     equal(model.get('name'), undefined);
   });
@@ -442,7 +442,7 @@ $(document).ready(function() {
   test("validate with error callback", 8, function() {
     var lastError, boundError;
     var model = new Backbone.Model();
-    model.validate = function(attrs) {
+    model.validator = function(attrs) {
       if (attrs.admin) return "Can't change admin status.";
     };
     var callback = function(model, error) {
@@ -636,7 +636,7 @@ $(document).ready(function() {
   test("save with wait validates attributes", 1, function() {
     var model = new Backbone.Model();
     model.url = '/test';
-    model.validate = function() { ok(true); };
+    model.validator = function() { ok(true); };
     model.save({x: 1}, {wait: true});
   });
 
@@ -770,7 +770,7 @@ $(document).ready(function() {
 
   test("#1179 - isValid returns true in the absence of validate.", 1, function() {
     var model = new Backbone.Model();
-    model.validate = null;
+    model.validator = null;
     ok(model.isValid());
   });
 
@@ -822,7 +822,7 @@ $(document).ready(function() {
 
   test("#1433 - Save: An invalid model cannot be persisted.", 1, function() {
     var model = new Backbone.Model;
-    model.validate = function(){ return 'invalid'; };
+    model.validator = function(){ return 'invalid'; };
     model.sync = function(){ ok(false); };
     strictEqual(model.save(), false);
   });
@@ -831,7 +831,7 @@ $(document).ready(function() {
     var Model = Backbone.Model.extend({
       url: '/test/',
       sync: function(method, model, options){ options.success(); },
-      validate: function(){ return 'invalid'; }
+      validator: function(){ return 'invalid'; }
     });
     var model = new Model({id: 1});
     model.on('error', function(){ ok(true); });
