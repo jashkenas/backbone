@@ -185,16 +185,16 @@
     var defaults;
     var attrs = attributes || {};
     if (options && options.collection) this.collection = options.collection;
-    if (options && options.parse) attrs = this.parse(attrs);
-    if (defaults = _.result(this, 'defaults')) {
-      attrs = _.extend({}, defaults, attrs);
-    }
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
     this.changed = {};
     this._changes = {};
     this._pending = {};
+    if (options && options.parse) attrs = this.parse(attrs);
+    if (defaults = _.result(this, 'defaults')) {
+      attrs = _.extend({}, defaults, attrs);
+    }
     this.set(attrs, {silent: true});
     // Reset change tracking.
     this.changed = {};
