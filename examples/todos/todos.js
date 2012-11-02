@@ -31,11 +31,6 @@ $(function(){
     // Toggle the `done` state of this todo item.
     toggle: function() {
       this.save({done: !this.get("done")});
-    },
-
-    // Remove this Todo from *localStorage* and delete its view.
-    clear: function() {
-      this.destroy();
     }
 
   });
@@ -50,7 +45,7 @@ $(function(){
     // Reference to this collection's model.
     model: Todo,
 
-    // Save all of the todo items under the `"todos"` namespace.
+    // Save all of the todo items under the `"todos-backbone"` namespace.
     localStorage: new Backbone.LocalStorage("todos-backbone"),
 
     // Filter down the list of all todo items that are finished.
@@ -131,9 +126,12 @@ $(function(){
     // Close the `"editing"` mode, saving changes to the todo.
     close: function() {
       var value = this.input.val();
-      if (!value) this.clear();
-      this.model.save({title: value});
-      this.$el.removeClass("editing");
+      if (!value) {
+        this.clear();
+      } else {
+        this.model.save({title: value});
+        this.$el.removeClass("editing");
+      }
     },
 
     // If you hit `enter`, we're through editing the item.
@@ -143,7 +141,7 @@ $(function(){
 
     // Remove the item, destroy the model.
     clear: function() {
-      this.model.clear();
+      this.model.destroy();
     }
 
   });
@@ -228,7 +226,7 @@ $(function(){
 
     // Clear all done todo items, destroying their models.
     clearCompleted: function() {
-      _.each(Todos.done(), function(todo){ todo.clear(); });
+      _.invoke(Todos.done(), 'destroy');
       return false;
     },
 
