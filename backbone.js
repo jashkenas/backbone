@@ -280,7 +280,7 @@
       if (unset) for (attr in attrs) attrs[attr] = void 0;
 
       // Run validation.
-      if (!this._validate(attrs, options)) return false;
+      if (!this.validate(attrs, options)) return false;
 
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
@@ -367,7 +367,7 @@
 
       // If we're "wait"-ing to set changed attributes, validate early.
       if (options.wait) {
-        if (!this._validate(attrs, options)) return false;
+        if (!this.validate(attrs, options)) return false;
         current = _.clone(this.attributes);
       }
 
@@ -378,7 +378,7 @@
       }
 
       // Do not persist invalid models.
-      if (!attrs && !this._validate(null, options)) return false;
+      if (!attrs && !this.validate(null, options)) return false;
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
@@ -538,16 +538,16 @@
     // Check if the model is currently in a valid state. It's only possible to
     // get into an *invalid* state if you're using silent changes.
     isValid: function(options) {
-      return !this.validate || !this.validate(this.attributes, options);
+      return !this.validator || !this.validator(this.attributes, options);
     },
 
     // Run validation against the next complete set of model attributes,
     // returning `true` if all is well. If a specific `error` callback has
     // been passed, call that instead of firing the general `"error"` event.
-    _validate: function(attrs, options) {
-      if (options && options.silent || !this.validate) return true;
+    validate: function(attrs, options) {
+      if (options && options.silent || !this.validator) return true;
       attrs = _.extend({}, this.attributes, attrs);
-      var error = this.validate(attrs, options);
+      var error = this.validator(attrs, options);
       if (!error) return true;
       if (options && options.error) options.error(this, error, options);
       this.trigger('error', this, error, options);
@@ -837,7 +837,7 @@
       options || (options = {});
       options.collection = this;
       var model = new this.model(attrs, options);
-      if (!model._validate(model.attributes, options)) return false;
+      if (!model.validate(model.attributes, options)) return false;
       return model;
     },
 

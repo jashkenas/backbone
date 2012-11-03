@@ -394,7 +394,7 @@ $(document).ready(function() {
 
   test("create enforces validation", 1, function() {
     var ValidatingModel = Backbone.Model.extend({
-      validate: function(attrs) {
+      validator: function(attrs) {
         return "fail";
       }
     });
@@ -407,7 +407,7 @@ $(document).ready(function() {
 
   test("a failing create runs the error callback", 1, function() {
     var ValidatingModel = Backbone.Model.extend({
-      validate: function(attrs) {
+      validator: function(attrs) {
         return "fail";
       }
     });
@@ -545,7 +545,7 @@ $(document).ready(function() {
   test("#861, adding models to a collection which do not pass validation", 1, function() {
     raises(function() {
       var Model = Backbone.Model.extend({
-        validate: function(attrs) {
+        validator: function(attrs) {
           if (attrs.id == 3) return "id can't be 3";
         }
       });
@@ -566,7 +566,7 @@ $(document).ready(function() {
     var col = new Backbone.Collection();
     col.on('test', function() { ok(false); });
     col.model = Backbone.Model.extend({
-      validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
+      validator: function(attrs){ if (!attrs.valid) return 'invalid'; }
     });
     var model = new col.model({id: 1, valid: true});
     raises(function() { col.add([model, {id: 2}]); });
