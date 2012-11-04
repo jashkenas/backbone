@@ -1078,7 +1078,8 @@ alert(JSON.stringify(artist));
       latest server state. A <tt>"change"</tt> event will be triggered if the
       server's state differs from the current attributes. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response)</tt> as arguments.
+      are passed <tt>(collection, response, options)</tt>
+      and <tt>(collection, xhr, options)</tt> as arguments, respectively.
     </p>
 
 <pre>
@@ -1776,7 +1777,8 @@ var Tweets = Backbone.Collection.extend({
       Fetch the default set of models for this collection from the server,
       resetting the collection when they arrive. The <b>options</b> hash takes
       <tt>success</tt> and <tt>error</tt>
-      callbacks which will be passed <tt>(collection, response)</tt> as arguments.
+      callbacks which will be passed <tt>(collection, response, options)</tt>
+      and <tt>(collection, xhr, options)</tt> as arguments, respectively.
       When the model data returns from the server, the collection will
       <a href="#Collection-reset">reset</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
@@ -2579,17 +2581,17 @@ var model = localBackbone.Model.extend(...);
         <img width="550" height="453" data-original="docs/images/dc-workspace.png" alt="DocumentCloud Workspace" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-usa-today">USA Today</h2>
 
     <p>
-      <a href="http://usatoday.com">USA Today</a> takes advantage of the modularity of 
+      <a href="http://usatoday.com">USA Today</a> takes advantage of the modularity of
       Backbone's data/model lifecycle &mdash; which makes it simple to create, inherit,
-      isolate, and link application objects &mdash; to keep the codebase both manageable and efficient. 
-      The new website also makes heavy use of the Backbone Router to control the 
-      page for both pushState-capable and legacy browsers. 
-      Finally, the team took advantage of Backbone's Event module to create a 
-      PubSub API that allows third parties and analytics packages to hook into the 
+      isolate, and link application objects &mdash; to keep the codebase both manageable and efficient.
+      The new website also makes heavy use of the Backbone Router to control the
+      page for both pushState-capable and legacy browsers.
+      Finally, the team took advantage of Backbone's Event module to create a
+      PubSub API that allows third parties and analytics packages to hook into the
       heart of the app.
     </p>
 
@@ -2673,18 +2675,18 @@ var model = localBackbone.Model.extend(...);
         <img width="550" height="416" data-original="docs/images/flow.png" alt="Flow" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-gilt">Gilt Groupe</h2>
 
     <p>
-      <a href="http://gilt.com">Gilt Groupe</a> uses Backbone.js to build multiple 
-      applications across their family of sites. 
-      <a href="http://m.gilt.com">Gilt's mobile website</a> uses Backbone and 
-      <a href="http://zeptojs.com">Zepto.js</a> to create a blazing-fast 
-      shopping experience for users on-the-go, while 
-      <a href="http://live.gilt.com">Gilt Live</a> combines Backbone with 
-      WebSockets to display the items that customers are buying in real-time. Gilt's search 
-      functionality also uses Backbone to filter and sort products efficiently 
+      <a href="http://gilt.com">Gilt Groupe</a> uses Backbone.js to build multiple
+      applications across their family of sites.
+      <a href="http://m.gilt.com">Gilt's mobile website</a> uses Backbone and
+      <a href="http://zeptojs.com">Zepto.js</a> to create a blazing-fast
+      shopping experience for users on-the-go, while
+      <a href="http://live.gilt.com">Gilt Live</a> combines Backbone with
+      WebSockets to display the items that customers are buying in real-time. Gilt's search
+      functionality also uses Backbone to filter and sort products efficiently
       by moving those actions to the client-side.
     </p>
 
@@ -2803,16 +2805,16 @@ var model = localBackbone.Model.extend(...);
         <img width="550" height="425" data-original="docs/images/do.png" alt="Do" class="example_image" />
       </a>
     </div>
-    
+
     <h2 id="examples-irccloud">IRCCloud</h2>
 
     <p>
       <a href="http://irccloud.com/">IRCCloud</a>
       is an always-connected IRC client that you use in your
-      browser &mdash; often leaving it open all day in a tab. 
+      browser &mdash; often leaving it open all day in a tab.
       The sleek web interface communicates with an
-      Erlang backend via websockets and the 
-      <a href="https://github.com/irccloud/irccloud-tools/wiki/API-Overview">IRCCloud API</a>. 
+      Erlang backend via websockets and the
+      <a href="https://github.com/irccloud/irccloud-tools/wiki/API-Overview">IRCCloud API</a>.
       It makes heavy use of Backbone.js events, models, views and routing to keep
       your IRC conversations flowing in real time.
     </p>
