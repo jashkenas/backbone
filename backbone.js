@@ -31,6 +31,8 @@
     Backbone = exports;
   } else {
     Backbone = root.Backbone = {};
+    // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
+    Backbone.$ = root.jQuery || root.Zepto || root.ender;
   }
 
   // Current version of the library. Keep in sync with `package.json`.
@@ -39,9 +41,6 @@
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
   if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
-
-  // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
-  Backbone.$ = root.jQuery || root.Zepto || root.ender;
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
