@@ -1078,8 +1078,8 @@ alert(JSON.stringify(artist));
       latest server state. A <tt>"change"</tt> event will be triggered if the
       server's state differs from the current attributes. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(collection, response, options)</tt>
-      and <tt>(collection, xhr, options)</tt> as arguments, respectively.
+      are passed <tt>(model, response, options)</tt>
+      and <tt>(model, xhr, options)</tt> as arguments, respectively.
     </p>
 
 <pre>
@@ -1139,7 +1139,8 @@ book.save({author: "Teddy"});
 
     <p>
       <b>save</b> accepts <tt>success</tt> and <tt>error</tt> callbacks in the
-      options hash, which are passed <tt>(model, response)</tt> as arguments.
+      options hash, which are passed <tt>(model, response, options)</tt> and
+      <tt>(model, xhr, options)</tt> as arguments, respectively.
       The <tt>error</tt> callback will also be invoked if the model has a
       <tt>validate</tt> method, and validation fails. If a server-side
       validation fails, return a non-<tt>200</tt> HTTP response code, along with
@@ -1157,7 +1158,9 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       request to <a href="#Sync">Backbone.sync</a>. Returns a
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> object, or
       <tt>false</tt> if the model <a href="#Model-isNew">isNew</a>. Accepts
-      <tt>success</tt> and <tt>error</tt> callbacks in the options hash.
+      <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
+      are passed <tt>(model, response, options)</tt> and <tt>(model, xhr, options)</tt>
+      as arguments, respectively.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
       through any collections that contain it, and a <tt>"sync"</tt> event, after
       the server has successfully acknowledged the model's deletion. Pass
