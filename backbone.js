@@ -364,6 +364,7 @@
         (attrs = {})[key] = val;
       }
       options = options ? _.clone(options) : {};
+      options.attributes = attrs;
 
       // If we're "wait"-ing to set changed attributes, validate early.
       if (options.wait) {
