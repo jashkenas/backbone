@@ -188,6 +188,7 @@
     this.attributes = {};
     this._escapedAttributes = {};
     this.cid = _.uniqueId('c');
+    this.uid = _.uniqueId();
     this.changed = {};
     this._changes = {};
     this._pending = {};
@@ -572,6 +573,7 @@
       if (options.parse) models = this.parse(models);
       this.reset(models, {silent: true, parse: options.parse});
     }
+    this.uid = _.uniqueId();
   };
 
   // Define the Collection's inheritable methods.
@@ -903,6 +905,7 @@
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
     this.initialize.apply(this, arguments);
+    this.uid = _.uniqueId();
   };
 
   // Cached regular expressions for matching named param parts and splatted
@@ -986,6 +989,7 @@
       this.location = window.location;
       this.history = window.history;
     }
+    this.uid = _.uniqueId();
   };
 
   // Cached regex for cleaning leading hashes and slashes.
@@ -1194,6 +1198,7 @@
   // if an existing element is not provided...
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
+    this.uid = _.uniqueId();
     this._configure(options || {});
     this._ensureElement();
     this.initialize.apply(this, arguments);
@@ -1443,6 +1448,8 @@
     // by us to simply call the parent's constructor.
     if (protoProps && _.has(protoProps, 'constructor')) {
       child = protoProps.constructor;
+    } else if (protoProps && _.has(protoProps, 'name')) {
+      eval("child = function " + protoProps.name + "(){ parent.apply(this, arguments); };");
     } else {
       child = function(){ parent.apply(this, arguments); };
     }
@@ -1464,11 +1471,34 @@
     // later.
     child.__super__ = parent.prototype;
 
+    // Set an informative toString for proper debugging
+    child.toString = function() {
+      return "subclass of " + (parent.name !== "" ? parent.name : parent.toString());
+    };
+
     return child;
   };
 
-  // Set up inheritance for the model, collection, router, view and history.
-  Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
+  // For each extendable component
+  _.each(["Model", "Collection", "Router", "View", "History"], function(component) {
+    var Component = Backbone[component];
+
+    // Set an informative toString
+    Component.toString = function() {
+      return "Backbone." + component;
+    };
+
+    // Set an informative toString to instances
+    Component.prototype.toString = function() {
+      var constructor = this.constructor,
+            parent = constructor.name !== "" ? constructor.name : constructor.toString();
+
+      return "<" + parent + ":" + this.uid + ">";
+    };
+
+    // Set up inheritance
+    Component.extend = extend;
+  });
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
