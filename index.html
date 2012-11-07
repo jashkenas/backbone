@@ -68,7 +68,7 @@
       margin: 40px 0 50px 260px;
     }
     img#logo {
-      width: 451px;
+      width: 450px;
       height: 80px;
     }
     div.run {
@@ -204,13 +204,17 @@
       img.example_image {
         margin: 0px auto;
       }
+        img.example_retina {
+          margin: 20px;
+          box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+        }
     @media only screen and (-webkit-max-device-pixel-ratio: 1) and (max-width: 600px),
            only screen and (max--moz-device-pixel-ratio: 1) and (max-width: 600px) {
       div#sidebar {
         display: none;
       }
       img#logo {
-        max-width: 451px;
+        max-width: 450px;
         width: 100%;
         height: auto;
       }
@@ -465,12 +469,12 @@
       <li>– <a href="#examples-prose">Prose</a></li>
       <li>– <a href="#examples-scrollkit">scroll kit</a></li>
       <li>– <a href="#examples-battlefield">Battlefield Play4Free</a></li>
+      <li>– <a href="#examples-syllabus">Syllabus</a></li>
       <li>– <a href="#examples-salon">Salon.io</a></li>
       <li>– <a href="#examples-tilemill">TileMill</a></li>
       <li>– <a href="#examples-blossom">Blossom</a></li>
       <li>– <a href="#examples-decide">Decide</a></li>
       <li>– <a href="#examples-trello">Trello</a></li>
-      <li>– <a href="#examples-quietwrite">QuietWrite</a></li>
       <li>– <a href="#examples-tzigla">Tzigla</a></li>
     </ul>
 
@@ -3209,6 +3213,25 @@ var model = localBackbone.Model.extend(...);
         <img width="550" height="435" data-original="docs/images/battlefield.png" alt="Battlefield Play4Free" class="example_image" />
       </a>
     </div>
+    
+    <h2 id="examples-syllabus">Syllabus</h2>
+
+    <p>
+      Syllabus is the new live blogging platform used by 
+      <a href="http://www.theverge.com/">The Verge</a> 
+      and other <a href="http://www.voxmedia.com/">Vox Media</a> sites.
+      Syllabus uses Backbone on both ends: an editorial dashboard and the live blog 
+      page itself. In the back, Backbone is used to provide a 
+      single-page experience for uploading, writing, editing and publishing content. 
+      On the live blog, Backbone manages fetching a JSON API feed, and updating 
+      the infinite-scrolling river of updates with new and revised content.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://live.theverge.com/">
+        <img width="510" height="354" data-original="docs/images/syllabus.jpg" alt="Syllabus" class="example_retina" />
+      </a>
+    </div>
 
     <h2 id="examples-salon">Salon.io</h2>
 
@@ -3297,23 +3320,6 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://trello.com">
         <img width="550" height="416" data-original="docs/images/trello.png" alt="Trello" class="example_image" />
-      </a>
-    </div>
-
-    <h2 id="examples-quietwrite">QuietWrite</h2>
-
-    <p>
-      <a href="http://www.twitter.com/jamesjyu">James Yu</a> used Backbone.js to
-      create <a href="http://www.quietwrite.com/">QuietWrite</a>, an app
-      that gives writers a clean and quiet interface to concentrate on the text itself.
-      The editor relies on Backbone to persist document data to the server. He
-      followed up with a Backbone.js + <a href="http://rubyonrails.org/">Rails</a> tutorial that describes how to implement
-      <a href="http://www.jamesyu.org/2011/01/27/cloudedit-a-backbone-js-tutorial-by-example/">CloudEdit, a simple document editing app</a>.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="http://www.quietwrite.com/">
-        <img width="550" height="381" data-original="docs/images/quietwrite.png" alt="QuietWrite" class="example_image" />
       </a>
     </div>
 
