@@ -292,7 +292,7 @@ $(document).ready(function() {
     strictEqual(fragment, location.pathname.replace(/^\//, ''));
   });
 
-  test("#1206 - Strip leading slash before location.assign.", 1, function() {
+  test("#1206 - Strip leading slash before location.assign.", 5, function() {
     Backbone.history.stop();
     location.replace('http://example.com/root/');
     Backbone.history = _.extend(new Backbone.History, {location: location});
@@ -300,7 +300,32 @@ $(document).ready(function() {
     location.assign = function(pathname) {
       strictEqual(pathname, '/root/fragment');
     };
+
     Backbone.history.navigate('/fragment');
+
+    Backbone.history.stop();
+    location.replace('http://example.com/root/');
+    Backbone.history.start({hashChange: false, root: '/root/'});
+
+    Backbone.history.navigate('#fragment');
+
+    Backbone.history.stop();
+    location.replace('http://example.com/root/');
+    Backbone.history.start({hashChange: false, root: '/root/'});
+
+    Backbone.history.navigate('/#fragment');
+
+    Backbone.history.stop();
+    location.replace('http://example.com/root/');
+    Backbone.history.start({hashChange: false, root: '/root/'});
+
+    Backbone.history.navigate('#/fragment');
+
+    Backbone.history.stop();
+    location.replace('http://example.com/root/');
+    Backbone.history.start({hashChange: false, root: '/root/'});
+
+    Backbone.history.navigate('/#/fragment');
   });
 
   test("#1387 - Root fragment without trailing slash.", 1, function() {
