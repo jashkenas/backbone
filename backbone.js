@@ -34,7 +34,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.9.2';
+  Backbone.VERSION = '0.9.2-inheritance';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
@@ -61,6 +61,48 @@
   // form param named `model`.
   Backbone.emulateJSON = false;
 
+  // Backbone.Class begins the inheritance chain for all other Backbone classes.
+  // Set up inheritance for the model, collection, router, view and history.
+  var Class = Backbone.Class = function () {
+  };
+
+  // Helper function to correctly set up the prototype chain, for subclasses.
+  // Similar to `goog.inherits`, but uses a hash of prototype properties and
+  // class properties to be extended.
+  Class.extend = function(protoProps, staticProps) {
+    var parent = this;
+    var child;
+
+    // The constructor function for the new subclass is either defined by you
+    // (the "constructor" property in your `extend` definition), or defaulted
+    // by us to simply call the parent's constructor.
+    if (protoProps && _.has(protoProps, 'constructor')) {
+      child = protoProps.constructor;
+    } else {
+      child = function(){ parent.apply(this, arguments); };
+    }
+
+    // Add static properties to the constructor function, if supplied.
+    _.extend(child, parent, staticProps);
+
+    // Set the prototype chain to inherit from `parent`, without calling
+    // `parent`'s constructor function.
+    var Surrogate = function(){ this.constructor = child; };
+    Surrogate.prototype = parent.prototype;
+    child.prototype = new Surrogate;
+
+    // Add prototype properties (instance properties) to the subclass,
+    // if supplied.
+    if (protoProps) _.extend(child.prototype, protoProps);
+
+    // Set a convenience property in case the parent's prototype is needed
+    // later.
+    child.__super__ = parent.prototype;
+
+    return child;
+  };
+
+
   // Backbone.Events
   // ---------------
 
@@ -71,12 +113,11 @@
   // custom events. You may bind with `on` or remove with `off` callback functions
   // to an event; `trigger`-ing an event fires all callbacks in succession.
   //
-  //     var object = {};
-  //     _.extend(object, Backbone.Events);
+  //     var object = new Backbone.Events();
   //     object.on('expand', function(){ alert('expanded'); });
   //     object.trigger('expand');
   //
-  var Events = Backbone.Events = {
+  var Events = Backbone.Events = Class.extend({
 
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
@@ -170,42 +211,21 @@
       return this;
     }
 
-  };
+  });
 
   // Aliases for backwards compatibility.
-  Events.bind   = Events.on;
-  Events.unbind = Events.off;
+  Events.prototype.bind   = Events.prototype.on;
+  Events.prototype.unbind = Events.prototype.off;
+
+  Events.bind = Events.prototype.on;
+  Events.unbine = Events.prototype.off;
+  Events.on = Events.prototype.on;
+  Events.off = Events.prototype.off;
+  Events.trigger = Events.prototype.trigger;
 
   // Backbone.Model
   // --------------
-
-  // Create a new model, with defined attributes. A client id (`cid`)
-  // is automatically generated and assigned for you.
-  var Model = Backbone.Model = function(attributes, options) {
-    var defaults;
-    var attrs = attributes || {};
-    if (options && options.collection) this.collection = options.collection;
-    this.attributes = {};
-    this._escapedAttributes = {};
-    this.cid = _.uniqueId('c');
-    this.changed = {};
-    this._changes = {};
-    this._pending = {};
-    if (options && options.parse) attrs = this.parse(attrs);
-    if (defaults = _.result(this, 'defaults')) {
-      attrs = _.extend({}, defaults, attrs);
-    }
-    this.set(attrs, {silent: true});
-    // Reset change tracking.
-    this.changed = {};
-    this._changes = {};
-    this._pending = {};
-    this._previousAttributes = _.clone(this.attributes);
-    this.initialize.apply(this, arguments);
-  };
-
-  // Attach all inheritable methods to the Model prototype.
-  _.extend(Model.prototype, Events, {
+  var Model = Backbone.Model = Events.extend({
 
     // A hash of attributes whose current and previous value differ.
     changed: null,
@@ -225,6 +245,31 @@
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
     idAttribute: 'id',
+
+    // Create a new model, with defined attributes. A client id (`cid`)
+    // is automatically generated and assigned for you.
+    constructor: function(attributes, options) {
+      var defaults;
+      var attrs = attributes || {};
+      if (options && options.collection) this.collection = options.collection;
+      this.attributes = {};
+      this._escapedAttributes = {};
+      this.cid = _.uniqueId('c');
+      this.changed = {};
+      this._changes = {};
+      this._pending = {};
+      if (options && options.parse) attrs = this.parse(attrs);
+      if (defaults = _.result(this, 'defaults')) {
+        attrs = _.extend({}, defaults, attrs);
+      }
+      this.set(attrs, {silent: true});
+      // Reset change tracking.
+      this.changed = {};
+      this._changes = {};
+      this._pending = {};
+      this._previousAttributes = _.clone(this.attributes);
+      this.initialize.apply(this, arguments);
+    },
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -562,26 +607,26 @@
   // Provides a standard collection class for our sets of models, ordered
   // or unordered. If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
-  var Collection = Backbone.Collection = function(models, options) {
-    options || (options = {});
-    if (options.model) this.model = options.model;
-    if (options.comparator !== void 0) this.comparator = options.comparator;
-    this._reset();
-    this.initialize.apply(this, arguments);
-    if (models) {
-      if (options.parse) models = this.parse(models);
-      this.reset(models, {silent: true, parse: options.parse});
-    }
-  };
-
-  // Define the Collection's inheritable methods.
-  _.extend(Collection.prototype, Events, {
+  var Collection = Backbone.Collection = Events.extend({
 
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
     model: Model,
 
-    // Initialize is an empty function by default. Override it with your own
+    // Default constructor for Backbone.Collection
+    constructor: function(models, options) {
+      options || (options = {});
+      if (options.model) this.model = options.model;
+      if (options.comparator !== void 0) this.comparator = options.comparator;
+      this._reset();
+      this.initialize.apply(this, arguments);
+      if (models) {
+        if (options.parse) models = this.parse(models);
+        this.reset(models, {silent: true, parse: options.parse});
+      }
+    },
+
+      // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize: function(){},
 
@@ -893,17 +938,9 @@
     };
   });
 
+
   // Backbone.Router
   // ---------------
-
-  // Routers map faux-URLs to actions, and fire events when routes are
-  // matched. Creating a new one sets its `routes` hash, if not set statically.
-  var Router = Backbone.Router = function(options) {
-    options || (options = {});
-    if (options.routes) this.routes = options.routes;
-    this._bindRoutes();
-    this.initialize.apply(this, arguments);
-  };
 
   // Cached regular expressions for matching named param parts and splatted
   // parts of route strings.
@@ -913,7 +950,16 @@
   var escapeRegExp  = /[-{}[\]+?.,\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
-  _.extend(Router.prototype, Events, {
+  var Router = Backbone.Router = Events.extend({
+
+    // Routers map faux-URLs to actions, and fire events when routes are
+    // matched. Creating a new one sets its `routes` hash, if not set statically.
+    constructor: function(options) {
+      options || (options = {});
+      if (options.routes) this.routes = options.routes;
+      this._bindRoutes();
+      this.initialize.apply(this, arguments);
+    },
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -975,19 +1021,6 @@
   // Backbone.History
   // ----------------
 
-  // Handles cross-browser history management, based on URL fragments. If the
-  // browser does not support `onhashchange`, falls back to polling.
-  var History = Backbone.History = function() {
-    this.handlers = [];
-    _.bindAll(this, 'checkUrl');
-
-    // #1653 - Ensure that `History` can be used outside of the browser.
-    if (typeof window !== 'undefined') {
-      this.location = window.location;
-      this.history = window.history;
-    }
-  };
-
   // Cached regex for cleaning leading hashes and slashes.
   var routeStripper = /^[#\/]|\s+$/;
 
@@ -1000,15 +1033,25 @@
   // Cached regex for removing a trailing slash.
   var trailingSlash = /\/$/;
 
-  // Has the history handling already been started?
-  History.started = false;
-
   // Set up all inheritable **Backbone.History** properties and methods.
-  _.extend(History.prototype, Events, {
+  var History = Backbone.History = Events.extend({
 
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
     interval: 50,
+
+    // Handles cross-browser history management, based on URL fragments. If the
+    // browser does not support `onhashchange`, falls back to polling.
+    constructor: function() {
+      this.handlers = [];
+      _.bindAll(this, 'checkUrl');
+
+      // #1653 - Ensure that `History` can be used outside of the browser.
+      if (typeof window !== 'undefined') {
+        this.location = window.location;
+        this.history = window.history;
+      }
+    },
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
@@ -1182,6 +1225,10 @@
       }
     }
 
+  },
+  {
+    // Has the history handling already been started?
+    started: false
   });
 
   // Create the default Backbone.history.
@@ -1190,16 +1237,6 @@
   // Backbone.View
   // -------------
 
-  // Creating a Backbone.View creates its initial element outside of the DOM,
-  // if an existing element is not provided...
-  var View = Backbone.View = function(options) {
-    this.cid = _.uniqueId('view');
-    this._configure(options || {});
-    this._ensureElement();
-    this.initialize.apply(this, arguments);
-    this.delegateEvents();
-  };
-
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
@@ -1207,10 +1244,20 @@
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
-  _.extend(View.prototype, Events, {
+  var View = Backbone.View = Events.extend({
 
     // The default `tagName` of a View's element is `"div"`.
     tagName: 'div',
+
+    // Creating a Backbone.View creates its initial element outside of the DOM,
+    // if an existing element is not provided...
+    constructor: function(options) {
+      this.cid = _.uniqueId('view');
+      this._configure(options || {});
+      this._ensureElement();
+      this.initialize.apply(this, arguments);
+      this.delegateEvents();
+    },
 
     // jQuery delegate for element lookup, scoped to DOM elements within the
     // current view. This should be prefered to global lookups where possible.
@@ -1430,45 +1477,6 @@
 
   // Helpers
   // -------
-
-  // Helper function to correctly set up the prototype chain, for subclasses.
-  // Similar to `goog.inherits`, but uses a hash of prototype properties and
-  // class properties to be extended.
-  var extend = function(protoProps, staticProps) {
-    var parent = this;
-    var child;
-
-    // The constructor function for the new subclass is either defined by you
-    // (the "constructor" property in your `extend` definition), or defaulted
-    // by us to simply call the parent's constructor.
-    if (protoProps && _.has(protoProps, 'constructor')) {
-      child = protoProps.constructor;
-    } else {
-      child = function(){ parent.apply(this, arguments); };
-    }
-
-    // Add static properties to the constructor function, if supplied.
-    _.extend(child, parent, staticProps);
-
-    // Set the prototype chain to inherit from `parent`, without calling
-    // `parent`'s constructor function.
-    var Surrogate = function(){ this.constructor = child; };
-    Surrogate.prototype = parent.prototype;
-    child.prototype = new Surrogate;
-
-    // Add prototype properties (instance properties) to the subclass,
-    // if supplied.
-    if (protoProps) _.extend(child.prototype, protoProps);
-
-    // Set a convenience property in case the parent's prototype is needed
-    // later.
-    child.__super__ = parent.prototype;
-
-    return child;
-  };
-
-  // Set up inheritance for the model, collection, router, view and history.
-  Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
