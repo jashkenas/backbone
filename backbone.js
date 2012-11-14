@@ -988,8 +988,8 @@
     }
   };
 
-  // Cached regex for cleaning leading hashes and slashes.
-  var routeStripper = /^[#\/]|\s+$/;
+  // Cached regex for cleaning a leading hash and/or slash or /#/ .
+  var routeStripper = /^#\/?|\/(#\/?)?|\s+$/;
 
   // Cached regex for stripping leading and trailing slashes.
   var rootStripper = /^\/+|\/+$/g;
