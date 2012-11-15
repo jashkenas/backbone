@@ -1086,6 +1086,13 @@
       } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
         this.fragment = this.getHash().replace(routeStripper, '');
         this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
+      
+      // Or if we don't want hash-based routing, but just would have wanted `pushState`-based one
+      // but our browser doesn't support it...
+      } else if (!this._wantsHashChange && this._wantsPushState && !this._hasPushState) {
+        // At least, just try to load the current URL forcePushState-fragment
+        this.fragment = this.getFragment(null, true);
+        return this.loadUrl(this.fragment);
       }
 
       if (!this.options.silent) return this.loadUrl();
