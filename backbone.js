@@ -451,7 +451,7 @@
     clone: function(deep) {
       var clone = new this.constructor(this.attributes);
       if (deep == true) {
-        for (attribute in clone.attributes) {
+        for (var attribute in clone.attributes) {
           var value = clone.attributes[attribute];
           if (value && typeof value['clone'] === 'function') {
             clone.attributes[attribute] = value.clone(true);
@@ -821,7 +821,7 @@
     clone: function(deep) {
       var clone = new this.constructor(this.models);
       if (deep == true) {
-        for (i in clone.models) {
+        for (var i in clone.models) {
           var model = clone.models[i];
           if (model && typeof model['clone'] === 'function') {
             clone.models[i] = model.clone(true);
