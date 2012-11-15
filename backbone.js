@@ -453,7 +453,7 @@
       if (deep == true) {
         for (var attribute in clone.attributes) {
           var value = clone.attributes[attribute];
-          if (value && typeof value['clone'] === 'function') {
+          if (value && typeof value.clone === 'function') {
             clone.attributes[attribute] = value.clone(true);
           }
         }
@@ -823,7 +823,7 @@
       if (deep == true) {
         for (var i in clone.models) {
           var model = clone.models[i];
-          if (model && typeof model['clone'] === 'function') {
+          if (model && typeof model.clone === 'function') {
             clone.models[i] = model.clone(true);
           }
         }
