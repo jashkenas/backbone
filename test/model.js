@@ -99,8 +99,9 @@ $(document).ready(function() {
     equal(model.url(), '/nested/1/collection/2');
   });
 
-  test("clone", 8, function() {
-    var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
+  test("clone", 10, function() {
+    var n = new Backbone.Model({'foz': 1});
+    var a = new Backbone.Model({'foo': 1, 'bar': 2, 'baz': 3, 'nested': n});
     var b = a.clone();
     equal(a.get('foo'), 1);
     equal(a.get('bar'), 2);
@@ -108,10 +109,30 @@ $(document).ready(function() {
     equal(b.get('foo'), a.get('foo'), "Foo should be the same on the clone.");
     equal(b.get('bar'), a.get('bar'), "Bar should be the same on the clone.");
     equal(b.get('baz'), a.get('baz'), "Baz should be the same on the clone.");
+    equal(b.get('nested').get('foz'), a.get('nested').get('foz'), "Foz of nested model should be the same on the clone.");
     a.set({foo : 100});
+    a.get('nested').set({foz: 100});
     equal(a.get('foo'), 100);
     equal(b.get('foo'), 1, "Changing a parent attribute does not change the clone.");
+    equal(b.get('nested').get('foz'), 100, "Changing a nested model attribute on the parent also effects the clone.");
   });
+
+  test("deep clone", 8, function() {
+    var n = new Backbone.Model({'foz': 1});
+    var a = new Backbone.Model({'bar': 2, 'nested': n});
+    var b = a.clone(true);
+    equal(a.get('bar'), 2);
+    equal(a.get('nested').get('foz'), 1);
+    equal(b.get('bar'), a.get('bar'), "Bar should be the same on the clone.");
+    equal(b.get('nested').get('foz'), a.get('nested').get('foz'), "Foz on nested model should be the same on the clone.");
+    a.set({bar: 8});
+    a.get('nested').set({foz: 9});
+    equal(a.get('bar'), 8);
+    equal(a.get('nested').get('foz'), 9);
+    equal(b.get('bar'), 2);
+    equal(b.get('nested').get('foz'), 1, "Changing a nested model attribute on the parent does not change the clone.");
+  });
+
 
   test("isNew", 6, function() {
     var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});

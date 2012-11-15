@@ -448,8 +448,17 @@
     },
 
     // Create a new model with identical attributes to this one.
-    clone: function() {
-      return new this.constructor(this.attributes);
+    clone: function(deep) {
+      var clone = new this.constructor(this.attributes);
+      if (deep == true) {
+        for (var attribute in clone.attributes) {
+          var value = clone.attributes[attribute];
+          if (value && typeof value.clone === 'function') {
+            clone.attributes[attribute] = value.clone(true);
+          }
+        }
+      }
+      return clone;
     },
 
     // A model is new if it has never been saved to the server, and lacks an id.
@@ -809,8 +818,17 @@
     },
 
     // Create a new collection with an identical list of models as this one.
-    clone: function() {
-      return new this.constructor(this.models);
+    clone: function(deep) {
+      var clone = new this.constructor(this.models);
+      if (deep == true) {
+        for (var i in clone.models) {
+          var model = clone.models[i];
+          if (model && typeof model.clone === 'function') {
+            clone.models[i] = model.clone(true);
+          }
+        }
+      }
+      return clone;
     },
 
     // Proxy to _'s chain. Can't be proxied the same way the rest of the
