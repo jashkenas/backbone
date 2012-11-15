@@ -277,6 +277,27 @@ $(document).ready(function() {
     equal(array[0].get('b'), 'b');
   });
 
+  test("clone", 4, function() {
+    var a = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
+    var b = a.clone();
+    equal(a.at(0), b.at(0));
+    equal(a.at(1), b.at(1));
+    equal(a.at(2), b.at(2));
+    a.first().set({a: 'z'});
+    equal(b.first().get('a'), 'z', "Changing a model effects the cloned collection.");
+  });
+
+  test("deep clone", 5, function() {
+    var a = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
+    var b = a.clone(true);
+    equal(a.at(0).get('a'), b.at(0).get('a'));
+    equal(a.at(1).get('b'), b.at(1).get('b'));
+    equal(a.at(2).get('b'), b.at(2).get('b'));
+    a.first().set({a: 'z'});
+    equal(a.first().get('a'), 'z')
+    equal(b.first().get('a'), 'a', "Changing a model does not effects the cloned collection.");
+  });
+
   test("events are unbound on remove", 3, function() {
     var counter = 0;
     var dj = new Backbone.Model();
