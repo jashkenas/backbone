@@ -483,6 +483,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#FAQ-events">Catalog of Events</a></li>
+      <li>– <a href="#FAQ-why-backbone">Why Backbone?</a></li>
       <li>– <a href="#FAQ-tim-toady">More Than One Way To Do It</a></li>
       <li>– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
       <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
@@ -3375,6 +3376,77 @@ var model = localBackbone.Model.extend(...);
       <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
       <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
+    </ul>
+
+    <p id="FAQ-why-backbone">
+      <b class="header">Why use Backbone, not [other framework X]?</b>
+      <br />
+      If your eye hasn't already been caught by the adaptibility and elan on display
+      in the above <a href="#examples">list of examples</a>, we can get more specific:
+      While other frameworks are interesting and
+      Backbone.js aims to provide the common foundation that data-rich web applications
+      with ambitious interfaces require &mdash; while very deliberately avoiding
+      painting you into a corner by making any decisions that you're
+      better equipped to make yourself.
+    </p>
+
+    <ul>
+      <li>
+        The focus is on supplying you with
+        <a href="#Collection-Underscore-Methods">helpful methods to manipulate and
+        query your data</a>, not on HTML widgets or reinventing the JavaScript
+        object model.
+      </li>
+      <li>
+        Backbone does not force you to use a single template engine. Views can bind
+        to HTML constructed in
+        <a href="http://underscorejs.org/#template">your</a>
+        <a href="http://guides.rubyonrails.org/layouts_and_rendering.html">favorite</a>
+        <a href="http://mustache.github.com">way</a>.
+      </li>
+      <li>
+        It's smaller. There's fewer kilobytes for the browser to download,
+        and less <i>conceptual</i> surface area. You can read and understand
+        the source in an afternoon.
+      </li>
+      <li>
+        It doesn't depend on stuffing application logic into your HTML.
+        There's no embedded JavaScript, template logic, or binding hookup code in
+        <tt>data-</tt> or <tt>ng-</tt> attributes, and no need to invent your own HTML tags.
+      </li>
+      <li>
+        <a href="#Events">Synchronous events</a> are used as the fundamental
+        building block, not a difficult-to-reason-about event loop, or by constantly
+        polling and traversing your data structures to hunt for changes. And if
+        you want a specific event to be aynchronous and aggregated,
+        <a href="http://underscorejs.org/#debounce">no problem</a>.
+      </li>
+      <li>
+        Backbone scales well, from <a href="http://disqus.com">embedded widgets</a>
+        to <a href="http://www.usatoday.com">massive apps</a>.
+      </li>
+      <li>
+        Backbone is a library, not a framework, and plays well with others.
+        You can embed Backbone widgets in Dojo apps without trouble, or use Backbone
+        models as the data backing for D3 visualizations (to pick two entirely
+        random examples).
+      </li>
+      <li>
+        "Two way data-binding" is avoided. While it certainly makes for a nifty
+        demo, and works for the most basic CRUD, it doesn't tend to be terribly
+        useful in your real-world app. Sometimes you want to update on
+        every keypress, sometimes on blur, sometimes when the panel is closed,
+        and sometimes when the "save" button is clicked. In almost all cases, simply
+        serializing the form to JSON is faster and easier. All that aside, if your
+        heart is set, <a href="http://rivetsjs.com">go</a>
+        <a href="http://nytimes.github.com/backbone.stickit/">for it</a>.
+      </li>
+      <li>
+        There's no built-in performance penalty for choosing to structure your
+        code with Backbone. And if you do want to optimize further, thin models and
+        templates with flexible granularity make it easy squeeze every last
+        drop of performance out of, say, IE8.
+      </li>
     </ul>
 
     <p id="FAQ-tim-toady">
