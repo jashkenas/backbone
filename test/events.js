@@ -116,6 +116,18 @@ $(document).ready(function() {
     equal(obj.counterB, 1, 'counterB should have only been incremented once.');
   });
 
+  test("Events: once", 3, function() {
+    var f = function(){ ok(true); };
+
+    var a = _.extend({}, Backbone.Events).once('event', f);
+    var b = _.extend({}, Backbone.Events).on('event', f);
+
+    a.trigger('event');
+
+    b.trigger('event');
+    b.trigger('event');
+  });
+
   test("bind a callback with a supplied context", 1, function () {
     var TestClass = function () {
       return this;
