@@ -717,6 +717,25 @@
       return cid && this._byCid[cid.cid || cid];
     },
 
+    // Get a model from the set by id. If none exists, return a
+    // temporary model and look to fetch the model from the server.
+    fetchModel: function(id, options) {
+      options || (options = {});
+      var m = this.get(id);
+      var model = m || new this.model({id: id});
+      if (!m || options.refresh) {
+        var collection = this;
+        var success = options.success;
+        options.success = function(model, resp, options) {
+          collection.add(model, _.extend({merge:true}, options));
+          if (success) success(model, resp, options);
+        };
+        if (!m) model.collection = collection;
+        model.fetch(options);
+      }
+      return model;
+    },
+
     // Get the model at the given index.
     at: function(index) {
       return this.models[index];

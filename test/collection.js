@@ -716,4 +716,26 @@ $(document).ready(function() {
     this.ajaxSettings.success([model]);
   });
 
+  test('fetchModel', function () {
+    var events = [];
+    var Collection = Backbone.Collection.extend({
+      url: 'test',
+      initialize: function () {
+        this.on('add', function (m) { events.push('add:'+m.id); });
+      }
+    });
+    Backbone.ajax = function(settings){ settings.success(); };
+
+    var c = new Collection([{id:1, name:'Loaded'}]);
+    
+    var one = c.fetchModel(1);
+    var two = c.fetchModel(2);
+    
+    equal(one.get('name'), 'Loaded');
+    equal(two.get('name'), void 0);
+    equal(this.syncArgs.method, 'read');
+    equal(this.syncArgs.model, two);
+    deepEqual(events, ['add:2']);
+  });
+
 });
