@@ -2285,8 +2285,10 @@ var DocumentRow = Backbone.View.extend({
     <p id="View-constructor">
       <b class="header">constructor / initialize</b><code>new View([options])</code>
       <br />
-      When creating a new View, the options you pass are attached to the view
-      as <tt>this.options</tt>, for future reference. There are several special
+      When creating a new View, the options you pass &mdash; after being merged
+      into any default options already present on the view &mdash;
+      are attached to the view as <tt>this.options</tt> for future reference.
+      There are several special
       options that, if passed, will be attached directly to the view:
       <tt>model</tt>, <tt>collection</tt>,
       <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, <tt>tagName</tt> and <tt>attributes</tt>.
