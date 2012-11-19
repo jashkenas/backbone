@@ -716,4 +716,19 @@ $(document).ready(function() {
     this.ajaxSettings.success([model]);
   });
 
+
+  test("#1754 - add do not sorts collection if all models were duplicates and we don't merge them.", 1, function() {
+    var sortHappened = false;
+    var collection = new Backbone.Collection([
+      {id: 1, x: 1},
+      {id: 2, x: 2}
+    ]);
+    collection.comparator = function(model) {
+      sortHappened = true;
+      return model.get('x');
+    };
+    collection.add({id: 1, x: 3}, {merge: false});
+    strictEqual(sortHappened, false);
+  });
+
 });

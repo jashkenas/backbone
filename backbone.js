@@ -599,7 +599,7 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
-      var i, args, length, model, existing;
+      var i, args, length, model, existing, merged;
       var at = options && options.at;
       models = _.isArray(models) ? models.slice() : [models];
 
@@ -617,8 +617,9 @@
         // If a duplicate is found, splice it out and optionally merge it into
         // the existing model.
         if (existing || this._byCid[model.cid]) {
-          if (options && options.merge && existing) {
+          if (options && options.merge && existing && model !== existing) {
             existing.set(model, options);
+            merged = true;
           }
           models.splice(i, 1);
           continue;
@@ -630,6 +631,10 @@
         this._byCid[model.cid] = model;
         if (model.id != null) this._byId[model.id] = model;
       }
+
+      // If all models were duplicates return now
+      // to avoid performing useless operations
+      if (!merged && !models.length) return this;
 
       // Update `length` and splice in new models.
       this.length += models.length;
