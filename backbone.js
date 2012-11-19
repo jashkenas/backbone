@@ -366,7 +366,7 @@
       options = options ? _.clone(options) : {};
 
       // If we're "wait"-ing to set changed attributes, validate early.
-      if (options.wait) {
+      if (attrs && options.wait) {
         if (!this._validate(attrs, options)) return false;
         current = _.clone(this.attributes);
       }
