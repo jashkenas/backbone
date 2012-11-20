@@ -821,7 +821,7 @@
     },
 
     // Reset all internal state. Called when the collection is reset.
-    _reset: function(options) {
+    _reset: function() {
       this.length = 0;
       this.models = [];
       this._byId  = {};
