@@ -69,6 +69,7 @@ $(document).ready(function() {
       "contacts":                   "contacts",
       "contacts/new":               "newContact",
       "contacts/:id":               "loadContact",
+      "optional(/:item)":           "optionalItem",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
@@ -103,6 +104,10 @@ $(document).ready(function() {
 
     loadContact: function(){
       this.contact = 'load';
+    },
+
+    optionalItem: function(arg){
+      this.arg = arg !== undefined ? arg : null;
     },
 
     splat : function(args) {
@@ -197,6 +202,15 @@ $(document).ready(function() {
     location.replace('http://example.com#splat/long-list/of/splatted_99args/end');
     Backbone.history.checkUrl();
     equal(router.args, 'long-list/of/splatted_99args');
+  });
+
+  test("routes (optional)", 2, function() {
+    location.replace('http://example.com#optional');
+    Backbone.history.checkUrl();
+    equal(router.arg, null);
+    location.replace('http://example.com#optional/thing');
+    Backbone.history.checkUrl();
+    equal(router.arg, 'thing');
   });
 
   test("routes (complex)", 3, function() {
@@ -447,6 +461,45 @@ $(document).ready(function() {
       root: 'root',
       pushState: true
     });
+  });
+
+  test("#1695 - hashChange to pushState with search.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root?a=b#x/y');
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(state, title, url){
+          strictEqual(url, '/root/x/y?a=b');
+        }
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true
+    });
+  });
+
+  test("#1746 - Router allows empty route.", 1, function() {
+    var Router = Backbone.Router.extend({
+      routes: {'': 'empty'},
+      empty: function(){},
+      route: function(route){
+        strictEqual(route, '');
+      }
+    });
+    new Router;
+  });
+
+  test("#1794 - Trailing space in fragments.", 1, function() {
+    var history = new Backbone.History;
+    strictEqual(history.getFragment('fragment   '), 'fragment');
+  });
+
+  test("#1820 - Leading slash and trailing space.", 1, function() {
+    var history = new Backbone.History;
+    strictEqual(history.getFragment('/fragment '), 'fragment');
   });
 
 });
