@@ -212,6 +212,13 @@ $(document).ready(function() {
     equal(i, 2, 'Unset does not fire an event for missing attributes.');
   });
 
+  test("unset array of attributes", 2, function() {
+    var model = new Backbone.Model({a: 1, b: 1});
+    model.unset(['a', 'b']);
+    equal(model.get('a'), void 0, "a should have changed");
+    equal(model.get('b'), void 0, "b should have changed");
+  });
+
   test("unset and changedAttributes", 2, function() {
     var model = new Backbone.Model({a: 1});
     model.unset('a', {silent: true});
