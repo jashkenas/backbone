@@ -798,7 +798,9 @@
         if (options.wait) collection.add(model, options);
         if (success) success(model, resp, options);
       };
-      model.save(null, options);
+      if(model.save(null, options) === false) {
+	return false; //"create" never returns false on failed validation.
+      }
       return model;
     },
 
