@@ -1381,7 +1381,7 @@
     // Ensure that we have the appropriate request data.
     if (!options.data && model && (method === 'create' || method === 'update')) {
       params.contentType = 'application/json';
-      params.data = JSON.stringify(model);
+      params.data = JSON.stringify(model.toJSON(options));
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
