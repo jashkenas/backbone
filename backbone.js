@@ -275,6 +275,7 @@
 
       // Extract attributes and options.
       var silent = options && options.silent;
+      var wait = options && options.wait;
       var unset = options && options.unset;
       if (attrs instanceof Model) attrs = attrs.attributes;
       if (unset) for (attr in attrs) attrs[attr] = void 0;
@@ -297,7 +298,7 @@
         // If the new and current value differ, record the change.
         if (!_.isEqual(now[attr], val) || (unset && _.has(now, attr))) {
           delete escaped[attr];
-          this._changes[attr] = true;
+          if (!silent) this._changes[attr] = true;
         }
 
         // Update or delete the current value.
@@ -307,7 +308,7 @@
         // then remove changes for this attribute.
         if (!_.isEqual(prev[attr], val) || (_.has(now, attr) !== _.has(prev, attr))) {
           this.changed[attr] = val;
-          if (!silent) this._pending[attr] = true;
+          if (!silent && !wait) this._pending[attr] = true;
         } else {
           delete this.changed[attr];
           delete this._pending[attr];
@@ -318,7 +319,7 @@
       }
 
       // Fire the `"change"` events.
-      if (!silent) this.change(options);
+      if (!silent && !wait && !_.isEmpty(this._changes)) this.change(options);
       return this;
     },
 
@@ -372,8 +373,7 @@
       }
 
       // Regular saves `set` attributes before persisting to the server.
-      var silentOptions = _.extend({}, options, {silent: true});
-      if (attrs && !this.set(attrs, options.wait ? silentOptions : options)) {
+      if (attrs && !this.set(attrs, options)) {
         return false;
       }
 
@@ -387,8 +387,10 @@
       options.success = function(resp, status, xhr) {
         done = true;
         var serverAttrs = model.parse(resp, xhr);
-        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
-        if (!model.set(serverAttrs, options)) return false;
+        if (options.wait) {
+          serverAttrs = _.extend(attrs || {}, serverAttrs);
+        }
+        if (!model.set(serverAttrs, _.extend({}, options, {wait:false}))) return false;
         if (success) success(model, resp, options);
       };
 
@@ -398,8 +400,8 @@
       // When using `wait`, reset attributes to original values unless
       // `success` has been called already.
       if (!done && options.wait) {
-        this.clear(silentOptions);
-        this.set(current, silentOptions);
+        this.clear(options);
+        this.set(current, _.extend({},options,{silent:true}));
       }
 
       return xhr;
@@ -482,17 +484,22 @@
         this.trigger('change:' + triggers[i], this, current[triggers[i]], options);
       }
       if (changing) return this;
-
-      // Continue firing `"change"` events while there are pending changes.
-      while (!_.isEmpty(this._pending)) {
-        this._pending = {};
+      
+      // Be sure to fire `"change"` event at least once
+      if (_.isEmpty(this._pending)) {
         this.trigger('change', this, options);
-        // Pending and silent changes still remain.
-        for (var attr in this.changed) {
-          if (this._pending[attr] || this._changes[attr]) continue;
-          delete this.changed[attr];
+      } else {
+        // Continue firing `"change"` events while there are pending changes.
+        while (!_.isEmpty(this._pending)) {
+          this._pending = {};
+          this.trigger('change', this, options);
+          // Pending and silent changes still remain.
+          for (var attr in this.changed) {
+            if (this._pending[attr] || this._changes[attr]) continue;
+            delete this.changed[attr];
+          }
+          this._previousAttributes = _.clone(this.attributes);
         }
-        this._previousAttributes = _.clone(this.attributes);
       }
 
       this._changing = null;
