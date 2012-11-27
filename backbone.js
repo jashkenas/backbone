@@ -1313,7 +1313,7 @@
     // Keys with special meaning *(model, collection, id, className)*, are
     // attached directly to the view.
     _configure: function(options) {
-      if (this.options) options = _.extend({}, this.options, options);
+      if (this.options) options = _.extend({}, _.result(this, 'options'), options);
       _.extend(this, _.pick(options, viewOptions));
       this.options = options;
     },
