@@ -604,13 +604,13 @@
       var at = options && options.at;
       models = _.isArray(models) ? models.slice() : [models];
 
+      // Turn bare objects into model references, and prevent invalid models
+      // from being added.
       for (i = models.length - 1; i >= 0; i--) {
-        // Turn bare objects into model references, and prevent invalid models
-        // from being added.
         if(!(model = this._prepareModel(models[i], options))) {
-            this.trigger("error", this, models[i], options);
-            models.splice(i, 1);
-            continue;
+          this.trigger("error", this, models[i], options);
+          models.splice(i, 1);
+          continue;
         }
         models[i] = model;
 
