@@ -604,19 +604,19 @@
       var at = options && options.at;
       models = _.isArray(models) ? models.slice() : [models];
 
-      // Begin by turning bare objects into model references, and preventing
-      // invalid models from being added.
-      for (i = 0, length = models.length; i < length; i++) {
-        if (models[i] = this._prepareModel(models[i], options)) continue;
-        throw new Error("Can't add an invalid model to a collection");
-      }
-
       for (i = models.length - 1; i >= 0; i--) {
-        model = models[i];
-        existing = model.id != null && this._byId[model.id];
+        // Turn bare objects into model references, and prevent invalid models
+        // from being added.
+        if(!(model = this._prepareModel(models[i], options))) {
+            this.trigger("error", this, models[i], options);
+            models.splice(i, 1);
+            continue;
+        }
+        models[i] = model;
 
-        // If a duplicate is found, splice it out and optionally merge it into
-        // the existing model.
+        existing = model.id != null && this._byId[model.id];
+        // If a duplicate is found, prevent it from being added and
+        // optionally merge it into the existing model.
         if (existing || this._byCid[model.cid]) {
           if (options && options.merge && existing) {
             existing.set(model, options);
