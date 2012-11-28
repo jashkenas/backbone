@@ -901,8 +901,15 @@ book.set("title", "A Scandal in Bohemia");
       You may also pass an <tt>error</tt>
       callback in the options, which will be invoked instead of triggering an
       <tt>"error"</tt> event, should validation fail.
-      If <tt>{silent: true}</tt> is passed as an option, the validation is deferred
-      until the next change.
+    </p>
+
+    <p>
+      Passing <tt>{silent: true}</tt> as an option will defer both the validation
+      and the event. This is useful when you want to
+      change attributes provisionally or rapidly, without propagating the change
+      through the rest of the system. That said, <tt>silent</tt> doesn't mean that
+      the change (and event) won't happen, it's merely silenced until the next
+      <a href="#Model-change">change</a>.
     </p>
 
     <p id="Model-escape">
