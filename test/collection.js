@@ -370,16 +370,12 @@ $(document).ready(function() {
     equal(undefined, e.collection);
   });
 
-  test("fetch", 4, function() {
+  test("fetch", 2, function() {
     var collection = new Backbone.Collection;
     collection.url = '/test';
     collection.fetch();
     equal(this.syncArgs.method, 'read');
     equal(this.syncArgs.model, collection);
-    equal(this.syncArgs.options.parse, true);
-
-    collection.fetch({parse: false});
-    equal(this.syncArgs.options.parse, false);
   });
 
   test("create", 4, function() {

@@ -191,7 +191,7 @@
     this.changed = {};
     this._changes = {};
     this._pending = {};
-    if (options && options.parse) attrs = this.parse(attrs);
+    if (this.parse) attrs = this.parse(attrs);
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.extend({}, defaults, attrs);
     }
@@ -344,7 +344,8 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(model.parse(resp, xhr), options)) return false;
+        if (model.parse) resp = model.parse(resp);
+        if (!model.set(resp, options)) return false;
         if (success) success(model, resp, options);
       };
       return this.sync('read', this, options);
@@ -386,7 +387,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         done = true;
-        var serverAttrs = model.parse(resp, xhr);
+        var serverAttrs = model.parse ? model.parse(resp) : resp;
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
@@ -439,12 +440,6 @@
       var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
-    },
-
-    // **parse** converts a response into the hash of attributes to be `set` on
-    // the model. The default implementation is just to pass the response along.
-    parse: function(resp, xhr) {
-      return resp;
     },
 
     // Create a new model with identical attributes to this one.
@@ -569,8 +564,8 @@
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) {
-      if (options.parse) models = this.parse(models);
-      this.reset(models, {silent: true, parse: options.parse});
+      if (this.parse) models = this.parse(models);
+      this.reset(models, {silent: true});
     }
   };
 
@@ -774,11 +769,11 @@
     // models to the collection instead of resetting.
     fetch: function(options) {
       options = options ? _.clone(options) : {};
-      if (options.parse === void 0) options.parse = true;
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
+        if (collection.parse) resp = collection.parse(resp);
+        collection[options.add ? 'add' : 'reset'](resp, options);
         if (success) success(collection, resp, options);
       };
       return this.sync('read', this, options);
@@ -800,12 +795,6 @@
       };
       model.save(null, options);
       return model;
-    },
-
-    // **parse** converts a response into a list of models to be added to the
-    // collection. The default implementation is just to pass it through.
-    parse: function(resp, xhr) {
-      return resp;
     },
 
     // Create a new collection with an identical list of models as this one.
