@@ -1314,7 +1314,8 @@
     // attached directly to the view.
     _configure: function(options) {
       if (this.options) options = _.extend({}, _.result(this, 'options'), options);
-      this.options = _.extend(this, _.pick(options, viewOptions));
+      _.extend(this, _.pick(options, viewOptions));
+      this.options = options;
     },
 
     // Ensure that the View has a DOM element to render into.
