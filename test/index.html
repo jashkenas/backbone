@@ -10,8 +10,6 @@
   <script src="vendor/jslitmus.js"></script>
   <script src="vendor/underscore.js"></script>
   <script src="../backbone.js"></script>
-
-  <script src="config.js"></script>
   <script src="environment.js"></script>
   <script src="noconflict.js"></script>
   <script src="events.js"></script>
@@ -21,6 +19,17 @@
   <script src="view.js"></script>
   <script src="sync.js"></script>
   <script src="speed.js"></script>
+  <script>
+    _.extend(QUnit.config, {
+
+      noglobals: true,
+
+      urlConfig: _.filter(QUnit.config.urlConfig, function(option) {
+        return option.id !== 'noglobals';
+      })
+
+    });
+  </script>
 </head>
 <body>
   <div id="qunit"></div>
