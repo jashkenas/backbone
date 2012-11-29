@@ -458,7 +458,7 @@
     // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
-      var changing = this._changing;
+      var i, changing = this._changing;
       this._changing = true;
 
       // Generate the changes to be triggered on the model.
