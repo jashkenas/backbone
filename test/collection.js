@@ -715,4 +715,18 @@ $(document).ready(function() {
     this.ajaxSettings.success([model]);
   });
 
+  test("`sort` shouldn't always fire on `add`", 1, function() {
+    var c = new Backbone.Collection([{id: 1},{id: 2},{id: 3}], {
+      comparator: 'id'
+    });
+    c.sort = function() {
+      ok(1);
+      return Backbone.Collection.prototype.sort.apply(this, arguments);
+    }
+    c.add([]);
+    c.add({id: 1});
+    c.add([{id: 2},{id: 3}]);
+    c.add({id: 4});
+  });
+
 });
