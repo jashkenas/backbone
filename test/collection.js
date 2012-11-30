@@ -715,4 +715,47 @@ $(document).ready(function() {
     this.ajaxSettings.success([model]);
   });
 
+  test("#1407 parse option on constructor parses collection and models", 2, function() {
+    var model = {
+      namespace : [{id: 1}, {id:2}]
+    };
+    var Collection = Backbone.Collection.extend({
+      model: Backbone.Model.extend({
+        parse: function(model) {
+          model.name = 'test';
+          return model;
+        }
+      }),
+      parse: function(model) {
+        return model.namespace;
+      }
+    });
+    var c = new Collection(model, {parse:true});
+
+    equal(c.length, 2);
+    equal(c.at(0).get('name'), 'test');
+  });
+
+  test("#1407 parse option on reset parses collection and models", 2, function() {
+    var model = {
+      namespace : [{id: 1}, {id:2}]
+    };
+    var Collection = Backbone.Collection.extend({
+      model: Backbone.Model.extend({
+        parse: function(model) {
+          model.name = 'test';
+          return model;
+        }
+      }),
+      parse: function(model) {
+        return model.namespace;
+      }
+    });
+    var c = new Collection();
+        c.reset(model, {parse:true});
+
+    equal(c.length, 2);
+    equal(c.at(0).get('name'), 'test');
+  });
+
 });
