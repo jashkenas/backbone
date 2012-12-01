@@ -716,16 +716,13 @@ $(document).ready(function() {
   });
 
   test("`sort` shouldn't always fire on `add`", 1, function() {
-    var c = new Backbone.Collection([{id: 1},{id: 2},{id: 3}], {
+    var c = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}], {
       comparator: 'id'
     });
-    c.sort = function() {
-      ok(1);
-      return Backbone.Collection.prototype.sort.apply(this, arguments);
-    }
+    c.sort = function(){ ok(true); };
     c.add([]);
     c.add({id: 1});
-    c.add([{id: 2},{id: 3}]);
+    c.add([{id: 2}, {id: 3}]);
     c.add({id: 4});
   });
 
