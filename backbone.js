@@ -787,8 +787,7 @@
           models.splice(i, 1);
           continue;
         }
-        if ((existing = this._byId[model.id]) ||
-            (existing = this._byCid[model.cid])) {
+        if (existing = this._byId[model.id] || this._byCid[model.cid]) {
           removed.splice(_.indexOf(removed, existing), 1);
         }
       }
