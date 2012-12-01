@@ -715,4 +715,29 @@ $(document).ready(function() {
     this.ajaxSettings.success([model]);
   });
 
+  test("update", 5, function() {
+    var m1 = new Backbone.Model;
+    var m2 = new Backbone.Model({id: 2});
+    var m3 = new Backbone.Model;
+    var c = new Backbone.Collection([m1, m2]);
+
+    // Test add/change/remove events
+    c.on('add', function(model) {
+      strictEqual(model, m3);
+    });
+    c.on('change', function(model) {
+      strictEqual(model, m2);
+    });
+    c.on('remove', function(model) {
+      strictEqual(model, m1);
+    });
+    c.update([{id: 2, a: 1}, m3]);
+
+    // Test removing models by passing an empty array
+    c.off('remove').on('remove', function(model) {
+      ok(model === m2 || model === m3);
+    });
+    c.update([]);
+  });
+
 });
