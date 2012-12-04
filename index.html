@@ -1091,7 +1091,8 @@ alert(JSON.stringify(artist));
       Useful if the model has never
       been populated with data, or if you'd like to ensure that you have the
       latest server state. A <tt>"change"</tt> event will be triggered if the
-      server's state differs from the current attributes. Accepts
+      server's state differs from the current attributes. Pass <tt>{silent: true}</tt>
+      to supress the <tt>"change"</tt> event. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
       are passed <tt>(model, response, options)</tt>
       and <tt>(model, xhr, options)</tt> as arguments, respectively.
@@ -1803,8 +1804,8 @@ var Tweets = Backbone.Collection.extend({
       callbacks which will be passed <tt>(collection, response, options)</tt>
       and <tt>(collection, xhr, options)</tt> as arguments, respectively.
       When the model data returns from the server, the collection will
-      <a href="#Collection-reset">reset</a>.
-      Delegates to <a href="#Sync">Backbone.sync</a>
+      <a href="#Collection-reset">reset</a>. You can pass <tt>{silent: true}</tt>
+      to suppress associated events. Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers for custom persistence strategies and returns a
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
       The server handler for <b>fetch</b> requests should return a JSON array of
