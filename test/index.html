@@ -19,17 +19,6 @@
   <script src="view.js"></script>
   <script src="sync.js"></script>
   <script src="speed.js"></script>
-  <script>
-    _.extend(QUnit.config, {
-
-      noglobals: true,
-
-      urlConfig: _.filter(QUnit.config.urlConfig, function(option) {
-        return option.id !== 'noglobals';
-      })
-
-    });
-  </script>
 </head>
 <body>
   <div id="qunit"></div>
