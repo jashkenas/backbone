@@ -89,7 +89,8 @@
 
       while (event = events.shift()) {
         list = calls[event] || (calls[event] = []);
-        list.push(callback, context);
+        list.push(callback, context, callback.__once__);
+        delete callback.__once__;
       }
 
       return this;
@@ -117,9 +118,9 @@
           continue;
         }
 
-        for (i = list.length - 2; i >= 0; i -= 2) {
+        for (i = list.length - 3; i >= 0; i -= 3) {
           if (!(callback && list[i] !== callback || context && list[i + 1] !== context)) {
-            list.splice(i, 2);
+            list.splice(i, 3);
           }
         }
       }
@@ -159,11 +160,14 @@
         if (all = calls.all) all = all.slice();
         if (list = calls[event]) list = list.slice();
 
+
         // Execute event callbacks.
         if (list) {
-          for (i = 0, length = list.length; i < length; i += 2) {
-            // Remove the special `once` event immediately before triggering..
-            list[i].__once__ && delete calls[event];
+          for (i = 0, length = list.length; i < length; i += 3) {
+            // Remove the special `once` event immediately before triggering.
+            if (list[i + 2]) {
+              delete calls[event];
+            }
 
             list[i].apply(list[i + 1] || this, rest);
           }
@@ -172,7 +176,7 @@
         // Execute "all" callbacks.
         if (all) {
           args = [event].concat(rest);
-          for (i = 0, length = all.length; i < length; i += 2) {
+          for (i = 0, length = all.length; i < length; i += 3) {
             all[i].apply(all[i + 1] || this, args);
           }
         }
