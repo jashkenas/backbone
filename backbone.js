@@ -588,10 +588,7 @@
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
-    if (models) {
-      if (options.parse) models = this.parse(models);
-      this.reset(models, {silent: true, parse: options.parse});
-    }
+    if (models) this.reset(models, _.extend({silent: true}, options));
   };
 
   // Define the Collection's inheritable methods.
@@ -619,7 +616,7 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
-      var i, args, length, model, existing;
+      var i, args, length, model, existing, sort;
       var at = options && options.at;
       models = _.isArray(models) ? models.slice() : [models];
 
@@ -639,6 +636,7 @@
         if (existing || this._byCid[model.cid]) {
           if (options && options.merge && existing) {
             existing.set(model, options);
+            sort = true;
           }
           models.splice(i, 1);
           continue;
@@ -651,14 +649,15 @@
         if (model.id != null) this._byId[model.id] = model;
       }
 
-      // Update `length` and splice in new models.
+      // See if sorting is needed, update `length` and splice in new models.
+      if (models.length) sort = true;
       this.length += models.length;
       args = [at != null ? at : this.models.length, 0];
       push.apply(args, models);
       splice.apply(this.models, args);
 
       // Sort the collection if appropriate.
-      if (this.comparator && at == null) this.sort({silent: true});
+      if (sort && this.comparator && at == null) this.sort({silent: true});
 
       if (options && options.silent) return this;
 
@@ -800,6 +799,7 @@
     // you can reset the entire set with a new list of models, without firing
     // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
+      if (options && options.parse) models = this.parse(models);
       for (var i = 0, l = this.models.length; i < l; i++) {
         this._removeReference(this.models[i]);
       }
