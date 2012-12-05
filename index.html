@@ -1408,7 +1408,7 @@ bill.set({name : "Bill Jones"});
       triggered on the collection directly, for convenience.
       This allows you to listen for changes to specific attributes in any
       model in a collection, for example:
-      <tt>Documents.on("change:selected", ...)</tt>
+      <tt>Documents.on("change:selected", function(model, collection, options) {...})</tt>
     </p>
 
     <p id="Collection-extend">
