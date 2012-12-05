@@ -777,21 +777,48 @@
 
     // Update a collection with models, removing, adding, and merging as
     // necessary.
-    update: function (models, options)  {
-      models = models ? _.isArray(models) ? models.slice() : [models] : [];
-      var removed = this.models.slice();
-      for (var i = models.length - 1; i >= 0; --i) {
-        var model = this._prepareModel(models[i], options);
-        if (!model) {
-          this.trigger('error', this, models[i], options);
-          models.splice(i, 1);
-          continue;
+    update: function(models, options) {
+      if (!_.isArray(models)) models = models ? [models] : [];
+      options = _.extend({add: true, merge: true, remove: true}, options);
+      var add = models;
+      var remove = [];
+
+      if (!options.add || options.remove) {
+        var i, l, model, existing, map;
+        add = [];
+        if (options.remove) map = {};
+        for (i = 0, l = models.length; i < l; ++i) {
+          model = models[i] || {};
+
+          // Try to find the model using the indexed `id` or `cid`.
+          existing =
+            model instanceof Model ?
+            this._byId[model.id] || this._byCid[model.cid] :
+            this._byId[model[this.model.prototype.idAttribute]];
+
+          // Push existing models to be merged
+          if (existing) {
+            if (options.merge) add.push(model);
+            if (options.remove) map[existing.cid] = model;
+          } else if (options.add) {
+            add.push(model);
+          }
         }
-        var existing = this._byId[model.id] || this._byCid[model.cid];
-        if (existing) removed.splice(_.indexOf(removed, existing), 1);
+        if (options.remove) {
+          for (i = 0, l = this.models.length; i < l; ++i) {
+            model = this.models[i];
+
+            // If the model isn't in the existing model map, put it in the
+            // remove array.
+            if (!map[model.cid]) remove.push(model);
+          }
+        }
       }
-      if (models.length) this.add(models, _.extend({merge: true}, options));
-      if (removed.length) this.remove(removed, options);
+
+      // Perform the necessary actions and trigger 'update' if appropriate.
+      if (add.length) this.add(add, options);
+      if (remove.length) this.remove(remove, options);
+      if (!options.silent) this.trigger('update', this, options);
       return this;
     },
 
@@ -818,8 +845,7 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        var action = options.add ? 'add' : options.update ? 'update' : 'reset';
-        collection[action](collection.parse(resp, xhr), options);
+        collection.update(collection.parse(resp, xhr), options);
         if (success) success(collection, resp, options);
       };
       return this.sync('read', this, options);
