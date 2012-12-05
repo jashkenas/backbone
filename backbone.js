@@ -778,18 +778,18 @@
 
     // Update a collection with models, removing, adding, and merging as
     // necessary.
-    update: function(models, options) {
-      var i, model, existing, removed = this.models.slice();
+    update: function (models, options)  {
       models = models ? _.isArray(models) ? models.slice() : [models] : [];
-      for (i = models.length - 1; i >= 0; i--) {
-        if(!(model = this._prepareModel(models[i], options))) {
-          this.trigger("error", this, models[i], options);
+      var removed = this.models.slice();
+      for (var i = models.length - 1; i >= 0; --i) {
+        var model = this._prepareModel(models[i], options);
+        if (!model) {
+          this.trigger('error', this, models[i], options);
           models.splice(i, 1);
           continue;
         }
-        if (existing = this._byId[model.id] || this._byCid[model.cid]) {
-          removed.splice(_.indexOf(removed, existing), 1);
-        }
+        var existing = this._byId[model.id] || this._byCid[model.cid];
+        if (existing) removed.splice(_.indexOf(removed, existing), 1);
       }
       if (models.length) this.add(models, _.extend({merge: true}, options));
       if (removed.length) this.remove(removed, options);
@@ -818,7 +818,7 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        var action = options.add ? 'add' : options.update ? 'update' : 'reset'
+        var action = options.add ? 'add' : options.update ? 'update' : 'reset';
         collection[action](collection.parse(resp, xhr), options);
         if (success) success(collection, resp, options);
       };
