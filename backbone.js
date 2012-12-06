@@ -780,6 +780,7 @@
     // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
       if (options && options.parse) models = this.parse(models);
+      if (this.validate && !this.validate(models)) return false;
       for (var i = 0, l = this.models.length; i < l; i++) {
         this._removeReference(this.models[i]);
       }

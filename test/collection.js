@@ -769,4 +769,17 @@ $(document).ready(function() {
     equal(c.at(0).get('name'), 'test');
   });
 
+  test("#1477 - custom validate called on collection if present", 1, function() {
+    var Collection = Backbone.Collection.extend({
+      validate: function (models) {
+        if (models.length < 3) return false;
+      }
+    });
+    var collection = new Collection([
+      {id: 1},
+      {id: 2}
+    ]);
+    equal(collection.length, 0);
+  });
+
 });
