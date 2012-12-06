@@ -81,6 +81,13 @@
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
+      if (_.isObject(events)) {
+        for (key in events) {
+          this.on(key, events[key], callback);
+        }
+        return this;
+      }
+
       var calls, event, list;
       if (!callback) return this;
 
@@ -99,6 +106,13 @@
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
+      if (_.isObject(events)) {
+        for (key in events) {
+          this.off(key, events[key], callback);
+        }
+        return this;
+      }
+
       var event, calls, list, i;
 
       // No events, or removing *all* events.

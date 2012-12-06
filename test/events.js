@@ -17,7 +17,7 @@ $(document).ready(function() {
 
   test("binding and triggering multiple events", 4, function() {
     var obj = { counter: 0 };
-    _.extend(obj,Backbone.Events);
+    _.extend(obj, Backbone.Events);
 
     obj.on('a b c', function() { obj.counter += 1; });
 
@@ -34,6 +34,38 @@ $(document).ready(function() {
     obj.trigger('a b c');
     equal(obj.counter, 5);
   });
+
+  test("binding and triggering with event maps", function() {
+    var obj = { counter: 0 };
+    _.extend(obj, Backbone.Events);
+
+    var increment = function() {
+      this.counter += 1;
+    };
+
+    obj.on({
+      a: increment,
+      b: increment,
+      c: increment
+    }, obj);
+
+    obj.trigger('a');
+    equal(obj.counter, 1);
+
+    obj.trigger('a b');
+    equal(obj.counter, 3);
+
+    obj.trigger('c');
+    equal(obj.counter, 4);
+
+    obj.off({
+      a: increment,
+      c: increment
+    }, obj);
+    obj.trigger('a b c');
+    equal(obj.counter, 5);
+  });
+
 
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
