@@ -224,4 +224,78 @@ $(document).ready(function() {
     obj.trigger('event');
   });
 
+  test("once", 2, function() {
+    // Same as the previous test, but we use once rather than having to explicitly unbind
+    var obj = { counterA: 0, counterB: 0 };
+    _.extend(obj,Backbone.Events);
+    var incrA = function(){ obj.counterA += 1; obj.trigger('event'); };
+    var incrB = function(){ obj.counterB += 1 };
+    obj.once('event', incrA);
+    obj.once('event', incrB);
+    obj.trigger('event');
+    obj.trigger('event');
+    obj.trigger('event');
+    equal(obj.counterA, 1, 'counterA should have only been incremented once.');
+    equal(obj.counterB, 1, 'counterB should have only been incremented once.');
+  });
+
+  test("once variant one", 3, function() {
+    var f = function(){ ok(true); };
+
+    var a = _.extend({}, Backbone.Events).once('event', f);
+    var b = _.extend({}, Backbone.Events).on('event', f);
+
+    a.trigger('event');
+
+    b.trigger('event');
+    b.trigger('event');
+  });
+
+  test("once variant two", 3, function() {
+    var f = function(){ ok(true); };
+    var obj = _.extend({}, Backbone.Events);
+
+    obj
+      .once('event', f)
+      .on('event', f)
+      .trigger('event')
+      .trigger('event');
+  });
+
+  test("once with off", 0, function() {
+    var f = function(){ ok(true); };
+    var obj = _.extend({}, Backbone.Events);
+
+    obj.once('event', f);
+    obj.off('event', f);
+    obj.trigger('event');
+  });
+
+  test("once with event maps", function() {
+    var obj = { counter: 0 };
+    _.extend(obj, Backbone.Events);
+
+    var increment = function() {
+      this.counter += 1;
+    };
+
+    obj.once({
+      a: increment,
+      b: increment,
+      c: increment
+    }, obj);
+
+    obj.trigger('a');
+    equal(obj.counter, 1);
+
+    obj.trigger('a b');
+    equal(obj.counter, 2);
+
+    obj.trigger('c');
+    equal(obj.counter, 3);
+
+    obj.trigger('a b c');
+    equal(obj.counter, 3);
+  });
+
 });
