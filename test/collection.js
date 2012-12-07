@@ -769,4 +769,14 @@ $(document).ready(function() {
     equal(c.at(0).get('name'), 'test');
   });
 
+
+  test("Reset includes previous models in triggered event.", 1, function() {
+    var model = new Backbone.Model();
+    var collection = new Backbone.Collection([model])
+    .on('reset', function(collection, options) {
+      deepEqual(options.previousModels, [model]);
+    });
+    collection.reset([]);
+  });
+
 });

@@ -793,13 +793,15 @@
     // you can reset the entire set with a new list of models, without firing
     // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
-      if (options && options.parse) models = this.parse(models);
+      options || (options = {});
+      if (options.parse) models = this.parse(models);
       for (var i = 0, l = this.models.length; i < l; i++) {
         this._removeReference(this.models[i]);
       }
+      options.previousModels = this.models;
       this._reset();
       if (models) this.add(models, _.extend({silent: true}, options));
-      if (!options || !options.silent) this.trigger('reset', this, options);
+      if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
 
