@@ -96,7 +96,8 @@
 
       while (event = events.shift()) {
         list = calls[event] || (calls[event] = []);
-        list.push(callback, context);
+        list.push(callback, context, callback.__once__);
+        delete callback.__once__;
       }
 
       return this;
@@ -131,9 +132,9 @@
           continue;
         }
 
-        for (i = list.length - 2; i >= 0; i -= 2) {
+        for (i = list.length - 3; i >= 0; i -= 3) {
           if (!(callback && list[i] !== callback || context && list[i + 1] !== context)) {
-            list.splice(i, 2);
+            list.splice(i, 3);
           }
         }
       }
@@ -141,12 +142,20 @@
       return this;
     },
 
+    // Bind an event like `on`, but unbind the event following the first trigger.
+    once: function(events, callback, context) {
+      // Mark the callback for future removal.
+      callback.__once__ = context || this;
+
+      return this.on.apply(this, arguments);
+    },
+
     // Trigger one or many events, firing all bound callbacks. Callbacks are
     // passed the same arguments as `trigger` is, apart from the event name
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
     trigger: function(events) {
-      var event, calls, list, i, length, args, all, rest;
+      var event, calls, list, i, length, args, all, rest, cb;
       if (!(calls = this._callbacks)) return this;
 
       rest = [];
@@ -167,15 +176,21 @@
 
         // Execute event callbacks.
         if (list) {
+          console.log(calls[event]);
           for (i = 0, length = list.length; i < length; i += 2) {
-            list[i].apply(list[i + 1] || this, rest);
+            cb = list[i];
+
+            // Remove the special `once` event immediately before triggering.
+            list[i + 2] && (calls[event][i] = undefined);
+
+            cb && cb.apply(list[i + 1] || this, rest);
           }
         }
 
         // Execute "all" callbacks.
         if (all) {
           args = [event].concat(rest);
-          for (i = 0, length = all.length; i < length; i += 2) {
+          for (i = 0, length = all.length; i < length; i += 3) {
             all[i].apply(all[i + 1] || this, args);
           }
         }
