@@ -67,9 +67,6 @@
   // Regular expression used to split event strings
   var eventSplitter = /\s+/;
 
-  // Internal flag used to set event callbacks `once`.
-  var once = false;
-
   // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may bind with `on` or remove with `off` callback functions
   // to an event; `trigger`-ing an event fires all callbacks in succession.
@@ -83,10 +80,10 @@
 
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
-    on: function(events, callback, context) {
+    on: function(events, callback, context, once) {
       if (_.isObject(events)) {
         for (key in events) {
-          this.on(key, events[key], callback);
+          this.on(key, events[key], callback, once && {});
         }
         return this;
       }
@@ -99,7 +96,7 @@
 
       while (event = events.shift()) {
         list = calls[event] || (calls[event] = []);
-        list.push(callback, context, once ? {} : null);
+        list.push(callback, context, once && {});
       }
 
       return this;
@@ -108,10 +105,7 @@
     // Bind events to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
     once: function(events, callback, context) {
-      once = true
-      this.on(events, callback, context);
-      once = false;
-      return this;
+      return this.on(events, callback, context, true);
     },
 
     // Remove one or many callbacks. If `context` is null, removes all callbacks
@@ -119,7 +113,7 @@
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
       if (_.isObject(events)) {
-        for (key in events) {
+        for (var key in events) {
           this.off(key, events[key], callback);
         }
         return this;
@@ -158,7 +152,7 @@
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
     trigger: function(events) {
-      var event, calls, list, i, length, args, all, rest, callback, context, onced;
+      var event, calls, list, i, length, args, all, rest, callback, context, once;
       if (!(calls = this._callbacks)) return this;
 
       rest = [];
@@ -180,10 +174,10 @@
         // Execute event callbacks.
         if (list) {
           for (i = 0, length = list.length; i < length; i += 3) {
-            callback = list[i], context = list[i + 1], onced = list[i + 2];
-            if (onced) calls[event].splice(i, 3);
-            if (!onced || !onced.dead) callback.apply(context || this, rest);
-            if (onced) onced.dead = true;
+            callback = list[i], context = list[i + 1], once = list[i + 2];
+            if (once) calls[event].splice(i, 3);
+            if (!once || !once.dead) callback.apply(context || this, rest);
+            if (once) once.dead = true;
           }
         }
 
