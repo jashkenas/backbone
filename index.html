@@ -2513,10 +2513,12 @@ $("#make-demo").append(el);
       Using <b>delegateEvents</b> provides a number of advantages over manually
       using jQuery to bind events to child elements during <a href="#View-render">render</a>. All attached
       callbacks are bound to the view before being handed off to jQuery, so when
-      the callbacks are invoked, <tt>this</tt> continues to refer to the view object. When
-      <b>delegateEvents</b> is run again, perhaps with a different <tt>events</tt>
-      hash, all callbacks are removed and delegated afresh &mdash; useful for
-      views which need to behave differently when in different modes.
+      the callbacks are invoked, <tt>this</tt> continues to refer to the view
+      object. A <a href="http://api.jquery.com/category/events/event-object/">jQuery event object</a> is passed as the first argument to the
+      event callback. When <b>delegateEvents</b> is run again, perhaps
+      with a different <tt>events</tt> hash, all callbacks are removed and
+      delegated afresh &mdash; useful for views which need to behave
+      differently when in different modes.
     </p>
 
     <p>
@@ -2536,16 +2538,16 @@ var DocumentView = Backbone.View.extend({
     "mouseover .title .date"  : "showTooltip"
   },
 
-  render: function() {
+  render: function(event) {
     this.$el.html(this.template(this.model.toJSON()));
     return this;
   },
 
-  open: function() {
+  open: function(event) {
     window.open(this.model.get("viewer_url"));
   },
 
-  select: function() {
+  select: function(event) {
     this.model.set({selected: true});
   },
 
