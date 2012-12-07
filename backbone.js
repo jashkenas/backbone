@@ -131,7 +131,7 @@
     // Bind an event like `on`, but unbind the event following the first trigger.
     once: function(events, callback, context) {
       // Mark the callback for future removal.
-      callback.__once__ = true;
+      callback.__once__ = context || this;
 
       return this.on.apply(this, arguments);
     },
@@ -141,7 +141,7 @@
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
     trigger: function(events) {
-      var event, calls, list, i, length, args, all, rest;
+      var event, calls, list, i, length, args, all, rest, cb;
       if (!(calls = this._callbacks)) return this;
 
       rest = [];
@@ -160,16 +160,16 @@
         if (all = calls.all) all = all.slice();
         if (list = calls[event]) list = list.slice();
 
-
         // Execute event callbacks.
         if (list) {
-          for (i = 0, length = list.length; i < length; i += 3) {
-            // Remove the special `once` event immediately before triggering.
-            if (list[i + 2]) {
-              delete calls[event];
-            }
+          console.log(calls[event]);
+          for (i = 0, length = list.length; i < length; i += 2) {
+            cb = list[i];
 
-            list[i].apply(list[i + 1] || this, rest);
+            // Remove the special `once` event immediately before triggering.
+            list[i + 2] && (calls[event][i] = undefined);
+
+            cb && cb.apply(list[i + 1] || this, rest);
           }
         }
 
