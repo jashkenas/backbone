@@ -83,7 +83,7 @@
     on: function(events, callback, context, once) {
       if (_.isObject(events)) {
         for (key in events) {
-          this.on(key, events[key], callback, once && {});
+          this.on(key, events[key], callback, once);
         }
         return this;
       }
