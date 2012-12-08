@@ -667,7 +667,7 @@ $(document).ready(function() {
       model.set({y: true});
     });
     model.set({x: true});
-    deepEqual(events, ['change:y', 'change:x', 'change']);
+    deepEqual(events, ['change:x', 'change:y', 'change']);
     events = [];
     model.change();
     deepEqual(events, ['change:z', 'change']);
