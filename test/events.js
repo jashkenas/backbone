@@ -284,7 +284,6 @@ $(document).ready(function() {
       b: increment,
       c: increment
     }, obj);
-
     obj.trigger('a');
     equal(obj.counter, 1);
 
@@ -296,6 +295,17 @@ $(document).ready(function() {
 
     obj.trigger('a b c');
     equal(obj.counter, 3);
+  });
+
+  test("Off during iteration with once.", 2, function() {
+    var obj = _.extend({}, Backbone.Events);
+    var f = function(){ this.off('event', f); };
+    obj.on('event', f);
+    obj.once('event', function(){});
+    obj.on('event', function(){ ok(true); });
+
+    obj.trigger('event');
+    obj.trigger('event');
   });
 
 });
