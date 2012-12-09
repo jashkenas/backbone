@@ -1,4 +1,4 @@
-//     Backbone.js 0.9.2
+//     Backbone.js 0.9.9-pre
 
 //     (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
@@ -34,7 +34,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.9.2';
+  Backbone.VERSION = '0.9.9-pre';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
@@ -67,6 +67,9 @@
   // Regular expression used to split event strings
   var eventSplitter = /\s+/;
 
+  // Internal flag used to set event callbacks `once`.
+  var once = false;
+
   // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may bind with `on` or remove with `off` callback functions
   // to an event; `trigger`-ing an event fires all callbacks in succession.
@@ -81,6 +84,13 @@
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
+      if (_.isObject(events)) {
+        for (key in events) {
+          this.on(key, events[key], callback);
+        }
+        return this;
+      }
+
       var calls, event, list;
       if (!callback) return this;
 
@@ -89,9 +99,18 @@
 
       while (event = events.shift()) {
         list = calls[event] || (calls[event] = []);
-        list.push(callback, context);
+        list.push(callback, context, once ? {} : null);
       }
 
+      return this;
+    },
+
+    // Bind events to only be triggered a single time. After the first time
+    // the callback is invoked, it will be removed.
+    once: function(events, callback, context) {
+      once = true
+      this.on(events, callback, context);
+      once = false;
       return this;
     },
 
@@ -99,6 +118,13 @@
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
+      if (_.isObject(events)) {
+        for (key in events) {
+          this.off(key, events[key], callback);
+        }
+        return this;
+      }
+
       var event, calls, list, i;
 
       // No events, or removing *all* events.
@@ -117,9 +143,9 @@
           continue;
         }
 
-        for (i = list.length - 2; i >= 0; i -= 2) {
+        for (i = list.length - 3; i >= 0; i -= 3) {
           if (!(callback && list[i] !== callback || context && list[i + 1] !== context)) {
-            list.splice(i, 2);
+            list.splice(i, 3);
           }
         }
       }
@@ -132,7 +158,7 @@
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
     trigger: function(events) {
-      var event, calls, list, i, length, args, all, rest;
+      var event, calls, list, i, length, args, all, rest, callback, context, onced;
       if (!(calls = this._callbacks)) return this;
 
       rest = [];
@@ -153,15 +179,18 @@
 
         // Execute event callbacks.
         if (list) {
-          for (i = 0, length = list.length; i < length; i += 2) {
-            list[i].apply(list[i + 1] || this, rest);
+          for (i = 0, length = list.length; i < length; i += 3) {
+            callback = list[i], context = list[i + 1], onced = list[i + 2];
+            if (onced) calls[event].splice(i, 3);
+            if (!onced || !onced.dead) callback.apply(context || this, rest);
+            if (onced) onced.dead = true;
           }
         }
 
         // Execute "all" callbacks.
         if (all) {
           args = [event].concat(rest);
-          for (i = 0, length = all.length; i < length; i += 2) {
+          for (i = 0, length = all.length; i < length; i += 3) {
             all[i].apply(all[i + 1] || this, args);
           }
         }
@@ -565,7 +594,7 @@
     // returning `true` if all is well. If a specific `error` callback has
     // been passed, call that instead of firing the general `"error"` event.
     _validate: function(attrs, options) {
-      if (options && options.silent || !this.validate) return true;
+      if (!this.validate) return true;
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;
@@ -826,13 +855,15 @@
     // you can reset the entire set with a new list of models, without firing
     // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
-      if (options && options.parse) models = this.parse(models);
+      options || (options = {});
+      if (options.parse) models = this.parse(models);
       for (var i = 0, l = this.models.length; i < l; i++) {
         this._removeReference(this.models[i]);
       }
+      options.previousModels = this.models;
       this._reset();
       if (models) this.add(models, _.extend({silent: true}, options));
-      if (!options || !options.silent) this.trigger('reset', this, options);
+      if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
 
@@ -904,7 +935,7 @@
       options || (options = {});
       options.collection = this;
       var model = new this.model(attrs, options);
-      if (!model._validate(model.attributes, options)) return false;
+      if (!model._validate(attrs, options)) return false;
       return model;
     },
 
@@ -1096,7 +1127,7 @@
           fragment = this.getHash();
         }
       }
-      return decodeURIComponent(fragment.replace(routeStripper, ''));
+      return fragment.replace(routeStripper, '');
     },
 
     // Start the hash change handling, returning `true` if the current URL matches
@@ -1446,7 +1477,7 @@
     }
 
     // Ensure that we have the appropriate request data.
-    if (!options.data && model && (method === 'create' || method === 'update')) {
+    if (options.data == null && model && (method === 'create' || method === 'update')) {
       params.contentType = 'application/json';
       params.data = JSON.stringify(model.toJSON(options));
     }

@@ -542,7 +542,7 @@ $(document).ready(function() {
     equal(col.length, 0);
   });
 
-  test("#861, adding models to a collection which do not pass validation", 2, function() {
+  test("#861, adding models to a collection which do not pass validation", function() {
       var Model = Backbone.Model.extend({
         validate: function(attrs) {
           if (attrs.id == 3) return "id can't be 3";
@@ -767,6 +767,16 @@ $(document).ready(function() {
 
     equal(c.length, 2);
     equal(c.at(0).get('name'), 'test');
+  });
+
+
+  test("Reset includes previous models in triggered event.", 1, function() {
+    var model = new Backbone.Model();
+    var collection = new Backbone.Collection([model])
+    .on('reset', function(collection, options) {
+      deepEqual(options.previousModels, [model]);
+    });
+    collection.reset([]);
   });
 
   test("update", function() {
