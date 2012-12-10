@@ -795,7 +795,7 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      if (!options || !options.silent) this.trigger('reset', this, options);
+      if (!options || !options.silent) this.trigger('sort', this, options);
       return this;
     },
 
@@ -814,7 +814,7 @@
 
       if (!options.add || options.remove) {
         var i, l, model, existing, map;
-        add = [];
+        if (!options.add || !options.merge) add = [];
         if (options.remove) map = {};
         for (i = 0, l = models.length; i < l; ++i) {
           model = models[i] || {};
@@ -827,9 +827,9 @@
 
           // Push existing models to be merged
           if (existing) {
-            if (options.merge) add.push(model);
+            if (!options.add && options.merge) add.push(model);
             if (options.remove) map[existing.cid] = model;
-          } else if (options.add) {
+          } else if (options.add && !options.merge) {
             add.push(model);
           }
         }
@@ -847,7 +847,7 @@
       // Perform the necessary actions and trigger 'update' if appropriate.
       if (add.length) this.add(add, options);
       if (remove.length) this.remove(remove, options);
-      if (!options.silent) this.trigger('update', this, options);
+      if (!options.silent) this.trigger('update', this, models, options);
       return this;
     },
 
