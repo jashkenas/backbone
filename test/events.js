@@ -298,13 +298,8 @@ $(document).ready(function() {
     equal(obj.counter, 3);
   });
 
-  test("the Backbone object can on/once/off/trigger", 2, function() {
-    Backbone.on('event', function() { ok(true); });
-    Backbone.once('other-event', function() { ok(true); });
-    Backbone.trigger('event');
-    Backbone.trigger('other-event');
-    Backbone.off('event');
-    Backbone.trigger('event');
+  test("Backbone object inherits Events", function() {
+    ok(Backbone.on === Backbone.Events.on);
   });
 
 });
