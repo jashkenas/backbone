@@ -270,7 +270,7 @@ $(document).ready(function() {
         };
       }
     });
-    var model = new Defaulted({two: null});
+    model = new Defaulted({two: null});
     equal(model.get('one'), 3);
     equal(model.get('two'), null);
   });
@@ -366,6 +366,19 @@ $(document).ready(function() {
     doc.save({title : "Henry V"});
     equal(this.syncArgs.method, 'update');
     ok(_.isEqual(this.syncArgs.model, doc));
+  });
+
+  test("save with PATCH", function() {
+    doc.clear().set({id: 1, a: 1, b: 2, c: 3, d: 4});
+    doc.save();
+    equal(this.syncArgs.method, 'update');
+    equal(this.syncArgs.options.attrs, undefined);
+
+    doc.save({b: 2, d: 4}, {patch: true});
+    equal(this.syncArgs.method, 'patch');
+    equal(_.size(this.syncArgs.options.attrs), 2);
+    equal(this.syncArgs.options.attrs.d, 4);
+    equal(this.syncArgs.options.attrs.a, undefined);
   });
 
   test("save in positional style", 1, function() {

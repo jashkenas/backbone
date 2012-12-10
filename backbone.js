@@ -423,7 +423,9 @@
       };
 
       // Finish configuring and sending the Ajax request.
-      var xhr = this.sync(this.isNew() ? 'create' : 'update', this, options);
+      var method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
+      if (method == 'patch') options.attrs = attrs;
+      var xhr = this.sync(method, this, options);
 
       // When using `wait`, reset attributes to original values unless
       // `success` has been called already.
@@ -1420,6 +1422,7 @@
   var methodMap = {
     'create': 'POST',
     'update': 'PUT',
+    'patch':  'PATCH',
     'delete': 'DELETE',
     'read':   'GET'
   };
@@ -1459,7 +1462,7 @@
     // Ensure that we have the appropriate request data.
     if (options.data == null && model && (method === 'create' || method === 'update')) {
       params.contentType = 'application/json';
-      params.data = JSON.stringify(model.toJSON(options));
+      params.data = JSON.stringify(options.attrs || model.toJSON(options));
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
