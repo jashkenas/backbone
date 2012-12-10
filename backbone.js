@@ -709,7 +709,7 @@
       options || (options = {});
       models = _.isArray(models) ? models.slice() : [models];
       for (i = 0, l = models.length; i < l; i++) {
-        model = this.getByCid(models[i]) || this.get(models[i]);
+        model = this.get(models[i]);
         if (!model) continue;
         delete this._byId[model.id];
         delete this._byCid[model.cid];
@@ -759,14 +759,9 @@
     },
 
     // Get a model from the set by id.
-    get: function(id) {
-      if (id == null) return void 0;
-      return this._byId[id.id != null ? id.id : id];
-    },
-
-    // Get a model from the set by client id.
-    getByCid: function(cid) {
-      return cid && this._byCid[cid.cid || cid];
+    get: function(obj) {
+      if (obj == null) return void 0;
+      return this._byId[obj.id != null ? obj.id : obj] || this._byCid[obj.cid || obj];
     },
 
     // Get the model at the given index.
@@ -799,7 +794,7 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      if (!options || !options.silent) this.trigger('sort', this, options);
+      if (!options || !options.silent) this.trigger('reset', this, options);
       return this;
     },
 
@@ -808,50 +803,30 @@
       return _.invoke(this.models, 'get', attr);
     },
 
-    // Update a collection with models, removing, adding, and merging as
-    // necessary.
+    // Smartly update a collection with a change set of models, adding,
+    // removing, and merging as necessary.
     update: function(models, options) {
-      if (!_.isArray(models)) models = models ? [models] : [];
-      options = _.extend({add: true, merge: true, remove: true}, options);
-      var add = models;
-      var remove = [];
+      var model, i, l, id, cid, existing;
+      var add = [], remove = [];
+      options = _.extend({add: true, merge: true, remove: false}, options);
 
-      if (!options.add || options.remove) {
-        var i, l, model, existing, map;
-        if (!options.add || !options.merge) add = [];
-        if (options.remove) map = {};
-        for (i = 0, l = models.length; i < l; ++i) {
-          model = models[i] || {};
-
-          // Try to find the model using the indexed `id` or `cid`.
-          existing =
-            model instanceof Model ?
-            this._byId[model.id] || this._byCid[model.cid] :
-            this._byId[model[this.model.prototype.idAttribute]];
-
-          // Push existing models to be merged
-          if (existing) {
-            if (!options.add && options.merge) add.push(model);
-            if (options.remove) map[existing.cid] = model;
-          } else if (options.add && !options.merge) {
-            add.push(model);
-          }
-        }
-        if (options.remove) {
-          for (i = 0, l = this.models.length; i < l; ++i) {
-            model = this.models[i];
-
-            // If the model isn't in the existing model map, put it in the
-            // remove array.
-            if (!map[model.cid]) remove.push(model);
-          }
+      // Determine which models to add and merge, and which to remove.
+      for (i = 0, l = models.length; i < l; i++) {
+        model = models[i];
+        existing = this.get(model);
+        if (options.add || options.merge && existing) add.push(model);
+      }
+      if (options.remove) {
+        var changeset = new Collection(models);
+        for (i = 0, l = this.models.length; i < l; i++) {
+          model = this.models[i];
+          if (!changeset.get(model)) remove.push(model);
         }
       }
 
-      // Perform the necessary actions and trigger 'update' if appropriate.
-      if (add.length) this.add(add, options);
+      // Remove models (if applicable) before we add and merge the rest.
       if (remove.length) this.remove(remove, options);
-      if (!options.silent) this.trigger('update', this, models, options);
+      if (add.length) this.add(add, options);
       return this;
     },
 
@@ -880,7 +855,8 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        collection.update(collection.parse(resp, xhr), options);
+        var method = options.update ? 'update' : 'reset';
+        collection[method](collection.parse(resp, xhr), options);
         if (success) success(collection, resp, options);
       };
       return this.sync('read', this, options);

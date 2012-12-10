@@ -58,10 +58,10 @@ $(document).ready(function() {
     strictEqual(collection.last().get('a'), 4);
   });
 
-  test("get, getByCid", 3, function() {
+  test("get", 3, function() {
     equal(col.get(0), d);
     equal(col.get(2), b);
-    equal(col.getByCid(col.first().cid), col.first());
+    equal(col.get(col.first().cid), col.first());
   });
 
   test("get with non-default ids", 2, function() {
@@ -569,7 +569,7 @@ $(document).ready(function() {
     var model = new collection.model({id: 1, valid: true});
     collection.add([model, {id: 2}]);;
     model.trigger('test');
-    ok(collection.getByCid(model.cid));
+    ok(collection.get(model.cid));
     ok(collection.get(1));
     ok(!collection.get(2));
     equal(collection.length, 1);
@@ -780,7 +780,6 @@ $(document).ready(function() {
   });
 
   test("update", function() {
-    var updateFired;
     var m1 = new Backbone.Model();
     var m2 = new Backbone.Model({id: 2});
     var m3 = new Backbone.Model();
@@ -796,21 +795,17 @@ $(document).ready(function() {
     c.on('remove', function(model) {
       strictEqual(model, m1);
     });
-    c.on('update', function() {
-      updateFired = true;
-    });
 
     // remove: false doesn't remove any models
     c.update([], {remove: false});
     strictEqual(c.length, 2);
-    strictEqual(updateFired, true);
 
     // add: false doesn't add any models
     c.update([m1, m2, m3], {add: false});
     strictEqual(c.length, 2);
 
     // merge: false doesn't change any models
-    c.update([m1, {id: 2, a: 1}], {merge: false});
+    c.update([m1, {id: 2, a: 1}], {merge: false, remove: true});
     strictEqual(m2.get('a'), void 0);
 
     // add: false, remove: false only merges existing models
@@ -820,14 +815,12 @@ $(document).ready(function() {
 
     // default options add/remove/merge as appropriate
     c.update([{id: 2, a: 1}, m3]);
-    strictEqual(c.length, 2);
+    strictEqual(c.length, 3);
     strictEqual(m2.get('a'), 1);
 
     // Test removing models not passing an argument
-    c.off('remove').on('remove', function(model) {
-      ok(model === m2 || model === m3);
-    });
-    c.update();
+    c.off('remove');
+    c.update([], {remove: true});
     strictEqual(c.length, 0);
   });
 
