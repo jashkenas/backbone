@@ -108,7 +108,7 @@
     // Bind events to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
     once: function(events, callback, context) {
-      once = true
+      once = true;
       this.on(events, callback, context);
       once = false;
       return this;
@@ -961,7 +961,7 @@
   var optionalParam = /\((.*?)\)/g;
   var namedParam    = /:\w+/g;
   var splatParam    = /\*\w+/g;
-  var escapeRegExp  = /[-{}[\]+?.,\\^$|#\s]/g;
+  var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
