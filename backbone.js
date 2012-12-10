@@ -85,10 +85,27 @@
 
   // Split string `name` into parts by `eventSplitter`.
   function splitEvents(obj, action, name, rest) {
-    name = name.split(eventSplitter);
-    for (var i = 0, l = name.length; i < l; ++i) {
-      obj[action].apply(obj, [name[i]].concat(rest));
+    var names = name.split(eventSplitter);
+    for (var i = 0, l = names.length; i < l; ++i) {
+      obj[action].apply(obj, [names[i]].concat(rest));
     }
+  }
+
+  // Turn off all events by name.
+  function turnOffEvents(obj, name, cb, context, once) {
+    if (!obj._events[name].length) return;
+    var events = [];
+    for (var i = 0, l = obj._events[name].length; i < l; ++i) {
+      var e = obj._events[name][i];
+      if ((!cb || cb === e.cb) &&
+          (!context || context === e.context) &&
+          (once == null || once === e.once)) {
+        e.off = true;
+        continue;
+      }
+      events.push(e);
+    }
+    if (events.length < obj._events[name].length) obj._events[name] = events;
   }
 
   // A module that can be mixed in to *any object* in order to provide it with
@@ -109,8 +126,8 @@
     // as the first parameter.
     on: function(name, cb, context) {
       if (!nameOk(this, 'on', name, [cb, context]) || !cb) return this;
-      (this._events || (this._events = [])).push({
-        name: name,
+      this._events || (this._events = {});
+      (this._events[name] || (this._events[name] = [])).push({
         cb: cb,
         context: context,
         once: bindingOnce
@@ -132,21 +149,19 @@
     // callbacks for the event. If `events` is null, removes all bound
     // callbacks for all events.
     off: function(name, cb, context, once) {
-      if (!this._events || !this._events.length ||
-          !nameOk(this, 'off', name, [cb, context, once])) return this;
-      var events = [];
-      for (var i = 0, l = this._events.length; i < l; ++i) {
-        var e = this._events[i];
-        if ((!name || name === e.name) &&
-            (!cb || cb === e.cb) &&
-            (!context || context === e.context) &&
-            (once == null || once === e.once)) {
-          e.off = true;
-          continue;
-        }
-        events.push(e);
+      if (!this._events) return this;
+      if (name == null && cb == null && context == null && once == null) {
+        this._events = {};
+        return this;
       }
-      this._events = events;
+      if (!nameOk(this, 'off', name, [cb, context, once])) return this;
+      if (name) {
+        turnOffEvents(this, name, cb, context, once);
+      } else {
+        for (var key in this._events) {
+          turnOffEvents(this, key, cb, context, once);
+        }
+      }
       return this;
     },
 
@@ -155,23 +170,27 @@
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
     trigger: function(name) {
-      if (!this._events || !this._events.length) return this;
+      if (!this._events) return this;
       var i, l, rest = [];
       for (i = 1, l = arguments.length; i < l; ++i) rest.push(arguments[i]);
       if (!nameOk(this, 'trigger', name, rest)) return this;
-      var args, events = this._events;
-      for (i = 0, l = events.length; i < l; ++i) {
-        var e = events[i];
-        if (e.name === name) {
+      var events = this._events[name];
+      var allEvents = this._events.all;
+      if (events && events.length) {
+        for (i = 0, l = events.length; i < l; ++i) {
+          var e = events[i];
           if (e.once) {
             if (e.off) continue;
             this.off(name, e.cb, e.context, e.once);
           }
           e.cb.apply(e.context || this, rest);
-          continue;
         }
-        if (e.name !== 'all') continue;
-        e.cb.apply(e.context || this, args || (args = [name].concat(rest)));
+      }
+      if (allEvents && allEvents.length) {
+        var args = [name].concat(rest);
+        for (i = 0, l = allEvents.length; i < l; ++i) {
+          allEvents[i].cb.apply(allEvents[i].context || this, args);
+        }
       }
       return this;
     },
