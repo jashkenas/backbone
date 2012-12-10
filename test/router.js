@@ -107,7 +107,7 @@ $(document).ready(function() {
     },
 
     optionalItem: function(arg){
-      this.arg = arg !== undefined ? arg : null;
+      this.arg = arg !== void 0 ? arg : null;
     },
 
     splat : function(args) {
@@ -139,7 +139,7 @@ $(document).ready(function() {
     location.replace('http://example.com#search/news');
     Backbone.history.checkUrl();
     equal(router.query, 'news');
-    equal(router.page, undefined);
+    equal(router.page, void 0);
     equal(lastRoute, 'search');
     equal(lastArgs[0], 'news');
   });
@@ -279,7 +279,7 @@ $(document).ready(function() {
     location.replace('http://example.com#search/fat');
     Backbone.history.checkUrl();
     equal(router.query, 'fat');
-    equal(router.page, undefined);
+    equal(router.page, void 0);
     equal(lastRoute, 'search');
   });
 
