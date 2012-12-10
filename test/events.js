@@ -298,4 +298,8 @@ $(document).ready(function() {
     equal(obj.counter, 3);
   });
 
+  test("Backbone object inherits Events", function() {
+    ok(Backbone.on === Backbone.Events.on);
+  });
+
 });
