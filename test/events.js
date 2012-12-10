@@ -284,6 +284,7 @@ $(document).ready(function() {
       b: increment,
       c: increment
     }, obj);
+
     obj.trigger('a');
     equal(obj.counter, 1);
 
@@ -295,6 +296,10 @@ $(document).ready(function() {
 
     obj.trigger('a b c');
     equal(obj.counter, 3);
+  });
+
+  test("Backbone object inherits Events", function() {
+    ok(Backbone.on === Backbone.Events.on);
   });
 
   test("Off during iteration with once.", 2, function() {

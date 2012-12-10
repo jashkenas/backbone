@@ -181,6 +181,9 @@
   Events.bind   = Events.on;
   Events.unbind = Events.off;
 
+  // Supply a global event emitter on Backbone itself.
+  _.extend(Backbone, Events);
+
   // Backbone.Model
   // --------------
 
@@ -937,7 +940,7 @@
   var optionalParam = /\((.*?)\)/g;
   var namedParam    = /:\w+/g;
   var splatParam    = /\*\w+/g;
-  var escapeRegExp  = /[-{}[\]+?.,\\^$|#\s]/g;
+  var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
