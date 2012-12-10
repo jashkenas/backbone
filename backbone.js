@@ -85,7 +85,7 @@
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
       if (_.isObject(events)) {
-        for (key in events) {
+        for (var key in events) {
           this.on(key, events[key], callback);
         }
         return this;
@@ -119,7 +119,7 @@
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
       if (_.isObject(events)) {
-        for (key in events) {
+        for (var key in events) {
           this.off(key, events[key], callback);
         }
         return this;
