@@ -779,4 +779,56 @@ $(document).ready(function() {
     collection.reset([]);
   });
 
+  test("update", function() {
+    var updateFired;
+    var m1 = new Backbone.Model();
+    var m2 = new Backbone.Model({id: 2});
+    var m3 = new Backbone.Model();
+    var c = new Backbone.Collection([m1, m2]);
+
+    // Test add/change/remove events
+    c.on('add', function(model) {
+      strictEqual(model, m3);
+    });
+    c.on('change', function(model) {
+      strictEqual(model, m2);
+    });
+    c.on('remove', function(model) {
+      strictEqual(model, m1);
+    });
+    c.on('update', function() {
+      updateFired = true;
+    });
+
+    // remove: false doesn't remove any models
+    c.update([], {remove: false});
+    strictEqual(c.length, 2);
+    strictEqual(updateFired, true);
+
+    // add: false doesn't add any models
+    c.update([m1, m2, m3], {add: false});
+    strictEqual(c.length, 2);
+
+    // merge: false doesn't change any models
+    c.update([m1, {id: 2, a: 1}], {merge: false});
+    strictEqual(m2.get('a'), void 0);
+
+    // add: false, remove: false only merges existing models
+    c.update([m1, {id: 2, a: 0}, m3, {id: 4}], {add: false, remove: false});
+    strictEqual(c.length, 2);
+    strictEqual(m2.get('a'), 0);
+
+    // default options add/remove/merge as appropriate
+    c.update([{id: 2, a: 1}, m3]);
+    strictEqual(c.length, 2);
+    strictEqual(m2.get('a'), 1);
+
+    // Test removing models not passing an argument
+    c.off('remove').on('remove', function(model) {
+      ok(model === m2 || model === m3);
+    });
+    c.update();
+    strictEqual(c.length, 0);
+  });
+
 });
