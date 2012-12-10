@@ -799,13 +799,60 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      if (!options || !options.silent) this.trigger('reset', this, options);
+      if (!options || !options.silent) this.trigger('sort', this, options);
       return this;
     },
 
     // Pluck an attribute from each model in the collection.
     pluck: function(attr) {
       return _.invoke(this.models, 'get', attr);
+    },
+
+    // Update a collection with models, removing, adding, and merging as
+    // necessary.
+    update: function(models, options) {
+      if (!_.isArray(models)) models = models ? [models] : [];
+      options = _.extend({add: true, merge: true, remove: true}, options);
+      var add = models;
+      var remove = [];
+
+      if (!options.add || options.remove) {
+        var i, l, model, existing, map;
+        if (!options.add || !options.merge) add = [];
+        if (options.remove) map = {};
+        for (i = 0, l = models.length; i < l; ++i) {
+          model = models[i] || {};
+
+          // Try to find the model using the indexed `id` or `cid`.
+          existing =
+            model instanceof Model ?
+            this._byId[model.id] || this._byCid[model.cid] :
+            this._byId[model[this.model.prototype.idAttribute]];
+
+          // Push existing models to be merged
+          if (existing) {
+            if (!options.add && options.merge) add.push(model);
+            if (options.remove) map[existing.cid] = model;
+          } else if (options.add && !options.merge) {
+            add.push(model);
+          }
+        }
+        if (options.remove) {
+          for (i = 0, l = this.models.length; i < l; ++i) {
+            model = this.models[i];
+
+            // If the model isn't in the existing model map, put it in the
+            // remove array.
+            if (!map[model.cid]) remove.push(model);
+          }
+        }
+      }
+
+      // Perform the necessary actions and trigger 'update' if appropriate.
+      if (add.length) this.add(add, options);
+      if (remove.length) this.remove(remove, options);
+      if (!options.silent) this.trigger('update', this, models, options);
+      return this;
     },
 
     // When you have more items than you want to add or remove individually,
@@ -833,7 +880,7 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
+        collection.update(collection.parse(resp, xhr), options);
         if (success) success(collection, resp, options);
       };
       return this.sync('read', this, options);
