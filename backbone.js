@@ -205,6 +205,9 @@
   Events.bind   = Events.on;
   Events.unbind = Events.off;
 
+  // Supply a global event emitter on Backbone itself.
+  _.extend(Backbone, Events);
+
   // Backbone.Model
   // --------------
 
