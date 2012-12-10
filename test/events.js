@@ -302,4 +302,12 @@ $(document).ready(function() {
     ok(Backbone.on === Backbone.Events.on);
   });
 
+  asyncTest("once with asynchronous events", 1, function() {
+    var func = _.debounce(function() { ok(true); start(); }, 50);
+    var obj = _.extend({}, Backbone.Events).once('async', func);
+
+    obj.trigger('async');
+    obj.trigger('async');
+  });
+
 });
