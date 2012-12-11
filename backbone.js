@@ -213,11 +213,11 @@
     // to every object it's currently listening to.
     stopListening: function(object, events, callback) {
       var listeners = this._listeners;
+      if (!listeners) return;
       if (object) {
         object.off(events, callback, this);
         if (!events && !callback) delete listeners[object._listenerId];
       } else {
-        if (!listeners) return;
         for (var id in listeners) {
           listeners[id].off(null, null, this);
         }
