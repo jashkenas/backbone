@@ -197,6 +197,33 @@
       }
 
       return this;
+    },
+
+    // An inversion-of-control version of `on`. Tell *this* object to listen to
+    // an event in another object ... keeping track of what it's listening to.
+    listenTo: function(object, events, callback) {
+      var listeners = this._listeners || (this._listeners = {});
+      var id = object._listenerId || (object._listenerId = _.uniqueId('l'));
+      listeners[id] = object;
+      object.on(events, callback, this);
+      return this;
+    },
+
+    // Tell this object to stop listening to either specific events ... or
+    // to every object it's currently listening to.
+    stopListening: function(object, events, callback) {
+      var listeners = this._listeners;
+      if (object) {
+        object.off(events, callback, this);
+        if (!events && !callback) delete listeners[object._listenerId];
+      } else {
+        if (!listeners) return;
+        for (var id in listeners) {
+          listeners[id].off(null, null, this);
+        }
+        this._listeners = {};
+      }
+      return this;
     }
 
   };
@@ -1310,20 +1337,11 @@
       return this;
     },
 
-    // Clean up references to this view in order to prevent latent effects and
-    // memory leaks.
-    dispose: function() {
-      this.undelegateEvents();
-      if (this.model && this.model.off) this.model.off(null, null, this);
-      if (this.collection && this.collection.off) this.collection.off(null, null, this);
-      return this;
-    },
-
-    // Remove this view from the DOM. Note that the view isn't present in the
-    // DOM by default, so calling this method may be a no-op.
+    // Remove this view by taking the element out of the DOM, and removing any
+    // applicable Backbone.Events listeners.
     remove: function() {
-      this.dispose();
       this.$el.remove();
+      this.stopListening();
       return this;
     },
 

@@ -66,6 +66,15 @@ $(document).ready(function() {
     equal(obj.counter, 5);
   });
 
+  test("listenTo and stopListening", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenTo(b, 'all', function(){ ok(true); });
+    b.trigger('anything');
+    a.listenTo(b, 'all', function(){ ok(false); });
+    a.stopListening();
+    b.trigger('anything');
+  });
 
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
@@ -229,7 +238,7 @@ $(document).ready(function() {
     var obj = { counterA: 0, counterB: 0 };
     _.extend(obj,Backbone.Events);
     var incrA = function(){ obj.counterA += 1; obj.trigger('event'); };
-    var incrB = function(){ obj.counterB += 1 };
+    var incrB = function(){ obj.counterB += 1; };
     obj.once('event', incrA);
     obj.once('event', incrB);
     obj.trigger('event');
