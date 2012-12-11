@@ -329,4 +329,20 @@ $(document).ready(function() {
     obj.trigger('async');
   });
 
+  test("Off during iteration with once.", 2, function() {
+    var obj = _.extend({}, Backbone.Events);
+    var f = function(){ this.off('event', f); };
+    obj.on('event', f);
+    obj.once('event', function(){});
+    obj.on('event', function(){ ok(true); });
+
+    obj.trigger('event');
+    obj.trigger('event');
+  });
+
+  test("`once` on `all` should work as expected", 1, function() {
+    Backbone.once('all', function() { ok(true); Backbone.trigger('all'); })
+    Backbone.trigger('all');
+  });
+
 });
