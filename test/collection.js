@@ -828,4 +828,14 @@ $(document).ready(function() {
     strictEqual(c.length, 0);
   });
 
+  test("#1894 - Push should not trigger a sort", 0, function() {
+    var Collection = Backbone.Collection.extend({
+      comparator: 'id',
+      sort: function() {
+        ok(false);
+      }
+    });
+    new Collection().push({id: 1});
+  });
+
 });
