@@ -838,4 +838,12 @@ $(document).ready(function() {
     new Collection().push({id: 1});
   });
 
+  test("#1894 - `sort` can optionally be turned off", 0, function() {
+    var Collection = Backbone.Collection.extend({
+      comparator: 'id',
+      sort: function() { ok(true); }
+    });
+    new Collection().add({id: 1}, {sort: false});
+  });
+
 });
