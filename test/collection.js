@@ -886,4 +886,19 @@ $(document).ready(function() {
     new Collection().add({id: 1}, {sort: false});
   });
 
+  test("clone", 6, function() {
+    var Model = Backbone.Model.extend({});
+    var col = new Backbone.Collection([{id: 1}], {comparator: 'id', model: Model});
+    var otherCol = col.clone();
+    deepEqual(otherCol.models, col.models);
+    equal(otherCol.model, Model);
+    equal(otherCol.comparator, 'id');
+
+    var ModelB = Backbone.Model.extend({});
+    otherCol = col.clone({comparator: 'name', model: ModelB});
+    deepEqual(otherCol.models, col.models);
+    equal(otherCol.model, ModelB);
+    equal(otherCol.comparator, 'name');
+  });
+
 });
