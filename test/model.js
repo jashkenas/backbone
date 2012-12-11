@@ -99,7 +99,7 @@ $(document).ready(function() {
     equal(model.url(), '/nested/1/collection/2');
   });
 
-  test("clone", 10, function() {
+  test("clone", 14, function() {
     var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
     var b = a.clone();
     equal(a.get('foo'), 1);
@@ -117,6 +117,17 @@ $(document).ready(function() {
     bar.set(foo.clone(), {unset: true});
     equal(foo.get('p'), 1);
     equal(bar.get('p'), undefined);
+
+    var parse = function (resp) {return resp;};
+    var baz = new Backbone.Model({p: 3}, {collection: collection});
+    var c = baz.clone();
+    equal(c.get('p'), 3);
+    equal(c.collection, collection);
+
+    var col = new klass();
+    var d = baz.clone({collection: col});
+    equal(d.get('p'), 3);
+    equal(d.collection, col);
   });
 
   test("isNew", 6, function() {

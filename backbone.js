@@ -507,8 +507,9 @@
     },
 
     // Create a new model with identical attributes to this one.
-    clone: function() {
-      return new this.constructor(this.attributes);
+    clone: function(options) {
+      options = _.extend({collection: this.collection}, options || {});
+      return new this.constructor(this.attributes, options);
     },
 
     // A model is new if it has never been saved to the server, and lacks an id.
@@ -917,8 +918,10 @@
     },
 
     // Create a new collection with an identical list of models as this one.
-    clone: function() {
-      return new this.constructor(this.models);
+    clone: function(options) {
+      options = _.extend({comparator: this.comparator, model: this.model},
+                         options || {});
+      return new this.constructor(this.models, options);
     },
 
     // Proxy to _'s chain. Can't be proxied the same way the rest of the
