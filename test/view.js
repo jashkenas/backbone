@@ -337,6 +337,28 @@ $(document).ready(function() {
     view.dispose();
   });
 
+  test("dispose with Backbone object", 0, function() {
+    var View = Backbone.View.extend({
+      events: {
+        click: function() { ok(false); }
+      },
+      initialize: function() {
+        this.model.on('all x', function(){ ok(false); }, this);
+        this.collection.on('all x', function(){ ok(false); }, this);
+      }
+    });
+
+    var view = new View({
+      model: _.extend({}, Backbone.Events),
+      collection: _.extend({}, Backbone.Events)
+    });
+
+    view.dispose();
+    view.model.trigger('x');
+    view.collection.trigger('x');
+    view.$el.click();
+  });
+
   test("view#remove calls dispose.", 1, function() {
     var view = new Backbone.View();
 
