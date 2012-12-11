@@ -363,4 +363,91 @@ $(document).ready(function() {
     equal(counter, 4);
   });
 
+  test("listening declaratively listens to objects", 2, function() {
+    var View = Backbone.View.extend({
+      listening: {
+        model: {'change': 'modelChange'},
+        eventable: {'custom': 'eventableCustom'}
+      },
+
+      initialize: function() {
+        this.eventable = _.extend({}, Backbone.Events);
+      },
+
+      modelChange: function() {
+        ok(true);
+      },
+
+      eventableCustom: function() {
+        ok(true);
+      }
+    });
+
+    var view = new View({model: new Backbone.Model});
+    view.model.trigger('change');
+    view.eventable.trigger('custom');
+  });
+
+  test("listening can be a function", 1, function() {
+    var View = Backbone.View.extend({
+      listening: function() {
+        return {model: {'change': 'modelChange'}};
+      },
+
+      modelChange: function() {
+        ok(true);
+      }
+    });
+
+    var view = new View({model: new Backbone.Model});
+    view.model.trigger('change');
+  });
+
+  test("listening binds the objects to the proper context", 1, function() {
+    var View = Backbone.View.extend({
+      listening: {
+        model: {'change': 'modelChange'}
+      },
+
+      initialize: function() {
+        this.context = this;
+      },
+
+      modelChange: function() {
+        ok(this.context && this.context === this);
+      }
+    });
+
+    var view = new View({model: new Backbone.Model});
+    view.model.trigger('change');
+  });
+
+  test("listening complains on undefined functions", 1, function() {
+    var View = Backbone.View.extend({
+      listening: {
+        model: {'change': 'modelChange'}
+      }
+    });
+
+    try {
+      var view = new View({model: new Backbone.Model});
+    } catch (e) {
+      equal('' + e, 'Error: Method "modelChange" does not exist');
+    }
+  });
+
+  test("listening complains on undefined properties", 1, function() {
+    var View = Backbone.View.extend({
+      listening: {
+        model: {'change': 'modelChange'}
+      }
+    });
+
+    try {
+      var view = new View();
+    } catch (e) {
+      equal('' + e, 'Error: Property "model" does not exist');
+    }
+  });
+
 });
