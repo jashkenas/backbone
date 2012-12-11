@@ -810,7 +810,7 @@
     update: function(models, options) {
       var model, i, l, id, cid, existing;
       var add = [], remove = [];
-      options = _.extend({add: true, merge: true, remove: false}, options);
+      options = _.extend({add: true, merge: true, remove: true}, options);
 
       // Determine which models to add and merge, and which to remove.
       for (i = 0, l = models.length; i < l; i++) {

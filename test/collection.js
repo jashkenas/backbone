@@ -809,7 +809,7 @@ $(document).ready(function() {
     strictEqual(c.length, 2);
 
     // merge: false doesn't change any models
-    c.update([m1, {id: 2, a: 1}], {merge: false, remove: true});
+    c.update([m1, {id: 2, a: 1}], {merge: false});
     strictEqual(m2.get('a'), void 0);
 
     // add: false, remove: false only merges existing models
@@ -819,12 +819,14 @@ $(document).ready(function() {
 
     // default options add/remove/merge as appropriate
     c.update([{id: 2, a: 1}, m3]);
-    strictEqual(c.length, 3);
+    strictEqual(c.length, 2);
     strictEqual(m2.get('a'), 1);
 
     // Test removing models not passing an argument
-    c.off('remove');
-    c.update([], {remove: true});
+    c.off('remove').on('remove', function(model) {
+      ok(model === m2 || model === m3);
+    });
+    c.update([]);
     strictEqual(c.length, 0);
   });
 
