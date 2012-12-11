@@ -838,4 +838,16 @@ $(document).ready(function() {
     new Collection().push({id: 1});
   });
 
+  test("Create should not trigger a sort", 0, function () {
+    var Collection = Backbone.Collection.extend({
+      model: Backbone.Model,
+      url: ".",
+      comparator: 'id',
+      sort: function() {
+        ok(false);
+      }
+    });
+    new Collection().create({id: 1});
+  });
+
 });
