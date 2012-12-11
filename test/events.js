@@ -340,4 +340,9 @@ $(document).ready(function() {
     obj.trigger('event');
   });
 
+  test("`once` on `all` should work as expected", 1, function() {
+    Backbone.once('all', function() { ok(true); Backbone.trigger('all'); })
+    Backbone.trigger('all');
+  });
+
 });

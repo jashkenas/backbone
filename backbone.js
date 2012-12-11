@@ -71,7 +71,7 @@
   var bindingOnce = false;
 
   // Check the passed event name and destruct it accordingly.
-  function nameOk(obj, action, name, rest) {
+  function singleName(obj, action, name, rest) {
     if (!name) return true;
     if (typeof name === 'object') return mapEvents(obj, action, name, rest);
     if (eventSplitter.test(name)) return splitEvents(obj, action, name, rest);
@@ -92,8 +92,12 @@
   }
 
   // Turn off all events by name.
-  function turnOffEvents(obj, name, cb, context, once) {
-    if (!obj._events[name].length) return;
+  function offEvents(obj, name, cb, context, once) {
+    if (!obj._events[name] || !obj._events[name].length) return obj;
+    if (!cb && !context && once == null) {
+      delete obj._events[name];
+      return obj;
+    }
     var events = [];
     for (var i = 0, l = obj._events[name].length; i < l; ++i) {
       var e = obj._events[name][i];
@@ -105,7 +109,26 @@
       }
       events.push(e);
     }
-    if (events.length < obj._events[name].length) obj._events[name] = events;
+    if (!events.length) {
+      delete obj._events[name];
+    } else if (events.length < obj._events[name].length) {
+      obj._events[name] = events;
+    }
+    return obj;
+  }
+
+  // Trigger passed events and turn off `once`s.
+  function triggerEvents(obj, events, name, args) {
+    if (!events || !events.length) return obj;
+    for (var i = 0, l = events.length; i < l; ++i) {
+      var e = events[i];
+      if (e.once) {
+        if (e.off) continue;
+        obj.off(name, e.cb, e.context, e.once);
+      }
+      e.cb.apply(e.context || obj, args);
+    }
+    return obj;
   }
 
   // A module that can be mixed in to *any object* in order to provide it with
@@ -125,13 +148,11 @@
     // Optionally pass in an `{'event': cb, 'event2': cb2}` map
     // as the first parameter.
     on: function(name, cb, context) {
-      if (!nameOk(this, 'on', name, [cb, context]) || !cb) return this;
+      if (!singleName(this, 'on', name, [cb, context]) || !cb) return this;
       this._events || (this._events = {});
-      (this._events[name] || (this._events[name] = [])).push({
-        cb: cb,
-        context: context,
-        once: bindingOnce
-      });
+      (this._events[name] || (this._events[name] = [])).push(
+        {cb: cb, context: context, once: bindingOnce}
+      );
       return this;
     },
 
@@ -150,18 +171,13 @@
     // callbacks for all events.
     off: function(name, cb, context, once) {
       if (!this._events) return this;
-      if (name == null && cb == null && context == null && once == null) {
+      if (!name && !cb && !context && once == null) {
         this._events = {};
         return this;
       }
-      if (!nameOk(this, 'off', name, [cb, context, once])) return this;
-      if (name) {
-        turnOffEvents(this, name, cb, context, once);
-      } else {
-        for (var key in this._events) {
-          turnOffEvents(this, key, cb, context, once);
-        }
-      }
+      if (!singleName(this, 'off', name, [cb, context, once])) return this;
+      if (name) return offEvents(this, name, cb, context, once);
+      for (var key in this._events) offEvents(this, key, cb, context, once);
       return this;
     },
 
@@ -173,26 +189,10 @@
       if (!this._events) return this;
       var i, l, rest = [];
       for (i = 1, l = arguments.length; i < l; ++i) rest.push(arguments[i]);
-      if (!nameOk(this, 'trigger', name, rest)) return this;
-      var events = this._events[name];
-      var allEvents = this._events.all;
-      if (events && events.length) {
-        for (i = 0, l = events.length; i < l; ++i) {
-          var e = events[i];
-          if (e.once) {
-            if (e.off) continue;
-            this.off(name, e.cb, e.context, e.once);
-          }
-          e.cb.apply(e.context || this, rest);
-        }
-      }
-      if (allEvents && allEvents.length) {
-        var args = [name].concat(rest);
-        for (i = 0, l = allEvents.length; i < l; ++i) {
-          allEvents[i].cb.apply(allEvents[i].context || this, args);
-        }
-      }
-      return this;
+      if (!singleName(this, 'trigger', name, rest)) return this;
+      var events = this._events[name], allEvents = this._events.all;
+      triggerEvents(this, events, name, rest);
+      return triggerEvents(this, allEvents, 'all', [name].concat(rest));
     },
 
     // An inversion-of-control version of `on`. Tell *this* object to listen to
