@@ -651,8 +651,9 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
+      options = options || {};
       var i, args, length, model, existing, sort;
-      var at = options && options.at;
+      var at = options.at;
       models = _.isArray(models) ? models.slice() : [models];
 
       // Turn bare objects into model references, and prevent invalid models
@@ -669,7 +670,7 @@
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing || this._byCid[model.cid]) {
-          if (options && options.merge && existing) {
+          if (options.merge && existing) {
             existing.set(model, options);
             sort = true;
           }
@@ -687,14 +688,14 @@
       // See if sorting is needed, update `length` and splice in new models.
       if (models.length) sort = true;
       this.length += models.length;
-      args = [at != null ? at : this.models.length, 0];
+      args = [options.index = at != null ? at : this.models.length, 0]
       push.apply(args, models);
       splice.apply(this.models, args);
 
       // Sort the collection if appropriate.
       if (sort && this.comparator && at == null) this.sort({silent: true});
 
-      if (options && options.silent) return this;
+      if (options.silent) return this;
 
       // Trigger `add` events.
       while (model = models.shift()) {

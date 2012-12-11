@@ -828,4 +828,12 @@ $(document).ready(function() {
     strictEqual(c.length, 0);
   });
 
+  test("add returns options.index to event handlers", 1, function () {
+    var collection = new Backbone.Collection();
+    collection.on('add', function(model, collection, options) {
+      strictEqual(options.index, 0);
+    });
+    collection.add(a);
+  });
+
 });
