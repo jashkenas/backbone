@@ -837,20 +837,22 @@
     // removing, and merging as necessary.
     update: function(models, options) {
       var model, i, l, id, cid, existing;
-      var add = [], remove = [];
+      var add = [], remove = [], modelMap = {};
+      var idAttr = this.model.prototype.idAttribute;
       options = _.extend({add: true, merge: true, remove: true}, options);
 
       // Determine which models to add and merge, and which to remove.
       for (i = 0, l = models.length; i < l; i++) {
         model = models[i];
-        existing = this.get(model);
+        id = model.id || model.cid || model[idAttr];
+        modelMap[id] = true;
+        existing = this.get(id);
         if (options.add || options.merge && existing) add.push(model);
       }
       if (options.remove) {
-        var changeset = new Collection(models);
         for (i = 0, l = this.models.length; i < l; i++) {
           model = this.models[i];
-          if (!changeset.get(model)) remove.push(model);
+          if (!modelMap[model.id] && !modelMap[model.cid]) remove.push(model);
         }
       }
 

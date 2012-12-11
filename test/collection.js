@@ -830,6 +830,35 @@ $(document).ready(function() {
     strictEqual(c.length, 0);
   });
 
+  test("update with only cids", 3, function() {
+    var m1 = new Backbone.Model;
+    var m2 = new Backbone.Model;
+    var c = new Backbone.Collection;
+    c.update([m1, m2]);
+    equal(c.length, 2);
+    c.update([m1]);
+    equal(c.length, 1);
+    c.update([m1, m1, m1, m2, m2], {remove: false});
+    equal(c.length, 2);
+  });
+
+  test("update with only idAttribute", 3, function() {
+    var m1 = { _id: 1 };
+    var m2 = { _id: 2 };
+    var col = Backbone.Collection.extend({
+      model: Backbone.Model.extend({
+        idAttribute: '_id'
+      })
+    });
+    var c = new col;
+    c.update([m1, m2]);
+    equal(c.length, 2);
+    c.update([m1]);
+    equal(c.length, 1);
+    c.update([m1, m1, m1, m2, m2], {remove: false});
+    equal(c.length, 2);
+  });
+
   test("#1894 - Push should not trigger a sort", 0, function() {
     var Collection = Backbone.Collection.extend({
       comparator: 'id',
