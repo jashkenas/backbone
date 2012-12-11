@@ -840,4 +840,13 @@ $(document).ready(function() {
     new Collection().push({id: 1});
   });
 
+  test("`update` with non-normal id", function() {
+    var Collection = Backbone.Collection.extend({
+      model: Backbone.Model.extend({idAttribute: '_id'})
+    });
+    var collection = new Collection({_id: 1});
+    collection.update([{_id: 1, a: 1}], {add: false});
+    equal(collection.first().get('a'), 1);
+  });
+
 });
