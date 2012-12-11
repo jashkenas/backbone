@@ -1314,8 +1314,10 @@
     // memory leaks.
     dispose: function() {
       this.undelegateEvents();
-      if (this.model && this.model.off) this.model.off(null, null, this);
-      if (this.collection && this.collection.off) this.collection.off(null, null, this);
+      // Compare the function reference to ensure correct intention when triggering `off`.
+      var off = Backbone.Events.off;
+      if (this.model && this.model.off === off) this.model.off(null, null, this);
+      if (this.collection && this.collection.off === off) this.collection.off(null, null, this);
       return this;
     },
 
