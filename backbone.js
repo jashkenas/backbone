@@ -93,7 +93,7 @@
 
   // Turn off all events by name.
   function offEvents(obj, name, cb, context, once) {
-    if (!obj._events[name] || !obj._events[name].length) return obj;
+    if (!obj._events[name]) return obj;
     if (!cb && !context && once == null) {
       delete obj._events[name];
       return obj;
@@ -119,7 +119,7 @@
 
   // Trigger passed events and turn off `once`s.
   function triggerEvents(obj, events, name, args) {
-    if (!events || !events.length) return obj;
+    if (!events) return obj;
     for (var i = 0, l = events.length; i < l; ++i) {
       var e = events[i];
       if (e.once) {
@@ -190,8 +190,8 @@
       var i, l, rest = [];
       for (i = 1, l = arguments.length; i < l; ++i) rest.push(arguments[i]);
       if (!singleName(this, 'trigger', name, rest)) return this;
-      var events = this._events[name], allEvents = this._events.all;
-      triggerEvents(this, events, name, rest);
+      var allEvents = this._events.all;
+      triggerEvents(this, this._events[name], name, rest);
       return triggerEvents(this, allEvents, 'all', [name].concat(rest));
     },
 
@@ -201,7 +201,7 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = object._listenerId || (object._listenerId = _.uniqueId('l'));
       listeners[id] = object;
-      object.on(events, callback, this);
+      object.on(events, callback || this, this);
       return this;
     },
 
