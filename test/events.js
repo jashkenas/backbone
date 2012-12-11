@@ -76,6 +76,16 @@ $(document).ready(function() {
     b.trigger('anything');
   });
 
+  test("listenTo and stopListening with event maps", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenTo(b, {change: function(){ ok(true); }});
+    b.trigger('change');
+    a.listenTo(b, {change: function(){ ok(false); }});
+    a.stopListening();
+    b.trigger('change');
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);

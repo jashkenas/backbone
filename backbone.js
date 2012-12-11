@@ -86,7 +86,7 @@
     on: function(events, callback, context) {
       if (_.isObject(events)) {
         for (var key in events) {
-          this.on(key, events[key], callback);
+          this.on(key, events[key], context || callback);
         }
         return this;
       }
@@ -120,7 +120,7 @@
     off: function(events, callback, context) {
       if (_.isObject(events)) {
         for (var key in events) {
-          this.off(key, events[key], callback);
+          this.off(key, events[key], context || callback);
         }
         return this;
       }
