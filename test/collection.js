@@ -18,17 +18,21 @@ $(document).ready(function() {
 
   }));
 
-  test("new and sort", 7, function() {
+  test("new and sort", 9, function() {
+    var counter = 0;
+    col.on('sort', function(){ counter++; });
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
     col.comparator = function(a, b) {
       return a.id > b.id ? -1 : 1;
     };
     col.sort();
+    equal(counter, 1);
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
     col.comparator = function(model) { return model.id; };
     col.sort();
+    equal(counter, 2);
     equal(col.first(), d, "d should be first");
     equal(col.last(), a, "a should be last");
     equal(col.length, 4);
@@ -304,13 +308,13 @@ $(document).ready(function() {
     var colE = new Backbone.Collection([e]);
     var colF = new Backbone.Collection([f]);
     ok(e != f);
-    ok(colE.length == 1);
-    ok(colF.length == 1);
+    ok(colE.length === 1);
+    ok(colF.length === 1);
     colE.remove(e);
     equal(passed, false);
-    ok(colE.length == 0);
+    ok(colE.length === 0);
     colF.remove(e);
-    ok(colF.length == 0);
+    ok(colF.length === 0);
     equal(passed, true);
   });
 
@@ -338,13 +342,13 @@ $(document).ready(function() {
     });
     equal(colE, e.collection);
     colF.remove(e);
-    ok(colF.length == 0);
-    ok(colE.length == 1);
+    ok(colF.length === 0);
+    ok(colE.length === 1);
     equal(counter, 1);
     equal(colE, e.collection);
     colE.remove(e);
     equal(null, e.collection);
-    ok(colE.length == 0);
+    ok(colE.length === 0);
     equal(counter, 2);
   });
 
@@ -354,8 +358,8 @@ $(document).ready(function() {
     var colE = new Backbone.Collection([e]);
     var colF = new Backbone.Collection([e]);
     e.destroy();
-    ok(colE.length == 0);
-    ok(colF.length == 0);
+    ok(colE.length === 0);
+    ok(colF.length === 0);
     equal(undefined, e.collection);
   });
 
@@ -365,8 +369,8 @@ $(document).ready(function() {
     var colE = new Backbone.Collection([e]);
     var colF = new Backbone.Collection([e]);
     e.destroy();
-    ok(colE.length == 0);
-    ok(colF.length == 0);
+    ok(colE.length === 0);
+    ok(colF.length === 0);
     equal(undefined, e.collection);
   });
 
@@ -567,7 +571,7 @@ $(document).ready(function() {
       validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
     });
     var model = new collection.model({id: 1, valid: true});
-    collection.add([model, {id: 2}]);;
+    collection.add([model, {id: 2}]);
     model.trigger('test');
     ok(collection.get(model.cid));
     ok(collection.get(1));

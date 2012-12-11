@@ -796,7 +796,7 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      if (!options || !options.silent) this.trigger('reset', this, options);
+      if (!options || !options.silent) this.trigger('sort', this, options);
       return this;
     },
 
