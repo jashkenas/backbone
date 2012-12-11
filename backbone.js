@@ -869,7 +869,7 @@
     // wait for the server to agree.
     create: function(model, options) {
       var collection = this;
-      options = options ? _.clone(options) : {};
+      options = _.extend({at: this.length}, options);
       model = this._prepareModel(model, options);
       if (!model) return false;
       if (!options.wait) collection.add(model, options);
