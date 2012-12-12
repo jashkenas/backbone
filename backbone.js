@@ -249,7 +249,7 @@
       attrs = _.extend({}, defaults, attrs);
     }
     this.set(attrs, {silent: true});
-    this._hasChanged = false;
+    this._hasComputed = true;
     this._changes = [];
     this._currentState = _.clone(this.attributes);
     this._previousAttributes = _.clone(this.attributes);
@@ -270,7 +270,7 @@
 
     // Whether there has been a `set` call since the last
     // calculation of the changed hash, for efficiency.
-    _hasChanged: false,
+    _hasComputed: true,
 
     // The model state used for comparison in determining if a
     // change should be fired.
@@ -349,11 +349,12 @@
 
         // Update or delete the current value, and track the change.
         unset ? delete now[attr] : now[attr] = val;
-        this._changes.push(attr, val, unset);
+        this._changes.push(attr, val);
       }
 
-      // Signal that the model's state has potentially changed.
-      this._hasChanged = true;
+      // Signal that the model's state has potentially changed, and we need
+      // to recompute the actual changes.
+      this._hasComputed = false;
 
       // Fire the `"change"` events.
       if (!silent) this.change(options);
@@ -529,7 +530,7 @@
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (this._hasChanged) this._computeChanges();
+      if (!this._hasComputed) this._computeChanges();
       if (attr == null) return !_.isEmpty(this.changed);
       return _.has(this.changed, attr);
     },
@@ -550,39 +551,37 @@
       return changed;
     },
 
-    // Calculates and handles any changes in `this._changes`,
-    // checking against `this._currentState` to determine current changes.
-    _computeChanges: function (changing) {
+    // Looking at the built up list of `set` attribute changes, compute how
+    // many of the attributes have actually changed. If `loud`, return a
+    // boiled-down list of only the real changes.
+    _computeChanges: function(loud) {
       this.changed = {};
-      var local = {};
+      var already = {};
       var triggers = [];
       var currentState = this._currentState;
       var changes = this._changes;
 
       // Loop through the current queue of potential model changes.
-      for (var i = changes.length - 3; i >= 0; i -= 3) {
-        var key = changes[i], val = changes[i + 1], unset = changes[i + 2];
+      for (var i = changes.length - 2; i >= 0; i -= 2) {
+        var key = changes[i], val = changes[i + 1];
+        if (already[key]) continue;
+        already[key] = true;
 
-        // If the item hasn't been set locally this round, proceed.
-        if (!local[key]) {
-          local[key] = true;
+        // Check if the attribute has been modified since the last change,
+        // and update `this.changed` accordingly.
+        if (currentState[key] !== val) {
+          this.changed[key] = val;
 
-          // Check if the attribute has been modified since the last change,
-          // and update `this.changed` accordingly.
-          if (currentState[key] !== val) {
-            this.changed[key] = val;
-
-            // Triggers & modifications are only created inside a `change` call.
-            if (!changing) continue;
-            triggers.push(key, val);
-            (!unset) ? currentState[key] = val : delete currentState[key];
-          }
+          // Triggers & modifications are only created inside a `change` call.
+          if (!loud) continue;
+          triggers.push(key, val);
+          currentState[key] = val;
         }
       }
-      if (changing) this._changes = [];
+      if (loud) this._changes = [];
 
       // Signals `this.changed` is current to prevent duplicate calls from `this.hasChanged`.
-      this._hasChanged = false;
+      this._hasComputed = true;
       return triggers;
     },
 
