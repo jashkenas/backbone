@@ -317,6 +317,14 @@ $(document).ready(function() {
     equal(obj.counter, 3);
   });
 
+  test("once with off only by context", 0, function() {
+    var context = {};
+    var obj = _.extend({}, Backbone.Events);
+    obj.once('event', function(){ ok(false); }, context);
+    obj.off(null, null, context);
+    obj.trigger('event');
+  });
+
   test("Backbone object inherits Events", function() {
     ok(Backbone.on === Backbone.Events.on);
   });

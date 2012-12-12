@@ -113,12 +113,12 @@
       if (eventMap(this, 'once', events, callback, context)) return this;
 
       _.each(events.split(eventSplitter), function(event) {
-        var f = _.once(function() {
-          this.off(event, f);
+        var wrapped = _.once(function() {
+          this.off(event, wrapped);
           callback.apply(context, arguments);
         });
-        f._callback = callback;
-        this.on(event, f, this);
+        wrapped._callback = callback;
+        this.on(event, wrapped, this);
       }, this);
 
       return this;
