@@ -569,7 +569,7 @@
 
           // Check if the attribute has been modified since the last change,
           // and update `this.changed` accordingly.
-          if (currentState[key] !== val || (_.has(currentState, key) && unset)) {
+          if (currentState[key] !== val) {
             this.changed[key] = val;
 
             // Triggers & modifications are only created inside a `change` call.

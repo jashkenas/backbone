@@ -580,9 +580,9 @@ $(document).ready(function() {
     ok(model.get('x') === a);
   });
 
-  test("unset fires change for undefined attributes", 1, function() {
+  test("unset does not fire a change for undefined attributes", 0, function() {
     var model = new Backbone.Model({x: undefined});
-    model.on('change:x', function(){ ok(true); });
+    model.on('change:x', function(){ ok(false); });
     model.unset('x');
   });
 
