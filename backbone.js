@@ -308,8 +308,7 @@
 
     // Get the HTML-escaped value of an attribute.
     escape: function(attr) {
-      var val = this.get(attr);
-      return _.escape('' + (val == null ? '' : val));
+      return _.escape(this.get(attr));
     },
 
     // Returns `true` if the attribute contains a value that is not null
