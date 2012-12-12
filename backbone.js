@@ -794,23 +794,30 @@
     // Smartly update a collection with a change set of models, adding,
     // removing, and merging as necessary.
     update: function(models, options) {
-      var model, i, l, id, cid, existing;
+      var model, i, l, existing;
       var add = [], remove = [], modelMap = {};
       var idAttr = this.model.prototype.idAttribute;
       options = _.extend({add: true, merge: true, remove: true}, options);
 
+      // Allow a single model (or no argument) to be passed.
+      if (!_.isArray(models)) models = models ? [models] : [];
+
+      // Proxy to `add` for this case, no need to iterate...
+      if (options.add && !options.remove) return this.add(models, options);
+
       // Determine which models to add and merge, and which to remove.
       for (i = 0, l = models.length; i < l; i++) {
         model = models[i];
-        id = model.id || model.cid || model[idAttr];
-        modelMap[id] = true;
-        existing = this.get(id);
-        if (options.add || options.merge && existing) add.push(model);
+        existing = this.get(model.id || model.cid || model[idAttr]);
+        if (options.remove && existing) modelMap[existing.cid] = true;
+        if ((options.add && !existing) || (options.merge && existing)) {
+          add.push(model);
+        }
       }
       if (options.remove) {
         for (i = 0, l = this.models.length; i < l; i++) {
           model = this.models[i];
-          if (!modelMap[model.id] && !modelMap[model.cid]) remove.push(model);
+          if (!modelMap[model.cid]) remove.push(model);
         }
       }
 
