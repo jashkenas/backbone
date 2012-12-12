@@ -67,8 +67,9 @@
   // Regular expression used to split event strings.
   var eventSplitter = /\s+/;
 
-  // Implement multiple event names `"change blur"` and jQuery-style event maps
-  // `{change: action}` in terms of the existing API.
+  // Implement fancy features of the Events API such as multiple event
+  // names `"change blur"` and jQuery-style event maps `{change: action}`
+  // in terms of the existing API.
   var eventsApi = function(obj, action, name, rest) {
     if (!name) return true;
     if (typeof name === 'object') {
@@ -86,7 +87,7 @@
   };
 
   // Optimized internal dispatch function for triggering events. Tries to
-  // keep the usual cases speedy.
+  // keep the usual cases speedy (most Backbone events have 3 arguments).
   var triggerEvents = function(obj, events, args) {
     for (var i = 0, l = events.length; i < l; i++) {
       var ev = events[i], callback = ev.callback, context = ev.context || obj;
