@@ -246,7 +246,7 @@ $(document).ready(function() {
   test("once", 2, function() {
     // Same as the previous test, but we use once rather than having to explicitly unbind
     var obj = { counterA: 0, counterB: 0 };
-    _.extend(obj,Backbone.Events);
+    _.extend(obj, Backbone.Events);
     var incrA = function(){ obj.counterA += 1; obj.trigger('event'); };
     var incrB = function(){ obj.counterB += 1; };
     obj.once('event', incrA);
@@ -327,6 +327,23 @@ $(document).ready(function() {
 
     obj.trigger('async');
     obj.trigger('async');
+  });
+
+  test("Off during iteration with once.", 2, function() {
+    var obj = _.extend({}, Backbone.Events);
+    var f = function(){ this.off('event', f); };
+    obj.on('event', f);
+    obj.once('event', function(){});
+    obj.on('event', function(){ ok(true); });
+
+    obj.trigger('event');
+    obj.trigger('event');
+  });
+
+  test("once with multiple events.", 2, function() {
+    var obj = _.extend({}, Backbone.Events);
+    obj.once('x y', function() { ok(true); });
+    obj.trigger('x y');
   });
 
 });
