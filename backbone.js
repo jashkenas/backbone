@@ -242,7 +242,6 @@
     this.cid = _.uniqueId('c');
     this.changed = {};
     this.attributes = {};
-    this._escapedAttributes = {};
     this._modelState = [];
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attrs = this.parse(attrs);
@@ -309,10 +308,8 @@
 
     // Get the HTML-escaped value of an attribute.
     escape: function(attr) {
-      var html;
-      if (html = this._escapedAttributes[attr]) return html;
       var val = this.get(attr);
-      return this._escapedAttributes[attr] = _.escape(val == null ? '' : '' + val);
+      return _.escape('' + (val == null ? '' : val));
     },
 
     // Returns `true` if the attribute contains a value that is not null
@@ -349,14 +346,10 @@
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
       var now = this.attributes;
-      var esc = this._escapedAttributes;
 
       // For each `set` attribute...
       for (attr in attrs) {
         val = attrs[attr];
-
-        // If an escaped attr exists, and the new and current value differ, remove the escaped attr.
-        if (esc[attr] && !_.isEqual(now[attr], val) || (unset && _.has(now, attr))) delete esc[attr];
 
         // Update or delete the current value.
         unset ? delete now[attr] : now[attr] = val;
