@@ -249,8 +249,6 @@
       attrs = _.extend({}, defaults, attrs);
     }
     this.set(attrs, {silent: true});
-    this._hasComputed = true;
-    this._changes = [];
     this._currentState = _.clone(this.attributes);
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
@@ -261,27 +259,6 @@
 
     // A hash of attributes whose current and previous value differ.
     changed: null,
-
-    // Whether there is a pending request to fire in the final `change` loop.
-    _pending: false,
-
-    // Whether the model is in the midst of a change cycle.
-    _changing: false,
-
-    // Whether there has been a `set` call since the last
-    // calculation of the changed hash, for efficiency.
-    _hasComputed: true,
-
-    // The model state used for comparison in determining if a
-    // change should be fired.
-    _currentState: null,
-
-    // An array queue of all changes attributed to a model
-    // on the next non-silent change event.
-    _changes: null,
-
-    // A hash of the model's attributes when the last `change` occured.
-    _previousAttributes: null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -508,7 +485,8 @@
 
       // Generate the changes to be triggered on the model.
       var triggers = this._computeChanges(true);
-      this._pending = triggers.length;
+
+      this._pending = !!triggers.length;
 
       for (i = triggers.length - 2; i >= 0; i -= 2) {
         this.trigger('change:' + triggers[i], this, triggers[i + 1], options);
@@ -523,7 +501,7 @@
         this._previousAttributes = _.clone(this.attributes);
       }
 
-      this._changing = null;
+      this._changing = false;
       return this;
     },
 
