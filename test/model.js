@@ -211,6 +211,17 @@ $(document).ready(function() {
     equal(value, 'last');
   });
 
+  test("set falsy values in the correct order", 1, function() {
+    var model = new Backbone.Model({result: 'result'});
+    model.on('change', function() {
+      equal(model.changed.result, false);
+    });
+    model.set({result: void 0}, {silent: true});
+    model.set({result: null}, {silent: true});
+    model.set({result: false}, {silent: true});
+    model.change();
+  });
+
   test("multiple unsets", 1, function() {
     var i = 0;
     var counter = function(){ i++; };

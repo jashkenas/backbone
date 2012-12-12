@@ -552,12 +552,12 @@
 
     // Calculates and handles any changes in `this._changes`,
     // checking against `this._currentState` to determine current changes.
-    _computeChanges: function (change) {
+    _computeChanges: function (changing) {
       this.changed = {};
       var local = {};
       var triggers = [];
-      var changes = this._changes;
       var currentState = this._currentState;
+      var changes = this._changes;
 
       // Loop through the current queue of potential model changes.
       for (var i = changes.length - 3; i >= 0; i -= 3) {
@@ -565,7 +565,7 @@
 
         // If the item hasn't been set locally this round, proceed.
         if (!local[key]) {
-          local[key] = val;
+          local[key] = true;
 
           // Check if the attribute has been modified since the last change,
           // and update `this.changed` accordingly.
@@ -573,13 +573,13 @@
             this.changed[key] = val;
 
             // Triggers & modifications are only created inside a `change` call.
-            if (!change) continue;
+            if (!changing) continue;
             triggers.push(key, val);
             (!unset) ? currentState[key] = val : delete currentState[key];
           }
         }
-        changes.splice(i,3);
       }
+      if (changing) this._changes = [];
 
       // Signals `this.changed` is current to prevent duplicate calls from `this.hasChanged`.
       this._hasChanged = false;
