@@ -67,9 +67,6 @@
   // Regular expression used to split event strings.
   var eventSplitter = /\s+/;
 
-  // Internal flag used to set `once` events.
-  var bindingOnce = false;
-
   // Check the passed event name and destruct it accordingly.
   function singleName(obj, action, name, rest) {
     if (!name) return true;
@@ -92,41 +89,24 @@
   }
 
   // Turn off all events by name.
-  function offEvents(obj, name, cb, context, once) {
+  function offEvents(obj, name, cb, context) {
     if (!obj._events[name]) return obj;
-    if (!cb && !context && once == null) {
+    if (!cb && !context) {
       delete obj._events[name];
       return obj;
     }
     var events = [];
     for (var i = 0, l = obj._events[name].length; i < l; ++i) {
       var e = obj._events[name][i];
-      if ((!cb || cb === e.cb) &&
-          (!context || context === e.context) &&
-          (once == null || once === e.once)) {
-        e.off = true;
-        continue;
+      if ((cb && cb !== (e.cb._cb || e.cb)) ||
+          (context && context !== e.context)) {
+        events.push(e);
       }
-      events.push(e);
     }
     if (!events.length) {
       delete obj._events[name];
     } else if (events.length < obj._events[name].length) {
       obj._events[name] = events;
-    }
-    return obj;
-  }
-
-  // Trigger passed events and turn off `once`s.
-  function triggerEvents(obj, events, name, args) {
-    if (!events) return obj;
-    for (var i = 0, l = events.length; i < l; ++i) {
-      var e = events[i];
-      if (e.once) {
-        if (e.off) continue;
-        obj.off(name, e.cb, e.context, e.once);
-      }
-      e.cb.apply(e.context || obj, args);
     }
     return obj;
   }
@@ -151,7 +131,7 @@
       if (!singleName(this, 'on', name, [cb, context]) || !cb) return this;
       this._events || (this._events = {});
       (this._events[name] || (this._events[name] = [])).push(
-        {cb: cb, context: context, once: bindingOnce}
+        {cb: cb, context: context}
       );
       return this;
     },
@@ -159,9 +139,14 @@
     // Bind events to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
     once: function(name, cb, context) {
-      bindingOnce = true;
-      this.on(name, cb, context);
-      bindingOnce = false;
+      if (!singleName(this, 'once', name, [cb, context]) || !cb) return this;
+      var self = this;
+      var once = _.once(function() {
+        self.off(name, once);
+        cb.apply(this, arguments);
+      });
+      once._cb = cb;
+      this.on(name, once, context);
       return this;
     },
 
@@ -169,15 +154,15 @@
     // callbacks with that function. If `cb` is null, removes all
     // callbacks for the event. If `events` is null, removes all bound
     // callbacks for all events.
-    off: function(name, cb, context, once) {
+    off: function(name, cb, context) {
       if (!this._events) return this;
-      if (!name && !cb && !context && once == null) {
+      if (!name && !cb && !context) {
         this._events = {};
         return this;
       }
-      if (!singleName(this, 'off', name, [cb, context, once])) return this;
-      if (name) return offEvents(this, name, cb, context, once);
-      for (var key in this._events) offEvents(this, key, cb, context, once);
+      if (!singleName(this, 'off', name, [cb, context])) return this;
+      if (name) return offEvents(this, name, cb, context);
+      for (var key in this._events) offEvents(this, key, cb, context);
       return this;
     },
 
@@ -190,9 +175,20 @@
       var i, l, rest = [];
       for (i = 1, l = arguments.length; i < l; ++i) rest.push(arguments[i]);
       if (!singleName(this, 'trigger', name, rest)) return this;
+      var events = this._events[name];
       var allEvents = this._events.all;
-      triggerEvents(this, this._events[name], name, rest);
-      return triggerEvents(this, allEvents, 'all', [name].concat(rest));
+      if (events) {
+        for (i = 0, l = events.length; i < l; ++i) {
+          events[i].cb.apply(events[i].context || this, rest);
+        }
+      }
+      if (allEvents) {
+        rest = [name].concat(rest);
+        for (i = 0, l = allEvents.length; i < l; ++i) {
+          allEvents[i].cb.apply(allEvents[i].context || this, rest);
+        }
+      }
+      return this;
     },
 
     // An inversion-of-control version of `on`. Tell *this* object to listen to
