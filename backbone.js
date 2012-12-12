@@ -69,7 +69,7 @@
 
   // Implement multiple event names `"change blur"` and jQuery-style event maps
   // `{change: action}` in terms of the existing API.
-  function eventsApi(obj, action, name, rest) {
+  var eventsApi = function(obj, action, name, rest) {
     if (!name) return true;
     if (typeof name === 'object') {
       for (var key in name) {
@@ -77,13 +77,34 @@
       }
     } else if (eventSplitter.test(name)) {
       var names = name.split(eventSplitter);
-      for (var i = 0, l = names.length; i < l; ++i) {
+      for (var i = 0, l = names.length; i < l; i++) {
         obj[action].apply(obj, [names[i]].concat(rest));
       }
     } else {
       return true;
     }
-  }
+  };
+
+  // Optimized internal dispatch function for triggering events. Tries to
+  // keep the usual cases speedy.
+  var triggerEvents = function(obj, events, args) {
+    for (var i = 0, l = events.length; i < l; i++) {
+      var ev = events[i], cb = ev.cb, context = ev.context || obj;
+      switch (args.length) {
+        case 0:
+          cb.call(context);
+          break;
+        case 1:
+          cb.call(context, args[0]);
+          break;
+        case 2:
+          cb.call(context, args[0], args[1]);
+          break;
+        default:
+          cb.apply(context, args);
+      }
+    }
+  };
 
   // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may bind with `on` or remove with `off` callback
@@ -168,25 +189,12 @@
     // receive the true name of the event as the first argument).
     trigger: function(name) {
       if (!this._events) return this;
-      var i, l;
-      if (eventSplitter.test(name)) {
-        eventsApi(this, 'trigger', name, slice.call(arguments, 1));
-      } else {
-        var events = this._events[name];
-        var allEvents = this._events.all;
-        var rest = slice.call(arguments, 1);
-        if (events) {
-          for (i = 0, l = events.length; i < l; ++i) {
-            events[i].cb.apply(events[i].context || this, rest);
-          }
-        }
-        if (allEvents) {
-          rest = [name].concat(rest);
-          for (i = 0, l = allEvents.length; i < l; ++i) {
-            allEvents[i].cb.apply(allEvents[i].context || this, rest);
-          }
-        }
-      }
+      var args = slice.call(arguments, 1);
+      if (!eventsApi(this, 'trigger', name, args)) return this;
+      var events = this._events[name];
+      var allEvents = this._events.all;
+      if (events) triggerEvents(this, events, args);
+      if (allEvents) triggerEvents(this, allEvents, arguments);
       return this;
     },
 
