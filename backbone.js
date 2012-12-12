@@ -148,7 +148,8 @@
         }
 
         for (i = list.length - 2; i >= 0; i -= 2) {
-          if (!(callback && (list[i]._callback || list[i]) !== callback || context && list[i + 1] !== context)) {
+          if (!(callback && (list[i]._callback || list[i]) !== callback ||
+                context && list[i + 1] !== context)) {
             list.splice(i, 2);
           }
         }
