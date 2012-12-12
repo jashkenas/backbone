@@ -252,8 +252,6 @@ $(document).ready(function() {
     obj.once('event', incrA);
     obj.once('event', incrB);
     obj.trigger('event');
-    obj.trigger('event');
-    obj.trigger('event');
     equal(obj.counterA, 1, 'counterA should have only been incremented once.');
     equal(obj.counterB, 1, 'counterB should have only been incremented once.');
   });
@@ -337,7 +335,7 @@ $(document).ready(function() {
     obj.trigger('async');
   });
 
-  test("Off during iteration with once.", 2, function() {
+  test("Off during iteration with once.", 1, function() {
     var obj = _.extend({}, Backbone.Events);
     var f = function(){ this.off('event', f); };
     obj.on('event', f);

@@ -67,6 +67,9 @@
   // Regular expression used to split event strings
   var eventSplitter = /\s+/;
 
+  // Internal flag used to set event callbacks `once`.
+  var once = false;
+
   // Internal function used to handle "event map"-style APIs.
   var eventMap = function(object, method, events, callback, context) {
     if (_.isObject(events)) {
@@ -101,7 +104,7 @@
 
       while (event = events.shift()) {
         list = calls[event] || (calls[event] = []);
-        list.push(callback, context);
+        list.push(callback, context, once ? {} : false);
       }
 
       return this;
@@ -110,17 +113,9 @@
     // Bind events to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
     once: function(events, callback, context) {
-      if (eventMap(this, 'once', events, callback, context)) return this;
-
-      _.each(events.split(eventSplitter), function(event) {
-        var wrapped = _.once(function() {
-          this.off(event, wrapped);
-          callback.apply(context, arguments);
-        });
-        wrapped._callback = callback;
-        this.on(event, wrapped, this);
-      }, this);
-
+      once = true;
+      this.on(events, callback, context);
+      once = false;
       return this;
     },
 
@@ -147,10 +142,9 @@
           continue;
         }
 
-        for (i = list.length - 2; i >= 0; i -= 2) {
-          if (!(callback && (list[i]._callback || list[i]) !== callback ||
-                context && list[i + 1] !== context)) {
-            list.splice(i, 2);
+        for (i = list.length - 3; i >= 0; i -= 3) {
+          if (!(callback && list[i] !== callback || context && list[i + 1] !== context)) {
+            list.splice(i, 3);
           }
         }
       }
@@ -184,15 +178,18 @@
 
         // Execute event callbacks.
         if (list) {
-          for (i = 0, length = list.length; i < length; i += 2) {
-            list[i].apply(list[i + 1] || this, rest);
+          for (i = 0, length = list.length; i < length; i += 3) {
+            callback = list[i], context = list[i + 1], onced = list[i + 2];
+            if (onced) calls[event].splice(i, 3);
+            if (!onced || !onced.dead) callback.apply(context || this, rest);
+            if (onced) onced.dead = true;
           }
         }
 
         // Execute "all" callbacks.
         if (all) {
           args = [event].concat(rest);
-          for (i = 0, length = all.length; i < length; i += 2) {
+          for (i = 0, length = all.length; i < length; i += 3) {
             all[i].apply(all[i + 1] || this, args);
           }
         }
