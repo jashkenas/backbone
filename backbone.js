@@ -100,6 +100,9 @@
         case 2:
           cb.call(context, args[0], args[1]);
           break;
+        case 3:
+          cb.call(context, args[0], args[1], args[2]);
+          break;
         default:
           cb.apply(context, args);
       }
