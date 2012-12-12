@@ -85,29 +85,6 @@
     }
   }
 
-  // Turn off all events by name.
-  function offEvents(obj, name, cb, context) {
-    if (!obj._events[name]) return obj;
-    if (!cb && !context) {
-      delete obj._events[name];
-      return obj;
-    }
-    var events = [];
-    for (var i = 0, l = obj._events[name].length; i < l; ++i) {
-      var e = obj._events[name][i];
-      if ((cb && cb !== (e.cb._cb || e.cb)) ||
-          (context && context !== e.context)) {
-        events.push(e);
-      }
-    }
-    if (!events.length) {
-      delete obj._events[name];
-    } else if (events.length < obj._events[name].length) {
-      obj._events[name] = events;
-    }
-    return obj;
-  }
-
   // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may bind with `on` or remove with `off` callback
   // functions to an event; `trigger`-ing an event fires all callbacks in
@@ -120,10 +97,9 @@
   //
   var Events = Backbone.Events = {
 
-    // Bind one or more space separated events, `events`, to a `cb`
-    // function. Passing `"all"` will bind the callback to all events fired.
-    // Optionally pass in an `{'event': cb, 'event2': cb2}` map
-    // as the first parameter.
+    // Bind one or more space separated events, or an events map,
+    // to a `callback` function. Passing `"all"` will bind the callback to
+    // all events fired.
     on: function(name, cb, context) {
       if (!(eventsApi(this, 'on', name, [cb, context]) && cb)) return this;
       this._events || (this._events = {});
@@ -158,8 +134,31 @@
         return this;
       }
       if (!eventsApi(this, 'off', name, [cb, context])) return this;
-      if (name) return offEvents(this, name, cb, context);
-      for (var key in this._events) offEvents(this, key, cb, context);
+
+      var names = name ? [name] : _.keys(this._events);
+
+      for (var i = 0, l = names.length; i < l; i++) {
+        name = names[i];
+        if (!this._events[name]) return this;
+        if (!cb && !context) {
+          delete this._events[name];
+          return this;
+        }
+        var events = [];
+        for (var j = 0, k = this._events[name].length; j < k; j++) {
+          var e = this._events[name][j];
+          if ((cb && cb !== (e.cb._cb || e.cb)) ||
+              (context && context !== e.context)) {
+            events.push(e);
+          }
+        }
+        if (!events.length) {
+          delete this._events[name];
+        } else if (events.length < this._events[name].length) {
+          this._events[name] = events;
+        }
+      }
+
       return this;
     },
 
@@ -169,20 +168,23 @@
     // receive the true name of the event as the first argument).
     trigger: function(name) {
       if (!this._events) return this;
-      var i, l, rest = [];
-      for (i = 1, l = arguments.length; i < l; ++i) rest.push(arguments[i]);
-      if (!eventsApi(this, 'trigger', name, rest)) return this;
-      var events = this._events[name];
-      var allEvents = this._events.all;
-      if (events) {
-        for (i = 0, l = events.length; i < l; ++i) {
-          events[i].cb.apply(events[i].context || this, rest);
+      var i, l;
+      if (eventSplitter.test(name)) {
+        eventsApi(this, 'trigger', name, slice.call(arguments, 1));
+      } else {
+        var events = this._events[name];
+        var allEvents = this._events.all;
+        var rest = slice.call(arguments, 1);
+        if (events) {
+          for (i = 0, l = events.length; i < l; ++i) {
+            events[i].cb.apply(events[i].context || this, rest);
+          }
         }
-      }
-      if (allEvents) {
-        rest = [name].concat(rest);
-        for (i = 0, l = allEvents.length; i < l; ++i) {
-          allEvents[i].cb.apply(allEvents[i].context || this, rest);
+        if (allEvents) {
+          rest = [name].concat(rest);
+          for (i = 0, l = allEvents.length; i < l; ++i) {
+            allEvents[i].cb.apply(allEvents[i].context || this, rest);
+          }
         }
       }
       return this;
