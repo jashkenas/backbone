@@ -336,8 +336,6 @@
       var silent = options && options.silent;
       var unset = options && options.unset;
 
-      if (unset) for (attr in attrs) attrs[attr] = void 0;
-
       // Run validation.
       if (!this._validate(attrs, options)) return false;
 
@@ -368,15 +366,15 @@
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
     unset: function(attr, options) {
-      options = _.extend({}, options, {unset: true});
-      return this.set(attr, null, options);
+      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
     // to silence it.
     clear: function(options) {
-      options = _.extend({}, options, {unset: true});
-      return this.set(_.clone(this.attributes), options);
+      var attrs = {};
+      for (var key in this.attributes) attrs[key] = void 0;
+      return this.set(attrs, _.extend({}, options, {unset: true}));
     },
 
     // Fetch the model from the server. If the server's representation of the
