@@ -64,26 +64,54 @@
   // Backbone.Events
   // ---------------
 
-  // Regular expression used to split event strings
+  // Regular expression used to split event strings.
   var eventSplitter = /\s+/;
 
-  // Internal flag used to set event callbacks `once`.
-  var once = false;
-
-  // Internal function used to handle "event map"-style APIs.
-  var eventMap = function(object, method, events, callback, context) {
-    if (_.isObject(events)) {
-      for (var key in events) {
-        object[method](key, events[key], context || callback);
+  // Implement multiple event names `"change blur"` and jQuery-style event maps
+  // `{change: action}` in terms of the existing API.
+  function eventsApi(obj, action, name, rest) {
+    if (!name) return true;
+    if (typeof name === 'object') {
+      for (var key in name) {
+        obj[action].apply(obj, [key, name[key]].concat(rest));
       }
+    } else if (eventSplitter.test(name)) {
+      var names = name.split(eventSplitter);
+      for (var i = 0, l = names.length; i < l; ++i) {
+        obj[action].apply(obj, [names[i]].concat(rest));
+      }
+    } else {
       return true;
     }
-    return false;
-  };
+  }
+
+  // Turn off all events by name.
+  function offEvents(obj, name, cb, context) {
+    if (!obj._events[name]) return obj;
+    if (!cb && !context) {
+      delete obj._events[name];
+      return obj;
+    }
+    var events = [];
+    for (var i = 0, l = obj._events[name].length; i < l; ++i) {
+      var e = obj._events[name][i];
+      if ((cb && cb !== (e.cb._cb || e.cb)) ||
+          (context && context !== e.context)) {
+        events.push(e);
+      }
+    }
+    if (!events.length) {
+      delete obj._events[name];
+    } else if (events.length < obj._events[name].length) {
+      obj._events[name] = events;
+    }
+    return obj;
+  }
 
   // A module that can be mixed in to *any object* in order to provide it with
-  // custom events. You may bind with `on` or remove with `off` callback functions
-  // to an event; `trigger`-ing an event fires all callbacks in succession.
+  // custom events. You may bind with `on` or remove with `off` callback
+  // functions to an event; `trigger`-ing an event fires all callbacks in
+  // succession.
   //
   //     var object = {};
   //     _.extend(object, Backbone.Events);
@@ -92,63 +120,46 @@
   //
   var Events = Backbone.Events = {
 
-    // Bind one or more space separated events, `events`, to a `callback`
+    // Bind one or more space separated events, `events`, to a `cb`
     // function. Passing `"all"` will bind the callback to all events fired.
-    on: function(events, callback, context) {
-      var calls, event, list;
-      if (eventMap(this, 'on', events, callback, context)) return this;
-      if (!callback) return this;
-
-      events = events.split(eventSplitter);
-      calls = this._callbacks || (this._callbacks = {});
-
-      while (event = events.shift()) {
-        list = calls[event] || (calls[event] = []);
-        list.push(callback, context, once ? {} : false);
-      }
-
+    // Optionally pass in an `{'event': cb, 'event2': cb2}` map
+    // as the first parameter.
+    on: function(name, cb, context) {
+      if (!(eventsApi(this, 'on', name, [cb, context]) && cb)) return this;
+      this._events || (this._events = {});
+      (this._events[name] || (this._events[name] = [])).push(
+        {cb: cb, context: context}
+      );
       return this;
     },
 
     // Bind events to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
-    once: function(events, callback, context) {
-      once = true;
-      this.on(events, callback, context);
-      once = false;
+    once: function(name, cb, context) {
+      if (!(eventsApi(this, 'once', name, [cb, context]) && cb)) return this;
+      var self = this;
+      var once = _.once(function() {
+        self.off(name, once);
+        cb.apply(this, arguments);
+      });
+      once._cb = cb;
+      this.on(name, once, context);
       return this;
     },
 
-    // Remove one or many callbacks. If `context` is null, removes all callbacks
-    // with that function. If `callback` is null, removes all callbacks for the
-    // event. If `events` is null, removes all bound callbacks for all events.
-    off: function(events, callback, context) {
-      var event, calls, list, i;
-      if (eventMap(this, 'off', events, callback, context)) return this;
-
-      // No events, or removing *all* events.
-      if (!(calls = this._callbacks)) return this;
-      if (!(events || callback || context)) {
-        delete this._callbacks;
+    // Remove one or many callbacks. If `context` is null, removes all
+    // callbacks with that function. If `cb` is null, removes all
+    // callbacks for the event. If `events` is null, removes all bound
+    // callbacks for all events.
+    off: function(name, cb, context) {
+      if (!this._events) return this;
+      if (!name && !cb && !context) {
+        this._events = {};
         return this;
       }
-
-      events = events ? events.split(eventSplitter) : _.keys(calls);
-
-      // Loop through the callback list, splicing where appropriate.
-      while (event = events.shift()) {
-        if (!(list = calls[event]) || !(callback || context)) {
-          delete calls[event];
-          continue;
-        }
-
-        for (i = list.length - 3; i >= 0; i -= 3) {
-          if (!(callback && list[i] !== callback || context && list[i + 1] !== context)) {
-            list.splice(i, 3);
-          }
-        }
-      }
-
+      if (!eventsApi(this, 'off', name, [cb, context])) return this;
+      if (name) return offEvents(this, name, cb, context);
+      for (var key in this._events) offEvents(this, key, cb, context);
       return this;
     },
 
@@ -156,45 +167,24 @@
     // passed the same arguments as `trigger` is, apart from the event name
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
-    trigger: function(events) {
-      var event, calls, list, i, length, args, all, rest, callback, context, onced;
-      if (!(calls = this._callbacks)) return this;
-
-      rest = [];
-      events = events.split(eventSplitter);
-
-      // Fill up `rest` with the callback arguments.  Since we're only copying
-      // the tail of `arguments`, a loop is much faster than Array#slice.
-      for (i = 1, length = arguments.length; i < length; i++) {
-        rest[i - 1] = arguments[i];
-      }
-
-      // For each event, walk through the list of callbacks twice, first to
-      // trigger the event, then to trigger any `"all"` callbacks.
-      while (event = events.shift()) {
-        // Copy callback lists to prevent modification.
-        if (all = calls.all) all = all.slice();
-        if (list = calls[event]) list = list.slice();
-
-        // Execute event callbacks.
-        if (list) {
-          for (i = 0, length = list.length; i < length; i += 3) {
-            callback = list[i], context = list[i + 1], onced = list[i + 2];
-            if (onced) calls[event].splice(i, 3);
-            if (!onced || !onced.dead) callback.apply(context || this, rest);
-            if (onced) onced.dead = true;
-          }
-        }
-
-        // Execute "all" callbacks.
-        if (all) {
-          args = [event].concat(rest);
-          for (i = 0, length = all.length; i < length; i += 3) {
-            all[i].apply(all[i + 1] || this, args);
-          }
+    trigger: function(name) {
+      if (!this._events) return this;
+      var i, l, rest = [];
+      for (i = 1, l = arguments.length; i < l; ++i) rest.push(arguments[i]);
+      if (!eventsApi(this, 'trigger', name, rest)) return this;
+      var events = this._events[name];
+      var allEvents = this._events.all;
+      if (events) {
+        for (i = 0, l = events.length; i < l; ++i) {
+          events[i].cb.apply(events[i].context || this, rest);
         }
       }
-
+      if (allEvents) {
+        rest = [name].concat(rest);
+        for (i = 0, l = allEvents.length; i < l; ++i) {
+          allEvents[i].cb.apply(allEvents[i].context || this, rest);
+        }
+      }
       return this;
     },
 
@@ -204,7 +194,7 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = object._listenerId || (object._listenerId = _.uniqueId('l'));
       listeners[id] = object;
-      object.on(events, callback, this);
+      object.on(events, callback || this, this);
       return this;
     },
 
@@ -224,7 +214,6 @@
       }
       return this;
     }
-
   };
 
   // Aliases for backwards compatibility.

@@ -335,7 +335,13 @@ $(document).ready(function() {
     obj.trigger('async');
   });
 
-  test("Off during iteration with once.", 1, function() {
+  test("once with multiple events.", 2, function() {
+    var obj = _.extend({}, Backbone.Events);
+    obj.once('x y', function() { ok(true); });
+    obj.trigger('x y');
+  });
+
+  test("Off during iteration with once.", 2, function() {
     var obj = _.extend({}, Backbone.Events);
     var f = function(){ this.off('event', f); };
     obj.on('event', f);
@@ -346,10 +352,12 @@ $(document).ready(function() {
     obj.trigger('event');
   });
 
-  test("once with multiple events.", 2, function() {
-    var obj = _.extend({}, Backbone.Events);
-    obj.once('x y', function() { ok(true); });
-    obj.trigger('x y');
+  test("`once` on `all` should work as expected", 1, function() {
+    Backbone.once('all', function() {
+      ok(true);
+      Backbone.trigger('all');
+    });
+    Backbone.trigger('all');
   });
 
 });
