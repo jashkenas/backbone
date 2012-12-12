@@ -201,6 +201,16 @@ $(document).ready(function() {
     equal(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
+  test("set triggers changes in the correct order", function() {
+    var value = null;
+    var model = new Backbone.Model;
+    model.on('last', function(){ value = 'last'; });
+    model.on('first', function(){ value = 'first'; });
+    model.trigger('first');
+    model.trigger('last');
+    equal(value, 'last');
+  });
+
   test("multiple unsets", 1, function() {
     var i = 0;
     var counter = function(){ i++; };

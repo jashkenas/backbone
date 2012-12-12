@@ -556,12 +556,12 @@
       this.changed = {};
       var local = {};
       var triggers = [];
-      var modelState = this._changes;
+      var changes = this._changes;
       var currentState = this._currentState;
 
       // Loop through the current queue of potential model changes.
-      for (var i = modelState.length - 3; i >= 0; i -= 3) {
-        var key = modelState[i], val = modelState[i + 1], unset = modelState[i + 2];
+      for (var i = changes.length - 3; i >= 0; i -= 3) {
+        var key = changes[i], val = changes[i + 1], unset = changes[i + 2];
 
         // If the item hasn't been set locally this round, proceed.
         if (!local[key]) {
@@ -578,7 +578,7 @@
             (!unset) ? currentState[key] = val : delete currentState[key];
           }
         }
-        modelState.splice(i,3);
+        changes.splice(i,3);
       }
 
       // Signals `this.changed` is current to prevent duplicate calls from `this.hasChanged`.
