@@ -249,7 +249,7 @@
       attrs = _.extend({}, defaults, attrs);
     }
     this.set(attrs, {silent: true});
-    this._currentState = _.clone(this.attributes);
+    this._currentAttributes = _.clone(this.attributes);
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
   };
@@ -480,7 +480,7 @@
     // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
-      var i, changing = this._changing;
+      var changing = this._changing;
       this._changing = true;
 
       // Generate the changes to be triggered on the model.
@@ -488,7 +488,7 @@
 
       this._pending = !!triggers.length;
 
-      for (i = triggers.length - 2; i >= 0; i -= 2) {
+      for (var i = triggers.length - 2; i >= 0; i -= 2) {
         this.trigger('change:' + triggers[i], this, triggers[i + 1], options);
       }
 
@@ -536,7 +536,7 @@
       this.changed = {};
       var already = {};
       var triggers = [];
-      var currentState = this._currentState;
+      var current = this._currentAttributes;
       var changes = this._changes;
 
       // Loop through the current queue of potential model changes.
@@ -546,14 +546,13 @@
         already[key] = true;
 
         // Check if the attribute has been modified since the last change,
-        // and update `this.changed` accordingly.
-        if (currentState[key] !== val) {
+        // and update `this.changed` accordingly. If we're inside of a `change`
+        // call, also add a trigger to the list.
+        if (current[key] !== val) {
           this.changed[key] = val;
-
-          // Triggers & modifications are only created inside a `change` call.
           if (!loud) continue;
           triggers.push(key, val);
-          currentState[key] = val;
+          current[key] = val;
         }
       }
       if (loud) this._changes = [];
