@@ -89,22 +89,22 @@
   // keep the usual cases speedy.
   var triggerEvents = function(obj, events, args) {
     for (var i = 0, l = events.length; i < l; i++) {
-      var ev = events[i], cb = ev.cb, context = ev.context || obj;
+      var ev = events[i], callback = ev.callback, context = ev.context || obj;
       switch (args.length) {
         case 0:
-          cb.call(context);
+          callback.call(context);
           break;
         case 1:
-          cb.call(context, args[0]);
+          callback.call(context, args[0]);
           break;
         case 2:
-          cb.call(context, args[0], args[1]);
+          callback.call(context, args[0], args[1]);
           break;
         case 3:
-          cb.call(context, args[0], args[1], args[2]);
+          callback.call(context, args[0], args[1], args[2]);
           break;
         default:
-          cb.apply(context, args);
+          callback.apply(context, args);
       }
     }
   };
@@ -124,61 +124,54 @@
     // Bind one or more space separated events, or an events map,
     // to a `callback` function. Passing `"all"` will bind the callback to
     // all events fired.
-    on: function(name, cb, context) {
-      if (!(eventsApi(this, 'on', name, [cb, context]) && cb)) return this;
+    on: function(name, callback, context) {
+      if (!(eventsApi(this, 'on', name, [callback, context]) && callback)) return this;
       this._events || (this._events = {});
-      (this._events[name] || (this._events[name] = [])).push(
-        {cb: cb, context: context}
-      );
+      var list = this._events[name] || (this._events[name] = []);
+      list.push({callback: callback, context: context});
       return this;
     },
 
     // Bind events to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
-    once: function(name, cb, context) {
-      if (!(eventsApi(this, 'once', name, [cb, context]) && cb)) return this;
+    once: function(name, callback, context) {
+      if (!(eventsApi(this, 'once', name, [callback, context]) && callback)) return this;
       var self = this;
       var once = _.once(function() {
         self.off(name, once);
-        cb.apply(this, arguments);
+        callback.apply(this, arguments);
       });
-      once._cb = cb;
+      once._callback = callback;
       this.on(name, once, context);
       return this;
     },
 
     // Remove one or many callbacks. If `context` is null, removes all
-    // callbacks with that function. If `cb` is null, removes all
+    // callbacks with that function. If `callback` is null, removes all
     // callbacks for the event. If `events` is null, removes all bound
     // callbacks for all events.
-    off: function(name, cb, context) {
-      if (!this._events) return this;
-      if (!name && !cb && !context) {
+    off: function(name, callback, context) {
+      var list, ev, events, names, i, l, j, k;
+      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
+      if (!name && !callback && !context) {
         this._events = {};
         return this;
       }
-      if (!eventsApi(this, 'off', name, [cb, context])) return this;
 
-      var names = name ? [name] : _.keys(this._events);
-
-      for (var i = 0, l = names.length; i < l; i++) {
+      names = name ? [name] : _.keys(this._events);
+      for (i = 0, l = names.length; i < l; i++) {
         name = names[i];
-        if (!this._events[name]) return this;
-        if (!cb && !context) {
-          delete this._events[name];
-          return this;
-        }
-        var events = [];
-        for (var j = 0, k = this._events[name].length; j < k; j++) {
-          var e = this._events[name][j];
-          if ((cb && cb !== (e.cb._cb || e.cb)) ||
-              (context && context !== e.context)) {
-            events.push(e);
+        if (list = this._events[name]) {
+          events = [];
+          if (callback || context) {
+            for (j = 0, k = list.length; j < k; j++) {
+              ev = list[j];
+              if ((callback && callback !== (ev.callback._callback || ev.callback)) ||
+                  (context && context !== ev.context)) {
+                events.push(ev);
+              }
+            }
           }
-        }
-        if (!events.length) {
-          delete this._events[name];
-        } else if (events.length < this._events[name].length) {
           this._events[name] = events;
         }
       }
