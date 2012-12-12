@@ -67,6 +67,17 @@
   // Regular expression used to split event strings
   var eventSplitter = /\s+/;
 
+  // Internal function used to handle "event map"-style APIs.
+  var eventMap = function(object, method, events, callback, context) {
+    if (_.isObject(events)) {
+      for (var key in events) {
+        object[method](key, events[key], context || callback);
+      }
+      return true;
+    }
+    return false;
+  };
+
   // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may bind with `on` or remove with `off` callback functions
   // to an event; `trigger`-ing an event fires all callbacks in succession.
@@ -81,14 +92,8 @@
     // Bind one or more space separated events, `events`, to a `callback`
     // function. Passing `"all"` will bind the callback to all events fired.
     on: function(events, callback, context) {
-      if (_.isObject(events)) {
-        for (var key in events) {
-          this.on(key, events[key], context || callback);
-        }
-        return this;
-      }
-
       var calls, event, list;
+      if (eventMap(this, 'on', events, callback, context)) return this;
       if (!callback) return this;
 
       events = events.split(eventSplitter);
@@ -105,12 +110,7 @@
     // Bind events to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
     once: function(events, callback, context) {
-      if (_.isObject(events)) {
-        for (var key in events) {
-          this.once(key, events[key], callback);
-        }
-        return this;
-      }
+      if (eventMap(this, 'once', events, callback, context)) return this;
 
       _.each(events.split(eventSplitter), function(event) {
         var f = _.once(function() {
@@ -128,14 +128,8 @@
     // with that function. If `callback` is null, removes all callbacks for the
     // event. If `events` is null, removes all bound callbacks for all events.
     off: function(events, callback, context) {
-      if (_.isObject(events)) {
-        for (var key in events) {
-          this.off(key, events[key], context || callback);
-        }
-        return this;
-      }
-
       var event, calls, list, i;
+      if (eventMap(this, 'off', events, callback, context)) return this;
 
       // No events, or removing *all* events.
       if (!(calls = this._callbacks)) return this;
@@ -154,10 +148,7 @@
         }
 
         for (i = list.length - 2; i >= 0; i -= 2) {
-          if (!(
-            callback && list[i] !== callback && list[i]._callback !== callback
-            || context && list[i + 1] !== context
-          )) {
+          if (!(callback && list[i] !== callback && list[i]._callback !== callback || context && list[i + 1] !== context)) {
             list.splice(i, 2);
           }
         }
