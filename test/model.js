@@ -114,7 +114,7 @@ $(document).ready(function() {
 
     var foo = new Backbone.Model({p: 1});
     var bar = new Backbone.Model({p: 2});
-    bar.set(foo.clone(), {unset: true});
+    bar.set(foo.clone().attributes, {unset: true});
     equal(foo.get('p'), 1);
     equal(bar.get('p'), undefined);
   });

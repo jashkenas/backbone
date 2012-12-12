@@ -336,7 +336,6 @@
       var silent = options && options.silent;
       var unset = options && options.unset;
 
-      if (attrs instanceof Model) attrs = attrs.attributes;
       if (unset) for (attr in attrs) attrs[attr] = void 0;
 
       // Run validation.
@@ -686,7 +685,7 @@
         // optionally merge it into the existing model.
         if (existing || this._byCid[model.cid]) {
           if (options && options.merge && existing) {
-            existing.set(model, options);
+            existing.set(model.attributes, options);
             needsSort = sort;
           }
           models.splice(i, 1);
