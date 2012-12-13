@@ -384,17 +384,6 @@ $(document).ready(function() {
     equal(lastError, "Can't change admin status.");
   });
 
-  test("isValid", function() {
-    var model = new Backbone.Model({valid: true});
-    model.validate = function(attrs) {
-      if (!attrs.valid) return "invalid";
-    };
-    equal(model.isValid(), true);
-    equal(model.set({valid: false}), false);
-    equal(model.isValid(), true);
-    ok(!model.set('valid', false, {silent: true}));
-  });
-
   test("save", 2, function() {
     doc.save({title : "Henry V"});
     equal(this.syncArgs.method, 'update');
@@ -816,12 +805,6 @@ $(document).ready(function() {
       model.set({b: true});
     });
     model.set({a: true});
-  });
-
-  test("#1179 - isValid returns true in the absence of validate.", 1, function() {
-    var model = new Backbone.Model();
-    model.validate = null;
-    ok(model.isValid());
   });
 
   test("#1122 - clear does not alter options.", 1, function() {
