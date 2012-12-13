@@ -2375,6 +2375,10 @@ var DocumentRow = Backbone.View.extend({
     "click .button.delete": "destroy"
   },
 
+  initialize: function() {
+    this.listenTo(this.model, "change", this.render);
+  }
+
   render: function() {
     ...
   }
