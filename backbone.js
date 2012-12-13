@@ -86,30 +86,6 @@
     }
   };
 
-  // Optimized internal dispatch function for triggering events. Tries to
-  // keep the usual cases speedy (most Backbone events have 3 arguments).
-  var triggerEvents = function(obj, events, args) {
-    for (var i = 0, l = events.length; i < l; i++) {
-      var ev = events[i], callback = ev.callback, context = ev.context || obj;
-      switch (args.length) {
-        case 0:
-          callback.call(context);
-          break;
-        case 1:
-          callback.call(context, args[0]);
-          break;
-        case 2:
-          callback.call(context, args[0], args[1]);
-          break;
-        case 3:
-          callback.call(context, args[0], args[1], args[2]);
-          break;
-        default:
-          callback.apply(context, args);
-      }
-    }
-  };
-
   // A module that can be mixed in to *any object* in order to provide it with
   // custom events. You may bind with `on` or remove with `off` callback
   // functions to an event; `trigger`-ing an event fires all callbacks in
@@ -186,12 +162,20 @@
     // receive the true name of the event as the first argument).
     trigger: function(name) {
       if (!this._events) return this;
-      var args = slice.call(arguments, 1);
+      var args, events, allEvents, all, i, l, ev;
+      args = slice.call(arguments, 1);
       if (!eventsApi(this, 'trigger', name, args)) return this;
-      var events = this._events[name];
-      var allEvents = this._events.all;
-      if (events) triggerEvents(this, events, args);
-      if (allEvents) triggerEvents(this, allEvents, arguments);
+      events = this._events[name];
+      allEvents = this._events.all;
+      for (all = 0; all <= 1; all++) {
+        if (events = all ? allEvents : events) {
+          args = all ? arguments : args;
+          for (i = 0, l = events.length; i < l; i++) {
+            ev = events[i];
+            ev.callback.apply(ev.context || this, args);
+          }
+        }
+      }
       return this;
     },
 
