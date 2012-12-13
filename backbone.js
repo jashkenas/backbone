@@ -246,7 +246,7 @@
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attrs = this.parse(attrs);
     if (defaults = _.result(this, 'defaults')) {
-      attrs = _.extend({}, defaults, attrs);
+      attrs = _.defaults({}, defaults, attrs);
     }
     this.set(attrs, {silent: true});
     this._currentAttributes = _.clone(this.attributes);

@@ -282,7 +282,7 @@ $(document).ready(function() {
     });
     var model = new Defaulted({two: null});
     equal(model.get('one'), 1);
-    equal(model.get('two'), null);
+    equal(model.get('two'), 2);
     Defaulted = Backbone.Model.extend({
       defaults: function() {
         return {
@@ -293,7 +293,7 @@ $(document).ready(function() {
     });
     model = new Defaulted({two: null});
     equal(model.get('one'), 3);
-    equal(model.get('two'), null);
+    equal(model.get('two'), 4);
   });
 
   test("change, hasChanged, changedAttributes, previous, previousAttributes", 12, function() {
