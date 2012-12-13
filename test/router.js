@@ -198,6 +198,14 @@ $(document).ready(function() {
     Backbone.history.navigate('end_here', {replace: true});
   });
 
+  test("previous route via navigate", 2, function() {
+    router.navigate('search/denver/p30', {trigger: true});
+    router.navigate('search/manhattan/p20', {trigger: true});
+    router.previous({trigger: true});
+    equal(router.query, 'denver');
+    equal(router.page, '30');
+  });
+
   test("routes (splats)", 1, function() {
     location.replace('http://example.com#splat/long-list/of/splatted_99args/end');
     Backbone.history.checkUrl();
