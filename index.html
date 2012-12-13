@@ -282,7 +282,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.9.2)</span>
+      Backbone.js <span class="version">(0.9.9)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/documentcloud/backbone">GitHub Repository</a></li>
@@ -304,6 +304,9 @@
       <li>– <a href="#Events-on">on</a></li>
       <li>– <a href="#Events-off">off</a></li>
       <li>– <a href="#Events-trigger">trigger</a></li>
+      <li>– <a href="#Events-once">once</a></li>
+      <li>– <a href="#Events-listenTo">listenTo</a></li>
+      <li>– <a href="#Events-stopListening">stopListening</a></li>
       <li>- <a href="#Events-catalog"><b>Catalog of Built-in Events</b></a></li>
     </ul>
 
@@ -331,7 +334,6 @@
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
-      <li>– <a href="#Model-isValid">isValid</a></li>
       <li>– <a href="#Model-url">url</a></li>
       <li>– <a href="#Model-urlRoot">urlRoot</a></li>
       <li>– <a href="#Model-parse">parse</a></li>
@@ -357,6 +359,8 @@
       <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (28)</b></a></li>
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
+      <li>– <a href="#Collection-reset">reset</a></li>
+      <li>– <a href="#Collection-update">update</a></li>
       <li>– <a href="#Collection-get">get</a></li>
       <li>– <a href="#Collection-getByCid">getByCid</a></li>
       <li>– <a href="#Collection-at">at</a></li>
@@ -373,7 +377,6 @@
       <li>– <a href="#Collection-parse">parse</a></li>
       <li>– <a href="#Collection-clone">clone</a></li>
       <li>– <a href="#Collection-fetch">fetch</a></li>
-      <li>– <a href="#Collection-reset">reset</a></li>
       <li>– <a href="#Collection-create">create</a></li>
     </ul>
 
@@ -418,7 +421,6 @@
       <li>– <a href="#View-dollar">$ (jQuery or Zepto)</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
-      <li>– <a href="#View-dispose">dispose</a></li>
       <li>– <a href="#View-make">make</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
       <li>– <a href="#View-undelegateEvents">undelegateEvents</a></li>
@@ -549,12 +551,12 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (0.9.2)</a></td>
-        <td class="text"><i>52kb, Full source, lots of comments</i></td>
+        <td><a class="punch" href="backbone.js">Development Version (0.9.9)</a></td>
+        <td class="text"><i>56kb, Full source, lots of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (0.9.2)</a></td>
-        <td class="text"><i>5.6kb, Packed and gzipped</i></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (0.9.9)</a></td>
+        <td class="text"><i>6.3kb, Packed and gzipped</i></td>
       </tr>
       <tr>
         <td><a class="punch" href="https://raw.github.com/documentcloud/backbone/master/backbone.js">Edge Version (master)</a></td>
@@ -613,45 +615,40 @@
       to execute them.
     </p>
 
-    <h2 id="upgrading">Upgrading to 0.9</h2>
+    <h2 id="upgrading">Upgrading to 0.9.9</h2>
 
     <p>
-      Backbone's <b>0.9</b> series should be considered as a release candidate
-      for an upcoming <b>1.0</b>. Some APIs have changed, and while there is a
-      <a href="#changelog">change log</a> available, and many new features to
-      take advantage of, there are a few specific changes where you'll need
-      to take care:
+      Backbone <b>0.9.9</b> should be considered as a release candidate
+      for an upcoming <b>1.0</b>. If you're upgrading from a previous version,
+      be sure to check the
+      <a href="#changelog">change log</a>. In brief, a fiew of the larger changes
+      are:
     </p>
 
     <ul>
       <li>
-        If you've ever manually set <tt>this.el</tt> in a Backbone View to be a
-        particular DOM element, you'll want to use
-        <a href="#View-setElement">setElement</a> instead.
+        Most importantly, Backbone events have two new methods:
+        <a href="#Events-listenTo">listenTo</a> and
+        <a href="#Events-stopListening">stopListening</a>. These are an
+        inversion-of-control flavor of the usual <tt>on</tt> and <tt>off</tt>,
+        and make it a little easier to clean up <i>all</i> events
+        that an object is listening to on other objects. When you destroy Views
+        with <a href="#View-remove">view.remove()</a>, this will now be done
+        automatically. Note that the usual rules about programming in a garbage
+        collected language still apply.
       </li>
       <li>
-        Creating and destroying models is now optimistic. Pass <tt>{wait: true}</tt>
-        if you need the previous behavior of waiting for the server to acknowledge
-        success. You can now also pass <tt>{wait: true}</tt> to <a href="#Model-save">save</a> calls.
+        HTTP <tt>PATCH</tt> support, via <tt>model.save(attrs, {patch: true})</tt>,
+        if you'd like to send only partial updates to the server.
       </li>
       <li>
-        If you have been writing a fair amount of <tt>$(view.el)</tt>, there's now
-        a cached reference for that jQuery object: <a href="#View-$el">$el</a>.
+        An <a href="#Collection-update">update</a> method was added to Collection,
+        which should make it easier to perform "smart" syncing updates with the
+        server, where models are added or removed, and updated attributes are merged
+        as appropriate.
       </li>
       <li>
-        If you're upgrading, make sure you also upgrade your version of Underscore.js
-        to the latest &mdash; 1.3.1 or greater.
-      </li>
-      <li>
-        <tt>model.set</tt> will no longer trigger change events when setting a value
-        with <tt>{silent: true}</tt> then setting it back to its original value.
-        Similarly, after changing an attribute silently, that <tt>change:attribute</tt>
-        event <i>will</i> fire during the next change.
-      </li>
-      <li>
-        Since <tt>view.$(selector)</tt> is now equivalent to <tt>view.$el.find(selector)</tt>
-        rather than <tt>$(selector, view.el)</tt> it can no longer be used when
-        <tt>selector</tt> is an HTML string or DOM element.
+        Backbone events now support <a href="#Events-once"</a>once</a>.
       </li>
     </ul>
 
@@ -713,6 +710,19 @@ proxy.on("all", function(eventName) {
 });
 </pre>
 
+    <p>
+      All Backbone event methods also support an event map syntax, as an alternative
+      to positional arguments:
+    </p>
+
+<pre>
+book.on({
+  "change:title": titleView.update,
+  "change:author": authorPane.update,
+  "destroy": bookView.remove
+});
+</pre>
+
     <p id="Events-off">
       <b class="header">off</b><code>object.off([event], [callback], [context])</code><span class="alias">Alias: unbind</span>
       <br />
@@ -754,6 +764,42 @@ object.off();
       event callbacks.
     </p>
 
+    <p id="Events-once">
+      <b class="header">once</b><code>object.once(event, callback, [context])</code>
+      <br />
+      Just like <a href="#Events-on">on</a>, but causes the bound callback to only
+      fire once before being removed. Handy for saying "the next time that X happens, do this".
+    </p>
+
+    <p id="Events-listenTo">
+      <b class="header">listenTo</b><code>object.listenTo(other, event, callback)</code>
+      <br />
+      Tell an <b>object</b> to listen to a particular event on an <b>other</b> object.
+      The advantage of using this form, intead of <tt>other.on(event, callback)</tt>,
+      is that <b>listenTo</b> allows the <b>object</b> to keep track of the events,
+      and they can be removed all at once later on.
+    </p>
+
+<pre>
+view.listenTo(model, 'change', view.render);
+</pre>
+
+    <p id="Events-stopListening">
+      <b class="header">stopListening</b><code>object.stopListening([other], [event], [callback])</code>
+      <br />
+      Tell an <b>object</b> to stop listening to events. Either call
+      <b>stopListening</b> with no arguments to have the <b>object</b> remove
+      all of its <a href="#Events-listenTo">registered</a> callbacks ... or be more
+      precise by telling it to remove just the events it's listening to on a
+      specific object, or a specific event, or just a specific callback.
+    </p>
+
+<pre>
+view.stopListening();
+
+view.stopListening(model);
+</pre>
+
     <p id="Events-catalog">
       <b class="header">Catalog of Events</b>
       <br />
@@ -766,6 +812,7 @@ object.off();
       <li><b>"add"</b> (model, collection, options) &mdash; when a model is added to a collection. </li>
       <li><b>"remove"</b> (model, collection, options) &mdash; when a model is removed from a collection. </li>
       <li><b>"reset"</b> (collection, options) &mdash; when the collection's entire contents have been replaced. </li>
+      <li><b>"sort"</b> (collection, options) &mdash; when the collection has been re-sorted. </li>
       <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
@@ -1149,6 +1196,12 @@ setInterval(function() {
     </p>
 
     <p>
+      If instead, you'd only like the <i>changed</i> attributes to be sent to the
+      server, call <tt>model.save(attrs, {patch: true})</tt>. You'll get an HTTP
+      <tt>PATCH</tt> request to the server with just the passed-in attributes.
+    </p>
+
+    <p>
       Calling <tt>save</tt> with new attributes will cause a <tt>"change"</tt>
       event immediately, and a <tt>"sync"</tt> event after the server has acknowledged
       the successful change. Pass <tt>{wait: true}</tt> if you'd like to wait
@@ -1269,15 +1322,6 @@ account.set({access: "unlimited"}, {
   }
 });
 </pre>
-
-    <p id="Model-isValid">
-      <b class="header">isValid</b><code>model.isValid()</code>
-      <br />
-      Models may enter an invalid state if you make changes to them silently
-      ... useful when dealing with form input. Call <tt>model.isValid()</tt>
-      to check if the model is currently in a valid state, according to your
-      <tt>validate</tt> function.
-    </p>
 
     <p id="Model-url">
       <b class="header">url</b><code>model.url()</code>
@@ -1577,9 +1621,10 @@ var alphabetical = Books.sortBy(function(book) {
       <a href="#Collection-model">model</a> property is defined, you may also pass
       raw attributes objects, and have them be vivified as instances of the model.
       Pass <tt>{at: index}</tt> to splice the model into the collection at the
-      specified <tt>index</tt>. Likewise, if you're a callback listening to a
-      collection's <tt>"add"</tt> event, <tt>options.index</tt> will tell you the
-      index at which the model is being added to the collection.
+      specified <tt>index</tt>. If you're adding models to the collection that are
+      <i>already</i> in the collection, they'll be ignored, unless you pass
+      <tt>{merge: true}</tt>, in which case their attributes will be merged
+      into the corresponding models, firing any appropriate <tt>"change"</tt> events.
     </p>
 
 <pre class="runnable">
@@ -1609,6 +1654,58 @@ ships.add([
       the index at which the model is being removed from the collection is available
       as <tt>options.index</tt>.
     </p>
+
+    <p id="Collection-reset">
+      <b class="header">reset</b><code>collection.reset([models], [options])</code>
+      <br />
+      Adding and removing models one at a time is all well and good, but sometimes
+      you have so many models to change that you'd rather just update the collection
+      in bulk. Use <b>reset</b> to replace a collection with a new list
+      of models (or attribute hashes), triggering a single <tt>"reset"</tt> event
+      at the end. Pass <tt>{silent: true}</tt> to suppress the <tt>"reset"</tt> event.
+      For convenience, within a <tt>"reset"</tt> event, the list of any previous
+      models is available as <tt>options.previousModels</tt>.
+    </p>
+
+    <p>
+      Here's an example using <b>reset</b> to bootstrap a collection during initial page load,
+      in a Rails application:
+    </p>
+
+<pre>
+&lt;script&gt;
+  var Accounts = new Backbone.Collection;
+  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
+&lt;/script&gt;
+</pre>
+
+    <p>
+      Calling <tt>collection.reset()</tt> without passing any models as arguments
+      will empty the entire collection.
+    </p>
+
+    <p id="Collection-update">
+      <b class="header">update</b><code>collection.update(models, [options])</code>
+      <br />
+      The <b>update</b> method tries to peform a "smart" update of the collection
+      with the passed list of models. If a model in the list isn't yet in the
+      collection it will be added; if the model is already in the collection
+      its attributes will be merged; and if the collection contains any models that
+      <i>aren't</i> present in the list, they'll be removed. All of the appropriate
+      <tt>"add"</tt>, <tt>"remove"</tt>, and <tt>"change"</tt> events are fired
+      as this happens. If you'd like to customize the behavior, you can disable
+      it with options: <tt>{add: false}</tt>, <tt>{remove: false}</tt>, or <tt>{merge: false}</tt>.
+    </p>
+
+<pre>
+var vanHalen = new Collection([eddie, alex, stone, roth]);
+
+vanHalen.update([eddie, alex, stone, hagar]);
+
+// Fires a "remove" event for roth, and an "add" event for "hagar".
+// Updates any of stone, alex, and eddie's attributes that may have
+// changed over the years.
+</pre>
 
     <p id="Collection-get">
       <b class="header">get</b><code>collection.get(id)</code>
@@ -1726,7 +1823,7 @@ alert(chapters.pluck('title'));
       Force a collection to re-sort itself. You don't need to call this under
       normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a>
       will sort itself whenever a model is added. Calling <b>sort</b>
-      triggers the collection's <tt>"reset"</tt> event, unless silenced by passing
+      triggers a <tt>"sort"</tt> event on the collection, unless silenced by passing
       <tt>{silent: true}</tt>
     </p>
 
@@ -1800,9 +1897,7 @@ var Notes = Backbone.Collection.extend({
       the array of model attributes to be <a href="#Collection-add">added</a>
       to the collection. The default implementation is a no-op, simply passing
       through the JSON response. Override this if you need to work with a
-      preexisting API, or better namespace your responses. Note that afterwards,
-      if your model class already has a <tt>parse</tt> function, it will be
-      run against each fetched model.
+      preexisting API, or better namespace your responses.
     </p>
 
 <pre>
@@ -1867,33 +1962,6 @@ Accounts.fetch();
       intended for lazily-loading models for interfaces that are not needed
       immediately: for example, documents with collections of notes that may be
       toggled open and closed.
-    </p>
-
-    <p id="Collection-reset">
-      <b class="header">reset</b><code>collection.reset([models], [options])</code>
-      <br />
-      Adding and removing models one at a time is all well and good, but sometimes
-      you have so many models to change that you'd rather just update the collection
-      in bulk. Use <b>reset</b> to replace a collection with a new list
-      of models (or attribute hashes), triggering a single <tt>"reset"</tt> event
-      at the end. Pass <tt>{silent: true}</tt> to suppress the <tt>"reset"</tt> event.
-    </p>
-
-    <p>
-      Here's an example using <b>reset</b> to bootstrap a collection during initial page load,
-      in a Rails application:
-    </p>
-
-<pre>
-&lt;script&gt;
-  var Accounts = new Backbone.Collection;
-  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
-&lt;/script&gt;
-</pre>
-
-    <p>
-      Calling <tt>collection.reset()</tt> without passing any models as arguments
-      will empty the entire collection.
     </p>
 
     <p id="Collection-create">
@@ -2235,12 +2303,11 @@ end
     </p>
 
     <p id="Sync-ajax">
-      <b class="header">ajax</b><code>Backbone.ajax = function(settings){ ... };</code>
+      <b class="header">ajax</b><code>Backbone.ajax = function(request) { ... };</code>
       <br />
-      If you want to use a custom ajax method or your ajax method doesn't support the
-      <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a> api and you need to
-      translate the options you can do so by setting <tt>Backbone.ajax</tt>.  The method
-      you supply will be used instead of the default <tt>$.ajax</tt>.
+      If you want to use a custom AJAX function, or your endpoint doesn't support
+      the <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a> API
+      and you need to tweak things, you can do so by setting <tt>Backbone.ajax</tt>.
     </p>
 
     <p id="Sync-emulateHTTP">
@@ -2314,6 +2381,12 @@ var DocumentRow = Backbone.View.extend({
 
 });
 </pre>
+
+    <p>
+      Properties like <tt>tagName</tt>, <tt>el</tt>, and <tt>events</tt> may
+      also be defined as a function, if you want to wait to define them until
+      runtime.
+    </p>
 
     <p id="View-constructor">
       <b class="header">constructor / initialize</b><code>new View([options])</code>
@@ -2463,15 +2536,9 @@ var Bookmark = Backbone.View.extend({
     <p id="View-remove">
       <b class="header">remove</b><code>view.remove()</code>
       <br />
-      <a href="#View-dispose">Dispose</a> of the view before removing it from
-      the DOM via <tt>view.$el.remove()</tt>.
-    </p>
-
-    <p id="View-dispose">
-      <b class="header">dispose</b><code>view.dispose()</code>
-      <br />
-      Clean up any references to the view in order to prevent unwanted latent
-      effects and memory leaks.
+      Removes a view from the DOM, and calls
+      <a href="#Events-stopListening">stopListening</a> to remove any bound
+      model events that the view has <a href="#Events-listenTo">listenTo</a>'d.
     </p>
 
     <p id="View-make">
@@ -3760,6 +3827,88 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header">0.9.9</b> &mdash; <small><i>Dec. 13, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.2...0.9.9">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Added <a href="#Events-listenTo">listenTo</a>
+        and <a href="#Events-stopListening">stopListening</a> to Events. They
+        can be used as inversion-of-control flavors of <tt>on</tt> and <tt>off</tt>,
+        for convenient unbinding of all events an object is currently listening to.
+        <tt>view.remove()</tt> automatically calls <tt>view.stopListening()</tt>.
+      </li>
+      <li>
+        When using <tt>add</tt> on a collection, passing <tt>{merge: true}</tt>
+        will now cause duplicate models to have their attributes merged in to
+        the existing models, instead of being ignored.
+      </li>
+      <li>
+        Added <a href="#Collection-update">update</a> (which also available as
+        an option to <tt>fetch</tt>) for "smart" updating of sets of models.
+      </li>
+      <li>
+        HTTP <tt>PATCH</tt> support in <a href="#Model-save">save</a> by passing
+        <tt>{patch: true}</tt>.
+      </li>
+      <li>
+        The <tt>Backbone</tt> object now extends <tt>Events</tt> so that you can
+        use it as a global event bus, if you like.
+      </li>
+      <li>
+        Router URLs now support optional parts via parentheses, without having
+        to use a regex.
+      </li>
+      <li>
+        Backbone events now supports <tt>once</tt>, similar to Node's <tt>once</tt>,
+        or jQuery's <tt>one</tt>.
+      </li>
+      <li>
+        Backbone events now support jQuery-style event maps <tt>obj.on({click: action})</tt>.
+      </li>
+      <li>
+        While listening to a <tt>reset</tt> event, the list of previous models
+        is now available in <tt>options.previousModels</tt>, for convenience.
+      </li>
+      <li>
+        <a href="#Model-validate">Validation</a> now occurs even during "silent"
+        changes. This change means that the <tt>isValid</tt> method has
+        been removed.
+      </li>
+      <li>
+        For mixed-mode APIs, <tt>Backbone.sync</tt> now accepts
+        <tt>emulateHTTP</tt> and <tt>emulateJSON</tt> as inline options.
+      </li>
+      <li>
+        Collections now also proxy Underscore method name aliases (collect,
+        inject, foldl, foldr, head, tail, take, and so on...)
+      </li>
+      <li>
+        The <tt>parse</tt> function is now always run if defined, for both
+        collections and models &mdash; not only after an Ajax call.
+      </li>
+      <li>
+        Bugfix for normalizing leading and trailing slashes in the Router
+        definitions. Their presence (or absence) should not affect behavior.
+      </li>
+      <li>
+        When declaring a View, <tt>options</tt>, <tt>el</tt> and <tt>tagName</tt>
+        may now be defined as functions, if you want their values to be
+        determined at runtime.
+      </li>
+      <li>
+        Added a <tt>Backbone.ajax</tt> hook for more convenient overriding of
+        the default use of <tt>$.ajax</tt>. If AJAX is too passé, set it to your
+        preferred method for server communication.
+      </li>
+      <li>
+        <tt>Collection#sort</tt> now triggers a <tt>sort</tt> event, instead
+        of a <tt>reset</tt> event.
+      </li>
+      <li>
+        Calling <tt>destroy</tt> on a Model will now return <tt>false</tt> if
+        the model <tt>isNew</tt>.
+      </li>
+    </ul>
 
     <b class="header">0.9.2</b> &mdash; <small><i>March 21, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.1...0.9.2">Diff</a><br />
     <ul style="margin-top: 5px;">

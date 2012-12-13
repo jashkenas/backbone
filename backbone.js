@@ -1,4 +1,4 @@
-//     Backbone.js 0.9.9-pre
+//     Backbone.js 0.9.9
 
 //     (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
@@ -34,7 +34,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.9.9-pre';
+  Backbone.VERSION = '0.9.9';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
@@ -564,12 +564,6 @@
     // `"change"` event.
     previousAttributes: function() {
       return _.clone(this._previousAttributes);
-    },
-
-    // Check if the model is currently in a valid state. It's only possible to
-    // get into an *invalid* state if you're using silent changes.
-    isValid: function(options) {
-      return !this.validate || !this.validate(this.attributes, options);
     },
 
     // Run validation against the next complete set of model attributes,
