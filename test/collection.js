@@ -899,4 +899,15 @@ $(document).ready(function() {
     new Collection().add({id: 1}, {sort: false});
   });
 
+  test("#1915 - `parse` data in the right order in `update`", function() {
+    var collection = new (Backbone.Collection.extend({
+      parse: function (data) {
+        strictEqual(data.status, 'ok');
+        return data.data;
+      }
+    }));
+    var res = {status: 'ok', data:[{id: 1}]}
+    collection.update(res, {parse: true});
+  });
+
 });
