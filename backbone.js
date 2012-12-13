@@ -89,24 +89,17 @@
   // Optimized internal dispatch function for triggering events. Tries to
   // keep the usual cases speedy (most Backbone events have 3 arguments).
   var triggerEvents = function(obj, events, args) {
-    for (var i = 0, l = events.length; i < l; i++) {
-      var ev = events[i], callback = ev.callback, context = ev.context || obj;
-      switch (args.length) {
-        case 0:
-          callback.call(context);
-          break;
-        case 1:
-          callback.call(context, args[0]);
-          break;
-        case 2:
-          callback.call(context, args[0], args[1]);
-          break;
-        case 3:
-          callback.call(context, args[0], args[1], args[2]);
-          break;
-        default:
-          callback.apply(context, args);
-      }
+    var ev, i = -1, l = events.length;
+    switch (args.length) {
+    case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx);
+    return;
+    case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0]);
+    return;
+    case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0], args[1]);
+    return;
+    case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0], args[1], args[2]);
+    return;
+    default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
     }
   };
 
@@ -129,7 +122,7 @@
       if (!(eventsApi(this, 'on', name, [callback, context]) && callback)) return this;
       this._events || (this._events = {});
       var list = this._events[name] || (this._events[name] = []);
-      list.push({callback: callback, context: context});
+      list.push({callback: callback, context: context, ctx: context || this});
       return this;
     },
 
