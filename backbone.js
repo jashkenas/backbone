@@ -1018,6 +1018,12 @@
       return this;
     },
 
+    // Retrieve the previous fragment and save it into the history.
+    previous: function(options) {
+      Backbone.history.navigate(Backbone.history.previousFragment, options);
+      return this;
+    },
+
     // Bind all defined routes to `Backbone.history`. We have to reverse the
     // order of the routes here to support behavior where the most general
     // routes can be defined at the bottom of the route map.
@@ -1144,6 +1150,7 @@
 
       // Determine if we need to change the base url, for a pushState link
       // opened by a non-pushState browser.
+      this.previousFragment = '';
       this.fragment = fragment;
       var loc = this.location;
       var atRoot = loc.pathname.replace(/[^\/]$/, '$&/') === this.root;
@@ -1218,6 +1225,7 @@
       if (!options || options === true) options = {trigger: options};
       fragment = this.getFragment(fragment || '');
       if (this.fragment === fragment) return;
+      this.previousFragment = this.fragment;
       this.fragment = fragment;
       var url = this.root + fragment;
 
