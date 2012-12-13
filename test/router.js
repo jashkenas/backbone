@@ -107,7 +107,7 @@ $(document).ready(function() {
     },
 
     optionalItem: function(arg){
-      this.arg = arg !== void 0 ? arg : null;
+      this.arg = arg != void 0 ? arg : null;
     },
 
     splat : function(args) {
