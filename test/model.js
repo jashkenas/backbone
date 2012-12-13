@@ -55,6 +55,18 @@ $(document).ready(function() {
     equal(model.get('value'), 2);
   });
 
+  test("initialize with defaults", 2, function() {
+    var Model = Backbone.Model.extend({
+      defaults: {
+        first_name: 'Unknown',
+        last_name: 'Unknown'
+      }
+    });
+    var model = new Model({'first_name': 'John'});
+    equal(model.get('first_name'), 'John');
+    equal(model.get('last_name'), 'Unknown');
+  });
+
   test("parse can return null", 1, function() {
     var Model = Backbone.Model.extend({
       parse: function(obj) {
