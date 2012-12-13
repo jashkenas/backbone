@@ -789,10 +789,10 @@
       var add = [], remove = [], modelMap = {};
       var idAttr = this.model.prototype.idAttribute;
       options = _.extend({add: true, merge: true, remove: true}, options);
+      if (options.parse) models = this.parse(models);
 
       // Allow a single model (or no argument) to be passed.
       if (!_.isArray(models)) models = models ? [models] : [];
-      if (options.parse) models = this.parse(models);
 
       // Proxy to `add` for this case, no need to iterate...
       if (options.add && !options.remove) return this.add(models, options);
