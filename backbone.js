@@ -361,7 +361,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(model.parse(resp, xhr), options)) return false;
+        if (!model.set(model.parse(resp), options)) return false;
         if (success) success(model, resp, options);
       };
       return this.sync('read', this, options);
@@ -403,7 +403,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         done = true;
-        var serverAttrs = model.parse(resp, xhr);
+        var serverAttrs = model.parse(resp);
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
@@ -462,7 +462,7 @@
 
     // **parse** converts a response into the hash of attributes to be `set` on
     // the model. The default implementation is just to pass the response along.
-    parse: function(resp, xhr) {
+    parse: function(resp) {
       return resp;
     },
 
@@ -801,6 +801,7 @@
 
       // Allow a single model (or no argument) to be passed.
       if (!_.isArray(models)) models = models ? [models] : [];
+      if (options.parse) models = this.parse(models);
 
       // Proxy to `add` for this case, no need to iterate...
       if (options.add && !options.remove) return this.add(models, options);
@@ -853,7 +854,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         var method = options.update ? 'update' : 'reset';
-        collection[method](collection.parse(resp, xhr), options);
+        collection[method](resp, options);
         if (success) success(collection, resp, options);
       };
       return this.sync('read', this, options);
@@ -879,7 +880,7 @@
 
     // **parse** converts a response into a list of models to be added to the
     // collection. The default implementation is just to pass it through.
-    parse: function(resp, xhr) {
+    parse: function(resp) {
       return resp;
     },
 

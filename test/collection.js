@@ -386,6 +386,19 @@ $(document).ready(function() {
     equal(this.syncArgs.options.parse, false);
   });
 
+  test("ensure fetch only parses once", 1, function() {
+    var collection = new Backbone.Collection;
+    var counter = 0;
+    collection.parse = function(models) {
+      counter++;
+      return models;
+    };
+    collection.url = '/test';
+    collection.fetch();
+    this.syncArgs.options.success([]);
+    equal(counter, 1);
+  });
+
   test("create", 4, function() {
     var collection = new Backbone.Collection;
     collection.url = '/test';
