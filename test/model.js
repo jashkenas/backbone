@@ -400,6 +400,7 @@ $(document).ready(function() {
     equal(_.size(this.syncArgs.options.attrs), 2);
     equal(this.syncArgs.options.attrs.d, 4);
     equal(this.syncArgs.options.attrs.a, undefined);
+    equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
   });
 
   test("save in positional style", 1, function() {
