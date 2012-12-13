@@ -1273,6 +1273,7 @@
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
+    this._setupListening();
   };
 
   // Cached regex to split keys for `delegate`.
@@ -1373,6 +1374,24 @@
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
       this.$el.unbind('.delegateEvents' + this.cid);
+    },
+
+    // Setup listeners from the declaratively specified objects by `listening`.
+    _setupListening: function() {
+      var listening;
+      if (!(listening = _.result(this, 'listening'))) return;
+      this.stopListening();
+      for (var prop in listening) {
+        var object = this[prop];
+        if (!object) throw new Error('Property "' + prop + '" does not exist');
+        var events = listening[prop];
+        for (var event in events) {
+          var method = events[event];
+          if (!_.isFunction(method)) method = this[events[event]];
+          if (!method) throw new Error('Method "' + events[event] + '" does not exist');
+          this.listenTo(object, event, method);
+        }
+      }
     },
 
     // Performs the initial configuration of a View with a set of options.
