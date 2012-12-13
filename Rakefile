@@ -7,7 +7,7 @@ task :build do
   begin
     require 'closure-compiler'
   rescue LoadError
-    puts "closure-compiler not found.\nInstall it by running 'gem install closure-compiler"
+    puts "closure-compiler not found.\nInstall it by running 'gem install closure-compiler'"
     exit
   end
   source = File.read 'backbone.js'
@@ -25,12 +25,13 @@ end
 
 desc "run JavaScriptLint on the source"
 task :lint do
+  check 'jsl', 'JavaScript Lint', 'http://www.javascriptlint.com/'
   system "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
 end
 
 desc "test the CoffeeScript integration"
 task :test do
-  check 'coffee', 'CoffeeScript', 'https://github.com/jashkenas/coffee-script.git'
+  check 'coffee', 'CoffeeScript', 'http://coffeescript.org/'
   system "coffee test/*.coffee"
 end
 
