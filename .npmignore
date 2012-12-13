@@ -1,5 +1,6 @@
 test/
 Rakefile
 docs/
-examples/
+raw/
+examples/examples/
 index.html
