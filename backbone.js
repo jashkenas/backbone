@@ -39,6 +39,9 @@
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '0.9.9';
 
+  // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
+  Backbone.$ = $;
+
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
   Backbone.noConflict = function() {
