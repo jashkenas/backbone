@@ -644,7 +644,9 @@
         An <a href="#Collection-update">update</a> method was added to Collection,
         which should make it easier to perform "smart" syncing updates with the
         server, where models are added or removed, and updated attributes are merged
-        as appropriate.
+        as appropriate. If you were previously using <br />
+        <tt>collection.fetch({add: true})</tt>,
+        use <tt>{update: true}</tt> now instead.
       </li>
       <li>
         Backbone events now support <a href="#Events-once"</a>once</a>.
@@ -1916,8 +1918,10 @@ var Tweets = Backbone.Collection.extend({
       <tt>success</tt> and <tt>error</tt>
       callbacks which will be passed <tt>(collection, response, options)</tt>
       and <tt>(collection, xhr, options)</tt> as arguments, respectively.
-      When the model data returns from the server, the collection will
-      <a href="#Collection-reset">reset</a>.
+      When the model data returns from the server, the collection will be (efficiently)
+      <a href="#Collection-reset">reset</a>, unless you pass <tt>{update: true}</tt>,
+      in which case it will use <a href="#Collection-update">update</a> to (intelligently)
+      merge the fetched models.
       Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers for custom persistence strategies and returns a
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
@@ -1937,9 +1941,11 @@ Accounts.fetch();
 </pre>
 
     <p>
-      If you'd like to add the incoming models to the current collection, instead
-      of replacing the collection's contents, pass <tt>{add: true}</tt> as an
-      option to <b>fetch</b>.
+      The behavior of <b>fetch</b> can be customized by using the available
+      <a href="#Collection-update">update</a> options. For example, to fetch a
+      collection, getting an <tt>"add"</tt> event for every new model, and
+      a <tt>"change"</tt> event for every changed existing model, without
+      removing anything: <tt>collection.fetch({update: true, remove: false})</tt>
     </p>
 
     <p>
