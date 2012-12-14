@@ -819,8 +819,9 @@ view.stopListening(model);
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
       <li><b>"request"</b> (model, xhr, options) &mdash; when a model (or collection) has started a request to the server. </li>
-      <li><b>"sync"</b> (model, resp, options) &mdash; when a model has been successfully synced with the server. </li>
-      <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
+      <li><b>"sync"</b> (model, resp, options) &mdash; when a model (or collection) has been successfully synced with the server. </li>
+      <li><b>"error"</b> (model, xhr, options) &mdash; when a model (or collection) has failed to sync with the server. </li>
+      <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails. </li>
       <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
     </ul>
@@ -3867,6 +3868,11 @@ ActiveRecord::Base.include_root_in_json = false
         The <tt>Backbone</tt> object now extends <tt>Events</tt> so that you can
         use it as a global event bus, if you like.
       </li>
+      <li>
+        Consolidated <tt>"sync"</tt> and <tt>"error"</tt> events in 
+        <a href="#Sync">Backbone.sync</a> and they are now triggered regardless
+        of the existence of <tt>success</tt> or <tt>error</tt> callbacks. This
+        also means that <tt>Collection#fetch</tt> now triggers these events.
       <li>
         Added a <tt>"request"</tt> event to <a href="#Sync">Backbone.sync</a>,
         which triggers whenever a request begins to be made to the server.
