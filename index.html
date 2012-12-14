@@ -2396,9 +2396,9 @@ var DocumentRow = Backbone.View.extend({
 </pre>
 
     <p>
-      Properties like <tt>tagName</tt>, <tt>el</tt>, and <tt>events</tt> may
-      also be defined as a function, if you want to wait to define them until
-      runtime.
+      Properties like <tt>tagName</tt>, <tt>id</tt>, <tt>className</tt>,
+      <tt>el</tt>, and <tt>events</tt> may also be defined as a function, if
+      you want to wait to define them until runtime.
     </p>
 
     <p id="View-constructor">
@@ -3915,9 +3915,9 @@ ActiveRecord::Base.include_root_in_json = false
         definitions. Their presence (or absence) should not affect behavior.
       </li>
       <li>
-        When declaring a View, <tt>options</tt>, <tt>el</tt> and <tt>tagName</tt>
-        may now be defined as functions, if you want their values to be
-        determined at runtime.
+        When declaring a View, <tt>options</tt>, <tt>el</tt>, <tt>tagName</tt>,
+        <tt>id</tt> and <tt>className</tt> may now be defined as functions, if
+        you want their values to be determined at runtime.
       </li>
       <li>
         Added a <tt>Backbone.ajax</tt> hook for more convenient overriding of
