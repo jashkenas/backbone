@@ -817,7 +817,8 @@ view.stopListening(model);
       <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
-      <li><b>"sync"</b> (model, resp, options) &mdash; triggers whenever a model has been successfully synced to the server. </li>
+      <li><b>"request"</b> (model, xhr, options) &mdash; when a model (or collection) has started a request to the server. </li>
+      <li><b>"sync"</b> (model, resp, options) &mdash; when a model has been successfully synced with the server. </li>
       <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
       <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
@@ -1204,7 +1205,8 @@ setInterval(function() {
 
     <p>
       Calling <tt>save</tt> with new attributes will cause a <tt>"change"</tt>
-      event immediately, and a <tt>"sync"</tt> event after the server has acknowledged
+      event immediately, a <tt>"request"</tt> event as the Ajax request begins to
+      got to the server, and a <tt>"sync"</tt> event after the server has acknowledged
       the successful change. Pass <tt>{wait: true}</tt> if you'd like to wait
       for the server before setting the new attributes on the model.
     </p>
@@ -1257,7 +1259,8 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       are passed <tt>(model, response, options)</tt> and <tt>(model, xhr, options)</tt>
       as arguments, respectively.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
-      through any collections that contain it, and a <tt>"sync"</tt> event, after
+      through any collections that contain it, a <tt>"request"</tt> event as it
+      begins the Ajax request to the server, and a <tt>"sync"</tt> event, after
       the server has successfully acknowledged the model's deletion. Pass
       <tt>{wait: true}</tt> if you'd like to wait for the server to respond
       before removing the model from the collection.
@@ -1979,8 +1982,9 @@ Accounts.fetch();
 
     <p>
       Creating a model will cause an immediate <tt>"add"</tt> event to be
-      triggered on the collection, as well as a <tt>"sync"</tt> event, once the
-      model has been successfully created on the server. Pass <tt>{wait: true}</tt>
+      triggered on the collection, a <tt>"request"</tt> event as the new model is
+      sent to the server, as well as a <tt>"sync"</tt> event, once the
+      server has responded with the successful creation of the model. Pass <tt>{wait: true}</tt>
       if you'd like to wait for the server before adding the new model to the collection.
     </p>
 
@@ -2261,6 +2265,12 @@ $(function(){
       to be updated on the client. When responding to a <tt>"read"</tt> request from a collection
       (<a href="#Collection#fetch">Collection#fetch</a>), send down an array
       of model attribute objects.
+    </p>
+
+    <p>
+      Whenever a model or collection begins a <b>sync</b> with the server, a
+      <tt>"request"</tt> event is emitted. If the request completes successfully
+      you'll get a <tt>"sync"</tt> event, and an <tt>"error"</tt> event if not.
     </p>
 
     <p>
@@ -3856,6 +3866,11 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         The <tt>Backbone</tt> object now extends <tt>Events</tt> so that you can
         use it as a global event bus, if you like.
+      </li>
+      <li>
+        Added a <tt>"request"</tt> event to <a href="#Sync">Backbone.sync</a>,
+        which triggers whenever a request begins to be made to the server.
+        The natural complement to the <tt>"sync"</tt> event.
       </li>
       <li>
         Router URLs now support optional parts via parentheses, without having
