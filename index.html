@@ -3933,7 +3933,8 @@ ActiveRecord::Base.include_root_in_json = false
         the model <tt>isNew</tt>.
       </li>
       <li>
-        <tt>Backbone.setDomLibrary()</tt> is deprecated in favor of setting <tt>Backbone.$</tt>
+        To set what library Backbone uses for DOM manipulation and Ajax calls,
+        use <tt>Backbone.$ = ...</tt> instead of <tt>setDomLibrary</tt>.
       </li>
     </ul>
 
