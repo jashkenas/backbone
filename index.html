@@ -362,7 +362,6 @@
       <li>– <a href="#Collection-reset">reset</a></li>
       <li>– <a href="#Collection-update">update</a></li>
       <li>– <a href="#Collection-get">get</a></li>
-      <li>– <a href="#Collection-getByCid">getByCid</a></li>
       <li>– <a href="#Collection-at">at</a></li>
       <li>– <a href="#Collection-push">push</a></li>
       <li>– <a href="#Collection-pop">pop</a></li>
@@ -1710,19 +1709,13 @@ vanHalen.update([eddie, alex, stone, hagar]);
     <p id="Collection-get">
       <b class="header">get</b><code>collection.get(id)</code>
       <br />
-      Get a model from a collection, specified by an <b>id</b> or a <b>model</b>.
+      Get a model from a collection, specified by an <a href="#Model-id">id</a>,
+      a <a href="#Model-cid">cid</a>, or by passing in a <b>model</b>.
     </p>
 
 <pre>
 var book = Library.get(110);
 </pre>
-
-    <p id="Collection-getByCid">
-      <b class="header">getByCid</b><code>collection.getByCid(cid)</code>
-      <br />
-      Get a model from a collection, specified by a
-      <a href="#Model-cid"><b>cid</b></a> or a <b>model</b>.
-    </p>
 
     <p id="Collection-at">
       <b class="header">at</b><code>collection.at(index)</code>
@@ -3885,6 +3878,10 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Collections now also proxy Underscore method name aliases (collect,
         inject, foldl, foldr, head, tail, take, and so on...)
+      </li>
+      <li>
+        Removed <tt>getByCid</tt> from Collections. <tt>collection.get</tt> now
+        supports lookup by both <tt>id</tt> and <tt>cid</tt>.
       </li>
       <li>
         The <tt>parse</tt> function is now always run if defined, for both
