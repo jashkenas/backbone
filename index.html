@@ -806,7 +806,8 @@ view.stopListening(model);
       <br />
       Here's the complete list of built-in Backbone events, with arguments.
       You're also free to trigger your own events on Models, Collections and
-      Views as you see fit.
+      Views as you see fit. The <tt>Backbone</tt> object itself mixes in <tt>Events</tt>,
+      and can be used to emit any global events that your application needs.
     </p>
 
     <ul class="small">
@@ -980,10 +981,10 @@ book.set("title", "A Scandal in Bohemia");
     </p>
 
     <p>
-      Passing <tt>{silent: true}</tt> as an option will defer the event. 
-      This is useful when you want to change attributes provisionally or rapidly, 
-      without propagating the change through the rest of the system. 
-      That said, <tt>silent</tt> doesn't mean that the change (and event) won't happen, 
+      Passing <tt>{silent: true}</tt> as an option will defer the event.
+      This is useful when you want to change attributes provisionally or rapidly,
+      without propagating the change through the rest of the system.
+      That said, <tt>silent</tt> doesn't mean that the change (and event) won't happen,
       it's merely silenced until the next <a href="#Model-change">change</a>.
     </p>
 
