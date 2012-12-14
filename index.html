@@ -3905,8 +3905,10 @@ ActiveRecord::Base.include_root_in_json = false
         supports lookup by both <tt>id</tt> and <tt>cid</tt>.
       </li>
       <li>
-        The <tt>parse</tt> function is now always run if defined, for both
-        collections and models &mdash; not only after an Ajax call.
+        After fetching a model or a collection, <i>all</i> defined <tt>parse</tt>
+        functions will now be run. So fetching a collection and getting back new
+        models could cause both the collection to parse the list, and then each model
+        to be parsed in turn, if you have both functions defined.
       </li>
       <li>
         Bugfix for normalizing leading and trailing slashes in the Router
