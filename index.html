@@ -979,12 +979,11 @@ book.set("title", "A Scandal in Bohemia");
     </p>
 
     <p>
-      Passing <tt>{silent: true}</tt> as an option will defer both the validation
-      and the event. This is useful when you want to
-      change attributes provisionally or rapidly, without propagating the change
-      through the rest of the system. That said, <tt>silent</tt> doesn't mean that
-      the change (and event) won't happen, it's merely silenced until the next
-      <a href="#Model-change">change</a>.
+      Passing <tt>{silent: true}</tt> as an option will defer the event. 
+      This is useful when you want to change attributes provisionally or rapidly, 
+      without propagating the change through the rest of the system. 
+      That said, <tt>silent</tt> doesn't mean that the change (and event) won't happen, 
+      it's merely silenced until the next <a href="#Model-change">change</a>.
     </p>
 
     <p id="Model-escape">
