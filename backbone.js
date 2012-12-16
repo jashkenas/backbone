@@ -41,7 +41,6 @@
   if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
 
   // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
-  console.log('backbone', Backbone);
   Backbone.$ = root.jQuery || root.Zepto || root.ender;
   if (!Backbone.$ && (typeof require !== 'undefined')) {
       ['jquery', 'zepto', 'ender'].some(function(engine) {
