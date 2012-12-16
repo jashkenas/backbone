@@ -41,7 +41,14 @@
   if (!_ && (typeof require !== 'undefined')) _ = require('underscore');
 
   // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
+  console.log('backbone', Backbone);
   Backbone.$ = root.jQuery || root.Zepto || root.ender;
+  if (!Backbone.$ && (typeof require !== 'undefined')) {
+      ['jquery', 'zepto', 'ender'].some(function(engine) {
+        try { Backbone.$ = require(engine); } catch (e) {}
+        return Backbone.$;
+      });
+  }
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
