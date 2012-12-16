@@ -237,7 +237,7 @@
     this.attributes = {};
     this._changes = [];
     if (options && options.collection) this.collection = options.collection;
-    if (options && options.parse) attrs = this.parse(attrs);
+    if (options && options.parse) attrs = this.parse(attrs, options);
     if (defaults = _.result(this, 'defaults')) _.defaults(attrs, defaults);
     this.set(attrs, {silent: true});
     this._currentAttributes = _.clone(this.attributes);
@@ -352,7 +352,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        if (!model.set(model.parse(resp), options)) return false;
+        if (!model.set(model.parse(resp, options), options)) return false;
         if (success) success(model, resp, options);
       };
       return this.sync('read', this, options);
@@ -394,7 +394,7 @@
       var success = options.success;
       options.success = function(resp, status, xhr) {
         done = true;
-        var serverAttrs = model.parse(resp);
+        var serverAttrs = model.parse(resp, options);
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
@@ -453,7 +453,7 @@
 
     // **parse** converts a response into the hash of attributes to be `set` on
     // the model. The default implementation is just to pass the response along.
-    parse: function(resp) {
+    parse: function(resp, options) {
       return resp;
     },
 
@@ -783,7 +783,7 @@
       var add = [], remove = [], modelMap = {};
       var idAttr = this.model.prototype.idAttribute;
       options = _.extend({add: true, merge: true, remove: true}, options);
-      if (options.parse) models = this.parse(models);
+      if (options.parse) models = this.parse(models, options);
 
       // Allow a single model (or no argument) to be passed.
       if (!_.isArray(models)) models = models ? [models] : [];
@@ -818,7 +818,7 @@
     // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
       options || (options = {});
-      if (options.parse) models = this.parse(models);
+      if (options.parse) models = this.parse(models, options);
       for (var i = 0, l = this.models.length; i < l; i++) {
         this._removeReference(this.models[i]);
       }
@@ -865,7 +865,7 @@
 
     // **parse** converts a response into a list of models to be added to the
     // collection. The default implementation is just to pass it through.
-    parse: function(resp) {
+    parse: function(resp, options) {
       return resp;
     },
 
@@ -1473,7 +1473,7 @@
     };
 
     // Make the request, allowing the user to override any Ajax options.
-    var xhr = Backbone.ajax(_.extend(params, options));
+    var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
     model.trigger('request', model, xhr, options);
     return xhr;
   };
