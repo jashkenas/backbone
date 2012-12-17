@@ -86,6 +86,13 @@ $(document).ready(function() {
     b.trigger('change');
   });
 
+  test("listenTo with context", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    var ctx = {};
+    a.listenTo(a, 'foo', function(){ equal(ctx, this); }, ctx);
+    a.trigger('foo');
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
