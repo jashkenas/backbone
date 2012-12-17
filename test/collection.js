@@ -62,13 +62,14 @@ $(document).ready(function() {
     strictEqual(collection.last().get('a'), 4);
   });
 
-  test("get", 3, function() {
+  test("get", 4, function() {
     equal(col.get(0), d);
     equal(col.get(2), b);
+    equal(col.get({id: 1}), c);
     equal(col.get(col.first().cid), col.first());
   });
 
-  test("get with non-default ids", 2, function() {
+  test("get with non-default ids", 3, function() {
     var col = new Backbone.Collection();
     var MongoModel = Backbone.Model.extend({
       idAttribute: '_id'
@@ -78,6 +79,11 @@ $(document).ready(function() {
     equal(col.get(100), model);
     model.set({_id: 101});
     equal(col.get(101), model);
+
+    var Col2 = Backbone.Collection.extend({ model: MongoModel });
+    col2 = new Col2();
+    col2.push(model);
+    equal(col2.get({_id: 101}), model);
   });
 
   test("update index when id changes", 3, function() {
