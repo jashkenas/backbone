@@ -1821,9 +1821,11 @@ alert(chapters.pluck('title'));
       <br />
       Force a collection to re-sort itself. You don't need to call this under
       normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a>
-      will sort itself whenever a model is added. Calling <b>sort</b>
-      triggers a <tt>"sort"</tt> event on the collection, unless silenced by passing
-      <tt>{silent: true}</tt>
+      will sort itself whenever a model is added. To disable sorting when adding
+      a model, pass <tt>{sort: false}</tt> to <tt>add</tt>. Calling <b>sort</b>
+      triggers a <tt>"sort"</tt> event on the collection, unless silenced by
+      passing
+      <tt>{silent: true}</tt>.
     </p>
 
     <p id="Collection-pluck">
