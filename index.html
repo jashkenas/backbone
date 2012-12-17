@@ -977,7 +977,7 @@ book.set("title", "A Scandal in Bohemia");
       occur if the validation fails, and <b>set</b> will return <tt>false</tt>.
       Otherwise, <b>set</b> returns a reference to the model.
       You may also pass an <tt>error</tt>
-      callback in the options, which will be invoked instead of triggering an
+      callback in the options, which will be invoked alongside the
       <tt>"error"</tt> event, should validation fail.
     </p>
 
@@ -1274,12 +1274,12 @@ book.destroy({success: function(model, response) {
 </pre>
 
     <p id="Model-validate">
-      <b class="header">validate</b><code>model.validate(attributes)</code>
+      <b class="header">validate</b><code>model.validate(attributes, options)</code>
       <br />
       This method is left undefined, and you're encouraged to override it with
       your custom validation logic, if you have any that can be performed
       in JavaScript. <b>validate</b> is called before <tt>set</tt> and
-      <tt>save</tt>, and is passed the model attributes updated with the values
+      <tt>save</tt>, and is passed the model attributes, as well as the options
       from <tt>set</tt> or <tt>save</tt>.
       If the attributes are valid, don't return anything from <b>validate</b>;
       if they are invalid, return an error of your choosing. It
@@ -1292,8 +1292,8 @@ book.destroy({success: function(model, response) {
 
 <pre class="runnable">
 var Chapter = Backbone.Model.extend({
-  validate: function(attrs) {
-    if (attrs.end < attrs.start) {
+  validate: function(attrs, options) {
+    if (attrs.end &lt; attrs.start) {
       return "can't end before it starts";
     }
   }
@@ -1315,9 +1315,8 @@ one.set({
 
     <p>
       <tt>"error"</tt> events are useful for providing coarse-grained error
-      messages at the model or collection level, but if you have a specific view
-      that can better handle the error, you may override and suppress the event
-      by passing an <tt>error</tt> callback directly:
+      messages at the model or collection level. An <tt>error</tt> callback can
+      can also be specified in the options, to be called alongside the error event:
     </p>
 
 <pre>
@@ -3893,7 +3892,8 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         <a href="#Model-validate">Validation</a> now occurs even during "silent"
         changes. This change means that the <tt>isValid</tt> method has
-        been removed.
+        been removed. Failed validations also trigger an error, even if an error
+        callback is specified in the options.
       </li>
       <li>
         For mixed-mode APIs, <tt>Backbone.sync</tt> now accepts
