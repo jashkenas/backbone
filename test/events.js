@@ -327,6 +327,15 @@ $(document).ready(function() {
     ok(Backbone.on === Backbone.Events.on);
   });
 
+  test("Backbone.connect", 1, function() {
+    var from = _.extend({}, Backbone.Events);
+    var to = {
+      eat: function(food) { ok(food == 'food'); }
+    };
+    Backbone.connect("feed", from, to, "eat");
+    from.trigger("feed", "food");
+  });
+
   asyncTest("once with asynchronous events", 1, function() {
     var func = _.debounce(function() { ok(true); start(); }, 50);
     var obj = _.extend({}, Backbone.Events).once('async', func);
