@@ -910,4 +910,23 @@ $(document).ready(function() {
     collection.update(res, {parse: true});
   });
 
+  asyncTest("#1939 - `parse` is passed `options`", 1, function () {
+    var collection = new (Backbone.Collection.extend({
+      url: '/',
+      parse: function (data, options) {
+        strictEqual(options.xhr.someHeader, 'headerValue');
+        return data;
+      }
+    }));
+    var ajax = Backbone.ajax;
+    Backbone.ajax = function (params) {
+      _.defer(params.success);
+      return {someHeader: 'headerValue'};
+    }
+    collection.fetch({
+      success: function () { start(); }
+    });
+    Backbone.ajax = ajax;
+  });
+
 });
