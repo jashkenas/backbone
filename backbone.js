@@ -195,7 +195,7 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = object._listenerId || (object._listenerId = _.uniqueId('l'));
       listeners[id] = object;
-      object.on(events, callback || this, context);
+      object.on(events, callback || context, context);
       return this;
     },
 
