@@ -224,6 +224,11 @@
   // want global "pubsub" in a convenient place.
   _.extend(Backbone, Events);
 
+  // Allow decoupling of event listeners from objects.
+  Backbone.connect = function (event, from, to, method) {
+    from.on(event, to[method], to);
+  };
+
   // Backbone.Model
   // --------------
 
