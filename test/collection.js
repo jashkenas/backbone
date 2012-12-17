@@ -929,4 +929,15 @@ $(document).ready(function() {
     Backbone.ajax = ajax;
   });
 
+  test("`sort` is trigged on `add` when sorting occurs", 2, function () {
+    var collection = new (Backbone.Collection.extend({
+      comparator: 'id'
+    }))({id: 1, id: 2, id: 3});
+    collection.on('sort', function () { ok(1); });
+    collection.add({id: 4}); // trigger
+    collection.add({id: 1}, {merge: true}); // trigger
+    collection.add({id: 1}); // don't trigger
+    collection.add({id: 5}, {silent: true}); // don't trigger
+  });
+
 });

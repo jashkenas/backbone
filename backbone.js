@@ -662,8 +662,8 @@
       push.apply(args, models);
       splice.apply(this.models, args);
 
-      // Sort the collection if appropriate.
-      if (needsSort && this.comparator && at == null) this.sort({silent: true});
+      // Silently sort the collection if appropriate.
+      if (needsSort &= this.comparator && at == null) this.sort({silent: true});
 
       if (options && options.silent) return this;
 
@@ -671,6 +671,9 @@
       while (model = models.shift()) {
         model.trigger('add', model, this, options);
       }
+
+      // Trigger `sort` if the collection was sorted.
+      if (needsSort) this.trigger('sort', this, options);
 
       return this;
     },
