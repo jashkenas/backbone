@@ -735,7 +735,8 @@
     get: function(obj) {
       if (obj == null) return void 0;
       var idAttr = this.model.prototype.idAttribute;
-      return this._byId[obj[idAttr] != null ? obj[idAttr] : obj] || this._byCid[obj.cid || obj];
+      return this._byId[obj[idAttr] != null ? obj[idAttr] : obj.id != null ? obj.id : obj]
+             || this._byCid[obj.cid || obj];
     },
 
     // Get the model at the given index.
