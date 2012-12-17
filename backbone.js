@@ -202,7 +202,7 @@
     // Tell this object to stop listening to either specific events ... or
     // to every object it's currently listening to.
     stopListening: function(object, events, callback, context) {
-      contxt = context || this;
+      context = context || this;
       var listeners = this._listeners;
       if (!listeners) return;
       if (object) {
