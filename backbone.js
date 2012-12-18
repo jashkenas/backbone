@@ -479,13 +479,16 @@
       // Generate the changes to be triggered on the model.
       var triggers = this._computeChanges(true);
 
-      this._pending = !!triggers.length;
+      var pending = this._pending = !!triggers.length;
 
       for (var i = triggers.length - 2; i >= 0; i -= 2) {
         this.trigger('change:' + triggers[i], this, triggers[i + 1], options);
       }
 
       if (changing) return this;
+
+      // Ensure the original `change` event is fired regardless of interim changes
+      if (pending) this._pending = true;
 
       // Trigger a `change` while there have been changes.
       while (this._pending) {
