@@ -949,4 +949,17 @@ $(document).ready(function() {
     equal(model.changedAttributes(), false);
   });
 
+  test("#1961 - pass along options.error to the creating set if present", function () {
+    var Model = Backbone.Model.extend({
+      validate: function (model) {
+        return "Error";
+      }
+    });
+    var model = new Model({a:1}, {
+      error: function (model, message) {
+        equal(message, "Error");
+      }
+    });
+  });
+
 });
