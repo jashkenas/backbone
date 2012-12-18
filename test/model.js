@@ -202,9 +202,9 @@ $(document).ready(function() {
     ok(changeCount == 1, "Change count should NOT have incremented.");
 
     a.validate = function(attrs) {
-      equal(attrs.foo, void 0, "don't ignore values when unsetting");
+      equal(attrs.foo, void 0, "validate:true passed while unsetting");
     };
-    a.unset('foo');
+    a.unset('foo', {validate:true});
     equal(a.get('foo'), void 0, "Foo should have changed");
     delete a.validate;
     ok(changeCount == 2, "Change count should have incremented for unset.");
@@ -449,7 +449,9 @@ $(document).ready(function() {
     equal(result, model);
     equal(model.get('a'), 100);
     equal(lastError, undefined);
-    result = model.set({a: 200, admin: false});
+    result = model.set({admin: true});
+    equal(model.get('admin'), true);
+    result = model.set({a: 200, admin: false}, {validate:true});
     equal(lastError, "Can't change admin status.");
     equal(result, false);
     equal(model.get('a'), 100);
@@ -467,10 +469,10 @@ $(document).ready(function() {
     model.set({name: "Two"});
     equal(model.get('name'), 'Two');
     equal(error, undefined);
-    model.unset('name');
+    model.unset('name', {validate: true});
     equal(error, true);
     equal(model.get('name'), 'Two');
-    model.clear();
+    model.clear({validate:true});
     equal(model.get('name'), 'Two');
     delete model.validate;
     model.clear();
@@ -489,12 +491,12 @@ $(document).ready(function() {
     model.on('error', function(model, error) {
       boundError = true;
     });
-    var result = model.set({a: 100}, {error: callback});
+    var result = model.set({a: 100}, {error: callback, validate:true});
     equal(result, model);
     equal(model.get('a'), 100);
     equal(lastError, undefined);
     equal(boundError, undefined);
-    result = model.set({a: 200, admin: true}, {error: callback});
+    result = model.set({a: 200, admin: true}, {error: callback, validate:true});
     equal(result, false);
     equal(model.get('a'), 100);
     equal(lastError, "Can't change admin status.");
@@ -947,6 +949,39 @@ $(document).ready(function() {
     var model = new Backbone.Model({a: {key: 'value'}});
     model.set('a', {key:'value'}, {silent:true});
     equal(model.changedAttributes(), false);
+  });
+
+  test("isValid", function() {
+    var model = new Backbone.Model({valid: true});
+    model.validate = function(attrs) {
+      if (!attrs.valid) return "invalid";
+    };
+    equal(model.isValid(), true);
+    equal(model.set({valid: false}, {validate:true}), false);
+    equal(model.isValid(), true);
+    model.set({valid:false});
+    equal(model.isValid(), false);
+    ok(!model.set('valid', false, {validate: true}));
+  });
+
+  test("#1179 - isValid returns true in the absence of validate.", 1, function() {
+    var model = new Backbone.Model();
+    model.validate = null;
+    ok(model.isValid());
+  });
+
+  test("#1961 - Creating a model with {validate:true} will call validate and use the error callback", function () {
+    var Model = Backbone.Model.extend({
+      validate: function (attrs) {
+        if (attrs.id === 1) return "This shouldn't happen";
+      }
+    });
+    var model = new Model({id: 1}, {
+      validate: true,
+      error: function (model, message) {
+        equal(message, "This shouldn't happen");
+      }
+    });
   });
 
 });
