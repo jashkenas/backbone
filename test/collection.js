@@ -933,7 +933,7 @@ $(document).ready(function() {
     var collection = new (Backbone.Collection.extend({
       comparator: 'id'
     }))({id: 1, id: 2, id: 3});
-    collection.on('sort', function () { ok(1); });
+    collection.on('sort', function () { ok(true); });
     collection.add({id: 4}); // trigger
     collection.add({id: 1}, {merge: true}); // trigger
     collection.add({id: 1}); // don't trigger
