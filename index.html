@@ -3875,11 +3875,6 @@ ActiveRecord::Base.include_root_in_json = false
         The natural complement to the <tt>"sync"</tt> event.
       </li>
       <li>
-        Removed <tt>Backbone.wrapError</tt> helper method, in favor of wrapping
-        optional error callbacks with a fallback error event within
-        <tt>Backbone.sync</tt>.
-      </li>
-      <li>
         Router URLs now support optional parts via parentheses, without having
         to use a regex.
       </li>
@@ -3943,6 +3938,10 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         To set what library Backbone uses for DOM manipulation and Ajax calls,
         use <tt>Backbone.$ = ...</tt> instead of <tt>setDomLibrary</tt>.
+      </li>
+      <li>
+        Removed the <tt>Backbone.wrapError</tt> helper method. Overriding
+        <tt>sync</tt> should work better for those particular use cases.
       </li>
     </ul>
 
