@@ -643,6 +643,7 @@
         if (existing = this.get(model)) {
           if (options && options.merge) {
             existing.set(model.attributes, options);
+            existing.trigger('merge', existing, this, options);
             needsSort = sort;
           }
           models.splice(i, 1);
@@ -913,7 +914,7 @@
     // events simply proxy through. "add" and "remove" events that originate
     // in other collections are ignored.
     _onModelEvent: function(event, model, collection, options) {
-      if ((event === 'add' || event === 'remove') && collection !== this) return;
+      if ((event === 'add' || event === 'remove' || event === 'merge') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
       if (model && event === 'change:' + model.idAttribute) {
         delete this._byId[model.previous(model.idAttribute)];
