@@ -663,7 +663,8 @@
       splice.apply(this.models, args);
 
       // Silently sort the collection if appropriate.
-      if (needsSort &= this.comparator && at == null) this.sort({silent: true});
+      needsSort = needsSort && this.comparator && at == null;
+      if (needsSort) this.sort({silent: true});
 
       if (options && options.silent) return this;
 
