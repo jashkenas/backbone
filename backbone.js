@@ -241,7 +241,7 @@
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attrs = this.parse(attrs, options);
     if (defaults = _.result(this, 'defaults')) _.defaults(attrs, defaults);
-    this.set(attrs, {silent: true});
+    this.set(attrs, _.extend({silent: true}, options));
     this._currentAttributes = _.clone(this.attributes);
     this._previousAttributes = _.clone(this.attributes);
     this.initialize.apply(this, arguments);
@@ -373,7 +373,7 @@
       } else if (key != null) {
         (attrs = {})[key] = val;
       }
-      options = options ? _.clone(options) : {};
+      options = _.extend({validate: true}, options);
 
       // If we're "wait"-ing to set changed attributes, validate early.
       if (options.wait) {
@@ -568,11 +568,17 @@
       return _.clone(this._previousAttributes);
     },
 
+    // Check if the model is currently in a valid state. It's only possible to
+    // get into an *invalid* state if you're using silent changes.
+    isValid: function(options) {
+      return !this.validate || !this.validate(this.attributes, options);
+    },
+
     // Run validation against the next complete set of model attributes,
     // returning `true` if all is well. Otherwise, fire a general
     // `"error"` event and call the error callback, if specified.
     _validate: function(attrs, options) {
-      if (!this.validate) return true;
+      if (!options || !options.validate || !this.validate) return true;
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validate(attrs, options);
       if (!error) return true;

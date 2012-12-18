@@ -417,7 +417,7 @@ $(document).ready(function() {
     equal(model.collection, collection);
   });
 
-  test("create enforces validation", 1, function() {
+  test("create with validate:true enforces validation", 1, function() {
     var ValidatingModel = Backbone.Model.extend({
       validate: function(attrs) {
         return "fail";
@@ -427,7 +427,7 @@ $(document).ready(function() {
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
-    equal(col.create({"foo":"bar"}), false);
+    equal(col.create({"foo":"bar"}, {validate:true}), false);
   });
 
   test("a failing create runs the error callback", 1, function() {
@@ -567,7 +567,7 @@ $(document).ready(function() {
     equal(col.length, 0);
   });
 
-  test("#861, adding models to a collection which do not pass validation", function() {
+  test("#861, adding models to a collection which do not pass validation, with validate:true", function() {
       var Model = Backbone.Model.extend({
         validate: function(attrs) {
           if (attrs.id == 3) return "id can't be 3";
@@ -581,18 +581,18 @@ $(document).ready(function() {
       var collection = new Collection;
       collection.on("error", function() { ok(true); });
 
-      collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}]);
+      collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}], {validate:true});
       deepEqual(collection.pluck('id'), [1, 2, 4, 5, 6]);
   });
 
-  test("Invalid models are discarded.", 5, function() {
+  test("Invalid models are discarded with validate:true.", 5, function() {
     var collection = new Backbone.Collection;
     collection.on('test', function() { ok(true); });
     collection.model = Backbone.Model.extend({
       validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
     });
     var model = new collection.model({id: 1, valid: true});
-    collection.add([model, {id: 2}]);
+    collection.add([model, {id: 2}], {validate:true});
     model.trigger('test');
     ok(collection.get(model.cid));
     ok(collection.get(1));
