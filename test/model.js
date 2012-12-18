@@ -949,4 +949,15 @@ $(document).ready(function() {
     equal(model.changedAttributes(), false);
   });
 
+  test("#1964 - final `change` event is always fired, regardless of interim changes", 1, function () {
+    var model = new Backbone.Model();
+    model.on('change:property', function() {
+      model.set('property', 'bar');
+    });
+    model.on('change', function() {
+      ok(true);
+    });
+    model.set('property', 'foo');
+  });
+
 });
