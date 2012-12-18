@@ -763,7 +763,17 @@
         throw new Error('Cannot sort a set without a comparator');
       }
 
-      if (_.isString(this.comparator) || this.comparator.length === 1) {
+      if (_.isString(this.comparator)) {
+        var comparator;
+        var firstchar = this.comparator.charAt(0);
+        if (firstchar === '-' || firstchar === '\\') {
+          comparator = this.comparator.substr(1);
+        } else {
+          comparator = this.comparator;
+        }
+        this.models = this.sortBy(comparator, this);
+        if (firstchar === '-') this.models.reverse();
+      } else if (this.comparator.length === 1) {
         this.models = this.sortBy(this.comparator, this);
       } else {
         this.models.sort(_.bind(this.comparator, this));

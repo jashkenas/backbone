@@ -47,6 +47,24 @@ $(document).ready(function() {
     deepEqual(collection.pluck('id'), [1, 2, 3]);
   });
 
+  test("String comparator starts with '-'.", 1, function() {
+    var collection = new Backbone.Collection([
+      {id: 3},
+      {id: 1},
+      {id: 2}
+    ], {comparator: '-id'});
+    deepEqual(collection.pluck('id'), [3, 2, 1]);
+  });
+
+  test("String comparator for '-attr' in asc order needs backslash", 1, function() {
+    var collection = new Backbone.Collection([
+      {'-id': 3},
+      {'-id': 1},
+      {'-id': 2}
+    ], {comparator: '\\-id'});
+    deepEqual(collection.pluck('-id'), [1, 2, 3]);
+  });
+
   test("new and parse", 3, function() {
     var Collection = Backbone.Collection.extend({
       parse : function(data) {
