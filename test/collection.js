@@ -936,5 +936,23 @@ $(document).ready(function() {
     });
     Backbone.ajax = ajax;
   });
-
+  
+  test("Event 'merge' triggers after `add` merged the data of a duplicate model", function() {
+    var c1 = new Backbone.Collection([{id:1, foo:'bar'}]),
+        c2 = new Backbone.Collection([c1.at(0)]);
+    var i = 0;
+    
+    c1.on('merge', function( model, collection, options ) {
+      equal(model.get('foo'), 'baz', 'Event `merge` triggered after merge is done');
+      equal(model, c1.at(0), 'First event argument is the model');
+      equal(collection, c1, 'Second event argument is the collection');
+      equal(options.merge, true, 'Third event argument is the options object');
+      i++;
+    });
+    
+    c1.add({id:1, foo:'baz'}, {merge:true});
+    c2.add({id:1, foo:'bat'}, {merge:true});
+    
+    equal(i, 1, 'Event `merge` is only proxied by the collection the merge originates from');
+  });
 });
