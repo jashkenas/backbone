@@ -368,7 +368,7 @@ $(document).ready(function() {
     model.set({lastName: 'Hicks'});
   });
 
-  test("validate after save", 1, function() {
+  test("validate after save", 2, function() {
     var lastError, model = new Backbone.Model();
     model.validate = function(attrs) {
       if (attrs.admin) return "Can't change admin status.";
@@ -376,11 +376,13 @@ $(document).ready(function() {
     model.sync = function(method, model, options) {
       options.success.call(this, {admin: true});
     };
-    model.save(null, {error: function(model, error) {
+    model.on('invalid', function(model, error) {
       lastError = error;
-    }});
+    });
+    model.save(null);
 
     equal(lastError, "Can't change admin status.");
+    equal(model.validationError, "Can't change admin status.");
   });
 
   test("save", 2, function() {
@@ -485,21 +487,18 @@ $(document).ready(function() {
     model.validate = function(attrs) {
       if (attrs.admin) return "Can't change admin status.";
     };
-    var callback = function(model, error) {
-      lastError = error;
-    };
     model.on('invalid', function(model, error) {
       boundError = true;
     });
-    var result = model.set({a: 100}, {error: callback, validate:true});
+    var result = model.set({a: 100}, {validate:true});
     equal(result, model);
     equal(model.get('a'), 100);
-    equal(lastError, undefined);
+    equal(model.validationError, null);
     equal(boundError, undefined);
-    result = model.set({a: 200, admin: true}, {error: callback, validate:true});
+    result = model.set({a: 200, admin: true}, {validate:true});
     equal(result, false);
     equal(model.get('a'), 100);
-    equal(lastError, "Can't change admin status.");
+    equal(model.validationError, "Can't change admin status.");
     equal(boundError, true);
   });
 
@@ -987,12 +986,8 @@ $(document).ready(function() {
         if (attrs.id === 1) return "This shouldn't happen";
       }
     });
-    var model = new Model({id: 1}, {
-      validate: true,
-      error: function (model, message) {
-        equal(message, "This shouldn't happen");
-      }
-    });
+    var model = new Model({id: 1}, {validate: true});
+    equal(model.validationError, "This shouldn't happen");
   });
 
 });

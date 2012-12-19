@@ -583,9 +583,8 @@
     _validate: function(attrs, options) {
       if (!options || !options.validate || !this.validate) return true;
       attrs = _.extend({}, this.attributes, attrs);
-      var error = this.validate(attrs, options);
+      var error = this.validationError = this.validate(attrs, options) || null;
       if (!error) return true;
-      if (options && options.error) options.error(this, error, options);
       this.trigger('invalid', this, error, options);
       return false;
     }

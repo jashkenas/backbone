@@ -430,7 +430,7 @@ $(document).ready(function() {
     equal(col.create({"foo":"bar"}, {validate:true}), false);
   });
 
-  test("a failing create runs the error callback", 1, function() {
+  test("a failing create returns model with errors", function() {
     var ValidatingModel = Backbone.Model.extend({
       validate: function(attrs) {
         return "fail";
@@ -439,11 +439,10 @@ $(document).ready(function() {
     var ValidatingCollection = Backbone.Collection.extend({
       model: ValidatingModel
     });
-    var flag = false;
-    var callback = function(model, error) { flag = true; };
     var col = new ValidatingCollection();
-    col.create({"foo":"bar"}, { error: callback });
-    equal(flag, true);
+    var m = col.create({"foo":"bar"});
+    equal(m.validationError, 'fail');
+    equal(col.length, 1);
   });
 
   test("initialize", 1, function() {
