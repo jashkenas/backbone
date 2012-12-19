@@ -244,9 +244,10 @@ $(document).ready(function() {
 
   test("unset and changedAttributes", 1, function() {
     var model = new Backbone.Model({a: 1});
+    model.on('change', function() {
+      ok('a' in model.changedAttributes(), 'changedAttributes should contain unset properties');
+    });
     model.unset('a');
-    var changedAttributes = model.changedAttributes();
-    ok('a' in changedAttributes, 'changedAttributes should contain unset properties');
   });
 
   test("using a non-default id attribute.", 5, function() {
@@ -260,67 +261,63 @@ $(document).ready(function() {
     equal(model.isNew(), true);
   });
 
-  // test("set an empty string", 1, function() {
-  //   var model = new Backbone.Model({name : "Model"});
-  //   model.set({name : ''});
-  //   equal(model.get('name'), '');
-  // });
+  test("set an empty string", 1, function() {
+    var model = new Backbone.Model({name : "Model"});
+    model.set({name : ''});
+    equal(model.get('name'), '');
+  });
 
-  // test("clear", 3, function() {
-  //   var changed;
-  //   var model = new Backbone.Model({id: 1, name : "Model"});
-  //   model.on("change:name", function(){ changed = true; });
-  //   model.on("change", function() {
-  //     var changedAttrs = model.changedAttributes();
-  //     ok('name' in changedAttrs);
-  //   });
-  //   model.clear();
-  //   equal(changed, true);
-  //   equal(model.get('name'), undefined);
-  // });
+  test("clear", 3, function() {
+    var changed;
+    var model = new Backbone.Model({id: 1, name : "Model"});
+    model.on("change:name", function(){ changed = true; });
+    model.on("change", function() {
+      var changedAttrs = model.changedAttributes();
+      ok('name' in changedAttrs);
+    });
+    model.clear();
+    equal(changed, true);
+    equal(model.get('name'), undefined);
+  });
 
-  // test("defaults", 4, function() {
-  //   var Defaulted = Backbone.Model.extend({
-  //     defaults: {
-  //       "one": 1,
-  //       "two": 2
-  //     }
-  //   });
-  //   var model = new Defaulted({two: null});
-  //   equal(model.get('one'), 1);
-  //   equal(model.get('two'), 2);
-  //   Defaulted = Backbone.Model.extend({
-  //     defaults: function() {
-  //       return {
-  //         "one": 3,
-  //         "two": 4
-  //       };
-  //     }
-  //   });
-  //   model = new Defaulted({two: null});
-  //   equal(model.get('one'), 3);
-  //   equal(model.get('two'), 4);
-  // });
+  test("defaults", 4, function() {
+    var Defaulted = Backbone.Model.extend({
+      defaults: {
+        "one": 1,
+        "two": 2
+      }
+    });
+    var model = new Defaulted({two: null});
+    equal(model.get('one'), 1);
+    equal(model.get('two'), 2);
+    Defaulted = Backbone.Model.extend({
+      defaults: function() {
+        return {
+          "one": 3,
+          "two": 4
+        };
+      }
+    });
+    model = new Defaulted({two: null});
+    equal(model.get('one'), 3);
+    equal(model.get('two'), 4);
+  });
 
-  // test("change, hasChanged, changedAttributes, previous, previousAttributes", 12, function() {
-  //   var model = new Backbone.Model({name : "Tim", age : 10});
-  //   equal(model.changedAttributes(), false);
-  //   model.on('change', function() {
-  //     ok(model.hasChanged('name'), 'name changed');
-  //     ok(!model.hasChanged('age'), 'age did not');
-  //     ok(_.isEqual(model.changedAttributes(), {name : 'Rob'}), 'changedAttributes returns the changed attrs');
-  //     equal(model.previous('name'), 'Tim');
-  //     ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}), 'previousAttributes is correct');
-  //   });
-  //   equal(model.hasChanged(), false);
-  //   equal(model.hasChanged(undefined), false);
-  //   model.set({name : 'Rob'}, {silent : true});
-  //   equal(model.hasChanged(), true);
-  //   equal(model.hasChanged(undefined), true);
-  //   equal(model.hasChanged('name'), true);
-  //   model.change();
-  //   equal(model.get('name'), 'Rob');
-  // });
+  test("change, hasChanged, changedAttributes, previous, previousAttributes", 9, function() {
+    var model = new Backbone.Model({name : "Tim", age : 10});
+    equal(model.changedAttributes(), false);
+    model.on('change', function() {
+      ok(model.hasChanged('name'), 'name changed');
+      ok(!model.hasChanged('age'), 'age did not');
+      ok(_.isEqual(model.changedAttributes(), {name : 'Rob'}), 'changedAttributes returns the changed attrs');
+      equal(model.previous('name'), 'Tim');
+      ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}), 'previousAttributes is correct');
+    });
+    equal(model.hasChanged(), false);
+    equal(model.hasChanged(undefined), false);
+    model.set('name', 'Rob');
+    equal(model.get('name'), 'Rob');
+  });
 
   // test("changedAttributes", 3, function() {
   //   var model = new Backbone.Model({a: 'a', b: 'b'});

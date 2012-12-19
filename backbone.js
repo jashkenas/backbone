@@ -346,6 +346,7 @@
         this.trigger('change', this, options);
       }
 
+      this.changed = {};
       this._changing = false;
       return this;
     },
