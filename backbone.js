@@ -423,7 +423,7 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, val, options) {
-      var attrs, current, done;
+      var attrs, model, success, method, toJSON, xhr;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
       if (key == null || _.isObject(key)) {
@@ -437,13 +437,18 @@
       // If we're "wait"-ing to set changed attributes, validate early.
       if (options.wait) {
         if (attrs && !this._validate(attrs, options)) return false;
-        current = _.clone(this.attributes);
       }
 
       // Regular saves `set` attributes before persisting to the server.
-      var silentOptions = _.extend({}, options, {silent: true});
-      if (attrs && !this.set(attrs, options.wait ? silentOptions : options)) {
-        return false;
+      if (attrs) {
+        if (options.wait) {
+          toJSON = this.toJSON;
+          this.toJSON = function() {
+            return _.extend(toJSON.call(this, options), attrs);
+          };
+        } else {
+          if (!this.set(attrs, options)) return false;
+        }
       }
 
       // Do not persist invalid models.
@@ -451,10 +456,9 @@
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
-      var model = this;
-      var success = options.success;
+      model = this;
+      success = options.success;
       options.success = function(resp, status, xhr) {
-        done = true;
         var serverAttrs = model.parse(resp, options);
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
@@ -462,16 +466,11 @@
       };
 
       // Finish configuring and sending the Ajax request.
-      var method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
+      method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
       if (method == 'patch') options.attrs = attrs;
-      var xhr = this.sync(method, this, options);
+      xhr = this.sync(method, this, options);
 
-      // When using `wait`, reset attributes to original values unless
-      // `success` has been called already.
-      if (!done && options.wait) {
-        this.clear(silentOptions);
-        this.set(current, silentOptions);
-      }
+      this.toJSON = toJSON;
 
       return xhr;
     },

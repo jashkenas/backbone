@@ -358,257 +358,251 @@ $(document).ready(function() {
     model.set({lastName: 'Hicks'});
   });
 
-  // test("validate after save", 2, function() {
-  //   var lastError, model = new Backbone.Model();
-  //   model.validate = function(attrs) {
-  //     if (attrs.admin) return "Can't change admin status.";
-  //   };
-  //   model.sync = function(method, model, options) {
-  //     options.success.call(this, {admin: true});
-  //   };
-  //   model.on('invalid', function(model, error) {
-  //     lastError = error;
-  //   });
-  //   model.save(null);
+  test("validate after save", 2, function() {
+    var lastError, model = new Backbone.Model();
+    model.validate = function(attrs) {
+      if (attrs.admin) return "Can't change admin status.";
+    };
+    model.sync = function(method, model, options) {
+      options.success.call(this, {admin: true});
+    };
+    model.on('invalid', function(model, error) {
+      lastError = error;
+    });
+    model.save(null);
 
-  //   equal(lastError, "Can't change admin status.");
-  //   equal(model.validationError, "Can't change admin status.");
-  // });
+    equal(lastError, "Can't change admin status.");
+    equal(model.validationError, "Can't change admin status.");
+  });
 
-  // test("save", 2, function() {
-  //   doc.save({title : "Henry V"});
-  //   equal(this.syncArgs.method, 'update');
-  //   ok(_.isEqual(this.syncArgs.model, doc));
-  // });
+  test("save", 2, function() {
+    doc.save({title : "Henry V"});
+    equal(this.syncArgs.method, 'update');
+    ok(_.isEqual(this.syncArgs.model, doc));
+  });
 
-  // test("save with PATCH", function() {
-  //   doc.clear().set({id: 1, a: 1, b: 2, c: 3, d: 4});
-  //   doc.save();
-  //   equal(this.syncArgs.method, 'update');
-  //   equal(this.syncArgs.options.attrs, undefined);
+  test("save with PATCH", function() {
+    doc.clear().set({id: 1, a: 1, b: 2, c: 3, d: 4});
+    doc.save();
+    equal(this.syncArgs.method, 'update');
+    equal(this.syncArgs.options.attrs, undefined);
 
-  //   doc.save({b: 2, d: 4}, {patch: true});
-  //   equal(this.syncArgs.method, 'patch');
-  //   equal(_.size(this.syncArgs.options.attrs), 2);
-  //   equal(this.syncArgs.options.attrs.d, 4);
-  //   equal(this.syncArgs.options.attrs.a, undefined);
-  //   equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
-  // });
+    doc.save({b: 2, d: 4}, {patch: true});
+    equal(this.syncArgs.method, 'patch');
+    equal(_.size(this.syncArgs.options.attrs), 2);
+    equal(this.syncArgs.options.attrs.d, 4);
+    equal(this.syncArgs.options.attrs.a, undefined);
+    equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
+  });
 
-  // test("save in positional style", 1, function() {
-  //   var model = new Backbone.Model();
-  //   model.sync = function(method, model, options) {
-  //     options.success();
-  //   };
-  //   model.save('title', 'Twelfth Night');
-  //   equal(model.get('title'), 'Twelfth Night');
-  // });
+  test("save in positional style", 1, function() {
+    var model = new Backbone.Model();
+    model.sync = function(method, model, options) {
+      options.success();
+    };
+    model.save('title', 'Twelfth Night');
+    equal(model.get('title'), 'Twelfth Night');
+  });
 
+  test("fetch", 2, function() {
+    doc.fetch();
+    equal(this.syncArgs.method, 'read');
+    ok(_.isEqual(this.syncArgs.model, doc));
+  });
 
+  test("destroy", 3, function() {
+    doc.destroy();
+    equal(this.syncArgs.method, 'delete');
+    ok(_.isEqual(this.syncArgs.model, doc));
 
-  // test("fetch", 2, function() {
-  //   doc.fetch();
-  //   equal(this.syncArgs.method, 'read');
-  //   ok(_.isEqual(this.syncArgs.model, doc));
-  // });
+    var newModel = new Backbone.Model;
+    equal(newModel.destroy(), false);
+  });
 
-  // test("destroy", 3, function() {
-  //   doc.destroy();
-  //   equal(this.syncArgs.method, 'delete');
-  //   ok(_.isEqual(this.syncArgs.model, doc));
+  test("non-persisted destroy", 1, function() {
+    var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
+    a.sync = function() { throw "should not be called"; };
+    a.destroy();
+    ok(true, "non-persisted model should not call sync");
+  });
 
-  //   var newModel = new Backbone.Model;
-  //   equal(newModel.destroy(), false);
-  // });
+  test("validate", function() {
+    var lastError;
+    var model = new Backbone.Model();
+    model.validate = function(attrs) {
+      if (attrs.admin != this.get('admin')) return "Can't change admin status.";
+    };
+    model.on('invalid', function(model, error) {
+      lastError = error;
+    });
+    var result = model.set({a: 100});
+    equal(result, model);
+    equal(model.get('a'), 100);
+    equal(lastError, undefined);
+    result = model.set({admin: true});
+    equal(model.get('admin'), true);
+    result = model.set({a: 200, admin: false}, {validate:true});
+    equal(lastError, "Can't change admin status.");
+    equal(result, false);
+    equal(model.get('a'), 100);
+  });
 
-  // test("non-persisted destroy", 1, function() {
-  //   var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
-  //   a.sync = function() { throw "should not be called"; };
-  //   a.destroy();
-  //   ok(true, "non-persisted model should not call sync");
-  // });
+  test("validate on unset and clear", 6, function() {
+    var error;
+    var model = new Backbone.Model({name: "One"});
+    model.validate = function(attrs) {
+      if (!attrs.name) {
+        error = true;
+        return "No thanks.";
+      }
+    };
+    model.set({name: "Two"});
+    equal(model.get('name'), 'Two');
+    equal(error, undefined);
+    model.unset('name', {validate: true});
+    equal(error, true);
+    equal(model.get('name'), 'Two');
+    model.clear({validate:true});
+    equal(model.get('name'), 'Two');
+    delete model.validate;
+    model.clear();
+    equal(model.get('name'), undefined);
+  });
 
-  // test("validate", function() {
-  //   var lastError;
-  //   var model = new Backbone.Model();
-  //   model.validate = function(attrs) {
-  //     if (attrs.admin != this.get('admin')) return "Can't change admin status.";
-  //   };
-  //   model.on('invalid', function(model, error) {
-  //     lastError = error;
-  //   });
-  //   var result = model.set({a: 100});
-  //   equal(result, model);
-  //   equal(model.get('a'), 100);
-  //   equal(lastError, undefined);
-  //   result = model.set({admin: true});
-  //   equal(model.get('admin'), true);
-  //   result = model.set({a: 200, admin: false}, {validate:true});
-  //   equal(lastError, "Can't change admin status.");
-  //   equal(result, false);
-  //   equal(model.get('a'), 100);
-  // });
+  test("validate with error callback", 8, function() {
+    var lastError, boundError;
+    var model = new Backbone.Model();
+    model.validate = function(attrs) {
+      if (attrs.admin) return "Can't change admin status.";
+    };
+    model.on('invalid', function(model, error) {
+      boundError = true;
+    });
+    var result = model.set({a: 100}, {validate:true});
+    equal(result, model);
+    equal(model.get('a'), 100);
+    equal(model.validationError, null);
+    equal(boundError, undefined);
+    result = model.set({a: 200, admin: true}, {validate:true});
+    equal(result, false);
+    equal(model.get('a'), 100);
+    equal(model.validationError, "Can't change admin status.");
+    equal(boundError, true);
+  });
 
-  // test("validate on unset and clear", 6, function() {
-  //   var error;
-  //   var model = new Backbone.Model({name: "One"});
-  //   model.validate = function(attrs) {
-  //     if (!attrs.name) {
-  //       error = true;
-  //       return "No thanks.";
-  //     }
-  //   };
-  //   model.set({name: "Two"});
-  //   equal(model.get('name'), 'Two');
-  //   equal(error, undefined);
-  //   model.unset('name', {validate: true});
-  //   equal(error, true);
-  //   equal(model.get('name'), 'Two');
-  //   model.clear({validate:true});
-  //   equal(model.get('name'), 'Two');
-  //   delete model.validate;
-  //   model.clear();
-  //   equal(model.get('name'), undefined);
-  // });
+  test("defaults always extend attrs (#459)", 2, function() {
+    var Defaulted = Backbone.Model.extend({
+      defaults: {one: 1},
+      initialize : function(attrs, opts) {
+        equal(this.attributes.one, 1);
+      }
+    });
+    var providedattrs = new Defaulted({});
+    var emptyattrs = new Defaulted();
+  });
 
-  // test("validate with error callback", 8, function() {
-  //   var lastError, boundError;
-  //   var model = new Backbone.Model();
-  //   model.validate = function(attrs) {
-  //     if (attrs.admin) return "Can't change admin status.";
-  //   };
-  //   model.on('invalid', function(model, error) {
-  //     boundError = true;
-  //   });
-  //   var result = model.set({a: 100}, {validate:true});
-  //   equal(result, model);
-  //   equal(model.get('a'), 100);
-  //   equal(model.validationError, null);
-  //   equal(boundError, undefined);
-  //   result = model.set({a: 200, admin: true}, {validate:true});
-  //   equal(result, false);
-  //   equal(model.get('a'), 100);
-  //   equal(model.validationError, "Can't change admin status.");
-  //   equal(boundError, true);
-  // });
+  test("Inherit class properties", 6, function() {
+    var Parent = Backbone.Model.extend({
+      instancePropSame: function() {},
+      instancePropDiff: function() {}
+    }, {
+      classProp: function() {}
+    });
+    var Child = Parent.extend({
+      instancePropDiff: function() {}
+    });
 
-  // test("defaults always extend attrs (#459)", 2, function() {
-  //   var Defaulted = Backbone.Model.extend({
-  //     defaults: {one: 1},
-  //     initialize : function(attrs, opts) {
-  //       equal(this.attributes.one, 1);
-  //     }
-  //   });
-  //   var providedattrs = new Defaulted({});
-  //   var emptyattrs = new Defaulted();
-  // });
+    var adult = new Parent;
+    var kid   = new Child;
 
-  // test("Inherit class properties", 6, function() {
-  //   var Parent = Backbone.Model.extend({
-  //     instancePropSame: function() {},
-  //     instancePropDiff: function() {}
-  //   }, {
-  //     classProp: function() {}
-  //   });
-  //   var Child = Parent.extend({
-  //     instancePropDiff: function() {}
-  //   });
+    equal(Child.classProp, Parent.classProp);
+    notEqual(Child.classProp, undefined);
 
-  //   var adult = new Parent;
-  //   var kid   = new Child;
+    equal(kid.instancePropSame, adult.instancePropSame);
+    notEqual(kid.instancePropSame, undefined);
 
-  //   equal(Child.classProp, Parent.classProp);
-  //   notEqual(Child.classProp, undefined);
+    notEqual(Child.prototype.instancePropDiff, Parent.prototype.instancePropDiff);
+    notEqual(Child.prototype.instancePropDiff, undefined);
+  });
 
-  //   equal(kid.instancePropSame, adult.instancePropSame);
-  //   notEqual(kid.instancePropSame, undefined);
+  test("Nested change events don't clobber previous attributes", 4, function() {
+    new Backbone.Model()
+    .on('change:state', function(model, newState) {
+      equal(model.previous('state'), undefined);
+      equal(newState, 'hello');
+      // Fire a nested change event.
+      model.set({other: 'whatever'});
+    })
+    .on('change:state', function(model, newState) {
+      equal(model.previous('state'), undefined);
+      equal(newState, 'hello');
+    })
+    .set({state: 'hello'});
+  });
 
-  //   notEqual(Child.prototype.instancePropDiff, Parent.prototype.instancePropDiff);
-  //   notEqual(Child.prototype.instancePropDiff, undefined);
-  // });
+  test("hasChanged/set should use same comparison", 2, function() {
+    var changed = 0, model = new Backbone.Model({a: null});
+    model.on('change', function() {
+      ok(this.hasChanged('a'));
+    })
+    .on('change:a', function() {
+      changed++;
+    })
+    .set({a: undefined});
+    equal(changed, 1);
+  });
 
-  // test("Nested change events don't clobber previous attributes", 4, function() {
-  //   new Backbone.Model()
-  //   .on('change:state', function(model, newState) {
-  //     equal(model.previous('state'), undefined);
-  //     equal(newState, 'hello');
-  //     // Fire a nested change event.
-  //     model.set({other: 'whatever'});
-  //   })
-  //   .on('change:state', function(model, newState) {
-  //     equal(model.previous('state'), undefined);
-  //     equal(newState, 'hello');
-  //   })
-  //   .set({state: 'hello'});
-  // });
+  test("#582, #425, change:attribute callbacks should fire after all changes have occurred", 9, function() {
+    var model = new Backbone.Model;
 
-  // test("hasChanged/set should use same comparison", 2, function() {
-  //   var changed = 0, model = new Backbone.Model({a: null});
-  //   model.on('change', function() {
-  //     ok(this.hasChanged('a'));
-  //   })
-  //   .on('change:a', function() {
-  //     changed++;
-  //   })
-  //   .set({a: undefined});
-  //   equal(changed, 1);
-  // });
+    var assertion = function() {
+      equal(model.get('a'), 'a');
+      equal(model.get('b'), 'b');
+      equal(model.get('c'), 'c');
+    };
 
-  // test("#582, #425, change:attribute callbacks should fire after all changes have occurred", 9, function() {
-  //   var model = new Backbone.Model;
+    model.on('change:a', assertion);
+    model.on('change:b', assertion);
+    model.on('change:c', assertion);
 
-  //   var assertion = function() {
-  //     equal(model.get('a'), 'a');
-  //     equal(model.get('b'), 'b');
-  //     equal(model.get('c'), 'c');
-  //   };
+    model.set({a: 'a', b: 'b', c: 'c'});
+  });
 
-  //   model.on('change:a', assertion);
-  //   model.on('change:b', assertion);
-  //   model.on('change:c', assertion);
+  test("#871, set with attributes property", 1, function() {
+    var model = new Backbone.Model();
+    model.set({attributes: true});
+    ok(model.has('attributes'));
+  });
 
-  //   model.set({a: 'a', b: 'b', c: 'c'});
-  // });
+  test("set value regardless of equality/change", 1, function() {
+    var model = new Backbone.Model({x: []});
+    var a = [];
+    model.set({x: a});
+    ok(model.get('x') === a);
+  });
 
-  // test("#871, set with attributes property", 1, function() {
-  //   var model = new Backbone.Model();
-  //   model.set({attributes: true});
-  //   ok(model.has('attributes'));
-  // });
+  test("unset does not fire a change for undefined attributes", 0, function() {
+    var model = new Backbone.Model({x: undefined});
+    model.on('change:x', function(){ ok(false); });
+    model.unset('x');
+  });
 
-  // test("set value regardless of equality/change", 1, function() {
-  //   var model = new Backbone.Model({x: []});
-  //   var a = [];
-  //   model.set({x: a});
-  //   ok(model.get('x') === a);
-  // });
+  test("set: undefined values", 1, function() {
+    var model = new Backbone.Model({x: undefined});
+    ok('x' in model.attributes);
+  });
 
-  // test("unset does not fire a change for undefined attributes", 0, function() {
-  //   var model = new Backbone.Model({x: undefined});
-  //   model.on('change:x', function(){ ok(false); });
-  //   model.unset('x');
-  // });
+  test("change fires change:attr", 1, function() {
+    var model = new Backbone.Model({x: 1});
+    model.on('change:x', function(){ ok(true); });
+    model.set({x: 2});
+  });
 
-  // test("set: undefined values", 1, function() {
-  //   var model = new Backbone.Model({x: undefined});
-  //   ok('x' in model.attributes);
-  // });
-
-  // test("change fires change:attr", 1, function() {
-  //   var model = new Backbone.Model({x: 1});
-  //   model.set({x: 2}, {silent: true});
-  //   model.on('change:x', function(){ ok(true); });
-  //   model.change();
-  // });
-
-  // test("hasChanged is false after original values are set", 2, function() {
-  //   var model = new Backbone.Model({x: 1});
-  //   model.on('change:x', function(){ ok(false); });
-  //   model.set({x: 2}, {silent: true});
-  //   ok(model.hasChanged());
-  //   model.set({x: 1}, {silent: true});
-  //   ok(!model.hasChanged());
-  // });
+  test("hasChanged is false after original values are set", 0, function() {
+    var model = new Backbone.Model({x: 1});
+    model.on('change:x', function(){ ok(false); });
+    model.set({x: 1});
+  });
 
   // test("save with `wait` succeeds without `validate`", 1, function() {
   //   var model = new Backbone.Model();
