@@ -223,48 +223,42 @@ $(document).ready(function() {
     equal(value, 'last');
   });
 
-  // test("set falsy values in the correct order", 1, function() {
-  //   var model = new Backbone.Model({result: 'result'});
-  //   model.on('change', function() {
-  //     equal(model.changed.result, false);
-  //   });
-  //   model.set({result: void 0}, {silent: true});
-  //   model.set({result: null}, {silent: true});
-  //   model.set({result: false}, {silent: true});
-  //   model.change();
-  // });
+  test("set falsy values in the correct order", 1, function() {
+    var model = new Backbone.Model({result: 'result'});
+    model.on('change', function() {
+      equal(model.changed.result, false);
+    });
+    model.set({result: false});
+  });
 
-  // test("multiple unsets", 1, function() {
-  //   var i = 0;
-  //   var counter = function(){ i++; };
-  //   var model = new Backbone.Model({a: 1});
-  //   model.on("change:a", counter);
-  //   model.set({a: 2});
-  //   model.unset('a');
-  //   model.unset('a');
-  //   equal(i, 2, 'Unset does not fire an event for missing attributes.');
-  // });
+  test("multiple unsets", 1, function() {
+    var i = 0;
+    var counter = function(){ i++; };
+    var model = new Backbone.Model({a: 1});
+    model.on("change:a", counter);
+    model.set({a: 2});
+    model.unset('a');
+    model.unset('a');
+    equal(i, 2, 'Unset does not fire an event for missing attributes.');
+  });
 
-  // test("unset and changedAttributes", 2, function() {
-  //   var model = new Backbone.Model({a: 1});
-  //   model.unset('a', {silent: true});
-  //   var changedAttributes = model.changedAttributes();
-  //   ok('a' in changedAttributes, 'changedAttributes should contain unset properties');
+  test("unset and changedAttributes", 1, function() {
+    var model = new Backbone.Model({a: 1});
+    model.unset('a');
+    var changedAttributes = model.changedAttributes();
+    ok('a' in changedAttributes, 'changedAttributes should contain unset properties');
+  });
 
-  //   changedAttributes = model.changedAttributes();
-  //   ok('a' in changedAttributes, 'changedAttributes should contain unset properties when running changedAttributes again after an unset.');
-  // });
-
-  // test("using a non-default id attribute.", 5, function() {
-  //   var MongoModel = Backbone.Model.extend({idAttribute : '_id'});
-  //   var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
-  //   equal(model.get('id'), 'eye-dee');
-  //   equal(model.id, 25);
-  //   equal(model.isNew(), false);
-  //   model.unset('_id');
-  //   equal(model.id, undefined);
-  //   equal(model.isNew(), true);
-  // });
+  test("using a non-default id attribute.", 5, function() {
+    var MongoModel = Backbone.Model.extend({idAttribute : '_id'});
+    var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
+    equal(model.get('id'), 'eye-dee');
+    equal(model.id, 25);
+    equal(model.isNew(), false);
+    model.unset('_id');
+    equal(model.id, undefined);
+    equal(model.isNew(), true);
+  });
 
   // test("set an empty string", 1, function() {
   //   var model = new Backbone.Model({name : "Model"});

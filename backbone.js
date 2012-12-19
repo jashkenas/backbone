@@ -237,14 +237,12 @@
     this.cid = _.uniqueId('c');
     this.changed = {};
     this.attributes = {};
-    this._changes = [];
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attrs = this.parse(attrs, options) || {};
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
-    this.attributes = _.clone(attrs);
-    this.id = attrs[this.idAttribute];
+    this.set(attrs);
     this.initialize.apply(this, arguments);
   };
 
@@ -369,7 +367,7 @@
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (attr == null) return _.isEmpty(this.changed);
+      if (attr == null) return !_.isEmpty(this.changed);
       return _.has(this.changed, attr);
     },
 
