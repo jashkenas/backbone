@@ -604,64 +604,64 @@ $(document).ready(function() {
     model.set({x: 1});
   });
 
-  // test("save with `wait` succeeds without `validate`", 1, function() {
-  //   var model = new Backbone.Model();
-  //   model.url = '/test';
-  //   model.save({x: 1}, {wait: true});
-  //   ok(this.syncArgs.model === model);
-  // });
+  test("save with `wait` succeeds without `validate`", 1, function() {
+    var model = new Backbone.Model();
+    model.url = '/test';
+    model.save({x: 1}, {wait: true});
+    ok(this.syncArgs.model === model);
+  });
 
-  // test("`hasChanged` for falsey keys", 2, function() {
-  //   var model = new Backbone.Model();
-  //   model.set({x: true}, {silent: true});
-  //   ok(!model.hasChanged(0));
-  //   ok(!model.hasChanged(''));
-  // });
+  test("`hasChanged` for falsey keys", 2, function() {
+    var model = new Backbone.Model();
+    model.set({x: true}, {silent: true});
+    ok(!model.hasChanged(0));
+    ok(!model.hasChanged(''));
+  });
 
-  // test("`previous` for falsey keys", 2, function() {
-  //   var model = new Backbone.Model({0: true, '': true});
-  //   model.set({0: false, '': false}, {silent: true});
-  //   equal(model.previous(0), true);
-  //   equal(model.previous(''), true);
-  // });
+  test("`previous` for falsey keys", 2, function() {
+    var model = new Backbone.Model({0: true, '': true});
+    model.set({0: false, '': false}, {silent: true});
+    equal(model.previous(0), true);
+    equal(model.previous(''), true);
+  });
 
-  // test("`save` with `wait` sends correct attributes", 5, function() {
-  //   var changed = 0;
-  //   var model = new Backbone.Model({x: 1, y: 2});
-  //   model.url = '/test';
-  //   model.on('change:x', function() { changed++; });
-  //   model.save({x: 3}, {wait: true});
-  //   deepEqual(JSON.parse(this.ajaxSettings.data), {x: 3, y: 2});
-  //   equal(model.get('x'), 1);
-  //   equal(changed, 0);
-  //   this.syncArgs.options.success({});
-  //   equal(model.get('x'), 3);
-  //   equal(changed, 1);
-  // });
+  test("`save` with `wait` sends correct attributes", 5, function() {
+    var changed = 0;
+    var model = new Backbone.Model({x: 1, y: 2});
+    model.url = '/test';
+    model.on('change:x', function() { changed++; });
+    model.save({x: 3}, {wait: true});
+    deepEqual(JSON.parse(this.ajaxSettings.data), {x: 3, y: 2});
+    equal(model.get('x'), 1);
+    equal(changed, 0);
+    this.syncArgs.options.success({});
+    equal(model.get('x'), 3);
+    equal(changed, 1);
+  });
 
-  // test("a failed `save` with `wait` doesn't leave attributes behind", 1, function() {
-  //   var model = new Backbone.Model;
-  //   model.url = '/test';
-  //   model.save({x: 1}, {wait: true});
-  //   equal(model.get('x'), void 0);
-  // });
+  test("a failed `save` with `wait` doesn't leave attributes behind", 1, function() {
+    var model = new Backbone.Model;
+    model.url = '/test';
+    model.save({x: 1}, {wait: true});
+    equal(model.get('x'), void 0);
+  });
 
-  // test("#1030 - `save` with `wait` results in correct attributes if success is called during sync", 2, function() {
-  //   var model = new Backbone.Model({x: 1, y: 2});
-  //   model.sync = function(method, model, options) {
-  //     options.success();
-  //   };
-  //   model.on("change:x", function() { ok(true); });
-  //   model.save({x: 3}, {wait: true});
-  //   equal(model.get('x'), 3);
-  // });
+  test("#1030 - `save` with `wait` results in correct attributes if success is called during sync", 2, function() {
+    var model = new Backbone.Model({x: 1, y: 2});
+    model.sync = function(method, model, options) {
+      options.success();
+    };
+    model.on("change:x", function() { ok(true); });
+    model.save({x: 3}, {wait: true});
+    equal(model.get('x'), 3);
+  });
 
-  // test("save with wait validates attributes", function() {
-  //   var model = new Backbone.Model();
-  //   model.url = '/test';
-  //   model.validate = function() { ok(true); };
-  //   model.save({x: 1}, {wait: true});
-  // });
+  test("save with wait validates attributes", function() {
+    var model = new Backbone.Model();
+    model.url = '/test';
+    model.validate = function() { ok(true); };
+    model.save({x: 1}, {wait: true});
+  });
 
   // test("nested `set` during `'change:attr'`", 2, function() {
   //   var events = [];
