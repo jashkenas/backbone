@@ -586,7 +586,7 @@
       var error = this.validate(attrs, options);
       if (!error) return true;
       if (options && options.error) options.error(this, error, options);
-      this.trigger('error', this, error, options);
+      this.trigger('invalid', this, error, options);
       return false;
     }
 
@@ -641,7 +641,7 @@
       // from being added.
       for (i = models.length - 1; i >= 0; i--) {
         if(!(model = this._prepareModel(models[i], options))) {
-          this.trigger("error", this, models[i], options);
+          this.trigger('invalid', this, models[i], options);
           models.splice(i, 1);
           continue;
         }

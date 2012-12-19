@@ -204,7 +204,7 @@ $(document).ready(function() {
     a.validate = function(attrs) {
       equal(attrs.foo, void 0, "validate:true passed while unsetting");
     };
-    a.unset('foo', {validate:true});
+    a.unset('foo', {validate: true});
     equal(a.get('foo'), void 0, "Foo should have changed");
     delete a.validate;
     ok(changeCount == 2, "Change count should have incremented for unset.");
@@ -442,7 +442,7 @@ $(document).ready(function() {
     model.validate = function(attrs) {
       if (attrs.admin != this.get('admin')) return "Can't change admin status.";
     };
-    model.on('error', function(model, error) {
+    model.on('invalid', function(model, error) {
       lastError = error;
     });
     var result = model.set({a: 100});
@@ -488,7 +488,7 @@ $(document).ready(function() {
     var callback = function(model, error) {
       lastError = error;
     };
-    model.on('error', function(model, error) {
+    model.on('invalid', function(model, error) {
       boundError = true;
     });
     var result = model.set({a: 100}, {error: callback, validate:true});
@@ -868,7 +868,7 @@ $(document).ready(function() {
       validate: function(){ return 'invalid'; }
     });
     var model = new Model({id: 1});
-    model.on('error', function(){ ok(true); });
+    model.on('invalid', function(){ ok(true); });
     model.save();
   });
 

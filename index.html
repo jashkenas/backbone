@@ -820,7 +820,8 @@ view.stopListening(model);
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
       <li><b>"request"</b> (model, xhr, options) &mdash; when a model (or collection) has started a request to the server. </li>
       <li><b>"sync"</b> (model, resp, options) &mdash; when a model has been successfully synced with the server. </li>
-      <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
+      <li><b>"error"</b> (model, xhr, options) &mdash; when a model's <a href="#Model-save">save</a> call fails on the server. </li>
+      <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client. </li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (router, route, params) &mdash; Fired by history when <i>any</i> route has been matched.</li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
@@ -3894,6 +3895,11 @@ ActiveRecord::Base.include_root_in_json = false
         changes. This change means that the <tt>isValid</tt> method has
         been removed. Failed validations also trigger an error, even if an error
         callback is specified in the options.
+      </li>
+      <li>
+        Consolidated <tt>"sync"</tt> and <tt>"error"</tt> events within
+        <a href="#Sync">Backbone.sync</a>. They are now triggered regardless
+        of the existence of <tt>success</tt> or <tt>error</tt> callbacks.
       </li>
       <li>
         For mixed-mode APIs, <tt>Backbone.sync</tt> now accepts
