@@ -773,10 +773,10 @@ object.off();
     </p>
 
     <p id="Events-listenTo">
-      <b class="header">listenTo</b><code>object.listenTo(other, event, callback)</code>
+      <b class="header">listenTo</b><code>object.listenTo(other, event, callback, [context])</code>
       <br />
       Tell an <b>object</b> to listen to a particular event on an <b>other</b> object.
-      The advantage of using this form, instead of <tt>other.on(event, callback)</tt>,
+      The advantage of using this form, instead of <tt>other.on(event, callback, [context])</tt>,
       is that <b>listenTo</b> allows the <b>object</b> to keep track of the events,
       and they can be removed all at once later on.
     </p>
@@ -786,7 +786,7 @@ view.listenTo(model, 'change', view.render);
 </pre>
 
     <p id="Events-stopListening">
-      <b class="header">stopListening</b><code>object.stopListening([other], [event], [callback])</code>
+      <b class="header">stopListening</b><code>object.stopListening([other], [event], [callback], [context])</code>
       <br />
       Tell an <b>object</b> to stop listening to events. Either call
       <b>stopListening</b> with no arguments to have the <b>object</b> remove
@@ -822,7 +822,8 @@ view.stopListening(model);
       <li><b>"sync"</b> (model, resp, options) &mdash; when a model (or collection) has been successfully synced with the server. </li>
       <li><b>"error"</b> (model, xhr, options) &mdash; when a model (or collection) has failed to sync with the server. </li>
       <li><b>"error"</b> (model, error, options) &mdash; when a model's validation fails. </li>
-      <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
+      <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
+      <li><b>"route"</b> (router, route, params) &mdash; Fired by history when <i>any</i> route has been matched.</li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
     </ul>
 
@@ -977,7 +978,7 @@ book.set("title", "A Scandal in Bohemia");
       occur if the validation fails, and <b>set</b> will return <tt>false</tt>.
       Otherwise, <b>set</b> returns a reference to the model.
       You may also pass an <tt>error</tt>
-      callback in the options, which will be invoked instead of triggering an
+      callback in the options, which will be invoked alongside the
       <tt>"error"</tt> event, should validation fail.
     </p>
 
@@ -1274,12 +1275,12 @@ book.destroy({success: function(model, response) {
 </pre>
 
     <p id="Model-validate">
-      <b class="header">validate</b><code>model.validate(attributes)</code>
+      <b class="header">validate</b><code>model.validate(attributes, options)</code>
       <br />
       This method is left undefined, and you're encouraged to override it with
       your custom validation logic, if you have any that can be performed
       in JavaScript. <b>validate</b> is called before <tt>set</tt> and
-      <tt>save</tt>, and is passed the model attributes updated with the values
+      <tt>save</tt>, and is passed the model attributes, as well as the options
       from <tt>set</tt> or <tt>save</tt>.
       If the attributes are valid, don't return anything from <b>validate</b>;
       if they are invalid, return an error of your choosing. It
@@ -1292,8 +1293,8 @@ book.destroy({success: function(model, response) {
 
 <pre class="runnable">
 var Chapter = Backbone.Model.extend({
-  validate: function(attrs) {
-    if (attrs.end < attrs.start) {
+  validate: function(attrs, options) {
+    if (attrs.end &lt; attrs.start) {
       return "can't end before it starts";
     }
   }
@@ -1315,9 +1316,8 @@ one.set({
 
     <p>
       <tt>"error"</tt> events are useful for providing coarse-grained error
-      messages at the model or collection level, but if you have a specific view
-      that can better handle the error, you may override and suppress the event
-      by passing an <tt>error</tt> callback directly:
+      messages at the model or collection level. An <tt>error</tt> callback can
+      can also be specified in the options, to be called alongside the error event:
     </p>
 
 <pre>
@@ -1821,9 +1821,11 @@ alert(chapters.pluck('title'));
       <br />
       Force a collection to re-sort itself. You don't need to call this under
       normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a>
-      will sort itself whenever a model is added. Calling <b>sort</b>
-      triggers a <tt>"sort"</tt> event on the collection, unless silenced by passing
-      <tt>{silent: true}</tt>
+      will sort itself whenever a model is added. To disable sorting when adding
+      a model, pass <tt>{sort: false}</tt> to <tt>add</tt>. Calling <b>sort</b>
+      triggers a <tt>"sort"</tt> event on the collection, unless silenced by
+      passing
+      <tt>{silent: true}</tt>.
     </p>
 
     <p id="Collection-pluck">
@@ -2397,9 +2399,9 @@ var DocumentRow = Backbone.View.extend({
 </pre>
 
     <p>
-      Properties like <tt>tagName</tt>, <tt>el</tt>, and <tt>events</tt> may
-      also be defined as a function, if you want to wait to define them until
-      runtime.
+      Properties like <tt>tagName</tt>, <tt>id</tt>, <tt>className</tt>,
+      <tt>el</tt>, and <tt>events</tt> may also be defined as a function, if
+      you want to wait to define them until runtime.
     </p>
 
     <p id="View-constructor">
@@ -3857,7 +3859,7 @@ ActiveRecord::Base.include_root_in_json = false
         the existing models, instead of being ignored.
       </li>
       <li>
-        Added <a href="#Collection-update">update</a> (which also available as
+        Added <a href="#Collection-update">update</a> (which is also available as
         an option to <tt>fetch</tt>) for "smart" updating of sets of models.
       </li>
       <li>
@@ -3897,7 +3899,8 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         <a href="#Model-validate">Validation</a> now occurs even during "silent"
         changes. This change means that the <tt>isValid</tt> method has
-        been removed.
+        been removed. Failed validations also trigger an error, even if an error
+        callback is specified in the options.
       </li>
       <li>
         For mixed-mode APIs, <tt>Backbone.sync</tt> now accepts
@@ -3922,9 +3925,9 @@ ActiveRecord::Base.include_root_in_json = false
         definitions. Their presence (or absence) should not affect behavior.
       </li>
       <li>
-        When declaring a View, <tt>options</tt>, <tt>el</tt> and <tt>tagName</tt>
-        may now be defined as functions, if you want their values to be
-        determined at runtime.
+        When declaring a View, <tt>options</tt>, <tt>el</tt>, <tt>tagName</tt>,
+        <tt>id</tt> and <tt>className</tt> may now be defined as functions, if
+        you want their values to be determined at runtime.
       </li>
       <li>
         Added a <tt>Backbone.ajax</tt> hook for more convenient overriding of
@@ -3942,6 +3945,10 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         To set what library Backbone uses for DOM manipulation and Ajax calls,
         use <tt>Backbone.$ = ...</tt> instead of <tt>setDomLibrary</tt>.
+      </li>
+      <li>
+        Removed the <tt>Backbone.wrapError</tt> helper method. Overriding
+        <tt>sync</tt> should work better for those particular use cases.
       </li>
     </ul>
 
