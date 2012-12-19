@@ -880,6 +880,24 @@ $(document).ready(function() {
     equal(c.length, 2);
   });
 
+  test("update + merge with default values defined", function() {
+    var Model = Backbone.Model.extend({
+      defaults: {
+        key: 'value'
+      }
+    });
+    var m = new Model({id: 1});
+    var col = new Backbone.Collection([m]);
+    equal(col.first().get('key'), 'value');
+
+    col.update({id: 1, key: 'other'});
+    equal(col.first().get('key'), 'other');
+
+    col.update({id: 1, other: 'value'});
+    equal(col.first().get('key'), 'other');
+    equal(col.length, 1);
+  });
+
   test("#1894 - Push should not trigger a sort", 0, function() {
     var Collection = Backbone.Collection.extend({
       comparator: 'id',
@@ -940,7 +958,7 @@ $(document).ready(function() {
   test("`sort` is trigged on `add` when sorting occurs", 2, function () {
     var collection = new (Backbone.Collection.extend({
       comparator: 'id'
-    }))({id: 1, id: 2, id: 3});
+    }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
     collection.add({id: 4}); // trigger
     collection.add({id: 1}, {merge: true}); // trigger
