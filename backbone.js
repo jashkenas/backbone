@@ -380,7 +380,8 @@
     // determining if there *would be* a change.
     changedAttributes: function(diff) {
       if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
-      var val, changed = false, old = this._previousAttributes;
+      var val, changed = false;
+      var old = this._changing ? this._previousAttributes : this.attributes;
       for (var attr in diff) {
         if (_.isEqual(old[attr], (val = diff[attr]))) continue;
         (changed || (changed = {}))[attr] = val;
@@ -527,8 +528,7 @@
       return this.id == null;
     },
 
-    // Check if the model is currently in a valid state. It's only possible to
-    // get into an *invalid* state if you're using silent changes.
+    // Check if the model is currently in a valid state.
     isValid: function(options) {
       return !this.validate || !this.validate(this.attributes, options);
     },
@@ -559,7 +559,7 @@
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
-    if (models) this.reset(models, _.extend({silent: true}, options));
+    if (models) this.reset(models, options);
   };
 
   // Define the Collection's inheritable methods.
@@ -584,8 +584,7 @@
       return Backbone.sync.apply(this, arguments);
     },
 
-    // Add a model, or list of models to the set. Pass **silent** to avoid
-    // firing the `add` event for every new model.
+    // Add a model, or list of models to the set.
     add: function(models, options) {
       var i, args, length, model, attrs, existing, needsSort;
       var at = options && options.at;
@@ -632,8 +631,6 @@
       needsSort = needsSort && this.comparator && at == null;
       if (needsSort) this.sort({silent: true});
 
-      if (options && options.silent) return this;
-
       // Trigger `add` events.
       while (model = models.shift()) {
         model.trigger('add', model, this, options);
@@ -645,8 +642,7 @@
       return this;
     },
 
-    // Remove a model, or a list of models from the set. Pass silent to avoid
-    // firing the `remove` event for every model removed.
+    // Remove a model, or a list of models from the set.
     remove: function(models, options) {
       var i, l, index, model;
       options || (options = {});
@@ -659,10 +655,8 @@
         index = this.indexOf(model);
         this.models.splice(index, 1);
         this.length--;
-        if (!options.silent) {
-          options.index = index;
-          model.trigger('remove', model, this, options);
-        }
+        options.index = index;
+        model.trigger('remove', model, this, options);
         this._removeReference(model);
       }
       return this;
@@ -738,7 +732,7 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      if (!options || !options.silent) this.trigger('sort', this, options);
+      this.trigger('sort', this, options);
       return this;
     },
 
@@ -1118,7 +1112,7 @@
         this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
       }
 
-      if (!this.options.silent) return this.loadUrl();
+      return this.loadUrl();
     },
 
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,

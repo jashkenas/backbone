@@ -319,45 +319,44 @@ $(document).ready(function() {
     equal(model.get('name'), 'Rob');
   });
 
-  // test("changedAttributes", 3, function() {
-  //   var model = new Backbone.Model({a: 'a', b: 'b'});
-  //   equal(model.changedAttributes(), false);
-  //   equal(model.changedAttributes({a: 'a'}), false);
-  //   equal(model.changedAttributes({a: 'b'}).a, 'b');
-  // });
+  test("changedAttributes", 3, function() {
+    var model = new Backbone.Model({a: 'a', b: 'b'});
+    equal(model.changedAttributes(), false);
+    equal(model.changedAttributes({a: 'a'}), false);
+    equal(model.changedAttributes({a: 'b'}).a, 'b');
+  });
 
-  // test("change with options", 2, function() {
-  //   var value;
-  //   var model = new Backbone.Model({name: 'Rob'});
-  //   model.on('change', function(model, options) {
-  //     value = options.prefix + model.get('name');
-  //   });
-  //   model.set({name: 'Bob'}, {silent: true});
-  //   model.change({prefix: 'Mr. '});
-  //   equal(value, 'Mr. Bob');
-  //   model.set({name: 'Sue'}, {prefix: 'Ms. '});
-  //   equal(value, 'Ms. Sue');
-  // });
+  test("change with options", 2, function() {
+    var value;
+    var model = new Backbone.Model({name: 'Rob'});
+    model.on('change', function(model, options) {
+      value = options.prefix + model.get('name');
+    });
+    model.set({name: 'Bob'}, {prefix: 'Mr. '});
+    equal(value, 'Mr. Bob');
+    model.set({name: 'Sue'}, {prefix: 'Ms. '});
+    equal(value, 'Ms. Sue');
+  });
 
-  // test("change after initialize", 1, function () {
-  //   var changed = 0;
-  //   var attrs = {id: 1, label: 'c'};
-  //   var obj = new Backbone.Model(attrs);
-  //   obj.on('change', function() { changed += 1; });
-  //   obj.set(attrs);
-  //   equal(changed, 0);
-  // });
+  test("change after initialize", 1, function () {
+    var changed = 0;
+    var attrs = {id: 1, label: 'c'};
+    var obj = new Backbone.Model(attrs);
+    obj.on('change', function() { changed += 1; });
+    obj.set(attrs);
+    equal(changed, 0);
+  });
 
-  // test("save within change event", 1, function () {
-  //   var env = this;
-  //   var model = new Backbone.Model({firstName : "Taylor", lastName: "Swift"});
-  //   model.url = '/test';
-  //   model.on('change', function () {
-  //     model.save();
-  //     ok(_.isEqual(env.syncArgs.model, model));
-  //   });
-  //   model.set({lastName: 'Hicks'});
-  // });
+  test("save within change event", 1, function () {
+    var env = this;
+    var model = new Backbone.Model({firstName : "Taylor", lastName: "Swift"});
+    model.url = '/test';
+    model.on('change', function () {
+      model.save();
+      ok(_.isEqual(env.syncArgs.model, model));
+    });
+    model.set({lastName: 'Hicks'});
+  });
 
   // test("validate after save", 2, function() {
   //   var lastError, model = new Backbone.Model();
