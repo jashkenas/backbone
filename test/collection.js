@@ -887,7 +887,7 @@ $(document).ready(function() {
       }
     });
     var m = new Model({id: 1});
-    var col = new Backbone.Collection([m]);
+    var col = new Backbone.Collection([m], {model: Model});
     equal(col.first().get('key'), 'value');
 
     col.update({id: 1, key: 'other'});
