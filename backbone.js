@@ -240,7 +240,9 @@
     this._changes = [];
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attrs = this.parse(attrs, options);
-    if (defaults = _.result(this, 'defaults')) _.defaults(attrs, defaults);
+    if (defaults = _.result(this, 'defaults')) {
+      attrs = _.defaults({}, attrs, defaults);
+    }
     this.set(attrs, _.extend({silent: true}, options));
     this._currentAttributes = _.clone(this.attributes);
     this._previousAttributes = _.clone(this.attributes);
@@ -631,7 +633,7 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
-      var i, args, length, model, existing, needsSort;
+      var i, args, length, model, attrs, existing, needsSort;
       var at = options && options.at;
       var sort = ((options && options.sort) == null ? true : options.sort);
       models = _.isArray(models) ? models.slice() : [models];
@@ -639,8 +641,9 @@
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (i = models.length - 1; i >= 0; i--) {
-        if(!(model = this._prepareModel(models[i], options))) {
-          this.trigger('invalid', this, models[i], options);
+        attrs = models[i];
+        if(!(model = this._prepareModel(attrs, options))) {
+          this.trigger('invalid', this, attrs, options);
           models.splice(i, 1);
           continue;
         }
@@ -650,7 +653,7 @@
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
           if (options && options.merge) {
-            existing.set(model.attributes, options);
+            existing.set(attrs != model ? attrs : model.attributes, options);
             needsSort = sort;
           }
           models.splice(i, 1);
