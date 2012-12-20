@@ -305,7 +305,7 @@
       // Extract attributes and options.
       unset           = options && options.unset;
       changes         = [];
-      nested          = [];
+      nested          = false;
       changing        = this._changing;
       this._changing  = true;
 
@@ -326,7 +326,7 @@
         val = attrs[attr];
         if (!_.isEqual(current[attr], val)) changes.push(attr);
         if (!_.isEqual(prev[attr], val)) {
-          nested.push(attr);
+          nested = true;
           this.changed[attr] = val;
         } else {
           delete this.changed[attr];
@@ -342,7 +342,7 @@
       }
 
       if (changing) return this;
-      if (!this._pending && nested.length) this.trigger('change', this, options);
+      if (!this._pending && nested) this.trigger('change', this, options);
       while (this._pending) {
         this._pending = false;
         this.trigger('change', this, options);
