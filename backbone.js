@@ -295,15 +295,17 @@
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (_.isObject(key)) {
+      if (typeof key === 'object') {
         attrs = key;
         options = val;
       } else {
         (attrs = {})[key] = val;
       }
 
+      options || (options = {});
+
       // Extract attributes and options.
-      unset           = options && options.unset;
+      unset           = options.unset;
       changes         = [];
       nested          = false;
       changing        = this._changing;
@@ -428,7 +430,7 @@
       var attrs, model, success, method, toJSON, xhr;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (key == null || _.isObject(key)) {
+      if (key == null || typeof key === 'object') {
         attrs = key;
         options = val;
       } else if (key != null) {
@@ -542,7 +544,7 @@
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validationError = this.validate(attrs, options) || null;
       if (!error) return true;
-      this.trigger('invalid', this, error, options);
+      this.trigger('invalid', this, error, options || {});
       return false;
     }
 
@@ -587,10 +589,11 @@
 
     // Add a model, or list of models to the set.
     add: function(models, options) {
-      var i, args, length, model, attrs, existing, needsSort;
-      var at = options && options.at;
-      var sort = ((options && options.sort) == null ? true : options.sort);
       models = _.isArray(models) ? models.slice() : [models];
+      options || (options = {});
+      var i, args, length, model, attrs, existing, needsSort;
+      var at = options.at;
+      var sort = options.sort == null ? true : options.sort;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
@@ -606,7 +609,7 @@
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
-          if (options && options.merge) {
+          if (options.merge) {
             existing.set(attrs != model ? attrs : model.attributes, options);
             needsSort = sort;
           }
@@ -645,9 +648,9 @@
 
     // Remove a model, or a list of models from the set.
     remove: function(models, options) {
-      var i, l, index, model;
-      options || (options = {});
       models = _.isArray(models) ? models.slice() : [models];
+      options || (options = {});
+      var i, l, index, model;
       for (i = 0, l = models.length; i < l; i++) {
         model = this.get(models[i]);
         if (!model) continue;
@@ -733,7 +736,7 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      this.trigger('sort', this, options);
+      this.trigger('sort', this, options || {});
       return this;
     },
 
@@ -745,10 +748,10 @@
     // Smartly update a collection with a change set of models, adding,
     // removing, and merging as necessary.
     update: function(models, options) {
-      var model, i, l, existing;
-      var add = [], remove = [], modelMap = {};
       options = _.extend({add: true, merge: true, remove: true}, options);
       if (options.parse) models = this.parse(models, options);
+      var model, i, l, existing;
+      var add = [], remove = [], modelMap = {};
 
       // Allow a single model (or no argument) to be passed.
       if (!_.isArray(models)) models = models ? [models] : [];
@@ -814,9 +817,9 @@
     // collection immediately, unless `wait: true` is passed, in which case we
     // wait for the server to agree.
     create: function(model, options) {
-      var collection = this;
       options = options ? _.clone(options) : {};
       model = this._prepareModel(model, options);
+      var collection = this;
       if (!model) return false;
       if (!options.wait) collection.add(model, options);
       var success = options.success;
