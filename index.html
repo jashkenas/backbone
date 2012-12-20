@@ -3949,6 +3949,12 @@ ActiveRecord::Base.include_root_in_json = false
         Removed the <tt>Backbone.wrapError</tt> helper method. Overriding
         <tt>sync</tt> should work better for those particular use cases.
       </li>
+      <li>
+        To improve the performance of <tt>add</tt>, <tt>options.index</tt>
+        will no longer be set in the `add` event callback.
+        <tt>collection.indexOf(model)</tt>can be used to retrieve the index
+        of a model as necessary.
+      </li>
     </ul>
 
     <b class="header">0.9.2</b> &mdash; <small><i>March 21, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.1...0.9.2">Diff</a><br />
