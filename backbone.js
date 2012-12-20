@@ -242,7 +242,7 @@
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
-    this.set(attrs);
+    this.set(attrs, options);
     this.initialize.apply(this, arguments);
   };
 
@@ -291,7 +291,7 @@
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
     set: function(key, val, options) {
-      var attr, attrs, unset, changes, changing, prev, current;
+      var attr, attrs, unset, changes, nested, changing, prev, current;
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
@@ -305,6 +305,7 @@
       // Extract attributes and options.
       unset           = options && options.unset;
       changes         = [];
+      nested          = [];
       changing        = this._changing;
       this._changing  = true;
 
@@ -325,6 +326,7 @@
         val = attrs[attr];
         if (!_.isEqual(current[attr], val)) changes.push(attr, val);
         if (!_.isEqual(prev[attr], val)) {
+          nested.push(attr, val);
           this.changed[attr] = val;
         } else {
           delete this.changed[attr];
@@ -332,14 +334,21 @@
         unset ? delete current[attr] : current[attr] = val;
       }
 
+      this._pending = !!changes.length;
+
       // Trigger all relevant attribute changes.
       for (var i = 0, l = changes.length; i < l; i += 2) {
         this.trigger('change:' + changes[i], this, changes[i + 1], options);
       }
 
       if (changing) return this;
-      if (changes.length) this.trigger('change', this, options);
+      if (!this._pending && nested.length) this.trigger('change', this, options);
+      while (this._pending) {
+        this._pending = false;
+        this.trigger('change', this, options);
+      }
       this.changed = {};
+      this._pending = false;
       this._changing = false;
       return this;
     },
