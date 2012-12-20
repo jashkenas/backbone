@@ -591,17 +591,16 @@
     add: function(models, options) {
       models = _.isArray(models) ? models.slice() : [models];
       options || (options = {});
-      var i, args, length, model, attrs, existing, needsSort;
+      var i, l, args, length, model, attrs, existing, needsSort, add = [];
       var at = options.at;
       var sort = options.sort == null ? true : options.sort;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
-      for (i = models.length - 1; i >= 0; i--) {
+      for (i = 0, l = models.length; i < l; i++) {
         attrs = models[i];
         if(!(model = this._prepareModel(attrs, options))) {
           this.trigger('invalid', this, attrs, options);
-          models.splice(i, 1);
           continue;
         }
         models[i] = model;
@@ -613,9 +612,11 @@
             existing.set(attrs != model ? attrs : model.attributes, options);
             needsSort = sort;
           }
-          models.splice(i, 1);
           continue;
         }
+
+        // This is a new model, push it to the `add` list.
+        add.push(model);
 
         // Listen to added models' events, and index models for lookup by
         // `id` and by `cid`.
@@ -625,19 +626,23 @@
       }
 
       // See if sorting is needed, update `length` and splice in new models.
-      if (models.length) needsSort = sort;
-      this.length += models.length;
-      args = [at != null ? at : this.models.length, 0];
-      push.apply(args, models);
-      splice.apply(this.models, args);
+      if (add.length) {
+        needsSort = sort;
+        this.length += add.length;
+        if (at != null) {
+          splice.apply(this.models, [at, 0].concat(add));
+        } else {
+          push.apply(this.models, add);
+        }
+      }
 
       // Silently sort the collection if appropriate.
       needsSort = needsSort && this.comparator && at == null;
       if (needsSort) this.sort({silent: true});
 
       // Trigger `add` events.
-      while (model = models.shift()) {
-        model.trigger('add', model, this, options);
+      for (i = 0, l = add.length; i < l; i++) {
+        (model = add[i]).trigger('add', model, this, options);
       }
 
       // Trigger `sort` if the collection was sorted.
