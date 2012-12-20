@@ -296,7 +296,7 @@
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (_.isObject(key)) {
+      if (typeof key === 'object') {
         attrs = key;
         options = val;
       } else {
@@ -369,7 +369,7 @@
       var attrs, current, done;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (key == null || _.isObject(key)) {
+      if (key === void 0 || typeof key === 'object') {
         attrs = key;
         options = val;
       } else if (key != null) {
