@@ -859,7 +859,7 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
-        var method = options.update ? 'update' : 'reset';
+        var method = (options.update || options.add) ? 'update' : 'reset';
         collection[method](resp, options);
         if (success) success(collection, resp, options);
       };
