@@ -384,4 +384,8 @@ $(document).ready(function() {
     Backbone.trigger('all');
   });
 
+  test("once without a callback is a noop", 0, function() {
+    _.extend({}, Backbone.Events).once('event').trigger('event');
+  });
+
 });
