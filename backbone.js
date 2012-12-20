@@ -324,9 +324,9 @@
       // For each `set` attribute, update or delete the current value.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr, val);
+        if (!_.isEqual(current[attr], val)) changes.push(attr);
         if (!_.isEqual(prev[attr], val)) {
-          nested.push(attr, val);
+          nested.push(attr);
           this.changed[attr] = val;
         } else {
           delete this.changed[attr];
@@ -337,8 +337,8 @@
       this._pending = !!changes.length;
 
       // Trigger all relevant attribute changes.
-      for (var i = 0, l = changes.length; i < l; i += 2) {
-        this.trigger('change:' + changes[i], this, changes[i + 1], options);
+      for (var i = 0, l = changes.length; i < l; i++) {
+        this.trigger('change:' + changes[i], this, current[changes[i]], options);
       }
 
       if (changing) return this;
