@@ -663,22 +663,25 @@ $(document).ready(function() {
     model.save({x: 1}, {wait: true});
   });
 
-  // test("nested `set` during `'change:attr'`", 2, function() {
-  //   var events = [];
-  //   var model = new Backbone.Model();
-  //   model.on('all', function(event) { events.push(event); });
-  //   model.on('change', function() {
-  //     model.set({z: true}, {silent:true});
-  //   });
-  //   model.on('change:x', function() {
-  //     model.set({y: true});
-  //   });
-  //   model.set({x: true});
-  //   deepEqual(events, ['change:y', 'change:x', 'change']);
-  //   events = [];
-  //   model.change();
-  //   deepEqual(events, ['change:z', 'change']);
-  // });
+  test("nested `set` during `'change:attr'`", 5, function() {
+    var events = [];
+    var model = new Backbone.Model();
+    model.on('all', function(event) { events.push(event); });
+    model.on('change', function() {
+      model.set({z: true});
+    });
+    model.on('change', function() {
+      ok(true);
+      ok('z' in model.changed);
+      ok('x' in model.changed);
+      ok('y' in model.changed);
+    });
+    model.on('change:x', function() {
+      model.set({y: true});
+    });
+    model.set({x: true});
+    deepEqual(events, ['change:y', 'change:x', 'change:z', 'change']);
+  });
 
   // test("nested `change` only fires once", 1, function() {
   //   var model = new Backbone.Model();
