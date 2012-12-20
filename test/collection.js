@@ -959,8 +959,9 @@ $(document).ready(function() {
       comparator: 'id'
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
-    collection.add({id: 4}); // trigger
-    collection.add({id: 1}, {merge: true}); // trigger
+    collection.add({id: 4}); // trigger, new model
+    collection.add({id: 1, a: 1}, {merge: true}); // trigger, changed model
+    collection.add({id: 1, a: 1}, {merge: true}); // don't trigger
     collection.add({id: 1}); // don't trigger
     collection.add({id: 5}, {silent: true}); // don't trigger
   });

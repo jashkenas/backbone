@@ -593,7 +593,8 @@
       options || (options = {});
       var i, l, args, length, model, attrs, existing, needsSort, add = [];
       var at = options.at;
-      var sort = options.sort == null ? true : options.sort;
+      var sort = (options.sort == null ? true : options.sort) &&
+                  needsSort && this.comparator && at == null;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
@@ -610,7 +611,7 @@
         if (existing = this.get(model)) {
           if (options.merge) {
             existing.set(attrs != model ? attrs : model.attributes, options);
-            needsSort = sort;
+            if (sort && !needsSort && existing.hasChanged()) needsSort = sort;
           }
           continue;
         }
@@ -637,7 +638,6 @@
       }
 
       // Silently sort the collection if appropriate.
-      needsSort = needsSort && this.comparator && at == null;
       if (needsSort) this.sort({silent: true});
 
       // Trigger `add` events.
