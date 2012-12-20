@@ -407,6 +407,19 @@ $(document).ready(function() {
     equal(counter, 1);
   });
 
+  test("ensure fetch calls 'update' if only {add: true} option is passed", 1, function() {
+    var collection = new Backbone.Collection;
+    var counter = 0;
+    collection.update = function(models) {
+      counter++;
+      return this;
+    };
+    collection.url = '/test';
+    collection.fetch({add: true});
+    this.syncArgs.options.success([]);
+    equal(counter, 1);
+  });
+
   test("create", 4, function() {
     var collection = new Backbone.Collection;
     collection.url = '/test';
