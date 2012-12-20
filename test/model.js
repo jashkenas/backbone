@@ -613,14 +613,14 @@ $(document).ready(function() {
 
   test("`hasChanged` for falsey keys", 2, function() {
     var model = new Backbone.Model();
-    model.set({x: true}, {silent: true});
+    model.set({x: true});
     ok(!model.hasChanged(0));
     ok(!model.hasChanged(''));
   });
 
   test("`previous` for falsey keys", 2, function() {
     var model = new Backbone.Model({0: true, '': true});
-    model.set({0: false, '': false}, {silent: true});
+    model.set({0: false, '': false});
     equal(model.previous(0), true);
     equal(model.previous(''), true);
   });
@@ -739,7 +739,7 @@ $(document).ready(function() {
     model.set({x: true});
   });
 
-  test("multiple nested changes with silent", 1, function() {
+  test("multiple nested changes", 1, function() {
     var changes = [];
     var model = new Backbone.Model();
     model.on('change:b', function(model, val) { changes.push(val); });
@@ -855,9 +855,9 @@ $(document).ready(function() {
     var changes = [];
     var model = new Backbone.Model();
     model.on('change', function() {
-      model.set({a:'c'}, {silent:true});
-      model.set({b:2}, {silent:true});
-      model.unset('c', {silent:true});
+      model.set({a:'c'});
+      model.set({b: 2});
+      model.unset('c');
     });
     model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
     model.set({a:'a', b:1, c:'item'});
@@ -872,7 +872,7 @@ $(document).ready(function() {
     expect(0);
   });
 
-  test("silent changes in last `change` event back to original does not trigger change", 2, function() {
+  test("changes in last `change` event", 2, function() {
     var changes = [];
     var model = new Backbone.Model();
     model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
@@ -887,7 +887,7 @@ $(document).ready(function() {
 
   test("#1943 change calculations should use _.isEqual", function() {
     var model = new Backbone.Model({a: {key: 'value'}});
-    model.set('a', {key:'value'}, {silent:true});
+    model.set('a', {key:'value'});
     equal(model.changedAttributes(), false);
   });
 
