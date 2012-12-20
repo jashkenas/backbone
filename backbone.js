@@ -475,6 +475,7 @@
     // a `"change:attribute"` event for each changed attribute.
     // Calling this will cause all objects observing the model to update.
     change: function(options) {
+      options || (options = {});
       var changing = this._changing;
       this._changing = true;
 
@@ -584,6 +585,7 @@
     // `"error"` event and call the error callback, if specified.
     _validate: function(attrs, options) {
       if (!options || !options.validate || !this.validate) return true;
+      options || (options = {});
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validationError = this.validate(attrs, options) || null;
       if (!error) return true;
@@ -633,9 +635,10 @@
     // Add a model, or list of models to the set. Pass **silent** to avoid
     // firing the `add` event for every new model.
     add: function(models, options) {
+      options || (options = {});
       var i, args, length, model, attrs, existing, needsSort;
-      var at = options && options.at;
-      var sort = ((options && options.sort) == null ? true : options.sort);
+      var at = options.at;
+      var sort = options.sort == null ? true : options.sort;
       models = _.isArray(models) ? models.slice() : [models];
 
       // Turn bare objects into model references, and prevent invalid models
@@ -652,7 +655,7 @@
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
-          if (options && options.merge) {
+          if (options.merge) {
             existing.set(attrs != model ? attrs : model.attributes, options);
             needsSort = sort;
           }
@@ -678,7 +681,7 @@
       needsSort = needsSort && this.comparator && at == null;
       if (needsSort) this.sort({silent: true});
 
-      if (options && options.silent) return this;
+      if (options.silent) return this;
 
       // Trigger `add` events.
       while (model = models.shift()) {
@@ -694,9 +697,9 @@
     // Remove a model, or a list of models from the set. Pass silent to avoid
     // firing the `remove` event for every model removed.
     remove: function(models, options) {
-      var i, l, index, model;
       options || (options = {});
       models = _.isArray(models) ? models.slice() : [models];
+      var i, l, index, model;
       for (i = 0, l = models.length; i < l; i++) {
         model = this.get(models[i]);
         if (!model) continue;
@@ -777,14 +780,16 @@
       if (!this.comparator) {
         throw new Error('Cannot sort a set without a comparator');
       }
+      options || (options = {});
 
+      // Run sort based on type of `comparator`.
       if (_.isString(this.comparator) || this.comparator.length === 1) {
         this.models = this.sortBy(this.comparator, this);
       } else {
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      if (!options || !options.silent) this.trigger('sort', this, options);
+      if (!options.silent) this.trigger('sort', this, options);
       return this;
     },
 
@@ -796,10 +801,10 @@
     // Smartly update a collection with a change set of models, adding,
     // removing, and merging as necessary.
     update: function(models, options) {
-      var model, i, l, existing;
-      var add = [], remove = [], modelMap = {};
       options = _.extend({add: true, merge: true, remove: true}, options);
       if (options.parse) models = this.parse(models, options);
+      var model, i, l, existing;
+      var add = [], remove = [], modelMap = {};
 
       // Allow a single model (or no argument) to be passed.
       if (!_.isArray(models)) models = models ? [models] : [];
@@ -865,9 +870,9 @@
     // collection immediately, unless `wait: true` is passed, in which case we
     // wait for the server to agree.
     create: function(model, options) {
-      var collection = this;
       options = options ? _.clone(options) : {};
       model = this._prepareModel(model, options);
+      var collection = this;
       if (!model) return false;
       if (!options.wait) collection.add(model, options);
       var success = options.success;
