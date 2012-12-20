@@ -1305,10 +1305,20 @@
       return this;
     },
 
-    // Remove this view by taking the element out of the DOM, and removing any
-    // applicable Backbone.Events listeners.
+    // Remove this view by taking the element out of the DOM, removing any
+    // applicable Backbone.Events listeners and undelegating events.
     remove: function() {
       this.$el.remove();
+      this.undelegateEvents();
+      this.stopListening();
+      return this;
+    },
+    
+    // Empties the view but leaves the container by removing any
+    // applicable Backbone.Events listeners and undelegating events.
+    empty: function() {
+      this.$el.empty();
+      this.undelegateEvents();
       this.stopListening();
       return this;
     },
