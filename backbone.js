@@ -638,7 +638,8 @@
       options || (options = {});
       var i, args, length, model, attrs, existing, needsSort;
       var at = options.at;
-      var sort = options.sort == null ? true : options.sort;
+      var sort = (options.sort == null ? true : options.sort) &&
+                  this.comparator && at == null;
       models = _.isArray(models) ? models.slice() : [models];
 
       // Turn bare objects into model references, and prevent invalid models
@@ -657,7 +658,7 @@
         if (existing = this.get(model)) {
           if (options.merge) {
             existing.set(attrs != model ? attrs : model.attributes, options);
-            needsSort = sort;
+            if (sort && !needsSort && existing.hasChanged()) needsSort = true;
           }
           models.splice(i, 1);
           continue;
@@ -678,7 +679,6 @@
       splice.apply(this.models, args);
 
       // Silently sort the collection if appropriate.
-      needsSort = needsSort && this.comparator && at == null;
       if (needsSort) this.sort({silent: true});
 
       if (options.silent) return this;
