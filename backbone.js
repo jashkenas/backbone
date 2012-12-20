@@ -1313,6 +1313,15 @@
       this.stopListening();
       return this;
     },
+    
+    // Empties the view but leaves the container by removing any
+    // applicable Backbone.Events listeners and undelegating events.
+    empty: function() {
+      this.$el.empty();
+      this.undelegateEvents();
+      this.stopListening();
+      return this;
+    },
 
     // For small amounts of DOM Elements, where a full-blown template isn't
     // needed, use **make** to manufacture elements, one at a time.
