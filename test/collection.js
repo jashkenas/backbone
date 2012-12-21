@@ -959,7 +959,7 @@ $(document).ready(function() {
       comparator: 'a'
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
-    collection.add({id: 4}); // sort, new model
+    collection.add({id: 4}); // do sort, new model
     collection.add({id: 1, a: 1}, {merge: true}); // do sort, comparator change
     collection.add({id: 1, b: 1}, {merge: true}); // don't sort, no comparator change
     collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no comparator change
@@ -974,10 +974,10 @@ $(document).ready(function() {
       }
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
-    collection.add({id: 4}); // sort, new model
-    collection.add({id: 1, a: 1}, {merge: true}); // do sort, comparator change
-    collection.add({id: 1, b: 1}, {merge: true}); // don't sort, no comparator change
-    collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no comparator change
+    collection.add({id: 4}); // do sort, new model
+    collection.add({id: 1, a: 1}, {merge: true}); // do sort, model change
+    collection.add({id: 1, b: 1}, {merge: true}); // do sort, model change
+    collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no model change
     collection.add(collection.models); // don't sort, nothing new
     collection.add(collection.models, {merge: true}); // don't sort
   });
