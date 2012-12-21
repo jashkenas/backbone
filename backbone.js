@@ -736,16 +736,17 @@
     // normal circumstances, as the set will maintain sort order as each item
     // is added.
     sort: function(options) {
-      if (!this.comparator) {
+      var comparator = this.comparator;
+      if (!comparator) {
         throw new Error('Cannot sort a set without a comparator');
       }
       options || (options = {});
 
       // Run sort based on type of `comparator`.
-      if (_.isString(this.comparator) || this.comparator.length === 1) {
-        this.models = this.sortBy(this.comparator, this);
+      if (typeof comparator === 'string' || comparator.length === 1) {
+        this.models = this.sortBy(comparator, this);
       } else {
-        this.models.sort(_.bind(this.comparator, this));
+        this.models.sort(_.bind(comparator, this));
       }
 
       if (!options.silent) this.trigger('sort', this, options);
