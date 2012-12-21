@@ -604,8 +604,8 @@
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
           if (options.merge) {
-            existing.set(attrs != model ? attrs : model.attributes, options);
-            if (sort && !needsSort && existing.hasChanged()) needsSort = sort;
+            existing.set(attrs === model ? model.attributes : attrs, options);
+            if (sort && !needsSort && existing.hasChanged()) needsSort = true;
           }
           continue;
         }
@@ -622,7 +622,7 @@
 
       // See if sorting is needed, update `length` and splice in new models.
       if (add.length) {
-        needsSort = sort;
+        if (sort) needsSort = true;
         this.length += add.length;
         if (at != null) {
           splice.apply(this.models, [at, 0].concat(add));
