@@ -427,7 +427,7 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, val, options) {
-      var attrs, model, success, method, toJSON, xhr;
+      var attrs, model, success, method, xhr, attributes = this.attributes;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
       if (key == null || typeof key === 'object') {
@@ -445,11 +445,9 @@
       // Do not persist invalid models.
       if (!this._validate(attrs, options)) return false;
 
+      // Set temporary attributes if `{wait: true}`.
       if (attrs && options.wait) {
-        toJSON = this.toJSON;
-        this.toJSON = function() {
-          return _.extend(toJSON.call(this, options), attrs);
-        };
+        this.attributes = _.extend({}, attributes, attrs);
       }
 
       // After a successful server-side save, the client is (optionally)
@@ -457,6 +455,8 @@
       model = this;
       success = options.success;
       options.success = function(resp, status, xhr) {
+        // Ensure attributes are restored during synchronous saves.
+        model.attributes = attributes;
         var serverAttrs = model.parse(resp, options);
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (!model.set(serverAttrs, options)) return false;
@@ -468,7 +468,8 @@
       if (method == 'patch') options.attrs = attrs;
       xhr = this.sync(method, this, options);
 
-      if (options.wait) this.toJSON = toJSON;
+      // Restore attributes.
+      if (attrs && options.wait) this.attributes = attributes;
 
       return xhr;
     },
