@@ -436,27 +436,21 @@
       } else if (key != null) {
         (attrs = {})[key] = val;
       }
+
+      // If we're not waiting and attributes exist, save acts as `set(attr).save(null, opts)`.
+      if (attrs && (!options || !options.wait) && !this.set(attrs, options)) return false;
+
       options = _.extend({validate: true}, options);
 
-      // If we're "wait"-ing to set changed attributes, validate early.
-      if (options.wait) {
-        if (attrs && !this._validate(attrs, options)) return false;
-      }
-
-      // Regular saves `set` attributes before persisting to the server.
-      if (attrs) {
-        if (options.wait) {
-          toJSON = this.toJSON;
-          this.toJSON = function() {
-            return _.extend(toJSON.call(this, options), attrs);
-          };
-        } else {
-          if (!this.set(attrs, options)) return false;
-        }
-      }
-
       // Do not persist invalid models.
-      if (!attrs && !this._validate(null, options)) return false;
+      if (!this._validate(attrs, options)) return false;
+
+      if (attrs && options.wait) {
+        toJSON = this.toJSON;
+        this.toJSON = function() {
+          return _.extend(toJSON.call(this, options), attrs);
+        };
+      }
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
@@ -474,7 +468,7 @@
       if (method == 'patch') options.attrs = attrs;
       xhr = this.sync(method, this, options);
 
-      this.toJSON = toJSON;
+      if (options.wait) this.toJSON = toJSON;
 
       return xhr;
     },
