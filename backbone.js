@@ -304,6 +304,7 @@
 
       // Extract attributes and options.
       unset           = options && options.unset;
+      silent          = options && options.silent;
       changes         = [];
       nested          = false;
       changing        = this._changing;
@@ -337,15 +338,19 @@
       this._pending = !!changes.length;
 
       // Trigger all relevant attribute changes.
-      for (var i = 0, l = changes.length; i < l; i++) {
-        this.trigger('change:' + changes[i], this, current[changes[i]], options);
+      if (!silent) {
+        for (var i = 0, l = changes.length; i < l; i++) {
+          this.trigger('change:' + changes[i], this, current[changes[i]], options);
+        }
       }
 
       if (changing) return this;
-      if (!this._pending && nested) this.trigger('change', this, options);
-      while (this._pending) {
-        this._pending = false;
-        this.trigger('change', this, options);
+      if (!silent) {
+        if (!this._pending && nested) this.trigger('change', this, options);
+        while (this._pending) {
+          this._pending = false;
+          this.trigger('change', this, options);
+        }
       }
       this.changed = {};
       this._pending = false;
@@ -560,7 +565,7 @@
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
-    if (models) this.reset(models, options);
+    if (models) this.reset(models, _.extend({silent: true}, options));
   };
 
   // Define the Collection's inheritable methods.
@@ -632,6 +637,8 @@
       needsSort = needsSort && this.comparator && at == null;
       if (needsSort) this.sort({silent: true});
 
+      if (options && options.silent) return this;
+
       // Trigger `add` events.
       while (model = models.shift()) {
         model.trigger('add', model, this, options);
@@ -656,8 +663,10 @@
         index = this.indexOf(model);
         this.models.splice(index, 1);
         this.length--;
-        options.index = index;
-        model.trigger('remove', model, this, options);
+        if (!options.silent) {
+          options.index = index;
+          model.trigger('remove', model, this, options);
+        }
         this._removeReference(model);
       }
       return this;
@@ -733,7 +742,7 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      this.trigger('sort', this, options);
+      if (!options || !options.silent) this.trigger('sort', this, options);
       return this;
     },
 
@@ -1113,7 +1122,7 @@
         this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
       }
 
-      return this.loadUrl();
+      if (!this.options.silent) return this.loadUrl();
     },
 
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
