@@ -295,11 +295,11 @@
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (typeof key === 'string') {
-        (attrs = {})[key] = val;
-      } else {
+      if (typeof key === 'object') {
         attrs = key;
         options = val;
+      } else {
+        (attrs = {})[key] = val;
       }
 
       options || (options = {});
@@ -434,11 +434,11 @@
       var attrs, model, success, method, xhr, attributes = this.attributes;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (typeof key === 'string') {
-        (attrs = {})[key] = val;
-      } else {
+      if (key == null || typeof key === 'object') {
         attrs = key;
         options = val;
+      } else {
+        (attrs = {})[key] = val;
       }
 
       // If we're not waiting and attributes exist, save acts as `set(attr).save(null, opts)`.
