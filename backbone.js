@@ -354,7 +354,7 @@
           this.trigger('change', this, options);
         }
       }
-      this.changed = {};
+      // this.changed = {};
       this._pending = false;
       this._changing = false;
       return this;
@@ -590,10 +590,10 @@
     add: function(models, options) {
       models = _.isArray(models) ? models.slice() : [models];
       options || (options = {});
-      var i, l, args, length, model, attrs, existing, needsSort, add = [];
-      var at = options.at;
-      var sort = (options.sort == null ? true : options.sort) &&
-                  needsSort && this.comparator && at == null;
+      var i, l, args, length, model, attrs, existing, needsSort, at, sort, add;
+      add = [];
+      at = options.at;
+      sort = this.comparator && (at == null) && (options.sort == null ? true : options.sort) ;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.

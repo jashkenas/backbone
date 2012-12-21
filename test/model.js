@@ -308,8 +308,8 @@ $(document).ready(function() {
   });
 
   test("change, hasChanged, changedAttributes, previous, previousAttributes", 9, function() {
-    var model = new Backbone.Model({name : "Tim", age : 10});
-    equal(model.changedAttributes(), false);
+    var model = new Backbone.Model({name: "Tim", age: 10});
+    deepEqual(model.changedAttributes(), {name: "Tim", age: 10});
     model.on('change', function() {
       ok(model.hasChanged('name'), 'name changed');
       ok(!model.hasChanged('age'), 'age did not');
@@ -317,15 +317,15 @@ $(document).ready(function() {
       equal(model.previous('name'), 'Tim');
       ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}), 'previousAttributes is correct');
     });
-    equal(model.hasChanged(), false);
-    equal(model.hasChanged(undefined), false);
+    equal(model.hasChanged(), true);
+    equal(model.hasChanged(undefined), true);
     model.set({name : 'Rob'});
     equal(model.get('name'), 'Rob');
   });
 
   test("changedAttributes", 3, function() {
     var model = new Backbone.Model({a: 'a', b: 'b'});
-    equal(model.changedAttributes(), false);
+    deepEqual(model.changedAttributes(), {a: 'a', b: 'b'});
     equal(model.changedAttributes({a: 'a'}), false);
     equal(model.changedAttributes({a: 'b'}).a, 'b');
   });
@@ -596,16 +596,18 @@ $(document).ready(function() {
     ok('x' in model.attributes);
   });
 
-  test("hasChanged is false outside of change events, and true within", 4, function() {
+  test("hasChanged works outside of change events, and true within", 6, function() {
     var model = new Backbone.Model({x: 1});
     model.on('change:x', function() {
       ok(model.hasChanged('x'));
       equal(model.get('x'), 1);
     });
     model.set({x: 2}, {silent: true});
-    ok(!model.hasChanged());
+    ok(model.hasChanged());
+    equal(model.hasChanged('x'), true);
     model.set({x: 1});
-    ok(!model.hasChanged());
+    ok(model.hasChanged());
+    equal(model.hasChanged('x'), true);
   });
 
   test("save with `wait` succeeds without `validate`", 1, function() {
