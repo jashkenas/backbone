@@ -590,10 +590,11 @@
     add: function(models, options) {
       models = _.isArray(models) ? models.slice() : [models];
       options || (options = {});
-      var i, l, args, length, model, attrs, existing, needsSort, at, sort, add;
+      var i, l, args, length, model, attrs, existing, doSort, sortAttr, at, sort, add;
       add = [];
       at = options.at;
-      sort = this.comparator && (at == null) && (options.sort == null ? true : options.sort) ;
+      sort = this.comparator && (at == null) && (options.sort == null || options.sort);
+      sortAttr = typeof this.comparator === 'string' ? this.comparator : null;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
@@ -610,7 +611,7 @@
         if (existing = this.get(model)) {
           if (options.merge) {
             existing.set(attrs === model ? model.attributes : attrs, options);
-            if (sort && !needsSort && existing.hasChanged()) needsSort = true;
+            if (sort && !doSort && existing.hasChanged(sortAttr)) doSort = true;
           }
           continue;
         }
@@ -627,7 +628,7 @@
 
       // See if sorting is needed, update `length` and splice in new models.
       if (add.length) {
-        if (sort) needsSort = true;
+        if (sort) doSort = true;
         this.length += add.length;
         if (at != null) {
           splice.apply(this.models, [at, 0].concat(add));
@@ -637,7 +638,7 @@
       }
 
       // Silently sort the collection if appropriate.
-      if (needsSort) this.sort({silent: true});
+      if (doSort) this.sort({silent: true});
 
       if (options && options.silent) return this;
 
@@ -647,7 +648,7 @@
       }
 
       // Trigger `sort` if the collection was sorted.
-      if (needsSort) this.trigger('sort', this, options);
+      if (doSort) this.trigger('sort', this, options);
 
       return this;
     },

@@ -956,12 +956,13 @@ $(document).ready(function() {
 
   test("`add` only `sort`s when necessary", 2, function () {
     var collection = new (Backbone.Collection.extend({
-      comparator: 'id'
+      comparator: 'a'
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
     collection.add({id: 4}); // sort, new model
-    collection.add({id: 1, a: 1}, {merge: true}); // sort, changed model
-    collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no change
+    collection.add({id: 1, a: 1}, {merge: true}); // do sort, comparator change
+    collection.add({id: 1, b: 1}, {merge: true}); // don't sort, no comparator change
+    collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no comparator change
     collection.add(collection.models); // don't sort, nothing new
     collection.add(collection.models, {merge: true}); // don't sort
   });
