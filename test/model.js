@@ -272,6 +272,21 @@ $(document).ready(function() {
     equal(model.get('name'), '');
   });
 
+  test("setting an object", 1, function() {
+    var model = new Backbone.Model({
+      custom: { foo: 1 }
+    });
+    model.on('change', function() {
+      ok(1);
+    });
+    model.set({
+      custom: { foo: 1 } // no change should be fired
+    });
+    model.set({
+      custom: { foo: 2 } // change event should be fired
+    });
+  });
+
   test("clear", 3, function() {
     var changed;
     var model = new Backbone.Model({id: 1, name : "Model"});
