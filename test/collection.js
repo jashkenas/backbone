@@ -967,7 +967,7 @@ $(document).ready(function() {
     collection.add(collection.models, {merge: true}); // don't sort
   });
 
-  test("`add` only `sort`s when necessary with comparator function", 2, function () {
+  test("`add` only `sort`s when necessary with comparator function", 3, function () {
     var collection = new (Backbone.Collection.extend({
       comparator: function(a, b) {
         a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
