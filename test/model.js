@@ -308,7 +308,7 @@ $(document).ready(function() {
     equal(model.get('two'), 4);
   });
 
-  test("change, hasChanged, changedAttributes, previous, previousAttributes", 12, function() {
+  test("change, hasChanged, changedAttributes, previous, previousAttributes", 13, function() {
     var model = new Backbone.Model({name : "Tim", age : 10});
     equal(model.changedAttributes(), false);
     model.on('change', function() {
@@ -326,6 +326,7 @@ $(document).ready(function() {
     equal(model.hasChanged('name'), true);
     model.change();
     equal(model.get('name'), 'Rob');
+    equal(model.hasChanged(), false);
   });
 
   test("changedAttributes", 3, function() {

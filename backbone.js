@@ -501,6 +501,7 @@
       }
 
       this._changing = false;
+      this.changed = {};
       return this;
     },
 
