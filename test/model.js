@@ -368,7 +368,7 @@ $(document).ready(function() {
       if (attrs.admin) return "Can't change admin status.";
     };
     model.sync = function(method, model, options) {
-      options.success.call(this, {admin: true});
+      options.success.call(this, this, {admin: true}, options);
     };
     model.on('invalid', function(model, error) {
       lastError = error;
@@ -402,7 +402,7 @@ $(document).ready(function() {
   test("save in positional style", 1, function() {
     var model = new Backbone.Model();
     model.sync = function(method, model, options) {
-      options.success();
+      options.success(model, {}, options);
     };
     model.save('title', 'Twelfth Night');
     equal(model.get('title'), 'Twelfth Night');
@@ -674,7 +674,7 @@ $(document).ready(function() {
   test("#1030 - `save` with `wait` results in correct attributes if success is called during sync", 2, function() {
     var model = new Backbone.Model({x: 1, y: 2});
     model.sync = function(method, model, options) {
-      options.success();
+      options.success(model, {}, options);
     };
     model.on("change:x", function() { ok(true); });
     model.save({x: 3}, {wait: true});
@@ -839,7 +839,7 @@ $(document).ready(function() {
       }
     };
     model.sync = function(method, model, options) {
-      options.success();
+      options.success(model, {}, options);
     };
     model.save({id: 1}, opts);
     model.fetch(opts);
@@ -896,7 +896,7 @@ $(document).ready(function() {
     var Model = Backbone.Model.extend({
       sync: function(method, model, options) {
         setTimeout(function(){
-          options.success();
+          options.success(model, {}, options);
           start();
         }, 0);
       }

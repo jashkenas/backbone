@@ -418,9 +418,8 @@
     fetch: function(options) {
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
-      var model = this;
       var success = options.success;
-      options.success = function(resp, status, xhr) {
+      options.success = function(model, resp, options) {
         if (!model.set(model.parse(resp, options), options)) return false;
         if (success) success(model, resp, options);
       };
@@ -456,9 +455,8 @@
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
-      model = this;
       success = options.success;
-      options.success = function(resp, status, xhr) {
+      options.success = function(model, resp, options) {
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
         var serverAttrs = model.parse(resp, options);
@@ -490,13 +488,13 @@
         model.trigger('destroy', model, model.collection, options);
       };
 
-      options.success = function(resp) {
+      options.success = function(model, resp, options) {
         if (options.wait || model.isNew()) destroy();
         if (success) success(model, resp, options);
       };
 
       if (this.isNew()) {
-        options.success();
+        options.success(this, null, options);
         return false;
       }
 
@@ -817,7 +815,7 @@
       if (options.parse === void 0) options.parse = true;
       var collection = this;
       var success = options.success;
-      options.success = function(resp, status, xhr) {
+      options.success = function(model, resp, options) {
         var method = options.update ? 'update' : 'reset';
         collection[method](resp, options);
         if (success) success(collection, resp, options);
@@ -1443,7 +1441,7 @@
 
     var success = options.success;
     options.success = function(resp, status, xhr) {
-      if (success) success(resp, status, xhr);
+      if (success) success(model, resp, options);
       model.trigger('sync', model, resp, options);
     };
 
