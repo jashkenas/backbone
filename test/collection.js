@@ -954,16 +954,16 @@ $(document).ready(function() {
     Backbone.ajax = ajax;
   });
 
-  test("`sort` is trigged on `add` when sorting occurs", 2, function () {
+  test("`add` only `sort`s when necessary", 2, function () {
     var collection = new (Backbone.Collection.extend({
       comparator: 'id'
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
-    collection.add({id: 4}); // trigger, new model
-    collection.add({id: 1, a: 1}, {merge: true}); // trigger, changed model
-    collection.add({id: 1, a: 1}, {merge: true}); // don't trigger
-    collection.add({id: 1}); // don't trigger
-    collection.add({id: 5}, {silent: true}); // don't trigger
+    collection.add({id: 4}); // sort, new model
+    collection.add({id: 1, a: 1}, {merge: true}); // sort, changed model
+    collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no change
+    collection.add(collection.models); // don't sort, nothing new
+    collection.add(collection.models, {merge: true}); // don't sort
   });
 
 });
