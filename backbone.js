@@ -295,16 +295,18 @@
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (_.isObject(key)) {
+      if (typeof key === 'object') {
         attrs = key;
         options = val;
       } else {
         (attrs = {})[key] = val;
       }
 
+      options || (options = {});
+
       // Extract attributes and options.
-      unset           = options && options.unset;
-      silent          = options && options.silent;
+      unset           = options.unset;
+      silent          = options.silent;
       changes         = [];
       nested          = false;
       changing        = this._changing;
@@ -433,33 +435,27 @@
       var attrs, model, success, method, toJSON, xhr;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (key == null || _.isObject(key)) {
+      if (key == null || typeof key === 'object') {
         attrs = key;
         options = val;
       } else if (key != null) {
         (attrs = {})[key] = val;
       }
+
+      // If we're not waiting and attributes exist, save acts as `set(attr).save(null, opts)`.
+      if (attrs && (!options || !options.wait) && !this.set(attrs, options)) return false;
+
       options = _.extend({validate: true}, options);
 
-      // If we're "wait"-ing to set changed attributes, validate early.
-      if (options.wait) {
-        if (attrs && !this._validate(attrs, options)) return false;
-      }
-
-      // Regular saves `set` attributes before persisting to the server.
-      if (attrs) {
-        if (options.wait) {
-          toJSON = this.toJSON;
-          this.toJSON = function() {
-            return _.extend(toJSON.call(this, options), attrs);
-          };
-        } else {
-          if (!this.set(attrs, options)) return false;
-        }
-      }
-
       // Do not persist invalid models.
-      if (!attrs && !this._validate(null, options)) return false;
+      if (!this._validate(attrs, options)) return false;
+
+      if (attrs && options.wait) {
+        toJSON = this.toJSON;
+        this.toJSON = function() {
+          return _.extend(toJSON.call(this, options), attrs);
+        };
+      }
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
@@ -477,7 +473,7 @@
       if (method == 'patch') options.attrs = attrs;
       xhr = this.sync(method, this, options);
 
-      this.toJSON = toJSON;
+      if (options.wait) this.toJSON = toJSON;
 
       return xhr;
     },
@@ -547,7 +543,7 @@
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validationError = this.validate(attrs, options) || null;
       if (!error) return true;
-      this.trigger('invalid', this, error, options);
+      this.trigger('invalid', this, error, options || {});
       return false;
     }
 
@@ -592,18 +588,19 @@
 
     // Add a model, or list of models to the set.
     add: function(models, options) {
-      var i, args, length, model, attrs, existing, needsSort;
-      var at = options && options.at;
-      var sort = ((options && options.sort) == null ? true : options.sort);
       models = _.isArray(models) ? models.slice() : [models];
+      options || (options = {});
+      var i, l, args, length, model, attrs, existing, needsSort, add = [];
+      var at = options.at;
+      var sort = (options.sort == null ? true : options.sort) &&
+                  needsSort && this.comparator && at == null;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
-      for (i = models.length - 1; i >= 0; i--) {
+      for (i = 0, l = models.length; i < l; i++) {
         attrs = models[i];
         if(!(model = this._prepareModel(attrs, options))) {
           this.trigger('invalid', this, attrs, options);
-          models.splice(i, 1);
           continue;
         }
         models[i] = model;
@@ -611,13 +608,15 @@
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
-          if (options && options.merge) {
-            existing.set(attrs != model ? attrs : model.attributes, options);
-            needsSort = sort;
+          if (options.merge) {
+            existing.set(attrs === model ? model.attributes : attrs, options);
+            if (sort && !needsSort && existing.hasChanged()) needsSort = true;
           }
-          models.splice(i, 1);
           continue;
         }
+
+        // This is a new model, push it to the `add` list.
+        add.push(model);
 
         // Listen to added models' events, and index models for lookup by
         // `id` and by `cid`.
@@ -627,21 +626,24 @@
       }
 
       // See if sorting is needed, update `length` and splice in new models.
-      if (models.length) needsSort = sort;
-      this.length += models.length;
-      args = [at != null ? at : this.models.length, 0];
-      push.apply(args, models);
-      splice.apply(this.models, args);
+      if (add.length) {
+        if (sort) needsSort = true;
+        this.length += add.length;
+        if (at != null) {
+          splice.apply(this.models, [at, 0].concat(add));
+        } else {
+          push.apply(this.models, add);
+        }
+      }
 
       // Silently sort the collection if appropriate.
-      needsSort = needsSort && this.comparator && at == null;
       if (needsSort) this.sort({silent: true});
 
       if (options && options.silent) return this;
 
       // Trigger `add` events.
-      while (model = models.shift()) {
-        model.trigger('add', model, this, options);
+      for (i = 0, l = add.length; i < l; i++) {
+        (model = add[i]).trigger('add', model, this, options);
       }
 
       // Trigger `sort` if the collection was sorted.
@@ -652,9 +654,9 @@
 
     // Remove a model, or a list of models from the set.
     remove: function(models, options) {
-      var i, l, index, model;
-      options || (options = {});
       models = _.isArray(models) ? models.slice() : [models];
+      options || (options = {});
+      var i, l, index, model;
       for (i = 0, l = models.length; i < l; i++) {
         model = this.get(models[i]);
         if (!model) continue;
@@ -742,7 +744,7 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      if (!options || !options.silent) this.trigger('sort', this, options);
+      if (!silent) this.trigger('sort', this, options || {});
       return this;
     },
 
@@ -754,10 +756,10 @@
     // Smartly update a collection with a change set of models, adding,
     // removing, and merging as necessary.
     update: function(models, options) {
-      var model, i, l, existing;
-      var add = [], remove = [], modelMap = {};
       options = _.extend({add: true, merge: true, remove: true}, options);
       if (options.parse) models = this.parse(models, options);
+      var model, i, l, existing;
+      var add = [], remove = [], modelMap = {};
 
       // Allow a single model (or no argument) to be passed.
       if (!_.isArray(models)) models = models ? [models] : [];
@@ -823,9 +825,9 @@
     // collection immediately, unless `wait: true` is passed, in which case we
     // wait for the server to agree.
     create: function(model, options) {
-      var collection = this;
       options = options ? _.clone(options) : {};
       model = this._prepareModel(model, options);
+      var collection = this;
       if (!model) return false;
       if (!options.wait) collection.add(model, options);
       var success = options.success;
