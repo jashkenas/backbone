@@ -1333,7 +1333,7 @@ account.set({access: "unlimited"}, {
       <br />
       Returns the relative URL where the model's resource would be located on
       the server. If your models are located somewhere else, override this method
-      with the correct logic. Generates URLs of the form: <tt>"/[collection.url]/[id]"</tt>
+      with the correct logic. Generates URLs of the form: <tt>"[collection.url]/[id]"</tt>
       by default, but you may override by specifying an explicit <tt>urlRoot</tt>
       if the model's collection shouldn't be taken into account.
     </p>
@@ -1352,7 +1352,7 @@ account.set({access: "unlimited"}, {
       <br />
       Specify a <tt>urlRoot</tt> if you're using a model <i>outside</i> of a collection,
       to enable the default <a href="#Model-url">url</a> function to generate
-      URLs based on the model id. <tt>"/[urlRoot]/id"</tt><br />
+      URLs based on the model id. <tt>"[urlRoot]/id"</tt><br />
       Normally, you won't need to define this.
       Note that <tt>urlRoot</tt> may also be a function.
     </p>
@@ -3948,6 +3948,12 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Removed the <tt>Backbone.wrapError</tt> helper method. Overriding
         <tt>sync</tt> should work better for those particular use cases.
+      </li>
+      <li>
+        To improve the performance of <tt>add</tt>, <tt>options.index</tt>
+        will no longer be set in the `add` event callback.
+        <tt>collection.indexOf(model)</tt> can be used to retrieve the index
+        of a model as necessary.
       </li>
     </ul>
 

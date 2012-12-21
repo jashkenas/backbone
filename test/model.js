@@ -585,6 +585,13 @@ $(document).ready(function() {
     ok(model.get('x') === a);
   });
 
+  test("set same value does not trigger change", 0, function() {
+    var model = new Backbone.Model({x: 1});
+    model.on('change change:x', function() { ok(false); });
+    model.set({x: 1});
+    model.set({x: 1});
+  });
+
   test("unset does not fire a change for undefined attributes", 0, function() {
     var model = new Backbone.Model({x: undefined});
     model.on('change:x', function(){ ok(false); });
