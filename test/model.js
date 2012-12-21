@@ -988,4 +988,16 @@ $(document).ready(function() {
     equal(model.validationError, "This shouldn't happen");
   });
 
+  test("toJSON receives attrs during save(..., {wait: true})", 1, function() {
+    var Model = Backbone.Model.extend({
+      url: '/test',
+      toJSON: function() {
+        strictEqual(this.attributes.x, 1);
+        return _.clone(this.attributes);
+      }
+    });
+    var model = new Model;
+    model.save({x: 1}, {wait: true});
+  });
+
 });
