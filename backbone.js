@@ -743,7 +743,7 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      if (!silent) this.trigger('sort', this, options || {});
+      if (!options || !options.silent) this.trigger('sort', this, options || {});
       return this;
     },
 
