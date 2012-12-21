@@ -593,7 +593,7 @@
       add = [];
       at = options.at;
       sort = this.comparator && (at == null) && (options.sort == null || options.sort);
-      sortAttr = typeof this.comparator === 'string' ? this.comparator : null;
+      sortAttr = _.isString(this.comparator) ? this.comparator : null;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
