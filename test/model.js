@@ -309,7 +309,7 @@ $(document).ready(function() {
 
   test("change, hasChanged, changedAttributes, previous, previousAttributes", 9, function() {
     var model = new Backbone.Model({name: "Tim", age: 10});
-    deepEqual(model.changedAttributes(), {name: "Tim", age: 10});
+    deepEqual(model.changedAttributes(), false);
     model.on('change', function() {
       ok(model.hasChanged('name'), 'name changed');
       ok(!model.hasChanged('age'), 'age did not');
@@ -317,15 +317,15 @@ $(document).ready(function() {
       equal(model.previous('name'), 'Tim');
       ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}), 'previousAttributes is correct');
     });
-    equal(model.hasChanged(), true);
-    equal(model.hasChanged(undefined), true);
+    equal(model.hasChanged(), false);
+    equal(model.hasChanged(undefined), false);
     model.set({name : 'Rob'});
     equal(model.get('name'), 'Rob');
   });
 
   test("changedAttributes", 3, function() {
     var model = new Backbone.Model({a: 'a', b: 'b'});
-    deepEqual(model.changedAttributes(), {a: 'a', b: 'b'});
+    deepEqual(model.changedAttributes(), false);
     equal(model.changedAttributes({a: 'a'}), false);
     equal(model.changedAttributes({a: 'b'}).a, 'b');
   });
@@ -608,6 +608,18 @@ $(document).ready(function() {
     model.set({x: 1});
     ok(model.hasChanged());
     equal(model.hasChanged('x'), true);
+  });
+
+  test("hasChanged gets cleared on the following set", 4, function() {
+    var model = new Backbone.Model;
+    model.set({x: 1});
+    ok(model.hasChanged());
+    model.set({x: 1});
+    ok(!model.hasChanged());
+    model.set({x: 2});
+    ok(model.hasChanged());
+    model.set({});
+    ok(!model.hasChanged());
   });
 
   test("save with `wait` succeeds without `validate`", 1, function() {

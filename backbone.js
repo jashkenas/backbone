@@ -235,7 +235,6 @@
     var defaults;
     var attrs = attributes || {};
     this.cid = _.uniqueId('c');
-    this.changed = {};
     this.attributes = {};
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attrs = this.parse(attrs, options) || {};
@@ -243,6 +242,7 @@
       attrs = _.defaults({}, attrs, defaults);
     }
     this.set(attrs, options);
+    this.changed = {};
     this.initialize.apply(this, arguments);
   };
 
@@ -354,7 +354,6 @@
           this.trigger('change', this, options);
         }
       }
-      // this.changed = {};
       this._pending = false;
       this._changing = false;
       return this;
