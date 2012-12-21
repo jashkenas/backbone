@@ -362,7 +362,9 @@ $(document).ready(function() {
 
   test("model destroy removes from all collections", 3, function() {
     var e = new Backbone.Model({id: 5, title: 'Othello'});
-    e.sync = function(method, model, options) { options.success({}); };
+    e.sync = function(method, model, options) {
+      options.success(model, [], options);
+    };
     var colE = new Backbone.Collection([e]);
     var colF = new Backbone.Collection([e]);
     e.destroy();
@@ -655,7 +657,7 @@ $(document).ready(function() {
       }
     };
     col.sync = m.sync = function( method, collection, options ){
-      options.success();
+      options.success(collection, [], options);
     };
     col.fetch(opts);
     col.create(m, opts);
@@ -673,7 +675,9 @@ $(document).ready(function() {
   test("#1447 - create with wait adds model.", 1, function() {
     var collection = new Backbone.Collection;
     var model = new Backbone.Model;
-    model.sync = function(method, model, options){ options.success(); };
+    model.sync = function(method, model, options){
+      options.success(model, [], options);
+    };
     collection.on('add', function(){ ok(true); });
     collection.create(model, {wait: true});
   });
