@@ -589,7 +589,7 @@
     add: function(models, options) {
       models = _.isArray(models) ? models.slice() : [models];
       options || (options = {});
-      var i, l, args, length, model, attrs, existing, doSort, sortAttr, at, sort, add;
+      var i, l, model, attrs, existing, sort, doSort, sortAttr, at, add;
       add = [];
       at = options.at;
       sort = this.comparator && (at == null) && (options.sort == null || options.sort);
