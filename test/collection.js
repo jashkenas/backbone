@@ -82,7 +82,7 @@ $(document).ready(function() {
     equal(col.get(101), model);
 
     var Col2 = Backbone.Collection.extend({ model: MongoModel });
-    col2 = new Col2();
+    var col2 = new Col2();
     col2.push(model);
     equal(col2.get({_id: 101}), model);
     equal(col2.get(model.clone()), model);
