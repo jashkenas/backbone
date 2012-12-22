@@ -758,7 +758,7 @@
     // Smartly update a collection with a change set of models, adding,
     // removing, and merging as necessary.
     update: function(models, options) {
-      options = _.extend({add: true, merge: true, remove: true}, options);
+      options = _.extend({add: true, merge: true, remove: false}, options);
       if (options.parse) models = this.parse(models, options);
       var model, i, l, existing;
       var add = [], remove = [], modelMap = {};
@@ -808,7 +808,7 @@
     },
 
     // Fetch the default set of models for this collection, resetting the
-    // collection when they arrive. If `add: true` is passed, appends the
+    // collection when they arrive. If `update: true` is passed, appends the
     // models to the collection instead of resetting.
     fetch: function(options) {
       options = options ? _.clone(options) : {};
