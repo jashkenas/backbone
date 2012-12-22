@@ -1099,9 +1099,9 @@
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
-        Backbone.$(window).bind('popstate', this.checkUrl);
+        Backbone.$(window).on('popstate', this.checkUrl);
       } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        Backbone.$(window).bind('hashchange', this.checkUrl);
+        Backbone.$(window).on('hashchange', this.checkUrl);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
@@ -1133,7 +1133,7 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      Backbone.$(window).unbind('popstate', this.checkUrl).unbind('hashchange', this.checkUrl);
+      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
       clearInterval(this._checkUrlInterval);
       History.started = false;
     },
@@ -1325,9 +1325,9 @@
         method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
-          this.$el.bind(eventName, method);
+          this.$el.on(eventName, method);
         } else {
-          this.$el.delegate(selector, eventName, method);
+          this.$el.on(eventName, selector, method);
         }
       }
     },
@@ -1336,7 +1336,7 @@
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
-      this.$el.unbind('.delegateEvents' + this.cid);
+      this.$el.off('.delegateEvents' + this.cid);
     },
 
     // Performs the initial configuration of a View with a set of options.

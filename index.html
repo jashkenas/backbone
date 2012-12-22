@@ -570,12 +570,12 @@
 
     <p>
       Backbone's only hard dependency is either
-      <a href="http://underscorejs.org/">Underscore.js</a> <small>( > 1.4.3)</small> or
+      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.4.3)</small> or
       <a href="http://lodash.com">Lo-Dash</a>.
       For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
       and DOM manipulation with <a href="#View">Backbone.View</a>, include
       <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
-      <a href="http://jquery.com">jQuery</a> <small>( > 1.4.2)</small> or
+      <a href="http://jquery.com">jQuery</a> <small>( >= 1.7.0)</small> or
       <a href="http://zeptojs.com/">Zepto</a>.
     </p>
 
@@ -2578,7 +2578,7 @@ $("#make-demo").append(el);
     <p id="View-delegateEvents">
       <b class="header">delegateEvents</b><code>delegateEvents([events])</code>
       <br />
-      Uses jQuery's <tt>delegate</tt> function to provide declarative callbacks
+      Uses jQuery's <tt>on</tt> function to provide declarative callbacks
       for DOM events within a view.
       If an <b>events</b> hash is not passed directly, uses <tt>this.events</tt>
       as the source. Events are written in the format <tt>{"event selector": "callback"}</tt>.
