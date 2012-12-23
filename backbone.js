@@ -942,13 +942,6 @@
     this.initialize.apply(this, arguments);
   };
 
-  // Cached regular expressions for matching named param parts and splatted
-  // parts of route strings.
-  var optionalParam = /\((.*?)\)/g;
-  var namedParam    = /(\(\?)?:\w+/g;
-  var splatParam    = /\*\w+/g;
-  var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
-
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
 
@@ -963,14 +956,13 @@
     //     });
     //
     route: function(route, name, callback) {
-      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      var router = this;
       if (!callback) callback = this[name];
-      Backbone.history.route(route, _.bind(function(fragment) {
-        var args = this._extractParameters(route, fragment);
-        callback && callback.apply(this, args);
-        this.trigger.apply(this, ['route:' + name].concat(args));
-        Backbone.history.trigger('route', this, name, args);
-      }, this));
+      Backbone.history.route(new Route(route, function(args) {
+        if (callback) callback.apply(router, args);
+        router.trigger.apply(router, ['route:' + name].concat(args));
+        Backbone.history.trigger('route', router, name, args);
+      }));
       return this;
     },
 
@@ -989,24 +981,63 @@
       while ((route = routes.pop()) != null) {
         this.route(route, this.routes[route]);
       }
-    },
+    }
+
+  });
+
+  // Route
+  // -----
+
+  // Routes create a RegExp for matching a fragment and extracting parameters.
+  var Route = function(route, callback) {
+    // Store a map of which parameters should be decoded.
+    this.decode = [];
+    this.route = _.isString(route) ? this.toRegExp(route) : route;
+    this.callback = callback;
+  };
+
+  // Cached regular expressions for matching named param parts and splatted
+  // parts of route strings.
+  var optionalParam = /\((.*?)\)/g;
+  var routeParam    = /((\(\?)?:\w+)|(\*\w+)/g;
+  var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
+
+  _.extend(Route.prototype, {
 
     // Convert a route string into a regular expression, suitable for matching
     // against the current location hash.
-    _routeToRegExp: function(route) {
-      route = route.replace(escapeRegExp, '\\$&')
-                   .replace(optionalParam, '(?:$1)?')
-                   .replace(namedParam, function(match, optional){
-                     return optional ? match : '([^\/]+)';
-                   })
-                   .replace(splatParam, '(.*?)');
-      return new RegExp('^' + route + '$');
+    toRegExp: function(route) {
+      var decode = this.decode;
+      return new RegExp('^' +
+        route.replace(escapeRegExp, '\\$&')
+        .replace(optionalParam, '(?:$1)?')
+        .replace(routeParam, function(match, named, optional, splat) {
+          decode.push(named != null);
+          return splat ? '(.*?)' : optional ? match : '([^/]+)';
+        })
+      + '$');
     },
 
-    // Given a route, and a URL fragment that it matches, return the array of
-    // extracted parameters.
-    _extractParameters: function(route, fragment) {
-      return route.exec(fragment).slice(1);
+    // Given a fragment match, return an array of extracted parameters.
+    extractArgs: function(match) {
+      var arg, args = [];
+      for (var i = 0, length = match.length - 1; i < length; i++) {
+        arg = args[i] = match[i + 1];
+
+        // Decode named parameters for convenience.
+        if (arg != null && this.decode[i]) {
+          try { args[i] = decodeURIComponent(arg); } catch(e){}
+        }
+      }
+      return args;
+    },
+
+    // Test a fragment for a match.
+    test: function(fragment) {
+      var match = fragment.match(this.route);
+      if (!match) return false;
+      this.callback(this.extractArgs(match));
+      return true;
     }
 
   });
@@ -1140,8 +1171,8 @@
 
     // Add a route to be tested when the fragment changes. Routes added later
     // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
+    route: function(route) {
+      this.handlers.unshift(route);
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -1161,13 +1192,9 @@
     // returns `false`.
     loadUrl: function(fragmentOverride) {
       var fragment = this.fragment = this.getFragment(fragmentOverride);
-      var matched = _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
-        }
+      return _.any(this.handlers, function(handler) {
+        return handler.test(fragment);
       });
-      return matched;
     },
 
     // Save a fragment into the hash history, or replace the URL state if the

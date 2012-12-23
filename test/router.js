@@ -72,7 +72,8 @@ $(document).ready(function() {
       "optional(/:item)":           "optionalItem",
       "named/optional/(y:z)":       "namedOptional",
       "splat/*args/end":            "splat",
-      "*first/complex-:part/*rest": "complex",
+      "decode/:named/*splat":       "decode",
+      "*first/complex-*part/*rest": "complex",
       ":entity?*args":              "query",
       "*anything":                  "anything"
     },
@@ -132,6 +133,11 @@ $(document).ready(function() {
 
     namedOptional: function(z) {
       this.z = z;
+    },
+
+    decode: function(named, path) {
+      this.named = named;
+      this.path = path;
     }
 
   });
@@ -514,6 +520,13 @@ $(document).ready(function() {
     location.replace('http://example.com#named/optional/y123');
     Backbone.history.checkUrl();
     strictEqual(router.z, '123');
+  });
+
+  test("Decode named parameters, not splats.", 2, function() {
+    location.replace('http://example.com#decode/a%2Fb/c%2Fd/e');
+    Backbone.history.checkUrl();
+    strictEqual(router.named, 'a/b');
+    strictEqual(router.path, 'c%2Fd/e');
   });
 
 });
