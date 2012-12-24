@@ -773,10 +773,10 @@ object.off();
     </p>
 
     <p id="Events-listenTo">
-      <b class="header">listenTo</b><code>object.listenTo(other, event, callback, [context])</code>
+      <b class="header">listenTo</b><code>object.listenTo(other, event, callback)</code>
       <br />
       Tell an <b>object</b> to listen to a particular event on an <b>other</b> object.
-      The advantage of using this form, instead of <tt>other.on(event, callback, [context])</tt>,
+      The advantage of using this form, instead of <tt>other.on(event, callback)</tt>,
       is that <b>listenTo</b> allows the <b>object</b> to keep track of the events,
       and they can be removed all at once later on.
     </p>
@@ -786,7 +786,7 @@ view.listenTo(model, 'change', view.render);
 </pre>
 
     <p id="Events-stopListening">
-      <b class="header">stopListening</b><code>object.stopListening([other], [event], [callback], [context])</code>
+      <b class="header">stopListening</b><code>object.stopListening([other], [event], [callback])</code>
       <br />
       Tell an <b>object</b> to stop listening to events. Either call
       <b>stopListening</b> with no arguments to have the <b>object</b> remove
