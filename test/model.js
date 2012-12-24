@@ -338,6 +338,31 @@ $(document).ready(function() {
     equal(model.get('name'), 'Rob');
   });
 
+  test("change and hasChanged", 5, function () {
+    var model = new Backbone.Model({name : "Tim", age : 10});
+        model.on('change', function () { ok(true); });
+      equal(model.hasChanged(), false);
+      model.set({name: 'Rob'}, {silent: true});
+      equal(model.hasChanged(), true);
+      model.change();
+      equal(model.hasChanged(), false);
+      model.set({name: 'Rob'});
+      equal(model.hasChanged(), false);
+  });
+
+  test("change with options", function() {
+    var value;
+    var model = new Backbone.Model({name: 'Rob'});
+    model.bind('change', function(model, options) {
+      value = options.prefix + model.get('name');
+    });
+    model.set({name: 'Bob'}, {silent: true});
+    model.change({prefix: 'Mr. '});
+    equal(value, 'Mr. Bob');
+    model.set({name: 'Sue'}, {prefix: 'Ms. '});
+    equal(value, 'Ms. Sue');
+  });
+
   test("changedAttributes", 3, function() {
     var model = new Backbone.Model({a: 'a', b: 'b'});
     deepEqual(model.changedAttributes(), false);
