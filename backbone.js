@@ -302,6 +302,11 @@
         (attrs = {})[key] = val;
       }
 
+      // Manipulate input values
+      if (this.tailor) {
+        this.tailor(attrs);
+      }
+
       options || (options = {});
 
       // Extract attributes and options.

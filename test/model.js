@@ -1022,4 +1022,65 @@ $(document).ready(function() {
     model.save({x: 1}, {wait: true});
   });
 
+  test("tailor - Allow input values manipulation before setting attributes", function() {
+    var Model = Backbone.Model.extend({
+      tailorFns: {
+        count: function(value) {
+          return Math.max(0, Math.min(10, +value));
+        },
+
+        name: function(value) {
+          return value != null ? value.toUpperCase() : '';
+        }
+      },
+
+      tailor: function(attrs) {
+        for (var name in attrs) {
+          if (name in this.tailorFns) {
+            attrs[name] = this.tailorFns[name].call(this, attrs[name]);
+          }
+        }
+      }
+    });
+
+    var model = new Model({
+      count: '5',
+      name: null
+    });
+
+    // count should be 5 and name should be empty string
+    strictEqual(model.get('count'), 5);
+    strictEqual(model.get('name'), '');
+
+    // 45 is not in the 0-10 range
+    model.set('count', 45);
+    strictEqual(model.get('count'), 10);
+
+    // -3 is not in the 0-10 range
+    model.set('count', -3);
+    strictEqual(model.get('count'), 0);
+
+    // any input name string is converted to uppercase
+    model.set('name', 'jOhN Doe');
+    strictEqual(model.get('name'), 'JOHN DOE');
+
+    // any string that is written in different case but is exactly like the current string
+    // shouldn't trigger a change event
+    var triggered = false;
+    model.on('change:name', function() {
+      triggered = true;
+    });
+    model.set('name', 'JoHn dOe');
+    strictEqual(triggered, false);
+
+    // value changes so change event is triggered
+    triggered = false;
+    model.on('change:count', function() {
+      triggered = true;
+    });
+    model.set('count', 9);
+    strictEqual(triggered, true);
+
+  });
+
 });
