@@ -1281,7 +1281,7 @@
     //     var el = this.make('li', {'class': 'row'}, this.model.escape('title'));
     //
     make: function(tagName, attributes, content) {
-      var $el = Backbone.$("<" + tagName + "/>");
+      var $el = Backbone.$('<' + tagName + '>');
       if (attributes) $el.attr(attributes);
       if (content != null) $el.html(content);
       return $el[0];
