@@ -291,7 +291,7 @@
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
     set: function(key, val, options) {
-      var attr, attrs, unset, changes, silent, nested, changing, prev, current;
+      var attr, attrs, unset, changes, silent, changing, prev, current;
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
@@ -308,7 +308,6 @@
       unset           = options.unset;
       silent          = options.silent;
       changes         = [];
-      nested          = false;
       changing        = this._changing;
       this._changing  = true;
 
@@ -329,7 +328,6 @@
         val = attrs[attr];
         if (!_.isEqual(current[attr], val)) changes.push(attr);
         if (!_.isEqual(prev[attr], val)) {
-          nested = true;
           this.changed[attr] = val;
         } else {
           delete this.changed[attr];
@@ -337,7 +335,7 @@
         unset ? delete current[attr] : current[attr] = val;
       }
 
-      this._pending = !!changes.length;
+      if (changes.length) this._pending = true;
 
       // Trigger all relevant attribute changes.
       if (!silent) {
@@ -348,7 +346,6 @@
 
       if (changing) return this;
       if (!silent) {
-        if (!this._pending && nested) this.trigger('change', this, options);
         while (this._pending) {
           this._pending = false;
           this.trigger('change', this, options);
