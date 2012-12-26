@@ -461,7 +461,7 @@
         model.attributes = attributes;
         var serverAttrs = model.parse(resp, options);
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
-        if (!model.set(serverAttrs, options)) return false;
+        if (typeof serverAttrs === 'object' && !model.set(serverAttrs, options)) return false;
         if (success) success(model, resp, options);
       };
 
