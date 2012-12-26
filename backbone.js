@@ -120,6 +120,12 @@
     // all events fired.
     on: function(name, callback, context) {
       if (!(eventsApi(this, 'on', name, [callback, context]) && callback)) return this;
+      if (!_.isString(name)) {
+        throw new TypeError('Backbone.Events.on: name argument must be a string');
+      }
+      if (!_.isFunction(callback)) {
+        throw new TypeError('Backbone.Events.on: callback argument must be a function')
+      }
       this._events || (this._events = {});
       var list = this._events[name] || (this._events[name] = []);
       list.push({callback: callback, context: context, ctx: context || this});
