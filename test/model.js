@@ -423,6 +423,18 @@ $(document).ready(function() {
     equal(model.get('title'), 'Twelfth Night');
   });
 
+  test("save with non-object success response", 1, function () {
+    var model = new Backbone.Model();
+    model.sync = function(method, model, options) {
+      options.success(model, '', options);
+    };
+    model.save({testing:'empty'}, {
+      success: function (model) {
+        deepEqual(model.attributes, {testing:'empty'});
+      }
+    });
+  });
+
   test("fetch", 2, function() {
     doc.fetch();
     equal(this.syncArgs.method, 'read');
