@@ -516,4 +516,12 @@ $(document).ready(function() {
     strictEqual(router.z, '123');
   });
 
+  test("Include query parameters in getFragment result", 1, function() {
+    Backbone.history.stop();
+    location.replace("http://example.com/counter/params?hello=world");
+    Backbone.history.start({pushState:true});
+    var fragment = Backbone.history.getFragment();
+    equal(fragment, "counter/params?hello=world");
+  });
+
 });
