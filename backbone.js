@@ -1063,7 +1063,8 @@
     getFragment: function(fragment, forcePushState) {
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = this.location.pathname;
+          var prefix = this.location.protocol + "//" + this.location.host;
+          fragment = this.location.href.substr(prefix.length);
           var root = this.root.replace(trailingSlash, '');
           if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
         } else {
