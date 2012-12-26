@@ -339,7 +339,6 @@
       <li>– <a href="#Model-parse">parse</a></li>
       <li>– <a href="#Model-clone">clone</a></li>
       <li>– <a href="#Model-isNew">isNew</a></li>
-      <li>– <a href="#Model-change">change</a></li>
       <li>– <a href="#Model-hasChanged">hasChanged</a></li>
       <li>– <a href="#Model-changedAttributes">changedAttributes</a></li>
       <li>– <a href="#Model-previous">previous</a></li>
@@ -1399,16 +1398,6 @@ ActiveRecord::Base.include_root_in_json = false
       <br />
       Has this model been saved to the server yet? If the model does not yet have
       an <tt>id</tt>, it is considered to be new.
-    </p>
-
-    <p id="Model-change">
-      <b class="header">change</b><code>model.change()</code>
-      <br />
-      Manually trigger the <tt>"change"</tt> event and a <tt>"change:attribute"</tt>
-      event for each attribute that has changed. If you've been passing
-      <tt>{silent: true}</tt> to the <a href="#Model-set">set</a> function in order to
-      aggregate rapid changes to a model, you'll want to call <tt>model.change()</tt>
-      when you're all finished.
     </p>
 
     <p id="Model-hasChanged">
