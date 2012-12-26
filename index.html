@@ -3955,6 +3955,11 @@ ActiveRecord::Base.include_root_in_json = false
         <tt>collection.indexOf(model)</tt> can be used to retrieve the index
         of a model as necessary.
       </li>
+      <li>
+        For semantic and cross browser reasons, routes will now ignore search
+        parameters.  Routes like <tt>search?query=…&amp;page=3</tt> should become
+        <tt>search/…/3</tt>.
+      </li>
     </ul>
 
     <b class="header">0.9.2</b> &mdash; <small><i>March 21, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.1...0.9.2">Diff</a><br />
