@@ -1063,8 +1063,7 @@
     getFragment: function(fragment, forcePushState) {
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          var prefix = this.location.protocol + "//" + this.location.host;
-          fragment = this.location.href.substr(prefix.length);
+          fragment = this.location.pathname + this.location.search
           var root = this.root.replace(trailingSlash, '');
           if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
         } else {
@@ -1119,6 +1118,7 @@
       // but we're currently in a browser that doesn't support it...
       if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
+        this.fragment = this.fragment.replace(/\?.*$/, '');
         this.location.replace(this.root + this.location.search + '#' + this.fragment);
         // Return immediately as browser will do redirect to new url
         return true;
