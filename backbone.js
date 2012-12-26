@@ -249,9 +249,6 @@
   // Attach all inheritable methods to the Model prototype.
   _.extend(Model.prototype, Events, {
 
-    // A hash of attributes whose current and previous value differ.
-    changed: null,
-
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
     idAttribute: 'id',
@@ -525,6 +522,14 @@
     // A model is new if it has never been saved to the server, and lacks an id.
     isNew: function() {
       return this.id == null;
+    },
+
+    // Call this method to manually fire a `change` event for this model.
+    // Calling this will cause all objects observing the model to update.
+    change: function(options) {
+      this.trigger('change', this, options || {});
+      this._previousAttributes = _.clone(this.attributes);
+      this.changed = {};
     },
 
     // Check if the model is currently in a valid state.
