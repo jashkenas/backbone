@@ -243,6 +243,7 @@
     }
     this.set(attrs, options);
     this.changed = {};
+    this._pending = 0;
     this.initialize.apply(this, arguments);
   };
 
@@ -335,7 +336,7 @@
         unset ? delete current[attr] : current[attr] = val;
       }
 
-      if (changes.length) this._pending = true;
+      if (changes.length && !silent) this._pending++;
 
       // Trigger all relevant attribute changes.
       if (!silent) {
@@ -347,11 +348,11 @@
       if (changing) return this;
       if (!silent) {
         while (this._pending) {
-          this._pending = false;
+          this._pending--;
           this.trigger('change', this, options);
         }
       }
-      this._pending = false;
+      this._pending = 0;
       this._changing = false;
       return this;
     },
