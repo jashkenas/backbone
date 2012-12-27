@@ -536,8 +536,7 @@
     // returning `true` if all is well. Otherwise, fire a general
     // `"error"` event and call the error callback, if specified.
     _validate: function(attrs, options) {
-      if (!options || !options.validate || !this.validate) return true;
-      options || (options = {});
+      if (!options.validate || !this.validate) return true;
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validationError = this.validate(attrs, options) || null;
       if (!error) return true;
