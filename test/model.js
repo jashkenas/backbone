@@ -786,7 +786,7 @@ $(document).ready(function() {
     model.set({x: true});
   });
 
-  test("nested `'change'` with silent", 3, function() {
+  test("nested `'change'` with silent", 2, function() {
     var count = 0;
     var model = new Backbone.Model();
     model.on('change:y', function() { ok(false); });
@@ -797,9 +797,6 @@ $(document).ready(function() {
           model.set({y: true}, {silent: true});
           break;
         case 1:
-          deepEqual(this.changedAttributes(), {x: true, y: true});
-          break;
-        case 2:
           deepEqual(this.changedAttributes(), {z: true});
           break;
         default:
@@ -810,7 +807,7 @@ $(document).ready(function() {
     model.set({z: true});
   });
 
-  test("nested `'change:attr'` with silent", 0, function() {
+  test("nested `'change:attr'` with silent. Silent does not fire it's own event", 0, function() {
     var model = new Backbone.Model();
     model.on('change:y', function(){ ok(false); });
     model.on('change', function() {
@@ -1001,7 +998,7 @@ $(document).ready(function() {
     equal(model.changedAttributes(), false);
   });
 
-  test("#1964 - final `change` event is always fired, regardless of interim changes", 1, function () {
+  test("#1964 - final `change` event is always fired, regardless of interim changes", 2, function () {
     var model = new Backbone.Model();
     model.on('change:property', function() {
       model.set('property', 'bar');
