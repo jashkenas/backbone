@@ -213,6 +213,24 @@ $(document).ready(function() {
     equal(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
+  test("#2030 - set with failed validate, followed by another set triggers change", function () {
+    var attr = 0, main = 0, error = 0;
+    var Model = Backbone.Model.extend({
+      validate: function (attr) {
+        if (attr.x > 1) {
+          error++;
+          return "this is an error";
+        }
+      }
+    });
+    var model = new Model({x:0});
+      model.on('change:x', function () { attr++; });
+      model.on('change', function () { main++; });
+      model.set({x:2}, {validate:true});
+      model.set({x:1}, {validate:true});
+      deepEqual([attr, main, error], [1, 1, 1]);
+  });
+
   test("set triggers changes in the correct order", function() {
     var value = null;
     var model = new Backbone.Model;

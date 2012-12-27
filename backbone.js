@@ -304,6 +304,9 @@
 
       options || (options = {});
 
+      // Run validation.
+      if (!this._validate(attrs, options)) return false;
+
       // Extract attributes and options.
       unset           = options.unset;
       silent          = options.silent;
@@ -316,9 +319,6 @@
         this.changed = {};
       }
       current = this.attributes, prev = this._previousAttributes;
-
-      // Run validation.
-      if (!this._validate(attrs, options)) return false;
 
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
