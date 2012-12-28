@@ -1049,6 +1049,8 @@
     // in Firefox where location.hash will always be decoded.
     getHash: function(window) {
       var match = (window || this).location.href.match(/#(.*)$/);
+      // #1305 - Some browsers escape unicode characters in `location.hash`.
+      if (match) try { return decodeURI(match[1]); } catch(e) {}
       return match ? match[1] : '';
     },
 

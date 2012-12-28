@@ -516,4 +516,16 @@ $(document).ready(function() {
     strictEqual(router.z, '123');
   });
 
+  test("#1305 - Decode escaped unicode characters.", 1, function() {
+    location.replace('http://example.com#中/文');
+    Backbone.history.checkUrl();
+    strictEqual(Backbone.history.fragment, '中/文');
+  });
+
+  test("#1305 - Malformed URI", 1, function() {
+    location.replace('http://example.com#%E6');
+    Backbone.history.checkUrl();
+    strictEqual(Backbone.history.fragment, '%E6');
+  });
+
 });
