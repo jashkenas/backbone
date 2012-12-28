@@ -333,10 +333,9 @@
         unset ? delete current[attr] : current[attr] = val;
       }
 
-      if (!silent && changes.length) this._pending = true;
-
       // Trigger all relevant attribute changes.
       if (!silent) {
+        if (changes.length) this._pending = true;
         for (var i = 0, l = changes.length; i < l; i++) {
           this.trigger('change:' + changes[i], this, current[changes[i]], options);
         }
