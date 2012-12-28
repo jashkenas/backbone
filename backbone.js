@@ -160,7 +160,8 @@
           if (callback || context) {
             for (j = 0, k = list.length; j < k; j++) {
               ev = list[j];
-              if ((callback && callback !== ev.callback._callback && callback !== ev.callback) ||
+              if ((callback && callback !== ev.callback &&
+                               callback !== ev.callback._callback) ||
                   (context && context !== ev.context)) {
                 events.push(ev);
               }
