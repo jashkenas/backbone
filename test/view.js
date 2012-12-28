@@ -30,19 +30,19 @@ $(document).ready(function() {
   });
 
   test("make", 3, function() {
-    var div = view.make('div', {id: 'test-div'}, "one two three");
+    var $div = view.make('div', {id: 'test-div'}, "one two three");
 
-    equal(div.tagName.toLowerCase(), 'div');
-    equal(div.id, 'test-div');
-    equal($(div).text(), 'one two three');
+    equal($div[0].tagName.toLowerCase(), 'div');
+    equal($div[0].id, 'test-div');
+    equal($div.text(), 'one two three');
   });
 
   test("make can take falsy values for content", 2, function() {
-    var div = view.make('div', {id: 'test-div'}, 0);
-    equal($(div).text(), '0');
+    var $div = view.make('div', {id: 'test-div'}, 0);
+    equal($div.text(), '0');
 
-    div = view.make('div', {id: 'test-div'}, '');
-    equal($(div).text(), '');
+    $div = view.make('div', {id: 'test-div'}, '');
+    equal($div.text(), '');
   });
 
   test("initialize", 1, function() {
