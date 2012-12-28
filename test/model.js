@@ -253,6 +253,20 @@ $(document).ready(function() {
     model.set({result: void 0});
   });
 
+  test("unset with array as first argument", 5, function() {
+    var all_changed = 0, a_changed = 0, b_changed = 0;
+    var model = new Backbone.Model({a: 1, b: 2});
+    model.on("change", function(){ all_changed++; });
+    model.on("change:a", function(){ a_changed++; });
+    model.on("change:b", function(){ b_changed++; });
+    model.unset(['a','b']);
+    equal(model.get('a'), void 0, "a should have been unset");
+    equal(model.get('b'), void 0, "b should have been unset");
+    equal(a_changed, 1, 'one change event fired for a.');
+    equal(b_changed, 1, 'one change event fired for b');
+    equal(all_changed, 1, 'unset fires only one change event when unsetting multiple attributes.');
+  });
+
   test("multiple unsets", 1, function() {
     var i = 0;
     var counter = function(){ i++; };
