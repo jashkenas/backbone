@@ -364,4 +364,13 @@ $(document).ready(function() {
     _.extend({}, Backbone.Events).once('event').trigger('event');
   });
 
+  test("once removes event after running", 1, function() {
+    var obj = {};
+    _.extend(obj, Backbone.Events);
+    obj.once('event', function() {});
+    obj.trigger('event');
+    console.log(obj._events);
+    equal(obj._events['event'].length, 0, 'once should have removed bound event.');
+  });
+
 });
