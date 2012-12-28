@@ -333,7 +333,7 @@
         unset ? delete current[attr] : current[attr] = val;
       }
 
-      if (changes.length) this._pending = true;
+      if (!silent && changes.length) this._pending = true;
 
       // Trigger all relevant attribute changes.
       if (!silent) {
