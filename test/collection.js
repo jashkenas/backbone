@@ -396,6 +396,17 @@ $(document).ready(function() {
     equal(this.syncArgs.options.parse, false);
   });
 
+  test("fetch with {add:true}", 1, function() {
+    var init = [{id:1, name:'Test1'},{id:2, name:'Test2'},{id:3, name:'Test3'}];
+    var update = [{id:4, name:'Test4'},{id:5, name:'Test5'}];
+    var collection = new Backbone.Collection(init);
+    collection.sync = function (type, model, options) {
+      options.success(this, update, options);
+    };
+    collection.fetch({add: true});
+    deepEqual(collection.toJSON(), init.concat(update));
+  });
+
   test("ensure fetch only parses once", 1, function() {
     var collection = new Backbone.Collection;
     var counter = 0;
