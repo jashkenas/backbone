@@ -189,16 +189,6 @@
       return this;
     },
 
-    // An inversion-of-control version of `on`. Tell *this* object to listen to
-    // an event in another object ... keeping track of what it's listening to.
-    listenTo: function(obj, name, callback) {
-      var listeners = this._listeners || (this._listeners = {});
-      var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
-      listeners[id] = obj;
-      obj.on(name, typeof name === 'object' ? this : callback, this);
-      return this;
-    },
-
     // Tell this object to stop listening to either specific events ... or
     // to every object it's currently listening to.
     stopListening: function(obj, name, callback) {
@@ -223,7 +213,7 @@
   // An inversion-of-control versions of `on` and `once`. Tell *this* object to listen to
   // an event in another object ... keeping track of what it's listening to.
   _.each(listenMethods, function(eventBinder, method) {
-    Events[method] = function(object, events, callback) {
+    Events[method] = function(obj, name, callback) {
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
