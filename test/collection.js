@@ -986,4 +986,24 @@ $(document).ready(function() {
     collection.add(collection.models, {merge: true}); // don't sort
   });
 
+  test("isPopulated", function() {
+    var collection = new Backbone.Collection;
+    strictEqual(collection.isPopulated(), false);
+
+    collection = new Backbone.Collection([{key: 'value'}]);
+    strictEqual(collection.isPopulated(), true);
+
+    var collection = new Backbone.Collection;
+    collection._fetched = true;
+    strictEqual(collection.isPopulated(), true);
+  });
+
+  test("shouldFetch", function() {
+    var collection = new Backbone.Collection;
+    strictEqual(collection.shouldFetch(), false);
+    collection.url = '/test';
+    strictEqual(collection.shouldFetch(), true);
+    collection.add({key: 'value'});
+    strictEqual(collection.shouldFetch(), false);
+  });
 });
