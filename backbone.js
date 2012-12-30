@@ -503,8 +503,11 @@
     // Default URL for the model's representation on the server -- if you're
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
-    url: function() {
-      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
+    url: function(options) {
+      _.defaults(options || (options = {}), {
+        silent: false
+      });
+      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || (!options.silent && urlError());
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -523,6 +526,27 @@
     // A model is new if it has never been saved to the server, and lacks an id.
     isNew: function() {
       return this.id == null;
+    },
+
+    // Have any non default keys been set on the model?
+    isPopulated: function() {
+      var attributes = _.clone(this.attributes);
+      var defaults = _.result(this, 'defaults') || {};
+      if (defaults) {
+        for (var defaultKey in defaults) {
+          if (attributes[defaultKey] !== defaults[defaultKey]) {
+            return true;
+          }
+          delete attributes[defaultKey];
+        }
+      }
+      var keys = _.keys(attributes);
+      return keys.length > 1 || (keys.length === 1 && keys[0] !== this.idAttribute);
+    },
+
+    // If we have a url and are not populated we should fetch
+    shouldFetch: function() {
+      return !!this.url({silent: true}) && !this.isPopulated();
     },
 
     // Check if the model is currently in a valid state.
@@ -798,6 +822,7 @@
       }
       options.previousModels = this.models;
       this._reset();
+      this._fetched = !!models;
       if (models) this.add(models, _.extend({silent: true}, options));
       if (!options.silent) this.trigger('reset', this, options);
       return this;
@@ -811,6 +836,7 @@
       if (options.parse === void 0) options.parse = true;
       var success = options.success;
       options.success = function(collection, resp, options) {
+        collection._fetched = true;
         var method = options.update ? 'update' : 'reset';
         collection[method](resp, options);
         if (success) success(collection, resp, options);
@@ -852,6 +878,19 @@
     // constructor.
     chain: function() {
       return _(this.models).chain();
+    },
+
+    // Has the collection been initialized with any models,
+    // or been fetched from the server, but the response
+    // has no models.
+    isPopulated: function() {
+      return this._fetched || this.length > 0;
+    },
+
+    // The collection should be fetched if it has a url
+    // but is not populated.
+    shouldFetch: function() {
+      return !!_.result(this, 'url') && !this.isPopulated();
     },
 
     // Reset all internal state. Called when the collection is reset.
