@@ -406,7 +406,8 @@
     // attributes will be set to undefined. You can also pass an
     // attributes object to diff against the model, determining if
     // there *would be* a change. If this method is called from a
-    // change event callback the changes are considered
+    // change event callback the changes are considered relative to
+    // the state of the model before the mutation started.
     changedAttributes: function(diff) {
       if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
       var val, changed = false;
