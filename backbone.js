@@ -240,17 +240,14 @@
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
-    this.set(attrs, options);
     this._changeEventsPending = false;
-    this.changed = {};
+    this.set(attrs, options);
+    this.changed = {}; // Clear any changed state.
     this.initialize.apply(this, arguments);
   };
 
   // Attach all inheritable methods to the Model prototype.
   _.extend(Model.prototype, Events, {
-
-    // A hash of attributes whose current and previous value differ.
-    changed: null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -287,7 +284,6 @@
     },
 
     // ----------------------------------------------------------------------
-
 
     // The primitive method for changing the attribute values in the
     // model. Used by set, unset, and clear. Unless the silent option
@@ -391,6 +387,11 @@
       return this._change(attrs, options);
     },
 
+    // XXX: that comments on the next few methods are not quite right
+    // because _previousAttributes is recorded even when the mutating
+    // methods are called with a silent option and thus no change
+    // event is fired.
+
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
@@ -398,12 +399,14 @@
       return _.has(this.changed, attr);
     },
 
-    // Return an object containing all the attributes that have changed, or
-    // false if there are no changed attributes. Useful for determining what
-    // parts of a view need to be updated and/or what attributes need to be
-    // persisted to the server. Unset attributes will be set to undefined.
-    // You can also pass an attributes object to diff against the model,
-    // determining if there *would be* a change.
+    // Return an object containing all the attributes that have
+    // changed, or false if there are no changed attributes. Useful
+    // for determining what parts of a view need to be updated and/or
+    // what attributes need to be persisted to the server. Unset
+    // attributes will be set to undefined. You can also pass an
+    // attributes object to diff against the model, determining if
+    // there *would be* a change. If this method is called from a
+    // change event callback the changes are considered
     changedAttributes: function(diff) {
       if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
       var val, changed = false;
