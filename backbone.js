@@ -354,14 +354,27 @@
       return this;
     },
 
-    set: function(key, val, options) {
-      return this._set(key, val, options);
+    set: function(first, second, third) {
+      // Handle both `"key", value` and `{key: value}` -style arguments.
+      var attrs, options;
+
+      if (typeof first === 'object') {
+        attrs   = first;
+        options = second;
+      } else {
+        (attrs = {})[first] = second;
+        options = third;
+      }
+
+      return this._set(attrs, options);
     },
 
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
     unset: function(attr, options) {
-      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
+      var attrs = {};
+      attrs[attr] = void 0;
+      return this._set(attrs, _.extend({}, options, {unset: true}));
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
@@ -369,7 +382,7 @@
     clear: function(options) {
       var attrs = {};
       for (var key in this.attributes) attrs[key] = void 0;
-      return this.set(attrs, _.extend({}, options, {unset: true}));
+      return this._set(attrs, _.extend({}, options, {unset: true}));
     },
 
     // Determine if the model has changed since the last `"change"` event.
