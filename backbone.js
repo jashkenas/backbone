@@ -192,6 +192,9 @@
     // An inversion-of-control version of `on`. Tell *this* object to listen to
     // an event in another object ... keeping track of what it's listening to.
     listenTo: function(object, events, callback) {
+      if (_.isFunction(events) || (events === callback && events == null)) {
+        callback = events, events = object, object = this;
+      }
       var listeners = this._listeners || (this._listeners = {});
       var id = object._listenerId || (object._listenerId = _.uniqueId('l'));
       listeners[id] = object;
