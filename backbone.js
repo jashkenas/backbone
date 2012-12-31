@@ -307,6 +307,7 @@
         this._previousAttributes = _.clone(this.attributes);
         this.changed = {};
       }
+
       current = this.attributes, prev = this._previousAttributes;
 
       // Check for changes of `id`.
@@ -322,32 +323,36 @@
           delete this.changed[attr];
         }
 
-        if (_.isUndefined(val)) {
-          delete current[attr];
-        } else {
-          current[attr] = val;
-        }
+        _.isUndefined(val) ? delete current[attr] : current[attr] = val;
       }
 
-      // Trigger all relevant attribute changes.
-      if (!silent) {
-        if (changes.length) this._pending = true;
-        for (var i = 0, l = changes.length; i < l; i++) {
-          this.trigger('change:' + changes[i], this, current[changes[i]], options);
-        }
+      if (!silent && changes.length) {
+        this._pending = true;
+        this._triggerChangeEvents(changes, current, options);
       }
 
-      if (changing) return this;
+      if (!changing) {
 
-      if (!silent) {
-        while (this._pending) {
-          this._pending = false;
-          this.trigger('change', this, options);
+        if (!silent) {
+          while (this._pending) {
+            this._pending = false;
+            this.trigger('change', this, options);
+          }
         }
+
+        this._pending  = false;
+        this._changing = false;
       }
-      this._pending = false;
-      this._changing = false;
+
       return this;
+    },
+
+    _triggerChangeEvents: function (changes, current, options) {
+      var i, attr;
+      for (i in changes) {
+        attr = changes[i];
+        this.trigger('change:' + attr, this, current[attr], options);
+      }
     },
 
     set: function(first, second, third) {
