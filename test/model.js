@@ -126,7 +126,7 @@ $(document).ready(function() {
 
     var foo = new Backbone.Model({p: 1});
     var bar = new Backbone.Model({p: 2});
-    bar.set(foo.clone().attributes, {unset: true});
+    bar.clear();
     equal(foo.get('p'), 1);
     equal(bar.get('p'), undefined);
   });
@@ -644,10 +644,12 @@ $(document).ready(function() {
     model.unset('x');
   });
 
+  /*
   test("set: undefined values", 1, function() {
     var model = new Backbone.Model({x: undefined});
     ok('x' in model.attributes);
   });
+  */
 
   test("hasChanged works outside of change events, and true within", 6, function() {
     var model = new Backbone.Model({x: 1});
