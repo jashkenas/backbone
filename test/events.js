@@ -100,6 +100,18 @@ $(document).ready(function() {
     e.trigger("foo");
   });
 
+  test("listenTo yourself implicity", 1, function() {
+    var e = _.extend({}, Backbone.Events);
+    e.listenTo("foo", function() { ok(true); });
+    e.trigger("foo");
+  });
+
+  test("listenTo yourself implicity with event maps", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    a.listenTo({change: function() { ok(true); }});
+    a.trigger('change');
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
