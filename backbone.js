@@ -241,6 +241,7 @@
       attrs = _.defaults({}, attrs, defaults);
     }
     this.set(attrs, options);
+    this._changeEventsPending = false;
     this.changed = {};
     this.initialize.apply(this, arguments);
   };
@@ -287,10 +288,13 @@
 
     // ----------------------------------------------------------------------
 
-    // Set a hash of model attributes on the object, firing `"change"` unless
-    // you choose to silence it.
+
+    // The primitive method for changing the attribute values in the
+    // model. Used by set, unset, and clear. Unless the silent option
+    // is passed, fires change:<foo> events for each changed attribute
+    // and a final change event.
     _change: function(attrs, options) {
-      var attr, changes, silent, changing, prev, current;
+      var attr, changes, silent, topCall, prev, current, changed;
 
       options || (options = {});
 
@@ -298,50 +302,49 @@
       if (!this._validate(attrs, options)) return false;
 
       // Extract attributes and options.
-      silent          = options.silent;
-      changes         = [];
-      changing        = this._changing;
-      this._changing  = true;
+      silent  = options.silent;
+      changes = [];
 
-      if (!changing) {
+      // We can be re-entered in event callbacks so track whether this
+      // is the top call or not.
+      topCall        = !this._changing;
+      this._changing = true;
+
+      if (topCall) {
         this._previousAttributes = _.clone(this.attributes);
         this.changed = {};
       }
 
-      current = this.attributes, prev = this._previousAttributes;
+      current = this.attributes;
+      prev    = this._previousAttributes;
+      changed = this.changed;
 
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
-      // For each `set` attribute, update or delete the current value.
+      // For each attribute, update or delete the current value
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
-          this.changed[attr] = val;
-        } else {
-          delete this.changed[attr];
-        }
-
+        if (!silent && !_.isEqual(current[attr], val)) changes.push(attr);
+        _.isEqual(prev[attr], val) ? delete changed[attr] : changed[attr] = val;
         _.isUndefined(val) ? delete current[attr] : current[attr] = val;
       }
 
       if (!silent && changes.length) {
-        this._pending = true;
+        this._changeEventsPending = true;
         this._triggerChangeEvents(changes, current, options);
       }
 
-      if (!changing) {
-
+      if (topCall) {
         if (!silent) {
-          while (this._pending) {
-            this._pending = false;
+          // Keep triggering the change event until things quiesce
+          while (this._changeEventsPending) {
+            this._changeEventsPending = false;
             this.trigger('change', this, options);
           }
         }
-
-        this._pending  = false;
-        this._changing = false;
+        this._changeEventsPending = false;
+        this._changing            = false;
       }
 
       return this;
@@ -355,6 +358,8 @@
       }
     },
 
+    // Set a hash of model attributes on the object, firing `"change"` unless
+    // you choose to silence it.
     set: function(first, second, third) {
       // Handle both `"key", value` and `{key: value}` -style arguments.
       var attrs, options;
