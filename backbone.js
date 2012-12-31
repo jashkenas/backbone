@@ -289,7 +289,7 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
-    set: function(key, val, options) {
+    _set: function(key, val, options) {
       var attr, attrs, unset, changes, silent, changing, prev, current;
       if (key == null) return this;
 
@@ -352,6 +352,10 @@
       this._pending = false;
       this._changing = false;
       return this;
+    },
+
+    set: function(key, val, options) {
+      return this._set(key, val, options);
     },
 
     // Remove an attribute from the model, firing `"change"` unless you choose
