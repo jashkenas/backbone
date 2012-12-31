@@ -289,7 +289,7 @@
 
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
-    _set: function(attrs, options) {
+    _change: function(attrs, options) {
       var attr, changes, silent, changing, prev, current;
 
       options || (options = {});
@@ -321,6 +321,7 @@
         } else {
           delete this.changed[attr];
         }
+
         if (_.isUndefined(val)) {
           delete current[attr];
         } else {
@@ -337,6 +338,7 @@
       }
 
       if (changing) return this;
+
       if (!silent) {
         while (this._pending) {
           this._pending = false;
@@ -360,7 +362,7 @@
         options = third;
       }
 
-      return this._set(attrs, options);
+      return this._change(attrs, options);
     },
 
     // Remove an attribute from the model, firing `"change"` unless you choose
@@ -368,7 +370,7 @@
     unset: function(attr, options) {
       var attrs = {};
       attrs[attr] = void 0;
-      return this._set(attrs, options);
+      return this._change(attrs, options);
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
@@ -376,7 +378,7 @@
     clear: function(options) {
       var attrs = {};
       for (var key in this.attributes) attrs[key] = void 0;
-      return this._set(attrs, options);
+      return this._change(attrs, options);
     },
 
     // Determine if the model has changed since the last `"change"` event.
