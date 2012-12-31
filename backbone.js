@@ -369,7 +369,7 @@
     unset: function(attr, options) {
       var attrs = {};
       attrs[attr] = void 0;
-      return this._set(attrs, _.extend({}, options, {unset: true}));
+      return this._set(attrs, options);
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
@@ -377,7 +377,7 @@
     clear: function(options) {
       var attrs = {};
       for (var key in this.attributes) attrs[key] = void 0;
-      return this._set(attrs, _.extend({}, options, {unset: true}));
+      return this._set(attrs, options);
     },
 
     // Determine if the model has changed since the last `"change"` event.
