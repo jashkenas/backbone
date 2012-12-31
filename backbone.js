@@ -503,8 +503,12 @@
     // Default URL for the model's representation on the server -- if you're
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
-    url: function() {
-      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
+    url: function(options) {
+      _.defaults(options || (options = {}), {
+        silent: false
+      });
+      var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url');
+      if (!base) return !options.silent ? urlError() : false;
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
     },

@@ -78,12 +78,13 @@ $(document).ready(function() {
     equal(JSON.stringify(model.toJSON()), "{}");
   });
 
-  test("url", 3, function() {
+  test("url", 4, function() {
     doc.urlRoot = null;
     equal(doc.url(), '/collection/1-the-tempest');
     doc.collection.url = '/collection/';
     equal(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;
+    strictEqual(doc.url({silent: true}), false);
     raises(function() { doc.url(); });
     doc.collection = collection;
   });
