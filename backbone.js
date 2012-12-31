@@ -290,7 +290,7 @@
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
     _set: function(attrs, options) {
-      var attr, unset, changes, silent, changing, prev, current;
+      var attr, changes, silent, changing, prev, current;
 
       options || (options = {});
 
@@ -298,7 +298,6 @@
       if (!this._validate(attrs, options)) return false;
 
       // Extract attributes and options.
-      unset           = options.unset;
       silent          = options.silent;
       changes         = [];
       changing        = this._changing;
