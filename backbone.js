@@ -823,10 +823,9 @@
     // wait for the server to agree.
     create: function(model, options) {
       options = options ? _.clone(options) : {};
-      model = this._prepareModel(model, options);
-      if (!model) return false;
+      if (!(model = this._prepareModel(model, options))) return false;
+      if (!options.wait) this.add(model, options);
       var collection = this;
-      if (!options.wait) collection.add(model, options);
       var success = options.success;
       options.success = function(model, resp, options) {
         if (options.wait) collection.add(model, options);
