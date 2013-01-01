@@ -226,30 +226,33 @@
   _.extend(Backbone, Events);
 
   var ChangeTracker = function() {
-    this.previous = void 0;
-    this.changed  = {};
-    this.changing = false;
+    this.previous      = void 0;
+    this.changed       = {};
+    this.changing      = false;
+    this.eventsPending = false;
   };
 
   ChangeTracker.prototype = {
 
     reset: function () {
-      this.changed = {};
+      this.changed       = {};
+      this.changing      = false;
+      this.eventsPending = false;
     },
 
-    start: function(attrs) {
-      this.previous = attrs;
-      this.changed = {};
-    },
-
-    isTopCall: function () {
+    isTopCall: function (current) {
       var result = !this.changing;
       this.changing = true;
+      if (result) {
+        this.previous = _.clone(current);
+        this.changed = {};
+      }
       return result;
     },
 
     done: function () {
       this.changing = false;
+      this.eventsPending = false;
     },
 
     hasChanged: function(attr) {
@@ -268,6 +271,15 @@
       return changed;
     },
 
+    hasEventsPending: function () {
+      var result = this.eventsPending;
+      this.eventsPending = false;
+      return result;
+    },
+
+    startTriggering: function () {
+      this.eventsPending = true;
+    }
 
   };
 
@@ -286,7 +298,6 @@
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
-    this._changeEventsPending = false;
     this._changeTracker = new ChangeTracker();
     this.set(attrs, options);
     this._changeTracker.reset();
@@ -350,11 +361,7 @@
 
       // We can be re-entered in event callbacks so track whether this
       // is the top call or not.
-      topCall = this._changeTracker.isTopCall();
-
-      if (topCall) {
-        this._changeTracker.start(_.clone(this.attributes));
-      }
+      topCall = this._changeTracker.isTopCall(this.attributes);
 
       current = this.attributes;
       prev    = this._changeTracker.previous;
@@ -372,19 +379,17 @@
       }
 
       if (!silent && changes.length) {
-        this._changeEventsPending = true;
+        this._changeTracker.startTriggering();
         this._triggerChangeEvents(changes, current, options);
       }
 
       if (topCall) {
         if (!silent) {
           // Keep triggering the change event until things quiesce
-          while (this._changeEventsPending) {
-            this._changeEventsPending = false;
+          while (this._changeTracker.hasEventsPending()) {
             this.trigger('change', this, options);
           }
         }
-        this._changeEventsPending = false;
         this._changeTracker.done();
       }
 
