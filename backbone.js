@@ -231,24 +231,25 @@
     this.changed    = {};
     this.old        = void 0;
     this.hadChanges = false;
-    this.calls      = 0;
+    this.changesets = [];
   };
 
   ChangeTracker.prototype = {
 
     enter: function () {
-      this.calls++;
-      if (this.calls === 1) {
+      this.changesets.push([]);
+      if (this.changesets.length === 1) {
         this.previous = _.clone(this.model.attributes);
         this.old      = this.previous;
         this.changed  = {};
       }
     },
 
-    exit: function (changes, options, finish) {
+    exit: function (options) {
       var i, attr;
-      var silent = options.silent;
+      var silent  = options.silent;
       var current = this.model.attributes;
+      var changes = this.changesets[this.changesets.length - 1];
 
       if (!silent && changes.length) {
         for (i in changes) {
@@ -259,7 +260,7 @@
       }
 
       // Only do this on the last exit.
-      if (this.calls === 1) {
+      if (this.changesets.length === 1) {
         if (!silent) {
           // Keep triggering the change event until things quiesce
           while (this.hadChanges) {
@@ -273,10 +274,12 @@
         this.hadChanges = false;
         this.old        = current;
       }
-      this.calls--;
+      this.changesets.pop();
     },
 
-    recordChange: function (attr, val) {
+    recordChange: function (attr, currentVal, val) {
+      var changes = this.changesets[this.changesets.length - 1];
+      if (!_.isEqual(currentVal, val)) changes.push(attr);
       _.isEqual(this.previous[attr], val) ? delete this.changed[attr] : this.changed[attr] = val;
     },
 
@@ -381,18 +384,16 @@
 
       tracker = this._changeTracker;
       current = this.attributes;
-      changes = silent ? null : []; // The changes made in this particular call.
 
       tracker.enter();
       try {
         for (attr in attrs) {
           val = attrs[attr];
-          if (!silent && !_.isEqual(current[attr], val)) changes.push(attr);
-          tracker.recordChange(attr, val);
+          tracker.recordChange(attr, current[attr], val);
           _.isUndefined(val) ? delete current[attr] : current[attr] = val;
         }
       } finally {
-        tracker.exit(changes, options);
+        tracker.exit(options);
       }
 
       return this;
