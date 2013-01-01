@@ -226,18 +226,18 @@
   _.extend(Backbone, Events);
 
   var ChangeTracker = function() {
-    this.previous      = void 0;
-    this.changed       = {};
-    this.changing      = false;
-    this.eventsPending = false;
+    this.previous              = void 0;
+    this.changed               = {};
+    this.changing              = false;
+    this.attributeChangesFired = false;
   };
 
   ChangeTracker.prototype = {
 
     reset: function () {
-      this.changed       = {};
-      this.changing      = false;
-      this.eventsPending = false;
+      this.changing              = false;
+      this.attributeChangesFired = false;
+      this.changed               = {};
     },
 
     isTopCall: function (current) {
@@ -250,10 +250,27 @@
       return result;
     },
 
-    done: function () {
-      this.changing = false;
-      this.eventsPending = false;
+    finish: function (topCall, silent, model, options) {
+      if (topCall) {
+        if (!silent) {
+          // Keep triggering the change event until things quiesce
+          while (this.attributeChangesFired) {
+            this.attributeChangesFired = false;
+            model.trigger('change', model, options);
+          }
+        }
+        // N.B. we don't reset `changed` here since we need to be able
+        // to report about what changed after the call to _change. It
+        // will be reset at the next call to isTopCall.
+        this.changing              = false;
+        this.attributeChangesFired = false;
+      }
     },
+
+    recordChange: function (attr, val) {
+      _.isEqual(this.previous[attr], val) ? delete this.changed[attr] : this.changed[attr] = val;
+    },
+
 
     hasChanged: function(attr) {
       if (attr == null) return !_.isEmpty(this.changed);
@@ -269,16 +286,6 @@
         (changed || (changed = {}))[attr] = val;
       }
       return changed;
-    },
-
-    hasEventsPending: function () {
-      var result = this.eventsPending;
-      this.eventsPending = false;
-      return result;
-    },
-
-    startTriggering: function () {
-      this.eventsPending = true;
     }
 
   };
@@ -348,24 +355,20 @@
     // is passed, fires change:<foo> events for each changed attribute
     // and a final change event.
     _change: function(attrs, options) {
-      var attr, changes, silent, topCall, prev, current, changed;
+      var attr, val, changes, silent, topCall, current;
 
       options || (options = {});
 
       // Run validation.
       if (!this._validate(attrs, options)) return false;
 
-      // Extract attributes and options.
       silent  = options.silent;
-      changes = [];
+      current = this.attributes;
 
       // We can be re-entered in event callbacks so track whether this
       // is the top call or not.
-      topCall = this._changeTracker.isTopCall(this.attributes);
-
-      current = this.attributes;
-      prev    = this._changeTracker.previous;
-      changed = this._changeTracker.changed;
+      topCall = this._changeTracker.isTopCall(current);
+      changes = []; // The changes made in this particular call.
 
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
@@ -374,24 +377,15 @@
       for (attr in attrs) {
         val = attrs[attr];
         if (!silent && !_.isEqual(current[attr], val)) changes.push(attr);
-        _.isEqual(prev[attr], val) ? delete changed[attr] : changed[attr] = val;
+        this._changeTracker.recordChange(attr, val);
         _.isUndefined(val) ? delete current[attr] : current[attr] = val;
       }
 
       if (!silent && changes.length) {
-        this._changeTracker.startTriggering();
         this._triggerChangeEvents(changes, current, options);
       }
 
-      if (topCall) {
-        if (!silent) {
-          // Keep triggering the change event until things quiesce
-          while (this._changeTracker.hasEventsPending()) {
-            this.trigger('change', this, options);
-          }
-        }
-        this._changeTracker.done();
-      }
+      this._changeTracker.finish(topCall, silent, this, options);
 
       return this;
     },
@@ -402,6 +396,7 @@
         attr = changes[i];
         this.trigger('change:' + attr, this, current[attr], options);
       }
+      this._changeTracker.attributeChangesFired = true;
     },
 
     // Set a hash of model attributes on the object, firing `"change"` unless
