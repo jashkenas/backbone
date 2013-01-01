@@ -227,7 +227,7 @@
 
   var ChangeTracker = function(model) {
     this.model      = model;
-    this.previous   = void 0;
+    this.before     = void 0;
     this.changed    = {};
     this.old        = void 0;
     this.hadChanges = false;
@@ -239,8 +239,8 @@
     enter: function () {
       this.changesets.push([]);
       if (this.changesets.length === 1) {
-        this.previous = _.clone(this.model.attributes);
-        this.old      = this.previous;
+        this.before = _.clone(this.model.attributes);
+        this.old      = this.before;
         this.changed  = {};
       }
     },
@@ -280,7 +280,7 @@
     recordChange: function (attr, currentVal, val) {
       var changes = this.changesets[this.changesets.length - 1];
       if (!_.isEqual(currentVal, val)) changes.push(attr);
-      _.isEqual(this.previous[attr], val) ? delete this.changed[attr] : this.changed[attr] = val;
+      _.isEqual(this.before[attr], val) ? delete this.changed[attr] : this.changed[attr] = val;
     },
 
     forgetChanges: function () { this.changed = {}; },
@@ -302,7 +302,14 @@
         }
       }
       return changed;
-    }
+    },
+
+    previous: function(attr) {
+      if (attr == null || !this.before) return null;
+      return this.before[attr];
+    },
+
+    previousAttributes: function() { return _.clone(this.before); }
 
   };
 
@@ -442,38 +449,25 @@
       return this._changeTracker.hasChanged(attr);
     },
 
-    // Return an object containing all the attributes that have
-    // changed, or false if there are no changed attributes. Useful
-    // for determining what parts of a view need to be updated and/or
-    // what attributes need to be persisted to the server. Unset
-    // attributes will be set to undefined. You can also pass an
-    // attributes object to diff against the model, determining if
-    // there *would be* a change. If this method is called from a
-    // change event callback the changes are considered relative to
+    // Return an object containing all the attributes that have changed, or
+    // false if there are no changed attributes. Useful for determining what
+    // parts of a view need to be updated and/or what attributes need to be
+    // persisted to the server. Unset attributes will be set to undefined.
+    // You can also pass an attributes object to diff against the model,
+    // determining if there *would be* a change. If this method is called
+    // from a change event callback the changes are considered relative to
     // the state of the model before the mutation started.
     changedAttributes: function(diff) {
       return this._changeTracker.changedAttributes(diff);
     },
 
-    // Get the new value of a changed attribute, as of the last call
-    // to a model mutator.
-    changed: function(attr) {
-      if (attr == null || !this._changeTracker.changed) return null;
-      return this._changeTracker.changed[attr];
-    },
-
     // Get the previous value of an attribute, recorded at the time the last
     // `"change"` event was fired.
-    previous: function(attr) {
-      if (attr == null || !this._changeTracker.previous) return null;
-      return this._changeTracker.previous[attr];
-    },
+    previous: function(attr) { return this._changeTracker.previous(attr); },
 
     // Get all of the attributes of the model at the time of the previous
     // `"change"` event.
-    previousAttributes: function() {
-      return _.clone(this._changeTracker.previous);
-    },
+    previousAttributes: function() { return this._changeTracker.previousAttributes(); },
 
     // ---------------------------------------------------------------------
 
