@@ -230,7 +230,6 @@
     this.previous              = void 0;
     this.changed               = {};
     this.old                   = void 0;
-    this.changing              = false;
     this.attributeChangesFired = false;
     this.calls                 = 0;
   };
@@ -238,27 +237,16 @@
   ChangeTracker.prototype = {
 
     enter: function () {
-      var alreadyChanging = this.changing;
-
-      //console.log('enter with calls: ' + this.calls + ' and changing ' + this.changing);
-      console.assert(this.changing ? this.calls > 0 : true);
-      console.assert(this.changing ? true : this.calls === 0);
       this.calls++;
 
-      this.changing = true;
-
-      if (!alreadyChanging) {
+      if (this.calls === 1) {
         this.previous = _.clone(this.model.attributes);
         this.old = this.previous;
         this.changed = {};
-        return true;
-      } else {
-        return false;
       }
     },
 
     exit: function (silent, changes, options, finish) {
-      //console.log('exit with calls: ' + this.calls);
 
       if (!silent && changes.length) {
         var i, attr, current = this.model.attributes;
@@ -269,7 +257,7 @@
         this.attributeChangesFired = true;
       }
 
-      if (finish) {
+      if (this.calls === 1) {
         if (!silent) {
           // Keep triggering the change event until things quiesce
           while (this.attributeChangesFired) {
@@ -280,13 +268,10 @@
         // N.B. we don't reset `changed` here since we need to be able
         // to report about what changed after the call to _change. It
         // will be reset the next time we call `enter`.
-        this.changing              = false;
-        //console.log('Setting changing false and calls is ' + this.calls);
         this.attributeChangesFired = false;
         this.old                   = this.model.attributes;
       }
       this.calls--;
-      console.assert(finish ? this.calls === 0 : true);
     },
 
     recordChange: function (attr, val) {
@@ -381,7 +366,7 @@
     // is passed, fires change:<foo> events for each changed attribute
     // and a final change event.
     _change: function(attrs, options) {
-      var attr, val, changes, silent, topCall, current;
+      var attr, val, changes, silent, current;
 
       options || (options = {});
 
@@ -395,7 +380,8 @@
 
       // We can be re-entered in event callbacks so track whether this
       // is the top call or not.
-      topCall = this._changeTracker.enter();
+      this._changeTracker.enter();
+
       changes = silent ? null : []; // The changes made in this particular call.
       current = this.attributes;
 
@@ -407,7 +393,7 @@
         _.isUndefined(val) ? delete current[attr] : current[attr] = val;
       }
 
-      this._changeTracker.exit(silent, changes, options, topCall);
+      this._changeTracker.exit(silent, changes, options);
 
       return this;
     },
