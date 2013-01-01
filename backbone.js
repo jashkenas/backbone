@@ -232,12 +232,18 @@
     this.old                   = void 0;
     this.changing              = false;
     this.attributeChangesFired = false;
+    this.calls                 = 0;
   };
 
   ChangeTracker.prototype = {
 
     enter: function () {
       var alreadyChanging = this.changing;
+
+      //console.log('enter with calls: ' + this.calls + ' and changing ' + this.changing);
+      console.assert(this.changing ? this.calls > 0 : true);
+      console.assert(this.changing ? true : this.calls === 0);
+      this.calls++;
 
       this.changing = true;
 
@@ -252,6 +258,7 @@
     },
 
     exit: function (silent, changes, options, finish) {
+      //console.log('exit with calls: ' + this.calls);
 
       if (!silent && changes.length) {
         var i, attr, current = this.model.attributes;
@@ -274,9 +281,12 @@
         // to report about what changed after the call to _change. It
         // will be reset the next time we call `enter`.
         this.changing              = false;
+        //console.log('Setting changing false and calls is ' + this.calls);
         this.attributeChangesFired = false;
         this.old                   = this.model.attributes;
       }
+      this.calls--;
+      console.assert(finish ? this.calls === 0 : true);
     },
 
     recordChange: function (attr, val) {
