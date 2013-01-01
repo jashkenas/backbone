@@ -225,13 +225,22 @@
   // want global "pubsub" in a convenient place.
   _.extend(Backbone, Events);
 
+
+
+  // The ChangeTracker is used by the Model to keep track of the state of
+  // changes made to the model's attributes so at to trigger
+  // 'change:attribute' and 'change' events at the right times. This is
+  // moderately involved since a single call to a model mutatator (set,
+  // unset, or clear) can trigger events whose handlers may further mutate
+  // the model but we want to treat each top-level call to a mutator as a
+  // single change.
+
   var ChangeTracker = function(model) {
-    this.model      = model;
-    this.before     = void 0;
-    this.changed    = {};
-    this.old        = void 0;
-    this.hadChanges = false;
-    this.changesets = [];
+    this.model                     = model;
+    this.before                    = void 0;
+    this.changed                   = {};
+    this.attributeChangesTriggered = false;
+    this.changesets                = [];
   };
 
   ChangeTracker.prototype = {
@@ -239,40 +248,38 @@
     enter: function () {
       this.changesets.push([]);
       if (this.changesets.length === 1) {
-        this.before = _.clone(this.model.attributes);
-        this.old      = this.before;
-        this.changed  = {};
+        this.before                    = _.clone(this.model.attributes);
+        this.changed                   = {};
+        this.attributeChangesTriggered = false;
       }
     },
 
     exit: function (options) {
-      var i, attr;
-      var silent  = options.silent;
-      var current = this.model.attributes;
-      var changes = this.changesets[this.changesets.length - 1];
+      var i, attr, model, changes, current;
 
-      if (!silent && changes.length) {
-        for (i in changes) {
-          attr = changes[i];
-          this.model.trigger('change:' + attr, this.model, current[attr], options);
+      if (!options.silent) {
+        model   = this.model;
+        changes = this.changesets[this.changesets.length - 1];
+
+        if (changes.length) {
+          current = model.attributes;
+          for (i in changes) {
+            attr = changes[i];
+            model.trigger('change:' + attr, model, current[attr], options);
+          }
+          this.attributeChangesTriggered = true;
         }
-        this.hadChanges = true;
-      }
 
-      // Only do this on the last exit.
-      if (this.changesets.length === 1) {
-        if (!silent) {
-          // Keep triggering the change event until things quiesce
-          while (this.hadChanges) {
-            this.hadChanges = false;
-            this.model.trigger('change', this.model, options);
+        // Only do this when exiting from the top level call to a mutator.
+        if (this.changesets.length === 1) {
+          // Keep triggering the change event until things quiesce. Thus one
+          // call to a mutator may result in multiple change events if the
+          // handler for on change event further mutates the model.
+          while (this.attributeChangesTriggered) {
+            this.attributeChangesTriggered = false;
+            model.trigger('change', model, options);
           }
         }
-        // N.B. we don't reset `changed` here since we need to be able
-        // to report about what changed after the call to _change. It
-        // will be reset the next time we call `enter`.
-        this.hadChanges = false;
-        this.old        = current;
       }
       this.changesets.pop();
     },
@@ -290,10 +297,22 @@
       return _.has(this.changed, attr);
     },
 
+    inChange: function () { return this.changesets.length > 0; },
+
     changedAttributes: function(diff) {
       if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
 
-      var attr, val, old = this.old, changed = false;
+
+      // In this case we are not actually asking if anything has changed but
+      // rather, whether if we were to set(diff) it would result in a
+      // change. In the midst of a change we want to compare the prospective
+      // values to the values prior to the start of the change (i.e.
+      // this.before) but once all changes are finished we want to compare
+      // to the current values (i.e. this.model.attributes). I'm not sure
+      // why that actually is; why, in a callback, wouldn't you want to
+      // compare to whatever the current values are? -Peter Seibel
+      var attr, val, changed = false;
+      var old = this.inChange() ? this.before : this.model.attributes;
 
       for (attr in diff) {
         val = diff[attr];
@@ -378,7 +397,7 @@
     // is passed, fires change:<foo> events for each changed attribute
     // and a final change event.
     _change: function(attrs, options) {
-      var attr, val, silent, tracker, current, changes;
+      var attr, val, silent, tracker, current;
 
       options || (options = {});
       silent = options.silent;
