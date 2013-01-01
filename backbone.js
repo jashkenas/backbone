@@ -225,6 +225,52 @@
   // want global "pubsub" in a convenient place.
   _.extend(Backbone, Events);
 
+  var ChangeTracker = function() {
+    this.previous = void 0;
+    this.changed  = {};
+    this.changing = false;
+  };
+
+  ChangeTracker.prototype = {
+
+    reset: function () {
+      this.changed = {};
+    },
+
+    start: function(attrs) {
+      this.previous = attrs;
+      this.changed = {};
+    },
+
+    isTopCall: function () {
+      var result = !this.changing;
+      this.changing = true;
+      return result;
+    },
+
+    done: function () {
+      this.changing = false;
+    },
+
+    hasChanged: function(attr) {
+      if (attr == null) return !_.isEmpty(this.changed);
+      return _.has(this.changed, attr);
+    },
+
+    changedAttributes: function(diff, current) {
+      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
+      var val, changed = false;
+      var old = this.changing ? this.previous : current;
+      for (var attr in diff) {
+        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
+        (changed || (changed = {}))[attr] = val;
+      }
+      return changed;
+    },
+
+
+  };
+
   // Backbone.Model
   // --------------
 
@@ -241,12 +287,9 @@
       attrs = _.defaults({}, attrs, defaults);
     }
     this._changeEventsPending = false;
-    this._changeTracker = {
-      previous: void 0,
-      changed: {}
-    };
+    this._changeTracker = new ChangeTracker();
     this.set(attrs, options);
-    this._changeTracker.changed = {};
+    this._changeTracker.reset();
     this.initialize.apply(this, arguments);
   };
 
@@ -307,14 +350,10 @@
 
       // We can be re-entered in event callbacks so track whether this
       // is the top call or not.
-      topCall        = !this._changing;
-      this._changing = true;
+      topCall = this._changeTracker.isTopCall();
 
       if (topCall) {
-        this._changeTracker = {
-          previous: _.clone(this.attributes),
-          changed: {}
-        };
+        this._changeTracker.start(_.clone(this.attributes));
       }
 
       current = this.attributes;
@@ -346,7 +385,7 @@
           }
         }
         this._changeEventsPending = false;
-        this._changing            = false;
+        this._changeTracker.done();
       }
 
       return this;
@@ -401,8 +440,7 @@
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (attr == null) return !_.isEmpty(this._changeTracker.changed);
-      return _.has(this._changeTracker.changed, attr);
+      return this._changeTracker.hasChanged(attr);
     },
 
     // Return an object containing all the attributes that have
@@ -415,14 +453,7 @@
     // change event callback the changes are considered relative to
     // the state of the model before the mutation started.
     changedAttributes: function(diff) {
-      if (!diff) return this.hasChanged() ? _.clone(this._changeTracker.changed) : false;
-      var val, changed = false;
-      var old = this._changing ? this._changeTracker.previous : this.attributes;
-      for (var attr in diff) {
-        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
-        (changed || (changed = {}))[attr] = val;
-      }
-      return changed;
+      return this._changeTracker.changedAttributes(diff, this.attributes);
     },
 
     // Get the changed value
