@@ -294,7 +294,7 @@
       return changed;
     },
 
-    triggerAttributeChangeEvents: function (changes) {
+    exit: function (changes) {
       var i, attr, current = this.model.attributes;
       for (i in changes) {
         attr = changes[i];
@@ -397,7 +397,7 @@
       }
 
       if (!silent && changes.length) {
-        this._changeTracker.triggerAttributeChangeEvents(changes);
+        this._changeTracker.exit(changes);
       }
 
       finish();
