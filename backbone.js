@@ -225,8 +225,11 @@
   // want global "pubsub" in a convenient place.
   _.extend(Backbone, Events);
 
-  var ChangeTracker = function() {
+  var ChangeTracker = function(model) {
+    this.model                 = model;
     this.previous              = void 0;
+    this.old                   = void 0;
+    this.options               = null;
     this.changed               = {};
     this.changing              = false;
     this.attributeChangesFired = false;
@@ -234,36 +237,35 @@
 
   ChangeTracker.prototype = {
 
-    reset: function () {
-      this.changing              = false;
-      this.attributeChangesFired = false;
-      this.changed               = {};
-    },
+    enter: function (options) {
+      var silent, alreadyChanging = this.changing;
 
-    isTopCall: function (current) {
-      var result = !this.changing;
+      this.options  = options;
       this.changing = true;
-      if (result) {
-        this.previous = _.clone(current);
-        this.changed = {};
-      }
-      return result;
-    },
 
-    finish: function (topCall, silent, model, options) {
-      if (topCall) {
-        if (!silent) {
-          // Keep triggering the change event until things quiesce
-          while (this.attributeChangesFired) {
-            this.attributeChangesFired = false;
-            model.trigger('change', model, options);
+      if (!alreadyChanging) {
+        silent = options.silent;
+        this.previous = _.clone(this.model.attributes);
+        this.old = this.previous;
+        this.changed = {};
+        var me = this;
+        return function () {
+          if (!silent) {
+            // Keep triggering the change event until things quiesce
+            while (me.attributeChangesFired) {
+              me.attributeChangesFired = false;
+              me.model.trigger('change', me.model, options);
+            }
           }
-        }
-        // N.B. we don't reset `changed` here since we need to be able
-        // to report about what changed after the call to _change. It
-        // will be reset at the next call to isTopCall.
-        this.changing              = false;
-        this.attributeChangesFired = false;
+          // N.B. we don't reset `changed` here since we need to be
+          // able to report about what changed after the call to
+          // _change. It will be reset at the next call to isTopCall.
+          me.changing              = false;
+          me.attributeChangesFired = false;
+          me.old                   = me.model.attributes;
+        };
+      } else {
+        return function () {};
       }
     },
 
@@ -271,21 +273,34 @@
       _.isEqual(this.previous[attr], val) ? delete this.changed[attr] : this.changed[attr] = val;
     },
 
+    forgetChanges: function () { this.changed = {}; },
 
     hasChanged: function(attr) {
       if (attr == null) return !_.isEmpty(this.changed);
       return _.has(this.changed, attr);
     },
 
-    changedAttributes: function(diff, current) {
+    changedAttributes: function(diff) {
       if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
-      var val, changed = false;
-      var old = this.changing ? this.previous : current;
-      for (var attr in diff) {
-        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
-        (changed || (changed = {}))[attr] = val;
+
+      var attr, val, old = this.old, changed = false;
+
+      for (attr in diff) {
+        val = diff[attr];
+        if (!_.isEqual(old[attr], val)) {
+          (changed || (changed = {}))[attr] = val;
+        }
       }
       return changed;
+    },
+
+    triggerAttributeChangeEvents: function (changes) {
+      var i, attr, current = this.model.attributes;
+      for (i in changes) {
+        attr = changes[i];
+        this.model.trigger('change:' + attr, this.model, current[attr], this.options);
+      }
+      this.attributeChangesFired = true;
     }
 
   };
@@ -305,9 +320,9 @@
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
-    this._changeTracker = new ChangeTracker();
+    this._changeTracker = new ChangeTracker(this);
     this.set(attrs, options);
-    this._changeTracker.reset();
+    this._changeTracker.forgetChanges();
     this.initialize.apply(this, arguments);
   };
 
@@ -355,23 +370,23 @@
     // is passed, fires change:<foo> events for each changed attribute
     // and a final change event.
     _change: function(attrs, options) {
-      var attr, val, changes, silent, topCall, current;
+      var attr, val, changes, silent, finish, current;
 
       options || (options = {});
 
       // Run validation.
       if (!this._validate(attrs, options)) return false;
 
-      silent  = options.silent;
-      current = this.attributes;
+      // Check for changes of `id`.
+      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+
+      silent = options.silent;
 
       // We can be re-entered in event callbacks so track whether this
       // is the top call or not.
-      topCall = this._changeTracker.isTopCall(current);
-      changes = []; // The changes made in this particular call.
-
-      // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+      finish = this._changeTracker.enter(options);
+      changes = silent ? null : []; // The changes made in this particular call.
+      current = this.attributes;
 
       // For each attribute, update or delete the current value
       for (attr in attrs) {
@@ -382,21 +397,12 @@
       }
 
       if (!silent && changes.length) {
-        this._triggerChangeEvents(changes, current, options);
+        this._changeTracker.triggerAttributeChangeEvents(changes);
       }
 
-      this._changeTracker.finish(topCall, silent, this, options);
+      finish();
 
       return this;
-    },
-
-    _triggerChangeEvents: function (changes, current, options) {
-      var i, attr;
-      for (i in changes) {
-        attr = changes[i];
-        this.trigger('change:' + attr, this, current[attr], options);
-      }
-      this._changeTracker.attributeChangesFired = true;
     },
 
     // Set a hash of model attributes on the object, firing `"change"` unless
@@ -433,9 +439,8 @@
     },
 
     // XXX: that comments on the next few methods are not quite right
-    // because _previousAttributes is recorded even when the mutating
-    // methods are called with a silent option and thus no change
-    // event is fired.
+    // because changes are recorded even when the mutating methods are
+    // called with a silent option and thus no change event is fired.
 
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
@@ -453,10 +458,11 @@
     // change event callback the changes are considered relative to
     // the state of the model before the mutation started.
     changedAttributes: function(diff) {
-      return this._changeTracker.changedAttributes(diff, this.attributes);
+      return this._changeTracker.changedAttributes(diff);
     },
 
-    // Get the changed value
+    // Get the new value of a changed attribute, as of the last call
+    // to a model mutator.
     changed: function(attr) {
       if (attr == null || !this._changeTracker.changed) return null;
       return this._changeTracker.changed[attr];
