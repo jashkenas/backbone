@@ -244,7 +244,7 @@ $(document).ready(function() {
   test("set falsy values in the correct order", 2, function() {
     var model = new Backbone.Model({result: 'result'});
     model.on('change', function() {
-      equal(model.changed('result'), void 0);
+      equal(model.changedAttributes()['result'], void 0);
       equal(model.previous('result'), false);
     });
     model.set({result: void 0}, {silent: true});
@@ -645,6 +645,15 @@ $(document).ready(function() {
   });
 
   /*
+    I have to take out this test since I'm now treating assigning an
+    undefined value to an attribute as the same as unsetting it. I.e.
+    it's no longer possible for an attribute to exist but have an
+    undefined value. Which seems righteous to me since there's no way
+    to send an undefined value in JSON and thus a model with present
+    but undefined values is the same, from a JSON point of view, as a
+    model with those values simply not present. -Peter
+
+
   test("set: undefined values", 1, function() {
     var model = new Backbone.Model({x: undefined});
     ok('x' in model.attributes);
