@@ -241,8 +241,12 @@
       attrs = _.defaults({}, attrs, defaults);
     }
     this._changeEventsPending = false;
+    this._changeTracker = {
+      previous: void 0,
+      changed: {}
+    };
     this.set(attrs, options);
-    this.changed = {}; // Clear any changed state.
+    this._changeTracker.changed = {};
     this.initialize.apply(this, arguments);
   };
 
@@ -307,13 +311,15 @@
       this._changing = true;
 
       if (topCall) {
-        this._previousAttributes = _.clone(this.attributes);
-        this.changed = {};
+        this._changeTracker = {
+          previous: _.clone(this.attributes),
+          changed: {}
+        };
       }
 
       current = this.attributes;
-      prev    = this._previousAttributes;
-      changed = this.changed;
+      prev    = this._changeTracker.previous;
+      changed = this._changeTracker.changed;
 
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
@@ -395,8 +401,8 @@
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (attr == null) return !_.isEmpty(this.changed);
-      return _.has(this.changed, attr);
+      if (attr == null) return !_.isEmpty(this._changeTracker.changed);
+      return _.has(this._changeTracker.changed, attr);
     },
 
     // Return an object containing all the attributes that have
@@ -409,9 +415,9 @@
     // change event callback the changes are considered relative to
     // the state of the model before the mutation started.
     changedAttributes: function(diff) {
-      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
+      if (!diff) return this.hasChanged() ? _.clone(this._changeTracker.changed) : false;
       var val, changed = false;
-      var old = this._changing ? this._previousAttributes : this.attributes;
+      var old = this._changing ? this._changeTracker.previous : this.attributes;
       for (var attr in diff) {
         if (_.isEqual(old[attr], (val = diff[attr]))) continue;
         (changed || (changed = {}))[attr] = val;
@@ -419,17 +425,23 @@
       return changed;
     },
 
+    // Get the changed value
+    changed: function(attr) {
+      if (attr == null || !this._changeTracker.changed) return null;
+      return this._changeTracker.changed[attr];
+    },
+
     // Get the previous value of an attribute, recorded at the time the last
     // `"change"` event was fired.
     previous: function(attr) {
-      if (attr == null || !this._previousAttributes) return null;
-      return this._previousAttributes[attr];
+      if (attr == null || !this._changeTracker.previous) return null;
+      return this._changeTracker.previous[attr];
     },
 
     // Get all of the attributes of the model at the time of the previous
     // `"change"` event.
     previousAttributes: function() {
-      return _.clone(this._previousAttributes);
+      return _.clone(this._changeTracker.previous);
     },
 
     // ---------------------------------------------------------------------

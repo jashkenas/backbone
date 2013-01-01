@@ -244,7 +244,7 @@ $(document).ready(function() {
   test("set falsy values in the correct order", 2, function() {
     var model = new Backbone.Model({result: 'result'});
     model.on('change', function() {
-      equal(model.changed.result, void 0);
+      equal(model.changed('result'), void 0);
       equal(model.previous('result'), false);
     });
     model.set({result: void 0}, {silent: true});
