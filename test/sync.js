@@ -155,6 +155,32 @@ $(document).ready(function() {
     Backbone.sync('create', model);
   });
 
+  test("Can override generated success handlers", 2, function() {
+    var model = new Backbone.Model,
+        oldWrapSuccess = Backbone.wrapSuccess;
+    Backbone.wrapSuccess = function(model, options) {
+      ok(true);
+      return oldWrapSuccess.apply(this, arguments);
+    };
+    model.url = '/test';
+    Backbone.sync('read', model);
+    equal(this.ajaxSettings.url, '/test');
+    Backbone.wrapSuccess = oldWrapSuccess;
+  });
+
+  test("Can override generated error handlers", 1, function() {
+    var model = new Backbone.Model,
+        oldWrapError = Backbone.wrapError;
+    Backbone.wrapError = function(model, options) {
+      ok(true);
+      return oldWrapError.apply(this, arguments);
+    };
+    model.url = '/test';
+    Backbone.sync('read', model);
+    this.ajaxSettings.error();
+    Backbone.wrapError = oldWrapError;
+  });
+
   test("Call provided error callback on error.", 1, function() {
     var model = new Backbone.Model;
     model.url = '/test';
