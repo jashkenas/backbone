@@ -846,13 +846,6 @@
       return new this.constructor(this.models);
     },
 
-    // Proxy to _'s chain. Can't be proxied the same way the rest of the
-    // underscore methods are proxied because it relies on the underscore
-    // constructor.
-    chain: function() {
-      return _(this.models).chain();
-    },
-
     // Reset all internal state. Called when the collection is reset.
     _reset: function() {
       this.length = 0;
@@ -901,7 +894,7 @@
     'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
     'max', 'min', 'sortedIndex', 'toArray', 'size', 'first', 'head', 'take',
     'initial', 'rest', 'tail', 'drop', 'last', 'without', 'indexOf', 'shuffle',
-    'lastIndexOf', 'isEmpty'];
+    'lastIndexOf', 'isEmpty', 'chain'];
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
   _.each(methods, function(method) {
