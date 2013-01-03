@@ -841,32 +841,35 @@ $(document).ready(function() {
     strictEqual(c.length, 2);
     strictEqual(m2.get('a'), 0);
 
-    // default options add/remove/merge as appropriate
+    // default options adds new models, keeps old models and merges
     c.update([{id: 2, a: 1}, m3]);
-    strictEqual(c.length, 2);
+    equal(c.contains(m1), true);
+    equal(c.contains(m2), true);
+    equal(c.contains(m3), true);
+    strictEqual(c.length, 3);
     strictEqual(m2.get('a'), 1);
 
     // Test removing models not passing an argument
     c.off('remove').on('remove', function(model) {
       ok(model === m2 || model === m3);
     });
-    c.update([]);
-    strictEqual(c.length, 0);
+    c.update([m1], {remove: true});
+    strictEqual(c.length, 1);
   });
 
-  test("update with only cids", 3, function() {
+  test("update with only cids does not insert duplicates", 3, function() {
     var m1 = new Backbone.Model;
     var m2 = new Backbone.Model;
     var c = new Backbone.Collection;
     c.update([m1, m2]);
     equal(c.length, 2);
-    c.update([m1]);
+    c.update([m1], {remove: true});
     equal(c.length, 1);
     c.update([m1, m1, m1, m2, m2], {remove: false});
     equal(c.length, 2);
   });
 
-  test("update with only idAttribute", 3, function() {
+  test("update with only idAttribute does not insert duplicates", 3, function() {
     var m1 = { _id: 1 };
     var m2 = { _id: 2 };
     var col = Backbone.Collection.extend({
@@ -877,7 +880,7 @@ $(document).ready(function() {
     var c = new col;
     c.update([m1, m2]);
     equal(c.length, 2);
-    c.update([m1]);
+    c.update([m1], {remove: true});
     equal(c.length, 1);
     c.update([m1, m1, m1, m2, m2], {remove: false});
     equal(c.length, 2);
