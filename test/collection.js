@@ -901,6 +901,10 @@ $(document).ready(function() {
     equal(col.length, 1);
   });
 
+  test('update fires update event', 1, function () {
+    (new Backbone.Collection).on('update', _.bind(ok, this, true)).update();
+  });
+
   test("#1894 - Push should not trigger a sort", 0, function() {
     var Collection = Backbone.Collection.extend({
       comparator: 'id',

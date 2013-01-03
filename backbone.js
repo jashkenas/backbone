@@ -784,6 +784,7 @@
       // Remove models (if applicable) before we add and merge the rest.
       if (remove.length) this.remove(remove, options);
       if (add.length) this.add(add, options);
+      if (!options.silent) this.trigger('update', this, options);
       return this;
     },
 
