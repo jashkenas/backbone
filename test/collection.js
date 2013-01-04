@@ -986,4 +986,9 @@ $(document).ready(function() {
     collection.add(collection.models, {merge: true}); // don't sort
   });
 
+  test("vivifying models creates incrementally increasing `cid`s", function() {
+    var col = new Backbone.Collection([{foo: 1}, {foo: 2}, {foo: 3}]);
+    ok(col.at(0).cid < col.at(1).cid && col.at(1).cid < col.at(2).cid);
+  });
+
 });
