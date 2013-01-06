@@ -261,7 +261,27 @@
 
     // Return a copy of the model's `attributes` object.
     toJSON: function(options) {
-      return _.clone(this.attributes);
+      var json;
+      options || (options = {});
+
+      if (!options.escape) return _.clone(this.attributes);
+
+      json = {};
+      // Escape specified attributes.
+      if (_.isString(options.escape)) {
+        _.each(this.attributes, function (value, name) {
+          json[name] = name === options.escape ? _.escape(value) : value;
+        });
+      } else if (_.isArray(options.escape)) {
+        _.each(this.attributes, function (value, name) {
+          json[name] = _.contains(options.escape, name) ? _.escape(value) : value;
+        });
+      } else {
+        _.each(this.attributes, function (value, name) {
+          json[name] = _.escape(value);
+        });
+      }
+      return _.clone(json);
     },
 
     // Proxy `Backbone.sync` by default.
