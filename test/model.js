@@ -160,6 +160,14 @@ $(document).ready(function() {
     equal(doc.escape('audience'), '');
   });
 
+  test("toJSON", 4, function () {
+    var model = new Backbone.Model({amp: '&', gt: '>'});
+    deepEqual(model.toJSON(), {amp: '&', gt: '>'});
+    deepEqual(model.toJSON({escape: true}), {amp: '&amp;', gt: '&gt;'});
+    deepEqual(model.toJSON({escape: 'amp'}), {amp: '&amp;', gt: '>'});
+    deepEqual(model.toJSON({escape: ['gt']}), {amp: '&', gt: '&gt;'});
+  });
+
   test("has", 10, function() {
     var model = new Backbone.Model();
 
