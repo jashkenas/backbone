@@ -816,15 +816,15 @@
       return this;
     },
 
-    // Fetch the default set of models for this collection, resetting the
-    // collection when they arrive. If `update: true` is passed, the response
-    // data will be passed through the `update` method instead of `reset`.
+    // Fetch the default set of models for this collection, updating the
+    // collection when they arrive. If `reset: true` is passed, the response
+    // data will be passed through the `reset` method instead of `update`.
     fetch: function(options) {
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
       var success = options.success;
       options.success = function(collection, resp, options) {
-        var method = options.update ? 'update' : 'reset';
+        var method = options.reset ? 'reset' : 'update';
         collection[method](resp, options);
         if (success) success(collection, resp, options);
       };
