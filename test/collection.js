@@ -447,9 +447,9 @@ $(document).ready(function() {
     equal(col.length, 1);
   });
 
-  test("initialize", 1, function() {
+  test("initialise", 1, function() {
     var Collection = Backbone.Collection.extend({
-      initialize: function() {
+      initialise: function() {
         this.one = 1;
       }
     });
@@ -518,7 +518,7 @@ $(document).ready(function() {
 
   test("reset passes caller options", 3, function() {
     var Model = Backbone.Model.extend({
-      initialize: function(attrs, options) {
+      initialise: function(attrs, options) {
         this.model_parameter = options.model_parameter;
       }
     });

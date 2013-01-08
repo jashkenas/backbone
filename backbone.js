@@ -242,7 +242,7 @@
     }
     this.set(attrs, options);
     this.changed = {};
-    this.initialize.apply(this, arguments);
+    this.initialise.apply(this, arguments);
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -255,9 +255,9 @@
     // CouchDB users may want to set this to `"_id"`.
     idAttribute: 'id',
 
-    // Initialize is an empty function by default. Override it with your own
+    // Initialise is an empty function by default. Override it with your own
     // initialization logic.
-    initialize: function(){},
+    initialise: function(){},
 
     // Return a copy of the model's `attributes` object.
     toJSON: function(options) {
@@ -555,7 +555,7 @@
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
-    this.initialize.apply(this, arguments);
+    this.initialise.apply(this, arguments);
     if (models) this.reset(models, _.extend({silent: true}, options));
   };
 
@@ -566,9 +566,9 @@
     // This should be overridden in most cases.
     model: Model,
 
-    // Initialize is an empty function by default. Override it with your own
+    // Initialise is an empty function by default. Override it with your own
     // initialization logic.
-    initialize: function(){},
+    initialise: function(){},
 
     // The JSON representation of a Collection is an array of the
     // models' attributes.
@@ -927,7 +927,7 @@
     options || (options = {});
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
-    this.initialize.apply(this, arguments);
+    this.initialise.apply(this, arguments);
   };
 
   // Cached regular expressions for matching named param parts and splatted
@@ -940,9 +940,9 @@
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
 
-    // Initialize is an empty function by default. Override it with your own
+    // Initialise is an empty function by default. Override it with your own
     // initialization logic.
-    initialize: function(){},
+    initialise: function(){},
 
     // Manually bind a single named route to a callback. For example:
     //
@@ -1224,7 +1224,7 @@
     this.cid = _.uniqueId('view');
     this._configure(options || {});
     this._ensureElement();
-    this.initialize.apply(this, arguments);
+    this.initialise.apply(this, arguments);
     this.delegateEvents();
   };
 
@@ -1246,9 +1246,9 @@
       return this.$el.find(selector);
     },
 
-    // Initialize is an empty function by default. Override it with your own
+    // Initialise is an empty function by default. Override it with your own
     // initialization logic.
-    initialize: function(){},
+    initialise: function(){},
 
     // **render** is the core function that your view should override, in order
     // to populate its element (`this.el`), with the appropriate HTML. The

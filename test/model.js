@@ -22,9 +22,9 @@ $(document).ready(function() {
 
   }));
 
-  test("initialize", 3, function() {
+  test("initialise", 3, function() {
     var Model = Backbone.Model.extend({
-      initialize: function() {
+      initialise: function() {
         this.one = 1;
         equal(this.collection, collection);
       }
@@ -34,9 +34,9 @@ $(document).ready(function() {
     equal(model.collection, collection);
   });
 
-  test("initialize with attributes and options", 1, function() {
+  test("initialise with attributes and options", 1, function() {
     var Model = Backbone.Model.extend({
-      initialize: function(attributes, options) {
+      initialise: function(attributes, options) {
         this.one = options.one;
       }
     });
@@ -44,7 +44,7 @@ $(document).ready(function() {
     equal(model.one, 1);
   });
 
-  test("initialize with parsed attributes", 1, function() {
+  test("initialise with parsed attributes", 1, function() {
     var Model = Backbone.Model.extend({
       parse: function(obj) {
         obj.value += 1;
@@ -55,7 +55,7 @@ $(document).ready(function() {
     equal(model.get('value'), 2);
   });
 
-  test("initialize with defaults", 2, function() {
+  test("initialise with defaults", 2, function() {
     var Model = Backbone.Model.extend({
       defaults: {
         first_name: 'Unknown',
@@ -375,7 +375,7 @@ $(document).ready(function() {
     equal(value, 'Ms. Sue');
   });
 
-  test("change after initialize", 1, function () {
+  test("change after initialise", 1, function () {
     var changed = 0;
     var attrs = {id: 1, label: 'c'};
     var obj = new Backbone.Model(attrs);
@@ -543,7 +543,7 @@ $(document).ready(function() {
   test("defaults always extend attrs (#459)", 2, function() {
     var Defaulted = Backbone.Model.extend({
       defaults: {one: 1},
-      initialize : function(attrs, opts) {
+      initialise : function(attrs, opts) {
         equal(this.attributes.one, 1);
       }
     });
@@ -931,7 +931,7 @@ $(document).ready(function() {
   test("#1545 - `undefined` can be passed to a model constructor without coersion", function() {
     var Model = Backbone.Model.extend({
       defaults: { one: 1 },
-      initialize : function(attrs, opts) {
+      initialise : function(attrs, opts) {
         equal(attrs, undefined);
       }
     });
