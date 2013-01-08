@@ -1275,9 +1275,10 @@ book.destroy({success: function(model, response) {
       <br />
       This method is left undefined, and you're encouraged to override it with
       your custom validation logic, if you have any that can be performed
-      in JavaScript. <b>validate</b> is called before <tt>set</tt> and
-      <tt>save</tt>, and is passed the model attributes, as well as the options
-      from <tt>set</tt> or <tt>save</tt>.
+      in JavaScript. By default <b>validate</b> is called before
+      <tt>save</tt>, but can also be called before <tt>set</tt> if
+      <tt>{validate:true}</tt> is passed. The <b>validate</b> method is passed 
+      the model attributes, as well as the options from <tt>set</tt> or <tt>save</tt>.
       If the attributes are valid, don't return anything from <b>validate</b>;
       if they are invalid, return an error of your choosing. It
       can be as simple as a string error message to be displayed, or a complete
@@ -3815,10 +3816,10 @@ ActiveRecord::Base.include_root_in_json = false
     <b class="header">Edge</b> &mdash; <small><i>Not yet released</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...master">Diff</a><br />
     <ul style="margin-top: 5px;">
       <li>
-        Model validation is no longer enforced by default upon
-        construction or in Model#set.
-        Models can be constructed (and added to collections) even if
-        they fail validation now, unless <tt>{validate: true}</tt> is passed
+        Model validation is now only enforced by default in 
+        <tt>Model#save</tt> and no longer enforced by default upon
+        construction or in <tt>Model#set</tt>, unless the
+        <tt>{validate:true}</tt> option is passed.
       </li>
       <li>
         <tt>View#make</tt> has been removed. You'll need to use <tt>$</tt> directly to
