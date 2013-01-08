@@ -29,9 +29,9 @@ $(document).ready(function() {
     strictEqual(view.$('a b').html(), 'test');
   });
 
-  test("initialize", 1, function() {
+  test("initialise", 1, function() {
     var View = Backbone.View.extend({
-      initialize: function() {
+      initialise: function() {
         this.one = 1;
       }
     });
@@ -296,7 +296,7 @@ $(document).ready(function() {
 
   test("views stopListening", 0, function() {
     var View = Backbone.View.extend({
-      initialize: function() {
+      initialise: function() {
         this.listenTo(this.model, 'all x', function(){ ok(false); }, this);
         this.listenTo(this.collection, 'all x', function(){ ok(false); }, this);
       }

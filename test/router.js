@@ -78,7 +78,7 @@ $(document).ready(function() {
       "*anything":                  "anything"
     },
 
-    initialize : function(options) {
+    initialise : function(options) {
       this.testing = options.testing;
       this.route('implicit', 'implicit');
     },
@@ -140,7 +140,7 @@ $(document).ready(function() {
 
   });
 
-  test("initialize", 1, function() {
+  test("initialise", 1, function() {
     equal(router.testing, 101);
   });
 

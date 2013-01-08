@@ -315,7 +315,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Model-extend">extend</a></li>
-      <li>– <a href="#Model-constructor">constructor / initialize</a></li>
+      <li>– <a href="#Model-constructor">constructor / initialise</a></li>
       <li>– <a href="#Model-get">get</a></li>
       <li>– <a href="#Model-set">set</a></li>
       <li>– <a href="#Model-escape">escape</a></li>
@@ -351,7 +351,7 @@
     <ul class="toc_section">
       <li>– <a href="#Collection-extend">extend</a></li>
       <li>– <a href="#Collection-model">model</a></li>
-      <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
+      <li>– <a href="#Collection-constructor">constructor / initialise</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-toJSON">toJSON</a></li>
       <li>– <a href="#Collection-sync">sync</a></li>
@@ -384,7 +384,7 @@
     <ul class="toc_section">
       <li>– <a href="#Router-extend">extend</a></li>
       <li>– <a href="#Router-routes">routes</a></li>
-      <li>– <a href="#Router-constructor">constructor / initialize</a></li>
+      <li>– <a href="#Router-constructor">constructor / initialise</a></li>
       <li>– <a href="#Router-route">route</a></li>
       <li>– <a href="#Router-navigate">navigate</a></li>
     </ul>
@@ -411,7 +411,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#View-extend">extend</a></li>
-      <li>– <a href="#View-constructor">constructor / initialize</a></li>
+      <li>– <a href="#View-constructor">constructor / initialise</a></li>
       <li>– <a href="#View-el">el</a></li>
       <li>– <a href="#View-$el">$el</a></li>
       <li>– <a href="#View-setElement">setElement</a></li>
@@ -879,7 +879,7 @@ sidebar.promptColor();
 <pre>
 var Note = Backbone.Model.extend({
 
-  initialize: function() { ... },
+  initialise: function() { ... },
 
   author: function() { ... },
 
@@ -918,11 +918,11 @@ var Note = Backbone.Model.extend({
 </pre>
 
     <p id="Model-constructor">
-      <b class="header">constructor / initialize</b><code>new Model([attributes], [options])</code>
+      <b class="header">constructor / initialise</b><code>new Model([attributes], [options])</code>
       <br />
       When creating an instance of a model, you can pass in the initial values
       of the <b>attributes</b>, which will be <a href="#Model-set">set</a> on the
-      model. If you define an <b>initialize</b> function, it will be invoked when
+      model. If you define an <b>initialise</b> function, it will be invoked when
       the model is created.
     </p>
 
@@ -1491,13 +1491,13 @@ var Library = Backbone.Collection.extend({
 </pre>
 
     <p id="Collection-constructor">
-      <b class="header">constructor / initialize</b><code>new Collection([models], [options])</code>
+      <b class="header">constructor / initialise</b><code>new Collection([models], [options])</code>
       <br />
       When creating a Collection, you may choose to pass in the initial array
       of <b>models</b>.  The collection's <a href="#Collection-comparator">comparator</a>
       may be included as an option. Passing <tt>false</tt> as the
       comparator option will prevent sorting. If you define an
-      <b>initialize</b> function, it will be invoked when the collection is
+      <b>initialise</b> function, it will be invoked when the collection is
       created.
     </p>
 
@@ -2087,11 +2087,11 @@ router.on("route:help", function(page) {
 </pre>
 
     <p id="Router-constructor">
-      <b class="header">constructor / initialize</b><code>new Router([options])</code>
+      <b class="header">constructor / initialise</b><code>new Router([options])</code>
       <br />
       When creating a new router, you may pass its
       <a href="#Router-routes">routes</a> hash directly as an option, if you
-      choose. All <tt>options</tt> will also be passed to your <tt>initialize</tt>
+      choose. All <tt>options</tt> will also be passed to your <tt>initialise</tt>
       function, if defined.
     </p>
 
@@ -2108,7 +2108,7 @@ router.on("route:help", function(page) {
     </p>
 
 <pre>
-initialize: function(options) {
+initialise: function(options) {
 
   // Matches #page/10, passing "10"
   this.route("page/:number", "page", function(number){ ... });
@@ -2367,7 +2367,7 @@ var DocumentRow = Backbone.View.extend({
     "click .button.delete": "destroy"
   },
 
-  initialize: function() {
+  initialise: function() {
     this.listenTo(this.model, "change", this.render);
   }
 
@@ -2385,7 +2385,7 @@ var DocumentRow = Backbone.View.extend({
     </p>
 
     <p id="View-constructor">
-      <b class="header">constructor / initialize</b><code>new View([options])</code>
+      <b class="header">constructor / initialise</b><code>new View([options])</code>
       <br />
       When creating a new View, the options you pass &mdash; after being merged
       into any default options already present on the view &mdash;
@@ -2394,7 +2394,7 @@ var DocumentRow = Backbone.View.extend({
       options that, if passed, will be attached directly to the view:
       <tt>model</tt>, <tt>collection</tt>,
       <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, <tt>tagName</tt> and <tt>attributes</tt>.
-      If the view defines an <b>initialize</b> function, it will be called when
+      If the view defines an <b>initialise</b> function, it will be called when
       the view is first created. If you'd like to create a view that references
       an element <i>already</i> in the DOM, pass in the element as an option:
       <tt>new View({el: existingElement})</tt>
@@ -3619,7 +3619,7 @@ var model = localBackbone.Model.extend(...);
 <pre>
 var Mailbox = Backbone.Model.extend({
 
-  initialize: function() {
+  initialise: function() {
     this.messages = new Messages;
     this.messages.url = '/mailbox/' + this.id + '/messages';
     this.messages.on("reset", this.updateCounts);
@@ -3779,7 +3779,7 @@ Inbox.messages.fetch();
 <pre>
 var MessageList = Backbone.View.extend({
 
-  initialize: function() {
+  initialise: function() {
     var messages = this.collection;
     messages.on("reset", this.render, this);
     messages.on("add", this.addMessage, this);
@@ -4124,7 +4124,7 @@ ActiveRecord::Base.include_root_in_json = false
       <b class="header">0.5.1</b> &mdash; <small><i>July 5, 2011</i></small><br />
       Cleanups from the 0.5.0 release, to wit: improved transparent upgrades from
       hash-based URLs to pushState, and vice-versa. Fixed inconsistency with
-      non-modified attributes being passed to <tt>Model#initialize</tt>. Reverted
+      non-modified attributes being passed to <tt>Model#initialise</tt>. Reverted
       a <b>0.5.0</b> change that would strip leading hashbangs from routes.
       Added <tt>contains</tt> as an alias for <tt>includes</tt>.
     </p>
@@ -4223,7 +4223,7 @@ ActiveRecord::Base.include_root_in_json = false
 
     <p>
       <b class="header">0.1.1</b> &mdash; <small><i>Oct 14, 2010</i></small><br />
-      Added a convention for <tt>initialize</tt> functions to be called
+      Added a convention for <tt>initialise</tt> functions to be called
       upon instance construction, if defined. Documentation tweaks.
     </p>
 
