@@ -613,7 +613,14 @@
       to execute them.
     </p>
 
-    <h2 id="upgrading">Upgrading to 0.9.9</h2>
+    <h2 id="upgrading">Upgrading to Edge</h2>
+
+    <p>
+      You're reading the docs for an unreleased version. See the 
+      <a href="#changelog">change log</a>.
+    </p>
+
+    <h2>Upgrading to 0.9.9</h2>
 
     <p>
       Backbone <b>0.9.9</b> should be considered as a release candidate
@@ -3823,6 +3830,20 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header">Edge</b> &mdash; <small><i>Not yet released</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...master">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Model validation is no longer enforced by default upon
+        construction or in Model#set.
+        Models can be constructed (and added to collections) even if
+        they fail validation now, unless <tt>{validate: true}</tt> is passed
+      </li>
+      <li>
+        <tt>View#make</tt> has been removed. You'll need to use <tt>$</tt> directly to
+        construct DOM elements now.
+      </li>
+    </ul>
 
     <b class="header">0.9.9</b> &mdash; <small><i>Dec. 13, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.2...0.9.9">Diff</a><br />
     <ul style="margin-top: 5px;">
