@@ -585,21 +585,19 @@
     add: function(models, options) {
       models = _.isArray(models) ? models.slice() : [models];
       options || (options = {});
-      var i, l, model, attrs, existing, sort, doSort, sortAttr, at, add;
+      var i, l, model, attrs, existing, doSort, add, at, sort, sortAttr;
       add = [];
       at = options.at;
-      sort = this.comparator && (at == null) && (options.sort == null || options.sort);
+      sort = this.comparator && (at == null) && options.sort != false;
       sortAttr = _.isString(this.comparator) ? this.comparator : null;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (i = 0, l = models.length; i < l; i++) {
-        attrs = models[i];
-        if(!(model = this._prepareModel(attrs, options))) {
+        if (!(model = this._prepareModel(attrs = models[i], options))) {
           this.trigger('invalid', this, attrs, options);
           continue;
         }
-        models[i] = model;
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
