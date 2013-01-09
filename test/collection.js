@@ -901,6 +901,22 @@ $(document).ready(function() {
     equal(col.length, 1);
   });
 
+  test("update with parse", function () {
+    var Model = Backbone.Model.extend({
+      parse: function (resp) { return resp.model; }
+    });
+    var Collection = Backbone.Collection.extend({
+      model: Model,
+      parse: function (resp) { return resp.models; }
+    });
+    var model1 = new Model({id: 1});
+    var collection = new Collection(model1);
+    var resp = {models: [{model: {id: 1, a: 1}}]};
+    collection.update(resp, {parse: true});
+    equal(model1, collection.first());
+    equal(model1.get('a'), 1);
+  });
+
   test("#1894 - Push should not trigger a sort", 0, function() {
     var Collection = Backbone.Collection.extend({
       comparator: 'id',
