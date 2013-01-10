@@ -793,11 +793,7 @@
     reset: function(models, options) {
       options || (options = {});
       options.previousModels = _.clone(this.models);
-      if (models || options.parse) {
-        this.update(models, _.extend({silent: true, merge: false}, options));
-      } else {
-        this._reset();
-      }
+      this.update(models, _.extend({silent: true, merge: false}, options));
       if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
