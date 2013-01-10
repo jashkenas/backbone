@@ -509,7 +509,7 @@ $(document).ready(function() {
     }), 1);
   });
 
-  test("reset", 10, function() {
+  test("reset", 12, function() {
     var resetCount = 0;
     var models = col.models;
     col.on('reset', function() { resetCount += 1; });
@@ -526,6 +526,22 @@ $(document).ready(function() {
     equal(col.length, 4);
     ok(col.last() !== d);
     ok(_.isEqual(col.last().attributes, d.attributes));
+    col.reset();
+    equal(col.length, 0);
+    equal(resetCount, 4);
+  });
+
+  test ("reset with different values", function(){
+    var col = new Backbone.Collection({id: 1});
+    col.reset({id: 1, a: 1});
+    equal(col.get(1).get('a'), 1);
+  });
+
+  test("same references in reset", function() {
+    var model = new Backbone.Model({id: 1});
+    var collection = new Backbone.Collection({id: 1});
+    collection.reset(model);
+    equal(collection.get(1), model);
   });
 
   test("reset passes caller options", 3, function() {
