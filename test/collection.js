@@ -497,9 +497,9 @@ $(document).ready(function() {
          [4, 0]);
   });
 
-  test("reset", 10, function() {
+  test("reset", 12, function() {
     var resetCount = 0;
-    var models = col.models;
+    var models = col.models.slice();
     col.on('reset', function() { resetCount += 1; });
     col.reset([]);
     equal(resetCount, 1);
@@ -514,6 +514,15 @@ $(document).ready(function() {
     equal(col.length, 4);
     ok(col.last() !== d);
     ok(_.isEqual(col.last().attributes, d.attributes));
+    col.reset();
+    equal(col.length, 0);
+    equal(resetCount, 4);
+  });
+
+  test ("reset with merge", function(){
+    var col = new Backbone.Collection({id: 1});
+    col.reset({id: 1, a: 1}, {merge: true});
+    equal(col.get(1).get('a'), 1);
   });
 
   test("reset passes caller options", 3, function() {
