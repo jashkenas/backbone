@@ -497,6 +497,20 @@ $(document).ready(function() {
          [4, 0]);
   });
 
+  test("sortedIndex", function () {
+    var a = new Backbone.Model({key: 1});
+    var b = new Backbone.Model({key: 2});
+    var c = new Backbone.Model({key: 3});
+    var collection = new (Backbone.Collection.extend({
+      comparator: 'key'
+    }))([b, c, a]);
+    equal(collection.sortedIndex(b), 1);
+    equal(collection.sortedIndex(b, 'key'), 1);
+    equal(collection.sortedIndex(b, function (model) {
+      return model.get('key');
+    }), 1);
+  });
+
   test("reset", 10, function() {
     var resetCount = 0;
     var models = col.models;

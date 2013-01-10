@@ -882,6 +882,14 @@
         if (model.id != null) this._byId[model.id] = model;
       }
       this.trigger.apply(this, arguments);
+    },
+
+    sortedIndex: function (model, value, context) {
+      value || (value = this.comparator);
+      var iterator = _.isFunction(value) ? value : function(model) {
+        return model.get(value);
+      }
+      return _.sortedIndex(this.models, model, iterator, context);
     }
 
   });
@@ -890,9 +898,9 @@
   var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
     'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
     'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
-    'max', 'min', 'sortedIndex', 'toArray', 'size', 'first', 'head', 'take',
-    'initial', 'rest', 'tail', 'drop', 'last', 'without', 'indexOf', 'shuffle',
-    'lastIndexOf', 'isEmpty', 'chain'];
+    'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
+    'tail', 'drop', 'last', 'without', 'indexOf', 'shuffle', 'lastIndexOf',
+    'isEmpty', 'chain'];
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
   _.each(methods, function(method) {
