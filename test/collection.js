@@ -525,6 +525,13 @@ $(document).ready(function() {
     equal(col.get(1).get('a'), 1);
   });
 
+  test("same id in reset", function() {
+    var model = new Backbone.Model({id: 1});
+    var collection = new Backbone.Collection({id: 1});
+    collection.reset(model, {merge: true});
+    equal(collection.get(1), model);
+  });
+
   test("reset passes caller options", 3, function() {
     var Model = Backbone.Model.extend({
       initialize: function(attrs, options) {
