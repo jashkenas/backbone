@@ -888,7 +888,7 @@
       value || (value = this.comparator);
       var iterator = _.isFunction(value) ? value : function(model) {
         return model.get(value);
-      }
+      };
       return _.sortedIndex(this.models, model, iterator, context);
     }
 
