@@ -499,7 +499,7 @@ $(document).ready(function() {
 
   test("reset", 10, function() {
     var resetCount = 0;
-    var models = _.clone(col.models);
+    var models = col.models.slice();
     col.on('reset', function() { resetCount += 1; });
     col.reset([]);
     equal(resetCount, 1);
