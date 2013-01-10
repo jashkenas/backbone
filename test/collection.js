@@ -497,7 +497,7 @@ $(document).ready(function() {
          [4, 0]);
   });
 
-  test("reset", 10, function() {
+  test("reset", 11, function() {
     var resetCount = 0;
     var models = _.clone(col.models);
     col.on('reset', function() { resetCount += 1; });
@@ -514,6 +514,8 @@ $(document).ready(function() {
     equal(col.length, 4);
     ok(col.last() !== d);
     ok(_.isEqual(col.last().attributes, d.attributes));
+    col.reset();
+    equal(col.length, 0);
   });
 
   test("reset passes caller options", 3, function() {
