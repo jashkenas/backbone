@@ -792,13 +792,8 @@
     // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
       options || (options = {});
-      if (options.parse) models = this.parse(models, options);
-      for (var i = 0, l = this.models.length; i < l; i++) {
-        this._removeReference(this.models[i]);
-      }
-      options.previousModels = this.models;
-      this._reset();
-      if (models) this.add(models, _.extend({silent: true}, options));
+      options.previousModels = _.clone(this.models);
+      if (models || options.parse) this.update(models, _.extend({silent: true, merge: false}, options));
       if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
