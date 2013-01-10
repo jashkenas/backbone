@@ -792,7 +792,7 @@
     // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
       options || (options = {});
-      options.previousModels = _.clone(this.models);
+      options.previousModels = this.models.slice();
       this.update(models, _.extend({silent: true, merge: false}, options));
       if (!options.silent) this.trigger('reset', this, options);
       return this;
