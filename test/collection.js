@@ -498,15 +498,13 @@ $(document).ready(function() {
   });
 
   test("sortedIndex", function () {
-    var a = new Backbone.Model({key: 1});
-    var b = new Backbone.Model({key: 2});
-    var c = new Backbone.Model({key: 3});
+    var model = new Backbone.Model({key: 2});
     var collection = new (Backbone.Collection.extend({
       comparator: 'key'
-    }))([b, c, a]);
-    equal(collection.sortedIndex(b), 1);
-    equal(collection.sortedIndex(b, 'key'), 1);
-    equal(collection.sortedIndex(b, function (model) {
+    }))([model, {key: 1}]);
+    equal(collection.sortedIndex(model), 1);
+    equal(collection.sortedIndex(model, 'key'), 1);
+    equal(collection.sortedIndex(model, function (model) {
       return model.get('key');
     }), 1);
   });
