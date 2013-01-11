@@ -419,7 +419,6 @@
       <li>– <a href="#View-dollar">$ (jQuery or Zepto)</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
-      <li>– <a href="#View-make">make</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
       <li>– <a href="#View-undelegateEvents">undelegateEvents</a></li>
     </ul>
@@ -613,7 +612,14 @@
       to execute them.
     </p>
 
-    <h2 id="upgrading">Upgrading to 0.9.9</h2>
+    <h2 id="upgrading">Upgrading to Edge</h2>
+
+    <p>
+      You're reading the docs for an unreleased version. See the 
+      <a href="#changelog">change log</a>.
+    </p>
+
+    <h2>Upgrading to 0.9.9</h2>
 
     <p>
       Backbone <b>0.9.9</b> should be considered as a release candidate
@@ -1269,9 +1275,10 @@ book.destroy({success: function(model, response) {
       <br />
       This method is left undefined, and you're encouraged to override it with
       your custom validation logic, if you have any that can be performed
-      in JavaScript. <b>validate</b> is called before <tt>set</tt> and
-      <tt>save</tt>, and is passed the model attributes, as well as the options
-      from <tt>set</tt> or <tt>save</tt>.
+      in JavaScript. By default <b>validate</b> is called before
+      <tt>save</tt>, but can also be called before <tt>set</tt> if
+      <tt>{validate:true}</tt> is passed. The <b>validate</b> method is passed 
+      the model attributes, as well as the options from <tt>set</tt> or <tt>save</tt>.
       If the attributes are valid, don't return anything from <b>validate</b>;
       if they are invalid, return an error of your choosing. It
       can be as simple as a string error message to be displayed, or a complete
@@ -2536,24 +2543,6 @@ var Bookmark = Backbone.View.extend({
       <a href="#Events-stopListening">stopListening</a> to remove any bound
       events that the view has <a href="#Events-listenTo">listenTo</a>'d.
     </p>
-
-    <p id="View-make">
-      <b class="header">make</b><code>view.make(tagName, [attributes], [content])</code>
-      <br />
-      Convenience function for creating a DOM element of the given type (<b>tagName</b>),
-      with optional attributes and HTML content. Used internally to create the
-      initial <tt>view.el</tt>.
-    </p>
-
-<pre class="runnable">
-var view = new Backbone.View;
-
-var el = view.make("b", {"class": "bold"}, "Bold! ");
-
-$("#make-demo").append(el);
-</pre>
-
-<div id="make-demo"></div>
 
     <p id="View-delegateEvents">
       <b class="header">delegateEvents</b><code>delegateEvents([events])</code>
@@ -3823,6 +3812,20 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header">Edge</b> &mdash; <small><i>Not yet released</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...master">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Model validation is now only enforced by default in 
+        <tt>Model#save</tt> and no longer enforced by default upon
+        construction or in <tt>Model#set</tt>, unless the
+        <tt>{validate:true}</tt> option is passed.
+      </li>
+      <li>
+        <tt>View#make</tt> has been removed. You'll need to use <tt>$</tt> directly to
+        construct DOM elements now.
+      </li>
+    </ul>
 
     <b class="header">0.9.9</b> &mdash; <small><i>Dec. 13, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.2...0.9.9">Diff</a><br />
     <ul style="margin-top: 5px;">
