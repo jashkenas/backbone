@@ -828,7 +828,7 @@ view.stopListening(model);
       <li><b>"error"</b> (model, xhr, options) &mdash; when a model's <a href="#Model-save">save</a> call fails on the server. </li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client. </li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
-      <li><b>"route"</b> (router, route, params) &mdash; Fired by history when <i>any</i> route has been matched.</li>
+      <li><b>"route"</b> (router, route, params) &mdash; Fired by history (or router) when <i>any</i> route has been matched.</li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
     </ul>
 
@@ -3816,24 +3816,34 @@ ActiveRecord::Base.include_root_in_json = false
     <b class="header">Edge</b> &mdash; <small><i>Not yet released</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...master">Diff</a><br />
     <ul style="margin-top: 5px;">
       <li>
+        A <tt>"route"</tt> event is triggered on the router in addition 
+        to being fired on <tt>Backbone.history</tt>.
+      </li>
+      <li>
         Model validation is now only enforced by default in 
         <tt>Model#save</tt> and no longer enforced by default upon
-        construction or in <tt>Model#set</tt>, unless the
-        <tt>{validate:true}</tt> option is passed.
+        construction or in <tt>Model#set</tt>, unless the <tt>{validate:true}</tt> 
+        option is passed.
       </li>
       <li>
         <tt>View#make</tt> has been removed. You'll need to use <tt>$</tt> directly to
         construct DOM elements now.
       </li>
       <li>
-        Passing <tt>{silent:true}</tt> on change will no longer delay individual <tt>"change:attr"</tt> events,
-        instead they are silenced entirely.
+        Passing <tt>{silent:true}</tt> on change will no longer delay individual 
+        <tt>"change:attr"</tt> events, instead they are silenced entirely.
       </li>
       <li>  
-        The <tt>Model#change</tt> method has been removed, as delayed attribute changes as no longer available.
+        The <tt>Model#change</tt> method has been removed, as delayed attribute 
+        changes as no longer available.
       </li>
       <li>
-        Bug fix on <tt>change</tt> where attribute comparison uses <tt>!==</tt> instead of <tt>_.isEqual</tt>.
+        Bug fix on <tt>change</tt> where attribute comparison uses <tt>!==</tt> 
+        instead of <tt>_.isEqual</tt>.
+      </li>
+      <li>
+        Bug fix where an empty response from the server on save would not call 
+        the success function.
       </li>
     </ul>
 
