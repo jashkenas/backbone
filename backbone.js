@@ -450,6 +450,7 @@
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
+      if (options.parse === void 0) options.parse = true;
       success = options.success;
       options.success = function(model, resp, options) {
         // Ensure attributes are restored during synchronous saves.
