@@ -428,7 +428,7 @@
       var attrs, success, method, xhr, attributes = this.attributes;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (key == null || typeof key === 'object') {
+      if (typeof key === 'object') {
         attrs = key;
         options = val;
       } else {
