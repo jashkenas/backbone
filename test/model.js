@@ -1049,18 +1049,6 @@ $(document).ready(function() {
     equal(model.validationError, "This shouldn't happen");
   });
 
-  test("toJSON receives attrs during save(..., {wait: true})", 1, function() {
-    var Model = Backbone.Model.extend({
-      url: '/test',
-      toJSON: function() {
-        strictEqual(this.attributes.x, 1);
-        return _.clone(this.attributes);
-      }
-    });
-    var model = new Model;
-    model.save({x: 1}, {wait: true});
-  });
-
   test("#2034 - nested set with silent only triggers one change", 1, function() {
     var model = new Backbone.Model();
     model.on('change', function() {
