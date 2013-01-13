@@ -74,7 +74,6 @@ $(document).ready(function() {
       "named/optional/(y:z)":       "namedOptional",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
-      ":entity?*args":              "query",
       "*anything":                  "anything"
     },
 
@@ -120,11 +119,6 @@ $(document).ready(function() {
       this.first = first;
       this.part = part;
       this.rest = rest;
-    },
-
-    query: function(entity, args) {
-      this.entity    = entity;
-      this.queryArgs = args;
     },
 
     anything: function(whatever) {
@@ -228,16 +222,6 @@ $(document).ready(function() {
     equal(router.first, 'one/two/three');
     equal(router.part, 'part');
     equal(router.rest, 'four/five/six/seven');
-  });
-
-  test("routes (query)", 5, function() {
-    location.replace('http://example.com#mandel?a=b&c=d');
-    Backbone.history.checkUrl();
-    equal(router.entity, 'mandel');
-    equal(router.queryArgs, 'a=b&c=d');
-    equal(lastRoute, 'query');
-    equal(lastArgs[0], 'mandel');
-    equal(lastArgs[1], 'a=b&c=d');
   });
 
   test("routes (anything)", 1, function() {
@@ -527,6 +511,11 @@ $(document).ready(function() {
     });
     location.replace('http://example.com#route-event/x');
     Backbone.history.checkUrl();
+  });
+
+  test("#891 - History#navigate strips search params.", 1, function() {
+    Backbone.history.navigate('path?with=query');
+    strictEqual(Backbone.history.fragment, 'path');
   });
 
 });
