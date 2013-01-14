@@ -211,7 +211,7 @@ $(function(){
 
     // Add all items in the **Todos** collection at once.
     addAll: function() {
-      Todos.each(this.addOne);
+      Todos.each(this.addOne, this);
     },
 
     // If you hit return in the main input field, create new **Todo** model,
