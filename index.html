@@ -282,7 +282,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.9.9)</span>
+      Backbone.js <span class="version">(0.9.10)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/documentcloud/backbone">GitHub Repository</a></li>
@@ -611,17 +611,12 @@
       to execute them.
     </p>
 
-    <h2 id="upgrading">Upgrading to Edge</h2>
+    <h2 id="upgrading">Upgrading to 0.9.10</h2>
+
+    <h2>Upgrading to 0.9.10</h2>
 
     <p>
-      You're reading the docs for an unreleased version. See the
-      <a href="#changelog">change log</a>.
-    </p>
-
-    <h2>Upgrading to 0.9.9</h2>
-
-    <p>
-      Backbone <b>0.9.9</b> should be considered as a release candidate
+      Backbone <b>0.9.10</b> should be considered as a release candidate
       for an upcoming <b>1.0</b>. If you're upgrading from a previous version,
       be sure to check the
       <a href="#changelog">change log</a>. In brief, a few of the larger changes
@@ -654,6 +649,20 @@
       </li>
       <li>
         Backbone events now support <a href="#Events-once"</a>once</a>.
+      </li>
+      <li>
+        Model validation is now only enforced by default in
+        <tt>Model#save</tt> and no longer enforced by default upon
+        construction or in <tt>Model#set</tt>, unless the <tt>{validate:true}</tt>
+        option is passed.
+      </li>
+      <li>
+        Passing <tt>{silent:true}</tt> on change will no longer delay individual
+        <tt>"change:attr"</tt> events, instead they are silenced entirely.
+      </li>
+      <li>
+        The <tt>Model#change</tt> method has been removed, as delayed attribute
+        changes as no longer available.
       </li>
     </ul>
 
@@ -3814,7 +3823,7 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
-    <b class="header">Edge</b> &mdash; <small><i>Not yet released</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...master">Diff</a><br />
+    <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...0.9.10">Diff</a><br />
     <ul style="margin-top: 5px;">
       <li>
         A <tt>"route"</tt> event is triggered on the router in addition
