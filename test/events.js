@@ -100,6 +100,13 @@ $(document).ready(function() {
     e.trigger("foo");
   });
 
+  test("listenTo with empty callback doesn't throw an error", 1, function(){
+    var e = _.extend({}, Backbone.Events);
+    e.listenTo(e, "foo", null);
+    e.trigger("foo");
+    ok(true);
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
