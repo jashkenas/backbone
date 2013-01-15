@@ -11,8 +11,8 @@
     "phantomjs": "0.2.2"
   },
   "scripts": {
-    "test": "phantomjs test/vendor/runner.js test/index.html"
+    "test": "phantomjs test/vendor/runner.js test/index.html?noglobals=true"
   },
   "main"          : "backbone.js",
-  "version"       : "0.9.9"
+  "version"       : "0.9.10"
 }

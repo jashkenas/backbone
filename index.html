@@ -282,7 +282,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.9.9)</span>
+      Backbone.js <span class="version">(0.9.10)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/documentcloud/backbone">GitHub Repository</a></li>
@@ -339,7 +339,6 @@
       <li>– <a href="#Model-parse">parse</a></li>
       <li>– <a href="#Model-clone">clone</a></li>
       <li>– <a href="#Model-isNew">isNew</a></li>
-      <li>– <a href="#Model-change">change</a></li>
       <li>– <a href="#Model-hasChanged">hasChanged</a></li>
       <li>– <a href="#Model-changedAttributes">changedAttributes</a></li>
       <li>– <a href="#Model-previous">previous</a></li>
@@ -362,7 +361,6 @@
       <li>– <a href="#Collection-reset">reset</a></li>
       <li>– <a href="#Collection-update">update</a></li>
       <li>– <a href="#Collection-get">get</a></li>
-      <li>– <a href="#Collection-getByCid">getByCid</a></li>
       <li>– <a href="#Collection-at">at</a></li>
       <li>– <a href="#Collection-push">push</a></li>
       <li>– <a href="#Collection-pop">pop</a></li>
@@ -421,7 +419,6 @@
       <li>– <a href="#View-dollar">$ (jQuery or Zepto)</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
-      <li>– <a href="#View-make">make</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
       <li>– <a href="#View-undelegateEvents">undelegateEvents</a></li>
     </ul>
@@ -472,7 +469,6 @@
       <li>– <a href="#examples-seatgeek">SeatGeek</a></li>
       <li>– <a href="#examples-easel">Easel</a></li>
       <li>– <a href="#examples-prose">Prose</a></li>
-      <li>– <a href="#examples-scrollkit">scroll kit</a></li>
       <li>- <a href="#examples-jolicloud">Jolicloud</a></li>
       <li>– <a href="#examples-battlefield">Battlefield Play4Free</a></li>
       <li>– <a href="#examples-syllabus">Syllabus</a></li>
@@ -551,11 +547,11 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (0.9.9)</a></td>
+        <td><a class="punch" href="backbone.js">Development Version (0.9.10)</a></td>
         <td class="text"><i>56kb, Full source, lots of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (0.9.9)</a></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (0.9.10)</a></td>
         <td class="text"><i>6.3kb, Packed and gzipped</i></td>
       </tr>
       <tr>
@@ -571,12 +567,12 @@
 
     <p>
       Backbone's only hard dependency is either
-      <a href="http://underscorejs.org/">Underscore.js</a> <small>( > 1.4.3)</small> or
+      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.4.3)</small> or
       <a href="http://lodash.com">Lo-Dash</a>.
       For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
       and DOM manipulation with <a href="#View">Backbone.View</a>, include
       <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
-      <a href="http://jquery.com">jQuery</a> <small>( > 1.4.2)</small> or
+      <a href="http://jquery.com">jQuery</a> <small>( >= 1.7.0)</small> or
       <a href="http://zeptojs.com/">Zepto</a>.
     </p>
 
@@ -615,13 +611,13 @@
       to execute them.
     </p>
 
-    <h2 id="upgrading">Upgrading to 0.9.9</h2>
+    <h2 id="upgrading">Upgrading to 0.9.10</h2>
 
     <p>
-      Backbone <b>0.9.9</b> should be considered as a release candidate
+      Backbone <b>0.9.10</b> should be considered as a release candidate
       for an upcoming <b>1.0</b>. If you're upgrading from a previous version,
       be sure to check the
-      <a href="#changelog">change log</a>. In brief, a fiew of the larger changes
+      <a href="#changelog">change log</a>. In brief, a few of the larger changes
       are:
     </p>
 
@@ -645,10 +641,26 @@
         An <a href="#Collection-update">update</a> method was added to Collection,
         which should make it easier to perform "smart" syncing updates with the
         server, where models are added or removed, and updated attributes are merged
-        as appropriate.
+        as appropriate. If you were previously using <br />
+        <tt>collection.fetch({add: true})</tt>,
+        try <a href="#Collection-update">update</a> instead.
       </li>
       <li>
         Backbone events now support <a href="#Events-once"</a>once</a>.
+      </li>
+      <li>
+        Model validation is now only enforced by default in
+        <tt>Model#save</tt> and no longer enforced by default upon
+        construction or in <tt>Model#set</tt>, unless the <tt>{validate:true}</tt>
+        option is passed.
+      </li>
+      <li>
+        Passing <tt>{silent:true}</tt> on change will no longer delay individual
+        <tt>"change:attr"</tt> events, instead they are silenced entirely.
+      </li>
+      <li>
+        The <tt>Model#change</tt> method has been removed, as delayed attribute
+        changes as no longer available.
       </li>
     </ul>
 
@@ -775,7 +787,7 @@ object.off();
       <b class="header">listenTo</b><code>object.listenTo(other, event, callback)</code>
       <br />
       Tell an <b>object</b> to listen to a particular event on an <b>other</b> object.
-      The advantage of using this form, intead of <tt>other.on(event, callback)</tt>,
+      The advantage of using this form, instead of <tt>other.on(event, callback)</tt>,
       is that <b>listenTo</b> allows the <b>object</b> to keep track of the events,
       and they can be removed all at once later on.
     </p>
@@ -805,7 +817,8 @@ view.stopListening(model);
       <br />
       Here's the complete list of built-in Backbone events, with arguments.
       You're also free to trigger your own events on Models, Collections and
-      Views as you see fit.
+      Views as you see fit. The <tt>Backbone</tt> object itself mixes in <tt>Events</tt>,
+      and can be used to emit any global events that your application needs.
     </p>
 
     <ul class="small">
@@ -816,9 +829,12 @@ view.stopListening(model);
       <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
-      <li><b>"sync"</b> (model, resp, options) &mdash; triggers whenever a model has been successfully synced to the server. </li>
-      <li><b>"error"</b> (model, collection) &mdash; when a model's validation fails, or a <a href="#Model-save">save</a> call fails on the server. </li>
-      <li><b>"route:[name]"</b> (router) &mdash; when one of a router's routes has matched. </li>
+      <li><b>"request"</b> (model, xhr, options) &mdash; when a model (or collection) has started a request to the server. </li>
+      <li><b>"sync"</b> (model, resp, options) &mdash; when a model (or collection) has been successfully synced with the server. </li>
+      <li><b>"error"</b> (model, xhr, options) &mdash; when a model's <a href="#Model-save">save</a> call fails on the server. </li>
+      <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client. </li>
+      <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
+      <li><b>"route"</b> (router, route, params) &mdash; Fired by history (or router) when <i>any</i> route has been matched.</li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
     </ul>
 
@@ -973,17 +989,8 @@ book.set("title", "A Scandal in Bohemia");
       occur if the validation fails, and <b>set</b> will return <tt>false</tt>.
       Otherwise, <b>set</b> returns a reference to the model.
       You may also pass an <tt>error</tt>
-      callback in the options, which will be invoked instead of triggering an
+      callback in the options, which will be invoked alongside the
       <tt>"error"</tt> event, should validation fail.
-    </p>
-
-    <p>
-      Passing <tt>{silent: true}</tt> as an option will defer both the validation
-      and the event. This is useful when you want to
-      change attributes provisionally or rapidly, without propagating the change
-      through the rest of the system. That said, <tt>silent</tt> doesn't mean that
-      the change (and event) won't happen, it's merely silenced until the next
-      <a href="#Model-change">change</a>.
     </p>
 
     <p id="Model-escape">
@@ -1065,7 +1072,6 @@ alert("Cake id: " + cake.id);
       automatically assigned to all models when they're first created. Client ids
       are handy when the model has not yet been saved to the server, and does not
       yet have its eventual true <b>id</b>, but already needs to be visible in the UI.
-      Client ids take the form: <tt>c1, c2, c3 ...</tt>
     </p>
 
     <p id="Model-attributes">
@@ -1081,7 +1087,7 @@ alert("Cake id: " + cake.id);
     <p>
       Please use <a href="#Model-set">set</a> to update the <b>attributes</b>
       instead of modifying them directly. If you'd like to retrieve and munge a
-      copy of the model's attributes, use <a href="#Model-toJSON">toJSON</a>
+      copy of the model's attributes, use <tt>_.clone(model.attributes)</tt>
       instead.
     </p>
 
@@ -1130,11 +1136,13 @@ alert("Dessert will be " + (new Meal).get('dessert'));
     <p id="Model-toJSON">
       <b class="header">toJSON</b><code>model.toJSON()</code>
       <br />
-      Return a copy of the model's <a href="#Model-attributes">attributes</a> for JSON stringification.
-      This can be used for persistence, serialization, or for augmentation before
-      being handed off to a view. The name of this method is a bit confusing, as
-      it doesn't actually return a JSON string &mdash; but I'm afraid that it's
-      the way that the <a href="https://developer.mozilla.org/en/JSON#toJSON()_method">JavaScript API for <b>JSON.stringify</b> works</a>.
+      Return a copy of the model's <a href="#Model-attributes">attributes</a>
+      for JSON stringification.  This can be used for persistence,
+      serialization, or for augmentation before being sent to the server. The
+      name of this method is a bit confusing, as it doesn't actually return a
+      JSON string &mdash; but I'm afraid that it's the way that the
+      <a href="https://developer.mozilla.org/en/JSON#toJSON()_method">JavaScript API for <b>JSON.stringify</b></a>
+      works.
     </p>
 
 <pre class="runnable">
@@ -1203,7 +1211,8 @@ setInterval(function() {
 
     <p>
       Calling <tt>save</tt> with new attributes will cause a <tt>"change"</tt>
-      event immediately, and a <tt>"sync"</tt> event after the server has acknowledged
+      event immediately, a <tt>"request"</tt> event as the Ajax request begins to
+      go to the server, and a <tt>"sync"</tt> event after the server has acknowledged
       the successful change. Pass <tt>{wait: true}</tt> if you'd like to wait
       for the server before setting the new attributes on the model.
     </p>
@@ -1256,7 +1265,8 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       are passed <tt>(model, response, options)</tt> and <tt>(model, xhr, options)</tt>
       as arguments, respectively.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
-      through any collections that contain it, and a <tt>"sync"</tt> event, after
+      through any collections that contain it, a <tt>"request"</tt> event as it
+      begins the Ajax request to the server, and a <tt>"sync"</tt> event, after
       the server has successfully acknowledged the model's deletion. Pass
       <tt>{wait: true}</tt> if you'd like to wait for the server to respond
       before removing the model from the collection.
@@ -1269,13 +1279,14 @@ book.destroy({success: function(model, response) {
 </pre>
 
     <p id="Model-validate">
-      <b class="header">validate</b><code>model.validate(attributes)</code>
+      <b class="header">validate</b><code>model.validate(attributes, options)</code>
       <br />
       This method is left undefined, and you're encouraged to override it with
       your custom validation logic, if you have any that can be performed
-      in JavaScript. <b>validate</b> is called before <tt>set</tt> and
-      <tt>save</tt>, and is passed the model attributes updated with the values
-      from <tt>set</tt> or <tt>save</tt>.
+      in JavaScript. By default <b>validate</b> is called before
+      <tt>save</tt>, but can also be called before <tt>set</tt> if
+      <tt>{validate:true}</tt> is passed. The <b>validate</b> method is passed
+      the model attributes, as well as the options from <tt>set</tt> or <tt>save</tt>.
       If the attributes are valid, don't return anything from <b>validate</b>;
       if they are invalid, return an error of your choosing. It
       can be as simple as a string error message to be displayed, or a complete
@@ -1287,8 +1298,8 @@ book.destroy({success: function(model, response) {
 
 <pre class="runnable">
 var Chapter = Backbone.Model.extend({
-  validate: function(attrs) {
-    if (attrs.end < attrs.start) {
+  validate: function(attrs, options) {
+    if (attrs.end &lt; attrs.start) {
       return "can't end before it starts";
     }
   }
@@ -1310,9 +1321,8 @@ one.set({
 
     <p>
       <tt>"error"</tt> events are useful for providing coarse-grained error
-      messages at the model or collection level, but if you have a specific view
-      that can better handle the error, you may override and suppress the event
-      by passing an <tt>error</tt> callback directly:
+      messages at the model or collection level. An <tt>error</tt> callback can
+      can also be specified in the options, to be called alongside the error event:
     </p>
 
 <pre>
@@ -1328,7 +1338,7 @@ account.set({access: "unlimited"}, {
       <br />
       Returns the relative URL where the model's resource would be located on
       the server. If your models are located somewhere else, override this method
-      with the correct logic. Generates URLs of the form: <tt>"/[collection.url]/[id]"</tt>
+      with the correct logic. Generates URLs of the form: <tt>"[collection.url]/[id]"</tt>
       by default, but you may override by specifying an explicit <tt>urlRoot</tt>
       if the model's collection shouldn't be taken into account.
     </p>
@@ -1347,7 +1357,7 @@ account.set({access: "unlimited"}, {
       <br />
       Specify a <tt>urlRoot</tt> if you're using a model <i>outside</i> of a collection,
       to enable the default <a href="#Model-url">url</a> function to generate
-      URLs based on the model id. <tt>"/[urlRoot]/id"</tt><br />
+      URLs based on the model id. <tt>"[urlRoot]/id"</tt><br />
       Normally, you won't need to define this.
       Note that <tt>urlRoot</tt> may also be a function.
     </p>
@@ -1394,16 +1404,6 @@ ActiveRecord::Base.include_root_in_json = false
       <br />
       Has this model been saved to the server yet? If the model does not yet have
       an <tt>id</tt>, it is considered to be new.
-    </p>
-
-    <p id="Model-change">
-      <b class="header">change</b><code>model.change()</code>
-      <br />
-      Manually trigger the <tt>"change"</tt> event and a <tt>"change:attribute"</tt>
-      event for each attribute that has changed. If you've been passing
-      <tt>{silent: true}</tt> to the <a href="#Model-set">set</a> function in order to
-      aggregate rapid changes to a model, you'll want to call <tt>model.change()</tt>
-      when you're all finished.
     </p>
 
     <p id="Model-hasChanged">
@@ -1710,19 +1710,13 @@ vanHalen.update([eddie, alex, stone, hagar]);
     <p id="Collection-get">
       <b class="header">get</b><code>collection.get(id)</code>
       <br />
-      Get a model from a collection, specified by an <b>id</b> or a <b>model</b>.
+      Get a model from a collection, specified by an <a href="#Model-id">id</a>,
+      a <a href="#Model-cid">cid</a>, or by passing in a <b>model</b>.
     </p>
 
 <pre>
 var book = Library.get(110);
 </pre>
-
-    <p id="Collection-getByCid">
-      <b class="header">getByCid</b><code>collection.getByCid(cid)</code>
-      <br />
-      Get a model from a collection, specified by a
-      <a href="#Model-cid"><b>cid</b></a> or a <b>model</b>.
-    </p>
 
     <p id="Collection-at">
       <b class="header">at</b><code>collection.at(index)</code>
@@ -1822,9 +1816,11 @@ alert(chapters.pluck('title'));
       <br />
       Force a collection to re-sort itself. You don't need to call this under
       normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a>
-      will sort itself whenever a model is added. Calling <b>sort</b>
-      triggers a <tt>"sort"</tt> event on the collection, unless silenced by passing
-      <tt>{silent: true}</tt>
+      will sort itself whenever a model is added. To disable sorting when adding
+      a model, pass <tt>{sort: false}</tt> to <tt>add</tt>. Calling <b>sort</b>
+      triggers a <tt>"sort"</tt> event on the collection, unless silenced by
+      passing
+      <tt>{silent: true}</tt>.
     </p>
 
     <p id="Collection-pluck">
@@ -1923,8 +1919,10 @@ var Tweets = Backbone.Collection.extend({
       <tt>success</tt> and <tt>error</tt>
       callbacks which will be passed <tt>(collection, response, options)</tt>
       and <tt>(collection, xhr, options)</tt> as arguments, respectively.
-      When the model data returns from the server, the collection will
-      <a href="#Collection-reset">reset</a>.
+      When the model data returns from the server, the collection will be (efficiently)
+      <a href="#Collection-reset">reset</a>, unless you pass <tt>{update: true}</tt>,
+      in which case it will use <a href="#Collection-update">update</a> to (intelligently)
+      merge the fetched models.
       Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers for custom persistence strategies and returns a
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
@@ -1944,9 +1942,11 @@ Accounts.fetch();
 </pre>
 
     <p>
-      If you'd like to add the incoming models to the current collection, instead
-      of replacing the collection's contents, pass <tt>{add: true}</tt> as an
-      option to <b>fetch</b>.
+      The behavior of <b>fetch</b> can be customized by using the available
+      <a href="#Collection-update">update</a> options. For example, to fetch a
+      collection, getting an <tt>"add"</tt> event for every new model, and
+      a <tt>"change"</tt> event for every changed existing model, without
+      removing anything: <tt>collection.fetch({update: true, remove: false})</tt>
     </p>
 
     <p>
@@ -1980,8 +1980,9 @@ Accounts.fetch();
 
     <p>
       Creating a model will cause an immediate <tt>"add"</tt> event to be
-      triggered on the collection, as well as a <tt>"sync"</tt> event, once the
-      model has been successfully created on the server. Pass <tt>{wait: true}</tt>
+      triggered on the collection, a <tt>"request"</tt> event as the new model is
+      sent to the server, as well as a <tt>"sync"</tt> event, once the
+      server has responded with the successful creation of the model. Pass <tt>{wait: true}</tt>
       if you'd like to wait for the server before adding the new model to the collection.
     </p>
 
@@ -2265,6 +2266,12 @@ $(function(){
     </p>
 
     <p>
+      Whenever a model or collection begins a <b>sync</b> with the server, a
+      <tt>"request"</tt> event is emitted. If the request completes successfully
+      you'll get a <tt>"sync"</tt> event, and an <tt>"error"</tt> event if not.
+    </p>
+
+    <p>
       The <b>sync</b> function may be overriden globally as <tt>Backbone.sync</tt>,
       or at a finer-grained level, by adding a <tt>sync</tt> function to a Backbone
       collection or to an individual model.
@@ -2387,9 +2394,9 @@ var DocumentRow = Backbone.View.extend({
 </pre>
 
     <p>
-      Properties like <tt>tagName</tt>, <tt>el</tt>, and <tt>events</tt> may
-      also be defined as a function, if you want to wait to define them until
-      runtime.
+      Properties like <tt>tagName</tt>, <tt>id</tt>, <tt>className</tt>,
+      <tt>el</tt>, and <tt>events</tt> may also be defined as a function, if
+      you want to wait to define them until runtime.
     </p>
 
     <p id="View-constructor">
@@ -2509,7 +2516,7 @@ ui.Chapter = Backbone.View.extend({
 var Bookmark = Backbone.View.extend({
   template: _.template(…),
   render: function() {
-    this.$el.html(this.template(this.model.toJSON()));
+    this.$el.html(this.template(this.model.attributes));
     return this;
   }
 });
@@ -2542,31 +2549,13 @@ var Bookmark = Backbone.View.extend({
       <br />
       Removes a view from the DOM, and calls
       <a href="#Events-stopListening">stopListening</a> to remove any bound
-      model events that the view has <a href="#Events-listenTo">listenTo</a>'d.
+      events that the view has <a href="#Events-listenTo">listenTo</a>'d.
     </p>
-
-    <p id="View-make">
-      <b class="header">make</b><code>view.make(tagName, [attributes], [content])</code>
-      <br />
-      Convenience function for creating a DOM element of the given type (<b>tagName</b>),
-      with optional attributes and HTML content. Used internally to create the
-      initial <tt>view.el</tt>.
-    </p>
-
-<pre class="runnable">
-var view = new Backbone.View;
-
-var el = view.make("b", {"class": "bold"}, "Bold! ");
-
-$("#make-demo").append(el);
-</pre>
-
-<div id="make-demo"></div>
 
     <p id="View-delegateEvents">
       <b class="header">delegateEvents</b><code>delegateEvents([events])</code>
       <br />
-      Uses jQuery's <tt>delegate</tt> function to provide declarative callbacks
+      Uses jQuery's <tt>on</tt> function to provide declarative callbacks
       for DOM events within a view.
       If an <b>events</b> hash is not passed directly, uses <tt>this.events</tt>
       as the source. Events are written in the format <tt>{"event selector": "callback"}</tt>.
@@ -2613,7 +2602,7 @@ var DocumentView = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(this.template(this.model.toJSON()));
+    this.$el.html(this.template(this.model.attributes));
     return this;
   },
 
@@ -3832,7 +3821,41 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
-    <b class="header">0.9.9</b> &mdash; <small><i>Dec. 13, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.2...0.9.9">Diff</a><br />
+    <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...0.9.10">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        A <tt>"route"</tt> event is triggered on the router in addition
+        to being fired on <tt>Backbone.history</tt>.
+      </li>
+      <li>
+        Model validation is now only enforced by default in
+        <tt>Model#save</tt> and no longer enforced by default upon
+        construction or in <tt>Model#set</tt>, unless the <tt>{validate:true}</tt>
+        option is passed.
+      </li>
+      <li>
+        <tt>View#make</tt> has been removed. You'll need to use <tt>$</tt> directly to
+        construct DOM elements now.
+      </li>
+      <li>
+        Passing <tt>{silent:true}</tt> on change will no longer delay individual
+        <tt>"change:attr"</tt> events, instead they are silenced entirely.
+      </li>
+      <li>
+        The <tt>Model#change</tt> method has been removed, as delayed attribute
+        changes as no longer available.
+      </li>
+      <li>
+        Bug fix on <tt>change</tt> where attribute comparison uses <tt>!==</tt>
+        instead of <tt>_.isEqual</tt>.
+      </li>
+      <li>
+        Bug fix where an empty response from the server on save would not call
+        the success function.
+      </li>
+    </ul>
+
+    <b class="header">0.9.9</b> &mdash; <small><i>Dec. 13, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.2...0.9.9">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.9.9/index.html">Docs</a><br />
     <ul style="margin-top: 5px;">
       <li>
         Added <a href="#Events-listenTo">listenTo</a>
@@ -3847,7 +3870,7 @@ ActiveRecord::Base.include_root_in_json = false
         the existing models, instead of being ignored.
       </li>
       <li>
-        Added <a href="#Collection-update">update</a> (which also available as
+        Added <a href="#Collection-update">update</a> (which is also available as
         an option to <tt>fetch</tt>) for "smart" updating of sets of models.
       </li>
       <li>
@@ -3857,6 +3880,11 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         The <tt>Backbone</tt> object now extends <tt>Events</tt> so that you can
         use it as a global event bus, if you like.
+      </li>
+      <li>
+        Added a <tt>"request"</tt> event to <a href="#Sync">Backbone.sync</a>,
+        which triggers whenever a request begins to be made to the server.
+        The natural complement to the <tt>"sync"</tt> event.
       </li>
       <li>
         Router URLs now support optional parts via parentheses, without having
@@ -3876,7 +3904,13 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         <a href="#Model-validate">Validation</a> now occurs even during "silent"
         changes. This change means that the <tt>isValid</tt> method has
-        been removed.
+        been removed. Failed validations also trigger an error, even if an error
+        callback is specified in the options.
+      </li>
+      <li>
+        Consolidated <tt>"sync"</tt> and <tt>"error"</tt> events within
+        <a href="#Sync">Backbone.sync</a>. They are now triggered regardless
+        of the existence of <tt>success</tt> or <tt>error</tt> callbacks.
       </li>
       <li>
         For mixed-mode APIs, <tt>Backbone.sync</tt> now accepts
@@ -3887,17 +3921,23 @@ ActiveRecord::Base.include_root_in_json = false
         inject, foldl, foldr, head, tail, take, and so on...)
       </li>
       <li>
-        The <tt>parse</tt> function is now always run if defined, for both
-        collections and models &mdash; not only after an Ajax call.
+        Removed <tt>getByCid</tt> from Collections. <tt>collection.get</tt> now
+        supports lookup by both <tt>id</tt> and <tt>cid</tt>.
+      </li>
+      <li>
+        After fetching a model or a collection, <i>all</i> defined <tt>parse</tt>
+        functions will now be run. So fetching a collection and getting back new
+        models could cause both the collection to parse the list, and then each model
+        to be parsed in turn, if you have both functions defined.
       </li>
       <li>
         Bugfix for normalizing leading and trailing slashes in the Router
         definitions. Their presence (or absence) should not affect behavior.
       </li>
       <li>
-        When declaring a View, <tt>options</tt>, <tt>el</tt> and <tt>tagName</tt>
-        may now be defined as functions, if you want their values to be
-        determined at runtime.
+        When declaring a View, <tt>options</tt>, <tt>el</tt>, <tt>tagName</tt>,
+        <tt>id</tt> and <tt>className</tt> may now be defined as functions, if
+        you want their values to be determined at runtime.
       </li>
       <li>
         Added a <tt>Backbone.ajax</tt> hook for more convenient overriding of
@@ -3912,9 +3952,28 @@ ActiveRecord::Base.include_root_in_json = false
         Calling <tt>destroy</tt> on a Model will now return <tt>false</tt> if
         the model <tt>isNew</tt>.
       </li>
+      <li>
+        To set what library Backbone uses for DOM manipulation and Ajax calls,
+        use <tt>Backbone.$ = ...</tt> instead of <tt>setDomLibrary</tt>.
+      </li>
+      <li>
+        Removed the <tt>Backbone.wrapError</tt> helper method. Overriding
+        <tt>sync</tt> should work better for those particular use cases.
+      </li>
+      <li>
+        To improve the performance of <tt>add</tt>, <tt>options.index</tt>
+        will no longer be set in the `add` event callback.
+        <tt>collection.indexOf(model)</tt> can be used to retrieve the index
+        of a model as necessary.
+      </li>
+      <li>
+        For semantic and cross browser reasons, routes will now ignore search
+        parameters.  Routes like <tt>search?query=…&amp;page=3</tt> should become
+        <tt>search/…/3</tt>.
+      </li>
     </ul>
 
-    <b class="header">0.9.2</b> &mdash; <small><i>March 21, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.1...0.9.2">Diff</a><br />
+    <b class="header">0.9.2</b> &mdash; <small><i>March 21, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.1...0.9.2">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.9.2/index.html">Docs</a><br />
     <ul style="margin-top: 5px;">
       <li>
         Instead of throwing an error when adding duplicate models to a collection,
@@ -3956,7 +4015,7 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
     </ul>
 
-    <b class="header">0.9.1</b> &mdash; <small><i>Feb. 2, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.0...0.9.1">Diff</a><br />
+    <b class="header">0.9.1</b> &mdash; <small><i>Feb. 2, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.0...0.9.1">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.9.1/index.html">Docs</a><br />
     <ul style="margin-top: 5px;">
       <li>
         Reverted to 0.5.3-esque behavior for validating models. Silent changes
@@ -3974,7 +4033,7 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
     </ul>
 
-    <b class="header">0.9.0</b> &mdash; <small><i>Jan. 30, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.5.3...0.9.0">Diff</a><br />
+    <b class="header">0.9.0</b> &mdash; <small><i>Jan. 30, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.5.3...0.9.0">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.9.0/index.html">Docs</a><br />
     <ul style="margin-top: 5px;">
       <li>
         Creating and destroying models with <tt>create</tt> and <tt>destroy</tt>
@@ -4072,7 +4131,7 @@ ActiveRecord::Base.include_root_in_json = false
     </ul>
 
     <p>
-      <b class="header">0.5.3</b> &mdash; <small><i>August 9, 2011</i></small><br />
+      <b class="header">0.5.3</b> &mdash; <small><i>August 9, 2011</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.5.2...0.5.3">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.5.3/index.html">Docs</a><br />
       A View's <tt>events</tt> property may now be defined as a function, as well
       as an object literal, making it easier to programmatically define and inherit
       events. <tt>groupBy</tt> is now proxied from Underscore as a method on Collections.
@@ -4082,7 +4141,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <p>
-      <b class="header">0.5.2</b> &mdash; <small><i>July 26, 2011</i></small><br />
+      <b class="header">0.5.2</b> &mdash; <small><i>July 26, 2011</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.5.1...0.5.2">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.5.2/index.html">Docs</a><br />
       The <tt>bind</tt> function, can now take an optional third argument, to specify
       the <tt>this</tt> of the callback function.
       Multiple models with the same <tt>id</tt> are now allowed in a collection.
@@ -4093,7 +4152,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <p>
-      <b class="header">0.5.1</b> &mdash; <small><i>July 5, 2011</i></small><br />
+      <b class="header">0.5.1</b> &mdash; <small><i>July 5, 2011</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.5.0...0.5.1">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.5.1/index.html">Docs</a><br />
       Cleanups from the 0.5.0 release, to wit: improved transparent upgrades from
       hash-based URLs to pushState, and vice-versa. Fixed inconsistency with
       non-modified attributes being passed to <tt>Model#initialize</tt>. Reverted
@@ -4102,7 +4161,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <p>
-      <b class="header">0.5.0</b> &mdash; <small><i>July 1, 2011</i></small><br />
+      <b class="header">0.5.0</b> &mdash; <small><i>July 1, 2011</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.3.3...0.5.0">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.5.0/index.html">Docs</a><br />
       A large number of tiny tweaks and micro bugfixes, best viewed by looking
       at <a href="https://github.com/documentcloud/backbone/compare/0.3.3...0.5.0">the commit diff</a>.
       HTML5 <tt>pushState</tt> support, enabled by opting-in with:
@@ -4126,7 +4185,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <p>
-      <b class="header">0.3.3</b> &mdash; <small><i>Dec 1, 2010</i></small><br />
+      <b class="header">0.3.3</b> &mdash; <small><i>Dec 1, 2010</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.3.2...0.3.3">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.3.3/index.html">Docs</a><br />
       Backbone.js now supports <a href="http://zeptojs.com">Zepto</a>, alongside
       jQuery, as a framework for DOM manipulation and Ajax support.
       Implemented <a href="#Model-escape">Model#escape</a>, to efficiently handle
@@ -4137,7 +4196,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <p>
-      <b class="header">0.3.2</b> &mdash; <small><i>Nov 23, 2010</i></small><br />
+      <b class="header">0.3.2</b> &mdash; <small><i>Nov 23, 2010</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.3.1...0.3.2">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.3.2/index.html">Docs</a><br />
       Bugfix for IE7 + iframe-based "hashchange" events. <tt>sync</tt> may now be
       overridden on a per-model, or per-collection basis. Fixed recursion error
       when calling <tt>save</tt> with no changed attributes, within a
@@ -4145,7 +4204,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <p>
-      <b class="header">0.3.1</b> &mdash; <small><i>Nov 15, 2010</i></small><br />
+      <b class="header">0.3.1</b> &mdash; <small><i>Nov 15, 2010</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.3.0...0.3.1">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.3.1/index.html">Docs</a><br />
       All <tt>"add"</tt> and <tt>"remove"</tt> events are now sent through the
       model, so that views can listen for them without having to know about the
       collection. Added a <tt>remove</tt> method to <a href="#View">Backbone.View</a>.
@@ -4154,7 +4213,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <p>
-      <b class="header">0.3.0</b> &mdash; <small><i>Nov 9, 2010</i></small><br />
+      <b class="header">0.3.0</b> &mdash; <small><i>Nov 9, 2010</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.2.0...0.3.0">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.3.0/index.html">Docs</a><br />
       Backbone now has <a href="#Controller">Controllers</a> and
       <a href="#History">History</a>, for doing client-side routing based on
       URL fragments.
@@ -4168,7 +4227,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <p>
-      <b class="header">0.2.0</b> &mdash; <small><i>Oct 25, 2010</i></small><br />
+      <b class="header">0.2.0</b> &mdash; <small><i>Oct 25, 2010</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.1.2...0.2.0">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.2.0/index.html">Docs</a><br />
       Instead of requiring server responses to be namespaced under a <tt>model</tt>
       key, now you can define your own <a href="#Model-parse">parse</a> method
       to convert responses into attributes for Models and Collections.
@@ -4180,7 +4239,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <p>
-      <b class="header">0.1.2</b> &mdash; <small><i>Oct 19, 2010</i></small><br />
+      <b class="header">0.1.2</b> &mdash; <small><i>Oct 19, 2010</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.1.1...0.1.2">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.1.2/index.html">Docs</a><br />
       Added a <a href="#Model-fetch">Model#fetch</a> method for refreshing the
       attributes of single model from the server.
       An <tt>error</tt> callback may now be passed to <tt>set</tt> and <tt>save</tt>
@@ -4194,13 +4253,13 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <p>
-      <b class="header">0.1.1</b> &mdash; <small><i>Oct 14, 2010</i></small><br />
+      <b class="header">0.1.1</b> &mdash; <small><i>Oct 14, 2010</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.1.0...0.1.1">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.1.1/index.html">Docs</a><br />
       Added a convention for <tt>initialize</tt> functions to be called
       upon instance construction, if defined. Documentation tweaks.
     </p>
 
     <p>
-      <b class="header">0.1.0</b> &mdash; <small><i>Oct 13, 2010</i></small><br />
+      <b class="header">0.1.0</b> &mdash; <small><i>Oct 13, 2010</i></small> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.1.0/index.html">Docs</a><br />
       Initial Backbone release.
     </p>
 
@@ -4214,7 +4273,7 @@ ActiveRecord::Base.include_root_in_json = false
   </div>
 
   <script src="test/vendor/underscore.js"></script>
-  <script src="test/vendor/jquery-1.7.1.js"></script>
+  <script src="test/vendor/jquery.js"></script>
   <script src="docs/js/jquery.lazyload.js"></script>
   <script src="test/vendor/json2.js"></script>
   <script src="backbone.js"></script>

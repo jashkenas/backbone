@@ -100,8 +100,8 @@ $(function(){
     // a one-to-one correspondence between a **Todo** and a **TodoView** in this
     // app, we set a direct reference on the model for convenience.
     initialize: function() {
-      this.model.on('change', this.render, this);
-      this.model.on('destroy', this.remove, this);
+      this.listenTo(this.model, 'change', this.render);
+      this.listenTo(this.model, 'destroy', this.remove);
     },
 
     // Re-render the titles of the todo item.
@@ -174,9 +174,9 @@ $(function(){
       this.input = this.$("#new-todo");
       this.allCheckbox = this.$("#toggle-all")[0];
 
-      Todos.on('add', this.addOne, this);
-      Todos.on('reset', this.addAll, this);
-      Todos.on('all', this.render, this);
+      this.listenTo(Todos, 'add', this.addOne);
+      this.listenTo(Todos, 'reset', this.addAll);
+      this.listenTo(Todos, 'all', this.render);
 
       this.footer = this.$('footer');
       this.main = $('#main');
@@ -211,7 +211,7 @@ $(function(){
 
     // Add all items in the **Todos** collection at once.
     addAll: function() {
-      Todos.each(this.addOne);
+      Todos.each(this.addOne, this);
     },
 
     // If you hit return in the main input field, create new **Todo** model,
