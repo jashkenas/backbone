@@ -14,5 +14,5 @@
     "test": "phantomjs test/vendor/runner.js test/index.html?noglobals=true"
   },
   "main"          : "backbone.js",
-  "version"       : "0.9.9"
+  "version"       : "0.9.10"
 }
