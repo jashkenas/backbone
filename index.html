@@ -960,10 +960,16 @@ new Book({
     </p>
 
     <p id="Model-get">
-      <b class="header">get</b><code>model.get(attribute)</code>
+      <b class="header">get</b><code>model.get(attribute, [fallback])</code>
       <br />
       Get the current value of an attribute from the model. For example:
-      <tt>note.get("title")</tt>
+      <tt>note.get("title")</tt>.
+      You can specify a <tt>fallback</tt> value that will be returned if the model
+      does not respond to the requested attribute:
+<pre class="runnable">
+var person = new Backbone.Model({ name: "John" });
+alert(person.get('name') + " is " + person.get('age', 30) + " years old");
+</pre>
     </p>
 
     <p id="Model-set">
@@ -3810,6 +3816,12 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+
+    <ul style="margin-top: 5px;">
+      <li>
+        Added a <tt>fallback</tt> argument to <tt>Model#get</tt> to allow specifying a fallback value in case requested attribute doesn't exist in the model.
+      </li>
+    </ul>
 
     <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...0.9.10">Diff</a><br />
     <ul style="margin-top: 5px;">
