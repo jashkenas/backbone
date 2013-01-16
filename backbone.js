@@ -226,6 +226,113 @@
   // want global "pubsub" in a convenient place.
   _.extend(Backbone, Events);
 
+
+
+  // The ChangeTracker is used by the Model to keep track of the state of
+  // changes made to the model's attributes so at to trigger
+  // 'change:attribute' and 'change' events at the right times. This is
+  // moderately involved since a single call to a model mutatator (set,
+  // unset, or clear) can trigger events whose handlers may further mutate
+  // the model but we want to treat each top-level call to a mutator as a
+  // single change.
+
+  var ChangeTracker = function(model) {
+    this.model                     = model;
+    this.before                    = void 0;
+    this.changed                   = {};
+    this.attributeChangesTriggered = false;
+    this.changesets                = [];
+  };
+
+  ChangeTracker.prototype = {
+
+    enter: function () {
+      this.changesets.push([]);
+      if (this.changesets.length === 1) {
+        this.before                    = _.clone(this.model.attributes);
+        this.changed                   = {};
+        this.attributeChangesTriggered = false;
+      }
+    },
+
+    exit: function (options) {
+      var i, attr, model, changes, current;
+
+      if (!options.silent) {
+        model   = this.model;
+        changes = this.changesets[this.changesets.length - 1];
+
+        if (changes.length) {
+          current = model.attributes;
+          for (i in changes) {
+            attr = changes[i];
+            model.trigger('change:' + attr, model, current[attr], options);
+          }
+          this.attributeChangesTriggered = true;
+        }
+
+        // Only do this when exiting from the top level call to a mutator.
+        if (this.changesets.length === 1) {
+          // Keep triggering the change event until things quiesce. Thus one
+          // call to a mutator may result in multiple change events if the
+          // handler for on change event further mutates the model.
+          while (this.attributeChangesTriggered) {
+            this.attributeChangesTriggered = false;
+            model.trigger('change', model, options);
+          }
+        }
+      }
+      this.changesets.pop();
+    },
+
+    recordChange: function (attr, currentVal, val) {
+      var changes = this.changesets[this.changesets.length - 1];
+      if (!_.isEqual(currentVal, val)) changes.push(attr);
+      _.isEqual(this.before[attr], val) ? delete this.changed[attr] : this.changed[attr] = val;
+    },
+
+    forgetChanges: function () { this.changed = {}; },
+
+    hasChanged: function(attr) {
+      if (attr == null) return !_.isEmpty(this.changed);
+      return _.has(this.changed, attr);
+    },
+
+    inChange: function () { return this.changesets.length > 0; },
+
+    changedAttributes: function(diff) {
+      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
+
+
+      // In this case we are not actually asking if anything has changed but
+      // rather, whether if we were to set(diff) it would result in a
+      // change. In the midst of a change we want to compare the prospective
+      // values to the values prior to the start of the change (i.e.
+      // this.before) but once all changes are finished we want to compare
+      // to the current values (i.e. this.model.attributes). I'm not sure
+      // why that actually is; why, in a callback, wouldn't you want to
+      // compare to whatever the current values are? -Peter Seibel
+      var attr, val, changed = false;
+      var old = this.inChange() ? this.before : this.model.attributes;
+
+      for (attr in diff) {
+        val = diff[attr];
+        if (!_.isEqual(old[attr], val)) {
+          (changed || (changed = {}))[attr] = val;
+        }
+      }
+      return changed;
+    },
+
+    previous: function(attr) {
+      if (attr == null || !this.before) return null;
+      return this.before[attr];
+    },
+
+    previousAttributes: function() { return _.clone(this.before); }
+
+  };
+
   // Backbone.Model
   // --------------
 
@@ -241,16 +348,14 @@
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
+    this._changeTracker = new ChangeTracker(this);
     this.set(attrs, options);
-    this.changed = {};
+    this._changeTracker.forgetChanges();
     this.initialize.apply(this, arguments);
   };
 
   // Attach all inheritable methods to the Model prototype.
   _.extend(Model.prototype, Events, {
-
-    // A hash of attributes whose current and previous value differ.
-    changed: null,
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
@@ -288,77 +393,62 @@
 
     // ----------------------------------------------------------------------
 
-    // Set a hash of model attributes on the object, firing `"change"` unless
-    // you choose to silence it.
-    set: function(key, val, options) {
-      var attr, attrs, unset, changes, silent, changing, prev, current;
-      if (key == null) return this;
-
-      // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (typeof key === 'object') {
-        attrs = key;
-        options = val;
-      } else {
-        (attrs = {})[key] = val;
-      }
+    // The primitive method for changing the attribute values in the
+    // model. Used by set, unset, and clear. Unless the silent option
+    // is passed, fires change:<foo> events for each changed attribute
+    // and a final change event.
+    _change: function(attrs, options) {
+      var attr, val, silent, tracker, current;
 
       options || (options = {});
+      silent = options.silent;
 
       // Run validation.
       if (!this._validate(attrs, options)) return false;
 
-      // Extract attributes and options.
-      unset           = options.unset;
-      silent          = options.silent;
-      changes         = [];
-      changing        = this._changing;
-      this._changing  = true;
-
-      if (!changing) {
-        this._previousAttributes = _.clone(this.attributes);
-        this.changed = {};
-      }
-      current = this.attributes, prev = this._previousAttributes;
-
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
-      // For each `set` attribute, update or delete the current value.
-      for (attr in attrs) {
-        val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
-          this.changed[attr] = val;
-        } else {
-          delete this.changed[attr];
+      tracker = this._changeTracker;
+      current = this.attributes;
+
+      tracker.enter();
+      try {
+        for (attr in attrs) {
+          val = attrs[attr];
+          tracker.recordChange(attr, current[attr], val);
+          _.isUndefined(val) ? delete current[attr] : current[attr] = val;
         }
-        unset ? delete current[attr] : current[attr] = val;
+      } finally {
+        tracker.exit(options);
       }
 
-      // Trigger all relevant attribute changes.
-      if (!silent) {
-        if (changes.length) this._pending = true;
-        for (var i = 0, l = changes.length; i < l; i++) {
-          this.trigger('change:' + changes[i], this, current[changes[i]], options);
-        }
-      }
-
-      if (changing) return this;
-      if (!silent) {
-        while (this._pending) {
-          this._pending = false;
-          this.trigger('change', this, options);
-        }
-      }
-      this._pending = false;
-      this._changing = false;
       return this;
+    },
+
+    // Set a hash of model attributes on the object, firing `"change"` unless
+    // you choose to silence it.
+    set: function(first, second, third) {
+      // Handle both `"key", value` and `{key: value}` -style arguments.
+      var attrs, options;
+
+      if (typeof first === 'object') {
+        attrs   = first;
+        options = second;
+      } else {
+        (attrs = {})[first] = second;
+        options = third;
+      }
+
+      return this._change(attrs, options);
     },
 
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
     unset: function(attr, options) {
-      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
+      var attrs = {};
+      attrs[attr] = void 0;
+      return this._change(attrs, options);
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
@@ -366,14 +456,17 @@
     clear: function(options) {
       var attrs = {};
       for (var key in this.attributes) attrs[key] = void 0;
-      return this.set(attrs, _.extend({}, options, {unset: true}));
+      return this._change(attrs, options);
     },
+
+    // XXX: that comments on the next few methods are not quite right
+    // because changes are recorded even when the mutating methods are
+    // called with a silent option and thus no change event is fired.
 
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (attr == null) return !_.isEmpty(this.changed);
-      return _.has(this.changed, attr);
+      return this._changeTracker.hasChanged(attr);
     },
 
     // Return an object containing all the attributes that have changed, or
@@ -381,30 +474,20 @@
     // parts of a view need to be updated and/or what attributes need to be
     // persisted to the server. Unset attributes will be set to undefined.
     // You can also pass an attributes object to diff against the model,
-    // determining if there *would be* a change.
+    // determining if there *would be* a change. If this method is called
+    // from a change event callback the changes are considered relative to
+    // the state of the model before the mutation started.
     changedAttributes: function(diff) {
-      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
-      var val, changed = false;
-      var old = this._changing ? this._previousAttributes : this.attributes;
-      for (var attr in diff) {
-        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
-        (changed || (changed = {}))[attr] = val;
-      }
-      return changed;
+      return this._changeTracker.changedAttributes(diff);
     },
 
     // Get the previous value of an attribute, recorded at the time the last
     // `"change"` event was fired.
-    previous: function(attr) {
-      if (attr == null || !this._previousAttributes) return null;
-      return this._previousAttributes[attr];
-    },
+    previous: function(attr) { return this._changeTracker.previous(attr); },
 
     // Get all of the attributes of the model at the time of the previous
     // `"change"` event.
-    previousAttributes: function() {
-      return _.clone(this._previousAttributes);
-    },
+    previousAttributes: function() { return this._changeTracker.previousAttributes(); },
 
     // ---------------------------------------------------------------------
 
