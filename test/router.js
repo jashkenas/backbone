@@ -74,7 +74,7 @@ $(document).ready(function() {
       "named/optional/(y:z)":       "namedOptional",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
-      ":entity?*args":              "query",
+      "query/:entity":              "query",
       "*anything":                  "anything"
     },
 
@@ -231,13 +231,13 @@ $(document).ready(function() {
   });
 
   test("routes (query)", 5, function() {
-    location.replace('http://example.com#mandel?a=b&c=d');
+    location.replace('http://example.com#query/mandel?a=b&c=d');
     Backbone.history.checkUrl();
     equal(router.entity, 'mandel');
-    equal(router.queryArgs, 'a=b&c=d');
+    deepEqual(router.queryArgs, {'a': 'b', 'c': 'd'});
     equal(lastRoute, 'query');
     equal(lastArgs[0], 'mandel');
-    equal(lastArgs[1], 'a=b&c=d');
+    deepEqual(lastArgs[1], {'a': 'b', 'c': 'd'});
   });
 
   test("routes (anything)", 1, function() {

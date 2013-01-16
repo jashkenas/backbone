@@ -1000,10 +1000,32 @@
       return new RegExp('^' + route + '$');
     },
 
+    //from http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values
+    _parseSearchParams: function(search) {
+      var match,
+        plusRegExp = /\+/g,  // Regex for replacing addition symbol with a space
+        searchRegExp = /([^&=]+)=?([^&]*)/g,
+        decode = function (s) { return decodeURIComponent(s.replace(plusRegExp, " ")); },
+        params = {};
+
+      while (match = searchRegExp.exec(search)) {
+        params[decode(match[1])] = decode(match[2]);
+      }
+      return params;
+    },
+
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters: function(route, fragment) {
-      return route.exec(fragment).slice(1);
+      var parts = fragment.split('?')
+        pathname = parts[0],
+        search = parts[1];
+        params = route.exec(pathname).slice(1);
+
+      if(search && search.length) {
+        params.push(this._parseSearchParams(search));
+      }
+      return params;
     }
 
   });
@@ -1059,7 +1081,7 @@
     getFragment: function(fragment, forcePushState) {
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = this.location.pathname;
+          fragment = this.location.pathname + this.location.search;
           var root = this.root.replace(trailingSlash, '');
           if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
         } else {
@@ -1159,9 +1181,9 @@
     // returns `false`.
     loadUrl: function(fragmentOverride) {
       var fragment = this.fragment = this.getFragment(fragmentOverride);
-      fragment = fragment.replace(searchStripper, '');
+      var pathname = fragment.replace(searchStripper, '');
       var matched = _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
+        if (handler.route.test(pathname)) {
           handler.callback(fragment);
           return true;
         }
