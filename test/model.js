@@ -146,6 +146,10 @@ $(document).ready(function() {
   test("get", 2, function() {
     equal(doc.get('title'), 'The Tempest');
     equal(doc.get('author'), 'Bill Shakespeare');
+    
+    // test get with fallback argument
+    equal(doc.get('title', 'Hamlet'), 'The Tempest');
+    equal(doc.get('No Such Thing', 'Hamlet'), 'Othello');
   });
 
   test("escape", 5, function() {

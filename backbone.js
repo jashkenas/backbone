@@ -271,8 +271,15 @@
     },
 
     // Get the value of an attribute.
-    get: function(attr) {
-      return this.attributes[attr];
+    get: function(attr, fallback) {
+      var retval = this.attributes[attr];
+
+      // if no such attribute was found, return fallback (if specified)
+      if ( _.isEmpty(retval) && !_.isUndefined(fallback) ) {
+        retval = fallback; 
+      }
+
+      return retval;
     },
 
     // Get the HTML-escaped value of an attribute.
