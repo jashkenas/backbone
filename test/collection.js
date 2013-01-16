@@ -511,7 +511,7 @@ $(document).ready(function() {
 
   test("reset", 10, function() {
     var resetCount = 0;
-    var models = col.models.slice();
+    var models = col.models;
     col.on('reset', function() { resetCount += 1; });
     col.reset([]);
     equal(resetCount, 1);

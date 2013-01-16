@@ -556,7 +556,6 @@
     options || (options = {});
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
-    this.models = [];
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, _.extend({silent: true}, options));
@@ -591,7 +590,7 @@
       var i, l, model, attrs, existing, doSort, add, at, sort, sortAttr;
       add = [];
       at = options.at;
-      sort = this.comparator && (at == null) && options.sort != false;
+      sort = this.comparator && (at == null) && options.sort !== false;
       sortAttr = _.isString(this.comparator) ? this.comparator : null;
 
       // Turn bare objects into model references, and prevent invalid models
@@ -797,7 +796,7 @@
       for (var i = 0, l = this.models.length; i < l; i++) {
         this._removeReference(this.models[i]);
       }
-      options.previousModels = this.models.slice();
+      options.previousModels = this.models;
       this._reset();
       if (models) this.add(models, _.extend({silent: true}, options));
       if (!options.silent) this.trigger('reset', this, options);
@@ -850,7 +849,7 @@
     // Reset all internal state. Called when the collection is reset.
     _reset: function() {
       this.length = 0;
-      this.models.length = 0;
+      this.models = [];
       this._byId  = {};
     },
 
