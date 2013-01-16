@@ -1427,14 +1427,14 @@
 
     var success = options.success;
     options.success = function(resp) {
-      if (success) success(model, resp, options);
-      model.trigger('sync', model, resp, options);
+      if (success) success(model, resp, options, arguments);
+      model.trigger('sync', model, resp, options, arguments);
     };
 
     var error = options.error;
-    options.error = function(xhr) {
-      if (error) error(model, xhr, options);
-      model.trigger('error', model, xhr, options);
+    options.error = function() {
+      if (error) error(model, xhr, options, arguments);
+      model.trigger('error', model, xhr, options, arguments);
     };
 
     // Make the request, allowing the user to override any Ajax options.
