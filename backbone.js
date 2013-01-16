@@ -1017,9 +1017,9 @@
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters: function(route, fragment) {
-      var parts = fragment.split('?')
+      var parts = fragment.split('?'),
         pathname = parts[0],
-        search = parts[1];
+        search = parts[1],
         params = route.exec(pathname).slice(1);
 
       if(search && search.length) {
