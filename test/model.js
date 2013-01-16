@@ -143,13 +143,13 @@ $(document).ready(function() {
     ok(!new Backbone.Model({ 'id': -5 }).isNew(), "is false for a negative integer");
   });
 
-  test("get", 2, function() {
+  test("get", 4, function() {
     equal(doc.get('title'), 'The Tempest');
     equal(doc.get('author'), 'Bill Shakespeare');
     
     // test get with fallback argument
     equal(doc.get('title', 'Hamlet'), 'The Tempest');
-    equal(doc.get('No Such Thing', 'Hamlet'), 'Othello');
+    equal(doc.get('No Such Thing', 'Hamlet'), 'Hamlet');
   });
 
   test("escape", 5, function() {
