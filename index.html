@@ -3667,23 +3667,45 @@ Inbox.messages.fetch();
       firing an extra AJAX request to <a href="#Collection-fetch">fetch</a> them,
       a nicer pattern is to have their data already bootstrapped into the page.
       You can then use <a href="#Collection-reset">reset</a> to populate your
-      collections with the initial data. At DocumentCloud, in the
-      <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the
-      workspace, we do something along these lines:
+      collections with the initial data.
+    </p>
+    <p>
+      Instead of writing out the initial model in a script literal that can leave
+      you open to a Cross Site Scripting attack from untrusted data, follow the <a href="https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet#RULE_.233.1_-_HTML_escape_JSON_values_in_an_HTML_context_and_read_the_data_with_JSON.parse">OWASP 
+      guideline for bootstrapping an application with JSON data</a> by writing out 
+      the JSON inside of a hidden div, then fetching the contents and parsing it using
+      <tt>JSON.parse</tt>.
+    </p>
+    <p>
+      A Ruby-ish example of this would be:
     </p>
 
 <pre>
+&lt;div id="Accounts-Data" style="display: none;"&lt;
+   &lt;%= @accounts.to_json %&gt;
+&lt;/div&gt;
+
 &lt;script&gt;
+  var accountsData = [];
   var Accounts = new Backbone.Collection;
-  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
-  var Projects = new Backbone.Collection;
-  Projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
+  
+  try {
+      accountsData = JSON.parse($('div#Accounts-Data').text());
+      Accounts.reset(accountsData);
+  }
+  catch(err) {
+      console.log('error parsing accounts data');
+      // try Accounts.fetch() to load the model
+  } 
 &lt;/script&gt;
 </pre>
 
-    <p>You have to <a href="http://mathiasbynens.be/notes/etago">escape</a>
-    <tt>&lt;/</tt> within the JSON string, to prevent javascript injection
-    attacks.
+    <p>
+      Always use the native 
+      <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/JSON">JSON object</a> or the 
+      <a href="https://github.com/douglascrockford/JSON-js">json2.js</a> library to
+      parse the bootstrapping data, never use <tt>eval</tt>.
+    </p>
 
     <p id="FAQ-extending">
       <b class="header">Extending Backbone</b>
