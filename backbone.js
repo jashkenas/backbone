@@ -243,7 +243,9 @@
     }
     this.set(attrs, options);
     this.changed = {};
+    this.trigger('init:before');
     this.initialize.apply(this, arguments);
+    this.trigger('init:after');
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -557,7 +559,9 @@
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
+    this.trigger('init:before');
     this.initialize.apply(this, arguments);
+    this.trigger('init:after');
     if (models) this.reset(models, _.extend({silent: true}, options));
   };
 
@@ -935,7 +939,9 @@
     options || (options = {});
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
+    this.trigger('init:before');
     this.initialize.apply(this, arguments);
+    this.trigger('init:after');
   };
 
   // Cached regular expressions for matching named param parts and splatted
@@ -1232,7 +1238,9 @@
     this.cid = _.uniqueId('view');
     this._configure(options || {});
     this._ensureElement();
+    this.trigger('init:before');
     this.initialize.apply(this, arguments);
+    this.trigger('init:after');
     this.delegateEvents();
   };
 
