@@ -1283,7 +1283,7 @@ book.destroy({success: function(model, response) {
       error object that describes the error programmatically. If <b>validate</b>
       returns an error, <tt>set</tt> and <tt>save</tt> will not continue, and the
       model attributes will not be modified.
-      Failed validations trigger an <tt>"error"</tt> event.
+      Failed validations trigger an <tt>"invalid"</tt> event.
     </p>
 
 <pre class="runnable">
@@ -1299,29 +1299,20 @@ var one = new Chapter({
   title : "Chapter One: The Beginning"
 });
 
-one.on("error", function(model, error) {
+one.on("invalid", function(model, error) {
   alert(model.get("title") + " " + error);
 });
 
-one.set({
+one.save({
   start: 15,
   end:   10
 });
 </pre>
 
     <p>
-      <tt>"error"</tt> events are useful for providing coarse-grained error
-      messages at the model or collection level. An <tt>error</tt> callback can
-      can also be specified in the options, to be called alongside the error event:
+      <tt>"invalid"</tt> events are useful for providing coarse-grained error
+      messages at the model or collection level.
     </p>
-
-<pre>
-account.set({access: "unlimited"}, {
-  error: function(model, error) {
-    alert(error);
-  }
-});
-</pre>
 
     <p id="Model-url">
       <b class="header">url</b><code>model.url()</code>
