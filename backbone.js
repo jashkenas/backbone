@@ -252,6 +252,9 @@
     // A hash of attributes whose current and previous value differ.
     changed: null,
 
+    // The value returned during the last failed validation.
+    validationError: null,
+
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
     idAttribute: 'id',
