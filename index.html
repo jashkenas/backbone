@@ -334,6 +334,7 @@
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
+      <li>– <a href="#Model-validationError">validationError</a></li>
       <li>– <a href="#Model-url">url</a></li>
       <li>– <a href="#Model-urlRoot">urlRoot</a></li>
       <li>– <a href="#Model-parse">parse</a></li>
@@ -1283,7 +1284,9 @@ book.destroy({success: function(model, response) {
       error object that describes the error programmatically. If <b>validate</b>
       returns an error, <tt>set</tt> and <tt>save</tt> will not continue, and the
       model attributes will not be modified.
-      Failed validations trigger an <tt>"invalid"</tt> event.
+      Failed validations trigger an <tt>"invalid"</tt> event, and set the 
+      <tt>validationError</tt> property on the model with the value returned by
+      this method.
     </p>
 
 <pre class="runnable">
@@ -1312,6 +1315,12 @@ one.save({
     <p>
       <tt>"invalid"</tt> events are useful for providing coarse-grained error
       messages at the model or collection level.
+    </p>
+
+    <p id="Model-validationError">
+      <b class="header">validationError</b><code>model.validationError</code>
+      <br />
+      The value returned by <a href="#Model-validate">validate</a> during the last failed validation.
     </p>
 
     <p id="Model-url">
