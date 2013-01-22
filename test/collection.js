@@ -88,6 +88,13 @@ $(document).ready(function() {
     equal(col2.get(model.clone()), model);
   });
 
+  test("get with id and cid for a model without id", function() {
+    var col = new Backbone.Collection();
+    var model = new Backbone.Model();
+    col.push(model);
+    equal(col.get({id: 1, cid: model.cid}), model);
+  });
+
   test("update index when id changes", 3, function() {
     var col = new Backbone.Collection();
     col.add([
