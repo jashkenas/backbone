@@ -400,4 +400,16 @@ $(document).ready(function() {
     _.extend({}, Backbone.Events).once('event').trigger('event');
   });
 
+  test("event priority", function () {
+    var obj = _.extend({}, Backbone.Events);
+    var p = '';
+    obj.on({
+      event: function () { p += '3'; },
+      'event!-2': function () { p += '1'; },
+      'event!1': function () { p += '5'; },
+      'event!-1': function () { p += '2'; },
+    }).on('event', function () { p += '4'; }).trigger('event event');
+    equal(p, '1234512345');
+  });
+
 });
