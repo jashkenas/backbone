@@ -606,7 +606,7 @@
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        if (existing = this.get(model)) {
+        if (existing = this.get(attrs)) {
           if (options.merge) {
             existing.set(attrs === model ? model.attributes : attrs, options);
             if (sort && !doSort && existing.hasChanged(sortAttr)) doSort = true;
