@@ -234,10 +234,10 @@ $(document).ready(function() {
     location.replace('http://example.com#query/mandel?a=b&c=d');
     Backbone.history.checkUrl();
     equal(router.entity, 'mandel');
-    deepEqual(router.queryArgs, {'a': 'b', 'c': 'd'});
+    equal(router.queryArgs, 'a=b&c=d');
     equal(lastRoute, 'query');
     equal(lastArgs[0], 'mandel');
-    deepEqual(lastArgs[1], {'a': 'b', 'c': 'd'});
+    equal(lastArgs[1], 'a=b&c=d');
   });
 
   test("routes (anything)", 1, function() {

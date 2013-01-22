@@ -1000,20 +1000,6 @@
       return new RegExp('^' + route + '$');
     },
 
-    //from http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values
-    _parseSearchParams: function(search) {
-      var match,
-        plusRegExp = /\+/g,  // Regex for replacing addition symbol with a space
-        searchRegExp = /([^&=]+)=?([^&]*)/g,
-        decode = function (s) { return decodeURIComponent(s.replace(plusRegExp, " ")); },
-        params = {};
-
-      while (match = searchRegExp.exec(search)) {
-        params[decode(match[1])] = decode(match[2]);
-      }
-      return params;
-    },
-
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters: function(route, fragment) {
@@ -1023,7 +1009,7 @@
         params = route.exec(pathname).slice(1);
 
       if(search && search.length) {
-        params.push(this._parseSearchParams(search));
+        params.push(search);
       }
       return params;
     }
