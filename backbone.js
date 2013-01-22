@@ -66,6 +66,7 @@
 
   // Regular expression used to split event strings.
   var eventSplitter = /\s+/;
+  var prioritySplitter = '!';
 
   // Implement fancy features of the Events API such as multiple event
   // names `"change blur"` and jQuery-style event maps `{change: action}`
@@ -121,8 +122,14 @@
     on: function(name, callback, context) {
       if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
       this._events || (this._events = {});
+      var ev = {callback: callback, context: context, ctx: context || this};
+      var split = name.split(prioritySplitter);
+      name = split[0];
+      var priority = ev.priority = +split[1] || 0;
       var events = this._events[name] || (this._events[name] = []);
-      events.push({callback: callback, context: context, ctx: context || this});
+      var i = _.sortedIndex(events, ev, 'priority'), l = events.length;
+      while (i < l && priority === events[i].priority) ++i;
+      events.splice(i, 0, ev);
       return this;
     },
 
