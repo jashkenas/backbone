@@ -1311,7 +1311,7 @@
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
         method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
+        eventName += '.delegateEvents.' + this.cid;
         if (selector === '') {
           this.$el.on(eventName, method);
         } else {
@@ -1324,7 +1324,7 @@
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
-      this.$el.off('.delegateEvents' + this.cid);
+      this.$el.off('.delegateEvents.' + this.cid);
     },
 
     // Performs the initial configuration of a View with a set of options.
