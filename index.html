@@ -1092,8 +1092,10 @@ alert("Cake id: " + cake.id);
       <br />
       The <b>changed</b> property is the internal hash containing all the attributes
       that have changed since the last <tt>"change"</tt> event was triggered.
-      Please do not update <b>changed</b> directly.  Its state is maintained internally
-      by <a href="#Model-set">set</a> and <a href="#Model-change">change</a>.
+      There's no need to update <b>changed</b> directly since its state is internally maintained
+      by <a href="#Model-set">set</a>>.
+      Use <a href="#Model-hasChanged">hasChanged</a> to determine if the model has changed since
+      the last "change" event.
       A copy of <b>changed</b> can be acquired from
       <a href="#Model-changedAttributes">changedAttributes</a>.
     </p>
