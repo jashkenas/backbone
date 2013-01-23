@@ -88,6 +88,13 @@ $(document).ready(function() {
     equal(col2.get(model.clone()), model);
   });
 
+  test("get with id and cid for a model without id", function() {
+    var col = new Backbone.Collection();
+    var model = new Backbone.Model();
+    col.push(model);
+    equal(col.get({id: 1, cid: model.cid}), model);
+  });
+
   test("update index when id changes", 3, function() {
     var col = new Backbone.Collection();
     col.add([
@@ -240,6 +247,14 @@ $(document).ready(function() {
     equal(col.indexOf(rob), 0);
     equal(col.indexOf(tim), 1);
     equal(col.indexOf(tom), 2);
+  });
+
+  test("add with id and cid where the model has no id", function() {
+    var m = new Backbone.Model({key: 'value'});
+    var c = new Backbone.Collection([m]);
+    c.add([{id: 1, cid: m.cid}], {merge: true});
+    equal(c.length, 1);
+    equal(c.get(1), m);
   });
 
   test("comparator that depends on `this`", 2, function() {
@@ -926,6 +941,14 @@ $(document).ready(function() {
     col.update({id: 1, other: 'value'});
     equal(col.first().get('key'), 'other');
     equal(col.length, 1);
+  });
+
+  test("update with id and cid where the model has no id", function() {
+    var m = new Backbone.Model({key: 'value'});
+    var c = new Backbone.Collection([m]);
+    c.update([{id: 1, cid: m.cid}]);
+    equal(c.length, 1);
+    equal(c.get(1), m);
   });
 
   test("#1894 - Push should not trigger a sort", 0, function() {

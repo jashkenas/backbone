@@ -606,7 +606,7 @@
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        if (existing = this.get(model)) {
+        if (existing = this.get(attrs)) {
           if (options.merge) {
             existing.set(attrs === model ? model.attributes : attrs, options);
             if (sort && !doSort && existing.hasChanged(sortAttr)) doSort = true;
@@ -710,7 +710,7 @@
     get: function(obj) {
       if (obj == null) return void 0;
       this._idAttr || (this._idAttr = this.model.prototype.idAttribute);
-      return this._byId[obj.id || obj.cid || obj[this._idAttr] || obj];
+      return this._byId[obj.id] || this._byId[obj.cid || obj[this._idAttr] || obj];
     },
 
     // Get the model at the given index.
