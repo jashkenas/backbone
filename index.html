@@ -334,6 +334,7 @@
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
+      <li>– <a href="#Model-validationError">validationError</a></li>
       <li>– <a href="#Model-url">url</a></li>
       <li>– <a href="#Model-urlRoot">urlRoot</a></li>
       <li>– <a href="#Model-parse">parse</a></li>
@@ -1091,9 +1092,8 @@ alert("Cake id: " + cake.id);
       <br />
       The <b>changed</b> property is the internal hash containing all the attributes
       that have changed since the last <tt>"change"</tt> event was triggered.
-      Please do not update <b>changed</b> directly.  Its state is maintained internally
-      by <a href="#Model-set">set</a> and <a href="#Model-change">change</a>.
-      A copy of <b>changed</b> can be acquired from
+      Please do not update <b>changed</b> directly since its state is internally maintained
+      by <a href="#Model-set">set</a>.  A copy of <b>changed</b> can be acquired from
       <a href="#Model-changedAttributes">changedAttributes</a>.
     </p>
 
@@ -1283,7 +1283,9 @@ book.destroy({success: function(model, response) {
       error object that describes the error programmatically. If <b>validate</b>
       returns an error, <tt>set</tt> and <tt>save</tt> will not continue, and the
       model attributes will not be modified.
-      Failed validations trigger an <tt>"error"</tt> event.
+      Failed validations trigger an <tt>"invalid"</tt> event, and set the
+      <tt>validationError</tt> property on the model with the value returned by
+      this method.
     </p>
 
 <pre class="runnable">
@@ -1299,29 +1301,26 @@ var one = new Chapter({
   title : "Chapter One: The Beginning"
 });
 
-one.on("error", function(model, error) {
+one.on("invalid", function(model, error) {
   alert(model.get("title") + " " + error);
 });
 
-one.set({
+one.save({
   start: 15,
   end:   10
 });
 </pre>
 
     <p>
-      <tt>"error"</tt> events are useful for providing coarse-grained error
-      messages at the model or collection level. An <tt>error</tt> callback can
-      can also be specified in the options, to be called alongside the error event:
+      <tt>"invalid"</tt> events are useful for providing coarse-grained error
+      messages at the model or collection level.
     </p>
 
-<pre>
-account.set({access: "unlimited"}, {
-  error: function(model, error) {
-    alert(error);
-  }
-});
-</pre>
+    <p id="Model-validationError">
+      <b class="header">validationError</b><code>model.validationError</code>
+      <br />
+      The value returned by <a href="#Model-validate">validate</a> during the last failed validation.
+    </p>
 
     <p id="Model-url">
       <b class="header">url</b><code>model.url()</code>
@@ -3145,17 +3144,17 @@ var model = localBackbone.Model.extend(...);
     <h2 id="examples-artsy">Art.sy</h2>
 
     <p>
-      <a href="http://art.sy">Art.sy</a> is a place to discover art you'll
+      <a href="http://artsy.net">Art.sy</a> is a place to discover art you'll
       love. Art.sy is built on Rails, using
       <a href="https://github.com/intridea/grape">Grape</a> to serve a robust
-      <a href="http://art.sy/api">JSON API</a>. The main site is a single page
+      <a href="http://artsy.net/api">JSON API</a>. The main site is a single page
       app written in Coffeescript and uses Backbone to provide structure around
       this API. An admin panel and partner CMS have also been extracted into
       their own API-consuming Backbone projects.
     </p>
 
     <div style="text-align: center;">
-      <a href="http://art.sy">
+      <a href="http://artsy.net">
         <img width="550" height="550" data-original="docs/images/artsy.png" alt="Art.sy" class="example_image" />
       </a>
     </div>
