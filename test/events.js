@@ -101,6 +101,38 @@ $(document).ready(function() {
     b.trigger('event event2');
   });
 
+  test("listenToOnce and stopListening", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenToOnce(b, 'all', function() { ok(true); });
+    b.trigger('anything');
+    b.trigger('anything');
+    a.listenToOnce(b, 'all', function() { ok(false); });
+    a.stopListening();
+    b.trigger('anything');
+  });
+
+  test("listenTo, listenToOnce and stopListening", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenToOnce(b, 'all', function() { ok(true); });
+    b.trigger('anything');
+    b.trigger('anything');
+    a.listenTo(b, 'all', function() { ok(false); });
+    a.stopListening();
+    b.trigger('anything');
+  });
+
+  test("listenTo and stopListening with event maps", 1, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenTo(b, {change: function(){ ok(true); }});
+    b.trigger('change');
+    a.listenTo(b, {change: function(){ ok(false); }});
+    a.stopListening();
+    b.trigger('change');
+  });
+
   test("listenTo yourself", 1, function(){
     var e = _.extend({}, Backbone.Events);
     e.listenTo(e, "foo", function(){ ok(true); });
