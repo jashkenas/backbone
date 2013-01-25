@@ -242,16 +242,19 @@ $(document).ready(function() {
     equal(col.indexOf(tom), 2);
   });
 
-  test("add, assign id to model, then get", 5, function() {
+  test("add, set or assign id to model, then get", 6, function() {
+    var nonStrictID = 'looslyAssigned', strictUseOfId = 'idStrictlySetInAttrs';
     e = new Backbone.Model;
     otherCol.add(e);
     strictEqual(e.id, void 0, 'model id is not defined yet');
     ok(e.cid, 'model cid is defined');
-    e.id = 'localStorageKey_' + e.cid;
+    e.id = nonStrictID;
     var got = otherCol.get(e);
     ok(got, 'get returned the model ok');
-    equal(got.id, e.id, 'get returned model with expected id');
+    equal(got.id, nonStrictID, 'get returned model with expected id, not set as attribute');
     equal(got.cid, e.cid, 'get returned model with expected cid');
+    e.set({id: strictUseOfId});
+    equal(otherCol.get(e).id, strictUseOfId, 'get returned model with expected id, set as attribute');
   });
 
   test("comparator that depends on `this`", 2, function() {
