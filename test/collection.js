@@ -242,6 +242,18 @@ $(document).ready(function() {
     equal(col.indexOf(tom), 2);
   });
 
+  test("add, assign id to model, then get", 5, function() {
+    e = new Backbone.Model;
+    otherCol.add(e);
+    strictEqual(e.id, void 0, 'model id is not defined yet');
+    ok(e.cid, 'model cid is defined');
+    e.id = 'localStorageKey_' + e.cid;
+    var got = otherCol.get(e);
+    ok(got, 'get returned the model ok');
+    equal(got.id, e.id, 'get returned model with expected id');
+    equal(got.cid, e.cid, 'get returned model with expected cid');
+  });
+
   test("comparator that depends on `this`", 2, function() {
     var col = new Backbone.Collection;
     col.negative = function(num) {
