@@ -147,11 +147,11 @@ $(document).ready(function() {
     e.trigger("foo");
   });
 
-  test("listenTo with empty callback doesn't throw an error", 1, function(){
+  test("listenTo with empty callback throw an error", 1, function(){
     var e = _.extend({}, Backbone.Events);
-    e.listenTo(e, "foo", null);
-    e.trigger("foo");
-    ok(true);
+    throws(function(){
+      e.listenTo(e, "foo", null);
+    }, "Missing callback parameter");
   });
 
   test("trigger all for each event", 3, function() {
@@ -269,8 +269,11 @@ $(document).ready(function() {
     strictEqual(counter, 2);
   });
 
-  test("if no callback is provided, `on` is a noop", 0, function() {
-    _.extend({}, Backbone.Events).on('test').trigger('test');
+  test("if no callback is provided, `on` throws an error", 1, function() {
+    var dispatcher = _.extend({}, Backbone.Events);
+    throws(function() {
+      dispatcher.on('test');
+    }, "Missing callback parameter");
   });
 
   test("remove all events for a specific context", 4, function() {
@@ -428,8 +431,11 @@ $(document).ready(function() {
     Backbone.trigger('all');
   });
 
-  test("once without a callback is a noop", 0, function() {
-    _.extend({}, Backbone.Events).once('event').trigger('event');
+  test("once without a callback throws an error", 1, function() {
+    var dispatcher = _.extend({}, Backbone.Events);
+    throws(function() {
+      dispatcher.once('event');
+    }, 'Missing callback parameter');
   });
 
 });

@@ -119,7 +119,9 @@
     // to a `callback` function. Passing `"all"` will bind the callback to
     // all events fired.
     on: function(name, callback, context) {
-      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
+      if (!callback && !_.isObject(name)) throw new Error('Missing callback parameter');
+
+      if (!eventsApi(this, 'on', name, [callback, context])) return this;
       this._events || (this._events = {});
       var events = this._events[name] || (this._events[name] = []);
       events.push({callback: callback, context: context, ctx: context || this});
@@ -129,7 +131,9 @@
     // Bind events to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
     once: function(name, callback, context) {
-      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
+      if (!callback && !_.isObject(name)) throw new Error('Missing callback parameter');
+
+      if (!eventsApi(this, 'once', name, [callback, context])) return this;
       var self = this;
       var once = _.once(function() {
         self.off(name, once);
