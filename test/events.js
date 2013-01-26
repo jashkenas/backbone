@@ -343,8 +343,8 @@ $(document).ready(function() {
     obj
       .once('event', f)
       .on('event', f)
-      .trigger('event')
       .trigger('event');
+    obj.trigger('event');
   });
 
   test("once with off", 0, function() {

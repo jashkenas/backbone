@@ -89,18 +89,19 @@
   // Optimized internal dispatch function for triggering events. Tries to
   // keep the usual cases speedy (most Backbone events have 3 arguments).
   var triggerEvents = function(events, args) {
-    var ev, i = -1, l = events.length;
+    var ev, i = -1, l = events.length, returnList = [];
     switch (args.length) {
-    case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx);
-    return;
-    case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0]);
-    return;
-    case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0], args[1]);
-    return;
-    case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, args[0], args[1], args[2]);
-    return;
-    default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
+    case 0: while (++i < l) returnList.push((ev = events[i]).callback.call(ev.ctx));
+    break;
+    case 1: while (++i < l) returnList.push((ev = events[i]).callback.call(ev.ctx, args[0]));
+    break;
+    case 2: while (++i < l) returnList.push((ev = events[i]).callback.call(ev.ctx, args[0], args[1]));
+    break;
+    case 3: while (++i < l) returnList.push((ev = events[i]).callback.call(ev.ctx, args[0], args[1], args[2]));
+    break;
+    default: while (++i < l) returnList.push((ev = events[i]).callback.apply(ev.ctx, args));
     }
+    return returnList;
   };
 
   // A module that can be mixed in to *any object* in order to provide it with
@@ -179,14 +180,16 @@
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
     trigger: function(name) {
-      if (!this._events) return this;
+      var $ = Backbone.$;
+      if (!this._events) return $.Deferred().resolve().promise();
       var args = slice.call(arguments, 1);
-      if (!eventsApi(this, 'trigger', name, args)) return this;
+      if (!eventsApi(this, 'trigger', name, args)) return $.Deferred().resolve().promise();
+      var dfdList = [];
       var events = this._events[name];
       var allEvents = this._events.all;
-      if (events) triggerEvents(events, args);
-      if (allEvents) triggerEvents(allEvents, arguments);
-      return this;
+      if (events) dfdList = dfdList.concat(triggerEvents(events, args));
+      if (allEvents) dfdList = dfdList.concat(triggerEvents(allEvents, arguments));
+      return $.when.apply($, dfdList);
     },
 
     // Tell this object to stop listening to either specific events ... or
