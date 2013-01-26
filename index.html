@@ -574,7 +574,7 @@
       and DOM manipulation with <a href="#View">Backbone.View</a>, include
       <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
       <a href="http://jquery.com">jQuery</a> <small>( >= 1.7.0)</small> or
-      <a href="http://zeptojs.com/">Zepto</a>.
+      <a href="http://zeptojs.com/">Zepto</a>. If you are using Zepto, include <a href="https://github.com/sudhirj/simply-deferred">Simply Deferred</a> and install it into Zepto: <tt>Deferred.installInto(Zepto)</tt>
     </p>
 
     <h2 id="introduction">Introduction</h2>
@@ -684,6 +684,16 @@ object.on("alert", function(msg) {
 });
 
 object.trigger("alert", "an event");
+
+object.on("beforeclose", function() {
+  var dfd = $.Deferred();
+  setTimeout(dfd.resolve, 100);
+  return dfd.promise();
+});
+
+object.trigger('beforeclose').then(function() {
+  alert("Triggered after beforeclose");
+});
 </pre>
 
     <p>
@@ -774,7 +784,7 @@ object.off();
       <br />
       Trigger callbacks for the given <b>event</b>, or space-delimited list of events.
       Subsequent arguments to <b>trigger</b> will be passed along to the
-      event callbacks.
+      event callbacks. Trigger returns a promise object, which can be used to handle async handlers.
     </p>
 
     <p id="Events-once">
