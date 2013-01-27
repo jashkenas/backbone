@@ -2,26 +2,6 @@ $(document).ready(function() {
 
   module("Backbone.Events");
 
-  test("event functions are chainable",14,function(){
-    var obj = _.extend({foo:"bar"},Backbone.Events),
-        fn = function(){},
-        otherobj = _.extend({bar:"baz"},Backbone.Events);
-    ok(obj === obj.trigger('noeventssetyet'));
-    ok(obj === obj.off('noeventssetyet'));
-    ok(obj === obj.stopListening('noeventssetyet'));
-    ok(obj === obj.on('a',fn));
-    ok(obj === obj.on('a b',fn));
-    ok(obj === obj.once('c',fn));
-    ok(obj === obj.once('d e',fn));
-    ok(obj === obj.trigger('a'));
-    ok(obj === obj.trigger('a b'));
-    ok(obj === obj.listenTo(otherobj,'a',fn));
-    ok(obj === obj.listenToOnce(otherobj,'b',fn));
-    ok(obj === obj.off('a'));
-    ok(obj === obj.off('a b'));
-    ok(obj === obj.stopListening(otherobj,'b'));
-  });
-
   test("on and trigger", 2, function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
@@ -311,18 +291,6 @@ $(document).ready(function() {
     obj.trigger('x y');
   });
 
-  test("off is chainable", 3, function() {
-    var obj = _.extend({}, Backbone.Events);
-    // With no events
-    ok(obj.off() === obj);
-    // When removing all events
-    obj.on('event', function(){}, obj);
-    ok(obj.off() === obj);
-    // When removing some events
-    obj.on('event', function(){}, obj);
-    ok(obj.off('event') === obj);
-  });
-
   test("#1310 - off does not skip consecutive events", 0, function() {
     var obj = _.extend({}, Backbone.Events);
     obj.on('event', function() { ok(false); }, obj);
@@ -450,6 +418,23 @@ $(document).ready(function() {
 
   test("once without a callback is a noop", 0, function() {
     _.extend({}, Backbone.Events).once('event').trigger('event');
+  });
+
+  test("event functions are chainable", function() {
+    var obj = _.extend({}, Backbone.Events);
+    var obj2 = _.extend({}, Backbone.Events);
+    var fn = function() {};
+    equal(obj, obj.trigger('noeventssetyet'));
+    equal(obj, obj.off('noeventssetyet'));
+    equal(obj, obj.stopListening('noeventssetyet'));
+    equal(obj, obj.on('a', fn));
+    equal(obj, obj.once('c', fn));
+    equal(obj, obj.trigger('a'));
+    equal(obj, obj.listenTo(obj2, 'a', fn));
+    equal(obj, obj.listenToOnce(obj2, 'b', fn));
+    equal(obj, obj.off('a c'));
+    equal(obj, obj.stopListening(obj2, 'a'));
+    equal(obj, obj.stopListening());
   });
 
 });
