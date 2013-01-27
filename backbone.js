@@ -136,8 +136,7 @@
         callback.apply(this, arguments);
       });
       once._callback = callback;
-      this.on(name, once, context);
-      return this;
+      return this.on(name, once, context);
     },
 
     // Remove one or many callbacks. If `context` is null, removes all
@@ -217,8 +216,7 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
-      obj[implementation](name, typeof name === 'object' ? this : callback, this);
-      return this;
+      return obj[implementation](name, typeof name === 'object' ? this : callback, this);
     };
   });
 
