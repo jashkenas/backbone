@@ -136,8 +136,7 @@
         callback.apply(this, arguments);
       });
       once._callback = callback;
-      this.on(name, once, context);
-      return this;
+      return this.on(name, once, context);
     },
 
     // Remove one or many callbacks. If `context` is null, removes all
