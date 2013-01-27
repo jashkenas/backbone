@@ -2,16 +2,23 @@ $(document).ready(function() {
 
   module("Backbone.Events");
 
-  test("event functions are chainable",7,function(){
+  test("event functions are chainable",14,function(){
     var obj = _.extend({foo:"bar"},Backbone.Events),
         fn = function(){},
         otherobj = _.extend({bar:"baz"},Backbone.Events);
+    ok(obj === obj.trigger('noeventssetyet'));
+    ok(obj === obj.off('noeventssetyet'));
+    ok(obj === obj.stopListening('noeventssetyet'));
+    ok(obj === obj.on('a',fn));
     ok(obj === obj.on('a b',fn));
-    ok(obj === obj.once('a c',fn));
+    ok(obj === obj.once('c',fn));
+    ok(obj === obj.once('d e',fn));
     ok(obj === obj.trigger('a'));
+    ok(obj === obj.trigger('a b'));
     ok(obj === obj.listenTo(otherobj,'a',fn));
     ok(obj === obj.listenToOnce(otherobj,'b',fn));
     ok(obj === obj.off('a'));
+    ok(obj === obj.off('a b'));
     ok(obj === obj.stopListening(otherobj,'b'));
   });
 
