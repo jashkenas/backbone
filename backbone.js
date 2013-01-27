@@ -216,7 +216,8 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
-      return obj[implementation](name, typeof name === 'object' ? this : callback, this);
+      obj[implementation](name, typeof name === 'object' ? this : callback, this);
+      return this;
     };
   });
 
