@@ -15,6 +15,24 @@ $(document).ready(function() {
     equal(obj.counter, 5, 'counter should be incremented five times.');
   });
 
+  asyncTest("async trigger", 3, function () {
+    var obj = _.extend({},Backbone.Events);
+    var asyncHandler = function () {
+      var dfd = $.Deferred();
+      setTimeout(function() {
+        ok(true);
+        dfd.resolve();
+        start();
+      }, 100);
+      return dfd.promise();
+    };
+    obj.on("async", asyncHandler);
+    obj.on("async", asyncHandler);
+    obj.trigger("async").then(function () {
+      ok(true);
+    });
+  });
+
   test("binding and triggering multiple events", 4, function() {
     var obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
@@ -331,8 +349,8 @@ $(document).ready(function() {
     obj
       .once('event', f)
       .on('event', f)
-      .trigger('event')
       .trigger('event');
+    obj.trigger('event');
   });
 
   test("once with off", 0, function() {
