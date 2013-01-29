@@ -1234,10 +1234,8 @@ book.save({author: "Teddy"});
       <b>save</b> accepts <tt>success</tt> and <tt>error</tt> callbacks in the
       options hash, which are passed <tt>(model, response, options)</tt> and
       <tt>(model, xhr, options)</tt> as arguments, respectively.
-      The <tt>error</tt> callback will also be invoked if the model has a
-      <tt>validate</tt> method, and validation fails. If a server-side
-      validation fails, return a non-<tt>200</tt> HTTP response code, along with
-      an error response in text or JSON.
+      If a server-side validation fails, return a non-<tt>200</tt> 
+      HTTP response code, along with an error response in text or JSON.
     </p>
 
 <pre>
