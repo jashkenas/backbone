@@ -1959,7 +1959,8 @@ Accounts.fetch();
       saving the model to the server, and adding the model to the set after being
       successfully created. Returns
       the model, or <tt>false</tt> if a validation error prevented the
-      model from being created. In order for this to work, you should set the
+      model from being created. Pass <tt>{validate: true}</tt> if you'd like validation
+      to run on the model. In order for this to work, you should set the
       <a href="#Collection-model">model</a> property of the collection.
       The <b>create</b> method can accept either an attributes hash or an
       existing, unsaved model object.
