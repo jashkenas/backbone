@@ -1586,19 +1586,19 @@ alert(JSON.stringify(collection));
     </ul>
 
 <pre>
-Books.each(function(book) {
+books.each(function(book) {
   book.publish();
 });
 
-var titles = Books.map(function(book) {
+var titles = books.map(function(book) {
   return book.get("title");
 });
 
-var publishedBooks = Books.filter(function(book) {
+var publishedBooks = books.filter(function(book) {
   return book.get("published") === true;
 });
 
-var alphabetical = Books.sortBy(function(book) {
+var alphabetical = books.sortBy(function(book) {
   return book.author.get("name").toLowerCase();
 });
 </pre>
