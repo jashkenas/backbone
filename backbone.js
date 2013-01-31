@@ -427,7 +427,7 @@
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
       };
-      options.error = wrapError(options.error, this, options);
+      options.error = wrapError(this, options);
       return this.sync('read', this, options);
     },
 
@@ -474,7 +474,8 @@
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
       };
-      
+      options.error = wrapError(this, options);
+
       method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
       if (method === 'patch') options.attrs = attrs;
       xhr = this.sync(method, this, options);
@@ -507,7 +508,7 @@
         options.success();
         return false;
       }
-      options.error = wrapError(options.error, this, options);
+      options.error = wrapError(this, options);
 
       var xhr = this.sync('delete', this, options);
       if (!options.wait) destroy();
@@ -829,7 +830,7 @@
         if (success) success(collection, resp, options);
         collection.trigger('sync', collection, resp, options);
       };
-      options.error = wrapError(options.error, this, options);
+      options.error = wrapError(this, options);
       return this.sync('read', this, options);
     },
 
@@ -1500,7 +1501,8 @@
   };
 
   // Wrap an optional error callback with a fallback error event.
-  var wrapError = function (error, model, options) {
+  var wrapError = function (model, options) {
+    var error = options.error;
     return function(resp) {
       if (error) error(model, resp, options);
       model.trigger('error', model, resp, options);
