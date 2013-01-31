@@ -418,6 +418,19 @@ $(document).ready(function() {
     ok(_.isEqual(this.syncArgs.model, doc));
   });
 
+  test("save, fetch, destroy triggers error event when an error occurs", 3, function () {
+    var model = new Backbone.Model();
+    model.on('error', function () {
+      ok(true);
+    });
+    model.sync = function (method, model, options) {
+      options.error();
+    };
+    model.save({data: 2, id: 1});
+    model.fetch();
+    model.destroy();
+  });
+
   test("save with PATCH", function() {
     doc.clear().set({id: 1, a: 1, b: 2, c: 3, d: 4});
     doc.save();

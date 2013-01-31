@@ -394,6 +394,15 @@ $(document).ready(function() {
     equal(this.syncArgs.options.parse, false);
   });
 
+  test("fetch with an error response triggers an error event", 1, function () {
+    var collection = new Backbone.Collection();
+    collection.on('error', function () {
+      ok(true);
+    });
+    collection.sync = function (method, model, options) { options.error(); };
+    collection.fetch();
+  });
+
   test("ensure fetch only parses once", 1, function() {
     var collection = new Backbone.Collection;
     var counter = 0;
