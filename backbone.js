@@ -792,6 +792,17 @@
       if (add.length) this.add(add, options);
       return this;
     },
+    
+
+    // Update each model in collection with passed values. For example:
+    //
+    //     steps.updateAll({ current: false });
+    //
+    updateAll: function(attrMap) {
+      this.each(function (model) {
+        model.set(attrMap);        
+      });
+    },
 
     // When you have more items than you want to add or remove individually,
     // you can reset the entire set with a new list of models, without firing
