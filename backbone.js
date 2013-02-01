@@ -216,12 +216,9 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
-      if (typeof name === 'object'){
-        for(var evt in name) { name[evt] = typeof name[evt] === 'string' ? this[name[evt]] : name[evt]; }
-        obj[implementation](name, this);
-      } else {
-        obj[implementation](name, typeof callback === 'string' ? this[callback] : callback, this);
-      }
+      _.each(typeof name === 'object' ? name : _.object([name],[callback]),function(fn,evt){
+        obj[implementation](evt, typeof fn === 'string' ? this[fn] : fn, this);
+      },this);
       return this;
     };
   });
