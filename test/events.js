@@ -159,7 +159,7 @@ $(document).ready(function() {
         b = _.extend({},Backbone.Events);
     a.listenTo(b,"event","method");
     b.trigger("event");
-    a.listenTo(b,"onetimeevent","method");
+    a.listenToOnce(b,"onetimeevent","method");
     b.trigger("onetimeevent","method");
   });
 
@@ -168,7 +168,7 @@ $(document).ready(function() {
         b = _.extend({},Backbone.Events);
     a.listenTo(b,{event:"method"});
     b.trigger("event");
-    a.listenTo(b,{onetimeevent:"method"});
+    a.listenToOnce(b,{onetimeevent:"method"});
     b.trigger("onetimeevent","method");
   });
 
