@@ -160,7 +160,7 @@ $(document).ready(function() {
     a.listenTo(b,"event","method");
     b.trigger("event");
     a.listenToOnce(b,"onetimeevent","method");
-    b.trigger("onetimeevent","method");
+    b.trigger("onetimeevent");
   });
 
   test("calling listenTo and listenToOnce with event maps containing method names", 2, function(){
@@ -169,7 +169,7 @@ $(document).ready(function() {
     a.listenTo(b,{event:"method"});
     b.trigger("event");
     a.listenToOnce(b,{onetimeevent:"method"});
-    b.trigger("onetimeevent","method");
+    b.trigger("onetimeevent");
   });
 
   test("trigger all for each event", 3, function() {
