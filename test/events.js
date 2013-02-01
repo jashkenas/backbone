@@ -154,22 +154,14 @@ $(document).ready(function() {
     ok(true);
   });
 
-  test("calling listenTo and listenToOnce with method name", 2, function(){
+  test("calling listenTo and listenToOnce with method name", 4, function(){
     var a = _.extend({attr:1,method:function(){ok(this.attr);}}, Backbone.Events),
         b = _.extend({},Backbone.Events);
     a.listenTo(b,"event","method");
-    b.trigger("event");
     a.listenToOnce(b,"onetimeevent","method");
-    b.trigger("onetimeevent");
-  });
-
-  test("calling listenTo and listenToOnce with event maps containing method names", 2, function(){
-    var a = _.extend({attr:1,method:function(){ok(this.attr);}}, Backbone.Events),
-        b = _.extend({},Backbone.Events);
-    a.listenTo(b,{event:"method"});
-    b.trigger("event");
-    a.listenToOnce(b,{onetimeevent:"method"});
-    b.trigger("onetimeevent");
+    a.listenTo(b,{mapevent:"method"});
+    a.listenToOnce(b,{onetimemapevent:"method"});
+    _.each(["event","onetimeevent","mapevent","onetimemapevent"],_.bind(b.trigger,b));
   });
 
   test("trigger all for each event", 3, function() {
