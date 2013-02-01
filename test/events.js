@@ -154,6 +154,16 @@ $(document).ready(function() {
     ok(true);
   });
 
+  test("calling listenTo and listenToOnce with method name", 4, function(){
+    var a = _.extend({attr:1,method:function(){ok(this.attr);}}, Backbone.Events),
+        b = _.extend({},Backbone.Events);
+    a.listenTo(b,"event","method");
+    a.listenToOnce(b,"onetimeevent","method");
+    a.listenTo(b,{mapevent:"method"});
+    a.listenToOnce(b,{onetimemapevent:"method"});
+    _.each(["event","onetimeevent","mapevent","onetimemapevent"],_.bind(b.trigger,b));
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);

@@ -216,7 +216,9 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
-      obj[implementation](name, typeof name === 'object' ? this : callback, this);
+      _.each(typeof name === 'object' ? name : _.object([name],[callback]),function(fn,evt){
+        obj[implementation](evt, typeof fn === 'string' ? this[fn] : fn, this);
+      },this);
       return this;
     };
   });
