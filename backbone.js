@@ -824,7 +824,8 @@
       if (options.parse === void 0) options.parse = true;
       var success = options.success;
       options.success = function(collection, resp, options) {
-        var method = options.update ? 'update' : 'reset';
+        var method = (options.add || options.update) ? 'update' : 'reset';
+        if (options.add) options = _.extend({remove: false}, options);
         collection[method](resp, options);
         if (success) success(collection, resp, options);
       };
