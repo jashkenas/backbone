@@ -216,7 +216,12 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
-      obj[implementation](name, typeof name === 'object' ? this : callback, this);
+      if (typeof name === 'object'){
+        for(var evt in name) { name[evt] = typeof name[evt] === 'string' ? this[name[evt]] : name[evt]; }
+        obj[implementation](name, this);
+      } else {
+        obj[implementation](name, typeof callback === 'string' ? this[callback] : callback, this);
+      }
       return this;
     };
   });
