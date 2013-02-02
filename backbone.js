@@ -277,8 +277,11 @@
     },
 
     // Get the value of an attribute.
-    get: function(attr) {
-      return this.attributes[attr];
+    get: function() {
+      var attrs = _.map(slice.call(arguments), function(attr) {
+        return this.attributes[attr];
+      }, this);
+      return attrs.length === 1 ? attrs[0] : attrs;
     },
 
     // Get the HTML-escaped value of an attribute.
