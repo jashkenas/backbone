@@ -1016,4 +1016,22 @@ $(document).ready(function() {
     collection.add(collection.models, {merge: true}); // don't sort
   });
 
+  test("#2234 - `add` should allow models with custom constructor", function () {
+    var M = function CustomConstructor () {
+      Backbone.Model.apply(this, arguments);
+    };
+    _.extend(
+      M.prototype,
+      Backbone.Model.prototype
+    );
+    var c = new (Backbone.Collection.extend({
+      model : M
+    }));
+    var m = new M({ one : 'attr' });
+    c.add(m);
+    var originAttrs = _.keys(m.attributes);
+    var actualAttrs = _.keys(c.at(0).attributes);
+    equal(actualAttrs.length, originAttrs.length);
+  });
+
 });
