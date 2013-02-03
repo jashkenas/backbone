@@ -257,7 +257,7 @@ $(document).ready(function() {
   });
 
   test("routes (function)", 2, function() {
-    equal(ExternalObject.value, 'unset');
+    router.on("route:function/:value", function(val){ equal(val, 'set'); });
     location.replace('http://example.com#function/set');
     Backbone.history.checkUrl();
     equal(ExternalObject.value, 'set');
