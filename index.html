@@ -367,6 +367,7 @@
       <li>– <a href="#Collection-pop">pop</a></li>
       <li>– <a href="#Collection-unshift">unshift</a></li>
       <li>– <a href="#Collection-shift">shift</a></li>
+      <li>– <a href="#Collection-slice">slice</a></li>
       <li>– <a href="#Collection-length">length</a></li>
       <li>– <a href="#Collection-comparator">comparator</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
@@ -1739,6 +1740,13 @@ var book = Library.get(110);
       <br />
       Remove and return the first model from a collection. Takes the same options as
       <a href="#Collection-remove">remove</a>.
+    </p>
+
+    <p id="Collection-slice">
+      <b class="header">slice</b><code>collection.slice(begin, end)</code>
+      <br />
+      Return a shallow copy of this collection's models, using the same options as
+      native Array#slice.
     </p>
 
     <p id="Collection-length">
