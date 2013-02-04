@@ -420,11 +420,14 @@
     fetch: function(options) {
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
+      var model = this;
       var success = options.success;
-      options.success = function(model, resp, options) {
+      options.success = function(resp) {
         if (!model.set(model.parse(resp, options), options)) return false;
         if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
       };
+      wrapError(this, options);
       return this.sync('read', this, options);
     },
 
@@ -432,7 +435,7 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, val, options) {
-      var attrs, success, method, xhr, attributes = this.attributes;
+      var attrs, method, xhr, attributes = this.attributes;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
       if (key == null || typeof key === 'object') {
@@ -458,8 +461,9 @@
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
       if (options.parse === void 0) options.parse = true;
-      success = options.success;
-      options.success = function(model, resp, options) {
+      var model = this;
+      var success = options.success;
+      options.success = function(resp) {
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
         var serverAttrs = model.parse(resp, options);
@@ -468,9 +472,10 @@
           return false;
         }
         if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
       };
+      wrapError(this, options);
 
-      // Finish configuring and sending the Ajax request.
       method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
       if (method === 'patch') options.attrs = attrs;
       xhr = this.sync(method, this, options);
@@ -493,15 +498,17 @@
         model.trigger('destroy', model, model.collection, options);
       };
 
-      options.success = function(model, resp, options) {
+      options.success = function(resp) {
         if (options.wait || model.isNew()) destroy();
         if (success) success(model, resp, options);
+        if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
       if (this.isNew()) {
-        options.success(this, null, options);
+        options.success();
         return false;
       }
+      wrapError(this, options);
 
       var xhr = this.sync('delete', this, options);
       if (!options.wait) destroy();
@@ -823,11 +830,14 @@
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
       var success = options.success;
-      options.success = function(collection, resp, options) {
+      var collection = this;
+      options.success = function(resp) {
         var method = options.update ? 'update' : 'reset';
         collection[method](resp, options);
         if (success) success(collection, resp, options);
+        collection.trigger('sync', collection, resp, options);
       };
+      wrapError(this, options);
       return this.sync('read', this, options);
     },
 
@@ -840,7 +850,7 @@
       if (!options.wait) this.add(model, options);
       var collection = this;
       var success = options.success;
-      options.success = function(model, resp, options) {
+      options.success = function(resp) {
         if (options.wait) collection.add(model, options);
         if (success) success(model, resp, options);
       };
@@ -1439,18 +1449,6 @@
       params.processData = false;
     }
 
-    var success = options.success;
-    options.success = function(resp) {
-      if (success) success(model, resp, options);
-      model.trigger('sync', model, resp, options);
-    };
-
-    var error = options.error;
-    options.error = function(xhr) {
-      if (error) error(model, xhr, options);
-      model.trigger('error', model, xhr, options);
-    };
-
     // Make the request, allowing the user to override any Ajax options.
     var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
     model.trigger('request', model, xhr, options);
@@ -1507,6 +1505,15 @@
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
     throw new Error('A "url" property or function must be specified');
+  };
+
+  // Wrap an optional error callback with a fallback error event.
+  var wrapError = function (model, options) {
+    var error = options.error;
+    options.error = function(resp) {
+      if (error) error(model, resp, options);
+      model.trigger('error', model, resp, options);
+    };
   };
 
 }).call(this);
