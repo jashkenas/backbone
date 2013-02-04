@@ -868,7 +868,7 @@
 
     // Prepare a model or hash of attributes to be added to this collection.
     _prepareModel: function(attrs, options) {
-      if (attrs instanceof Model) {
+      if (attrs instanceof this.model) {
         if (!attrs.collection) attrs.collection = this;
         return attrs;
       }
