@@ -915,7 +915,7 @@ $(document).ready(function() {
 
   test("#1412 - Trigger 'sync' event.", 3, function() {
     var model = new Backbone.Model({id: 1});
-    model.sync = function (method, model, options) { options.success(); }
+    model.sync = function (method, model, options) { options.success(); };
     model.on('sync', function(){ ok(true); });
     model.fetch();
     model.save();
