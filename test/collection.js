@@ -362,9 +362,7 @@ $(document).ready(function() {
 
   test("model destroy removes from all collections", 3, function() {
     var e = new Backbone.Model({id: 5, title: 'Othello'});
-    e.sync = function(method, model, options) {
-      options.success(model, [], options);
-    };
+    e.sync = function(method, model, options) { options.success(); };
     var colE = new Backbone.Collection([e]);
     var colF = new Backbone.Collection([e]);
     e.destroy();
@@ -396,6 +394,15 @@ $(document).ready(function() {
     equal(this.syncArgs.options.parse, false);
   });
 
+  test("fetch with an error response triggers an error event", 1, function () {
+    var collection = new Backbone.Collection();
+    collection.on('error', function () {
+      ok(true);
+    });
+    collection.sync = function (method, model, options) { options.error(); };
+    collection.fetch();
+  });
+
   test("ensure fetch only parses once", 1, function() {
     var collection = new Backbone.Collection;
     var counter = 0;
@@ -405,7 +412,7 @@ $(document).ready(function() {
     };
     collection.url = '/test';
     collection.fetch();
-    this.syncArgs.options.success([]);
+    this.syncArgs.options.success();
     equal(counter, 1);
   });
 
@@ -705,9 +712,7 @@ $(document).ready(function() {
   test("#1447 - create with wait adds model.", 1, function() {
     var collection = new Backbone.Collection;
     var model = new Backbone.Model;
-    model.sync = function(method, model, options){
-      options.success(model, [], options);
-    };
+    model.sync = function(method, model, options){ options.success(); };
     collection.on('add', function(){ ok(true); });
     collection.create(model, {wait: true});
   });
