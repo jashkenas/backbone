@@ -69,6 +69,24 @@ $(document).ready(function() {
     equal(col.get(c.clone()), c);
     equal(col.get(col.first().cid), col.first());
   });
+  
+  test("get with mixed id/cids/idAttribute", 4, function() {
+    var f = new Backbone.Model({label: 'f'});
+    col.add(f);
+    equal(col.get(f), f);
+    equal(col.get({id:5, cid:f.cid}), f);
+
+    var TestModel = Backbone.Model.extend({
+      idAttribute: 'resource_uri'
+    });
+	var col2 = new Backbone.Collection();
+	col2.model = TestModel;
+
+    var g = new TestModel({label: 'g', resource_uri: 5});
+	col2.add(g);
+	equal(col2.get(g), g);
+    equal(col2.get({resource_uri:5}), g);
+  });
 
   test("get with non-default ids", 4, function() {
     var col = new Backbone.Collection();
