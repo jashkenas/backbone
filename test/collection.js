@@ -69,6 +69,13 @@ $(document).ready(function() {
     equal(col.get(c.clone()), c);
     equal(col.get(col.first().cid), col.first());
   });
+  
+  test("get with mixed id/cids", 2, function() {
+    var f = new Backbone.Model({label: 'f'});
+    col.add(f);
+    equal(col.get(f), f);
+    equal(col.get({id:5, cid:f.cid}), f);
+  });
 
   test("get with non-default ids", 4, function() {
     var col = new Backbone.Collection();
