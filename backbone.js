@@ -719,8 +719,7 @@
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
-      this._idAttr || (this._idAttr = this.model.prototype.idAttribute);
-      return this._byId[obj.id || obj.cid || obj[this._idAttr] || obj];
+      return this._byId[obj.id || obj.cid || obj];
     },
 
     // Get the model at the given index.
@@ -776,7 +775,7 @@
     update: function(models, options) {
       options = _.extend({add: true, merge: true, remove: true}, options);
       if (options.parse) models = this.parse(models, options);
-      var model, i, l, existing;
+      var attrs, model, i, l, existing;
       var add = [], remove = [], modelMap = {};
 
       // Allow a single model (or no argument) to be passed.
@@ -787,11 +786,14 @@
 
       // Determine which models to add and merge, and which to remove.
       for (i = 0, l = models.length; i < l; i++) {
-        model = models[i];
+        if (!(model = this._prepareModel(attrs = models[i], options))) {
+          this.trigger('invalid', this, attrs, options);
+          continue;
+        }
         existing = this.get(model);
         if (options.remove && existing) modelMap[existing.cid] = true;
         if ((options.add && !existing) || (options.merge && existing)) {
-          add.push(model);
+          add.push(attrs);
         }
       }
       if (options.remove) {
