@@ -70,22 +70,20 @@ $(document).ready(function() {
     equal(col.get(col.first().cid), col.first());
   });
 
-  test("get with non-default ids", 4, function() {
+  test("get with non-default ids", 5, function() {
     var col = new Backbone.Collection();
-    var MongoModel = Backbone.Model.extend({
-      idAttribute: '_id'
-    });
+    var MongoModel = Backbone.Model.extend({idAttribute: '_id'});
     var model = new MongoModel({_id: 100});
-    col.push(model);
+    col.add(model);
     equal(col.get(100), model);
-    model.set({_id: 101});
-    equal(col.get(101), model);
+    equal(col.get(model.cid), model);
+    equal(col.get(model), model);
+    equal(col.get(101), void 0);
 
-    var Col2 = Backbone.Collection.extend({ model: MongoModel });
-    var col2 = new Col2();
-    col2.push(model);
-    equal(col2.get({_id: 101}), model);
-    equal(col2.get(model.clone()), model);
+    var col2 = new Backbone.Collection();
+    col2.model = MongoModel;
+    col2.add(model.attributes);
+    equal(col2.get(model.clone()), col2.first());
   });
 
   test("update index when id changes", 3, function() {
@@ -934,6 +932,23 @@ $(document).ready(function() {
     col.update({id: 1, other: 'value'});
     equal(col.first().get('key'), 'other');
     equal(col.length, 1);
+  });
+
+  test("`update` and model level `parse`", function() {
+    var Model = Backbone.Model.extend({
+      parse: function (res) { return res.model; }
+    });
+    var Collection = Backbone.Collection.extend({
+      model: Model,
+      parse: function (res) { return res.models; }
+    });
+    var model = new Model({id: 1});
+    var collection = new Collection(model);
+    collection.update({models: [
+      {model: {id: 1}},
+      {model: {id: 2}}
+    ]}, {parse: true});
+    equal(collection.first(), model);
   });
 
   test("#1894 - Push should not trigger a sort", 0, function() {
