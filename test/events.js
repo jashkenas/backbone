@@ -106,6 +106,17 @@ $(document).ready(function() {
     b.trigger('event2');
   });
 
+  test("stopListening after explicit event stop", 1, function () {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var cb = function () { ok(true); };
+    a.listenTo(b, 'event event2', cb);
+    a.stopListening(null, 'event');
+    b.trigger('event event2');
+    a.stopListening();
+    b.trigger('event2');
+  });
+
   test("listenToOnce and stopListening", 1, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
