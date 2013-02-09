@@ -193,15 +193,12 @@
     stopListening: function(obj, name, callback) {
       var listeners = this._listeners;
       if (!listeners) return this;
-      if (obj) {
-        obj.off(name, typeof name === 'object' ? this : callback, this);
-        if (!name && !callback) delete listeners[obj._listenerId];
-      } else {
-        if (typeof name === 'object') callback = this;
-        for (var id in listeners) {
-          listeners[id].off(name, callback, this);
-        }
-        this._listeners = {};
+      var deleteListener = !name && !callback;
+      if (typeof name === 'object') callback = this;
+      if (obj) (listeners = {})[obj._listenerId] = obj;
+      for (var id in listeners) {
+        listeners[id].off(name, callback, this);
+        if (deleteListener) delete this._listeners[id];
       }
       return this;
     }
@@ -216,7 +213,8 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
-      obj[implementation](name, typeof name === 'object' ? this : callback, this);
+      if (typeof name === 'object') callback = this;
+      obj[implementation](name, callback, this);
       return this;
     };
   });
