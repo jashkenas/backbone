@@ -607,10 +607,7 @@
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (i = 0, l = models.length; i < l; i++) {
-        if (!(model = this._prepareModel(attrs = models[i], options))) {
-          this.trigger('invalid', this, attrs, options);
-          continue;
-        }
+        if (!(model = this._prepareModel(attrs = models[i], options))) continue;
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
@@ -784,14 +781,12 @@
 
       // Determine which models to add and merge, and which to remove.
       for (i = 0, l = models.length; i < l; i++) {
-        if (!(model = this._prepareModel(attrs = models[i], options))) {
-          this.trigger('invalid', this, attrs, options);
-          continue;
-        }
+        if (!((attrs = models[i]) instanceof Model)) attrs = _.clone(attrs);
+        if (!(model = this._prepareModel(attrs, options))) continue;
         existing = this.get(model);
         if (options.remove && existing) modelMap[existing.cid] = true;
         if ((options.add && !existing) || (options.merge && existing)) {
-          add.push(attrs);
+          add.push(models[i]);
         }
       }
       if (options.remove) {
@@ -885,7 +880,10 @@
       options || (options = {});
       options.collection = this;
       var model = new this.model(attrs, options);
-      if (!model._validate(attrs, options)) return false;
+      if (!model._validate(attrs, options)) {
+        this.trigger('invalid', this, attrs, options);
+        return false;
+      }
       return model;
     },
 

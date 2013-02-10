@@ -951,6 +951,18 @@ $(document).ready(function() {
     equal(collection.first(), model);
   });
 
+  test("`update` data is only parsed once", function() {
+    var collection = new Backbone.Collection();
+    collection.model = Backbone.Model.extend({
+      parse: function (data) {
+        equal(data.parsed, void 0);
+        data.parsed = true;
+        return data;
+      }
+    });
+    collection.update({}, {parse: true});
+  });
+
   test("#1894 - Push should not trigger a sort", 0, function() {
     var Collection = Backbone.Collection.extend({
       comparator: 'id',
