@@ -239,6 +239,7 @@
     this.attributes = {};
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attrs = this.parse(attrs, options) || {};
+    if (options) options.attrs = attrs;
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
@@ -615,7 +616,8 @@
         if (existing = this.get(model)) {
           modelMap[existing.cid] = true;
           if (options.merge) {
-            existing.set(attrs === model ? model.attributes : attrs, options);
+            attrs = attrs === model ? model.attributes : options.attrs;
+            existing.set(attrs, options);
             if (sort && !doSort && existing.hasChanged(sortAttr)) doSort = true;
           }
           continue;
