@@ -1584,19 +1584,19 @@ alert(JSON.stringify(collection));
     </ul>
 
 <pre>
-Books.each(function(book) {
+books.each(function(book) {
   book.publish();
 });
 
-var titles = Books.map(function(book) {
+var titles = books.map(function(book) {
   return book.get("title");
 });
 
-var publishedBooks = Books.filter(function(book) {
+var publishedBooks = books.filter(function(book) {
   return book.get("published") === true;
 });
 
-var alphabetical = Books.sortBy(function(book) {
+var alphabetical = books.sortBy(function(book) {
   return book.author.get("name").toLowerCase();
 });
 </pre>
@@ -1662,8 +1662,8 @@ ships.add([
 
 <pre>
 &lt;script&gt;
-  var Accounts = new Backbone.Collection;
-  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  var accounts = new Backbone.Collection;
+  accounts.reset(&lt;%= @accounts.to_json %&gt;);
 &lt;/script&gt;
 </pre>
 
@@ -1931,10 +1931,10 @@ Backbone.sync = function(method, model) {
   alert(method + ": " + model.url);
 };
 
-var Accounts = new Backbone.Collection;
-Accounts.url = '/accounts';
+var accounts = new Backbone.Collection;
+accounts.url = '/accounts';
 
-Accounts.fetch();
+accounts.fetch();
 </pre>
 
     <p>
@@ -1987,9 +1987,9 @@ var Library = Backbone.Collection.extend({
   model: Book
 });
 
-var NYPL = new Library;
+var nypl = new Library;
 
-var othello = NYPL.create({
+var othello = nypl.create({
   title: "Othello",
   author: "William Shakespeare"
 });
@@ -3622,11 +3622,11 @@ var Mailbox = Backbone.Model.extend({
 
 });
 
-var Inbox = new Mailbox;
+var inbox = new Mailbox;
 
 // And then, when the Inbox is opened:
 
-Inbox.messages.fetch();
+inbox.messages.fetch();
 </pre>
 
     <p>
@@ -3680,10 +3680,10 @@ Inbox.messages.fetch();
 
 <pre>
 &lt;script&gt;
-  var Accounts = new Backbone.Collection;
-  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
-  var Projects = new Backbone.Collection;
-  Projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
+  var accounts = new Backbone.Collection;
+  accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  var projects = new Backbone.Collection;
+  projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
 &lt;/script&gt;
 </pre>
 
