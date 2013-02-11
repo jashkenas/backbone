@@ -230,6 +230,9 @@
   // Backbone.Model
   // --------------
 
+  // List of model options to be merged as properties.
+  var modelOptions = ['collection', 'url', 'urlRoot', 'idAttribute', 'defaults'];
+
   // Create a new model, with defined attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
@@ -237,8 +240,10 @@
     var attrs = attributes || {};
     this.cid = _.uniqueId('c');
     this.attributes = {};
-    if (options && options.collection) this.collection = options.collection;
-    if (options && options.parse) attrs = this.parse(attrs, options) || {};
+    if (options) {
+      _.extend(this, _.pick(options, modelOptions));
+      if (options.parse) attrs = this.parse(attrs, options) || {};
+    }
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }

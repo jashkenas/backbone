@@ -1082,4 +1082,17 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test('idAttribute, defaults, urlRoot, and collection may be passed to the constructor', function () {
+    var c = new Backbone.Collection();
+    var model = new Backbone.Model({}, {idAttribute:'_id'});
+    equal(model.idAttribute, '_id');
+    deepEqual(model.toJSON(), {});
+    model = new Backbone.Model({id:1}, {urlRoot:'/test'});
+    equal(model.url(), '/test/1');
+    model = new Backbone.Model({id:2}, {defaults: {test:1}});
+    deepEqual(model.toJSON(), {id:2, test:1});
+    model = new Backbone.Model({id:2}, {collection: c});
+    deepEqual(model.collection, c);
+  });
+
 });
