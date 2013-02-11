@@ -603,6 +603,7 @@
       at = options.at;
       sort = this.comparator && (at == null) && options.sort !== false;
       sortAttr = _.isString(this.comparator) ? this.comparator : null;
+      var modelMap = {};
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
@@ -612,12 +613,15 @@
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
+          modelMap[existing.cid] = true;
           if (options.merge) {
             existing.set(attrs === model ? model.attributes : attrs, options);
             if (sort && !doSort && existing.hasChanged(sortAttr)) doSort = true;
           }
           continue;
         }
+
+        if (options.add === false) continue;
 
         // This is a new model, push it to the `add` list.
         add.push(model);
@@ -627,6 +631,14 @@
         model.on('all', this._onModelEvent, this);
         this._byId[model.cid] = model;
         if (model.id != null) this._byId[model.id] = model;
+      }
+
+      if (options.remove) {
+        var remove = [];
+        for (i = 0, l = this.length; i < l; ++i) {
+          if (!modelMap[(model = this.models[i]).cid]) remove.push(model);
+        }
+        if (remove.length) this.remove(remove, options);
       }
 
       // See if sorting is needed, update `length` and splice in new models.
@@ -768,37 +780,9 @@
     // Smartly update a collection with a change set of models, adding,
     // removing, and merging as necessary.
     update: function(models, options) {
-      options = _.extend({add: true, merge: true, remove: true}, options);
+      options = _.extend({merge: true, remove: true}, options);
       if (options.parse) models = this.parse(models, options);
-      var attrs, model, i, l, existing;
-      var add = [], remove = [], modelMap = {};
-
-      // Allow a single model (or no argument) to be passed.
-      if (!_.isArray(models)) models = models ? [models] : [];
-
-      // Proxy to `add` for this case, no need to iterate...
-      if (options.add && !options.remove) return this.add(models, options);
-
-      // Determine which models to add and merge, and which to remove.
-      for (i = 0, l = models.length; i < l; i++) {
-        if (!((attrs = models[i]) instanceof Model)) attrs = _.clone(attrs);
-        if (!(model = this._prepareModel(attrs, options))) continue;
-        existing = this.get(model);
-        if (options.remove && existing) modelMap[existing.cid] = true;
-        if ((options.add && !existing) || (options.merge && existing)) {
-          add.push(models[i]);
-        }
-      }
-      if (options.remove) {
-        for (i = 0, l = this.models.length; i < l; i++) {
-          model = this.models[i];
-          if (!modelMap[model.cid]) remove.push(model);
-        }
-      }
-
-      // Remove models (if applicable) before we add and merge the rest.
-      if (remove.length) this.remove(remove, options);
-      if (add.length) this.add(add, options);
+      this.add(models, options);
       return this;
     },
 
