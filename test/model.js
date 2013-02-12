@@ -1082,4 +1082,19 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test("clone should be equivalent to parent model", 1, function() {
+    var Model = Backbone.Model.extend({
+      "defaults": {
+        'a': 1,
+        'b': null
+      }
+    });
+
+    var model = new Model();
+    model.set({ 'a': null, 'b': 1});
+
+    var clone = model.clone();
+    deepEqual(clone.attributes, model.attributes);
+  });
+
 });
