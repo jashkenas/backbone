@@ -1235,7 +1235,7 @@ book.save({author: "Teddy"});
       <b>save</b> accepts <tt>success</tt> and <tt>error</tt> callbacks in the
       options hash, which are passed <tt>(model, response, options)</tt> and
       <tt>(model, xhr, options)</tt> as arguments, respectively.
-      If a server-side validation fails, return a non-<tt>200</tt> 
+      If a server-side validation fails, return a non-<tt>200</tt>
       HTTP response code, along with an error response in text or JSON.
     </p>
 
@@ -1359,7 +1359,7 @@ alert(solaris.url());
 </pre>
 
     <p id="Model-parse">
-      <b class="header">parse</b><code>model.parse(response)</code>
+      <b class="header">parse</b><code>model.parse(response, options)</code>
       <br />
       <b>parse</b> is called whenever a model's data is returned by the
       server, in <a href="#Model-fetch">fetch</a>, and <a href="#Model-save">save</a>.
@@ -1746,7 +1746,7 @@ var book = Library.get(110);
       <b class="header">slice</b><code>collection.slice(begin, end)</code>
       <br />
       Return a shallow copy of this collection's models, using the same options as
-      native 
+      native
       <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/slice">Array#slice</a>.
     </p>
 
@@ -1881,7 +1881,7 @@ var Notes = Backbone.Collection.extend({
 </pre>
 
     <p id="Collection-parse">
-      <b class="header">parse</b><code>collection.parse(response)</code>
+      <b class="header">parse</b><code>collection.parse(response, options)</code>
       <br />
       <b>parse</b> is called by Backbone whenever a collection's models are
       returned by the server, in <a href="#Collection-fetch">fetch</a>.
@@ -3848,6 +3848,9 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Bug fix where an empty response from the server on save would not call
         the success function.
+      </li>
+      <li>
+        <tt>parse</tt> now receives <tt>options</tt> as its second argument.
       </li>
     </ul>
 
