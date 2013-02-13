@@ -712,16 +712,17 @@
     // Smartly update a collection with a change set of models, adding,
     // removing, and merging as necessary.
     update: function(models, options) {
-      if (options && options.parse) models = this.parse(models, options);
-      models = _.isArray(models) ? models.slice() : [models];
-      options = _.extend({add: true, merge: true, remove: true}, options);
-
-      var i, l, model, attrs, existing, doSort, add, at, sort, sortAttr;
-      add = [];
-      at = options.at;
-      sort = this.comparator && (at == null) && options.sort !== false;
-      sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var modelMap = {};
+      options || (options = {});
+      if (options.parse) models = this.parse(models, options);
+      if (!_.isArray(models)) models = models ? [models] : [];
+      var i, l, model, attrs, existing, sort;
+      var add = options.add !== false;
+      var merge = options.merge !== false;
+      var remove = options.remove !== false;
+      var at = options.at;
+      var sortable = this.comparator && (at == null) && options.sort !== false;
+      var sortAttr = _.isString(this.comparator) ? this.comparator : null;
+      var toAdd = [], toRemove = [], modelMap = {};
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
@@ -731,57 +732,55 @@
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
-          modelMap[existing.cid] = true;
-          if (options.merge) {
+          if (remove) modelMap[existing.cid] = true;
+          if (merge) {
             existing.set(attrs === model ? model.attributes : attrs, options);
-            if (sort && !doSort && existing.hasChanged(sortAttr)) doSort = true;
+            if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
-          continue;
+        } else if (add) {
+
+          // This is a new model, push it to the `toAdd` list.
+          toAdd.push(model);
+
+          // Listen to added models' events, and index models for lookup by
+          // `id` and by `cid`.
+          model.on('all', this._onModelEvent, this);
+          this._byId[model.cid] = model;
+          if (model.id != null) this._byId[model.id] = model;
         }
-
-        if (options.add === false) continue;
-
-        // This is a new model, push it to the `add` list.
-        add.push(model);
-
-        // Listen to added models' events, and index models for lookup by
-        // `id` and by `cid`.
-        model.on('all', this._onModelEvent, this);
-        this._byId[model.cid] = model;
-        if (model.id != null) this._byId[model.id] = model;
       }
 
-      if (options.remove) {
-        var remove = [];
+      // Remove nonexistent models if appropriate.
+      if (remove) {
         for (i = 0, l = this.length; i < l; ++i) {
-          if (!modelMap[(model = this.models[i]).cid]) remove.push(model);
+          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
         }
-        if (remove.length) this.remove(remove, options);
+        if (toRemove.length) this.remove(toRemove, options);
       }
 
       // See if sorting is needed, update `length` and splice in new models.
-      if (add.length) {
-        if (sort) doSort = true;
-        this.length += add.length;
+      if (toAdd.length) {
+        if (sortable) sort = true;
+        this.length += toAdd.length;
         if (at != null) {
-          splice.apply(this.models, [at, 0].concat(add));
+          splice.apply(this.models, [at, 0].concat(toAdd));
         } else {
-          push.apply(this.models, add);
+          push.apply(this.models, toAdd);
         }
       }
 
       // Silently sort the collection if appropriate.
-      if (doSort) this.sort({silent: true});
+      if (sort) this.sort({silent: true});
 
       if (options.silent) return this;
 
       // Trigger `add` events.
-      for (i = 0, l = add.length; i < l; i++) {
-        (model = add[i]).trigger('add', model, this, options);
+      for (i = 0, l = toAdd.length; i < l; i++) {
+        (model = toAdd[i]).trigger('add', model, this, options);
       }
 
       // Trigger `sort` if the collection was sorted.
-      if (doSort) this.trigger('sort', this, options);
+      if (sort) this.trigger('sort', this, options);
       return this;
     },
 
@@ -795,7 +794,7 @@
       }
       options.previousModels = this.models;
       this._reset();
-      if (models) this.add(models, _.extend({silent: true}, options));
+      this.add(models, _.extend({silent: true}, options));
       if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
