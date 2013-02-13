@@ -796,7 +796,7 @@
       }
       options.previousModels = this.models;
       this._reset();
-      if (models) this.update(models, _.extend({silent: true}, options));
+      if (models) this.update(models, _.extend({silent: true, merge: false}, options));
       if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
