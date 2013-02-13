@@ -714,14 +714,15 @@
     // removing, and merging as necessary.
     update: function(models, options) {
       var i, l, model, attrs, existing, doSort, add, at, sort, sortAttr;
-      if (options && options.parse) models = this.parse(models, options);
-      models = _.isArray(models) ? models.slice() : [models];
       add = [];
       options = _.extend({add: true, merge: true, remove: true}, options);
       at = options.at;
       sort = this.comparator && (at == null) && options.sort !== false;
       sortAttr = _.isString(this.comparator) ? this.comparator : null;
       var modelMap = {};
+
+      if (options.parse) models = this.parse(models, options);
+      models = _.isArray(models) ? models.slice() : [models];
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
