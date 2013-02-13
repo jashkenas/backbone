@@ -410,7 +410,7 @@ $(document).ready(function() {
     };
     collection.url = '/test';
     collection.fetch();
-    this.syncArgs.options.success();
+    this.syncArgs.options.success({foo: 'bar'});
     equal(counter, 1);
   });
 
@@ -1011,7 +1011,7 @@ $(document).ready(function() {
     }));
     var ajax = Backbone.ajax;
     Backbone.ajax = function (params) {
-      _.defer(params.success);
+      _.defer(params.success, {foo: 'bar'});
       return {someHeader: 'headerValue'};
     };
     collection.fetch({
