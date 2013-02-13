@@ -597,8 +597,7 @@
     // Add a model, or list of models to the set.
     add: function(models, options) {
       options = _.extend({add: true, merge: false, remove: false}, options);
-      this.update(models, options);
-      return this;
+      return this.update(models, options);
     },
 
     // Remove a model, or a list of models from the set.
