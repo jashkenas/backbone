@@ -367,6 +367,7 @@
       <li>– <a href="#Collection-pop">pop</a></li>
       <li>– <a href="#Collection-unshift">unshift</a></li>
       <li>– <a href="#Collection-shift">shift</a></li>
+      <li>– <a href="#Collection-slice">slice</a></li>
       <li>– <a href="#Collection-length">length</a></li>
       <li>– <a href="#Collection-comparator">comparator</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
@@ -1234,7 +1235,7 @@ book.save({author: "Teddy"});
       <b>save</b> accepts <tt>success</tt> and <tt>error</tt> callbacks in the
       options hash, which are passed <tt>(model, response, options)</tt> and
       <tt>(model, xhr, options)</tt> as arguments, respectively.
-      If a server-side validation fails, return a non-<tt>200</tt> 
+      If a server-side validation fails, return a non-<tt>200</tt>
       HTTP response code, along with an error response in text or JSON.
     </p>
 
@@ -1358,7 +1359,7 @@ alert(solaris.url());
 </pre>
 
     <p id="Model-parse">
-      <b class="header">parse</b><code>model.parse(response)</code>
+      <b class="header">parse</b><code>model.parse(response, options)</code>
       <br />
       <b>parse</b> is called whenever a model's data is returned by the
       server, in <a href="#Model-fetch">fetch</a>, and <a href="#Model-save">save</a>.
@@ -1583,19 +1584,19 @@ alert(JSON.stringify(collection));
     </ul>
 
 <pre>
-Books.each(function(book) {
+books.each(function(book) {
   book.publish();
 });
 
-var titles = Books.map(function(book) {
+var titles = books.map(function(book) {
   return book.get("title");
 });
 
-var publishedBooks = Books.filter(function(book) {
+var publishedBooks = books.filter(function(book) {
   return book.get("published") === true;
 });
 
-var alphabetical = Books.sortBy(function(book) {
+var alphabetical = books.sortBy(function(book) {
   return book.author.get("name").toLowerCase();
 });
 </pre>
@@ -1661,8 +1662,8 @@ ships.add([
 
 <pre>
 &lt;script&gt;
-  var Accounts = new Backbone.Collection;
-  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  var accounts = new Backbone.Collection;
+  accounts.reset(&lt;%= @accounts.to_json %&gt;);
 &lt;/script&gt;
 </pre>
 
@@ -1739,6 +1740,14 @@ var book = Library.get(110);
       <br />
       Remove and return the first model from a collection. Takes the same options as
       <a href="#Collection-remove">remove</a>.
+    </p>
+
+    <p id="Collection-slice">
+      <b class="header">slice</b><code>collection.slice(begin, end)</code>
+      <br />
+      Return a shallow copy of this collection's models, using the same options as
+      native
+      <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/slice">Array#slice</a>.
     </p>
 
     <p id="Collection-length">
@@ -1872,7 +1881,7 @@ var Notes = Backbone.Collection.extend({
 </pre>
 
     <p id="Collection-parse">
-      <b class="header">parse</b><code>collection.parse(response)</code>
+      <b class="header">parse</b><code>collection.parse(response, options)</code>
       <br />
       <b>parse</b> is called by Backbone whenever a collection's models are
       returned by the server, in <a href="#Collection-fetch">fetch</a>.
@@ -1922,10 +1931,10 @@ Backbone.sync = function(method, model) {
   alert(method + ": " + model.url);
 };
 
-var Accounts = new Backbone.Collection;
-Accounts.url = '/accounts';
+var accounts = new Backbone.Collection;
+accounts.url = '/accounts';
 
-Accounts.fetch();
+accounts.fetch();
 </pre>
 
     <p>
@@ -1978,9 +1987,9 @@ var Library = Backbone.Collection.extend({
   model: Book
 });
 
-var NYPL = new Library;
+var nypl = new Library;
 
-var othello = NYPL.create({
+var othello = nypl.create({
   title: "Othello",
   author: "William Shakespeare"
 });
@@ -3613,11 +3622,11 @@ var Mailbox = Backbone.Model.extend({
 
 });
 
-var Inbox = new Mailbox;
+var inbox = new Mailbox;
 
 // And then, when the Inbox is opened:
 
-Inbox.messages.fetch();
+inbox.messages.fetch();
 </pre>
 
     <p>
@@ -3671,10 +3680,10 @@ Inbox.messages.fetch();
 
 <pre>
 &lt;script&gt;
-  var Accounts = new Backbone.Collection;
-  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
-  var Projects = new Backbone.Collection;
-  Projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
+  var accounts = new Backbone.Collection;
+  accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  var projects = new Backbone.Collection;
+  projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
 &lt;/script&gt;
 </pre>
 
@@ -3839,6 +3848,9 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Bug fix where an empty response from the server on save would not call
         the success function.
+      </li>
+      <li>
+        <tt>parse</tt> now receives <tt>options</tt> as its second argument.
       </li>
     </ul>
 
