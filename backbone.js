@@ -596,75 +596,8 @@
 
     // Add a model, or list of models to the set.
     add: function(models, options) {
-      models = _.isArray(models) ? models.slice() : [models];
-      options || (options = {});
-      var i, l, model, attrs, existing, doSort, add, at, sort, sortAttr;
-      add = [];
-      at = options.at;
-      sort = this.comparator && (at == null) && options.sort !== false;
-      sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var modelMap = {};
-
-      // Turn bare objects into model references, and prevent invalid models
-      // from being added.
-      for (i = 0, l = models.length; i < l; i++) {
-        if (!(model = this._prepareModel(attrs = models[i], options))) continue;
-
-        // If a duplicate is found, prevent it from being added and
-        // optionally merge it into the existing model.
-        if (existing = this.get(model)) {
-          modelMap[existing.cid] = true;
-          if (options.merge) {
-            existing.set(attrs === model ? model.attributes : attrs, options);
-            if (sort && !doSort && existing.hasChanged(sortAttr)) doSort = true;
-          }
-          continue;
-        }
-
-        if (options.add === false) continue;
-
-        // This is a new model, push it to the `add` list.
-        add.push(model);
-
-        // Listen to added models' events, and index models for lookup by
-        // `id` and by `cid`.
-        model.on('all', this._onModelEvent, this);
-        this._byId[model.cid] = model;
-        if (model.id != null) this._byId[model.id] = model;
-      }
-
-      if (options.remove) {
-        var remove = [];
-        for (i = 0, l = this.length; i < l; ++i) {
-          if (!modelMap[(model = this.models[i]).cid]) remove.push(model);
-        }
-        if (remove.length) this.remove(remove, options);
-      }
-
-      // See if sorting is needed, update `length` and splice in new models.
-      if (add.length) {
-        if (sort) doSort = true;
-        this.length += add.length;
-        if (at != null) {
-          splice.apply(this.models, [at, 0].concat(add));
-        } else {
-          push.apply(this.models, add);
-        }
-      }
-
-      // Silently sort the collection if appropriate.
-      if (doSort) this.sort({silent: true});
-
-      if (options.silent) return this;
-
-      // Trigger `add` events.
-      for (i = 0, l = add.length; i < l; i++) {
-        (model = add[i]).trigger('add', model, this, options);
-      }
-
-      // Trigger `sort` if the collection was sorted.
-      if (doSort) this.trigger('sort', this, options);
-
+      options = _.extend({add: true, merge: false, remove: false}, options);
+      this.update(models, options);
       return this;
     },
 
@@ -780,9 +713,75 @@
     // Smartly update a collection with a change set of models, adding,
     // removing, and merging as necessary.
     update: function(models, options) {
-      options = _.extend({merge: true, remove: true}, options);
-      if (options.parse) models = this.parse(models, options);
-      this.add(models, options);
+      var i, l, model, attrs, existing, doSort, add, at, sort, sortAttr;
+      if (options && options.parse) models = this.parse(models, options);
+      models = _.isArray(models) ? models.slice() : [models];
+      add = [];
+      options = _.extend({add: true, merge: true, remove: true}, options);
+      at = options.at;
+      sort = this.comparator && (at == null) && options.sort !== false;
+      sortAttr = _.isString(this.comparator) ? this.comparator : null;
+      var modelMap = {};
+
+      // Turn bare objects into model references, and prevent invalid models
+      // from being added.
+      for (i = 0, l = models.length; i < l; i++) {
+        if (!(model = this._prepareModel(attrs = models[i], options))) continue;
+
+        // If a duplicate is found, prevent it from being added and
+        // optionally merge it into the existing model.
+        if (existing = this.get(model)) {
+          modelMap[existing.cid] = true;
+          if (options.merge) {
+            existing.set(attrs === model ? model.attributes : attrs, options);
+            if (sort && !doSort && existing.hasChanged(sortAttr)) doSort = true;
+          }
+          continue;
+        }
+
+        if (options.add === false) continue;
+
+        // This is a new model, push it to the `add` list.
+        add.push(model);
+
+        // Listen to added models' events, and index models for lookup by
+        // `id` and by `cid`.
+        model.on('all', this._onModelEvent, this);
+        this._byId[model.cid] = model;
+        if (model.id != null) this._byId[model.id] = model;
+      }
+
+      if (options.remove) {
+        var remove = [];
+        for (i = 0, l = this.length; i < l; ++i) {
+          if (!modelMap[(model = this.models[i]).cid]) remove.push(model);
+        }
+        if (remove.length) this.remove(remove, options);
+      }
+
+      // See if sorting is needed, update `length` and splice in new models.
+      if (add.length) {
+        if (sort) doSort = true;
+        this.length += add.length;
+        if (at != null) {
+          splice.apply(this.models, [at, 0].concat(add));
+        } else {
+          push.apply(this.models, add);
+        }
+      }
+
+      // Silently sort the collection if appropriate.
+      if (doSort) this.sort({silent: true});
+
+      if (options.silent) return this;
+
+      // Trigger `add` events.
+      for (i = 0, l = add.length; i < l; i++) {
+        (model = add[i]).trigger('add', model, this, options);
+      }
+
+      // Trigger `sort` if the collection was sorted.
+      if (doSort) this.trigger('sort', this, options);
       return this;
     },
 
@@ -791,13 +790,12 @@
     // any `add` or `remove` events. Fires `reset` when finished.
     reset: function(models, options) {
       options || (options = {});
-      if (options.parse) models = this.parse(models, options);
       for (var i = 0, l = this.models.length; i < l; i++) {
         this._removeReference(this.models[i]);
       }
       options.previousModels = this.models;
       this._reset();
-      if (models) this.add(models, _.extend({silent: true}, options));
+      if (models) this.update(models, _.extend({silent: true}, options));
       if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
