@@ -454,10 +454,9 @@ $(document).ready(function() {
     equal(model.get('title'), 'Twelfth Night');
   });
 
-  test("save with non-object success response", 2, function () {
+  test("save with non-object success response", 1, function () {
     var model = new Backbone.Model();
     model.sync = function(method, model, options) {
-      options.success('', options);
       options.success(null, options);
     };
     model.save({testing:'empty'}, {
