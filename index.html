@@ -3847,6 +3847,13 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header">0.9.11</b> &mdash; <small><i>Some day, 2013</i></small> &mdash; <a href="#">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        <tt>Model#isValid</tt> works harmoniously with the rest of the validation system. <tt>Model.validationError</tt> will be available if you've implemented <tt>Model#validate</tt>.
+      </li>
+    </ul>
+
     <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...0.9.10">Diff</a><br />
     <ul style="margin-top: 5px;">
       <li>
@@ -3858,9 +3865,6 @@ ActiveRecord::Base.include_root_in_json = false
         <tt>Model#save</tt> and no longer enforced by default upon
         construction or in <tt>Model#set</tt>, unless the <tt>{validate:true}</tt>
         option is passed.
-      </li>
-      <li>
-        <tt>Model#isValid</tt> works harmoniously with the rest of the validation system.
       </li>
       <li>
         <tt>View#make</tt> has been removed. You'll need to use <tt>$</tt> directly to
