@@ -425,13 +425,13 @@
           if (success) success(model, resp, options);
           model.trigger('sync', model, resp, options);
         }
-        model = options = null;
+        options = null;
       };
       var error = options.error;
       options.error = function(resp) {
         if (error) error(model, resp, options);
         model.trigger('error', model, resp, options);
-        model = options = null;
+        options = null;
       };
       return this.sync('read', this, options);
     },
@@ -476,13 +476,13 @@
           if (success) success(model, resp, options);
           model.trigger('sync', model, resp, options);
         }
-        model = options = null;
+        options = null;
       };
       var error = options.error;
       options.error = function(resp) {
         if (error) error(model, resp, options);
         model.trigger('error', model, resp, options);
-        model = options = null;
+        options = null;
       };
 
       method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
@@ -501,22 +501,24 @@
     destroy: function(options) {
       options = options ? _.clone(options) : {};
 
+      var destroy = function () {
+        model.trigger('destroy', model, model.collection, options);
+      };
+
       var wait = options.wait;
       var model = this;
       var success = options.success;
       options.success = function(resp) {
-        if (wait || model.isNew()) {
-          model.trigger('destroy', model, model.collection, options);
-        }
+        if (wait || model.isNew()) destroy();
         if (success) success(model, resp, options);
         if (!model.isNew()) model.trigger('sync', model, resp, options);
-        model = options = null;
+        options = null;
       };
       var error = options.error;
       options.error = function(resp) {
         if (error) error(model, resp, options);
         model.trigger('error', model, resp, options);
-        model = options = null;
+        options = null;
       };
 
       if (this.isNew()) {
@@ -525,7 +527,7 @@
       }
 
       var xhr = this.sync('delete', this, options);
-      if (!wait) this.trigger('destroy', this, this.collection, options);
+      if (!wait) destroy();
       return xhr;
     },
 
@@ -830,13 +832,13 @@
         collection[options.update ? 'update' : 'reset'](resp, options);
         if (success) success(collection, resp, options);
         collection.trigger('sync', collection, resp, options);
-        collection = options = null;
+        options = null;
       };
       var error = options.error;
       options.error = function(resp) {
         if (error) error(collection, resp, options);
         collection.trigger('error', collection, resp, options);
-        collection = options = null;
+        options = null;
       };
       return this.sync('read', this, options);
     },
