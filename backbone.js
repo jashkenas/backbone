@@ -421,18 +421,11 @@
       var model = this;
       var success = options.success;
       options.success = function(resp) {
-        if (model.set(model.parse(resp, options), options)) {
-          if (success) success(model, resp, options);
-          model.trigger('sync', model, resp, options);
-        }
-        options = null;
+        if (!model.set(model.parse(resp, options), options)) return false;
+        if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
       };
-      var error = options.error;
-      options.error = function(resp) {
-        if (error) error(model, resp, options);
-        model.trigger('error', model, resp, options);
-        options = null;
-      };
+      wrapError(this, options);
       return this.sync('read', this, options);
     },
 
@@ -451,8 +444,7 @@
       }
 
       // If we're not waiting and attributes exist, save acts as `set(attr).save(null, opts)`.
-      var wait = options && options.wait;
-      if (attrs && !wait && !this.set(attrs, options)) return false;
+      if (attrs && (!options || !options.wait) && !this.set(attrs, options)) return false;
 
       options = _.extend({validate: true}, options);
 
@@ -460,7 +452,9 @@
       if (!this._validate(attrs, options)) return false;
 
       // Set temporary attributes if `{wait: true}`.
-      if (attrs && wait) this.attributes = _.extend({}, attributes, attrs);
+      if (attrs && options.wait) {
+        this.attributes = _.extend({}, attributes, attrs);
+      }
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
@@ -471,26 +465,21 @@
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
         var serverAttrs = model.parse(resp, options);
-        if (wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
-        if (!_.isObject(serverAttrs) || model.set(serverAttrs, options)) {
-          if (success) success(model, resp, options);
-          model.trigger('sync', model, resp, options);
+        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
+        if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
+          return false;
         }
-        options = null;
+        if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
       };
-      var error = options.error;
-      options.error = function(resp) {
-        if (error) error(model, resp, options);
-        model.trigger('error', model, resp, options);
-        options = null;
-      };
+      wrapError(this, options);
 
       method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
       if (method === 'patch') options.attrs = attrs;
       xhr = this.sync(method, this, options);
 
       // Restore attributes.
-      if (attrs && wait) this.attributes = attributes;
+      if (attrs && options.wait) this.attributes = attributes;
 
       return xhr;
     },
@@ -500,34 +489,27 @@
     // If `wait: true` is passed, waits for the server to respond before removal.
     destroy: function(options) {
       options = options ? _.clone(options) : {};
+      var model = this;
+      var success = options.success;
 
-      var destroy = function () {
+      var destroy = function() {
         model.trigger('destroy', model, model.collection, options);
       };
 
-      var wait = options.wait;
-      var model = this;
-      var success = options.success;
       options.success = function(resp) {
-        if (wait || model.isNew()) destroy();
+        if (options.wait || model.isNew()) destroy();
         if (success) success(model, resp, options);
         if (!model.isNew()) model.trigger('sync', model, resp, options);
-        options = null;
-      };
-      var error = options.error;
-      options.error = function(resp) {
-        if (error) error(model, resp, options);
-        model.trigger('error', model, resp, options);
-        options = null;
       };
 
       if (this.isNew()) {
         options.success();
         return false;
       }
+      wrapError(this, options);
 
       var xhr = this.sync('delete', this, options);
-      if (!wait) destroy();
+      if (!options.wait) destroy();
       return xhr;
     },
 
@@ -826,20 +808,15 @@
     fetch: function(options) {
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
-      var collection = this;
       var success = options.success;
+      var collection = this;
       options.success = function(resp) {
-        collection[options.update ? 'update' : 'reset'](resp, options);
+        var method = options.update ? 'update' : 'reset';
+        collection[method](resp, options);
         if (success) success(collection, resp, options);
         collection.trigger('sync', collection, resp, options);
-        options = null;
       };
-      var error = options.error;
-      options.error = function(resp) {
-        if (error) error(collection, resp, options);
-        collection.trigger('error', collection, resp, options);
-        options = null;
-      };
+      wrapError(this, options);
       return this.sync('read', this, options);
     },
 
@@ -914,7 +891,7 @@
       this.trigger.apply(this, arguments);
     },
 
-    sortedIndex: function(model, value, context) {
+    sortedIndex: function (model, value, context) {
       value || (value = this.comparator);
       var iterator = _.isFunction(value) ? value : function(model) {
         return model.get(value);
@@ -1510,6 +1487,15 @@
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
     throw new Error('A "url" property or function must be specified');
+  };
+
+  // Wrap an optional error callback with a fallback error event.
+  var wrapError = function (model, options) {
+    var error = options.error;
+    options.error = function(resp) {
+      if (error) error(model, resp, options);
+      model.trigger('error', model, resp, options);
+    };
   };
 
 }).call(this);
