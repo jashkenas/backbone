@@ -335,6 +335,7 @@
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
       <li>– <a href="#Model-validationError">validationError</a></li>
+      <li>– <a href="#Model-isValid">isValid</a></li>
       <li>– <a href="#Model-url">url</a></li>
       <li>– <a href="#Model-urlRoot">urlRoot</a></li>
       <li>– <a href="#Model-parse">parse</a></li>
@@ -1320,6 +1321,35 @@ one.save({
       <br />
       The value returned by <a href="#Model-validate">validate</a> during the last failed validation.
     </p>
+
+    <p id="Model-isValid">
+      <b class="header">isValid</b><code>model.isValid</code>
+      <br />
+      Run <a href="#Model-validate">validate</a> to check the model state.
+    </p>
+
+<pre class="runnable">
+var Chapter = Backbone.Model.extend({
+  validate: function(attrs, options) {
+    if (attrs.end &lt; attrs.start) {
+      return "can't end before it starts";
+    }
+  }
+});
+
+var one = new Chapter({
+  title : "Chapter One: The Beginning"
+});
+
+one.set({
+  start: 15,
+  end:   10
+});
+
+if (!one.isValid()) {
+  alert(one.get("title") + " " + one.validationError);
+}
+</pre>
 
     <p id="Model-url">
       <b class="header">url</b><code>model.url()</code>
@@ -3828,6 +3858,9 @@ ActiveRecord::Base.include_root_in_json = false
         <tt>Model#save</tt> and no longer enforced by default upon
         construction or in <tt>Model#set</tt>, unless the <tt>{validate:true}</tt>
         option is passed.
+      </li>
+      <li>
+        <tt>Model#isValid</tt> works harmoniously with the rest of the validation system.
       </li>
       <li>
         <tt>View#make</tt> has been removed. You'll need to use <tt>$</tt> directly to
