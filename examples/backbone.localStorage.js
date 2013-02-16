@@ -1,6 +1,6 @@
 /**
  * Backbone localStorage Adapter
- * Version 1.0
+ * Version 1.1.0
  *
  * https://github.com/jeromegn/Backbone.localStorage
  */
@@ -8,11 +8,11 @@
    if (typeof define === "function" && define.amd) {
       // AMD. Register as an anonymous module.
       define(["underscore","backbone"], function(_, Backbone) {
-        // Use global variables if the locals is undefined.
+        // Use global variables if the locals are undefined.
         return factory(_ || root._, Backbone || root.Backbone);
       });
    } else {
-      // RequireJS isn't being used. Assume underscore and backbone is loaded in <script> tags
+      // RequireJS isn't being used. Assume underscore and backbone are loaded in <script> tags
       factory(_, Backbone);
    }
 }(this, function(_, Backbone) {
@@ -141,6 +141,7 @@ Backbone.LocalStorage.sync = window.Store.sync = Backbone.localSync = function(m
   }
 
   if (resp) {
+    model.trigger("sync", model, resp, options);
     if (options && options.success)
       if (Backbone.VERSION === "0.9.10") {
         options.success(model, resp, options);
@@ -154,6 +155,7 @@ Backbone.LocalStorage.sync = window.Store.sync = Backbone.localSync = function(m
     errorMessage = errorMessage ? errorMessage
                                 : "Record Not Found";
     
+    model.trigger("error", model, errorMessage, options);
     if (options && options.error)
       if (Backbone.VERSION === "0.9.10") {
         options.error(model, errorMessage, options);
