@@ -961,6 +961,12 @@ new Book({
       otherwise added automatically when you first add a model to a collection.
     </p>
 
+    <p>
+      If <tt>{parse: true}</tt> is passed as an <b>option</b>, the <b>attributes</b>
+      will first be converted by <a href="#Model-parse">parse</a> before being
+      <a href="#Model-set">set</a> on the model.
+    </p>
+
     <p id="Model-get">
       <b class="header">get</b><code>model.get(attribute)</code>
       <br />
