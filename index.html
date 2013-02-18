@@ -664,6 +664,10 @@
         The <tt>Model#change</tt> method has been removed, as delayed attribute
         changes are no longer available.
       </li>
+      <li>
+        Model validation now fires <tt>invalid</tt> event instead of
+        <tt>error</tt>.
+      </li>
     </ul>
 
     <h2 id="Events">Backbone.Events</h2>
@@ -3851,6 +3855,10 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
       <li>
         <tt>parse</tt> now receives <tt>options</tt> as its second argument.
+      </li>
+      <li>
+        Model validation now fires <tt>invalid</tt> event instead of
+        <tt>error</tt>.
       </li>
     </ul>
 
