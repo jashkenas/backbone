@@ -982,6 +982,12 @@
       return this;
     },
 
+		// Re-trigger the current fragment
+		reload: function() {
+      Backbone.history.reload();
+      return this;
+		},
+
     // Bind all defined routes to `Backbone.history`. We have to reverse the
     // order of the routes here to support behavior where the most general
     // routes can be defined at the bottom of the route map.
@@ -1171,6 +1177,13 @@
       });
       return matched;
     },
+
+		// Trigger the the current fragment
+		reload: function() {
+      if (!History.started) return false;
+      var fragment = this.fragment;
+			this.loadUrl(fragment);
+		},
 
     // Save a fragment into the hash history, or replace the URL state if the
     // 'replace' option is passed. You are responsible for properly URL-encoding

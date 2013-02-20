@@ -75,7 +75,8 @@ $(document).ready(function() {
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
-      "*anything":                  "anything"
+      "*anything":                  "anything",
+			"reload":											"reload"
     },
 
     initialize : function(options) {
@@ -136,7 +137,11 @@ $(document).ready(function() {
     },
 
     routeEvent: function(arg) {
-    }
+    },
+
+		reload: function () {
+
+		}
 
   });
 
@@ -527,6 +532,13 @@ $(document).ready(function() {
     });
     location.replace('http://example.com#route-event/x');
     Backbone.history.checkUrl();
+  });
+
+	test("trigger even when the current fragment is same as the new fragment when router.reload is called", 1, function () {
+    router.count = 0;
+    router.navigate('counter', {trigger: true});
+    Backbone.history.reload();
+    equal(router.count, 2);
   });
 
 });
