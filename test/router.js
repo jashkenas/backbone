@@ -75,8 +75,7 @@ $(document).ready(function() {
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
-      "*anything":                  "anything",
-			"reload":											"reload"
+      "*anything":                  "anything"
     },
 
     initialize : function(options) {
@@ -137,12 +136,7 @@ $(document).ready(function() {
     },
 
     routeEvent: function(arg) {
-    },
-
-		reload: function () {
-
-		}
-
+    }
   });
 
   test("initialize", 1, function() {
