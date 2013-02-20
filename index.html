@@ -1637,10 +1637,9 @@ ships.add([
       <b class="header">remove</b><code>collection.remove(models, [options])</code>
       <br />
       Remove a model (or an array of models) from the collection. Fires a
-      <tt>"remove"</tt> event, which you can use <tt>silent</tt>
-      to suppress. If you've a callback listening to the <tt>"remove"</tt> event,
-      the index at which the model is being removed from the collection is available
-      as <tt>options.index</tt>.
+      <tt>"remove"</tt> event, which you can use <tt>silent</tt> to suppress.
+      The model's index before removal is available to listeners as
+      <tt>options.index</tt>.
     </p>
 
     <p id="Collection-reset">
