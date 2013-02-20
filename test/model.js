@@ -324,7 +324,7 @@ $(document).ready(function() {
         "two": 2
       }
     });
-    var model = new Defaulted();
+    var model = new Defaulted({two: undefined});
     equal(model.get('one'), 1);
     equal(model.get('two'), 2);
     Defaulted = Backbone.Model.extend({
@@ -335,7 +335,7 @@ $(document).ready(function() {
         };
       }
     });
-    model = new Defaulted();
+    model = new Defaulted({two: undefined});
     equal(model.get('one'), 3);
     equal(model.get('two'), 4);
   });
