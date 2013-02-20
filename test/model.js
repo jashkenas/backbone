@@ -143,9 +143,13 @@ $(document).ready(function() {
     ok(!new Backbone.Model({ 'id': -5 }).isNew(), "is false for a negative integer");
   });
 
-  test("get", 2, function() {
+  test("get with string", 2, function() {
     equal(doc.get('title'), 'The Tempest');
     equal(doc.get('author'), 'Bill Shakespeare');
+  });
+
+   test("get with array", 1, function() {
+    deepEqual(doc.get(['title', 'isbn', 'author']), { title: 'The Tempest', isbn: undefined, author: 'Bill Shakespeare' });
   });
 
   test("escape", 5, function() {

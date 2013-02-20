@@ -274,9 +274,18 @@
       return Backbone.sync.apply(this, arguments);
     },
 
-    // Get the value of an attribute.
-    get: function(attr) {
-      return this.attributes[attr];
+    // Get the value(s) of a single attribute or multiple attributes.
+    get: function(key) {
+      if (_.isArray(key)) {
+        var self = this;
+        return _.chain(key)
+          .map(function(keyName) {
+            return [keyName, self.get(keyName)];
+          })
+          .object()
+          .value();
+      }
+      else return this.attributes[key];
     },
 
     // Get the HTML-escaped value of an attribute.
