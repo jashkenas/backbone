@@ -62,8 +62,10 @@ $(document).ready(function() {
     strictEqual(collection.last().get('a'), 4);
   });
 
-  test("get", 5, function() {
+  test("get", 6, function() {
     equal(col.get(0), d);
+    var d2 = d.clone();
+    equal(col.get(d2), d);
     equal(col.get(2), b);
     equal(col.get({id: 1}), c);
     equal(col.get(c.clone()), c);
