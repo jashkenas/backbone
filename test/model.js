@@ -46,9 +46,9 @@ $(document).ready(function() {
 
   test("initialize with parsed attributes", 1, function() {
     var Model = Backbone.Model.extend({
-      parse: function(obj) {
-        obj.value += 1;
-        return obj;
+      parse: function(attrs) {
+        attrs.value += 1;
+        return attrs;
       }
     });
     var model = new Model({value: 1}, {parse: true});
@@ -69,8 +69,8 @@ $(document).ready(function() {
 
   test("parse can return null", 1, function() {
     var Model = Backbone.Model.extend({
-      parse: function(obj) {
-        obj.value += 1;
+      parse: function(attrs) {
+        attrs.value += 1;
         return null;
       }
     });
