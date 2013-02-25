@@ -1111,8 +1111,7 @@
       // Determine if we need to change the base url, for a pushState link
       // opened by a non-pushState browser.
       this.fragment = fragment;
-      var loc = this.location;
-      var atRoot = loc.pathname.replace(/[^\/]$/, '$&/') === this.root;
+      var atRoot = this.location.pathname.replace(/[^\/]$/, '$&/') === this.root;
 
       // If we've started off with a route from a `pushState`-enabled browser,
       // but we're currently in a browser that doesn't support it...
@@ -1124,9 +1123,9 @@
 
       // Or if we've started out with a hash-based route, but we're currently
       // in a browser where it could be `pushState`-based instead...
-      } else if (this._wantsPushState && this._hasPushState && atRoot && loc.hash) {
+      } else if (this._wantsPushState && this._hasPushState && atRoot && this.location.hash) {
         this.fragment = this.getHash().replace(routeStripper, '');
-        this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
+        this.history.replaceState({}, document.title, this.root + this.fragment + this.location.search);
       }
 
       if (!this.options.silent) return this.loadUrl();
