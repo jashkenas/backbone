@@ -545,9 +545,8 @@
   });
 
   // Underscore methods that we want to implement on the Model.
-  var methods =  ['each', 'forEach', 'map', 'collect', 'contains', 'include',
-    'sortBy', 'groupBy', 'size', 'keys', 'values', 'pairs', 'invert', 'pick',
-    'omit', 'isEqual', 'isEmpty', 'chain'];
+  var methods =  ['each', 'forEach', 'sortBy', 'groupBy', 'size', 'keys',
+    'values', 'invert', 'pick', 'omit', 'isEqual', 'isEmpty', 'chain'];
 
   // Mix in each Underscore method as a proxy to `Model#attributes`.
   _.each(methods, function(method) {
