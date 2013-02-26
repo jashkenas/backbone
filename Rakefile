@@ -17,6 +17,12 @@ task :build do
   end
 end
 
+desc "compile backbone into javascript"
+task :compile do
+  check 'coffee', 'CoffeeScript', 'http://coffeescript.org/'
+  system "coffee --compile backbone.coffee"
+end
+
 desc "build the docco documentation"
 task :doc do
   check 'docco', 'docco', 'https://github.com/jashkenas/docco'
