@@ -72,18 +72,25 @@
   // in terms of the existing API.
   var eventsApi = function(obj, action, name, rest) {
     if (!name) return true;
+
+    // Handle event maps.
     if (typeof name === 'object') {
       for (var key in name) {
         obj[action].apply(obj, [key, name[key]].concat(rest));
       }
-    } else if (eventSplitter.test(name)) {
+      return false;
+    }
+
+    // Handle space separated event names.
+    if (eventSplitter.test(name)) {
       var names = name.split(eventSplitter);
       for (var i = 0, l = names.length; i < l; i++) {
         obj[action].apply(obj, [names[i]].concat(rest));
       }
-    } else {
-      return true;
+      return false;
     }
+
+    return true;
   };
 
   // Optimized internal dispatch function for triggering events. Tries to
