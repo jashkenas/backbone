@@ -69,7 +69,9 @@ $(document).ready(function() {
       "contacts":                   "contacts",
       "contacts/new":               "newContact",
       "contacts/:id":               "loadContact",
+      "route-event/:arg":           "routeEvent",
       "optional(/:item)":           "optionalItem",
+      "named/optional/(y:z)":       "namedOptional",
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
@@ -107,26 +109,33 @@ $(document).ready(function() {
     },
 
     optionalItem: function(arg){
-      this.arg = arg !== undefined ? arg : null;
+      this.arg = arg != void 0 ? arg : null;
     },
 
-    splat : function(args) {
+    splat: function(args) {
       this.args = args;
     },
 
-    complex : function(first, part, rest) {
+    complex: function(first, part, rest) {
       this.first = first;
       this.part = part;
       this.rest = rest;
     },
 
-    query : function(entity, args) {
+    query: function(entity, args) {
       this.entity    = entity;
       this.queryArgs = args;
     },
 
-    anything : function(whatever) {
+    anything: function(whatever) {
       this.anything = whatever;
+    },
+
+    namedOptional: function(z) {
+      this.z = z;
+    },
+
+    routeEvent: function(arg) {
     }
 
   });
@@ -139,7 +148,7 @@ $(document).ready(function() {
     location.replace('http://example.com#search/news');
     Backbone.history.checkUrl();
     equal(router.query, 'news');
-    equal(router.page, undefined);
+    equal(router.page, void 0);
     equal(lastRoute, 'search');
     equal(lastArgs[0], 'news');
   });
@@ -207,7 +216,7 @@ $(document).ready(function() {
   test("routes (optional)", 2, function() {
     location.replace('http://example.com#optional');
     Backbone.history.checkUrl();
-    equal(router.arg, null);
+    ok(!router.arg);
     location.replace('http://example.com#optional/thing');
     Backbone.history.checkUrl();
     equal(router.arg, 'thing');
@@ -265,12 +274,12 @@ $(document).ready(function() {
     if (!Backbone.history.iframe) ok(true);
   });
 
-  test("route callback gets passed decoded values", 3, function() {
+  test("#967 - Route callback gets passed encoded values.", 3, function() {
     var route = 'has%2Fslash/complex-has%23hash/has%20space';
     Backbone.history.navigate(route, {trigger: true});
-    equal(router.first, 'has/slash');
-    equal(router.part, 'has#hash');
-    equal(router.rest, 'has space');
+    strictEqual(router.first, 'has%2Fslash');
+    strictEqual(router.part, 'has%23hash');
+    strictEqual(router.rest, 'has%20space');
   });
 
   test("correctly handles URLs with % (#868)", 3, function() {
@@ -279,7 +288,7 @@ $(document).ready(function() {
     location.replace('http://example.com#search/fat');
     Backbone.history.checkUrl();
     equal(router.query, 'fat');
-    equal(router.page, undefined);
+    equal(router.page, void 0);
     equal(lastRoute, 'search');
   });
 
@@ -490,6 +499,34 @@ $(document).ready(function() {
       }
     });
     new Router;
+  });
+
+  test("#1794 - Trailing space in fragments.", 1, function() {
+    var history = new Backbone.History;
+    strictEqual(history.getFragment('fragment   '), 'fragment');
+  });
+
+  test("#1820 - Leading slash and trailing space.", 1, function() {
+    var history = new Backbone.History;
+    strictEqual(history.getFragment('/fragment '), 'fragment');
+  });
+
+  test("#1980 - Optional parameters.", 2, function() {
+    location.replace('http://example.com#named/optional/y');
+    Backbone.history.checkUrl();
+    strictEqual(router.z, undefined);
+    location.replace('http://example.com#named/optional/y123');
+    Backbone.history.checkUrl();
+    strictEqual(router.z, '123');
+  });
+
+  test("#2062 - Trigger 'route' event on router instance.", 2, function() {
+    router.on('route', function(name, args) {
+      strictEqual(name, 'routeEvent');
+      deepEqual(args, ['x']);
+    });
+    location.replace('http://example.com#route-event/x');
+    Backbone.history.checkUrl();
   });
 
 });

@@ -29,22 +29,6 @@ $(document).ready(function() {
     strictEqual(view.$('a b').html(), 'test');
   });
 
-  test("make", 3, function() {
-    var div = view.make('div', {id: 'test-div'}, "one two three");
-
-    equal(div.tagName.toLowerCase(), 'div');
-    equal(div.id, 'test-div');
-    equal($(div).text(), 'one two three');
-  });
-
-  test("make can take falsy values for content", 2, function() {
-    var div = view.make('div', {id: 'test-div'}, 0);
-    equal($(div).text(), '0');
-
-    var div = view.make('div', {id: 'test-div'}, '');
-    equal($(div).text(), '');
-  });
-
   test("initialize", 1, function() {
     var View = Backbone.View.extend({
       initialize: function() {
@@ -163,6 +147,30 @@ $(document).ready(function() {
 
     strictEqual(new View().el.className, 'className');
     strictEqual(new View().el.id, 'id');
+  });
+
+  test("with options function", 3, function() {
+    var View1 = Backbone.View.extend({
+      options: function() {
+        return {
+          title: 'title1',
+          acceptText: 'confirm'
+        };
+      }
+    });
+
+    var View2 = View1.extend({
+      options: function() {
+        return _.extend(View1.prototype.options.call(this), {
+          title: 'title2',
+          fixed: true
+        });
+      }
+    });
+
+    strictEqual(new View2().options.title, 'title2');
+    strictEqual(new View2().options.acceptText, 'confirm');
+    strictEqual(new View2().options.fixed, true);
   });
 
   test("with attributes", 2, function() {
@@ -286,14 +294,11 @@ $(document).ready(function() {
     ok(new View().$el.is('p'));
   });
 
-  test("dispose", 0, function() {
+  test("views stopListening", 0, function() {
     var View = Backbone.View.extend({
-      events: {
-        click: function() { ok(false); }
-      },
       initialize: function() {
-        this.model.on('all x', function(){ ok(false); }, this);
-        this.collection.on('all x', function(){ ok(false); }, this);
+        this.listenTo(this.model, 'all x', function(){ ok(false); }, this);
+        this.listenTo(this.collection, 'all x', function(){ ok(false); }, this);
       }
     });
 
@@ -302,22 +307,9 @@ $(document).ready(function() {
       collection: new Backbone.Collection
     });
 
-    view.dispose();
+    view.stopListening();
     view.model.trigger('x');
     view.collection.trigger('x');
-    view.$el.click();
-  });
-
-  test("dispose with non Backbone objects", 0, function() {
-    var view = new Backbone.View({model: {}, collection: {}});
-    view.dispose();
-  });
-
-  test("view#remove calls dispose.", 1, function() {
-    var view = new Backbone.View();
-
-    view.dispose = function() { ok(true); };
-    view.remove();
   });
 
   test("Provide function for el.", 1, function() {
@@ -329,6 +321,30 @@ $(document).ready(function() {
 
     var view = new View;
     ok(view.$el.is('p:has(a)'));
+  });
+
+  test("events passed in options", 2, function() {
+    var counter = 0;
+
+    var View = Backbone.View.extend({
+      el: '<p><a id="test"></a></p>',
+      increment: function() {
+        counter++;
+      }
+    });
+
+    var view = new View({events:{'click #test':'increment'}});
+    var view2 = new View({events:function(){
+      return {'click #test':'increment'};
+    }});
+
+    view.$('#test').trigger('click');
+    view2.$('#test').trigger('click');
+    equal(counter, 2);
+
+    view.$('#test').trigger('click');
+    view2.$('#test').trigger('click');
+    equal(counter, 4);
   });
 
 });
