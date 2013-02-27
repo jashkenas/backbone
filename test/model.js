@@ -242,14 +242,11 @@ $(document).ready(function() {
   });
 
   test("set falsy values in the correct order", 2, function() {
-    var model = new Backbone.Model({result: 'result'});
+    var model = new Backbone.Model({result: false});
     model.on('change', function() {
       equal(model.changed.result, void 0);
       equal(model.previous('result'), false);
     });
-    model.set({result: void 0}, {silent: true});
-    model.set({result: null}, {silent: true});
-    model.set({result: false}, {silent: true});
     model.set({result: void 0});
   });
 
@@ -662,15 +659,12 @@ $(document).ready(function() {
     ok('x' in model.attributes);
   });
 
-  test("hasChanged works outside of change events, and true within", 6, function() {
-    var model = new Backbone.Model({x: 1});
+  test("hasChanged works outside of change events, and true within", 4, function() {
+    var model = new Backbone.Model;
     model.on('change:x', function() {
       ok(model.hasChanged('x'));
       equal(model.get('x'), 1);
     });
-    model.set({x: 2}, {silent: true});
-    ok(model.hasChanged());
-    equal(model.hasChanged('x'), true);
     model.set({x: 1});
     ok(model.hasChanged());
     equal(model.hasChanged('x'), true);
@@ -697,14 +691,14 @@ $(document).ready(function() {
 
   test("`hasChanged` for falsey keys", 2, function() {
     var model = new Backbone.Model();
-    model.set({x: true}, {silent: true});
+    model.set({x: true});
     ok(!model.hasChanged(0));
     ok(!model.hasChanged(''));
   });
 
   test("`previous` for falsey keys", 2, function() {
     var model = new Backbone.Model({0: true, '': true});
-    model.set({0: false, '': false}, {silent: true});
+    model.set({0: false, '': false});
     equal(model.previous(0), true);
     equal(model.previous(''), true);
   });
@@ -754,21 +748,24 @@ $(document).ready(function() {
     new Model().save();
   });
 
-  test("nested `set` during `'change:attr'`", 2, function() {
+  test("nested `set` during `'change:attr'`", 1, function() {
     var events = [];
-    var model = new Backbone.Model();
+    var model = new Backbone.Model;
     model.on('all', function(event) { events.push(event); });
     model.on('change', function() {
-      model.set({z: true}, {silent:true});
+      model.set({z: true});
     });
     model.on('change:x', function() {
       model.set({y: true});
     });
     model.set({x: true});
-    deepEqual(events, ['change:y', 'change:x', 'change']);
-    events = [];
-    model.set({z: true});
-    deepEqual(events, []);
+    deepEqual(events, [
+      'change:y',
+      'change:x',
+      'change:z',
+      'change',
+      'change'
+    ]);
   });
 
   test("nested `change` only fires once", 1, function() {
@@ -806,16 +803,14 @@ $(document).ready(function() {
     model.set({x: true});
   });
 
-  test("nested `change` with silent", 3, function() {
+  test("nested change", 3, function() {
     var count = 0;
     var model = new Backbone.Model();
-    model.on('change:y', function() { ok(false); });
     model.on('change', function() {
       switch(count++) {
         case 0:
           deepEqual(this.changedAttributes(), {x: true});
-          model.set({y: true}, {silent: true});
-          model.set({z: true});
+          model.set({y: true, z: true});
           break;
         case 1:
           deepEqual(this.changedAttributes(), {x: true, y: true, z: true});
@@ -831,29 +826,7 @@ $(document).ready(function() {
     model.set({z: false});
   });
 
-  test("nested `change:attr` with silent", 0, function() {
-    var model = new Backbone.Model();
-    model.on('change:y', function(){ ok(false); });
-    model.on('change', function() {
-      model.set({y: true}, {silent: true});
-      model.set({z: true});
-    });
-    model.set({x: true});
-  });
-
-  test("multiple nested changes with silent", 1, function() {
-    var model = new Backbone.Model();
-    model.on('change:x', function() {
-      model.set({y: 1}, {silent: true});
-      model.set({y: 2});
-    });
-    model.on('change:y', function(model, val) {
-      equal(val, 2);
-    });
-    model.set({x: true});
-  });
-
-  test("multiple nested changes with silent", 1, function() {
+  test("multiple nested changes", 1, function() {
     var changes = [];
     var model = new Backbone.Model();
     model.on('change:b', function(model, val) { changes.push(val); });
@@ -862,14 +835,6 @@ $(document).ready(function() {
     });
     model.set({b: 0});
     deepEqual(changes, [0, 1]);
-  });
-
-  test("basic silent change semantics", 1, function() {
-    var model = new Backbone.Model;
-    model.set({x: 1});
-    model.on('change', function(){ ok(true); });
-    model.set({x: 2}, {silent: true});
-    model.set({x: 1});
   });
 
   test("nested set multiple times", 1, function() {
@@ -972,28 +937,6 @@ $(document).ready(function() {
     .save(null, {wait: true});
   });
 
-  test("#1664 - Changing from one value, silently to another, back to original triggers a change.", 1, function() {
-    var model = new Backbone.Model({x:1});
-    model.on('change:x', function() { ok(true); });
-    model.set({x:2},{silent:true});
-    model.set({x:3},{silent:true});
-    model.set({x:1});
-  });
-
-  test("#1664 - multiple silent changes nested inside a change event", 2, function() {
-    var changes = [];
-    var model = new Backbone.Model();
-    model.on('change', function() {
-      model.set({a:'c'}, {silent:true});
-      model.set({b:2}, {silent:true});
-      model.unset('c', {silent:true});
-    });
-    model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
-    model.set({a:'a', b:1, c:'item'});
-    deepEqual(changes, ['a',1,'item']);
-    deepEqual(model.attributes, {a: 'c', b: 2});
-  });
-
   test("#1791 - `attributes` is available for `parse`", function() {
     var Model = Backbone.Model.extend({
       parse: function() { this.has('a'); } // shouldn't throw an error
@@ -1002,22 +945,9 @@ $(document).ready(function() {
     expect(0);
   });
 
-  test("silent changes in last `change` event back to original triggers change", 2, function() {
-    var changes = [];
-    var model = new Backbone.Model();
-    model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
-    model.on('change', function() {
-      model.set({a:'c'}, {silent:true});
-    });
-    model.set({a:'a'});
-    deepEqual(changes, ['a']);
-    model.set({a:'a'});
-    deepEqual(changes, ['a', 'a']);
-  });
-
   test("#1943 change calculations should use _.isEqual", function() {
     var model = new Backbone.Model({a: {key: 'value'}});
-    model.set('a', {key:'value'}, {silent:true});
+    model.set('a', {key:'value'});
     equal(model.changedAttributes(), false);
   });
 
@@ -1071,15 +1001,6 @@ $(document).ready(function() {
     });
     var model = new Model;
     model.save({x: 1}, {wait: true});
-  });
-
-  test("#2034 - nested set with silent only triggers one change", 1, function() {
-    var model = new Backbone.Model();
-    model.on('change', function() {
-      model.set({b: true}, {silent: true});
-      ok(true);
-    });
-    model.set({a: true});
   });
 
 });
