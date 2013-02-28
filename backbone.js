@@ -277,8 +277,8 @@
     },
 
     // Proxy `Backbone.sync` by default.
-    sync: function() {
-      return Backbone.sync.apply(this, arguments);
+    sync: function(method, model, options) {
+      return Backbone.sync.call(this, method, model, options);
     },
 
     // Get the value of an attribute.
@@ -597,8 +597,8 @@
     },
 
     // Proxy `Backbone.sync` by default.
-    sync: function() {
-      return Backbone.sync.apply(this, arguments);
+    sync: function(method, collection, options) {
+      return Backbone.sync.call(this, method, collection, options);
     },
 
     // Add a model, or list of models to the set.
