@@ -974,12 +974,11 @@ new Book({
     <p id="Model-set">
       <b class="header">set</b><code>model.set(attributes, [options])</code>
       <br />
-      Set a hash of attributes (one or many) on the model. If any of the attributes
-      change the model's state, a <tt>"change"</tt> event will be triggered, unless
-      <tt>{silent: true}</tt> is passed as an option. Change events for specific
-      attributes are also triggered, and you can bind to those as well, for example:
-      <tt>change:title</tt>, and <tt>change:content</tt>. You may also pass
-      individual keys and values.
+      Set a hash of attributes (one or many) on the model. If any of the
+      attributes change the model's state, a <tt>"change"</tt> event will be
+      triggered. Change events for specific attributes are also triggered, and
+      you can bind to those as well, for example: <tt>change:title</tt>, and
+      <tt>change:content</tt>. You may also pass individual keys and values.
     </p>
 
 <pre>
@@ -1021,15 +1020,15 @@ if (note.has("title")) {
     <p id="Model-unset">
       <b class="header">unset</b><code>model.unset(attribute, [options])</code>
       <br />
-      Remove an attribute by deleting it from the internal attributes hash.
-      Fires a <tt>"change"</tt> event unless <tt>silent</tt> is passed as an option.
+      Remove an attribute by deleting it from the attributes hash.  Fires
+      <tt>"change"</tt> and <tt>"change:attr"</tt> events.
     </p>
 
     <p id="Model-clear">
       <b class="header">clear</b><code>model.clear([options])</code>
       <br />
-      Removes all attributes from the model, including the <tt>id</tt> attribute. Fires a <tt>"change"</tt> event unless
-      <tt>silent</tt> is passed as an option.
+      Removes all attributes from the model, including the <tt>id</tt>
+      attribute. Fires <tt>"change"</tt> and <tt>"change:attr"</tt> events.
     </p>
 
     <p id="Model-id">
@@ -3818,6 +3817,15 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header">Edge</b> &mdash; <small><i>Unreleased</i></small><br/>
+
+    <ul style="margin-top: 5px;">
+      <li>
+        The <tt>silent</tt> option has been removed from <tt>Model#set</tt>.
+        Custom options should be used to accomplish this effect instead.
+      </li>
+    </ul>
 
     <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...0.9.10">Diff</a><br />
     <ul style="margin-top: 5px;">
