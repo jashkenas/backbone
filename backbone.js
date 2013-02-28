@@ -1312,7 +1312,6 @@
     // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents: function(events) {
       if (!(events || (events = _.result(this, 'events')))) return this;
-      this.undelegateEvents();
       for (var key in events) {
         var method = events[key];
         if (!_.isFunction(method)) method = this[events[key]];
