@@ -4,6 +4,7 @@
   "homepage"      : "http://backbonejs.org",
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
   "type"          : "component",
+  "license"       : "MIT",
   "authors"       : [
     {
       "name" : "Jeremy Ashkenas",
