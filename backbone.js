@@ -616,8 +616,8 @@
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
           modelMap[existing.cid] = true;
-          if (options.merge) {
-            existing.set(attrs === model ? model.attributes : attrs, options);
+          if (options.merge && model !== existing) {
+            existing.set(model === attrs ? model.attributes : attrs, options);
             if (sort && !doSort && existing.hasChanged(sortAttr)) doSort = true;
           }
           continue;
