@@ -155,6 +155,25 @@ $(document).ready(function() {
     Backbone.sync('create', model);
   });
 
+	test("Asynchronous and synchronous Backbone.ajax method should fire 'request' event before the 'sync' event.", function() {
+		var collection = new Backbone.Collection;
+		var requestEventFired = false;
+
+		collection.url = '/test';
+		Backbone.ajax = function(settings){
+			return settings.success();
+		};
+
+		collection.on('request', function() {
+			ok(!requestEventFired, "request fired in order");
+			requestEventFired = true;
+		});
+		collection.on('sync', function() {
+			ok(requestEventFired, "sync fired in order");
+		});
+		collection.fetch();
+	});
+
   test("Call provided error callback on error.", 1, function() {
     var model = new Backbone.Model;
     model.url = '/test';
