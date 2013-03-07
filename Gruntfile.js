@@ -8,13 +8,18 @@ module.exports = function(grunt) {
 
         jshint: {
             options: {
-                curly: false,
-                eqeqeq: false,
-                latedef: false,
-                eqnull: true,
+                boss: true,
+                browser: true,
                 expr: true,
+                eqnull: true,
+                latedef: true,
+                newcap: false,
+                node: true,
+                strict: false,
                 supernew: true,
-                boss: true
+                sub: true,
+                trailing: true,
+                undef: true
             },
 
             src: ['backbone.js'],
