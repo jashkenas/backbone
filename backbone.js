@@ -866,7 +866,7 @@
       options.collection = this;
       var model = new this.model(attrs, options);
       if (!model._validate(attrs, options)) {
-        if (options.invalid) options.invalid(this, error, options);
+        if (options.invalid) options.invalid(this, attrs, options);
         this.trigger('invalid', this, attrs, options);
         return false;
       }
