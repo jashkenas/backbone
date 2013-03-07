@@ -14,7 +14,7 @@ module.exports = function(grunt) {
                 eqnull: true,
                 expr: true,
                 supernew: true,
-                evil: true
+                boss: true
             },
 
             src: ['backbone.js'],
@@ -35,10 +35,7 @@ module.exports = function(grunt) {
         },
 
         qunit: {
-            options: {
-
-            },
-            all: ['test/index.html']
+            all: ['test/**/index.html']
         },
 
         docco: {
@@ -59,18 +56,20 @@ module.exports = function(grunt) {
                 ext: '.js'
             }
         },
+
+        clean: ['test/compiled'],
         
         watch: {
             src: {
                 files: ['backbone.js', 'test/*.js', 'test/coffee.js'],
-                tasks: ['coffee', 'qunit', 'uglify']
+                tasks: ['coffee', 'jshint', 'qunit', 'clean', 'uglify']
             }
-        },
+        }
 
     });
     
     // shortcut task to test
-    grunt.registerTask('test', ['coffee', 'qunit']);
+    grunt.registerTask('test', ['jshint', 'coffee', 'qunit', 'clean']);
 
     // shortcut task to generate docs
     grunt.registerTask('docs', ['docco']);
@@ -80,6 +79,9 @@ module.exports = function(grunt) {
 
     //Load the plugin that provides the "coffee" task.
     grunt.loadNpmTasks('grunt-contrib-coffee');
+
+    //Load the plugin that provides the "clean" task.
+    grunt.loadNpmTasks('grunt-contrib-clean');
 
     //Load the plugin that provides the "qunit" task.
     grunt.loadNpmTasks('grunt-contrib-qunit');
