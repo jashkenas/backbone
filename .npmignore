@@ -4,3 +4,5 @@ docs/
 raw/
 examples/
 index.html
+node_modules/
+test/compiled/
