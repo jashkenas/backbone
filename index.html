@@ -1495,6 +1495,25 @@ var Library = Backbone.Collection.extend({
 });
 </pre>
 
+    <p>
+      A collection can also contain polymorphic models by overriding this property
+      with a function that returns a model.
+    </p>
+
+<pre>
+var Library = Backbone.Collection.extend({
+
+  model: function(attrs, options) {
+    if (condition) {
+      return new PublicDocument(attrs, options);
+    } else {
+      return new PrivateDocument(attrs, options);
+    }
+  }
+
+});
+</pre>
+
     <p id="Collection-constructor">
       <b class="header">constructor / initialize</b><code>new Collection([models], [options])</code>
       <br />
