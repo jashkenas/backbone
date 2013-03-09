@@ -137,7 +137,6 @@ $(document).ready(function() {
 
     routeEvent: function(arg) {
     }
-
   });
 
   test("initialize", 1, function() {
@@ -527,6 +526,13 @@ $(document).ready(function() {
     });
     location.replace('http://example.com#route-event/x');
     Backbone.history.checkUrl();
+  });
+
+	test("trigger even when the current fragment is same as the new fragment when router.reload is called", 1, function () {
+    router.count = 0;
+    router.navigate('counter', {trigger: true});
+    Backbone.history.reload();
+    equal(router.count, 2);
   });
 
 });
