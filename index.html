@@ -1522,11 +1522,15 @@ var Library = Backbone.Collection.extend({
       may be included as an option. Passing <tt>false</tt> as the
       comparator option will prevent sorting. If you define an
       <b>initialize</b> function, it will be invoked when the collection is
-      created.
+      created. The constructor copies following fields from the options into
+      instance variables: <tt>url</tt>, <tt>model</tt> and <tt>comparator</tt>.
     </p>
 
 <pre>
 var tabs = new TabSet([tab1, tab2, tab3]);
+var spaces = new Backbone.Collection([], {
+  url: "/spaces", model: Space
+});
 </pre>
 
     <p id="Collection-models">
