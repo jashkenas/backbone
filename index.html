@@ -2187,10 +2187,9 @@ app.navigate("help/troubleshooting", {trigger: true, replace: true});
 
     <p>
       <b>History</b> serves as a global router (per frame) to handle <tt>hashchange</tt>
-      events or <tt>pushState</tt>, match the appropriate route, and trigger callbacks. You shouldn't
-      ever have to create one of these yourself &mdash; you should use the reference
-      to <tt>Backbone.history</tt> that will be created for you automatically if you make use
-      of <a href="#Router">Routers</a> with <a href="#Router-routes">routes</a>.
+      events or <tt>pushState</tt>, match the appropriate route, and trigger callbacks.
+      You shouldn't ever have to create one of these yourself since <tt>Backbone.history</tt>
+      already contains one.
     </p>
 
     <p>
