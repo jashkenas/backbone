@@ -1049,18 +1049,20 @@ $(document).ready(function() {
     collection.add(collection.models, {merge: true}); // don't sort
   });
 
-  test("Copy known options into instance fields in the constructor", function() {
-      var model = new Backbone.Model();
-      var collection = new Backbone.Collection([], { model: model });
-      equal(collection.model, model);
+  test("Attach options to collection.", 3, function() {
+      var url = '/somewhere';
+      var model = new Backbone.Model;
+      var comparator = function(){};
 
-      var url = "/somewhere";
-      var collection = new Backbone.Collection([], { url: url });
-      equal(collection.url, url);
+      var collection = new Backbone.Collection([], {
+        url: url,
+        model: model,
+        comparator: comparator
+      });
 
-      var comparator = function() {};
-      var collection = new Backbone.Collection([], { comparator: comparator });
-      equal(collection.comparator, comparator);
+      strictEqual(collection.url, url);
+      ok(collection.model === model);
+      ok(collection.comparator === comparator);
   });
 
 });
