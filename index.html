@@ -1522,11 +1522,16 @@ var Library = Backbone.Collection.extend({
       may be included as an option. Passing <tt>false</tt> as the
       comparator option will prevent sorting. If you define an
       <b>initialize</b> function, it will be invoked when the collection is
-      created.
+      created. There are several options that, if provided, are attached to the
+      collection directly: <tt>url</tt>, <tt>model</tt> and <tt>comparator</tt>.
     </p>
 
 <pre>
 var tabs = new TabSet([tab1, tab2, tab3]);
+var spaces = new Backbone.Collection([], {
+  model: Space,
+  url: '/spaces'
+});
 </pre>
 
     <p id="Collection-models">
@@ -3838,12 +3843,16 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
-    <b class="header">Edge</b> &mdash; <small><i>Unreleased</i></small><br/>
+    <b class="header">Edge</b> &mdash; <small><i>Unreleased</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.10...master">Diff</a><br/>
 
     <ul style="margin-top: 5px;">
       <li>
         The <tt>silent</tt> option has been removed from <tt>Model#set</tt>.
         Custom options should be used to accomplish this effect instead.
+      </li>
+      <li>
+        Constructing a new collection with a <tt>url</tt> option will attach it
+        to the new instance.
       </li>
     </ul>
 

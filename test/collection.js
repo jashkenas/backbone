@@ -1049,4 +1049,20 @@ $(document).ready(function() {
     collection.add(collection.models, {merge: true}); // don't sort
   });
 
+  test("Attach options to collection.", 3, function() {
+      var url = '/somewhere';
+      var model = new Backbone.Model;
+      var comparator = function(){};
+
+      var collection = new Backbone.Collection([], {
+        url: url,
+        model: model,
+        comparator: comparator
+      });
+
+      strictEqual(collection.url, url);
+      ok(collection.model === model);
+      ok(collection.comparator === comparator);
+  });
+
 });
