@@ -44,7 +44,7 @@
 
 body {
   font-family: "aller-light";
-  background: url(public/images/grey_@2x.png);
+  background: url('public/images/gray.png');
   background-size: 322px;
   margin: 0;
 }
@@ -101,7 +101,8 @@ blockquote {
     font-family: Menlo, Consolas, Monaco, monospace;
     font-size: 14px; line-height: 19px;
     color: #999;
-    margin: 10px 0;
+    margin: 10px 0 0;
+    white-space: pre-wrap;
   }
 
 pre, tt, code {
