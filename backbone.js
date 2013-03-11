@@ -1,14 +1,14 @@
-//     Backbone.js 0.9.10
+// Backbone.js
+// ===========
 
-//     (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.
-//     Backbone may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://backbonejs.org
+// > (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.
+// > Backbone may be freely distributed under the MIT license.
+// > For all details and documentation: http://backbonejs.org
+
+// Initial Setup
+// -------------
 
 (function(){
-
-  // Initial Setup
-  // -------------
 
   // Save a reference to the global object (`window` in the browser, `exports`
   // on the server).
@@ -107,12 +107,6 @@
   // custom events. You may bind with `on` or remove with `off` callback
   // functions to an event; `trigger`-ing an event fires all callbacks in
   // succession.
-  //
-  //     var object = {};
-  //     _.extend(object, Backbone.Events);
-  //     object.on('expand', function(){ alert('expanded'); });
-  //     object.trigger('expand');
-  //
   var Events = Backbone.Events = {
 
     // Bind one or more space separated events, or an events map,
@@ -953,12 +947,7 @@
     // initialization logic.
     initialize: function(){},
 
-    // Manually bind a single named route to a callback. For example:
-    //
-    //     this.route('search/:query/p:num', 'search', function(query, num) {
-    //       ...
-    //     });
-    //
+    // Manually bind a single named route to a callback function.
     route: function(route, name, callback) {
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (!callback) callback = this[name];
