@@ -110,9 +110,9 @@ Backbone.LocalStorage.sync = window.Store.sync = Backbone.localSync = function(m
   }
 
   if (resp) {
-    options.success(model, resp, options);
+    options.success(resp);
   } else {
-    options.error(model, "Record not found", options);
+    options.error('Record not found.');
   }
 };
 

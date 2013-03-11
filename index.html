@@ -151,6 +151,9 @@
     a img {
       border: 0;
     }
+    a.travis-badge {
+      display: block;
+    }
     h1, h2, h3, h4, h5, h6 {
       padding-top: 20px;
     }
@@ -334,6 +337,7 @@
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
+      <li>– <a href="#Model-validationError">validationError</a></li>
       <li>– <a href="#Model-url">url</a></li>
       <li>– <a href="#Model-urlRoot">urlRoot</a></li>
       <li>– <a href="#Model-parse">parse</a></li>
@@ -366,6 +370,7 @@
       <li>– <a href="#Collection-pop">pop</a></li>
       <li>– <a href="#Collection-unshift">unshift</a></li>
       <li>– <a href="#Collection-shift">shift</a></li>
+      <li>– <a href="#Collection-slice">slice</a></li>
       <li>– <a href="#Collection-length">length</a></li>
       <li>– <a href="#Collection-comparator">comparator</a></li>
       <li>– <a href="#Collection-sort">sort</a></li>
@@ -441,6 +446,7 @@
       <li>– <a href="#examples-rdio">Rdio</a></li>
       <li>– <a href="#examples-linkedin">LinkedIn Mobile</a></li>
       <li>– <a href="#examples-hulu">Hulu</a></li>
+      <li>– <a href="#examples-quartz">Quartz</a></li>
       <li>– <a href="#examples-flow">Flow</a></li>
       <li>– <a href="#examples-gilt">Gilt Groupe</a></li>
       <li>– <a href="#examples-newsblur">NewsBlur</a></li>
@@ -475,7 +481,6 @@
       <li>– <a href="#examples-salon">Salon.io</a></li>
       <li>– <a href="#examples-tilemill">TileMill</a></li>
       <li>– <a href="#examples-blossom">Blossom</a></li>
-      <li>– <a href="#examples-decide">Decide</a></li>
       <li>– <a href="#examples-trello">Trello</a></li>
       <li>– <a href="#examples-tzigla">Tzigla</a></li>
     </ul>
@@ -558,8 +563,8 @@
         <td><a class="punch" href="https://raw.github.com/documentcloud/backbone/master/backbone.js">Edge Version (master)</a></td>
         <td>
           <i>Unreleased, use at your own risk</i>
-          <a href="https://travis-ci.org/documentcloud/backbone">
-            <img width="89" height="13" src="https://travis-ci.org/documentcloud/backbone.png" />
+          <a class="travis-badge" href="https://travis-ci.org/documentcloud/backbone">
+            <img src="https://travis-ci.org/documentcloud/backbone.png" />
           </a>
         </td>
       </tr>
@@ -660,7 +665,7 @@
       </li>
       <li>
         The <tt>Model#change</tt> method has been removed, as delayed attribute
-        changes as no longer available.
+        changes are no longer available.
       </li>
     </ul>
 
@@ -969,12 +974,11 @@ new Book({
     <p id="Model-set">
       <b class="header">set</b><code>model.set(attributes, [options])</code>
       <br />
-      Set a hash of attributes (one or many) on the model. If any of the attributes
-      change the model's state, a <tt>"change"</tt> event will be triggered, unless
-      <tt>{silent: true}</tt> is passed as an option. Change events for specific
-      attributes are also triggered, and you can bind to those as well, for example:
-      <tt>change:title</tt>, and <tt>change:content</tt>. You may also pass
-      individual keys and values.
+      Set a hash of attributes (one or many) on the model. If any of the
+      attributes change the model's state, a <tt>"change"</tt> event will be
+      triggered. Change events for specific attributes are also triggered, and
+      you can bind to those as well, for example: <tt>change:title</tt>, and
+      <tt>change:content</tt>. You may also pass individual keys and values.
     </p>
 
 <pre>
@@ -1016,15 +1020,15 @@ if (note.has("title")) {
     <p id="Model-unset">
       <b class="header">unset</b><code>model.unset(attribute, [options])</code>
       <br />
-      Remove an attribute by deleting it from the internal attributes hash.
-      Fires a <tt>"change"</tt> event unless <tt>silent</tt> is passed as an option.
+      Remove an attribute by deleting it from the attributes hash.  Fires
+      <tt>"change"</tt> and <tt>"change:attr"</tt> events.
     </p>
 
     <p id="Model-clear">
       <b class="header">clear</b><code>model.clear([options])</code>
       <br />
-      Removes all attributes from the model, including the <tt>id</tt> attribute. Fires a <tt>"change"</tt> event unless
-      <tt>silent</tt> is passed as an option.
+      Removes all attributes from the model, including the <tt>id</tt>
+      attribute. Fires <tt>"change"</tt> and <tt>"change:attr"</tt> events.
     </p>
 
     <p id="Model-id">
@@ -1091,9 +1095,8 @@ alert("Cake id: " + cake.id);
       <br />
       The <b>changed</b> property is the internal hash containing all the attributes
       that have changed since the last <tt>"change"</tt> event was triggered.
-      Please do not update <b>changed</b> directly.  Its state is maintained internally
-      by <a href="#Model-set">set</a> and <a href="#Model-change">change</a>.
-      A copy of <b>changed</b> can be acquired from
+      Please do not update <b>changed</b> directly since its state is internally maintained
+      by <a href="#Model-set">set</a>.  A copy of <b>changed</b> can be acquired from
       <a href="#Model-changedAttributes">changedAttributes</a>.
     </p>
 
@@ -1234,10 +1237,8 @@ book.save({author: "Teddy"});
       <b>save</b> accepts <tt>success</tt> and <tt>error</tt> callbacks in the
       options hash, which are passed <tt>(model, response, options)</tt> and
       <tt>(model, xhr, options)</tt> as arguments, respectively.
-      The <tt>error</tt> callback will also be invoked if the model has a
-      <tt>validate</tt> method, and validation fails. If a server-side
-      validation fails, return a non-<tt>200</tt> HTTP response code, along with
-      an error response in text or JSON.
+      If a server-side validation fails, return a non-<tt>200</tt>
+      HTTP response code, along with an error response in text or JSON.
     </p>
 
 <pre>
@@ -1283,7 +1284,9 @@ book.destroy({success: function(model, response) {
       error object that describes the error programmatically. If <b>validate</b>
       returns an error, <tt>set</tt> and <tt>save</tt> will not continue, and the
       model attributes will not be modified.
-      Failed validations trigger an <tt>"error"</tt> event.
+      Failed validations trigger an <tt>"invalid"</tt> event, and set the
+      <tt>validationError</tt> property on the model with the value returned by
+      this method.
     </p>
 
 <pre class="runnable">
@@ -1299,29 +1302,26 @@ var one = new Chapter({
   title : "Chapter One: The Beginning"
 });
 
-one.on("error", function(model, error) {
+one.on("invalid", function(model, error) {
   alert(model.get("title") + " " + error);
 });
 
-one.set({
+one.save({
   start: 15,
   end:   10
 });
 </pre>
 
     <p>
-      <tt>"error"</tt> events are useful for providing coarse-grained error
-      messages at the model or collection level. An <tt>error</tt> callback can
-      can also be specified in the options, to be called alongside the error event:
+      <tt>"invalid"</tt> events are useful for providing coarse-grained error
+      messages at the model or collection level.
     </p>
 
-<pre>
-account.set({access: "unlimited"}, {
-  error: function(model, error) {
-    alert(error);
-  }
-});
-</pre>
+    <p id="Model-validationError">
+      <b class="header">validationError</b><code>model.validationError</code>
+      <br />
+      The value returned by <a href="#Model-validate">validate</a> during the last failed validation.
+    </p>
 
     <p id="Model-url">
       <b class="header">url</b><code>model.url()</code>
@@ -1361,7 +1361,7 @@ alert(solaris.url());
 </pre>
 
     <p id="Model-parse">
-      <b class="header">parse</b><code>model.parse(response)</code>
+      <b class="header">parse</b><code>model.parse(response, options)</code>
       <br />
       <b>parse</b> is called whenever a model's data is returned by the
       server, in <a href="#Model-fetch">fetch</a>, and <a href="#Model-save">save</a>.
@@ -1495,6 +1495,25 @@ var Library = Backbone.Collection.extend({
 });
 </pre>
 
+    <p>
+      A collection can also contain polymorphic models by overriding this property
+      with a function that returns a model.
+    </p>
+
+<pre>
+var Library = Backbone.Collection.extend({
+
+  model: function(attrs, options) {
+    if (condition) {
+      return new PublicDocument(attrs, options);
+    } else {
+      return new PrivateDocument(attrs, options);
+    }
+  }
+
+});
+</pre>
+
     <p id="Collection-constructor">
       <b class="header">constructor / initialize</b><code>new Collection([models], [options])</code>
       <br />
@@ -1503,11 +1522,16 @@ var Library = Backbone.Collection.extend({
       may be included as an option. Passing <tt>false</tt> as the
       comparator option will prevent sorting. If you define an
       <b>initialize</b> function, it will be invoked when the collection is
-      created.
+      created. There are several options that, if provided, are attached to the
+      collection directly: <tt>url</tt>, <tt>model</tt> and <tt>comparator</tt>.
     </p>
 
 <pre>
 var tabs = new TabSet([tab1, tab2, tab3]);
+var spaces = new Backbone.Collection([], {
+  model: Space,
+  url: '/spaces'
+});
 </pre>
 
     <p id="Collection-models">
@@ -1562,9 +1586,9 @@ alert(JSON.stringify(collection));
       <li><a href="http://underscorejs.org/#find">find (detect)</a></li>
       <li><a href="http://underscorejs.org/#filter">filter (select)</a></li>
       <li><a href="http://underscorejs.org/#reject">reject</a></li>
-      <li><a href="http://underscorejs.org/#all">every (all)</a></li>
-      <li><a href="http://underscorejs.org/#any">some (any)</a></li>
-      <li><a href="http://underscorejs.org/#include">include (contains)</a></li>
+      <li><a href="http://underscorejs.org/#every">every (all)</a></li>
+      <li><a href="http://underscorejs.org/#some">some (any)</a></li>
+      <li><a href="http://underscorejs.org/#contains">contains (include)</a></li>
       <li><a href="http://underscorejs.org/#invoke">invoke</a></li>
       <li><a href="http://underscorejs.org/#max">max</a></li>
       <li><a href="http://underscorejs.org/#min">min</a></li>
@@ -1586,19 +1610,19 @@ alert(JSON.stringify(collection));
     </ul>
 
 <pre>
-Books.each(function(book) {
+books.each(function(book) {
   book.publish();
 });
 
-var titles = Books.map(function(book) {
+var titles = books.map(function(book) {
   return book.get("title");
 });
 
-var publishedBooks = Books.filter(function(book) {
+var publishedBooks = books.filter(function(book) {
   return book.get("published") === true;
 });
 
-var alphabetical = Books.sortBy(function(book) {
+var alphabetical = books.sortBy(function(book) {
   return book.author.get("name").toLowerCase();
 });
 </pre>
@@ -1639,10 +1663,9 @@ ships.add([
       <b class="header">remove</b><code>collection.remove(models, [options])</code>
       <br />
       Remove a model (or an array of models) from the collection. Fires a
-      <tt>"remove"</tt> event, which you can use <tt>silent</tt>
-      to suppress. If you're a callback listening to the <tt>"remove"</tt> event,
-      the index at which the model is being removed from the collection is available
-      as <tt>options.index</tt>.
+      <tt>"remove"</tt> event, which you can use <tt>silent</tt> to suppress.
+      The model's index before removal is available to listeners as
+      <tt>options.index</tt>.
     </p>
 
     <p id="Collection-reset">
@@ -1664,8 +1687,8 @@ ships.add([
 
 <pre>
 &lt;script&gt;
-  var Accounts = new Backbone.Collection;
-  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  var accounts = new Backbone.Collection;
+  accounts.reset(&lt;%= @accounts.to_json %&gt;);
 &lt;/script&gt;
 </pre>
 
@@ -1742,6 +1765,14 @@ var book = Library.get(110);
       <br />
       Remove and return the first model from a collection. Takes the same options as
       <a href="#Collection-remove">remove</a>.
+    </p>
+
+    <p id="Collection-slice">
+      <b class="header">slice</b><code>collection.slice(begin, end)</code>
+      <br />
+      Return a shallow copy of this collection's models, using the same options as
+      native
+      <a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/slice">Array#slice</a>.
     </p>
 
     <p id="Collection-length">
@@ -1875,7 +1906,7 @@ var Notes = Backbone.Collection.extend({
 </pre>
 
     <p id="Collection-parse">
-      <b class="header">parse</b><code>collection.parse(response)</code>
+      <b class="header">parse</b><code>collection.parse(response, options)</code>
       <br />
       <b>parse</b> is called by Backbone whenever a collection's models are
       returned by the server, in <a href="#Collection-fetch">fetch</a>.
@@ -1925,10 +1956,10 @@ Backbone.sync = function(method, model) {
   alert(method + ": " + model.url);
 };
 
-var Accounts = new Backbone.Collection;
-Accounts.url = '/accounts';
+var accounts = new Backbone.Collection;
+accounts.url = '/accounts';
 
-Accounts.fetch();
+accounts.fetch();
 </pre>
 
     <p>
@@ -1981,9 +2012,9 @@ var Library = Backbone.Collection.extend({
   model: Book
 });
 
-var NYPL = new Library;
+var nypl = new Library;
 
-var othello = NYPL.create({
+var othello = nypl.create({
   title: "Othello",
   author: "William Shakespeare"
 });
@@ -2764,6 +2795,26 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
 
+    <h2 id="examples-quartz">Quartz</h2>
+
+    <p>
+      <a href="http://qz.com">Quartz</a> sees itself as a digitally native news
+      outlet for the new
+      global economy. Because Quartz believes in the future of open,
+      cross-platform web applications, they selected Backbone and Underscore
+      to fetch, sort, store, and display content from a custom WordPress
+      API. Although <a href="http://qz.com">qz.com</a> uses responsive design
+      for phone, tablet, and
+      desktop browsers, it also takes advantage of Backbone events and views
+      to render device-specific templates in some cases.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://qz.com">
+        <img width="510" height="360" data-original="docs/images/quartz.jpg" alt="Quartz" class="example_retina" />
+      </a>
+    </div>
+
     <h2 id="examples-flow">Flow</h2>
 
     <p>
@@ -3145,17 +3196,17 @@ var model = localBackbone.Model.extend(...);
     <h2 id="examples-artsy">Art.sy</h2>
 
     <p>
-      <a href="http://art.sy">Art.sy</a> is a place to discover art you'll
+      <a href="http://artsy.net">Art.sy</a> is a place to discover art you'll
       love. Art.sy is built on Rails, using
       <a href="https://github.com/intridea/grape">Grape</a> to serve a robust
-      <a href="http://art.sy/api">JSON API</a>. The main site is a single page
+      <a href="http://artsy.net/api">JSON API</a>. The main site is a single page
       app written in Coffeescript and uses Backbone to provide structure around
       this API. An admin panel and partner CMS have also been extracted into
       their own API-consuming Backbone projects.
     </p>
 
     <div style="text-align: center;">
-      <a href="http://art.sy">
+      <a href="http://artsy.net">
         <img width="550" height="550" data-original="docs/images/artsy.png" alt="Art.sy" class="example_image" />
       </a>
     </div>
@@ -3405,25 +3456,6 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
 
-    <h2 id="examples-decide">Decide</h2>
-
-    <p>
-      <a href="http://decide.com">Decide.com</a> helps people decide when to buy
-      consumer electronics. It relies heavily on Backbone.js to render and
-      update its Search Results Page. An "infinite scroll" feature takes
-      advantage of a SearchResults model containing a collection of
-      Product models to fetch more results and render them on the fly
-      with <a href="http://mustache.github.com">Mustache</a>. A SearchController keeps everything in sync and
-      maintains page state in the URL. Backbone also powers the user
-      accounts and settings management.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="http://decide.com">
-        <img width="550" height="449" data-original="docs/images/decide.png" alt="Decide" class="example_image" />
-      </a>
-    </div>
-
     <h2 id="examples-trello">Trello</h2>
 
     <p>
@@ -3616,11 +3648,11 @@ var Mailbox = Backbone.Model.extend({
 
 });
 
-var Inbox = new Mailbox;
+var inbox = new Mailbox;
 
 // And then, when the Inbox is opened:
 
-Inbox.messages.fetch();
+inbox.messages.fetch();
 </pre>
 
     <p>
@@ -3674,10 +3706,10 @@ Inbox.messages.fetch();
 
 <pre>
 &lt;script&gt;
-  var Accounts = new Backbone.Collection;
-  Accounts.reset(&lt;%= @accounts.to_json %&gt;);
-  var Projects = new Backbone.Collection;
-  Projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
+  var accounts = new Backbone.Collection;
+  accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  var projects = new Backbone.Collection;
+  projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
 &lt;/script&gt;
 </pre>
 
@@ -3811,6 +3843,19 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header">Edge</b> &mdash; <small><i>Unreleased</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.10...master">Diff</a><br/>
+
+    <ul style="margin-top: 5px;">
+      <li>
+        The <tt>silent</tt> option has been removed from <tt>Model#set</tt>.
+        Custom options should be used to accomplish this effect instead.
+      </li>
+      <li>
+        Constructing a new collection with a <tt>url</tt> option will attach it
+        to the new instance.
+      </li>
+    </ul>
+
     <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...0.9.10">Diff</a><br />
     <ul style="margin-top: 5px;">
       <li>
@@ -3842,6 +3887,9 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Bug fix where an empty response from the server on save would not call
         the success function.
+      </li>
+      <li>
+        <tt>parse</tt> now receives <tt>options</tt> as its second argument.
       </li>
     </ul>
 

@@ -1,132 +1,207 @@
-/*--------------------- Layout and Typography ----------------------------*/
+/*--------------------- Typography ----------------------------*/
+
+@font-face {
+    font-family: 'aller-light';
+    src: url('public/fonts/aller-light.eot');
+    src: url('public/fonts/aller-light.eot?#iefix') format('embedded-opentype'),
+         url('public/fonts/aller-light.woff') format('woff'),
+         url('public/fonts/aller-light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'aller-bold';
+    src: url('public/fonts/aller-bold.eot');
+    src: url('public/fonts/aller-bold.eot?#iefix') format('embedded-opentype'),
+         url('public/fonts/aller-bold.woff') format('woff'),
+         url('public/fonts/aller-bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'novecento-bold';
+    src: url('public/fonts/novecento-bold.eot');
+    src: url('public/fonts/novecento-bold.eot?#iefix') format('embedded-opentype'),
+         url('public/fonts/novecento-bold.woff') format('woff'),
+         url('public/fonts/novecento-bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'fleurons';
+    src: url('public/fonts/fleurons.eot');
+    src: url('public/fonts/fleurons.eot?#iefix') format('embedded-opentype'),
+         url('public/fonts/fleurons.woff') format('woff'),
+         url('public/fonts/fleurons.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*--------------------- Base Styles ----------------------------*/
+
 body {
-  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
-  font-size: 15px;
-  line-height: 22px;
-  color: #252519;
-  margin: 0; padding: 0;
+  font-family: "aller-light";
+  background: url(public/images/grey_@2x.png);
+  background-size: 322px;
+  margin: 0;
 }
-a {
-  color: #261a3b;
+
+hr {
+  height: 1px;
+  background: #ddd;
+  border: 0;
 }
-  a:visited {
-    color: #261a3b;
-  }
-p {
-  margin: 0 0 15px 0;
-}
+
 h1, h2, h3, h4, h5, h6 {
-  margin: 0px 0 15px 0;
+  color: #112233;
+  font-weight: normal;
+  font-family: "novecento-bold";
+  text-transform: uppercase;
+  line-height: 1em;
+  margin-top: 50px;
 }
   h1 {
-    margin-top: 40px;
+    margin: 0;
+    text-align: center;
   }
-hr {
-    border: 0 none;
-    border-top: 1px solid #e5e5ee;
-    height: 1px;
-    margin: 20px 0;
-}
-#container {
-  position: relative;
-}
-#background {
-  position: fixed;
-  top: 0; left: 525px; right: 0; bottom: 0;
-  background: #f5f5ff;
-  border-left: 1px solid #e5e5ee;
-  z-index: -1;
-}
-#jump_to, #jump_page {
-  background: white;
-  -webkit-box-shadow: 0 0 25px #777; -moz-box-shadow: 0 0 25px #777;
-  -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px;
-  font: 10px Arial;
-  text-transform: uppercase;
-  cursor: pointer;
-  text-align: right;
-}
-#jump_to, #jump_wrapper {
-  position: fixed;
-  right: 0; top: 0;
-  padding: 5px 10px;
-}
-  #jump_wrapper {
-    padding: 0;
-    display: none;
+  h2 {
+    font-size: 1.3em;
   }
-    #jump_to:hover #jump_wrapper {
-      display: block;
-    }
-    #jump_page {
-      padding: 5px 0 3px;
-      margin: 0 0 25px 25px;
-    }
-      #jump_page .source {
-        display: block;
-        padding: 5px 10px;
-        text-decoration: none;
-        border-top: 1px solid #eee;
-      }
-        #jump_page .source:hover {
-          background: #f5f5ff;
-        }
-        #jump_page .source:first-child {
-        }
-table td {
-  border: 0;
-  outline: 0;
+  h1:after {
+    content: "8";
+    display: block;
+    font-family: "fleurons";
+    color: #999;
+    font-size: 80px;
+    padding: 10px 0 25px;
+  }
+
+a {
+  text-decoration: none;
+  color: #000;
 }
-  td.docs, th.docs {
-    max-width: 450px;
-    min-width: 450px;
-    min-height: 5px;
-    padding: 10px 25px 1px 50px;
-    overflow-x: hidden;
-    vertical-align: top;
+  a:hover {
+    text-decoration: underline;
+  }
+
+b, strong {
+  font-weight: normal;
+  font-family: "aller-bold";
+}
+
+blockquote {
+  border-left: 5px solid #ccc;
+  margin-left: 0;
+  padding: 1px 0 1px 1em;
+}
+  .page blockquote p {
+    font-family: Menlo, Consolas, Monaco, monospace;
+    font-size: 14px; line-height: 19px;
+    color: #999;
+    margin: 10px 0;
+  }
+
+pre, tt, code {
+  font-family: Menlo, Consolas, Monaco, monospace;
+  font-size: 12px;
+  display: inline-block;
+  border: 1px solid #EAEAEA;
+  background: #f8f8f8;
+  color: #555;
+  padding: 0 5px;
+  line-height: 20px;
+}
+  .page pre {
+    margin: 0;
+    width: 608px;
+    padding: 10px 15px;
+    background: #fcfcfc;
+    -moz-box-shadow:    inset 0 0 10px rgba(0,0,0,0.1);
+    -webkit-box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    box-shadow:         inset 0 0 10px rgba(0,0,0,0.1);
+    overflow-x: scroll;
+  }
+    .page pre code {
+      border: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+.fleur {
+  font-family: "fleurons";
+  font-size: 100px;
+  text-align: center;
+  margin: 40px 0;
+  color: #ccc;
+}
+
+/*--------------------- Layout ----------------------------*/
+
+.container {
+  width: 760px;
+  margin: 0 auto;
+  background: #fff;
+  background: rgba(255,255,255, 0.4);
+  overflow: hidden;
+}
+  .page {
+    width: 640px;
+    padding: 30px;
+    margin: 30px;
+    background: #fff;
+    font-size: 17px;
+    line-height: 26px;
+  }
+    .page p {
+      color: #30404f;
+      margin: 26px 0;
+    }
+
+ul.sections {
+  list-style: none;
+  padding:0 0 5px 0;;
+  margin:0;
+}
+
+.page li p {
+  margin: 12px 0;
+}
+
+.toc {
+  max-height: 0;
+  overflow: hidden;
+  text-align: center;
+  font-size: 13px;
+  line-height: 20px;
+  -moz-transition: max-height 1s;
+  -webkit-transition: max-height 1s;
+  transition: max-height 1s;
+}
+  .header:hover .toc {
+    max-height: 500px;
+  }
+  .toc h3 {
+    margin-top: 20px;
+  }
+  .toc ol {
+    margin: 0 0 20px 0;
+    display: inline-block;
     text-align: left;
+    list-style-type: upper-roman;
   }
-    .docs pre {
-      margin: 15px 0 15px;
-      padding-left: 15px;
+    .toc li {
+      font-family: 'novecento-bold';
     }
-    .docs p tt, .docs p code {
-      background: #f8f8ff;
-      border: 1px solid #dedede;
-      font-size: 12px;
-      padding: 0 0.2em;
-    }
-    .pilwrap {
-      position: relative;
-    }
-      .pilcrow {
-        font: 12px Arial;
-        text-decoration: none;
-        color: #454545;
-        position: absolute;
-        top: 3px; left: -20px;
-        padding: 1px 2px;
-        opacity: 0;
-        -webkit-transition: opacity 0.2s linear;
+      .toc li a {
+        font-family: 'aller-light';
       }
-        td.docs:hover .pilcrow {
-          opacity: 1;
-        }
-  td.code, th.code {
-    padding: 14px 15px 16px 25px;
-    width: 100%;
-    vertical-align: top;
-    background: #f5f5ff;
-    border-left: 1px solid #e5e5ee;
-  }
-    pre, tt, code {
-      font-size: 12px; line-height: 18px;
-      font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
-      margin: 0; padding: 0;
-    }
 
 
 /*---------------------- Syntax Highlighting -----------------------------*/
+
 td.linenos { background-color: #f0f0f0; padding-right: 10px; }
 span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
 body .hll { background-color: #ffffcc }
