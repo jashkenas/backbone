@@ -43,7 +43,7 @@ $(function(){
 
     // Filter down the list of all todo items that are finished.
     done: function() {
-      return this.filter(function(todo){ return todo.get('done'); });
+      return this.where({done: true});
     },
 
     // Filter down the list to only todo items that are still not finished.
@@ -59,9 +59,7 @@ $(function(){
     },
 
     // Todos are sorted by their original insertion order.
-    comparator: function(todo) {
-      return todo.get('order');
-    }
+    comparator: 'order'
 
   });
 
