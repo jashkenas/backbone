@@ -252,6 +252,8 @@
     this.set(attrs, options);
     this.changed = {};
     this.initialize.apply(this, arguments);
+
+    this.on("sync", function(model, resp, options) { model._lastSyncdAttributes = _.clone(model.attributes); } );
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -412,6 +414,19 @@
       return _.clone(this._previousAttributes);
     },
 
+    // Get the sync'd value of an attribute, recorded at the time the last
+    // '"sync"' event was fired.
+    lastSyncd: function(attr) {
+      if (attr == null || !this._lastSyncdAttributes) return null;
+      return this._lastSyncdAttributes[attr];
+    },
+
+    // Get all of the attributes of the model at the time of the previous
+    // '"sync"' event.
+    lastSyncdAttributes: function() {
+      return _.clone(this._lastSyncdAttributes);
+    },
+
     // ---------------------------------------------------------------------
 
     // Fetch the model from the server. If the server's representation of the
@@ -457,6 +472,7 @@
       if (attrs && options.wait) {
         this.attributes = _.extend({}, attributes, attrs);
       }
+
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
