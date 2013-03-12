@@ -85,6 +85,26 @@ $(document).ready(function() {
     equal(view.counter, 3);
   });
 
+  test("delegateEvents allows array of callbacks", 4, function() {
+    var counter1 = 0, counter2 = 0;
+
+    var view = new Backbone.View({el: '<p><a id="test"></a></p>'});
+    view.increment1 = function(){ counter1++; };
+    view.increment2 = function(){ counter2++; };
+
+    var events = {'click #test': ['increment1', 'increment2']};
+
+    view.delegateEvents(events);
+    view.$('#test').trigger('click');
+    equal(counter1, 1);
+    equal(counter2, 1);
+
+
+    view.$('#test').trigger('click');
+    equal(counter1, 2);
+    equal(counter2, 2);
+  });
+
   test("undelegateEvents", 6, function() {
     var counter1 = 0, counter2 = 0;
 
