@@ -775,6 +775,16 @@
       return this;
     },
 
+    // Figure out the smallest index at which a model should be inserted so as
+    // to maintain order.
+    sortedIndex: function(model, value, context) {
+      value || (value = this.comparator);
+      var iterator = _.isFunction(value) ? value : function(model) {
+        return model.get(value);
+      };
+      return _.sortedIndex(this.models, model, iterator, context);
+    },
+
     // Pluck an attribute from each model in the collection.
     pluck: function(attr) {
       return _.invoke(this.models, 'get', attr);
@@ -893,14 +903,6 @@
       }
       this.trigger.apply(this, arguments);
     },
-
-    sortedIndex: function (model, value, context) {
-      value || (value = this.comparator);
-      var iterator = _.isFunction(value) ? value : function(model) {
-        return model.get(value);
-      };
-      return _.sortedIndex(this.models, model, iterator, context);
-    }
 
   });
 
