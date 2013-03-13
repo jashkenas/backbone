@@ -4,56 +4,70 @@
 <head>
   <title>backbone-localstorage.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
 </head>
 <body>
-  <div class="container">
-    <div class="page">
-
-      <div class="header">
-        
-          <h1>backbone-localstorage.js</h1>
-        
-
-        
-          <div class="toc">
-            <h3>Table of Contents</h3>
-            <ol>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
               
-                
-                <li>
-                  <a class="source" href="backbone-localstorage.html">
-                    backbone-localstorage.js
-                  </a>
-                </li>
+              <a class="source" href="backbone-localstorage.html">
+                backbone-localstorage.js
+              </a>
+            
               
-                
-                <li>
-                  <a class="source" href="todos.html">
-                    todos.js
-                  </a>
-                </li>
-              
-            </ol>
+              <a class="source" href="todos.html">
+                todos.js
+              </a>
+            
           </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
         
-      </div>
-
-      
+          <li id="title">
+              <div class="annotation">
+                  <h1>backbone-localstorage.js</h1>
+              </div>
+          </li>
         
         
         
-          <div class="highlight"><pre><span class="cm">/**</span>
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class="highlight"><pre><span class="cm">/**</span>
 <span class="cm"> * Backbone localStorage Adapter</span>
 <span class="cm"> * https://github.com/jeromegn/Backbone.localStorage</span>
 <span class="cm"> */</span>
 
-<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              
 <p>A simple module to replace <code>Backbone.sync</code> with <em>localStorage</em>-based
 persistence. Models are given GUIDS, and saved into a JSON object. Simple
 as that.
@@ -64,74 +78,115 @@ to make things work even if they are removed from the global namespace
 
 </p>
 
+            </div>
+            
+            <div class="content"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">;</span></pre></div></div>
+            
+        </li>
         
-          <div class="highlight"><pre><span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">;</span></pre></div>
         
-      
-        
-        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              
 <p>Generate four random hex digits.
 
 </p>
 
-        
-          <div class="highlight"><pre><span class="kd">function</span> <span class="nx">S4</span><span class="p">()</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">S4</span><span class="p">()</span> <span class="p">{</span>
    <span class="k">return</span> <span class="p">(((</span><span class="mi">1</span><span class="o">+</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">())</span><span class="o">*</span><span class="mh">0x10000</span><span class="p">)</span><span class="o">|</span><span class="mi">0</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">).</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-<span class="p">};</span></pre></div>
+<span class="p">};</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              
 <p>Generate a pseudo-GUID by concatenating random hexadecimal.
 
 </p>
 
-        
-          <div class="highlight"><pre><span class="kd">function</span> <span class="nx">guid</span><span class="p">()</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">guid</span><span class="p">()</span> <span class="p">{</span>
    <span class="k">return</span> <span class="p">(</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="nx">S4</span><span class="p">());</span>
-<span class="p">};</span></pre></div>
+<span class="p">};</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              
 <p>Our Store is represented by a single JS object in <em>localStorage</em>. Create it
 with a meaningful name, like the name you&#39;d give a table.
 window.Store is deprectated, use Backbone.LocalStorage instead
 
 </p>
 
-        
-          <div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">Store</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">Store</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
   <span class="kd">var</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">getItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">records</span> <span class="o">=</span> <span class="p">(</span><span class="nx">store</span> <span class="o">&amp;&amp;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span> <span class="o">||</span> <span class="p">[];</span>
 <span class="p">};</span>
 
-<span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span></pre></div>
+<span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              
 <p>Save the current state of the <strong>Store</strong> to <em>localStorage</em>.
 
 </p>
 
-        
-          <div class="highlight"><pre>  <span class="nx">save</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre>  <span class="nx">save</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">setItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">));</span>
-  <span class="p">},</span></pre></div>
+  <span class="p">},</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              
 <p>Add a model, giving it a (hopefully)-unique GUID, if it doesn&#39;t already
 have an id of it&#39;s own.
 
 </p>
 
-        
-          <div class="highlight"><pre>  <span class="nx">create</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre>  <span class="nx">create</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">model</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">guid</span><span class="p">();</span>
         <span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">idAttribute</span><span class="p">,</span> <span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
@@ -140,58 +195,90 @@ have an id of it&#39;s own.
     <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
     <span class="k">return</span> <span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
-  <span class="p">},</span></pre></div>
+  <span class="p">},</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              
 <p>Update a model by replacing its copy in <code>this.data</code>.
 
 </p>
 
-        
-          <div class="highlight"><pre>  <span class="nx">update</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre>  <span class="nx">update</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">setItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">model</span><span class="p">));</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">,</span> <span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">()))</span> <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span> <span class="k">this</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
     <span class="k">return</span> <span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
-  <span class="p">},</span></pre></div>
+  <span class="p">},</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              
 <p>Retrieve a model from <code>this.data</code> by id.
 
 </p>
 
-        
-          <div class="highlight"><pre>  <span class="nx">find</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre>  <span class="nx">find</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">getItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">));</span>
-  <span class="p">},</span></pre></div>
+  <span class="p">},</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              
 <p>Return the array of all models currently in storage.
 
 </p>
 
-        
-          <div class="highlight"><pre>  <span class="nx">findAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre>  <span class="nx">findAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">_</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">).</span><span class="nx">chain</span><span class="p">()</span>
         <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">){</span><span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">getItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">id</span><span class="p">));},</span> <span class="k">this</span><span class="p">)</span>
         <span class="p">.</span><span class="nx">compact</span><span class="p">()</span>
         <span class="p">.</span><span class="nx">value</span><span class="p">();</span>
-  <span class="p">},</span></pre></div>
+  <span class="p">},</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              
 <p>Delete a model from <code>this.data</code>, returning it.
 
 </p>
 
-        
-          <div class="highlight"><pre>  <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre>  <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">removeItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">records</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">record_id</span><span class="p">){</span><span class="k">return</span> <span class="nx">record_id</span> <span class="o">==</span> <span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">();});</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
@@ -202,30 +289,46 @@ have an id of it&#39;s own.
       <span class="k">return</span> <span class="nx">localStorage</span><span class="p">;</span>
   <span class="p">}</span>
 
-<span class="p">});</span></pre></div>
+<span class="p">});</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              
 <p>localSync delegate to the model or collection&#39;s
 <em>localStorage</em> property, which should be an instance of <code>Store</code>.
 window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStorage.sync instead
 
 </p>
 
+            </div>
+            
+            <div class="content"><div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">Store</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">localSync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">localStorage</span> <span class="o">||</span> <span class="nx">model</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">;</span></pre></div></div>
+            
+        </li>
         
-          <div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">Store</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">localSync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">localStorage</span> <span class="o">||</span> <span class="nx">model</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">;</span></pre></div>
         
-      
-        
-        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              
 <p>Backwards compatibility with Backbone &lt;= 0.3.3
 
 </p>
 
-        
-          <div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span> <span class="o">==</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span> <span class="o">==</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
       <span class="nx">success</span><span class="o">:</span> <span class="nx">options</span><span class="p">,</span>
       <span class="nx">error</span><span class="o">:</span> <span class="nx">error</span>
@@ -257,27 +360,35 @@ window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStora
   <span class="p">}</span>
 
   <span class="k">return</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">ajaxSync</span><span class="p">;</span>
-<span class="p">};</span></pre></div>
+<span class="p">};</span></pre></div></div>
+            
+        </li>
         
-      
         
-        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              
 <p>Override &#39;Backbone.sync&#39; to default to localSync,
 the original &#39;Backbone.sync&#39; is still available in &#39;Backbone.ajaxSync&#39;
 </p>
 
-        
-          <div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+            </div>
+            
+            <div class="content"><div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">getSyncMethod</span><span class="p">(</span><span class="nx">model</span><span class="p">).</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">[</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">error</span><span class="p">]);</span>
 <span class="p">};</span>
 
 <span class="p">})();</span>
 
-</pre></div>
+</pre></div></div>
+            
+        </li>
         
-      
-      <div class="fleur">h</div>
-    </div>
+    </ul>
   </div>
 </body>
 </html>
