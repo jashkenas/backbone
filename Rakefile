@@ -29,12 +29,6 @@ task :lint do
   system "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
 end
 
-desc "test the CoffeeScript integration"
-task :test do
-  check 'coffee', 'CoffeeScript', 'http://coffeescript.org/'
-  system "coffee test/*.coffee"
-end
-
 # Check for the existence of an executable.
 def check(exec, name, url)
   return unless `which #{exec}`.empty?
