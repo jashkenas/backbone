@@ -126,7 +126,8 @@ $(document).ready(function() {
 
     var foo = new Backbone.Model({p: 1});
     var bar = new Backbone.Model({p: 2});
-    bar.set(foo.clone().attributes, {unset: true});
+    //bar.set(foo.clone().attributes, {unset: true}); //TODO How should this be handled now? What functionality of clone() is this section supposed to test?
+    bar.clear();
     equal(foo.get('p'), 1);
     equal(bar.get('p'), undefined);
   });
@@ -156,7 +157,7 @@ $(document).ready(function() {
     equal(doc.escape('audience'), 'Tim &gt; Joan');
     doc.set({audience: 10101});
     equal(doc.escape('audience'), '10101');
-    doc.unset('audience');
+    doc.set('audience', undefined);
     equal(doc.escape('audience'), '');
   });
 
@@ -183,14 +184,14 @@ $(document).ready(function() {
     strictEqual(model.has('empty'), true);
     strictEqual(model.has('name'), true);
 
-    model.unset('name');
+    model.set('name', undefined);
 
     strictEqual(model.has('name'), false);
     strictEqual(model.has('null'), false);
     strictEqual(model.has('undefined'), false);
   });
 
-  test("set and unset", 8, function() {
+  test("add and remove attributes with set", 8, function() {
     var a = new Backbone.Model({id: 'id', foo: 1, bar: 2, baz: 3});
     var changeCount = 0;
     a.on("change:foo", function() { changeCount += 1; });
@@ -202,15 +203,15 @@ $(document).ready(function() {
     ok(changeCount == 1, "Change count should NOT have incremented.");
 
     a.validate = function(attrs) {
-      equal(attrs.foo, void 0, "validate:true passed while unsetting");
+      equal(attrs.foo, void 0, "validate:true passed while removing");
     };
-    a.unset('foo', {validate: true});
-    equal(a.get('foo'), void 0, "Foo should have changed");
+    a.set('foo', undefined, {validate: true});
+    equal(a.get('foo'), void 0, "Foo should have changed.");
     delete a.validate;
-    ok(changeCount == 2, "Change count should have incremented for unset.");
+    ok(changeCount == 2, "Change count should have incremented for removing `foo`.");
 
-    a.unset('id');
-    equal(a.id, undefined, "Unsetting the id should remove the id property.");
+    a.set('id', undefined);
+    equal(a.id, undefined, "Setting the id to `undefined` should remove the id property.");
   });
 
   test("#2030 - set with failed validate, followed by another set triggers change", function () {
@@ -250,23 +251,23 @@ $(document).ready(function() {
     model.set({result: void 0});
   });
 
-  test("multiple unsets", 1, function() {
+  test("remove a nonexistent attribute", 1, function() {
     var i = 0;
     var counter = function(){ i++; };
     var model = new Backbone.Model({a: 1});
     model.on("change:a", counter);
     model.set({a: 2});
-    model.unset('a');
-    model.unset('a');
-    equal(i, 2, 'Unset does not fire an event for missing attributes.');
+    model.set('a', undefined);
+    model.set('a', undefined);
+    equal(i, 2, 'Set does not fire an event when removing nonexistent attributes.');
   });
 
-  test("unset and changedAttributes", 1, function() {
+  test("removing an attribute should be reflected in changedAttributes", 1, function() {
     var model = new Backbone.Model({a: 1});
     model.on('change', function() {
-      ok('a' in model.changedAttributes(), 'changedAttributes should contain unset properties');
+      ok('a' in model.changedAttributes(), 'changedAttributes should contain removed properties');
     });
-    model.unset('a');
+    model.set('a', undefined);
   });
 
   test("using a non-default id attribute.", 5, function() {
@@ -275,7 +276,7 @@ $(document).ready(function() {
     equal(model.get('id'), 'eye-dee');
     equal(model.id, 25);
     equal(model.isNew(), false);
-    model.unset('_id');
+    model.set('_id', undefined);
     equal(model.id, undefined);
     equal(model.isNew(), true);
   });
@@ -507,7 +508,7 @@ $(document).ready(function() {
     equal(model.get('a'), 100);
   });
 
-  test("validate on unset and clear", 6, function() {
+  test("validate on set when removing an attribute and clear", 6, function() {
     var error;
     var model = new Backbone.Model({name: "One"});
     model.validate = function(attrs) {
@@ -519,7 +520,7 @@ $(document).ready(function() {
     model.set({name: "Two"});
     equal(model.get('name'), 'Two');
     equal(error, undefined);
-    model.unset('name', {validate: true});
+    model.set('name', undefined, {validate: true});
     equal(error, true);
     equal(model.get('name'), 'Two');
     model.clear({validate:true});
@@ -648,15 +649,15 @@ $(document).ready(function() {
     model.set({x: 1});
   });
 
-  test("unset does not fire a change for undefined attributes", 0, function() {
+  test("set does not fire a change for removing undefined attributes", 0, function() {
     var model = new Backbone.Model({x: undefined});
     model.on('change:x', function(){ ok(false); });
-    model.unset('x');
+    model.set('x', undefined);
   });
 
-  test("set: undefined values", 1, function() {
+  test("unable to set undefined values", 1, function() {
     var model = new Backbone.Model({x: undefined});
-    ok('x' in model.attributes);
+    ok(!('x' in model.attributes));
   });
 
   test("hasChanged works outside of change events, and true within", 4, function() {
@@ -853,14 +854,14 @@ $(document).ready(function() {
     var model = new Backbone.Model();
     var options = {};
     model.clear(options);
-    ok(!options.unset);
+    ok(!options.foo);
   });
 
-  test("#1122 - unset does not alter options.", 1, function() {
+  test("#1122 - removing an attribute with set does not alter options.", 1, function() {
     var model = new Backbone.Model();
     var options = {};
-    model.unset('x', options);
-    ok(!options.unset);
+    model.set('x', undefined, options);
+    ok(!options.foo);
   });
 
   test("#1355 - `options` is passed to success callbacks", 3, function() {

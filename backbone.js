@@ -300,9 +300,12 @@
     // ----------------------------------------------------------------------
 
     // Set a hash of model attributes on the object, firing `"change"` unless
-    // you choose to silence it.
+    // you choose to silence it. To remove a model attribute, pass a value of
+    // `undefined`. For example: to remove an attribute "foo", you would pass
+    // { "foo": undefined }. You can add and remove multiple attributes in
+    // the same hash.
     set: function(key, val, options) {
-      var attr, attrs, unset, changes, changing, prev, current;
+      var attr, attrs, changes, changing, prev, current;
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
@@ -319,7 +322,6 @@
       if (!this._validate(attrs, options)) return false;
 
       // Extract attributes and options.
-      unset           = options.unset;
       changes         = [];
       changing        = this._changing;
       this._changing  = true;
@@ -342,7 +344,7 @@
         } else {
           delete this.changed[attr];
         }
-        unset ? delete current[attr] : current[attr] = val;
+        _.isUndefined(val) ? delete current[attr] : current[attr] = val;
       }
 
       // Trigger all relevant attribute changes.
@@ -361,18 +363,12 @@
       return this;
     },
 
-    // Remove an attribute from the model, firing `"change"` unless you choose
-    // to silence it. `unset` is a noop if the attribute doesn't exist.
-    unset: function(attr, options) {
-      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
-    },
-
     // Clear all attributes on the model, firing `"change"` unless you choose
     // to silence it.
     clear: function(options) {
       var attrs = {};
       for (var key in this.attributes) attrs[key] = void 0;
-      return this.set(attrs, _.extend({}, options, {unset: true}));
+      return this.set(attrs, options);
     },
 
     // Determine if the model has changed since the last `"change"` event.
