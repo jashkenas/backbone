@@ -1297,8 +1297,9 @@
     //
     //     {
     //       'mousedown .title':  'edit',
-    //       'click .button':     'save'
-    //       'click .open':       function(e) { ... }
+    //       'click .button':     'save',
+    //       'click .open':       function(e) { ... },
+    //       'mouseover .map':    ['showTip', 'moveTip']
     //     }
     //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
@@ -1310,17 +1311,20 @@
       if (!(events || (events = _.result(this, 'events')))) return this;
       this.undelegateEvents();
       for (var key in events) {
-        var method = events[key];
-        if (!_.isFunction(method)) method = this[events[key]];
-        if (!method) throw new Error('Method "' + events[key] + '" does not exist');
-        var match = key.match(delegateEventSplitter);
-        var eventName = match[1], selector = match[2];
-        method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.on(eventName, method);
-        } else {
-          this.$el.on(eventName, selector, method);
+        var methods = _.isArray(events[key]) ? events[key] : [events[key]];
+        for (var i = methods.length - 1; i >= 0; i--) {
+          var method = methods[i];
+          if (!_.isFunction(method)) method = this[method];
+          if (!method) throw new Error('Method "' + method + '" does not exist');
+          var match = key.match(delegateEventSplitter);
+          var eventName = match[1], selector = match[2];
+          method = _.bind(method, this);
+          eventName += '.delegateEvents' + this.cid;
+          if (selector === '') {
+            this.$el.on(eventName, method);
+          } else {
+            this.$el.on(eventName, selector, method);
+          }
         }
       }
       return this;
