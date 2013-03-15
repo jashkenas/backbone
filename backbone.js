@@ -344,7 +344,7 @@
         } else {
           delete this.changed[attr];
         }
-        _.isUndefined(val) ? delete current[attr] : current[attr] = val;
+        (val === void 0) ? delete current[attr] : current[attr] = val;
       }
 
       // Trigger all relevant attribute changes.
