@@ -216,12 +216,24 @@
   // An inversion-of-control versions of `on` and `once`. Tell *this* object to listen to
   // an event in another object ... keeping track of what it's listening to.
   _.each(listenMethods, function(implementation, method) {
-    Events[method] = function(obj, name, callback) {
+    Events[method] = function(/*object, name, callbacks...*/) {
+      var listener = this;
+      var obj = arguments[0];
+      var name = arguments[1];
+      var callbacks = 3 <= arguments.length ? [].slice.call(arguments, 2) : [];
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
-      if (typeof name === 'object') callback = this;
-      obj[implementation](name, callback, this);
+      var callImplementationWith = function (callback) {
+        obj[implementation](name, callback, listener);
+      };
+      if (typeof name === 'object') {
+        callImplementationWith(this)
+      } else {
+        for (var i = 0, l = callbacks.length; i < l; i++) {
+          callImplementationWith(callbacks[i])
+        }
+      }
       return this;
     };
   });
