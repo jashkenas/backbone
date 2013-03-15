@@ -323,7 +323,6 @@
       <li>– <a href="#Model-set">set</a></li>
       <li>– <a href="#Model-escape">escape</a></li>
       <li>– <a href="#Model-has">has</a></li>
-      <li>– <a href="#Model-unset">unset</a></li>
       <li>– <a href="#Model-clear">clear</a></li>
       <li>– <a href="#Model-id">id</a></li>
       <li>– <a href="#Model-idAttribute">idAttribute</a></li>
@@ -979,6 +978,12 @@ new Book({
       triggered. Change events for specific attributes are also triggered, and
       you can bind to those as well, for example: <tt>change:title</tt>, and
       <tt>change:content</tt>. You may also pass individual keys and values.
+      Passing a value of <tt>undefined</tt> will remove an attribute from the
+      attributes on the model. You may pass a hash with both attributes to add
+      and remove. For example, to add an attribute <tt>"foo"</tt> with a value of
+      <tt>"bar"</tt> and to remove an existing attribute <tt>"baz"</tt>, you
+      would pass the <tt>attributes</tt> hash:
+      <tt>{ "foo": "bar", "baz": undefined }</tt>.
     </p>
 
 <pre>
@@ -1016,13 +1021,6 @@ if (note.has("title")) {
   ...
 }
 </pre>
-
-    <p id="Model-unset">
-      <b class="header">unset</b><code>model.unset(attribute, [options])</code>
-      <br />
-      Remove an attribute by deleting it from the attributes hash.  Fires
-      <tt>"change"</tt> and <tt>"change:attr"</tt> events.
-    </p>
 
     <p id="Model-clear">
       <b class="header">clear</b><code>model.clear([options])</code>
