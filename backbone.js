@@ -299,8 +299,7 @@
 
     // ----------------------------------------------------------------------
 
-    // Set a hash of model attributes on the object, firing `"change"` unless
-    // you choose to silence it.
+    // Set a hash of model attributes on the object, firing `"change"`.
     set: function(key, val, options) {
       var attr, attrs, unset, changes, changing, prev, current;
       if (key == null) return this;
@@ -361,14 +360,13 @@
       return this;
     },
 
-    // Remove an attribute from the model, firing `"change"` unless you choose
-    // to silence it. `unset` is a noop if the attribute doesn't exist.
+    // Remove an attribute from the model, firing `"change"`. `unset` is a noop
+    // if the attribute doesn't exist.
     unset: function(attr, options) {
       return this.set(attr, void 0, _.extend({}, options, {unset: true}));
     },
 
-    // Clear all attributes on the model, firing `"change"` unless you choose
-    // to silence it.
+    // Clear all attributes on the model, firing `"change"`.
     clear: function(options) {
       var attrs = {};
       for (var key in this.attributes) attrs[key] = void 0;
