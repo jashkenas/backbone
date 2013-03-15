@@ -230,9 +230,8 @@
       if (typeof name === 'object') {
         callImplementationWith(this)
       } else {
-        var index, length;
-        for (index = 0, length = callbacks.length; index < length; index++) {
-          callImplementationWith(callbacks[index])
+        for (var i = 0, l = callbacks.length; i < l; i++) {
+          callImplementationWith(callbacks[i])
         }
       }
       return this;
