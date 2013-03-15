@@ -62,8 +62,9 @@ $(document).ready(function() {
     strictEqual(collection.last().get('a'), 4);
   });
 
-  test("get", 5, function() {
+  test("get", 6, function() {
     equal(col.get(0), d);
+    equal(col.get(d.clone()), d);
     equal(col.get(2), b);
     equal(col.get({id: 1}), c);
     equal(col.get(c.clone()), c);
@@ -1046,6 +1047,22 @@ $(document).ready(function() {
     collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no model change
     collection.add(collection.models); // don't sort, nothing new
     collection.add(collection.models, {merge: true}); // don't sort
+  });
+
+  test("Attach options to collection.", 3, function() {
+      var url = '/somewhere';
+      var model = new Backbone.Model;
+      var comparator = function(){};
+
+      var collection = new Backbone.Collection([], {
+        url: url,
+        model: model,
+        comparator: comparator
+      });
+
+      strictEqual(collection.url, url);
+      ok(collection.model === model);
+      ok(collection.comparator === comparator);
   });
 
 });

@@ -151,6 +151,9 @@
     a img {
       border: 0;
     }
+    a.travis-badge {
+      display: block;
+    }
     h1, h2, h3, h4, h5, h6 {
       padding-top: 20px;
     }
@@ -443,6 +446,7 @@
       <li>– <a href="#examples-rdio">Rdio</a></li>
       <li>– <a href="#examples-linkedin">LinkedIn Mobile</a></li>
       <li>– <a href="#examples-hulu">Hulu</a></li>
+      <li>– <a href="#examples-quartz">Quartz</a></li>
       <li>– <a href="#examples-flow">Flow</a></li>
       <li>– <a href="#examples-gilt">Gilt Groupe</a></li>
       <li>– <a href="#examples-newsblur">NewsBlur</a></li>
@@ -477,7 +481,6 @@
       <li>– <a href="#examples-salon">Salon.io</a></li>
       <li>– <a href="#examples-tilemill">TileMill</a></li>
       <li>– <a href="#examples-blossom">Blossom</a></li>
-      <li>– <a href="#examples-decide">Decide</a></li>
       <li>– <a href="#examples-trello">Trello</a></li>
       <li>– <a href="#examples-tzigla">Tzigla</a></li>
     </ul>
@@ -560,8 +563,8 @@
         <td><a class="punch" href="https://raw.github.com/documentcloud/backbone/master/backbone.js">Edge Version (master)</a></td>
         <td>
           <i>Unreleased, use at your own risk</i>
-          <a href="https://travis-ci.org/documentcloud/backbone">
-            <img width="89" height="13" src="https://travis-ci.org/documentcloud/backbone.png" />
+          <a class="travis-badge" href="https://travis-ci.org/documentcloud/backbone">
+            <img src="https://travis-ci.org/documentcloud/backbone.png" />
           </a>
         </td>
       </tr>
@@ -648,7 +651,7 @@
         try <a href="#Collection-update">update</a> instead.
       </li>
       <li>
-        Backbone events now support <a href="#Events-once"</a>once</a>.
+        Backbone events now support <a href="#Events-once">once</a>.
       </li>
       <li>
         Model validation is now only enforced by default in
@@ -971,12 +974,11 @@ new Book({
     <p id="Model-set">
       <b class="header">set</b><code>model.set(attributes, [options])</code>
       <br />
-      Set a hash of attributes (one or many) on the model. If any of the attributes
-      change the model's state, a <tt>"change"</tt> event will be triggered, unless
-      <tt>{silent: true}</tt> is passed as an option. Change events for specific
-      attributes are also triggered, and you can bind to those as well, for example:
-      <tt>change:title</tt>, and <tt>change:content</tt>. You may also pass
-      individual keys and values.
+      Set a hash of attributes (one or many) on the model. If any of the
+      attributes change the model's state, a <tt>"change"</tt> event will be
+      triggered. Change events for specific attributes are also triggered, and
+      you can bind to those as well, for example: <tt>change:title</tt>, and
+      <tt>change:content</tt>. You may also pass individual keys and values.
     </p>
 
 <pre>
@@ -1018,15 +1020,15 @@ if (note.has("title")) {
     <p id="Model-unset">
       <b class="header">unset</b><code>model.unset(attribute, [options])</code>
       <br />
-      Remove an attribute by deleting it from the internal attributes hash.
-      Fires a <tt>"change"</tt> event unless <tt>silent</tt> is passed as an option.
+      Remove an attribute by deleting it from the attributes hash.  Fires
+      <tt>"change"</tt> and <tt>"change:attr"</tt> events.
     </p>
 
     <p id="Model-clear">
       <b class="header">clear</b><code>model.clear([options])</code>
       <br />
-      Removes all attributes from the model, including the <tt>id</tt> attribute. Fires a <tt>"change"</tt> event unless
-      <tt>silent</tt> is passed as an option.
+      Removes all attributes from the model, including the <tt>id</tt>
+      attribute. Fires <tt>"change"</tt> and <tt>"change:attr"</tt> events.
     </p>
 
     <p id="Model-id">
@@ -1493,6 +1495,25 @@ var Library = Backbone.Collection.extend({
 });
 </pre>
 
+    <p>
+      A collection can also contain polymorphic models by overriding this property
+      with a function that returns a model.
+    </p>
+
+<pre>
+var Library = Backbone.Collection.extend({
+
+  model: function(attrs, options) {
+    if (condition) {
+      return new PublicDocument(attrs, options);
+    } else {
+      return new PrivateDocument(attrs, options);
+    }
+  }
+
+});
+</pre>
+
     <p id="Collection-constructor">
       <b class="header">constructor / initialize</b><code>new Collection([models], [options])</code>
       <br />
@@ -1501,11 +1522,16 @@ var Library = Backbone.Collection.extend({
       may be included as an option. Passing <tt>false</tt> as the
       comparator option will prevent sorting. If you define an
       <b>initialize</b> function, it will be invoked when the collection is
-      created.
+      created. There are several options that, if provided, are attached to the
+      collection directly: <tt>url</tt>, <tt>model</tt> and <tt>comparator</tt>.
     </p>
 
 <pre>
 var tabs = new TabSet([tab1, tab2, tab3]);
+var spaces = new Backbone.Collection([], {
+  model: Space,
+  url: '/spaces'
+});
 </pre>
 
     <p id="Collection-models">
@@ -1560,9 +1586,9 @@ alert(JSON.stringify(collection));
       <li><a href="http://underscorejs.org/#find">find (detect)</a></li>
       <li><a href="http://underscorejs.org/#filter">filter (select)</a></li>
       <li><a href="http://underscorejs.org/#reject">reject</a></li>
-      <li><a href="http://underscorejs.org/#all">every (all)</a></li>
-      <li><a href="http://underscorejs.org/#any">some (any)</a></li>
-      <li><a href="http://underscorejs.org/#include">include (contains)</a></li>
+      <li><a href="http://underscorejs.org/#every">every (all)</a></li>
+      <li><a href="http://underscorejs.org/#some">some (any)</a></li>
+      <li><a href="http://underscorejs.org/#contains">contains (include)</a></li>
       <li><a href="http://underscorejs.org/#invoke">invoke</a></li>
       <li><a href="http://underscorejs.org/#max">max</a></li>
       <li><a href="http://underscorejs.org/#min">min</a></li>
@@ -1637,10 +1663,9 @@ ships.add([
       <b class="header">remove</b><code>collection.remove(models, [options])</code>
       <br />
       Remove a model (or an array of models) from the collection. Fires a
-      <tt>"remove"</tt> event, which you can use <tt>silent</tt>
-      to suppress. If you're a callback listening to the <tt>"remove"</tt> event,
-      the index at which the model is being removed from the collection is available
-      as <tt>options.index</tt>.
+      <tt>"remove"</tt> event, which you can use <tt>silent</tt> to suppress.
+      The model's index before removal is available to listeners as
+      <tt>options.index</tt>.
     </p>
 
     <p id="Collection-reset">
@@ -2162,10 +2187,9 @@ app.navigate("help/troubleshooting", {trigger: true, replace: true});
 
     <p>
       <b>History</b> serves as a global router (per frame) to handle <tt>hashchange</tt>
-      events or <tt>pushState</tt>, match the appropriate route, and trigger callbacks. You shouldn't
-      ever have to create one of these yourself &mdash; you should use the reference
-      to <tt>Backbone.history</tt> that will be created for you automatically if you make use
-      of <a href="#Router">Routers</a> with <a href="#Router-routes">routes</a>.
+      events or <tt>pushState</tt>, match the appropriate route, and trigger callbacks.
+      You shouldn't ever have to create one of these yourself since <tt>Backbone.history</tt>
+      already contains one.
     </p>
 
     <p>
@@ -2767,6 +2791,26 @@ var model = localBackbone.Model.extend(...);
     <div style="text-align: center;">
       <a href="http://hulu.com">
         <img width="550" height="449" data-original="docs/images/hulu.png" alt="Hulu" class="example_image" />
+      </a>
+    </div>
+
+    <h2 id="examples-quartz">Quartz</h2>
+
+    <p>
+      <a href="http://qz.com">Quartz</a> sees itself as a digitally native news
+      outlet for the new
+      global economy. Because Quartz believes in the future of open,
+      cross-platform web applications, they selected Backbone and Underscore
+      to fetch, sort, store, and display content from a custom WordPress
+      API. Although <a href="http://qz.com">qz.com</a> uses responsive design
+      for phone, tablet, and
+      desktop browsers, it also takes advantage of Backbone events and views
+      to render device-specific templates in some cases.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://qz.com">
+        <img width="510" height="360" data-original="docs/images/quartz.jpg" alt="Quartz" class="example_retina" />
       </a>
     </div>
 
@@ -3411,25 +3455,6 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
 
-    <h2 id="examples-decide">Decide</h2>
-
-    <p>
-      <a href="http://decide.com">Decide.com</a> helps people decide when to buy
-      consumer electronics. It relies heavily on Backbone.js to render and
-      update its Search Results Page. An "infinite scroll" feature takes
-      advantage of a SearchResults model containing a collection of
-      Product models to fetch more results and render them on the fly
-      with <a href="http://mustache.github.com">Mustache</a>. A SearchController keeps everything in sync and
-      maintains page state in the URL. Backbone also powers the user
-      accounts and settings management.
-    </p>
-
-    <div style="text-align: center;">
-      <a href="http://decide.com">
-        <img width="550" height="449" data-original="docs/images/decide.png" alt="Decide" class="example_image" />
-      </a>
-    </div>
-
     <h2 id="examples-trello">Trello</h2>
 
     <p>
@@ -3816,6 +3841,19 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header">Edge</b> &mdash; <small><i>Unreleased</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.10...master">Diff</a><br/>
+
+    <ul style="margin-top: 5px;">
+      <li>
+        The <tt>silent</tt> option has been removed from <tt>Model#set</tt>.
+        Custom options should be used to accomplish this effect instead.
+      </li>
+      <li>
+        Constructing a new collection with a <tt>url</tt> option will attach it
+        to the new instance.
+      </li>
+    </ul>
 
     <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...0.9.10">Diff</a><br />
     <ul style="margin-top: 5px;">

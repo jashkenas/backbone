@@ -72,18 +72,25 @@
   // in terms of the existing API.
   var eventsApi = function(obj, action, name, rest) {
     if (!name) return true;
+
+    // Handle event maps.
     if (typeof name === 'object') {
       for (var key in name) {
         obj[action].apply(obj, [key, name[key]].concat(rest));
       }
-    } else if (eventSplitter.test(name)) {
+      return false;
+    }
+
+    // Handle space separated event names.
+    if (eventSplitter.test(name)) {
       var names = name.split(eventSplitter);
       for (var i = 0, l = names.length; i < l; i++) {
         obj[action].apply(obj, [names[i]].concat(rest));
       }
-    } else {
-      return true;
+      return false;
     }
+
+    return true;
   };
 
   // Optimized internal dispatch function for triggering events. Tries to
@@ -295,7 +302,7 @@
     // Set a hash of model attributes on the object, firing `"change"` unless
     // you choose to silence it.
     set: function(key, val, options) {
-      var attr, attrs, unset, changes, silent, changing, prev, current;
+      var attr, attrs, unset, changes, changing, prev, current;
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
@@ -313,7 +320,6 @@
 
       // Extract attributes and options.
       unset           = options.unset;
-      silent          = options.silent;
       changes         = [];
       changing        = this._changing;
       this._changing  = true;
@@ -340,19 +346,15 @@
       }
 
       // Trigger all relevant attribute changes.
-      if (!silent) {
-        if (changes.length) this._pending = true;
-        for (var i = 0, l = changes.length; i < l; i++) {
-          this.trigger('change:' + changes[i], this, current[changes[i]], options);
-        }
+      if (changes.length) this._pending = true;
+      for (var i = 0, l = changes.length; i < l; i++) {
+        this.trigger('change:' + changes[i], this, current[changes[i]], options);
       }
 
       if (changing) return this;
-      if (!silent) {
-        while (this._pending) {
-          this._pending = false;
-          this.trigger('change', this, options);
-        }
+      while (this._pending) {
+        this._pending = false;
+        this.trigger('change', this, options);
       }
       this._pending = false;
       this._changing = false;
@@ -413,7 +415,7 @@
     // ---------------------------------------------------------------------
 
     // Fetch the model from the server. If the server's representation of the
-    // model differs from its current attributes, they will be overriden,
+    // model differs from its current attributes, they will be overridden,
     // triggering a `"change"` event.
     fetch: function(options) {
       options = options ? _.clone(options) : {};
@@ -566,6 +568,7 @@
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
     options || (options = {});
+    if (options.url) this.url = options.url;
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
@@ -615,8 +618,8 @@
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
           modelMap[existing.cid] = true;
-          if (options.merge) {
-            existing.set(attrs === model ? model.attributes : attrs, options);
+          if (options.merge && model !== existing) {
+            existing.set(model === attrs ? model.attributes : attrs, options);
             if (sort && !doSort && existing.hasChanged(sortAttr)) doSort = true;
           }
           continue;
@@ -727,7 +730,7 @@
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
-      return this._byId[obj.id || obj.cid || obj];
+      return this._byId[obj.id != null ? obj.id : obj.cid || obj];
     },
 
     // Get the model at the given index.
@@ -771,6 +774,16 @@
 
       if (!options.silent) this.trigger('sort', this, options);
       return this;
+    },
+
+    // Figure out the smallest index at which a model should be inserted so as
+    // to maintain order.
+    sortedIndex: function(model, value, context) {
+      value || (value = this.comparator);
+      var iterator = _.isFunction(value) ? value : function(model) {
+        return model.get(value);
+      };
+      return _.sortedIndex(this.models, model, iterator, context);
     },
 
     // Pluck an attribute from each model in the collection.
@@ -892,14 +905,6 @@
       }
       this.trigger.apply(this, arguments);
     },
-
-    sortedIndex: function (model, value, context) {
-      value || (value = this.comparator);
-      var iterator = _.isFunction(value) ? value : function(model) {
-        return model.get(value);
-      };
-      return _.sortedIndex(this.models, model, iterator, context);
-    }
 
   });
 
@@ -1334,8 +1339,9 @@
     },
 
     // Performs the initial configuration of a View with a set of options.
-    // Keys with special meaning *(model, collection, id, className)*, are
-    // attached directly to the view.
+    // Keys with special meaning *(e.g. model, collection, id, className)* are
+    // attached directly to the view.  See `viewOptions` for an exhaustive
+    // list.
     _configure: function(options) {
       if (this.options) options = _.extend({}, _.result(this, 'options'), options);
       _.extend(this, _.pick(options, viewOptions));

@@ -9,3 +9,5 @@
 * Use the same coding style as the rest of the [codebase](https://github.com/documentcloud/backbone/blob/master/backbone.js).
 
 * In your pull request, do not re-build the minified `backbone-min.js` file. We'll do that before cutting a new release.
+
+* All pull requests should be made to `master`. If the patch is for documentation of the currently released version, please note this so that it can be cherry picked into `gh-pages`.

@@ -20,19 +20,13 @@ end
 desc "build the docco documentation"
 task :doc do
   check 'docco', 'docco', 'https://github.com/jashkenas/docco'
-  system 'docco backbone.js && docco examples/todos/todos.js examples/backbone-localstorage.js'
+  system 'docco -l linear backbone.js && docco -l linear examples/todos/todos.js examples/backbone-localstorage.js'
 end
 
 desc "run JavaScriptLint on the source"
 task :lint do
   check 'jsl', 'JavaScript Lint', 'http://www.javascriptlint.com/'
   system "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
-end
-
-desc "test the CoffeeScript integration"
-task :test do
-  check 'coffee', 'CoffeeScript', 'http://coffeescript.org/'
-  system "coffee test/*.coffee"
 end
 
 # Check for the existence of an executable.
