@@ -530,7 +530,7 @@ $(document).ready(function() {
   });
 
   test("#2255 - Extend routes by making routes a function.", 1, function() {
-    RouterBase = Backbone.Router.extend({
+    var RouterBase = Backbone.Router.extend({
       routes: function() {
         return {
           home:  "root",
@@ -539,7 +539,7 @@ $(document).ready(function() {
       },
     });
 
-    RouterExtended = RouterBase.extend({
+    var RouterExtended = RouterBase.extend({
       routes: function() {
         var _super = RouterExtended.__super__.routes;
         return _.extend(_super(),
@@ -548,7 +548,7 @@ $(document).ready(function() {
       }
     });
 
-    router = new RouterExtended();
+    var router = new RouterExtended();
     deepEqual({home: "root", index: "index.html", show: "show", search: "search"}, router.routes);
   });
 
