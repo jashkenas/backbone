@@ -900,7 +900,7 @@
         if (model.id != null) this._byId[model.id] = model;
       }
       this.trigger.apply(this, arguments);
-    },
+    }
 
   });
 
