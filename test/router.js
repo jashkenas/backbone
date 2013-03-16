@@ -511,13 +511,16 @@ $(document).ready(function() {
     strictEqual(history.getFragment('/fragment '), 'fragment');
   });
 
-  test("#1980 - Optional parameters.", 2, function() {
+  test("#1980 - Optional parameters.", 3, function() {
     location.replace('http://example.com#named/optional/y');
     Backbone.history.checkUrl();
     strictEqual(router.z, undefined);
     location.replace('http://example.com#named/optional/y123');
     Backbone.history.checkUrl();
     strictEqual(router.z, '123');
+    location.replace('http://example.com#named/optional/');
+    Backbone.history.checkUrl();
+    strictEqual(router.z, undefined);
   });
 
   test("#2062 - Trigger 'route' event on router instance.", 2, function() {
