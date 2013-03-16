@@ -1037,7 +1037,7 @@ $(document).ready(function() {
   test("`add` only `sort`s when necessary with comparator function", 3, function () {
     var collection = new (Backbone.Collection.extend({
       comparator: function(a, b) {
-        a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
+        return a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
       }
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
