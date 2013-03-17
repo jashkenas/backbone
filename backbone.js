@@ -1010,7 +1010,7 @@
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters: function(route, fragment) {
-      params = route.exec(fragment).slice(1);
+      var params = route.exec(fragment).slice(1);
       return _(params).map(function(p){return p === '' ? undefined : p;});
     }
 
