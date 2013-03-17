@@ -1419,10 +1419,11 @@ book.on("change", function() {
     <p id="Model-changedAttributes">
       <b class="header">changedAttributes</b><code>model.changedAttributes([attributes])</code>
       <br />
-      Retrieve a hash of only the model's attributes that have changed. Optionally,
-      an external <b>attributes</b> hash can be passed in, returning
-      the attributes in that hash which differ from the model. This can be used
-      to figure out which portions of a view should be updated, or what calls
+      Retrieve a hash of only the model's attributes that have changed, or
+      <tt>false</tt> if there are none. Optionally, an external
+      <b>attributes</b> hash can be passed in, returning the attributes in that
+      hash which differ from the model. This can be used to figure out which
+      portions of a view should be updated, or what calls
       need to be made to sync the changes to the server.
     </p>
 
