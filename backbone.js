@@ -942,7 +942,7 @@
   var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
-    this._bindRoutes();
+    this.bindRoutes(this.routes);
     this.initialize.apply(this, arguments);
   };
 
@@ -988,11 +988,11 @@
     // Bind all defined routes to `Backbone.history`. We have to reverse the
     // order of the routes here to support behavior where the most general
     // routes can be defined at the bottom of the route map.
-    _bindRoutes: function() {
-      if (!this.routes) return;
-      var route, routes = _.keys(this.routes);
+    bindRoutes: function(routeMap) {
+      if (!routeMap) return;
+      var route, routes = _.keys(routeMap);
       while ((route = routes.pop()) != null) {
-        this.route(route, this.routes[route]);
+        this.route(route, routeMap[route]);
       }
     },
 
