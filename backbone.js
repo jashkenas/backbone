@@ -879,6 +879,7 @@
       options.collection = this;
       var model = new this.model(attrs, options);
       if (!model._validate(attrs, options)) {
+        this.trigger('invalid', this, attrs, options);
         return false;
       }
       return model;
