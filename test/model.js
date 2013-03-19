@@ -111,6 +111,30 @@ $(document).ready(function() {
     equal(model.url(), '/nested/1/collection/2');
   });
 
+  test("underscore methods", 15, function() {
+    var model = new Backbone.Model({ 'foo': 'a', 'bar': 'b', 'baz': 'c' });
+    var model2 = model.clone();
+    deepEqual(model.keys(), ['foo', 'bar', 'baz']);
+    deepEqual(model.values(), ['a', 'b', 'c']);
+    deepEqual(model.invert(), { 'a': 'foo', 'b': 'bar', 'c': 'baz' });
+    deepEqual(model.pick('foo', 'baz'), {'foo': 'a', 'baz': 'c'});
+    deepEqual(model.omit('foo', 'bar'), {'baz': 'c'});
+    model.each(function(attr, index, attrs) {
+      ok(true);
+    });
+    equal(model.isEqual(model2.attributes), true);
+    equal(model.isEqual({ 'foo': 'a', 'bop': 'd' }), false);
+    equal(model.isEmpty(), false);
+    equal(model.size(), 3);
+    equal(model.chain().keys().contains('foo').value(), true);
+    deepEqual(model.sortBy(function(val) { return val === 'b' }), ["c", "a", "b"]);
+    deepEqual(model.groupBy(), {
+      'a': ['a'],
+      'b': ['b'],
+      'c': ['c']
+    });
+  });
+
   test("clone", 10, function() {
     var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
     var b = a.clone();
