@@ -551,6 +551,7 @@
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validationError = this.validate(attrs, options) || null;
       if (!error) return true;
+      if (options.invalid) options.invalid(this, error, options);
       this.trigger('invalid', this, error, options || {});
       return false;
     }
