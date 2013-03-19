@@ -363,8 +363,15 @@
 
     // Remove an attribute from the model, firing `"change"` unless you choose
     // to silence it. `unset` is a noop if the attribute doesn't exist.
-    unset: function(attr, options) {
-      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
+    unset: function(attrs, options) {
+      if (_.isString(attrs)) attrs = [attrs];
+      if (_.isArray(attrs)) {
+        attrs = _.reduce(attrs, function (attrs, attr) {
+          attrs[attr] = void 0;
+          return attrs;
+        }, {});
+      }
+      return this.set(attrs, _.extend({}, options, {unset: true}));
     },
 
     // Clear all attributes on the model, firing `"change"` unless you choose
