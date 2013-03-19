@@ -1309,8 +1309,6 @@
       for (var key in events) {
         var method = events[key];
         if (!_.isFunction(method)) method = this[events[key]];
-
-        // Ignore error if the method is not defined
         if (!method) continue;
 
         var match = key.match(delegateEventSplitter);
