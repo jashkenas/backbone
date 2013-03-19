@@ -1008,7 +1008,15 @@
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted parameters.
     _extractParameters: function(route, fragment) {
-      return route.exec(fragment).slice(1);
+      var parts = fragment.split('?'),
+        pathname = parts[0],
+        search = parts[1],
+        params = route.exec(pathname).slice(1);
+
+      if(search && search.length) {
+        params.push(search);
+      }
+      return params;
     }
 
   });
@@ -1031,6 +1039,7 @@
 
   // Cached regex for stripping a leading hash/slash and trailing space.
   var routeStripper = /^[#\/]|\s+$/g;
+  var searchStripper = /\?.*$/g;
 
   // Cached regex for stripping leading and trailing slashes.
   var rootStripper = /^\/+|\/+$/g;
@@ -1063,7 +1072,7 @@
     getFragment: function(fragment, forcePushState) {
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = this.location.pathname;
+          fragment = this.location.pathname + this.location.search;
           var root = this.root.replace(trailingSlash, '');
           if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
         } else {
@@ -1118,7 +1127,8 @@
       // but we're currently in a browser that doesn't support it...
       if (this._wantsHashChange && this._wantsPushState && !this._hasPushState && !atRoot) {
         this.fragment = this.getFragment(null, true);
-        this.location.replace(this.root + this.location.search + '#' + this.fragment);
+        var pathname = this.fragment.replace(searchStripper, '');
+        this.location.replace(this.root + this.location.search + '#' + pathname);
         // Return immediately as browser will do redirect to new url
         return true;
 
@@ -1163,8 +1173,9 @@
     // returns `false`.
     loadUrl: function(fragmentOverride) {
       var fragment = this.fragment = this.getFragment(fragmentOverride);
+      var pathname = fragment.replace(searchStripper, '');
       var matched = _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
+        if (handler.route.test(pathname)) {
           handler.callback(fragment);
           return true;
         }
