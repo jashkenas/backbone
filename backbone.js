@@ -540,7 +540,7 @@
 
     // Check if the model is currently in a valid state.
     isValid: function(options) {
-      return !this.validate || !this.validate(this.attributes, options);
+      return this._validate({}, _.extend(options || {}, { validate: true }));
     },
 
     // Run validation against the next complete set of model attributes,

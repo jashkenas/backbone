@@ -338,6 +338,7 @@
       <li>– <a href="#Model-destroy">destroy</a></li>
       <li>– <a href="#Model-validate">validate</a></li>
       <li>– <a href="#Model-validationError">validationError</a></li>
+      <li>– <a href="#Model-isValid">isValid</a></li>
       <li>– <a href="#Model-url">url</a></li>
       <li>– <a href="#Model-urlRoot">urlRoot</a></li>
       <li>– <a href="#Model-parse">parse</a></li>
@@ -1335,6 +1336,35 @@ one.save({
       <br />
       The value returned by <a href="#Model-validate">validate</a> during the last failed validation.
     </p>
+
+    <p id="Model-isValid">
+      <b class="header">isValid</b><code>model.isValid</code>
+      <br />
+      Run <a href="#Model-validate">validate</a> to check the model state.
+    </p>
+
+<pre class="runnable">
+var Chapter = Backbone.Model.extend({
+  validate: function(attrs, options) {
+    if (attrs.end &lt; attrs.start) {
+      return "can't end before it starts";
+    }
+  }
+});
+
+var one = new Chapter({
+  title : "Chapter One: The Beginning"
+});
+
+one.set({
+  start: 15,
+  end:   10
+});
+
+if (!one.isValid()) {
+  alert(one.get("title") + " " + one.validationError);
+}
+</pre>
 
     <p id="Model-url">
       <b class="header">url</b><code>model.url()</code>
@@ -3856,18 +3886,6 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
-    <b class="header">Edge</b> &mdash; <small><i>Unreleased</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.10...master">Diff</a><br/>
-
-    <ul style="margin-top: 5px;">
-      <li>
-        The <tt>silent</tt> option has been removed from <tt>Model#set</tt>.
-        Custom options should be used to accomplish this effect instead.
-      </li>
-      <li>
-        Constructing a new collection with a <tt>url</tt> option will attach it
-        to the new instance.
-      </li>
-    </ul>
 
     <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...0.9.10">Diff</a><br />
     <ul style="margin-top: 5px;">
