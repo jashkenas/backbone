@@ -640,15 +640,14 @@
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (i = 0, l = models.length; i < l; i++) {
-        attrs = models[i];
-        if (!(model = this._prepareModel(attrs, options))) continue;
+        if (!(model = this._prepareModel(models[i], options))) continue;
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
           if (options.remove) modelMap[existing.cid] = true;
           if (options.merge) {
-            existing.set(attrs === model ? model.attributes : attrs, options);
+            existing.set(model.attributes, options);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
         } else if (options.add) {

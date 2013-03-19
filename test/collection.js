@@ -225,6 +225,19 @@ $(document).ready(function() {
     equal(col.at(0).get('value'), 2);
   });
 
+  test("add with parse and merge", function() {
+    var Model = Backbone.Model.extend({
+      parse: function (data) {
+        return data.model;
+      }
+    });
+    var collection = new Backbone.Collection();
+    collection.model = Model;
+    collection.add({id: 1});
+    collection.add({model: {id: 1, name: 'Alf'}}, {parse: true, merge: true});
+    equal(collection.first().get('name'), 'Alf');
+  });
+
   test("add model to collection with sort()-style comparator", 3, function() {
     var col = new Backbone.Collection;
     col.comparator = function(a, b) {
@@ -931,7 +944,7 @@ $(document).ready(function() {
     equal(col.first().get('key'), 'other');
 
     col.set({id: 1, other: 'value'});
-    equal(col.first().get('key'), 'other');
+    equal(col.first().get('key'), 'value');
     equal(col.length, 1);
   });
 
