@@ -244,6 +244,8 @@
     var attrs = attributes || {};
     this.cid = _.uniqueId('c');
     this.attributes = {};
+    if (options && options.url) this.url = options.url;
+    if (options && options.urlRoot) this.urlRoot = options.urlRoot;
     if (options && options.collection) this.collection = options.collection;
     if (options && options.parse) attrs = this.parse(attrs, options) || {};
     if (defaults = _.result(this, 'defaults')) {
