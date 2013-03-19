@@ -422,7 +422,7 @@
       <li>– <a href="#View-$el">$el</a></li>
       <li>– <a href="#View-setElement">setElement</a></li>
       <li>– <a href="#View-attributes">attributes</a></li>
-      <li>– <a href="#View-dollar">$ (jQuery or Zepto)</a></li>
+      <li>– <a href="#View-dollar">$ (jQuery)</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
@@ -2313,7 +2313,7 @@ $(function(){
     <p>
       <b>Backbone.sync</b> is the function that Backbone calls every time it
       attempts to read or save a model to the server. By default, it uses
-      <tt>(jQuery/Zepto).ajax</tt> to make a RESTful JSON request and returns a
+      <tt>jQuery.ajax</tt> to make a RESTful JSON request and returns a
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>. You can override
       it in order to use a different persistence strategy, such as WebSockets,
       XML transport, or Local Storage.
@@ -2528,7 +2528,7 @@ alert(item.el + ' ' + body.el);
     <p id="View-$el">
       <b class="header">$el</b><code>view.$el</code>
       <br />
-      A cached jQuery (or Zepto) object for the view's element. A handy
+      A cached jQuery object for the view's element. A handy
       reference instead of re-wrapping the DOM element all the time.
     </p>
 
@@ -2555,9 +2555,9 @@ listView.$el.append(itemView.el);
     </p>
 
     <p id="View-dollar">
-      <b class="header">$ (jQuery or Zepto)</b><code>view.$(selector)</code>
+      <b class="header">$ (jQuery)</b><code>view.$(selector)</code>
       <br />
-      If jQuery or Zepto is included on the page, each view has a
+      If jQuery is included on the page, each view has a
       <b>$</b> function that runs queries scoped within the view's element. If you use this
       scoped jQuery function, you don't have to use model ids as part of your query
       to pull out specific elements in a list, and can rely much more on HTML class
