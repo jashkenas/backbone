@@ -1003,4 +1003,56 @@ $(document).ready(function() {
     model.save({x: 1}, {wait: true});
   });
 
+  test("#2208 - .lastSyncdAttributes", function() {
+    var Model = Backbone.Model.extend({
+      url: '/test',
+      sync: function(method, model, options) {
+        options.success();
+      }
+    });
+    var model = new Model({ a: 1, b: 2 });
+    ok(!model.lastSyncdAttributes());
+    model.save();
+    deepEqual(model.lastSyncdAttributes(), { a: 1, b: 2 });
+    model.set('a', 3);
+    deepEqual(model.lastSyncdAttributes(), { a: 1, b: 2 });
+  });
+
+  test("#2208 - .lastSyncd", function() {
+    var Model = Backbone.Model.extend({
+      url: '/test',
+      sync: function(method, model, options) {
+        options.success();
+      }
+    });
+    var model = new Model({ a: 1, b: 2 });
+    equal(model.lastSyncd('a'), null);
+    model.save();
+    equal(model.lastSyncd('a'), 1);
+    model.set('a', 3);
+    equal(model.lastSyncd('a'), 1);
+    model.save();
+    equal(model.lastSyncd('a'), 3);
+  });
+
+  test("#2208 - cache _lastSyncAttributes when sync is successful", function() {
+    var Model = Backbone.Model.extend({
+      url: '/test',
+      sync: function(method, model, options) {
+        options.success();
+      }
+    });
+    var model = new Model({x: true});
+    model.save();
+    ok(model.lastSyncdAttributes());
+  });
+
+  test("#2208 - do not cache _lastSyncAttributes when sync is not successful", 1, function() {
+    var Model = Backbone.Model.extend({
+      url: '/test',
+    });
+    var model = new Model({x: true});
+    model.save();
+    ok(!model.lastSyncdAttributes());
+  });
 });
