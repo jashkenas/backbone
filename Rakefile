@@ -1,20 +1,7 @@
-require 'rubygems'
-
-HEADER = /((^\s*\/\/.*\n)+)/
-
 desc "rebuild the backbone-min.js files for distribution"
 task :build do
-  begin
-    require 'closure-compiler'
-  rescue LoadError
-    puts "closure-compiler not found.\nInstall it by running 'gem install closure-compiler'"
-    exit
-  end
-  source = File.read 'backbone.js'
-  header = source.match(HEADER)
-  File.open('backbone-min.js', 'w+') do |file|
-    file.write header[1].squeeze(' ') + Closure::Compiler.new.compress(source)
-  end
+  check 'uglifyjs', 'UglifyJS', 'https://github.com/mishoo/UglifyJS2'
+  system 'uglifyjs backbone.js --source-map backbone-min.map -o backbone-min.js'
 end
 
 desc "build the docco documentation"
