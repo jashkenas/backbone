@@ -3904,6 +3904,11 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         <tt>parse</tt> now receives <tt>options</tt> as its second argument.
       </li>
+      <li>
+        <tt>Backbone.sync</tt> success callback arguments changed to
+        <em>(model, resp, options)</em> from <em>(resp, status, xhr)</em>.
+        The <tt>xhr</tt> object is still available as <tt>options.xhr</tt>.
+      </li>
     </ul>
 
     <b class="header">0.9.9</b> &mdash; <small><i>Dec. 13, 2012</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.2...0.9.9">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/documentcloud/backbone/0.9.9/index.html">Docs</a><br />
