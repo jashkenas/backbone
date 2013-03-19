@@ -972,7 +972,7 @@ var Library = Backbone.Model.extend({
     return data.library;
   }
 });
-</pre>    
+</pre>
 
     <p>
       If you pass a <tt>{collection: ...}</tt> as the <b>options</b>, the model
@@ -2045,9 +2045,9 @@ accounts.fetch();
       Convenience to create a new instance of a model within a collection.
       Equivalent to instantiating a model with a hash of attributes,
       saving the model to the server, and adding the model to the set after being
-      successfully created. Returns
-      the model, or <tt>false</tt> if a validation error prevented the
-      model from being created. In order for this to work, you should set the
+      successfully created. Returns the new model. If client-side validation
+      failed, the model will be unsaved, with validation errors.
+      In order for this to work, you should set the
       <a href="#Collection-model">model</a> property of the collection.
       The <b>create</b> method can accept either an attributes hash or an
       existing, unsaved model object.
