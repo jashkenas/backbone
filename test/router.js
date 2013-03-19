@@ -57,6 +57,15 @@ $(document).ready(function() {
 
   });
 
+  var ExternalObject = {
+    value: 'unset',
+
+    routingFunction: function(value) {
+      this.value = value;
+    }
+  };
+  _.bindAll(ExternalObject);
+
   var Router = Backbone.Router.extend({
 
     count: 0,
@@ -75,6 +84,7 @@ $(document).ready(function() {
       "splat/*args/end":            "splat",
       "*first/complex-:part/*rest": "complex",
       ":entity?*args":              "query",
+      "function/:value":            ExternalObject.routingFunction,
       "*anything":                  "anything"
     },
 
@@ -253,6 +263,13 @@ $(document).ready(function() {
     location.replace('http://example.com#doesnt-match-a-route');
     Backbone.history.checkUrl();
     equal(router.anything, 'doesnt-match-a-route');
+  });
+
+  test("routes (function)", 2, function() {
+    equal(ExternalObject.value, 'unset');
+    location.replace('http://example.com#function/set');
+    Backbone.history.checkUrl();
+    equal(ExternalObject.value, 'set');
   });
 
   test("fires event when router doesn't have callback on it", 1, function() {
