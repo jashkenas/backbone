@@ -556,11 +556,10 @@
   });
 
   // Underscore methods that we want to implement on the Model.
-  var methods =  ['each', 'forEach', 'sortBy', 'groupBy', 'size', 'keys',
-    'values', 'invert', 'pick', 'omit', 'isEqual', 'isEmpty', 'chain'];
+  var modelMethods =  ['keys', 'values', 'pairs', 'invert', 'pick', 'omit'];
 
   // Mix in each Underscore method as a proxy to `Model#attributes`.
-  _.each(methods, function(method) {
+  _.each(modelMethods, function(method) {
     Model.prototype[method] = function() {
       var args = slice.call(arguments);
       args.unshift(this.attributes);
