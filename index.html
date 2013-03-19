@@ -956,6 +956,19 @@ new Book({
       you to replace the actual constructor function for your model.
     </p>
 
+<pre>
+var Library = Backbone.Model.extend({
+  constructor: function() {
+    this.books = new Books();
+    Backbone.Model.apply(this, arguments);
+  },
+  parse: function(data, options) {
+    this.books.reset(data.books);
+    return data.library;
+  }
+});
+</pre>    
+
     <p>
       If you pass a <tt>{collection: ...}</tt> as the <b>options</b>, the model
       gains a <tt>collection</tt> property that will be used to indicate which
