@@ -951,7 +951,6 @@
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
-
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize: function(){},
@@ -989,7 +988,16 @@
       this.routes = _.result(this, 'routes');
       var route, routes = _.keys(this.routes);
       while ((route = routes.pop()) != null) {
-        this.route(route, this.routes[route]);
+        var handler = this.routes[route];
+
+        // If an actual function is provided, attach it to the router and then route normally
+        if (_.isFunction(handler)) {
+          var fn = handler;
+          handler = _.uniqueId('_unnamed_route_');
+          this[handler] = fn;
+        }
+
+        this.route(route, handler);
       }
     },
 
