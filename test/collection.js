@@ -438,7 +438,7 @@ $(document).ready(function() {
     equal(model.collection, collection);
   });
 
-  test("create with validate:true enforces validation", 1, function() {
+  test("create with validate:true enforces validation", 2, function() {
     var ValidatingModel = Backbone.Model.extend({
       validate: function(attrs) {
         return "fail";
@@ -448,6 +448,9 @@ $(document).ready(function() {
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
+    col.on('invalid', function (collection, attrs, options) {
+      equal(options.validationError, 'fail');
+    });
     equal(col.create({"foo":"bar"}, {validate:true}), false);
   });
 
