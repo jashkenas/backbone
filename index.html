@@ -1282,8 +1282,8 @@ book.destroy({success: function(model, response) {
       if they are invalid, return an error of your choosing. It
       can be as simple as a string error message to be displayed, or a complete
       error object that describes the error programmatically. If <b>validate</b>
-      returns an error, <tt>set</tt> and <tt>save</tt> will not continue, and the
-      model attributes will not be modified.
+      returns an error, <tt>save</tt> will not continue, and the
+      model attributes will not be modified on the server.
       Failed validations trigger an <tt>"invalid"</tt> event, and set the
       <tt>validationError</tt> property on the model with the value returned by
       this method.
