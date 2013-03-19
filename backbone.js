@@ -1239,10 +1239,11 @@
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
+    this.delegateListeners();
   };
 
   // Cached regex to split keys for `delegate`.
-  var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+  var delegateSplitter = /^(\S+)\s*(.*)$/;
 
   // List of view options to be merged as properties.
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
@@ -1310,7 +1311,7 @@
         var method = events[key];
         if (!_.isFunction(method)) method = this[events[key]];
         if (!method) throw new Error('Method "' + events[key] + '" does not exist');
-        var match = key.match(delegateEventSplitter);
+        var match = key.match(delegateSplitter);
         var eventName = match[1], selector = match[2];
         method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
@@ -1328,6 +1329,46 @@
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
       this.$el.off('.delegateEvents' + this.cid);
+      return this;
+    },
+
+    // Set callbacks, where `this.listeners` is a hash of
+    //
+    // *{"event target": "callback"}*
+    //
+    //     {
+    //       'event': 'handler',
+    //       'change model': 'changeHandler'
+    //       'add collection': function() { ... }
+    //     }
+    //
+    // pairs. Callbacks will be bound to the view, with `this` set properly.
+    // Uses listenTo to keep the handler managed by `this`.
+    // Omitting the target registers a listener to `this`.
+    //
+    // Passing in 'model' or 'collection' as the target will only register (
+    // and unregister) listeners for that target (`this` as the target will
+    // do the same for `this`).
+    delegateListeners: function(target, listeners) {
+      if (!(listeners || (listeners = _.result(this, 'listeners')))) return this;
+      if (!target) target = null;
+      if (_.isString(listeners)) {
+        target = this[target];
+        if (!target) return this;
+      }
+      this.stopListening(target);
+      for (var key in listeners) {
+        var method = listeners[key];
+        if (!_.isFunction(method)) method = this[listeners[key]];
+        if (!method) throw new Error('Method "' + listeners[key] + '" does not exist');
+        var match = key.match(delegateSplitter);
+        var eventName = match[1], target = match[2];
+        method = _.bind(method, this);
+        target = target === '' ? this : this[target];
+        if (target) {
+          this.listenTo(target, eventName, method);
+        }
+      }
       return this;
     },
 

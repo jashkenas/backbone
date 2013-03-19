@@ -347,4 +347,29 @@ $(document).ready(function() {
     equal(counter, 4);
   });
 
+  test("listening declaratively listens to objects", 2, function() {
+    var View = Backbone.View.extend({
+      listeners: {
+        'change model': 'modelChange',
+        'custom eventable': 'eventableCustom'
+      },
+
+      initialize: function() {
+        this.eventable = _.extend({}, Backbone.Events);
+      },
+
+      modelChange: function() {
+        ok(true);
+      },
+
+      eventableCustom: function() {
+        ok(true);
+      }
+    });
+
+    var view = new View({model: new Backbone.Model});
+    view.model.trigger('change');
+    view.eventable.trigger('custom');
+  });
+
 });
