@@ -474,8 +474,7 @@
       };
       wrapError(this, options);
 
-      method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
-      if (method === 'patch') options.attrs = attrs;
+      method = this.isNew() ? 'create' : 'update';
       xhr = this.sync(method, this, options);
 
       // Restore attributes.
@@ -1367,7 +1366,6 @@
   var methodMap = {
     'create': 'POST',
     'update': 'PUT',
-    'patch':  'PATCH',
     'delete': 'DELETE',
     'read':   'GET'
   };
@@ -1405,7 +1403,7 @@
     }
 
     // Ensure that we have the appropriate request data.
-    if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
+    if (options.data == null && model && (method === 'create' || method === 'update')) {
       params.contentType = 'application/json';
       params.data = JSON.stringify(options.attrs || model.toJSON(options));
     }
@@ -1418,7 +1416,7 @@
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
     // And an `X-HTTP-Method-Override` header.
-    if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE' || type === 'PATCH')) {
+    if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE')) {
       params.type = 'POST';
       if (options.emulateJSON) params.data._method = type;
       var beforeSend = options.beforeSend;
