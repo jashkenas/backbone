@@ -153,6 +153,15 @@ $(document).ready(function() {
     equal(lastArgs[0], 'news');
   });
 
+  test("routes (simple, but unicode)", 4, function() {
+    location.replace('http://example.com#search/тест');
+    Backbone.history.checkUrl();
+    equal(router.query, "%D1%82%D0%B5%D1%81%D1%82");
+    equal(router.page, void 0);
+    equal(lastRoute, 'search');
+    equal(lastArgs[0], "%D1%82%D0%B5%D1%81%D1%82");
+  });
+
   test("routes (two part)", 2, function() {
     location.replace('http://example.com#search/nyc/p10');
     Backbone.history.checkUrl();
@@ -534,9 +543,9 @@ $(document).ready(function() {
       routes: function() {
         return {
           home:  "root",
-          index: "index.html",
+          index: "index.html"
         };
-      },
+      }
     });
 
     var RouterExtended = RouterBase.extend({
