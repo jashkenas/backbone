@@ -51,9 +51,17 @@ b, strong {
   font-family: "aller-bold";
 }
 
-p, ul, ol {
+p {
   margin: 15px 0 0px;
 }
+  .annotation ul, .annotation ol {
+    margin: 25px 0;
+  }
+    .annotation ul li, .annotation ol li {
+      font-size: 14px;
+      line-height: 18px;
+      margin: 10px 0;
+    }
 
 h1, h2, h3, h4, h5, h6 {
   color: #112233;
@@ -361,66 +369,140 @@ ul.sections > li > div {
 }
 
 /*---------------------- Syntax Highlighting -----------------------------*/
+
 td.linenos { background-color: #f0f0f0; padding-right: 10px; }
 span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
-body .hll { background-color: #ffffcc }
-body .c { color: #408080; font-style: italic }  /* Comment */
-body .err { border: 1px solid #FF0000 }         /* Error */
-body .k { color: #954121 }                      /* Keyword */
-body .o { color: #666666 }                      /* Operator */
-body .cm { color: #408080; font-style: italic } /* Comment.Multiline */
-body .cp { color: #BC7A00 }                     /* Comment.Preproc */
-body .c1 { color: #408080; font-style: italic } /* Comment.Single */
-body .cs { color: #408080; font-style: italic } /* Comment.Special */
-body .gd { color: #A00000 }                     /* Generic.Deleted */
-body .ge { font-style: italic }                 /* Generic.Emph */
-body .gr { color: #FF0000 }                     /* Generic.Error */
-body .gh { color: #000080; font-weight: bold }  /* Generic.Heading */
-body .gi { color: #00A000 }                     /* Generic.Inserted */
-body .go { color: #808080 }                     /* Generic.Output */
-body .gp { color: #000080; font-weight: bold }  /* Generic.Prompt */
-body .gs { font-weight: bold }                  /* Generic.Strong */
-body .gu { color: #800080; font-weight: bold }  /* Generic.Subheading */
-body .gt { color: #0040D0 }                     /* Generic.Traceback */
-body .kc { color: #954121 }                     /* Keyword.Constant */
-body .kd { color: #954121; font-weight: bold }  /* Keyword.Declaration */
-body .kn { color: #954121; font-weight: bold }  /* Keyword.Namespace */
-body .kp { color: #954121 }                     /* Keyword.Pseudo */
-body .kr { color: #954121; font-weight: bold }  /* Keyword.Reserved */
-body .kt { color: #B00040 }                     /* Keyword.Type */
-body .m { color: #666666 }                      /* Literal.Number */
-body .s { color: #219161 }                      /* Literal.String */
-body .na { color: #7D9029 }                     /* Name.Attribute */
-body .nb { color: #954121 }                     /* Name.Builtin */
-body .nc { color: #0000FF; font-weight: bold }  /* Name.Class */
-body .no { color: #880000 }                     /* Name.Constant */
-body .nd { color: #AA22FF }                     /* Name.Decorator */
-body .ni { color: #999999; font-weight: bold }  /* Name.Entity */
-body .ne { color: #D2413A; font-weight: bold }  /* Name.Exception */
-body .nf { color: #0000FF }                     /* Name.Function */
-body .nl { color: #A0A000 }                     /* Name.Label */
-body .nn { color: #0000FF; font-weight: bold }  /* Name.Namespace */
-body .nt { color: #954121; font-weight: bold }  /* Name.Tag */
-body .nv { color: #19469D }                     /* Name.Variable */
-body .ow { color: #AA22FF; font-weight: bold }  /* Operator.Word */
-body .w { color: #bbbbbb }                      /* Text.Whitespace */
-body .mf { color: #666666 }                     /* Literal.Number.Float */
-body .mh { color: #666666 }                     /* Literal.Number.Hex */
-body .mi { color: #666666 }                     /* Literal.Number.Integer */
-body .mo { color: #666666 }                     /* Literal.Number.Oct */
-body .sb { color: #219161 }                     /* Literal.String.Backtick */
-body .sc { color: #219161 }                     /* Literal.String.Char */
-body .sd { color: #219161; font-style: italic } /* Literal.String.Doc */
-body .s2 { color: #219161 }                     /* Literal.String.Double */
-body .se { color: #BB6622; font-weight: bold }  /* Literal.String.Escape */
-body .sh { color: #219161 }                     /* Literal.String.Heredoc */
-body .si { color: #BB6688; font-weight: bold }  /* Literal.String.Interpol */
-body .sx { color: #954121 }                     /* Literal.String.Other */
-body .sr { color: #BB6688 }                     /* Literal.String.Regex */
-body .s1 { color: #219161 }                     /* Literal.String.Single */
-body .ss { color: #19469D }                     /* Literal.String.Symbol */
-body .bp { color: #954121 }                     /* Name.Builtin.Pseudo */
-body .vc { color: #19469D }                     /* Name.Variable.Class */
-body .vg { color: #19469D }                     /* Name.Variable.Global */
-body .vi { color: #19469D }                     /* Name.Variable.Instance */
-body .il { color: #666666 }                     /* Literal.Number.Integer.Long */
+/*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+
+pre code {
+  display: block; padding: 0.5em;
+  color: #000;
+  background: #f8f8ff
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #408080;
+  font-style: italic
+}
+
+pre .keyword,
+pre .assignment,
+pre .literal,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .lisp .title,
+pre .subst {
+  color: #954121;
+  /*font-weight: bold*/
+}
+
+pre .number,
+pre .hexcolor {
+  color: #40a070
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #219161;
+}
+
+pre .title,
+pre .id {
+  color: #19469D;
+}
+pre .params {
+  color: #00F;
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .label,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .instancevar,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #B68
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .ruby .symbol .keyword,
+pre .ruby .symbol .keymethods,
+pre .lisp .keyword,
+pre .tex .special,
+pre .input_number {
+  color: #990073
+}
+
+pre .builtin,
+pre .constructor,
+pre .built_in,
+pre .lisp .title {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+pre .tex .formula {
+  opacity: 0.5;
+}

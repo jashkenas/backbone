@@ -51,12 +51,12 @@
               
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Backbone localStorage Adapter</span>
-<span class="cm"> * https://github.com/jeromegn/Backbone.localStorage</span>
-<span class="cm"> */</span>
+            <div class="content"><div class='highlight'><pre><span class="comment">/**
+ * Backbone localStorage Adapter
+ * https://github.com/jeromegn/Backbone.localStorage
+ */</span>
 
-<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div></div>
+(<span class="keyword">function</span>() {</pre></div></div>
             
         </li>
         
@@ -67,21 +67,19 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              
-<p>A simple module to replace <code>Backbone.sync</code> with <em>localStorage</em>-based
+              <p>A simple module to replace <code>Backbone.sync</code> with <em>localStorage</em>-based
 persistence. Models are given GUIDS, and saved into a JSON object. Simple
 as that.
 
 </p>
 <p>Hold reference to Underscore.js and Backbone.js in the closure in order
 to make things work even if they are removed from the global namespace
-
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_</span><span class="p">;</span>
-<span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> _ = <span class="keyword">this</span>._;
+<span class="keyword">var</span> Backbone = <span class="keyword">this</span>.Backbone;</pre></div></div>
             
         </li>
         
@@ -92,16 +90,14 @@ to make things work even if they are removed from the global namespace
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              
-<p>Generate four random hex digits.
-
+              <p>Generate four random hex digits.
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">S4</span><span class="p">()</span> <span class="p">{</span>
-   <span class="k">return</span> <span class="p">(((</span><span class="mi">1</span><span class="o">+</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">())</span><span class="o">*</span><span class="mh">0x10000</span><span class="p">)</span><span class="o">|</span><span class="mi">0</span><span class="p">).</span><span class="nx">toString</span><span class="p">(</span><span class="mi">16</span><span class="p">).</span><span class="nx">substring</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-<span class="p">};</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="keyword">function</span> <span class="title">S4</span><span class="params">()</span> {</span>
+   <span class="keyword">return</span> (((<span class="number">1</span>+Math.random())*<span class="number">0x10000</span>)|<span class="number">0</span>).toString(<span class="number">16</span>).substring(<span class="number">1</span>);
+};</pre></div></div>
             
         </li>
         
@@ -112,16 +108,14 @@ to make things work even if they are removed from the global namespace
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              
-<p>Generate a pseudo-GUID by concatenating random hexadecimal.
-
+              <p>Generate a pseudo-GUID by concatenating random hexadecimal.
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">guid</span><span class="p">()</span> <span class="p">{</span>
-   <span class="k">return</span> <span class="p">(</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="nx">S4</span><span class="p">()</span><span class="o">+</span><span class="nx">S4</span><span class="p">());</span>
-<span class="p">};</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="keyword">function</span> <span class="title">guid</span><span class="params">()</span> {</span>
+   <span class="keyword">return</span> (S4()+S4()+<span class="string">"-"</span>+S4()+<span class="string">"-"</span>+S4()+<span class="string">"-"</span>+S4()+<span class="string">"-"</span>+S4()+S4()+S4());
+};</pre></div></div>
             
         </li>
         
@@ -132,22 +126,20 @@ to make things work even if they are removed from the global namespace
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              
-<p>Our Store is represented by a single JS object in <em>localStorage</em>. Create it
+              <p>Our Store is represented by a single JS object in <em>localStorage</em>. Create it
 with a meaningful name, like the name you&#39;d give a table.
 window.Store is deprectated, use Backbone.LocalStorage instead
-
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">Store</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
-  <span class="kd">var</span> <span class="nx">store</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">getItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
-  <span class="k">this</span><span class="p">.</span><span class="nx">records</span> <span class="o">=</span> <span class="p">(</span><span class="nx">store</span> <span class="o">&amp;&amp;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span> <span class="o">||</span> <span class="p">[];</span>
-<span class="p">};</span>
+            <div class="content"><div class='highlight'><pre>Backbone.LocalStorage = window.Store = <span class="keyword">function</span>(name) {
+  <span class="keyword">this</span>.name = name;
+  <span class="keyword">var</span> store = <span class="keyword">this</span>.localStorage().getItem(<span class="keyword">this</span>.name);
+  <span class="keyword">this</span>.records = (store &amp;&amp; store.split(<span class="string">","</span>)) || [];
+};
 
-<span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span></pre></div></div>
+_.extend(Backbone.LocalStorage.prototype, {</pre></div></div>
             
         </li>
         
@@ -158,16 +150,14 @@ window.Store is deprectated, use Backbone.LocalStorage instead
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              
-<p>Save the current state of the <strong>Store</strong> to <em>localStorage</em>.
-
+              <p>Save the current state of the <strong>Store</strong> to <em>localStorage</em>.
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nx">save</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">setItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">));</span>
-  <span class="p">},</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  save: <span class="keyword">function</span>() {
+    <span class="keyword">this</span>.localStorage().setItem(<span class="keyword">this</span>.name, <span class="keyword">this</span>.records.join(<span class="string">","</span>));
+  },</pre></div></div>
             
         </li>
         
@@ -178,24 +168,22 @@ window.Store is deprectated, use Backbone.LocalStorage instead
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              
-<p>Add a model, giving it a (hopefully)-unique GUID, if it doesn&#39;t already
+              <p>Add a model, giving it a (hopefully)-unique GUID, if it doesn&#39;t already
 have an id of it&#39;s own.
-
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nx">create</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">model</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">guid</span><span class="p">();</span>
-        <span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">idAttribute</span><span class="p">,</span> <span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">setItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">model</span><span class="p">));</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
-    <span class="k">return</span> <span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
-  <span class="p">},</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  create: <span class="keyword">function</span>(model) {
+    <span class="keyword">if</span> (!model.id) {
+        model.id = guid();
+        model.set(model.idAttribute, model.id);
+    }
+    <span class="keyword">this</span>.localStorage().setItem(<span class="keyword">this</span>.name+<span class="string">"-"</span>+model.id, JSON.stringify(model));
+    <span class="keyword">this</span>.records.push(model.id.toString());
+    <span class="keyword">this</span>.save();
+    <span class="keyword">return</span> model.toJSON();
+  },</pre></div></div>
             
         </li>
         
@@ -206,18 +194,16 @@ have an id of it&#39;s own.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              
-<p>Update a model by replacing its copy in <code>this.data</code>.
-
+              <p>Update a model by replacing its copy in <code>this.data</code>.
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nx">update</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">setItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">model</span><span class="p">));</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">,</span> <span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">()))</span> <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span> <span class="k">this</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
-    <span class="k">return</span> <span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
-  <span class="p">},</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  update: <span class="keyword">function</span>(model) {
+    <span class="keyword">this</span>.localStorage().setItem(<span class="keyword">this</span>.name+<span class="string">"-"</span>+model.id, JSON.stringify(model));
+    <span class="keyword">if</span> (!_.include(<span class="keyword">this</span>.records, model.id.toString())) <span class="keyword">this</span>.records.push(model.id.toString()); <span class="keyword">this</span>.save();
+    <span class="keyword">return</span> model.toJSON();
+  },</pre></div></div>
             
         </li>
         
@@ -228,16 +214,14 @@ have an id of it&#39;s own.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              
-<p>Retrieve a model from <code>this.data</code> by id.
-
+              <p>Retrieve a model from <code>this.data</code> by id.
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nx">find</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">getItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">));</span>
-  <span class="p">},</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  find: <span class="keyword">function</span>(model) {
+    <span class="keyword">return</span> JSON.parse(<span class="keyword">this</span>.localStorage().getItem(<span class="keyword">this</span>.name+<span class="string">"-"</span>+model.id));
+  },</pre></div></div>
             
         </li>
         
@@ -248,19 +232,17 @@ have an id of it&#39;s own.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              
-<p>Return the array of all models currently in storage.
-
+              <p>Return the array of all models currently in storage.
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nx">findAll</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">_</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">).</span><span class="nx">chain</span><span class="p">()</span>
-        <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">){</span><span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">getItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">id</span><span class="p">));},</span> <span class="k">this</span><span class="p">)</span>
-        <span class="p">.</span><span class="nx">compact</span><span class="p">()</span>
-        <span class="p">.</span><span class="nx">value</span><span class="p">();</span>
-  <span class="p">},</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  findAll: <span class="keyword">function</span>() {
+    <span class="keyword">return</span> _(<span class="keyword">this</span>.records).chain()
+        .map(<span class="keyword">function</span>(id){<span class="keyword">return</span> JSON.parse(<span class="keyword">this</span>.localStorage().getItem(<span class="keyword">this</span>.name+<span class="string">"-"</span>+id));}, <span class="keyword">this</span>)
+        .compact()
+        .value();
+  },</pre></div></div>
             
         </li>
         
@@ -271,25 +253,23 @@ have an id of it&#39;s own.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              
-<p>Delete a model from <code>this.data</code>, returning it.
-
+              <p>Delete a model from <code>this.data</code>, returning it.
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">().</span><span class="nx">removeItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">+</span><span class="s2">&quot;-&quot;</span><span class="o">+</span><span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">records</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">reject</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">record_id</span><span class="p">){</span><span class="k">return</span> <span class="nx">record_id</span> <span class="o">==</span> <span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">();});</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">save</span><span class="p">();</span>
-    <span class="k">return</span> <span class="nx">model</span><span class="p">;</span>
-  <span class="p">},</span>
+            <div class="content"><div class='highlight'><pre>  destroy: <span class="keyword">function</span>(model) {
+    <span class="keyword">this</span>.localStorage().removeItem(<span class="keyword">this</span>.name+<span class="string">"-"</span>+model.id);
+    <span class="keyword">this</span>.records = _.reject(<span class="keyword">this</span>.records, <span class="keyword">function</span>(record_id){<span class="keyword">return</span> record_id == model.id.toString();});
+    <span class="keyword">this</span>.save();
+    <span class="keyword">return</span> model;
+  },
 
-  <span class="nx">localStorage</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">localStorage</span><span class="p">;</span>
-  <span class="p">}</span>
+  localStorage: <span class="keyword">function</span>() {
+      <span class="keyword">return</span> localStorage;
+  }
 
-<span class="p">});</span></pre></div></div>
+});</pre></div></div>
             
         </li>
         
@@ -300,17 +280,15 @@ have an id of it&#39;s own.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              
-<p>localSync delegate to the model or collection&#39;s
+              <p>localSync delegate to the model or collection&#39;s
 <em>localStorage</em> property, which should be an instance of <code>Store</code>.
 window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStorage.sync instead
-
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">LocalStorage</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">Store</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">localSync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">var</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">localStorage</span> <span class="o">||</span> <span class="nx">model</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>Backbone.LocalStorage.sync = window.Store.sync = Backbone.localSync = <span class="keyword">function</span>(method, model, options, error) {
+  <span class="keyword">var</span> store = model.localStorage || model.collection.localStorage;</pre></div></div>
             
         </li>
         
@@ -321,46 +299,44 @@ window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStora
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              
-<p>Backwards compatibility with Backbone &lt;= 0.3.3
-
+              <p>Backwards compatibility with Backbone &lt;= 0.3.3
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre>  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">options</span> <span class="o">==</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="nx">success</span><span class="o">:</span> <span class="nx">options</span><span class="p">,</span>
-      <span class="nx">error</span><span class="o">:</span> <span class="nx">error</span>
-    <span class="p">};</span>
-  <span class="p">}</span>
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">if</span> (<span class="keyword">typeof</span> options == <span class="string">'function'</span>) {
+    options = {
+      success: options,
+      error: error
+    };
+  }
 
-  <span class="kd">var</span> <span class="nx">resp</span><span class="p">;</span>
+  <span class="keyword">var</span> resp;
 
-  <span class="k">switch</span> <span class="p">(</span><span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">case</span> <span class="s2">&quot;read&quot;</span><span class="o">:</span>    <span class="nx">resp</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">id</span> <span class="o">!=</span> <span class="kc">undefined</span> <span class="o">?</span> <span class="nx">store</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="o">:</span> <span class="nx">store</span><span class="p">.</span><span class="nx">findAll</span><span class="p">();</span> <span class="k">break</span><span class="p">;</span>
-    <span class="k">case</span> <span class="s2">&quot;create&quot;</span><span class="o">:</span>  <span class="nx">resp</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>                            <span class="k">break</span><span class="p">;</span>
-    <span class="k">case</span> <span class="s2">&quot;update&quot;</span><span class="o">:</span>  <span class="nx">resp</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>                            <span class="k">break</span><span class="p">;</span>
-    <span class="k">case</span> <span class="s2">&quot;delete&quot;</span><span class="o">:</span>  <span class="nx">resp</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">destroy</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>                           <span class="k">break</span><span class="p">;</span>
-  <span class="p">}</span>
+  <span class="keyword">switch</span> (method) {
+    <span class="keyword">case</span> <span class="string">"read"</span>:    resp = model.id != <span class="literal">undefined</span> ? store.find(model) : store.findAll(); <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="string">"create"</span>:  resp = store.create(model);                            <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="string">"update"</span>:  resp = store.update(model);                            <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="string">"delete"</span>:  resp = store.destroy(model);                           <span class="keyword">break</span>;
+  }
 
-  <span class="k">if</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">success</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">resp</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="nx">options</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="s2">&quot;Record not found&quot;</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">};</span>
+  <span class="keyword">if</span> (resp) {
+    options.success(model, resp, options);
+  } <span class="keyword">else</span> {
+    options.error(model, <span class="string">"Record not found"</span>, options);
+  }
+};
 
-<span class="nx">Backbone</span><span class="p">.</span><span class="nx">ajaxSync</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">sync</span><span class="p">;</span>
+Backbone.ajaxSync = Backbone.sync;
 
-<span class="nx">Backbone</span><span class="p">.</span><span class="nx">getSyncMethod</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span><span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">localStorage</span> <span class="o">||</span> <span class="p">(</span><span class="nx">model</span><span class="p">.</span><span class="nx">collection</span> <span class="o">&amp;&amp;</span> <span class="nx">model</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">localStorage</span><span class="p">))</span>
-  <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">localSync</span><span class="p">;</span>
-  <span class="p">}</span>
+Backbone.getSyncMethod = <span class="keyword">function</span>(model) {
+	<span class="keyword">if</span>(model.localStorage || (model.collection &amp;&amp; model.collection.localStorage))
+	{
+		<span class="keyword">return</span> Backbone.localSync;
+	}
 
-  <span class="k">return</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">ajaxSync</span><span class="p">;</span>
-<span class="p">};</span></pre></div></div>
+	<span class="keyword">return</span> Backbone.ajaxSync;
+};</pre></div></div>
             
         </li>
         
@@ -371,20 +347,17 @@ window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStora
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              
-<p>Override &#39;Backbone.sync&#39; to default to localSync,
+              <p>Override &#39;Backbone.sync&#39; to default to localSync,
 the original &#39;Backbone.sync&#39; is still available in &#39;Backbone.ajaxSync&#39;
 </p>
 
             </div>
             
-            <div class="content"><div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">sync</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">getSyncMethod</span><span class="p">(</span><span class="nx">model</span><span class="p">).</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">[</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="nx">error</span><span class="p">]);</span>
-<span class="p">};</span>
+            <div class="content"><div class='highlight'><pre>Backbone.sync = <span class="keyword">function</span>(method, model, options, error) {
+	<span class="keyword">return</span> Backbone.getSyncMethod(model).apply(<span class="keyword">this</span>, [method, model, options, error]);
+};
 
-<span class="p">})();</span>
-
-</pre></div></div>
+})();</pre></div></div>
             
         </li>
         
