@@ -286,7 +286,10 @@ $(document).ready(function() {
     equal(router.anything, 'doesnt-match-a-route');
   });
 
-  test("routes (function)", 2, function() {
+  test("routes (function)", 3, function() {
+    router.on('route', function(name) {
+      ok(name === '');
+    });
     equal(ExternalObject.value, 'unset');
     location.replace('http://example.com#function/set');
     Backbone.history.checkUrl();
