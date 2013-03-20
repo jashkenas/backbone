@@ -1,4 +1,4 @@
-//     Backbone.js 0.9.10
+//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
@@ -34,7 +34,7 @@
   }
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '0.9.10';
+  Backbone.VERSION = '1.0.0';
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
@@ -1174,7 +1174,8 @@
     // If we're sending a `PATCH` request, and we're in an old Internet Explorer
     // that still has ActiveX enabled by default, override jQuery to use that
     // for XHR instead. Remove this line when jQuery supports `PATCH` on IE8.
-    if (params.type === 'PATCH' && window.ActiveXObject) {
+    if (params.type === 'PATCH' && window.ActiveXObject &&
+          !(window.external && window.external.msActiveXFilteringEnabled)) {
       params.xhr = function() {
         return new ActiveXObject("Microsoft.XMLHTTP");
       };

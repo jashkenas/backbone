@@ -16,5 +16,5 @@
     "test": "phantomjs test/vendor/runner.js test/index.html?noglobals=true && coffee test/model.coffee"
   },
   "main"          : "backbone.js",
-  "version"       : "0.9.10"
+  "version"       : "1.0.0"
 }

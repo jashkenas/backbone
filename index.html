@@ -266,6 +266,7 @@
           padding-bottom: 25px;
         }
         td.text {
+          line-height: 12px;
           padding: 0;
           position: absolute;
           left: 0;
@@ -285,7 +286,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(0.9.10)</span>
+      Backbone.js <span class="version">(1.0.0)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/documentcloud/backbone">GitHub Repository</a></li>
@@ -310,6 +311,7 @@
       <li>– <a href="#Events-once">once</a></li>
       <li>– <a href="#Events-listenTo">listenTo</a></li>
       <li>– <a href="#Events-stopListening">stopListening</a></li>
+      <li>– <a href="#Events-listenToOnce">listenToOnce</a></li>
       <li>- <a href="#Events-catalog"><b>Catalog of Built-in Events</b></a></li>
     </ul>
 
@@ -336,6 +338,7 @@
       <li>– <a href="#Model-fetch">fetch</a></li>
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
+      <li>– <a href="#Model-Underscore-Methods"><b>Underscore Methods (6)</b></a></li>
       <li>– <a href="#Model-validate">validate</a></li>
       <li>– <a href="#Model-validationError">validationError</a></li>
       <li>– <a href="#Model-isValid">isValid</a></li>
@@ -364,7 +367,7 @@
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
       <li>– <a href="#Collection-reset">reset</a></li>
-      <li>– <a href="#Collection-update">update</a></li>
+      <li>– <a href="#Collection-set">set</a></li>
       <li>– <a href="#Collection-get">get</a></li>
       <li>– <a href="#Collection-at">at</a></li>
       <li>– <a href="#Collection-push">push</a></li>
@@ -377,6 +380,7 @@
       <li>– <a href="#Collection-sort">sort</a></li>
       <li>– <a href="#Collection-pluck">pluck</a></li>
       <li>– <a href="#Collection-where">where</a></li>
+      <li>– <a href="#Collection-findWhere">findWhere</a></li>
       <li>– <a href="#Collection-url">url</a></li>
       <li>– <a href="#Collection-parse">parse</a></li>
       <li>– <a href="#Collection-clone">clone</a></li>
@@ -553,12 +557,15 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (0.9.10)</a></td>
-        <td class="text"><i>56kb, Full source, lots of comments</i></td>
+        <td><a class="punch" href="backbone.js">Development Version (1.0.0)</a></td>
+        <td class="text"><i>58kb, Full source, tons of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (0.9.10)</a></td>
-        <td class="text"><i>6.3kb, Packed and gzipped</i></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (1.0.0)</a></td>
+        <td class="text" style="line-height: 16px;">
+          <i>7.1kb, Packed and gzipped</i><br />
+          <small>(<a href="backbone-min.map">Source Map</a>)</small>
+        </td>
       </tr>
       <tr>
         <td><a class="punch" href="https://raw.github.com/documentcloud/backbone/master/backbone.js">Edge Version (master)</a></td>
@@ -572,9 +579,8 @@
     </table>
 
     <p>
-      Backbone's only hard dependency is either
-      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.4.3)</small> or
-      <a href="http://lodash.com">Lo-Dash</a>.
+      Backbone's only hard dependency is
+      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.4.3)</small>.
       For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
       and DOM manipulation with <a href="#View">Backbone.View</a>, include
       <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
@@ -617,60 +623,42 @@
       to execute them.
     </p>
 
-    <h2 id="upgrading">Upgrading to 0.9.10</h2>
+    <h2 id="upgrading">Upgrading to 1.0</h2>
 
     <p>
-      Backbone <b>0.9.10</b> should be considered as a release candidate
-      for an upcoming <b>1.0</b>. If you're upgrading from a previous version,
-      be sure to check the
-      <a href="#changelog">change log</a>. In brief, a few of the larger changes
-      are:
+      Backbone <b>1.0</b> should be a fairly painless upgrade from the <b>0.9</b>
+      series. If you're upgrading from an older version, be sure to check out the
+      <a href="#changelog">change log</a>. In brief, a few of the larger breaking
+      changes are:
     </p>
 
     <ul>
       <li>
-        Most importantly, Backbone events have two new methods:
+        If you want to smartly update the contents of a Collection,
+        adding new models, removing missing ones, and merging those already present,
+        you now call <a href="#Collection-set">set</a> (previously named "update"),
+        a similar operation to calling <tt>set</tt> on a Model. This is now the
+        default when you call <a href="#Collection-fetch">fetch</a> on a collection.
+        To get the old behavior, pass <tt>{reset: true}</tt>.
+      </li>
+      <li>
+        If you have characters in your URL segments that require URL encoding,
+        Backbone will now decode them for you (normalizing the behavior
+        cross-browser) before your route handlers receive them as arguments.
+      </li>
+      <li>
+        In <b>0.9.x</b>, Backbone events gained two new methods:
         <a href="#Events-listenTo">listenTo</a> and
-        <a href="#Events-stopListening">stopListening</a>. These are an
-        inversion-of-control flavor of the usual <tt>on</tt> and <tt>off</tt>,
-        and make it a little easier to clean up <i>all</i> events
-        that an object is listening to on other objects. When you destroy Views
-        with <a href="#View-remove">view.remove()</a>, this will now be done
-        automatically. Note that the usual rules about programming in a garbage
-        collected language still apply.
-      </li>
-      <li>
-        HTTP <tt>PATCH</tt> support, via <tt>model.save(attrs, {patch: true})</tt>,
-        if you'd like to send only partial updates to the server.
-      </li>
-      <li>
-        An <a href="#Collection-update">update</a> method was added to Collection,
-        which should make it easier to perform "smart" syncing updates with the
-        server, where models are added or removed, and updated attributes are merged
-        as appropriate. If you were previously using <br />
-        <tt>collection.fetch({add: true})</tt>,
-        try <a href="#Collection-update">update</a> instead.
-      </li>
-      <li>
-        Backbone events now support <a href="#Events-once">once</a>.
+        <a href="#Events-stopListening">stopListening</a>, which make it easier
+        to create Views that have all of their observers unbound when you
+        want to <a href="#View-remove">remove</a> the view.
       </li>
       <li>
         Model validation is now only enforced by default in
-        <tt>Model#save</tt> and no longer enforced by default upon
-        construction or in <tt>Model#set</tt>, unless the <tt>{validate:true}</tt>
-        option is passed.
-      </li>
-      <li>
-        Passing <tt>{silent:true}</tt> on change will no longer delay individual
-        <tt>"change:attr"</tt> events, instead they are silenced entirely.
-      </li>
-      <li>
-        The <tt>Model#change</tt> method has been removed, as delayed attribute
-        changes are no longer available.
-      </li>
-      <li>
-        Model validation now fires <tt>invalid</tt> event instead of
-        <tt>error</tt>.
+        <a href="#Model-save">save</a> &mdash; not in
+        <a href="#Model-set">set</a> unless the <tt>{validate:true}</tt>
+        option is passed. Model validation now fires an <tt>"invalid"</tt> event instead of
+        <tt>"error"</tt>.
       </li>
     </ul>
 
@@ -821,6 +809,13 @@ view.stopListening();
 
 view.stopListening(model);
 </pre>
+
+    <p id="Events-listenToOnce">
+      <b class="header">listenToOnce</b><code>object.listenToOnce(other, event, callback)</code>
+      <br />
+      Just like <a href="#Events-listenTo">listenTo</a>, but causes the bound
+      callback to only fire once before being removed.
+    </p>
 
     <p id="Events-catalog">
       <b class="header">Catalog of Events</b>
@@ -1294,6 +1289,29 @@ book.destroy({success: function(model, response) {
 }});
 </pre>
 
+    <p id="Model-Underscore-Methods">
+      <b class="header">Underscore Methods (6)</b>
+      <br />
+      Backbone proxies to <b>Underscore.js</b> to provide 6 object functions
+      on <b>Backbone.Model</b>. They aren't all documented here, but
+      you can take a look at the Underscore documentation for the full details&hellip;
+    </p>
+
+    <ul class="small">
+      <li><a href="http://underscorejs.org/#keys">keys</a></li>
+      <li><a href="http://underscorejs.org/#values">values</a></li>
+      <li><a href="http://underscorejs.org/#pairs">pairs</a></li>
+      <li><a href="http://underscorejs.org/#invert">invert</a></li>
+      <li><a href="http://underscorejs.org/#pick">pick</a></li>
+      <li><a href="http://underscorejs.org/#omit">omit</a></li>
+    </ul>
+
+<pre>
+user.pick('first_name', 'last_name', 'email');
+
+chapters.keys().join(', ');
+</pre>
+
     <p id="Model-validate">
       <b class="header">validate</b><code>model.validate(attributes, options)</code>
       <br />
@@ -1384,7 +1402,8 @@ if (!one.isValid()) {
       the server. If your models are located somewhere else, override this method
       with the correct logic. Generates URLs of the form: <tt>"[collection.url]/[id]"</tt>
       by default, but you may override by specifying an explicit <tt>urlRoot</tt>
-      if the model's collection shouldn't be taken into account.
+      if the model's collection shouldn't be taken into account. You can also
+      pass in the model's <tt>url</tt> as an option when instantiating it.
     </p>
 
     <p>
@@ -1752,10 +1771,10 @@ ships.add([
       will empty the entire collection.
     </p>
 
-    <p id="Collection-update">
-      <b class="header">update</b><code>collection.update(models, [options])</code>
+    <p id="Collection-set">
+      <b class="header">set</b><code>collection.set(models, [options])</code>
       <br />
-      The <b>update</b> method tries to peform a "smart" update of the collection
+      The <b>set</b> method tries to peform a "smart" update of the collection
       with the passed list of models. If a model in the list isn't yet in the
       collection it will be added; if the model is already in the collection
       its attributes will be merged; and if the collection contains any models that
@@ -1937,6 +1956,13 @@ var musketeers = friends.where({job: "Musketeer"});
 
 alert(musketeers.length);
 </pre>
+
+    <p id="Collection-findWhere">
+      <b class="header">findWhere</b><code>collection.findWhere(attributes)</code>
+      <br />
+      Just like <a href="#Collection-where">where</a>, but directly returns only
+      the first model in the collection that matches the passed <b>attributes</b>.
+    </p>
 
     <p id="Collection-url">
       <b class="header">url</b><code>collection.url or collection.url()</code>
@@ -2127,7 +2153,8 @@ var Workspace = Backbone.Router.extend({
     <p id="Router-routes">
       <b class="header">routes</b><code>router.routes</code>
       <br />
-      The routes hash maps URLs with parameters to functions on your router,
+      The routes hash maps URLs with parameters to functions on your router
+      (or just direct function definitions, if you prefer),
       similar to the <a href="#View">View</a>'s <a href="#View-delegateEvents">events hash</a>.
       Routes can contain parameter parts, <tt>:param</tt>, which match a single URL
       component between slashes; and splat parts <tt>*splat</tt>, which can match
@@ -3894,6 +3921,40 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header">1.0.0</b> &mdash; <small><i>March 20, 2013</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.10...1.0.0">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Renamed Collection's "update" to <a href="#Collection-set">set</a>, for
+        parallelism with the similar <tt>model.set()</tt>, and contrast with
+        <a href="#Collection-reset">reset</a>. It's now the default
+        updating mechanism after a <a href="#Collection-fetch">fetch</a>. If you'd
+        like to continue using "reset", pass <tt>{reset: true}</tt>.
+      </li>
+      <li>
+        Your route handlers will now receive their URL parameters pre-decoded.
+      </li>
+      <li>
+        Added <a href="#Events-listenToOnce">listenToOnce</a> as the analogue of
+        <a href="#Events-once">once</a>.
+      </li>
+      <li>
+        Added the <a href="#Collection-findWhere">findWhere</a> method to Collections,
+        similar to <a href="#Collection-where">where</a>.
+      </li>
+      <li>
+        Added the <tt>keys</tt>, <tt>values</tt>, <tt>pairs</tt>, <tt>invert</tt>,
+        <tt>pick</tt>, and <tt>omit</tt> Underscore.js methods to Backbone Models.
+      </li>
+      <li>
+        The routes in a Router's route map may now be function literals,
+        instead of references to methods, if you like.
+      </li>
+      <li>
+        <tt>url</tt> and <tt>urlRoot</tt> properties may now be passed as options
+        when instantiating a new Model.
+      </li>
+    </ul>
 
     <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/documentcloud/backbone/compare/0.9.9...0.9.10">Diff</a><br />
     <ul style="margin-top: 5px;">
