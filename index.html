@@ -1785,7 +1785,7 @@ ships.add([
     <p id="Collection-set">
       <b class="header">set</b><code>collection.set(models, [options])</code>
       <br />
-      The <b>set</b> method tries to peform a "smart" update of the collection
+      The <b>set</b> method performs a "smart" update of the collection
       with the passed list of models. If a model in the list isn't yet in the
       collection it will be added; if the model is already in the collection
       its attributes will be merged; and if the collection contains any models that
@@ -2026,13 +2026,12 @@ var Tweets = Backbone.Collection.extend({
       <b class="header">fetch</b><code>collection.fetch([options])</code>
       <br />
       Fetch the default set of models for this collection from the server,
-      resetting the collection when they arrive. The <b>options</b> hash takes
-      <tt>success</tt> and <tt>error</tt> callbacks which will both be passed
-      <tt>(collection, response, options)</tt> as arguments.
-      When the model data returns from the server, the collection will be (efficiently)
-      <a href="#Collection-reset">reset</a>, unless you pass <tt>{set: true}</tt>,
-      in which case it will use <a href="#Collection-set">set</a> to (intelligently)
-      merge the fetched models.
+      <a href="#Collection-set">setting</a> them on the collection when they arrive. 
+      The <b>options</b> hash takes <tt>success</tt> and <tt>error</tt> callbacks 
+      which will both be passed <tt>(collection, response, options)</tt> as arguments.
+      When the model data returns from the server, it uses <a href="#Collection-set">set</a> 
+      to (intelligently) merge the fetched models, unless you pass <tt>{reset: true}</tt>,
+      in which case the collection will be (efficiently) <a href="#Collection-reset">reset</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers for custom persistence strategies and returns a
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
@@ -2955,23 +2954,23 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
 
-  	<h2 id="examples-wordpress">WordPress.com</h2>
+    <h2 id="examples-wordpress">WordPress.com</h2>
 
-  	<p>
-  		<a href="http://wordpress.com/">WordPress.com</a> is the software-as-a-service
-  		version of <a href="http://wordpress.org">WordPress</a>. It uses Backbone.js
-  		Models, Collections, and Views in its
-  		<a href="http://en.blog.wordpress.com/2012/05/25/notifications-refreshed/">Notifications system</a>.  Backbone.js was selected
-  		because it was easy to fit into the structure of the application, not the
-  		other way around. <a href="http://automattic.com">Automattic</a>
-  		(the company behind WordPress.com) is integrating Backbone.js into the
-  		Stats tab and other features throughout the homepage.
-  	</p>
+    <p>
+      <a href="http://wordpress.com/">WordPress.com</a> is the software-as-a-service
+      version of <a href="http://wordpress.org">WordPress</a>. It uses Backbone.js
+      Models, Collections, and Views in its
+      <a href="http://en.blog.wordpress.com/2012/05/25/notifications-refreshed/">Notifications system</a>.  Backbone.js was selected
+      because it was easy to fit into the structure of the application, not the
+      other way around. <a href="http://automattic.com">Automattic</a>
+      (the company behind WordPress.com) is integrating Backbone.js into the
+      Stats tab and other features throughout the homepage.
+    </p>
 
     <div style="text-align: center;">
       <a href="http://wordpress.com/">
         <img width="550" height="387" data-original="docs/images/wpcom-notifications.png" alt="WordPress.com Notifications"
-  	title="WordPress.com Notifications" class="example_image" />
+    title="WordPress.com Notifications" class="example_image" />
       </a>
     </div>
 
@@ -3739,7 +3738,7 @@ var inbox = new Mailbox;
 
 // And then, when the Inbox is opened:
 
-inbox.messages.fetch();
+inbox.messages.fetch({reset: true});
 </pre>
 
     <p>
