@@ -843,6 +843,16 @@ view.stopListening(model);
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
     </ul>
 
+    <p>
+      Generally speaking, when calling a function that emits an event
+      (<tt>model.set()</tt>, <tt>collection.add</tt>, and so on...),
+      if you'd like to prevent the event from being triggered, you may pass
+      <tt>{silent: true}</tt> as an option. Note that this is <i>rarely</i>,
+      perhaps even never, a good idea. Passing through a specific flag
+      in the options for your event callback to look at, and choose to ignore,
+      will usually work out better.
+    </p>
+
     <h2 id="Model">Backbone.Model</h2>
 
     <p>
@@ -999,11 +1009,10 @@ var Library = Backbone.Model.extend({
       <b class="header">set</b><code>model.set(attributes, [options])</code>
       <br />
       Set a hash of attributes (one or many) on the model. If any of the attributes
-      change the model's state, a <tt>"change"</tt> event will be triggered, unless
-      <tt>{silent: true}</tt> is passed as an option. Change events for specific
-      attributes are also triggered, and you can bind to those as well, for example:
-      <tt>change:title</tt>, and <tt>change:content</tt>. You may also pass
-      individual keys and values.
+      change the model's state, a <tt>"change"</tt> event will be triggered on the model.
+      Change events for specific attributes are also triggered, and you can bind
+      to those as well, for example: <tt>change:title</tt>, and <tt>change:content</tt>.
+      You may also pass individual keys and values.
     </p>
 
 <pre>
@@ -1192,8 +1201,7 @@ alert(JSON.stringify(artist));
       latest server state. A <tt>"change"</tt> event will be triggered if the
       server's state differs from the current attributes. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response, options)</tt>
-      and <tt>(model, xhr, options)</tt> as arguments, respectively.
+      are both passed <tt>(model, response, options)</tt> as arguments.
     </p>
 
 <pre>
@@ -1709,9 +1717,8 @@ var alphabetical = books.sortBy(function(book) {
     <p id="Collection-add">
       <b class="header">add</b><code>collection.add(models, [options])</code>
       <br />
-      Add a model (or an array of models) to the collection. Fires an <tt>"add"</tt>
-      event, which you can pass <tt>{silent: true}</tt> to suppress. If a
-      <a href="#Collection-model">model</a> property is defined, you may also pass
+      Add a model (or an array of models) to the collection, firing an <tt>"add"</tt>
+      event. If a <a href="#Collection-model">model</a> property is defined, you may also pass
       raw attributes objects, and have them be vivified as instances of the model.
       Pass <tt>{at: index}</tt> to splice the model into the collection at the
       specified <tt>index</tt>. If you're adding models to the collection that are
@@ -1754,9 +1761,8 @@ ships.add([
       you have so many models to change that you'd rather just update the collection
       in bulk. Use <b>reset</b> to replace a collection with a new list
       of models (or attribute hashes), triggering a single <tt>"reset"</tt> event
-      at the end. Pass <tt>{silent: true}</tt> to suppress the <tt>"reset"</tt> event.
-      For convenience, within a <tt>"reset"</tt> event, the list of any previous
-      models is available as <tt>options.previousModels</tt>.
+      at the end. For convenience, within a <tt>"reset"</tt> event, the list of any
+      previous models is available as <tt>options.previousModels</tt>.
     </p>
 
     <p>
@@ -1792,7 +1798,7 @@ ships.add([
 <pre>
 var vanHalen = new Collection([eddie, alex, stone, roth]);
 
-vanHalen.update([eddie, alex, stone, hagar]);
+vanHalen.set([eddie, alex, stone, hagar]);
 
 // Fires a "remove" event for roth, and an "add" event for "hagar".
 // Updates any of stone, alex, and eddie's attributes that may have
@@ -1918,9 +1924,7 @@ alert(chapters.pluck('title'));
       normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a>
       will sort itself whenever a model is added. To disable sorting when adding
       a model, pass <tt>{sort: false}</tt> to <tt>add</tt>. Calling <b>sort</b>
-      triggers a <tt>"sort"</tt> event on the collection, unless silenced by
-      passing
-      <tt>{silent: true}</tt>.
+      triggers a <tt>"sort"</tt> event on the collection.
     </p>
 
     <p id="Collection-pluck">
@@ -2023,12 +2027,11 @@ var Tweets = Backbone.Collection.extend({
       <br />
       Fetch the default set of models for this collection from the server,
       resetting the collection when they arrive. The <b>options</b> hash takes
-      <tt>success</tt> and <tt>error</tt>
-      callbacks which will be passed <tt>(collection, response, options)</tt>
-      and <tt>(collection, xhr, options)</tt> as arguments, respectively.
+      <tt>success</tt> and <tt>error</tt> callbacks which will both be passed
+      <tt>(collection, response, options)</tt> as arguments.
       When the model data returns from the server, the collection will be (efficiently)
-      <a href="#Collection-reset">reset</a>, unless you pass <tt>{update: true}</tt>,
-      in which case it will use <a href="#Collection-update">update</a> to (intelligently)
+      <a href="#Collection-reset">reset</a>, unless you pass <tt>{set: true}</tt>,
+      in which case it will use <a href="#Collection-set">set</a> to (intelligently)
       merge the fetched models.
       Delegates to <a href="#Sync">Backbone.sync</a>
       under the covers for custom persistence strategies and returns a
@@ -2050,10 +2053,10 @@ accounts.fetch();
 
     <p>
       The behavior of <b>fetch</b> can be customized by using the available
-      <a href="#Collection-update">update</a> options. For example, to fetch a
+      <a href="#Collection-set">set</a> options. For example, to fetch a
       collection, getting an <tt>"add"</tt> event for every new model, and
       a <tt>"change"</tt> event for every changed existing model, without
-      removing anything: <tt>collection.fetch({update: true, remove: false})</tt>
+      removing anything: <tt>collection.fetch({set: true, remove: false})</tt>
     </p>
 
     <p>
