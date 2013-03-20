@@ -214,12 +214,12 @@
   // listen to an event in another object ... keeping track of what it's
   // listening to.
   _.each(listenMethods, function(implementation, method) {
-    Events[method] = function(obj, name, callback) {
+    Events[method] = function(obj, name, callback, context) {
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
       if (typeof name === 'object') callback = this;
-      obj[implementation](name, callback, this);
+      obj[implementation](name, callback, context || this);
       return this;
     };
   });
