@@ -1192,8 +1192,7 @@ alert(JSON.stringify(artist));
       latest server state. A <tt>"change"</tt> event will be triggered if the
       server's state differs from the current attributes. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response, options)</tt>
-      and <tt>(model, xhr, options)</tt> as arguments, respectively.
+      are both passed <tt>(model, response, options)</tt> as arguments.
     </p>
 
 <pre>
@@ -2023,9 +2022,8 @@ var Tweets = Backbone.Collection.extend({
       <br />
       Fetch the default set of models for this collection from the server,
       resetting the collection when they arrive. The <b>options</b> hash takes
-      <tt>success</tt> and <tt>error</tt>
-      callbacks which will be passed <tt>(collection, response, options)</tt>
-      and <tt>(collection, xhr, options)</tt> as arguments, respectively.
+      <tt>success</tt> and <tt>error</tt> callbacks which will both be passed
+      <tt>(collection, response, options)</tt> as arguments.
       When the model data returns from the server, the collection will be (efficiently)
       <a href="#Collection-reset">reset</a>, unless you pass <tt>{set: true}</tt>,
       in which case it will use <a href="#Collection-set">set</a> to (intelligently)
