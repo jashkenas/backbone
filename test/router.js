@@ -82,6 +82,7 @@ $(document).ready(function() {
       "optional(/:item)":           "optionalItem",
       "named/optional/(y:z)":       "namedOptional",
       "splat/*args/end":            "splat",
+      ":repo/compare/*from...*to":  "github",
       "decode/:named/*splat":       "decode",
       "*first/complex-*part/*rest": "complex",
       ":entity?*args":              "query",
@@ -125,6 +126,12 @@ $(document).ready(function() {
 
     splat: function(args) {
       this.args = args;
+    },
+
+    github: function(repo, from, to) {
+      this.repo = repo;
+      this.from = from;
+      this.to = to;
     },
 
     complex: function(first, part, rest) {
@@ -236,6 +243,14 @@ $(document).ready(function() {
     location.replace('http://example.com#splat/long-list/of/splatted_99args/end');
     Backbone.history.checkUrl();
     equal(router.args, 'long-list/of/splatted_99args');
+  });
+
+  test("routes (github)", 3, function() {
+    location.replace('http://example.com#backbone/compare/1.0...braddunbar:with/slash');
+    Backbone.history.checkUrl();
+    equal(router.repo, 'backbone');
+    equal(router.from, '1.0');
+    equal(router.to, 'braddunbar:with/slash');
   });
 
   test("routes (optional)", 2, function() {
