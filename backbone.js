@@ -209,6 +209,7 @@
       }
       return this;
     }
+
   };
 
   var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
