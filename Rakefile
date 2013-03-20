@@ -1,7 +1,7 @@
 desc "rebuild the backbone-min.js files for distribution"
 task :build do
   check 'uglifyjs', 'UglifyJS', 'https://github.com/mishoo/UglifyJS2'
-  system 'uglifyjs backbone.js --source-map backbone-min.map -o backbone-min.js'
+  system 'uglifyjs backbone.js --mangle --source-map backbone-min.map -o backbone-min.js'
 end
 
 desc "build the docco documentation"
