@@ -565,6 +565,12 @@
       if (!error) return true;
       this.trigger('invalid', this, error, _.extend(options || {}, {validationError: error}));
       return false;
+    },
+
+    // Removes event listeners on duplicate or invalid models.
+    _cleanEvents: function () {
+      this.off();
+      this.stopListening();
     }
 
   });
@@ -684,6 +690,7 @@
             existing.set(model.attributes, options);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
+          existing._cleanEvents();
 
         // This is a new model, push it to the `toAdd` list.
         } else if (options.add) {
@@ -908,6 +915,7 @@
       var model = new this.model(attrs, options);
       if (!model._validate(attrs, options)) {
         this.trigger('invalid', this, attrs, options);
+        model._cleanEvents();
         return false;
       }
       return model;
