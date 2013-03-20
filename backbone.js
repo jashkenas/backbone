@@ -242,11 +242,10 @@
   var Model = Backbone.Model = function(attributes, options) {
     var defaults;
     var attrs = attributes || {};
+    options || (options = {});
     this.cid = _.uniqueId('c');
     this.attributes = {};
-    if (options && options.url) this.url = options.url;
-    if (options && options.urlRoot) this.urlRoot = options.urlRoot;
-    if (options && options.collection) this.collection = options.collection;
+    _.extend(this, _.pick(options, modelOptions));
     if (options && options.parse) attrs = this.parse(attrs, options) || {};
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
@@ -255,6 +254,9 @@
     this.changed = {};
     this.initialize.apply(this, arguments);
   };
+
+  // A list of options to be attached directly to the model, if provided.
+  var modelOptions = ['url', 'urlRoot', 'collection'];
 
   // Attach all inheritable methods to the Model prototype.
   _.extend(Model.prototype, Events, {
