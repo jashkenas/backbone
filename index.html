@@ -844,8 +844,13 @@ view.stopListening(model);
     </ul>
 
     <p>
-      Several events (<tt>add</tt>, <tt>remove</tt>, <tt>reset</tt>, <tt>sort</tt>, <tt>add</tt>, and <tt>change</tt>) may be silenced,
-      by passing a <tt>{silent: true}</tt> flag in the options on the triggering method.
+      Generally speaking, when calling a function that emits an event
+      (<tt>model.set()</tt>, <tt>collection.add</tt>, and so on...),
+      if you'd like to prevent the event from being triggered, you may pass
+      <tt>{silent: true}</tt> as an option. Note that this is <i>rarely</i>,
+      perhaps even never, a good idea. Passing through a specific flag
+      in the options for your event callback to look at, and choose to ignore,
+      will usually work out better.
     </p>
 
     <h2 id="Model">Backbone.Model</h2>
@@ -1005,8 +1010,8 @@ var Library = Backbone.Model.extend({
       <br />
       Set a hash of attributes (one or many) on the model. If any of the attributes
       change the model's state, a <tt>"change"</tt> event will be triggered on the model.
-      Change events for specific attributes are also triggered, and you can bind 
-      to those as well, for example: <tt>change:title</tt>, and <tt>change:content</tt>. 
+      Change events for specific attributes are also triggered, and you can bind
+      to those as well, for example: <tt>change:title</tt>, and <tt>change:content</tt>.
       You may also pass individual keys and values.
     </p>
 
@@ -1756,7 +1761,7 @@ ships.add([
       you have so many models to change that you'd rather just update the collection
       in bulk. Use <b>reset</b> to replace a collection with a new list
       of models (or attribute hashes), triggering a single <tt>"reset"</tt> event
-      at the end. For convenience, within a <tt>"reset"</tt> event, the list of any 
+      at the end. For convenience, within a <tt>"reset"</tt> event, the list of any
       previous models is available as <tt>options.previousModels</tt>.
     </p>
 
