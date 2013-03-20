@@ -8,11 +8,13 @@
     "underscore"  : ">=1.4.3"
   },
   "devDependencies": {
-    "phantomjs": "0.2.2"
+    "phantomjs": "1.8.1-3",
+    "docco": "0.6.1",
+    "coffee-script": "1.6.1"
   },
   "scripts": {
-    "test": "phantomjs test/vendor/runner.js test/index.html?noglobals=true"
+    "test": "phantomjs test/vendor/runner.js test/index.html?noglobals=true && coffee test/model.coffee"
   },
   "main"          : "backbone.js",
-  "version"       : "0.9.10"
+  "version"       : "1.0.0"
 }
