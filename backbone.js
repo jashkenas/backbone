@@ -246,7 +246,7 @@
     this.cid = _.uniqueId('c');
     this.attributes = {};
     _.extend(this, _.pick(options, modelOptions));
-    if (options && options.parse) attrs = this.parse(attrs, options) || {};
+    if (options.parse) attrs = this.parse(attrs, options) || {};
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
