@@ -1555,7 +1555,7 @@ bill.set({name : "Bill Jones"});
       triggered on the collection directly, for convenience.
       This allows you to listen for changes to specific attributes in any
       model in a collection, for example:
-      <tt>Documents.on("change:selected", ...)</tt>
+      <tt>documents.on("change:selected", ...)</tt>
     </p>
 
     <p id="Collection-extend">
@@ -2525,7 +2525,7 @@ var DocumentRow = Backbone.View.extend({
     </p>
 
 <pre>
-var doc = Documents.first();
+var doc = documents.first();
 
 new DocumentRow({
   model: doc,
