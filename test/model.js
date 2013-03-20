@@ -264,6 +264,34 @@ $(document).ready(function() {
     equal(i, 2, 'Unset does not fire an event for missing attributes.');
   });
 
+  test("unset", 18, function () {
+    var attrs = {a: 1, b: 2, c: 3};
+    var model = new Backbone.Model(attrs);
+    equal(model.has('a'), true);
+    equal(model.has('b'), true);
+    equal(model.has('c'), true);
+    model.unset('a');
+    equal(model.has('a'), false);
+    equal(model.has('b'), true);
+    equal(model.has('c'), true);
+    model.set(attrs);
+    equal(model.has('a'), true);
+    equal(model.has('b'), true);
+    equal(model.has('c'), true);
+    model.unset(['a', 'b']);
+    equal(model.has('a'), false);
+    equal(model.has('b'), false);
+    equal(model.has('c'), true);
+    model.set(attrs);
+    equal(model.has('a'), true);
+    equal(model.has('b'), true);
+    equal(model.has('c'), true);
+    model.unset({'a': void 0, 'b': void 0});
+    equal(model.has('a'), false);
+    equal(model.has('b'), false);
+    equal(model.has('c'), true);
+  });
+
   test("unset and changedAttributes", 1, function() {
     var model = new Backbone.Model({a: 1});
     model.on('change', function() {
