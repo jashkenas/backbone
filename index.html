@@ -1931,7 +1931,7 @@ alert(chapters.pluck('title'));
       <b class="header">pluck</b><code>collection.pluck(attribute)</code>
       <br />
       Pluck an attribute from each model in the collection. Equivalent to calling
-      <tt>map</tt>, and returning a single attribute from the iterator.
+      <tt>map</tt> and returning a single attribute from the iterator.
     </p>
 
 <pre class="runnable">
@@ -2450,7 +2450,7 @@ model.save();  // POST to "/collection/id", with "_method=PUT" + header.
       encoded as <tt>application/json</tt>, setting <tt>Backbone.emulateJSON = true;</tt>
       will cause the JSON to be serialized under a <tt>model</tt> parameter, and
       the request to be made with a <tt>application/x-www-form-urlencoded</tt>
-      mime type, as if from an HTML form.
+      MIME type, as if from an HTML form.
     </p>
 
     <h2 id="View">Backbone.View</h2>
@@ -3204,7 +3204,7 @@ var model = localBackbone.Model.extend(...);
       <a href="https://stripe.com">Stripe</a> provides an API for accepting
       credit cards on the web. Stripe's
       <a href="https://manage.stripe.com">management interface</a> was recently
-      rewritten from scratch in Coffeescript using Backbone.js as the primary
+      rewritten from scratch in CoffeeScript using Backbone.js as the primary
       framework, <a href="https://github.com/sstephenson/eco">Eco</a> for templates, <a href="http://sass-lang.com/">Sass</a> for stylesheets, and <a href="https://github.com/sstephenson/stitch">Stitch</a> to package
       everything together as <a href="http://commonjs.org/">CommonJS</a> modules. The new app uses
       <a href="https://stripe.com/docs/api">Stripe's API</a> directly for the
@@ -3286,7 +3286,7 @@ var model = localBackbone.Model.extend(...);
       love. Art.sy is built on Rails, using
       <a href="https://github.com/intridea/grape">Grape</a> to serve a robust
       <a href="http://artsy.net/api">JSON API</a>. The main site is a single page
-      app written in Coffeescript and uses Backbone to provide structure around
+      app written in CoffeeScript and uses Backbone to provide structure around
       this API. An admin panel and partner CMS have also been extracted into
       their own API-consuming Backbone projects.
     </p>
@@ -3349,7 +3349,7 @@ var model = localBackbone.Model.extend(...);
       everything it has to offer: the router, collections, models, and complex
       event handling. Before, the page was a mess of <a href="http://jquery.com/">jQuery</a> DOM manipulation
       and manual Ajax calls. Backbone.js helped introduce a new way to
-      think about developing an organized front-end application in Javascript.
+      think about developing an organized front-end application in JavaScript.
     </p>
 
     <div style="text-align: center;">
@@ -3416,11 +3416,11 @@ var model = localBackbone.Model.extend(...);
     <p>
       <a href="http://prose.io">Prose</a> is a content editor for GitHub,
       optimized for managing websites built with
-      <a href="http://jekyllrb.com/">Jekyll</a> and Github Pages. Prose is
+      <a href="http://jekyllrb.com/">Jekyll</a> and GitHub Pages. Prose is
       itself implemented as a static Jekyll site, using Backbone.js to render
       the views and handle the routes, as well as
       <a href="http://github.com/michael/github">Github.js</a>, a small data
-      abstraction layer for manipulating files directly on Github. Read more in the
+      abstraction layer for manipulating files directly on GitHub. Read more in the
       <a href="http://developmentseed.org/blog/2012/june/25/prose-a-content-editor-for-github/">official introduction post</a>,
       or <a href="https://github.com/prose/prose">take a look at the source code</a>.
     </p>
@@ -3612,7 +3612,7 @@ var model = localBackbone.Model.extend(...);
         <a href="http://mustache.github.com">way</a>.
       </li>
       <li>
-        It's smaller. There's fewer kilobytes for your browser or phone to download,
+        It's smaller. There are fewer kilobytes for your browser or phone to download,
         and less <i>conceptual</i> surface area. You can read and understand
         the source in an afternoon.
       </li>
