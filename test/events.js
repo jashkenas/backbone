@@ -278,6 +278,13 @@ $(document).ready(function() {
     _.extend({}, Backbone.Events).on('test').trigger('test');
   });
 
+  test("if callback is truthy but not a function, `on` should throw an error just like jQuery", 1, function() {
+    var view = _.extend({}, Backbone.Events).on('test', 'noop');
+    throws(function() {
+      view.trigger('test');
+    });
+  });
+
   test("remove all events for a specific context", 4, function() {
     var obj = _.extend({}, Backbone.Events);
     obj.on('x y all', function() { ok(true); });

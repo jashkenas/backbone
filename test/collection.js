@@ -225,6 +225,19 @@ $(document).ready(function() {
     equal(col.at(0).get('value'), 2);
   });
 
+  test("add with parse and merge", function() {
+    var Model = Backbone.Model.extend({
+      parse: function (data) {
+        return data.model;
+      }
+    });
+    var collection = new Backbone.Collection();
+    collection.model = Model;
+    collection.add({id: 1});
+    collection.add({model: {id: 1, name: 'Alf'}}, {parse: true, merge: true});
+    equal(collection.first().get('name'), 'Alf');
+  });
+
   test("add model to collection with sort()-style comparator", 3, function() {
     var col = new Backbone.Collection;
     col.comparator = function(a, b) {
@@ -425,7 +438,7 @@ $(document).ready(function() {
     equal(model.collection, collection);
   });
 
-  test("create with validate:true enforces validation", 1, function() {
+  test("create with validate:true enforces validation", 2, function() {
     var ValidatingModel = Backbone.Model.extend({
       validate: function(attrs) {
         return "fail";
@@ -435,6 +448,9 @@ $(document).ready(function() {
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
+    col.on('invalid', function (collection, attrs, options) {
+      equal(options.validationError, 'fail');
+    });
     equal(col.create({"foo":"bar"}, {validate:true}), false);
   });
 
@@ -518,7 +534,7 @@ $(document).ready(function() {
     }), 1);
   });
 
-  test("reset", 10, function() {
+  test("reset", 12, function() {
     var resetCount = 0;
     var models = col.models;
     col.on('reset', function() { resetCount += 1; });
@@ -535,6 +551,22 @@ $(document).ready(function() {
     equal(col.length, 4);
     ok(col.last() !== d);
     ok(_.isEqual(col.last().attributes, d.attributes));
+    col.reset();
+    equal(col.length, 0);
+    equal(resetCount, 4);
+  });
+
+  test ("reset with different values", function(){
+    var col = new Backbone.Collection({id: 1});
+    col.reset({id: 1, a: 1});
+    equal(col.get(1).get('a'), 1);
+  });
+
+  test("same references in reset", function() {
+    var model = new Backbone.Model({id: 1});
+    var collection = new Backbone.Collection({id: 1});
+    collection.reset(model);
+    equal(collection.get(1), model);
   });
 
   test("reset passes caller options", 3, function() {
@@ -841,7 +873,7 @@ $(document).ready(function() {
     collection.reset([]);
   });
 
-  test("update", function() {
+  test("set", function() {
     var m1 = new Backbone.Model();
     var m2 = new Backbone.Model({id: 2});
     var m3 = new Backbone.Model();
@@ -859,24 +891,24 @@ $(document).ready(function() {
     });
 
     // remove: false doesn't remove any models
-    c.update([], {remove: false});
+    c.set([], {remove: false});
     strictEqual(c.length, 2);
 
     // add: false doesn't add any models
-    c.update([m1, m2, m3], {add: false});
+    c.set([m1, m2, m3], {add: false});
     strictEqual(c.length, 2);
 
     // merge: false doesn't change any models
-    c.update([m1, {id: 2, a: 1}], {merge: false});
+    c.set([m1, {id: 2, a: 1}], {merge: false});
     strictEqual(m2.get('a'), void 0);
 
     // add: false, remove: false only merges existing models
-    c.update([m1, {id: 2, a: 0}, m3, {id: 4}], {add: false, remove: false});
+    c.set([m1, {id: 2, a: 0}, m3, {id: 4}], {add: false, remove: false});
     strictEqual(c.length, 2);
     strictEqual(m2.get('a'), 0);
 
     // default options add/remove/merge as appropriate
-    c.update([{id: 2, a: 1}, m3]);
+    c.set([{id: 2, a: 1}, m3]);
     strictEqual(c.length, 2);
     strictEqual(m2.get('a'), 1);
 
@@ -884,23 +916,23 @@ $(document).ready(function() {
     c.off('remove').on('remove', function(model) {
       ok(model === m2 || model === m3);
     });
-    c.update([]);
+    c.set([]);
     strictEqual(c.length, 0);
   });
 
-  test("update with only cids", 3, function() {
+  test("set with only cids", 3, function() {
     var m1 = new Backbone.Model;
     var m2 = new Backbone.Model;
     var c = new Backbone.Collection;
-    c.update([m1, m2]);
+    c.set([m1, m2]);
     equal(c.length, 2);
-    c.update([m1]);
+    c.set([m1]);
     equal(c.length, 1);
-    c.update([m1, m1, m1, m2, m2], {remove: false});
+    c.set([m1, m1, m1, m2, m2], {remove: false});
     equal(c.length, 2);
   });
 
-  test("update with only idAttribute", 3, function() {
+  test("set with only idAttribute", 3, function() {
     var m1 = { _id: 1 };
     var m2 = { _id: 2 };
     var col = Backbone.Collection.extend({
@@ -909,15 +941,15 @@ $(document).ready(function() {
       })
     });
     var c = new col;
-    c.update([m1, m2]);
+    c.set([m1, m2]);
     equal(c.length, 2);
-    c.update([m1]);
+    c.set([m1]);
     equal(c.length, 1);
-    c.update([m1, m1, m1, m2, m2], {remove: false});
+    c.set([m1, m1, m1, m2, m2], {remove: false});
     equal(c.length, 2);
   });
 
-  test("update + merge with default values defined", function() {
+  test("set + merge with default values defined", function() {
     var Model = Backbone.Model.extend({
       defaults: {
         key: 'value'
@@ -927,15 +959,15 @@ $(document).ready(function() {
     var col = new Backbone.Collection([m], {model: Model});
     equal(col.first().get('key'), 'value');
 
-    col.update({id: 1, key: 'other'});
+    col.set({id: 1, key: 'other'});
     equal(col.first().get('key'), 'other');
 
-    col.update({id: 1, other: 'value'});
-    equal(col.first().get('key'), 'other');
+    col.set({id: 1, other: 'value'});
+    equal(col.first().get('key'), 'value');
     equal(col.length, 1);
   });
 
-  test("`update` and model level `parse`", function() {
+  test("`set` and model level `parse`", function() {
     var Model = Backbone.Model.extend({
       parse: function (res) { return res.model; }
     });
@@ -945,14 +977,14 @@ $(document).ready(function() {
     });
     var model = new Model({id: 1});
     var collection = new Collection(model);
-    collection.update({models: [
+    collection.set({models: [
       {model: {id: 1}},
       {model: {id: 2}}
     ]}, {parse: true});
     equal(collection.first(), model);
   });
 
-  test("`update` data is only parsed once", function() {
+  test("`set` data is only parsed once", function() {
     var collection = new Backbone.Collection();
     collection.model = Backbone.Model.extend({
       parse: function (data) {
@@ -961,7 +993,7 @@ $(document).ready(function() {
         return data;
       }
     });
-    collection.update({}, {parse: true});
+    collection.set({}, {parse: true});
   });
 
   test("#1894 - Push should not trigger a sort", 0, function() {
@@ -974,12 +1006,12 @@ $(document).ready(function() {
     new Collection().push({id: 1});
   });
 
-  test("`update` with non-normal id", function() {
+  test("`set` with non-normal id", function() {
     var Collection = Backbone.Collection.extend({
       model: Backbone.Model.extend({idAttribute: '_id'})
     });
     var collection = new Collection({_id: 1});
-    collection.update([{_id: 1, a: 1}], {add: false});
+    collection.set([{_id: 1, a: 1}], {add: false});
     equal(collection.first().get('a'), 1);
   });
 
@@ -991,7 +1023,7 @@ $(document).ready(function() {
     new Collection().add({id: 1}, {sort: false});
   });
 
-  test("#1915 - `parse` data in the right order in `update`", function() {
+  test("#1915 - `parse` data in the right order in `set`", function() {
     var collection = new (Backbone.Collection.extend({
       parse: function (data) {
         strictEqual(data.status, 'ok');
@@ -999,7 +1031,7 @@ $(document).ready(function() {
       }
     }));
     var res = {status: 'ok', data:[{id: 1}]};
-    collection.update(res, {parse: true});
+    collection.set(res, {parse: true});
   });
 
   asyncTest("#1939 - `parse` is passed `options`", 1, function () {
@@ -1037,7 +1069,7 @@ $(document).ready(function() {
   test("`add` only `sort`s when necessary with comparator function", 3, function () {
     var collection = new (Backbone.Collection.extend({
       comparator: function(a, b) {
-        a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
+        return a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
       }
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
@@ -1047,6 +1079,22 @@ $(document).ready(function() {
     collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no model change
     collection.add(collection.models); // don't sort, nothing new
     collection.add(collection.models, {merge: true}); // don't sort
+  });
+
+  test("Attach options to collection.", 3, function() {
+      var url = '/somewhere';
+      var model = new Backbone.Model;
+      var comparator = function(){};
+
+      var collection = new Backbone.Collection([], {
+        url: url,
+        model: model,
+        comparator: comparator
+      });
+
+      strictEqual(collection.url, url);
+      ok(collection.model === model);
+      ok(collection.comparator === comparator);
   });
 
 });
