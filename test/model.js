@@ -1099,4 +1099,29 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test('#2392 - cleanup invalid model listeners', 1, function () {
+    var count = 0;
+    var collection = new Backbone.Collection();
+    var Model = Backbone.Model.extend({
+      initialize : function () {
+        this.listenTo(collection, 'refresh', function () {
+          count++;
+        });
+        this.on('remove', function () {
+          this.off();
+          this.stopListening();
+        }, this);
+      }
+    });
+    var Collection2 = Backbone.Collection.extend({
+      model : Model
+    });
+    var collection2 = new Collection2();
+    collection2.set([{id:1}, {id:2}]); 
+    collection.trigger('refresh');
+    collection2.set([{id:1}, {id:2}]);
+    collection.trigger('refresh');
+    equal(count, 4);
+  });
+
 });
