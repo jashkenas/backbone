@@ -1562,9 +1562,9 @@
   // Wrap an optional error callback with a fallback error event.
   var wrapError = function (model, options) {
     var error = options.error;
-    options.error = function(resp) {
-      if (error) error(model, resp, options);
-      model.trigger('error', model, resp, options);
+    options.error = function(xhr) {
+      if (error) error(model, xhr, options);
+      model.trigger('error', model, xhr, options);
     };
   };
 
