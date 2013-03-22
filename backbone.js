@@ -776,8 +776,8 @@
     },
 
     // Slice out a sub-array of models from the collection.
-    slice: function(begin, end) {
-      return this.models.slice(begin, end);
+    slice: function() {
+      return slice.apply(this.models, arguments);
     },
 
     // Get a model from the set by id.
