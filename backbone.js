@@ -259,7 +259,7 @@
   };
 
   // A list of options to be attached directly to the model, if provided.
-  var modelOptions = ['url', 'urlRoot', 'collection'];
+  var modelOptions = ['urlRoot', 'collection'];
 
   // Attach all inheritable methods to the Model prototype.
   _.extend(Model.prototype, Events, {
