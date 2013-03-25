@@ -248,7 +248,7 @@
     options || (options = {});
     this.cid = _.uniqueId('c');
     this.attributes = {};
-    _.extend(this, _.pick(options, modelOptions));
+    if (options.collection) this.collection = options.collection;
     if (options.parse) attrs = this.parse(attrs, options) || {};
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
@@ -257,9 +257,6 @@
     this.changed = {};
     this.initialize.apply(this, arguments);
   };
-
-  // A list of options to be attached directly to the model, if provided.
-  var modelOptions = ['urlRoot', 'collection'];
 
   // Attach all inheritable methods to the Model prototype.
   _.extend(Model.prototype, Events, {
@@ -596,7 +593,6 @@
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
     options || (options = {});
-    if (options.url) this.url = options.url;
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
