@@ -596,13 +596,15 @@
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
     options || (options = {});
-    if (options.url) this.url = options.url;
-    if (options.model) this.model = options.model;
+    _.extend(this, _.pick(options, collectionOptions));
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, _.extend({silent: true}, options));
   };
+
+  // A list of options to be attached directly to the collection, if provided.
+  var collectionOptions = ['url', 'model'];
 
   // Default options for `Collection#set`.
   var setOptions = {add: true, remove: true, merge: true};
