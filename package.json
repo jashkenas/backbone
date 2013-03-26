@@ -13,7 +13,7 @@
     "coffee-script": "1.6.1"
   },
   "scripts": {
-    "test": "phantomjs test/vendor/runner.js test/index.html?noglobals=true && coffee test/model.coffee"
+    "test": "phantomjs test/vendor/runner.js test/index.html?noglobals=true && phantomjs test/vendor/runner.js test/test-zepto.html?noglobals=true && coffee test/model.coffee"
   },
   "main"          : "backbone.js",
   "version"       : "1.0.0"
