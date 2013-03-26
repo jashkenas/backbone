@@ -988,11 +988,6 @@ var Library = Backbone.Model.extend({
     </p>
 
     <p>
-      <tt>{urlRoot: "..."}</tt> option may be passed when creating a new model
-      that needs to have a custom one-off URL endpoint.
-    </p>
-
-    <p>
       If <tt>{parse: true}</tt> is passed as an <b>option</b>, the <b>attributes</b>
       will first be converted by <a href="#Model-parse">parse</a> before being
       <a href="#Model-set">set</a> on the model.
@@ -1609,8 +1604,8 @@ var Library = Backbone.Collection.extend({
       may be included as an option. Passing <tt>false</tt> as the
       comparator option will prevent sorting. If you define an
       <b>initialize</b> function, it will be invoked when the collection is
-      created. There are several options that, if provided, are attached to the
-      collection directly: <tt>url</tt>, <tt>model</tt> and <tt>comparator</tt>.
+      created. There are a couple of options that, if provided, are attached to
+      the collection directly: <tt>model</tt> and <tt>comparator</tt>.
     </p>
 
 <pre>

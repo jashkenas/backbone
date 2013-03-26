@@ -111,11 +111,6 @@ $(document).ready(function() {
     equal(model.url(), '/nested/1/collection/2');
   });
 
-  test('urlRoot is directly attached if passed in the options', 1, function () {
-    var model = new Backbone.Model({a: 2}, {urlRoot: '/test'});
-    equal(model.urlRoot, '/test');
-  });
-
   test("underscore methods", 5, function() {
     var model = new Backbone.Model({ 'foo': 'a', 'bar': 'b', 'baz': 'c' });
     var model2 = model.clone();
