@@ -48,6 +48,8 @@ $(document).ready(function() {
 
     var events = {'click #test': 'increment'};
 
+    $('#qunit-fixture').html(view.el);
+
     view.delegateEvents(events);
     view.$('#test').trigger('click');
     equal(counter1, 1);
@@ -100,6 +102,8 @@ $(document).ready(function() {
     view.$el.on('click', function(){ counter2++; });
 
     var events = {'click #test': 'increment'};
+
+    $('#qunit-fixture').html(view.el);
 
     view.delegateEvents(events);
     view.$('#test').trigger('click');
@@ -319,7 +323,7 @@ $(document).ready(function() {
     view.collection.trigger('x');
   });
 
-  test("Provide function for el.", 1, function() {
+  test("Provide function for el.", 2, function() {
     var View = Backbone.View.extend({
       el: function() {
         return "<p><a></a></p>";
@@ -327,7 +331,8 @@ $(document).ready(function() {
     });
 
     var view = new View;
-    ok(view.$el.is('p:has(a)'));
+    ok(view.$el.is('p'));
+    ok(view.$el.find('a').length);
   });
 
   test("events passed in options", 2, function() {
@@ -344,6 +349,8 @@ $(document).ready(function() {
     var view2 = new View({events:function(){
       return {'click #test':'increment'};
     }});
+
+    $('#qunit-fixture').append(view.el).append(view2.el);
 
     view.$('#test').trigger('click');
     view2.$('#test').trigger('click');
