@@ -1021,6 +1021,16 @@
       return this;
     },
 
+    // Make the view element not visible 
+    hide: function() {
+      this.$el.hide();
+    },
+
+    // Make the view element visible
+    show: function() {
+      this.$el.show();
+    },
+
     // Change the view's element (`this.el` property), including event
     // re-delegation.
     setElement: function(element, delegate) {
