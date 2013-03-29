@@ -712,6 +712,15 @@ $(document).ready(function() {
     equal(model.get('a'), void 0);
   });
 
+  test("save doesn't validate twice", function () {
+    var model = new Backbone.Model();
+    var times = 0;
+    model.sync = function () {};
+    model.validate = function () { ++times; }
+    model.save({});
+    equal(times, 1);
+  });
+
   test("`hasChanged` for falsey keys", 2, function() {
     var model = new Backbone.Model();
     model.set({x: true}, {silent: true});
