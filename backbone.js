@@ -453,10 +453,10 @@
         (attrs = {})[key] = val;
       }
 
-      // If we're not waiting and attributes exist, save acts as `set(attr).save(null, opts)`.
-      if (attrs && (!options || !options.wait) && !this.set(attrs, options)) return false;
-
       options = _.extend({validate: true}, options);
+
+      // If we're not waiting and attributes exist, save acts as `set(attr).save(null, opts)`.
+      if (attrs && !options.wait && !this.set(attrs, options)) return false;
 
       // Do not persist invalid models.
       if (!this._validate(attrs, options)) return false;

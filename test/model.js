@@ -705,6 +705,13 @@ $(document).ready(function() {
     ok(this.syncArgs.model === model);
   });
 
+  test("save without `wait` doesn't set invalid attributes", function () {
+    var model = new Backbone.Model();
+    model.validate = function () { return 1; }
+    model.save({a: 1});
+    equal(model.get('a'), void 0);
+  });
+
   test("`hasChanged` for falsey keys", 2, function() {
     var model = new Backbone.Model();
     model.set({x: true}, {silent: true});
