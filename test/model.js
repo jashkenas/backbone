@@ -453,6 +453,11 @@ $(document).ready(function() {
     equal(this.syncArgs.options.attrs.d, 4);
     equal(this.syncArgs.options.attrs.a, undefined);
     equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
+
+    doc.save(null, {patch: true, fields: ['b', 'd']});
+    equal(this.syncArgs.options.attrs, undefined);
+    equal(_.size(this.syncArgs.options.fields), 2);
+    equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
   });
 
   test("save in positional style", 1, function() {
