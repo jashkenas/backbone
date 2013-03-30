@@ -277,7 +277,11 @@
 
     // Return a copy of the model's `attributes` object.
     toJSON: function(options) {
-      return _.clone(this.attributes);
+      if (options.patch && options.fields) {
+        return _.pick(this.attributes, options.fields);
+      } else {
+        return _.clone(this.attributes);
+      }
     },
 
     // Proxy `Backbone.sync` by default -- but override this if you need
@@ -488,7 +492,7 @@
       wrapError(this, options);
 
       method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
-      if (method === 'patch') options.attrs = attrs;
+      if (attrs && method === 'patch') options.attrs = attrs;
       xhr = this.sync(method, this, options);
 
       // Restore attributes.
