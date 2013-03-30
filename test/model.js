@@ -447,12 +447,28 @@ $(document).ready(function() {
     equal(this.syncArgs.method, 'update');
     equal(this.syncArgs.options.attrs, undefined);
 
+    // passed in attrs
     doc.save({b: 2, d: 4}, {patch: true});
     equal(this.syncArgs.method, 'patch');
     equal(_.size(this.syncArgs.options.attrs), 2);
     equal(this.syncArgs.options.attrs.d, 4);
     equal(this.syncArgs.options.attrs.a, undefined);
     equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
+
+    // fields array
+    doc.save(null, {patch: ['b', 'd']});
+    equal(this.syncArgs.method, 'patch');
+    equal(this.syncArgs.options.attrs.a, undefined);
+    equal(_.size(this.syncArgs.options.patch), 2);
+    equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
+
+    // fields array override
+    doc.save({b: 2, d: 4}, {patch: ['d']});
+    equal(this.syncArgs.method, 'patch');
+    equal(this.syncArgs.options.attrs.a, undefined);
+    equal(this.syncArgs.options.attrs.b, undefined);
+    equal(_.size(this.syncArgs.options.patch), 1);
+    equal(this.ajaxSettings.data, "{\"d\":4}");
   });
 
   test("save in positional style", 1, function() {
