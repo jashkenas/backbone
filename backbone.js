@@ -488,7 +488,13 @@
       wrapError(this, options);
 
       method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
-      if (method === 'patch') options.attrs = attrs;
+      if (method === 'patch') {
+        if (_.isArray(options.patch)) {
+          options.attrs = _.pick(attrs || this.attributes, options.patch);
+        } else {
+          options.attrs = attrs;
+        }
+      }
       xhr = this.sync(method, this, options);
 
       // Restore attributes.
