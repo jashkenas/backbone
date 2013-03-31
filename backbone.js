@@ -699,7 +699,7 @@
       // Remove nonexistent models if appropriate.
       if (options.remove) {
         for (i = 0, l = this.length; i < l; ++i) {
-          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
+          if (modelMap[(model = this.models[i]).cid]) toRemove.push(model);
         }
         if (toRemove.length) this.remove(toRemove, options);
       }
