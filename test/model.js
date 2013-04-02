@@ -1108,4 +1108,13 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test("fetch respects {parse: false} option", 0, function() {
+    var model = new Backbone.Model();
+    model.sync = function(method, model, options) {
+      options.success();
+    };
+
+    model.parse = function() { ok(false) };
+    model.fetch({ parse: false });
+  });
 });
