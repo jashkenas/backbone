@@ -204,6 +204,10 @@ $(document).ready(function() {
     equal(router.page, '20');
   });
 
+  test("reports matched route via nagivate", 1, function() {
+    ok(Backbone.history.navigate('search/manhattan/p20', true));
+  });
+
   test("route precedence via navigate", 6, function(){
     // check both 0.9.x and backwards-compatibility options
     _.each([ { trigger: true }, true ], function( options ){
