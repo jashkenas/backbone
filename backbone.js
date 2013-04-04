@@ -669,6 +669,8 @@
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
       var toAdd = [], toRemove = [], modelMap = {};
+      var add = options.add, merge = options.merge, remove = options.remove;
+      var order = !sortable && add && remove ? [] : false;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
@@ -678,14 +680,14 @@
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
-          if (options.remove) modelMap[existing.cid] = true;
-          if (options.merge) {
+          if (remove) modelMap[existing.cid] = true;
+          if (merge) {
             existing.set(model.attributes, options);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
 
         // This is a new model, push it to the `toAdd` list.
-        } else if (options.add) {
+        } else if (add) {
           toAdd.push(model);
 
           // Listen to added models' events, and index models for lookup by
@@ -694,10 +696,11 @@
           this._byId[model.cid] = model;
           if (model.id != null) this._byId[model.id] = model;
         }
+        if (order) order.push(existing || model);
       }
 
       // Remove nonexistent models if appropriate.
-      if (options.remove) {
+      if (remove) {
         for (i = 0, l = this.length; i < l; ++i) {
           if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
         }
@@ -705,13 +708,14 @@
       }
 
       // See if sorting is needed, update `length` and splice in new models.
-      if (toAdd.length) {
+      if (toAdd.length || (order && order.length)) {
         if (sortable) sort = true;
         this.length += toAdd.length;
         if (at != null) {
           splice.apply(this.models, [at, 0].concat(toAdd));
         } else {
-          push.apply(this.models, toAdd);
+          if (order) this.models.length = 0;
+          push.apply(this.models, order || toAdd);
         }
       }
 
@@ -726,7 +730,7 @@
       }
 
       // Trigger `sort` if the collection was sorted.
-      if (sort) this.trigger('sort', this, options);
+      if (sort || (order && order.length)) this.trigger('sort', this, options);
       return this;
     },
 

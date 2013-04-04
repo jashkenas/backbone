@@ -996,6 +996,25 @@ $(document).ready(function() {
     collection.set({}, {parse: true});
   });
 
+  test('`set` matches input order in the absence of a comparator', function () {
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    collection.set([{id: 3}, {id: 2}, {id: 1}]);
+    deepEqual(collection.models, [three, two, one]);
+    collection.set([{id: 1}, {id: 2}]);
+    deepEqual(collection.models, [one, two]);
+    collection.set([two, three, one]);
+    deepEqual(collection.models, [two, three, one]);
+    collection.set([{id: 1}, {id: 2}], {remove: false});
+    deepEqual(collection.models, [two, three, one]);
+    collection.set([{id: 1}, {id: 2}, {id: 3}], {merge: false});
+    deepEqual(collection.models, [one, two, three]);
+    collection.set([three, two, one, {id: 4}], {add: false});
+    deepEqual(collection.models, [one, two, three]);
+  });
+
   test("#1894 - Push should not trigger a sort", 0, function() {
     var Collection = Backbone.Collection.extend({
       comparator: 'id',
