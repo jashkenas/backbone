@@ -580,12 +580,16 @@
 
     <p>
       Backbone's only hard dependency is
-      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.4.3)</small>.
+      <b><a href="http://underscorejs.org/">Underscore.js</a></b>.
       For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
       and DOM manipulation with <a href="#View">Backbone.View</a>, include
-      <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
-      <a href="http://jquery.com">jQuery</a> <small>( >= 1.7.0)</small> or
-      <a href="http://zeptojs.com/">Zepto</a>.
+      <b><a href="http://jquery.com">jQuery</a></b>, and
+      <b><a href="https://github.com/douglascrockford/JSON-js">json2.js</a></b> for older
+      Internet Explorer support.
+      <i>(Mimics of the Underscore and jQuery APIs, such as
+      <a href="http://lodash.com">Lo-Dash</a> and
+      <a href="http://zeptojs.com">Zepto</a>, will
+      also tend to work, with varying degrees of compatibility.)</i>
     </p>
 
     <h2 id="introduction">Introduction</h2>
@@ -2183,9 +2187,9 @@ var Workspace = Backbone.Router.extend({
     </p>
 
     <p>
-      Trailing slashes are treated as part of the URL, and (correctly) treated 
+      Trailing slashes are treated as part of the URL, and (correctly) treated
       as a unique route when accessed. <tt>docs</tt> and <tt>docs/</tt> will fire
-      different callbacks. If you can't avoid generating both types of URLs, you 
+      different callbacks. If you can't avoid generating both types of URLs, you
       can define a <tt>"docs(/)"</tt> matcher to capture both cases.
     </p>
 
