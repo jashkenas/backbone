@@ -985,7 +985,7 @@
   // if an existing element is not provided...
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
-    this._configure(options || {});
+    options = this._configure(options || {});
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
@@ -1089,7 +1089,7 @@
     _configure: function(options) {
       if (this.options) options = _.extend({}, _.result(this, 'options'), options);
       _.extend(this, _.pick(options, viewOptions));
-      this.options = options;
+      return options;
     },
 
     // Ensure that the View has a DOM element to render into.
