@@ -245,7 +245,7 @@
   var Model = Backbone.Model = function(attributes, options) {
     var defaults;
     var attrs = attributes || {};
-    options || (options = {});
+    if (!options) options = {};
     this.cid = _.uniqueId('c');
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
@@ -317,7 +317,7 @@
         (attrs = {})[key] = val;
       }
 
-      options || (options = {});
+      if (!options) options = {};
 
       // Run validation.
       if (!this._validate(attrs, options)) return false;
@@ -595,7 +595,7 @@
   // If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
-    options || (options = {});
+    if (!options) options = {};
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
@@ -637,7 +637,7 @@
     // Remove a model, or a list of models from the set.
     remove: function(models, options) {
       models = _.isArray(models) ? models.slice() : [models];
-      options || (options = {});
+      if (!options) options = {};
       var i, l, index, model;
       for (i = 0, l = models.length; i < l; i++) {
         model = this.get(models[i]);
@@ -739,7 +739,7 @@
     // any granular `add` or `remove` events. Fires `reset` when finished.
     // Useful for bulk operations and optimizations.
     reset: function(models, options) {
-      options || (options = {});
+      if (!options) options = {};
       for (var i = 0, l = this.models.length; i < l; i++) {
         this._removeReference(this.models[i]);
       }
@@ -817,7 +817,7 @@
     // is added.
     sort: function(options) {
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
-      options || (options = {});
+      if (!options) options = {};
 
       // Run sort based on type of `comparator`.
       if (_.isString(this.comparator) || this.comparator.length === 1) {
@@ -906,7 +906,7 @@
         if (!attrs.collection) attrs.collection = this;
         return attrs;
       }
-      options || (options = {});
+      if (!options) options = {};
       options.collection = this;
       var model = new this.model(attrs, options);
       if (!model._validate(attrs, options)) {
@@ -989,7 +989,7 @@
   // if an existing element is not provided...
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
-    options || (options = {});
+    if (!options) options = {};
     _.extend(this, _.pick(options, viewOptions));
     this._ensureElement();
     this.initialize.apply(this, arguments);
@@ -1126,8 +1126,10 @@
   Backbone.sync = function(method, model, options) {
     var type = methodMap[method];
 
+    if (!options) options = {};
+
     // Default options, unless specified.
-    _.defaults(options || (options = {}), {
+    _.defaults(options, {
       emulateHTTP: Backbone.emulateHTTP,
       emulateJSON: Backbone.emulateJSON
     });
@@ -1206,7 +1208,7 @@
   // Routers map faux-URLs to actions, and fire events when routes are
   // matched. Creating a new one sets its `routes` hash, if not set statically.
   var Router = Backbone.Router = function(options) {
-    options || (options = {});
+    if (!options) options = {};
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
     this.initialize.apply(this, arguments);
