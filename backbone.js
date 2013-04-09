@@ -981,11 +981,16 @@
   // having to worry about render order ... and makes it easy for the view to
   // react to specific changes in the state of your models.
 
+  // Options with special meaning *(e.g. model, collection, id, className)* are
+  // attached directly to the view.  See `viewOptions` for an exhaustive
+  // list.
+
   // Creating a Backbone.View creates its initial element outside of the DOM,
   // if an existing element is not provided...
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
-    options = this._configure(options || {});
+    options || (options = {});
+    _.extend(this, _.pick(options, viewOptions));
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
@@ -1080,16 +1085,6 @@
     undelegateEvents: function() {
       this.$el.off('.delegateEvents' + this.cid);
       return this;
-    },
-
-    // Performs the initial configuration of a View with a set of options.
-    // Keys with special meaning *(e.g. model, collection, id, className)* are
-    // attached directly to the view.  See `viewOptions` for an exhaustive
-    // list.
-    _configure: function(options) {
-      if (this.options) options = _.extend({}, _.result(this, 'options'), options);
-      _.extend(this, _.pick(options, viewOptions));
-      return options;
     },
 
     // Ensure that the View has a DOM element to render into.
