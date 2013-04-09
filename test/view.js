@@ -153,24 +153,6 @@ $(document).ready(function() {
     strictEqual(new View().el.id, 'id');
   });
 
-  test("with options function", 2, function() {
-
-    var View = Backbone.View.extend({
-
-      options: function() {
-        return {title: 'title'};
-      },
-
-      initialize: function(options) {
-        strictEqual(options.title, 'title');
-        strictEqual(options.fixed, true);
-      }
-
-    });
-
-    new View({fixed: true});
-  });
-
   test("with attributes", 2, function() {
     var View = Backbone.View.extend({
       attributes: {
