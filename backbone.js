@@ -1368,6 +1368,7 @@
       this._wantsHashChange = this.options.hashChange !== false;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
+      this._wantsMatchAll   = !!this.options.matchAll;
       var fragment          = this.getFragment();
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
@@ -1440,18 +1441,25 @@
       this.loadUrl() || this.loadUrl(this.getHash());
     },
 
-    // Attempt to load the current URL fragment. If a route succeeds with a
-    // match, returns `true`. If no defined routes matches the fragment,
-    // returns `false`.
+    // Attempts to load the current URL fragment. 
+    // If a handler is matched, returns`true or, otherwise,`false.
+    // If matchAll option is true, does not stop at first matched callback.
     loadUrl: function(fragmentOverride) {
       var fragment = this.fragment = this.getFragment(fragmentOverride);
-      var matched = _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
-        }
-      });
-      return matched;
+      if (this._wantsMatchAll) {
+        return !!_.filter(this.handlers, this._matchHandler, fragment).length;
+      }
+      return _.any(this.handlers, this._matchHandler, fragment);
+    },
+    
+    // Helper for loadUrl method
+    // If fragment matchs route, then executes handler
+    _matchHandler: function(handler) {
+      var fragment = this;
+      if (handler.route.test(fragment)) {
+        handler.callback(fragment);
+        return true;
+      }
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
