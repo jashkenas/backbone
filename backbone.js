@@ -1212,7 +1212,8 @@
   // matched. Creating a new one sets its `routes` hash, if not set statically.
   var Router = Backbone.Router = function(options) {
     options || (options = {});
-    if (options.routes) this.routes = options.routes;
+    this.routes = options.routes || this.routes;
+    this.history = options.history || this.history || Backbone.history;
     this._bindRoutes();
     this.initialize.apply(this, arguments);
   };
@@ -1245,19 +1246,19 @@
       }
       if (!callback) callback = this[name];
       var router = this;
-      Backbone.history.route(route, function(fragment) {
+      this.history.route(route, function(fragment) {
         var args = router._extractParameters(route, fragment);
         callback && callback.apply(router, args);
         router.trigger.apply(router, ['route:' + name].concat(args));
         router.trigger('route', name, args);
-        Backbone.history.trigger('route', router, name, args);
+        router.history.trigger('route', router, name, args);
       });
       return this;
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate: function(fragment, options) {
-      Backbone.history.navigate(fragment, options);
+      this.history.navigate(fragment, options);
       return this;
     },
 
@@ -1305,15 +1306,15 @@
   // [onhashchange](https://developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
   // and URL fragments. If the browser supports neither (old IE, natch),
   // falls back to polling.
-  var History = Backbone.History = function() {
+  var History = Backbone.History = function(options) {
+    options || (options = {});
     this.handlers = [];
     _.bindAll(this, 'checkUrl');
 
     // Ensure that `History` can be used outside of the browser.
-    if (typeof window !== 'undefined') {
-      this.location = window.location;
-      this.history = window.history;
-    }
+    this.location = options.location || this.location;
+    this.history = options.history || this.history;
+    this.root = options.root || this.root || '/';
   };
 
   // Cached regex for stripping a leading hash/slash and trailing space.
@@ -1338,10 +1339,13 @@
     // twenty times a second.
     interval: 50,
 
+    // Has the history handling already been started?
+    started: false,
+
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
-    getHash: function(window) {
-      var match = (window || this).location.href.match(/#(.*)$/);
+    getHash: function(iframe) {
+      var match = (iframe || this).location.href.match(/#(.*)$/);
       return match ? match[1] : '';
     },
 
@@ -1363,8 +1367,8 @@
     // Start the hash change handling, returning `true` if the current URL matches
     // an existing route, and `false` otherwise.
     start: function(options) {
-      if (History.started) throw new Error("Backbone.history has already been started");
-      History.started = true;
+      if (this.started) throw new Error("Backbone.history has already been started");
+      this.started = History.started = true;
 
       // Figure out the initial configuration. Do we need an iframe?
       // Is pushState desired ... is it available?
@@ -1424,7 +1428,7 @@
     stop: function() {
       Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
       clearInterval(this._checkUrlInterval);
-      History.started = false;
+      this.started = History.started = false;
     },
 
     // Add a route to be tested when the fragment changes. Routes added later
@@ -1467,7 +1471,7 @@
     // route callback be fired (not usually desirable), or `replace: true`, if
     // you wish to modify the current URL without adding an entry to the history.
     navigate: function(fragment, options) {
-      if (!History.started) return false;
+      if (typeof window !== 'undefined' && !this.started) return false;
       if (!options || options === true) options = {trigger: options};
       fragment = this.getFragment(fragment || '');
       if (this.fragment === fragment) return;
@@ -1513,7 +1517,9 @@
   });
 
   // Create the default Backbone.history.
-  Backbone.history = new History;
+  if (typeof window !== 'undefined') {
+    Backbone.history = new History({location: window.location, history: window.history});
+  }
 
   // Helpers
   // -------
