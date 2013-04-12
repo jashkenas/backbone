@@ -5,7 +5,7 @@
 //     For all details and documentation:
 //     http://backbonejs.org
 
-(function(){
+(function() {
 
   // Initial Setup
   // -------------
@@ -72,7 +72,7 @@
   //
   //     var object = {};
   //     _.extend(object, Backbone.Events);
-  //     object.on('expand', function(){ alert('expanded'); });
+  //     object.on('expand', function() { alert('expanded'); });
   //     object.trigger('expand');
   //
   var Events = Backbone.Events = {
@@ -273,7 +273,7 @@
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
-    initialize: function(){},
+    initialize: function() {},
 
     // Return a copy of the model's `attributes` object.
     toJSON: function(options) {
@@ -616,12 +616,12 @@
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
-    initialize: function(){},
+    initialize: function() {},
 
     // The JSON representation of a Collection is an array of the
     // models' attributes.
     toJSON: function(options) {
-      return this.map(function(model){ return model.toJSON(options); });
+      return this.map(function(model) { return model.toJSON(options); });
     },
 
     // Proxy `Backbone.sync` by default.
@@ -1016,7 +1016,7 @@
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
-    initialize: function(){},
+    initialize: function() {},
 
     // **render** is the core function that your view should override, in order
     // to populate its element (`this.el`), with the appropriate HTML. The
@@ -1224,7 +1224,7 @@
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
-    initialize: function(){},
+    initialize: function() {},
 
     // Manually bind a single named route to a callback. For example:
     //
@@ -1273,7 +1273,7 @@
     _routeToRegExp: function(route) {
       route = route.replace(escapeRegExp, '\\$&')
                    .replace(optionalParam, '(?:$1)?')
-                   .replace(namedParam, function(match, optional){
+                   .replace(namedParam, function(match, optional) {
                      return optional ? match : '([^\/]+)';
                    })
                    .replace(splatParam, '(.*?)');
@@ -1526,7 +1526,7 @@
     if (protoProps && _.has(protoProps, 'constructor')) {
       child = protoProps.constructor;
     } else {
-      child = function(){ return parent.apply(this, arguments); };
+      child = function() { return parent.apply(this, arguments); };
     }
 
     // Add static properties to the constructor function, if supplied.
@@ -1534,7 +1534,7 @@
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function.
-    var Surrogate = function(){ this.constructor = child; };
+    var Surrogate = function() { this.constructor = child; };
     Surrogate.prototype = parent.prototype;
     child.prototype = new Surrogate;
 
