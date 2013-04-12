@@ -963,7 +963,7 @@ $(document).ready(function() {
     equal(col.first().get('key'), 'other');
 
     col.set({id: 1, other: 'value'});
-    equal(col.first().get('key'), 'value');
+    equal(col.first().get('key'), 'other');
     equal(col.length, 1);
   });
 
