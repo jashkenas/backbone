@@ -634,6 +634,12 @@
       return this.set(models, _.defaults(options || {}, addOptions));
     },
 
+    // Extend the collection with the collection in argument
+    extend: function(collection, options) {
+      this.add(collection.models, options);
+      return this;
+    },
+
     // Remove a model, or a list of models from the set.
     remove: function(models, options) {
       models = _.isArray(models) ? models.slice() : [models];

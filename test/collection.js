@@ -271,6 +271,77 @@ $(document).ready(function() {
     deepEqual(col.pluck('id'), [1, 2, 3]);
   });
 
+
+  test('extend', 6, function(){
+    var col = new Backbone.Collection();
+
+    var collections = [
+      new Backbone.Collection([{id: 0}, {id: 1}, {id: 2}]),
+      new Backbone.Collection([{id: 3}, {id: 4}, {id: 5}])
+    ];
+
+    _.each(collections, function(collection){
+      col.extend(collection);
+    });
+
+    for (var i = 0; i <= 5; i++) {
+      equal(col.at(i).get('id'), i);
+    }
+  });
+
+  test('extend; should ignore duplicate models', 5 , function() {
+    var col = new Backbone.Collection();
+
+    var collections = [
+      new Backbone.Collection([{id: 0}, {id: 1}, {id: 2}]),
+      new Backbone.Collection([{id: 3}, {id: 2}, {id: 4}])
+    ];
+
+    _.each(collections, function(collection){
+      col.extend(collection);
+    });
+
+    for (var i = 0; i <= 4; i++) {
+      equal(col.at(i).get('id'), i);
+    }
+  });
+
+  test('extend; should merge duplicate models', 5 , function() {
+    var col = new Backbone.Collection()
+
+    var collections = [
+      new Backbone.Collection([{id: 0, foo: true}, {id: 1, foo: true},
+                               {id: 2, foo: false}]),
+      new Backbone.Collection([{id: 3, foo: true}, {id: 2, foo: true},
+                               {id: 4, foo: true}])
+    ];
+
+    _.each(collections, function(collection){
+      col.extend(collection, {merge: true});
+    });
+
+    col.each(function(object) {
+      equal(object.get('foo'), true);
+    });
+  });
+
+  test('extend; extend in the middle of collection', 5 , function() {
+    var col = new Backbone.Collection()
+
+    var collections = [
+      new Backbone.Collection([{id: 1}, {id: 2}, {id: 5}]),
+      new Backbone.Collection([{id: 3}, {id: 4}])
+    ];
+
+    _.each(collections, function(collection){
+      col.extend(collection, {at: 2});
+    });
+
+    for (var i = 0; i <= 4; i++) {
+      equal(col.at(i).get('id'), i+1);
+    }
+  });
+
   test("remove", 5, function() {
     var removed = null;
     var otherRemoved = null;
