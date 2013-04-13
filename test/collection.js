@@ -962,7 +962,7 @@ $(document).ready(function() {
     col.set({id: 1, key: 'other'});
     equal(col.first().get('key'), 'other');
 
-    col.set({id: 1, other: 'value'});
+    col.set({id: 1, other: 'value'}, {merge: false});
     equal(col.first().get('key'), 'other');
     equal(col.length, 1);
   });
