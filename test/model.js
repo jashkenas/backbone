@@ -1108,4 +1108,12 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test("dirty function make", 3, function() {
+    var model = new Backbone.Model({a: 1});
+    model.dirty('a');
+    equal(model.hasChanged('a'), true);
+    equal(model.changedAttributes().a, 1);
+    equal(model.previous('a'), 1);
+  });
+
 });
