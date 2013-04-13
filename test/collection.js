@@ -1122,6 +1122,6 @@ $(document).ready(function() {
         'b': 0,
         'c': 0,
       }} );
-  }
+  } );
 
 });
