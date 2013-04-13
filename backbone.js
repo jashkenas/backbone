@@ -409,6 +409,14 @@
       return changed;
     },
 
+    // Force an attribute to be synced on next saving even if the value didn't
+    // change.
+    dirty: function(attr) {
+      var val = this.get(attr)
+      this.changed[attr] = val
+      this._previousAttributes[attr] = val
+    },
+
     // Get the previous value of an attribute, recorded at the time the last
     // `"change"` event was fired.
     previous: function(attr) {
