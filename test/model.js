@@ -46,9 +46,9 @@ $(document).ready(function() {
 
   test("initialize with parsed attributes", 1, function() {
     var Model = Backbone.Model.extend({
-      parse: function(obj) {
-        obj.value += 1;
-        return obj;
+      parse: function(attrs) {
+        attrs.value += 1;
+        return attrs;
       }
     });
     var model = new Model({value: 1}, {parse: true});
@@ -69,8 +69,8 @@ $(document).ready(function() {
 
   test("parse can return null", 1, function() {
     var Model = Backbone.Model.extend({
-      parse: function(obj) {
-        obj.value += 1;
+      parse: function(attrs) {
+        attrs.value += 1;
         return null;
       }
     });
@@ -109,6 +109,16 @@ $(document).ready(function() {
     equal(model.url(), '/nested/1/collection');
     model.set({id: 2});
     equal(model.url(), '/nested/1/collection/2');
+  });
+
+  test("underscore methods", 5, function() {
+    var model = new Backbone.Model({ 'foo': 'a', 'bar': 'b', 'baz': 'c' });
+    var model2 = model.clone();
+    deepEqual(model.keys(), ['foo', 'bar', 'baz']);
+    deepEqual(model.values(), ['a', 'b', 'c']);
+    deepEqual(model.invert(), { 'a': 'foo', 'b': 'bar', 'c': 'baz' });
+    deepEqual(model.pick('foo', 'baz'), {'foo': 'a', 'baz': 'c'});
+    deepEqual(model.omit('foo', 'bar'), {'baz': 'c'});
   });
 
   test("clone", 10, function() {
@@ -324,7 +334,7 @@ $(document).ready(function() {
         "two": 2
       }
     });
-    var model = new Defaulted({two: null});
+    var model = new Defaulted({two: undefined});
     equal(model.get('one'), 1);
     equal(model.get('two'), 2);
     Defaulted = Backbone.Model.extend({
@@ -335,7 +345,7 @@ $(document).ready(function() {
         };
       }
     });
-    model = new Defaulted({two: null});
+    model = new Defaulted({two: undefined});
     equal(model.get('one'), 3);
     equal(model.get('two'), 4);
   });
@@ -693,6 +703,22 @@ $(document).ready(function() {
     model.url = '/test';
     model.save({x: 1}, {wait: true});
     ok(this.syncArgs.model === model);
+  });
+
+  test("save without `wait` doesn't set invalid attributes", function () {
+    var model = new Backbone.Model();
+    model.validate = function () { return 1; }
+    model.save({a: 1});
+    equal(model.get('a'), void 0);
+  });
+
+  test("save doesn't validate twice", function () {
+    var model = new Backbone.Model();
+    var times = 0;
+    model.sync = function () {};
+    model.validate = function () { ++times; }
+    model.save({});
+    equal(times, 1);
   });
 
   test("`hasChanged` for falsey keys", 2, function() {
