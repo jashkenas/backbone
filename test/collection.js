@@ -1112,5 +1112,16 @@ $(document).ready(function() {
       ok(collection.model === model);
       ok(collection.comparator === comparator);
   });
+  
+  test("`defaultData` gets passed to `sync`", 1, function () {
+      col.defaultData = {'a': 1, 'b': 1};
+	  col.sync = function(method, model, options) {
+	    ok(options.data.a == 1 && options.data.b == 0 && options.data.c == 0);
+	  };
+	  col.fetch( {'data': {
+	    'b': 0,
+		'c': 0,
+      }} );
+  }
 
 });
