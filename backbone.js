@@ -1048,9 +1048,10 @@
     // *{"event selector": "callback"}*
     //
     //     {
-    //       'mousedown .title':  'edit',
-    //       'click .button':     'save'
-    //       'click .open':       function(e) { ... }
+    //       'mousedown .title':       'edit',
+    //       'click .button':          'save'
+    //       'click .multifunctional': 'decorate reorder'
+    //       'click .open':            function(e) { ... }
     //     }
     //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
@@ -1063,20 +1064,32 @@
       this.undelegateEvents();
       for (var key in events) {
         var method = events[key];
-        if (!_.isFunction(method)) method = this[events[key]];
-        if (!method) continue;
-
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
-        method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.on(eventName, method);
+
+        if (_.isFunction(method)) {
+          this.bindMethod(method, eventName, selector);
         } else {
-          this.$el.on(eventName, selector, method);
+          method = _.compact(method.match(delegateEventSplitter));
+          method.shift();
+          for (var i in method) {
+            if (!this[method[i]]) continue;
+            this.bindMethod(this[method[i]], eventName, selector);
+          }
         }
       }
       return this;
+    },
+
+    // Binds a method to an event in context of selector (if present non-empty string)
+    bindMethod: function(method, eventName, selector) {
+      method = _.bind(method, this);
+      if (selector === '') {
+        this.$el.on(eventName, method);
+      } else {
+        this.$el.on(eventName, selector, method);
+      }
     },
 
     // Clears all callbacks previously bound to the view with `delegateEvents`.
