@@ -60,6 +60,30 @@ $(document).ready(function() {
     equal(counter2, 3);
   });
 
+  test("delegateEvents allows multiple whitespace-separated callbacks", 6, function() {
+    var counter1 = 0, counter2 = 0;
+
+    var view = new Backbone.View({el: '<p><a id="test"></a></p>'});
+    view.increment = function(){ counter1++; };
+    view.$el.on('click', function(){ counter2++; });
+
+    var events = {'click #test': 'increment increment'};
+
+    view.delegateEvents(events);
+    view.$('#test').trigger('click');
+    equal(counter1, 2);
+    equal(counter2, 1);
+
+    view.$('#test').trigger('click');
+    equal(counter1, 4);
+    equal(counter2, 2);
+
+    view.delegateEvents(events);
+    view.$('#test').trigger('click');
+    equal(counter1, 6);
+    equal(counter2, 3);
+  });
+
   test("delegateEvents allows functions for callbacks", 3, function() {
     var view = new Backbone.View({el: '<p></p>'});
     view.counter = 0;
