@@ -155,6 +155,21 @@ $(document).ready(function() {
     Backbone.sync('create', model);
   });
 
+  test("Backbone.Deferred", 2, function() {
+    Backbone.sync = function(settings){
+      return Backbone.Deferred().resolve();
+    };
+    var model = new Backbone.Model();
+    model.url = '/test';
+    model.validate = function(attrs) {
+      return !attrs.accept;
+    }
+    result = model.save({accept: false});
+    strictEqual(result.state(), 'rejected');
+    result = model.save({accept: true});
+    strictEqual(result.state(), 'resolved');
+  });
+
   test("Call provided error callback on error.", 1, function() {
     var model = new Backbone.Model;
     model.url = '/test';
