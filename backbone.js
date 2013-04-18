@@ -445,7 +445,7 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, val, options) {
-      var attrs, method, xhr, dfd = new $.Deferred, attributes = this.attributes;
+      var attrs, method, xhr, dfd = Backbone.Deferred(), attributes = this.attributes;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
       if (key == null || typeof key === 'object') {
@@ -461,9 +461,9 @@
       // `set(attr).save(null, opts)` with validation. Otherwise, check if
       // the model will be valid when the attributes, if any, are set.
       if (attrs && !options.wait) {
-        if (!this.set(attrs, options)) return dfd.rejectWith(this);
+        if (!this.set(attrs, options)) return dfd.reject();
       } else {
-        if (!this._validate(attrs, options)) return dfd.rejectWith(this);
+        if (!this._validate(attrs, options)) return dfd.reject();
       }
 
       // Set temporary attributes if `{wait: true}`.
@@ -1203,6 +1203,10 @@
   Backbone.ajax = function() {
     return Backbone.$.ajax.apply(Backbone.$, arguments);
   };
+
+  // Set the default promises library to proxy to `$`.
+  // Override this if you'd like to use a different library.
+  Backbone.Deferred = Backbone.$.Deferred;
 
   // Backbone.Router
   // ---------------
