@@ -250,6 +250,7 @@
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
     if (options.parse) attrs = this.parse(attrs, options) || {};
+    options._attrs = attrs;
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
@@ -675,14 +676,15 @@
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (i = 0, l = models.length; i < l; i++) {
-        if (!(model = this._prepareModel(models[i], options))) continue;
+        if (!(model = this._prepareModel(attrs = models[i], options))) continue;
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
           if (remove) modelMap[existing.cid] = true;
           if (merge) {
-            existing.set(model.attributes, options);
+            attrs = attrs === model ? model.attributes : options._attrs;
+            existing.set(attrs, options);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
 
