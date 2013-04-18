@@ -489,7 +489,7 @@ $(document).ready(function() {
     ok(_.isEqual(this.syncArgs.model, doc));
 
     var newModel = new Backbone.Model;
-    equal(newModel.destroy(), false);
+    equal(newModel.destroy().state(), 'rejected');
   });
 
   test("non-persisted destroy", 1, function() {
