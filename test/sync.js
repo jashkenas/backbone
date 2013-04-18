@@ -164,7 +164,7 @@ $(document).ready(function() {
     model.validate = function(attrs) {
       return !attrs.accept;
     }
-    result = model.save({accept: false});
+    var result = model.save({accept: false});
     strictEqual(result.state(), 'rejected');
     result = model.save({accept: true});
     strictEqual(result.state(), 'resolved');

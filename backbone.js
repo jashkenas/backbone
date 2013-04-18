@@ -1206,7 +1206,9 @@
 
   // Set the default promises library to proxy to `$`.
   // Override this if you'd like to use a different library.
-  Backbone.Deferred = Backbone.$.Deferred;
+  Backbone.Deferred = function() {
+    return Backbone.$.Deferred.apply(Backbone.$, arguments);
+  }
 
   // Backbone.Router
   // ---------------

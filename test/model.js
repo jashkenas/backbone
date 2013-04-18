@@ -959,13 +959,11 @@ $(document).ready(function() {
     var model = new Backbone.Model;
     model.validate = function(){ return 'invalid'; };
     model.sync = function(){ ok(false); };
-    model.save()
-      .done(function() {
-        ok(false);
-      })
-      .fail(function() {
-        ok(true);
-      });
+    model.save().then(function() {
+      ok(false);
+    }, function() {
+      ok(true);
+    });
   });
 
   test("#1377 - Save without attrs triggers 'error'.", 2, function() {
@@ -976,13 +974,11 @@ $(document).ready(function() {
     });
     var model = new Model({id: 1});
     model.on('invalid', function(){ ok(true); });
-    model.save()
-      .done(function() {
-        ok(false);
-      })
-      .fail(function() {
-        ok(true);
-      });
+    model.save().then(function() {
+      ok(false);
+    }, function() {
+      ok(true);
+    });
   });
 
   test("#1545 - `undefined` can be passed to a model constructor without coersion", function() {
