@@ -209,4 +209,10 @@ $(document).ready(function() {
     strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
 
+  test("correctly check for model before triggering request event", 1, function() {
+    Backbone.emulateHTTP = true;
+    Backbone.sync('read', false, {url : "/someurl", data : ""}) 
+    ok(true, "No errors were thrown");
+  });
+
 });
