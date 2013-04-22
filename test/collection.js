@@ -1119,10 +1119,12 @@ $(document).ready(function() {
     ok( collection.length === 0 );
   });
 
-  test("`add` an array of `false` is a no-op", 1, function() {
+  test("`add` an array of `false` is a no-op", 2, function() {
     var collection = new Backbone.Collection();
-    collection.add( [ false, false, false ] );
+    collection.add( [ false, false, false, undefined, undefined ] );
     ok( collection.length === 0 );
+    collection.add( [false, undefined, {} ] );
+    ok( collection.length === 1 );
   });
 
 });
