@@ -209,10 +209,15 @@ $(document).ready(function() {
     strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
 
-  test("correctly check for model before triggering request event", 1, function() {
-    Backbone.emulateHTTP = true;
-    Backbone.sync('read', false, {url : "/someurl", data : ""}) 
-    ok(true, "No errors were thrown");
+  test("#2494 - Backbone.sync allows for non model/collection in second argument", 6, function() {
+    Backbone.sync('read', {}, {url : '/someurl'});
+    equal(this.ajaxSettings.url, '/someurl');
+    equal(this.ajaxSettings.type, 'GET');
+    equal(this.ajaxSettings.dataType, 'json');
+    Backbone.sync('create', {item: 'test'}, {url: '/test-url'});
+    equal(this.ajaxSettings.url, '/test-url');
+    equal(this.ajaxSettings.type, 'POST');
+    equal(this.ajaxSettings.data, '{"item":"test"}');
   });
 
 });
