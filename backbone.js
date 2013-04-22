@@ -1144,9 +1144,8 @@
 
     // Ensure that we have the appropriate request data.
     if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
-      var attrs = options.attrs || (_.isFunction(model.toJSON) ? model.toJSON(options) : model);
-      params.data = JSON.stringify(attrs);
       params.contentType = 'application/json';
+      params.data = JSON.stringify(options.attrs || model.toJSON(options));
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
@@ -1184,10 +1183,7 @@
 
     // Make the request, allowing the user to override any Ajax options.
     var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
-
-    // Only trigger a "request" event if the second argument is a model or collection.
-    if (model && model.trigger === Events.trigger) model.trigger('request', model, xhr, options);
-
+    model.trigger('request', model, xhr, options);
     return xhr;
   };
 

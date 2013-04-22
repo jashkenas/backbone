@@ -209,15 +209,4 @@ $(document).ready(function() {
     strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
 
-  test("#2494 - Backbone.sync allows for non model/collection in second argument", 6, function() {
-    Backbone.sync('read', {}, {url : '/someurl'});
-    equal(this.ajaxSettings.url, '/someurl');
-    equal(this.ajaxSettings.type, 'GET');
-    equal(this.ajaxSettings.dataType, 'json');
-    Backbone.sync('create', {item: 'test'}, {url: '/test-url'});
-    equal(this.ajaxSettings.url, '/test-url');
-    equal(this.ajaxSettings.type, 'POST');
-    equal(this.ajaxSettings.data, '{"item":"test"}');
-  });
-
 });
