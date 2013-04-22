@@ -676,6 +676,7 @@
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (i = 0, l = models.length; i < l; i++) {
+        if( !models[i] ) continue;
         if (!(model = this._prepareModel(attrs = models[i], options))) continue;
 
         // If a duplicate is found, prevent it from being added and
