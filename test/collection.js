@@ -1113,4 +1113,16 @@ $(document).ready(function() {
       ok(collection.comparator === comparator);
   });
 
+  test("`add` `false` to a collection is a no-op", 1, function() {
+    var collection = new Backbone.Collection();
+    collection.add( false );
+    ok( collection.length === 0 );
+  });
+
+  test("`add` an array of `false` is a no-op", 1, function() {
+    var collection = new Backbone.Collection();
+    collection.add( [ false, false, false ] );
+    ok( collection.length === 0 );
+  });
+
 });
