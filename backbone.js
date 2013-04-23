@@ -728,7 +728,7 @@
 
       // sorting of added
       var me = this;
-      if (toAdd.length) {
+      if (sort && toAdd.length) {
         toAdd.sort(function(a, b) {
           var indexOfA = me.indexOf(a),
             indexOfB = me.indexOf(b);
