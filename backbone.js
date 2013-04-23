@@ -726,6 +726,17 @@
 
       if (options.silent) return this;
 
+      // sorting of added
+      var me = this;
+      if (toAdd.length) {
+        toAdd.sort(function(a, b) {
+          var indexOfA = me.indexOf(a),
+            indexOfB = me.indexOf(b);
+
+          return indexOfA - indexOfB;
+        })
+      }
+
       // Trigger `add` events.
       for (i = 0, l = toAdd.length; i < l; i++) {
         (model = toAdd[i]).trigger('add', model, this, options);
