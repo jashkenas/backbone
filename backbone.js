@@ -733,6 +733,10 @@
 
       // Trigger `sort` if the collection was sorted.
       if (sort || (order && order.length)) this.trigger('sort', this, options);
+      
+      // Trigger `set` event
+      this.trigger('set', this, options);
+      
       return this;
     },
 
