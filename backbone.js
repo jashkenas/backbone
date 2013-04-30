@@ -1061,9 +1061,9 @@
     // Omitting the selector binds the event to `this.el`.
     // This only works for delegate-able events: not `focus`, `blur`, and
     // not `change`, `submit`, and `reset` in Internet Explorer.
-    delegateEvents: function(events) {
+    delegateEvents: function(events, keepOld) {
       if (!(events || (events = _.result(this, 'events')))) return this;
-      this.undelegateEvents();
+      if (!keepOld) this.undelegateEvents();
       for (var key in events) {
         var method = events[key];
         if (!_.isFunction(method)) method = this[events[key]];

@@ -114,6 +114,37 @@ $(document).ready(function() {
     equal(counter2, 3);
   });
 
+  test("delegateEvents keeps old methods with option", 8, function() {
+    var counter1 = 0, counter2 = 0;
+
+    var view = new Backbone.View({el: '<p><a id="test"></a></p>'});
+    view.increment = function(){ counter1++; };
+    view.incr2 = function(){ counter1++; };
+    view.$el.on('click', function(){ counter2++; });
+
+    var events = {'click #test': 'increment'};
+
+    view.delegateEvents(events);
+    view.$('#test').trigger('click');
+    equal(counter1, 1);
+    equal(counter2, 1);
+
+    view.$('#test').trigger('click');
+    equal(counter1, 2);
+    equal(counter2, 2);
+
+    view.delegateEvents({'click #test': 'incr2'}, true);
+    view.$('#test').trigger('click');
+    equal(counter1, 4);
+    equal(counter2, 3);
+
+    view.delegateEvents({'click #test': 'incr2'}, false);
+    view.$('#test').trigger('click');
+    equal(counter1, 5);
+    equal(counter2, 4);
+
+  });
+
   test("_ensureElement with DOM node el", 1, function() {
     var View = Backbone.View.extend({
       el: document.body
