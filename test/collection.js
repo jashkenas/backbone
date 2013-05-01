@@ -967,6 +967,22 @@ $(document).ready(function() {
     equal(col.length, 1);
   });
 
+  test('merge without mutation', function () {
+    var Model = Backbone.Model.extend({
+      initialize: function (attrs, options) {
+        if (attrs.child) {
+          this.set('child', new Model(attrs.child, options), options);
+        }
+      }
+    });
+    var Collection = Backbone.Collection.extend({model: Model});
+    var data = [{id: 1, child: {id: 2}}];
+    var collection = new Collection(data);
+    equal(collection.first().id, 1);
+    collection.set(data);
+    equal(collection.first().id, 1);
+  });
+
   test("`set` and model level `parse`", function() {
     var Model = Backbone.Model.extend({
       parse: function (res) { return res.model; }
