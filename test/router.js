@@ -167,6 +167,15 @@ $(document).ready(function() {
     equal(router.testing, 101);
   });
 
+  test("adding duplicate routes overwrites old routes", 2, function(){
+    var oldLength = Backbone.history.handlers.length;
+    router.route('new_route','new_route');
+    var newLength = Backbone.history.handlers.length;
+    equal(newLength, oldLength + 1);
+    router.route('new_route','new_route');
+    equal(newLength, Backbone.history.handlers.length);
+  });
+
   test("routes (simple)", 4, function() {
     location.replace('http://example.com#search/news');
     Backbone.history.checkUrl();

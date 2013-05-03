@@ -1427,9 +1427,27 @@
     },
 
     // Add a route to be tested when the fragment changes. Routes added later
-    // may override previous routes.
+    // may override previous routes.  Identical routes added later will
+    // overwrite previous routes.
     route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
+      var i, newHandler, regExpRoute;
+      newHandler = { route: route, callback: callback };
+
+      if (_.isRegExp(route)) {
+        regExpRoute = route;
+      } else {
+        regExpRoute = Backbone.Router.prototype._routeToRegExp(route);
+      }
+
+      for (i = 0; i < this.handlers.length; i++) {
+        if (this.handlers[i].route.toString() === regExpRoute.toString()) {
+          this.handlers[i] = newHandler;
+          return this;
+        }
+      }
+
+      this.handlers.unshift(newHandler);
+      return this;
     },
 
     // Checks the current URL to see if it has changed, and if it has,
