@@ -6,9 +6,29 @@ module.exports = (grunt) ->
         options:
           join: true
         files:
-          # 1:1 compile, identical output to join = false
-          'backbone.js': 'backbone.coffee'
           # concat then compile into single file
-          #'path/to/another.js': ['path/to/sources/*.coffee', 'path/to/more/*.coffee']
+          'backbone.js': [
+            'coffee/backbone.coffee'
+            'coffee/events.coffee'
+            'coffee/model.coffee'
+            'coffee/collection.coffee'
+            'coffee/view.coffee'
+            'coffee/router.coffee'
+            'coffee/history.coffee'
+            'coffee/helpers.coffee'
+          ]
+    uglify:
+      options:
+        mangle: true
+      my_target:
+        options:
+          sourceMap: 'backbone-min.map'
+          # the location to find your original source
+          #sourceMapRoot: 'http://example.com/path/to/src/'
+          # input sourcemap from a previous compilation
+          #sourceMapIn: 'example/coffeescript-sourcemap.js'
+        files:
+          'backbone-min.js': ['backbone.js']
   
   grunt.loadNpmTasks 'grunt-contrib-coffee'
+  grunt.loadNpmTasks 'grunt-contrib-uglify'
