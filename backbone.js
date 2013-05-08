@@ -633,7 +633,7 @@
 
     // Add a model, or list of models to the set.
     add: function(models, options) {
-      return this.set(models, _.defaults(options || {}, addOptions));
+      return this.set(models, _.defaults({}, options, addOptions));
     },
 
     // Remove a model, or a list of models from the set.
@@ -663,7 +663,7 @@
     // already exist in the collection, as necessary. Similar to **Model#set**,
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
-      options = _.defaults(options || {}, setOptions);
+      options = _.defaults({}, options, setOptions);
       if (options.parse) models = this.parse(models, options);
       if (!_.isArray(models)) models = models ? [models] : [];
       var i, l, model, attrs, existing, sort;
