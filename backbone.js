@@ -114,6 +114,22 @@
     }
   });
 
+  /**
+    Backbone.Events
+    ---------------
+  
+    A module that can be mixed in to *any object* in order to provide it with
+    custom events. You may bind with `on` or remove with `off` callback
+    functions to an event; `trigger`-ing an event fires all callbacks in
+    succession.
+  
+        var object = {};
+        _.extend(object, Backbone.Events);
+        object.on('expand', function(){ alert('expanded'); });
+        object.trigger('expand');
+  */
+
+
   Backbone.Events = (function() {
     function Events() {}
 
@@ -345,6 +361,20 @@
   Events.unbind = Events.off;
 
   _.extend(Backbone, Events);
+
+  /**
+    Backbone.Model
+    --------------
+  
+    Backbone **Models** are the basic data object in the framework --
+    frequently representing a row in a table in a database on your server.
+    A discrete chunk of data and a bunch of useful, related methods for
+    performing computations and transformations on that data.
+  
+    Create a new model with the specified attributes. A client id (`cid`)
+    is automatically generated and assigned for you.
+  */
+
 
   Backbone.Model = (function() {
     _.extend(Model.prototype, Events);
@@ -722,6 +752,23 @@
       return _[method].apply(_, args);
     };
   });
+
+  /**
+    Backbone.Collection
+    -------------------
+  
+    If models tend to represent a single row of data, a Backbone Collection is
+    more analagous to a table full of data ... or a small slice or page of that
+    table, or a collection of rows that belong together for a particular reason
+    -- all of the messages in this particular folder, all of the documents
+    belonging to this particular author, and so on. Collections maintain
+    indexes of their models, both in order, and for lookup by `id`.
+  
+    Create a new **Collection**, perhaps to contain a specific type of `model`.
+    If a `comparator` is specified, the Collection will maintain
+    its models in sort order, as they're added and removed.
+  */
+
 
   setOptions = {
     add: true,
@@ -1165,6 +1212,27 @@
     };
   });
 
+  /**
+    Backbone.View
+    -------------
+  
+    Backbone Views are almost more convention than they are actual code. A View
+    is simply a JavaScript object that represents a logical chunk of UI in the
+    DOM. This might be a single item, an entire list, a sidebar or panel, or
+    even the surrounding frame which wraps your whole app. Defining a chunk of
+    UI as a **View** allows you to define your DOM events declaratively, without
+    having to worry about render order ... and makes it easy for the view to
+    react to specific changes in the state of your models.
+  
+    Options with special meaning *(e.g. model, collection, id, className)* are
+    attached directly to the view.  See `viewOptions` for an exhaustive
+    list.
+  
+    Creating a Backbone.View creates its initial element outside of the DOM,
+    if an existing element is not provided...
+  */
+
+
   delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
   viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
@@ -1272,6 +1340,15 @@
 
   View = Backbone.View;
 
+  /**
+    Backbone.Router
+    ---------------
+  
+    Routers map faux-URLs to actions, and fire events when routes are
+    matched. Creating a new one sets its `routes` hash, if not set statically.
+  */
+
+
   optionalParam = /\((.*?)\)/g;
 
   namedParam = /(\(\?)?:\w+/g;
@@ -1375,6 +1452,18 @@
   })();
 
   Router = Backbone.Router;
+
+  /**
+    Backbone.History
+    ----------------
+  
+    Handles cross-browser history management, based on either
+    [pushState](http:#diveintohtml5.info/history.html) and real URLs, or
+    [onhashchange](https:#developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
+    and URL fragments. If the browser supports neither (old IE, natch),
+    falls back to polling.
+  */
+
 
   routeStripper = /^[#\/]|\s+$/g;
 
@@ -1567,6 +1656,16 @@
   History = Backbone.History;
 
   Backbone.history = new History;
+
+  /**
+  Helpers
+  -------
+  
+  Helper function to correctly set up the prototype chain, for subclasses.
+  Similar to `goog.inherits`, but uses a hash of prototype properties and
+  class properties to be extended.
+  */
+
 
   extend = function(protoProps, staticProps) {
     var Surrogate, child, parent;
