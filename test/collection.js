@@ -1117,16 +1117,25 @@ $(document).ready(function() {
   });
 
   test("Attach options to collection.", 2, function() {
-      var model = new Backbone.Model;
-      var comparator = function(){};
+    var model = new Backbone.Model;
+    var comparator = function(){};
 
-      var collection = new Backbone.Collection([], {
-        model: model,
-        comparator: comparator
-      });
+    var collection = new Backbone.Collection([], {
+      model: model,
+      comparator: comparator
+    });
 
-      ok(collection.model === model);
-      ok(collection.comparator === comparator);
+    ok(collection.model === model);
+    ok(collection.comparator === comparator);
+  });
+
+  test("`add` overrides `set` flags", function () {
+    var collection = new Backbone.Collection();
+    collection.once('add', function (model, collection, options) {
+      collection.add({id: 2}, options);
+    });
+    collection.set({id: 1});
+    equal(collection.length, 2);
   });
 
 });
