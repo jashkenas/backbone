@@ -1,9 +1,11 @@
-# Helpers
-# -------
+###*
+Helpers
+-------
 
-# Helper function to correctly set up the prototype chain, for subclasses.
-# Similar to `goog.inherits`, but uses a hash of prototype properties and
-# class properties to be extended.
+Helper function to correctly set up the prototype chain, for subclasses.
+Similar to `goog.inherits`, but uses a hash of prototype properties and
+class properties to be extended.
+###
 extend = (protoProps, staticProps) ->
   parent = @
   # The constructor function for the new subclass is either defined by you

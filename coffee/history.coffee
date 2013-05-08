@@ -1,11 +1,13 @@
-# Backbone.History
-# ----------------
+###*
+  Backbone.History
+  ----------------
 
-# Handles cross-browser history management, based on either
-# [pushState](http:#diveintohtml5.info/history.html) and real URLs, or
-# [onhashchange](https:#developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
-# and URL fragments. If the browser supports neither (old IE, natch),
-# falls back to polling.
+  Handles cross-browser history management, based on either
+  [pushState](http:#diveintohtml5.info/history.html) and real URLs, or
+  [onhashchange](https:#developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
+  and URL fragments. If the browser supports neither (old IE, natch),
+  falls back to polling.
+###
 
 # Cached regex for stripping a leading hash/slash and trailing space.
 routeStripper = /^[#\/]|\s+$/g

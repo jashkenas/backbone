@@ -1,16 +1,18 @@
-# Backbone.Collection
-# -------------------
+###*
+  Backbone.Collection
+  -------------------
 
-# If models tend to represent a single row of data, a Backbone Collection is
-# more analagous to a table full of data ... or a small slice or page of that
-# table, or a collection of rows that belong together for a particular reason
-# -- all of the messages in this particular folder, all of the documents
-# belonging to this particular author, and so on. Collections maintain
-# indexes of their models, both in order, and for lookup by `id`.
+  If models tend to represent a single row of data, a Backbone Collection is
+  more analagous to a table full of data ... or a small slice or page of that
+  table, or a collection of rows that belong together for a particular reason
+  -- all of the messages in this particular folder, all of the documents
+  belonging to this particular author, and so on. Collections maintain
+  indexes of their models, both in order, and for lookup by `id`.
 
-# Create a new **Collection**, perhaps to contain a specific type of `model`.
-# If a `comparator` is specified, the Collection will maintain
-# its models in sort order, as they're added and removed.
+  Create a new **Collection**, perhaps to contain a specific type of `model`.
+  If a `comparator` is specified, the Collection will maintain
+  its models in sort order, as they're added and removed.
+###
 
 # Default options for `Collection#set`.
 setOptions =

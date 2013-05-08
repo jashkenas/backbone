@@ -1,13 +1,15 @@
-# Backbone.Model
-# --------------
+###*
+  Backbone.Model
+  --------------
 
-# Backbone **Models** are the basic data object in the framework --
-# frequently representing a row in a table in a database on your server.
-# A discrete chunk of data and a bunch of useful, related methods for
-# performing computations and transformations on that data.
+  Backbone **Models** are the basic data object in the framework --
+  frequently representing a row in a table in a database on your server.
+  A discrete chunk of data and a bunch of useful, related methods for
+  performing computations and transformations on that data.
 
-# Create a new model with the specified attributes. A client id (`cid`)
-# is automatically generated and assigned for you.
+  Create a new model with the specified attributes. A client id (`cid`)
+  is automatically generated and assigned for you.
+###
 class Backbone.Model
   _.extend @::, Events
   
@@ -22,7 +24,7 @@ class Backbone.Model
     attrs = _.defaults({}, attrs, defaults) if defaults
     @set attrs, options
     @changed = {}
-    @initialize.apply @, arguments  
+    @initialize.apply @, arguments
   # A hash of attributes whose current and previous value differ.
   changed: null
   # The value returned during the last failed validation.

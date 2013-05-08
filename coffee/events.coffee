@@ -1,16 +1,17 @@
-# Backbone.Events
-# ---------------
+###*
+  Backbone.Events
+  ---------------
 
-# A module that can be mixed in to *any object* in order to provide it with
-# custom events. You may bind with `on` or remove with `off` callback
-# functions to an event; `trigger`-ing an event fires all callbacks in
-# succession.
-#
-#     var object = {};
-#     _.extend(object, Backbone.Events);
-#     object.on('expand', function(){ alert('expanded'); });
-#     object.trigger('expand');
-#
+  A module that can be mixed in to *any object* in order to provide it with
+  custom events. You may bind with `on` or remove with `off` callback
+  functions to an event; `trigger`-ing an event fires all callbacks in
+  succession.
+
+      var object = {};
+      _.extend(object, Backbone.Events);
+      object.on('expand', function(){ alert('expanded'); });
+      object.trigger('expand');
+###
 class Backbone.Events
   # Bind an event to a `callback` function. Passing `"all"` will bind
   # the callback to all events fired.

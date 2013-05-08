@@ -1,8 +1,10 @@
-# Backbone.Router
-# ---------------
+###*
+  Backbone.Router
+  ---------------
 
-# Routers map faux-URLs to actions, and fire events when routes are
-# matched. Creating a new one sets its `routes` hash, if not set statically.
+  Routers map faux-URLs to actions, and fire events when routes are
+  matched. Creating a new one sets its `routes` hash, if not set statically.
+###
 
 # Cached regular expressions for matching named param parts and splatted
 # parts of route strings.
