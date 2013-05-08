@@ -3,5 +3,7 @@ node_js:
   - 0.8
 notifications:
   email: false
+before_script:
+  - npm install -g grunt-cli
 script: "grunt build"
 test: "grunt build test"
