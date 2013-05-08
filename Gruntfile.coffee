@@ -1,8 +1,18 @@
 module.exports = (grunt) ->
+  grunt.loadNpmTasks 'grunt-coffeelint'
+  grunt.loadNpmTasks 'grunt-contrib-coffee'
+  grunt.loadNpmTasks 'grunt-contrib-uglify'
+  grunt.loadNpmTasks 'grunt-contrib-qunit'
+  grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
+    coffeelint:
+      app: ['coffee/*.coffee']
+      options:
+        max_line_length:
+          level: 'warn'
     coffee:
-      compileJoined:
+      backbone:
         options:
           join: true
         files:
@@ -20,15 +30,17 @@ module.exports = (grunt) ->
     uglify:
       options:
         mangle: true
-      my_target:
+      backbone:
         options:
           sourceMap: 'backbone-min.map'
-          # the location to find your original source
-          #sourceMapRoot: 'http://example.com/path/to/src/'
-          # input sourcemap from a previous compilation
-          #sourceMapIn: 'example/coffeescript-sourcemap.js'
         files:
           'backbone-min.js': ['backbone.js']
-  
-  grunt.loadNpmTasks 'grunt-contrib-coffee'
-  grunt.loadNpmTasks 'grunt-contrib-uglify'
+    qunit:
+      files: ['test/*.html']
+    watch:
+      files: ['coffee/*.coffee']
+      tasks: ['test']
+
+  grunt.registerTask 'default', ['coffeelint', 'coffee']
+  grunt.registerTask 'minify', ['default', 'uglify']
+  grunt.registerTask 'test', ['default', 'qunit']
