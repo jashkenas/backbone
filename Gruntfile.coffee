@@ -39,8 +39,8 @@ module.exports = (grunt) ->
       files: ['test/*.html']
     watch:
       files: ['coffee/*.coffee']
-      tasks: ['test']
+      tasks: ['default', 'test']
 
   grunt.registerTask 'default', ['coffeelint', 'coffee']
-  grunt.registerTask 'minify', ['default', 'uglify']
-  grunt.registerTask 'test', ['default', 'qunit']
+  grunt.registerTask 'build', ['default', 'uglify']
+  grunt.registerTask 'test', ['qunit']
