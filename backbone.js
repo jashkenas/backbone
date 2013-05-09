@@ -1031,8 +1031,13 @@
 
     // Remove this view by taking the element out of the DOM, and removing any
     // applicable Backbone.Events listeners.
-    remove: function() {
-      this.$el.remove();
+    remove: function(options) {
+      if (options.empty) {
+        this.$el.empty()
+      } else {
+        this.$el.remove();
+      }
+
       this.stopListening();
       return this;
     },
