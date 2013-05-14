@@ -223,6 +223,14 @@ $(document).ready(function() {
     equal(a.id, undefined, "Unsetting the id should remove the id property.");
   });
 
+  test("set from a model", 2, function() {
+    var a = new Backbone.Model({id: 'id', foo: 1});
+    var b = new Backbone.Model();
+    b.set(a);
+    ok(b.get('id') == 'id', "b should have the same id attribute");
+    ok(b.get('foo') == 1, "b should have the same foo attribute");
+  });
+
   test("#2030 - set with failed validate, followed by another set triggers change", function () {
     var attr = 0, main = 0, error = 0;
     var Model = Backbone.Model.extend({

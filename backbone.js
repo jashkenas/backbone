@@ -308,6 +308,12 @@
     // the core primitive operation of a model, updating the data and notifying
     // anyone who needs to know about the change in state. The heart of the beast.
     set: function(key, val, options) {
+
+      // if passed a model, use it's attributes
+      if (key instanceof Model) {
+        return this.set(key.attributes, options);
+      }
+
       var attr, attrs, unset, changes, silent, changing, prev, current;
       if (key == null) return this;
 
