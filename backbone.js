@@ -685,7 +685,6 @@
           if (remove) modelMap[existing.cid] = true;
           if (merge) {
             attrs = attrs === model ? model.attributes : options._attrs;
-            delete options._attrs;
             existing.set(attrs, options);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
@@ -701,6 +700,7 @@
           if (model.id != null) this._byId[model.id] = model;
         }
         if (order) order.push(existing || model);
+        delete options._attrs;
       }
 
       // Remove nonexistent models if appropriate.

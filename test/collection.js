@@ -981,6 +981,8 @@ $(document).ready(function() {
     equal(collection.first().id, 1);
     collection.set(data);
     equal(collection.first().id, 1);
+    collection.set([{id: 2, child: {id: 2}}].concat(data));
+    deepEqual(collection.pluck('id'), [2, 1]);
   });
 
   test("`set` and model level `parse`", function() {
