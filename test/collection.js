@@ -1138,4 +1138,99 @@ $(document).ready(function() {
     equal(collection.length, 2);
   });
 
+  
+  test("Adds to a collection using JSLO and defaults", function() {
+    var ModelWithDefaults, CollectionForModels, raw1;
+    // Backbone Model that has default properties
+    ModelWithDefaults = Backbone.Model.extend({
+      idAttribute: '_id',
+      defaults: {
+        age: 21,
+        name: 'John Doe',
+        job: 'driver',
+        mother: 'Sue'
+      },
+      initialize: function() {
+        this.set('_id', this.get('name'));
+      }
+    });
+    // A collection that uses the model by default
+    CollectionForModels = Backbone.Collection.extend({
+      model: ModelWithDefaults
+    });
+    // Raw, non-backbone data. The collection will use the default Model (ModelWithDefaults) 
+    // and thus the default values will be copied over for properties that we didnt specify.
+    // In this case, `mother` will be "Sue"
+    raw1 = {
+      name: 'Frank',
+      age: 40,
+      job: 'singer'
+    };
+    // start with an empty collection
+    var col = new CollectionForModels();
+    // add the raw data
+    col.add( raw1 );
+    // get a backbone model from the collection
+    var m1 = col.get('Frank');
+    ok( col.length == 1);
+    ok( m1.id == 'Frank');
+    ok( m1.get('age') == 40);
+    ok( m1.get('mother') == 'Sue');
+    // add something that will merge & maybe replace using defaults
+    var raw2 = {
+      name: 'Frank',  // this data will merge with object Frank in the collection
+      job: 'boss'   // replace current `job` data with 'boss'
+    };
+    col.add( raw2, {merge: true} ); // merge:true is the key here
+    var m2 = col.get('Frank');
+    // ensure that the object merged with the existing one, not create a new object
+    ok( col.length == 1);
+    // has updated `job` data
+    ok( m2.get('job') == 'boss');
+    // we didnt specify new `age` data, so it should still be the same
+    ok( m2.get('age') == 40, 'checking that age wasnt override by defaults'); // problem
+    // this is the problem. The merged object didnt specify `age`, so backbone used
+    // the default data of 21.
+    ok(m2.get('age') != 21, 'checking that age wasnt override by defaults');
+  });
+
+  test("Adds to a collection using merge without defaults", function() {
+    var ModelWithoutDefaults, CollectionForModels, raw1;
+    // Backbone Model that has default properties
+    ModelWithoutDefaults = Backbone.Model.extend({
+      idAttribute: '_id',
+      initialize: function() {
+        this.set('_id', this.get('name'));
+      }
+    });
+    // A collection that uses the model by default
+    CollectionForModels = Backbone.Collection.extend({
+      model: ModelWithoutDefaults
+    });
+    // Raw, non-backbone data. The collection will use the default Model (ModelWithoutDefaults) 
+    // and thus the default values will be copied over for properties that we didnt specify.
+    // In this case, `mother` will be "Sue"
+    raw1 = {
+      name: 'Frank',
+      age: 40,
+      job: 'singer'
+    };
+    // start with an empty collection
+    var col = new CollectionForModels();
+    col.add( raw1 );
+    var m1 = col.get('Frank');
+    ok( col.length == 1);
+    ok( m1.id == 'Frank');
+    ok( m1.get('age') == 40);
+    var raw2 = {
+      name: 'Frank',
+      job: 'boss'
+    };
+    col.add( raw2, {merge: true} );
+    var m2 = col.get('Frank');
+    ok( col.length == 1);
+    ok( m2.get('job') == 'boss');
+    ok( m2.get('age') == 40);
+  });
+
 });
