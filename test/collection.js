@@ -1233,4 +1233,18 @@ $(document).ready(function() {
     ok( m2.get('age') == 40);
   });
 
+  test("`add` `false` to a collection is a no-op", 1, function() {
+    var collection = new Backbone.Collection();
+    collection.add( false );
+    ok( collection.length === 0 );
+  });
+
+  test("`add` an array of `false` is a no-op", 2, function() {
+    var collection = new Backbone.Collection();
+    collection.add( [ false, false, false, undefined, undefined ] );
+    ok( collection.length === 0 );
+    collection.add( [false, undefined, {} ] );
+    ok( collection.length === 1 );
+  });
+
 });
