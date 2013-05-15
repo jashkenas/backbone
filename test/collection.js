@@ -1138,7 +1138,40 @@ $(document).ready(function() {
     equal(collection.length, 2);
   });
 
-  
+  /** 
+   * for pull request 2497
+   *
+   * @author nickfun
+   * @date 2013-04-22
+   */
+  test("`add` `false` to a collection is a no-op", 1, function() {
+    var collection = new Backbone.Collection();
+    collection.add( false );
+    ok( collection.length === 0 );
+  });
+
+  /** 
+   * for pull request 2497
+   *
+   * @author nickfun
+   * @date 2013-04-22
+   */
+  test("`add` an array of `false` is a no-op", 2, function() {
+    var collection = new Backbone.Collection();
+    collection.add( [ false, false, false, undefined, undefined ] );
+    ok( collection.length === 0 );
+    collection.add( [false, undefined, {} ] );
+    ok( collection.length === 1 );
+  });
+
+  /**
+   * Adding raw data to a collection that uses a model with defaults
+   *
+   * This test does not pass on backbone 1.0.0 
+   *
+   * @author nickfun
+   * @date 2013-05-15
+   */
   test("Adds to a collection using JSLO and defaults", function() {
     var ModelWithDefaults, CollectionForModels, raw1;
     // Backbone Model that has default properties
@@ -1194,6 +1227,14 @@ $(document).ready(function() {
     ok(m2.get('age') != 21, 'checking that age wasnt override by defaults');
   });
 
+  /**
+   * Same test as above, but now the model does not use defaults. 
+   *
+   * This test passes on backbone 1.0.0
+   *
+   * @author nickfun
+   * @date 2013-05-15
+   */
   test("Adds to a collection using merge without defaults", function() {
     var ModelWithoutDefaults, CollectionForModels, raw1;
     // Backbone Model that has default properties
@@ -1231,20 +1272,6 @@ $(document).ready(function() {
     ok( col.length == 1);
     ok( m2.get('job') == 'boss');
     ok( m2.get('age') == 40);
-  });
-
-  test("`add` `false` to a collection is a no-op", 1, function() {
-    var collection = new Backbone.Collection();
-    collection.add( false );
-    ok( collection.length === 0 );
-  });
-
-  test("`add` an array of `false` is a no-op", 2, function() {
-    var collection = new Backbone.Collection();
-    collection.add( [ false, false, false, undefined, undefined ] );
-    ok( collection.length === 0 );
-    collection.add( [false, undefined, {} ] );
-    ok( collection.length === 1 );
   });
 
 });
