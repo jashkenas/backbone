@@ -567,6 +567,11 @@
       if (!error) return true;
       this.trigger('invalid', this, error, _.extend(options || {}, {validationError: error}));
       return false;
+    },
+
+    // Proxy underscore's _.result
+    result: function(attr) {
+      return _.result(this, attr);
     }
 
   });
@@ -938,6 +943,11 @@
         if (model.id != null) this._byId[model.id] = model;
       }
       this.trigger.apply(this, arguments);
+    },
+
+    // Proxy underscore's _.result
+    result: function(attr) {
+      return _.result(this, attr);
     }
 
   });
@@ -1105,6 +1115,11 @@
       } else {
         this.setElement(_.result(this, 'el'), false);
       }
+    },
+
+    // Proxy underscore's _.result
+    result: function(attr) {
+      return _.result(this, attr);
     }
 
   });

@@ -327,4 +327,14 @@ $(document).ready(function() {
     equal(counter, 4);
   });
 
+  test("exposes _.result", function() {
+    var view = new Backbone.View();
+    view.foo = "foo";
+    view.bar = function() {
+      return this.foo + "bar";
+    }
+    equal(view.result("foo"), "foo");
+    equal(view.result("bar"), "foobar");
+  });
+
 });
