@@ -1108,4 +1108,20 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test("Should not re-parse the model after save if {parse: false} is specified", 1, function() {
+    var count = 0;
+    var Model = Backbone.Model.extend({
+      sync: function(method, model, options) {
+        options.success({item: 'value'});
+      },
+      parse: function(attr) {
+        count++;
+        return attr;
+      }
+    });
+    var model = new Model({item: 'test'}, {parse: true});
+    model.save({item: 'value'}, {parse: false});
+    equal(count, 1);
+  });
+
 });
