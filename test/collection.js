@@ -1140,4 +1140,14 @@ $(document).ready(function() {
     equal(collection.length, 2);
   });
 
+  test("exposes _.result", function() {
+    var collection = new Backbone.Collection();
+    collection.foo = "foo";
+    collection.bar = function() {
+      return this.foo + "bar";
+    }
+    equal(collection.result("foo"), "foo");
+    equal(collection.result("bar"), "foobar");
+  });
+
 });

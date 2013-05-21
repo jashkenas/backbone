@@ -1108,4 +1108,14 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test("exposes _.result", function() {
+    var model = new Backbone.Model();
+    model.foo = "foo";
+    model.bar = function() {
+      return this.foo + "bar";
+    }
+    equal(model.result("foo"), "foo");
+    equal(model.result("bar"), "foobar");
+  });
+
 });
