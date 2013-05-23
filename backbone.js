@@ -233,75 +233,24 @@
   // want global "pubsub" in a convenient place.
   _.extend(Backbone, Events);
 
-  // Backbone.Model
-  // --------------
+  // Backbone.Attributes
+  // -------------------
 
-  // Backbone **Models** are the basic data object in the framework --
-  // frequently representing a row in a table in a database on your server.
-  // A discrete chunk of data and a bunch of useful, related methods for
-  // performing computations and transformations on that data.
+  // A module which can be mixed in to any object to give it attribute access
+  // methods and change events.
+  //
+  //     var object = {};
+  //     _.extend(object, Backbone.Attributes);
+  //     object.on('change', function(){ alert('changed'); });
+  //     object.set('someAttribute', 'value');
+  //
 
-  // Create a new model with the specified attributes. A client id (`cid`)
-  // is automatically generated and assigned for you.
-  var Model = Backbone.Model = function(attributes, options) {
-    var defaults;
-    var attrs = attributes || {};
-    options || (options = {});
-    this.cid = _.uniqueId('c');
-    this.attributes = {};
-    if (options.collection) this.collection = options.collection;
-    if (options.parse) attrs = this.parse(attrs, options) || {};
-    options._attrs || (options._attrs = attrs);
-    if (defaults = _.result(this, 'defaults')) {
-      attrs = _.defaults({}, attrs, defaults);
-    }
-    this.set(attrs, options);
-    this.changed = {};
-    this.initialize.apply(this, arguments);
-  };
-
-  // Attach all inheritable methods to the Model prototype.
-  _.extend(Model.prototype, Events, {
-
-    // A hash of attributes whose current and previous value differ.
-    changed: null,
-
-    // The value returned during the last failed validation.
-    validationError: null,
-
-    // The default name for the JSON `id` attribute is `"id"`. MongoDB and
-    // CouchDB users may want to set this to `"_id"`.
-    idAttribute: 'id',
-
-    // Initialize is an empty function by default. Override it with your own
-    // initialization logic.
-    initialize: function(){},
-
-    // Return a copy of the model's `attributes` object.
-    toJSON: function(options) {
-      return _.clone(this.attributes);
-    },
-
-    // Proxy `Backbone.sync` by default -- but override this if you need
-    // custom syncing semantics for *this* particular model.
-    sync: function() {
-      return Backbone.sync.apply(this, arguments);
-    },
+  var Attributes = Backbone.Attributes = {
 
     // Get the value of an attribute.
     get: function(attr) {
+      this.attributes || (this.attributes = {});
       return this.attributes[attr];
-    },
-
-    // Get the HTML-escaped value of an attribute.
-    escape: function(attr) {
-      return _.escape(this.get(attr));
-    },
-
-    // Returns `true` if the attribute contains a value that is not null
-    // or undefined.
-    has: function(attr) {
-      return this.get(attr) != null;
     },
 
     // Set a hash of model attributes on the object, firing `"change"`. This is
@@ -322,7 +271,7 @@
       options || (options = {});
 
       // Run validation.
-      if (!this._validate(attrs, options)) return false;
+      if (this._validate && !this._validate(attrs, options)) return false;
 
       // Extract attributes and options.
       unset           = options.unset;
@@ -330,6 +279,9 @@
       changes         = [];
       changing        = this._changing;
       this._changing  = true;
+
+      // Ensure the object has an attributes hash.
+      this.attributes || (this.attributes = {});
 
       if (!changing) {
         this._previousAttributes = _.clone(this.attributes);
@@ -383,8 +335,16 @@
     // Clear all attributes on the model, firing `"change"`.
     clear: function(options) {
       var attrs = {};
-      for (var key in this.attributes) attrs[key] = void 0;
+      if (this.attributes) {
+        for (var key in this.attributes) attrs[key] = void 0;
+      }
       return this.set(attrs, _.extend({}, options, {unset: true}));
+    },
+
+    // Returns `true` if the attribute contains a value that is not null
+    // or undefined.
+    has: function(attr) {
+      return this.get(attr) != null;
     },
 
     // Determine if the model has changed since the last `"change"` event.
@@ -403,7 +363,7 @@
     changedAttributes: function(diff) {
       if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
       var val, changed = false;
-      var old = this._changing ? this._previousAttributes : this.attributes;
+      var old = this._changing ? this._previousAttributes : this.attributes || {};
       for (var attr in diff) {
         if (_.isEqual(old[attr], (val = diff[attr]))) continue;
         (changed || (changed = {}))[attr] = val;
@@ -422,6 +382,69 @@
     // `"change"` event.
     previousAttributes: function() {
       return _.clone(this._previousAttributes);
+    }
+  };
+
+  _.extend(Attributes, Events);
+
+  // Backbone.Model
+  // --------------
+
+  // Backbone **Models** are the basic data object in the framework --
+  // frequently representing a row in a table in a database on your server.
+  // A discrete chunk of data and a bunch of useful, related methods for
+  // performing computations and transformations on that data.
+
+  // Create a new model with the specified attributes. A client id (`cid`)
+  // is automatically generated and assigned for you.
+  var Model = Backbone.Model = function(attributes, options) {
+    var defaults;
+    var attrs = attributes || {};
+    options || (options = {});
+    this.cid = _.uniqueId('c');
+    this.attributes = {};
+    if (options.collection) this.collection = options.collection;
+    if (options.parse) attrs = this.parse(attrs, options) || {};
+    options._attrs || (options._attrs = attrs);
+    if (defaults = _.result(this, 'defaults')) {
+      attrs = _.defaults({}, attrs, defaults);
+    }
+    this.set(attrs, options);
+    this.changed = {};
+    this.initialize.apply(this, arguments);
+  };
+
+  // Attach all inheritable methods to the Model prototype.
+  _.extend(Model.prototype, Attributes, {
+
+    // A hash of attributes whose current and previous value differ.
+    changed: null,
+
+    // The value returned during the last failed validation.
+    validationError: null,
+
+    // The default name for the JSON `id` attribute is `"id"`. MongoDB and
+    // CouchDB users may want to set this to `"_id"`.
+    idAttribute: 'id',
+
+    // Initialize is an empty function by default. Override it with your own
+    // initialization logic.
+    initialize: function(){},
+
+    // Return a copy of the model's `attributes` object.
+    toJSON: function(options) {
+      return _.clone(this.attributes);
+    },
+
+    // Proxy `Backbone.sync` by default -- but override this if you need
+    // custom syncing semantics for *this* particular model.
+    sync: function() {
+      return Backbone.sync.apply(this, arguments);
+    },
+
+    // Get the HTML-escaped value of an attribute.
+    escape: function(attr) {
+      return _.escape(this.get(attr));
     },
 
     // Fetch the model from the server. If the server's representation of the
