@@ -1,0 +1,19 @@
+{
+  "name": "backbone",
+  "version": "1.0.0",
+  "main": "backbone-min.js",
+   "dependencies": {
+    "jquery": ">=1.7.0",
+    "underscore": ">=1.4.3"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "docs",
+    "examples",
+    "CNAME",
+    "CONTRIBUTING.md",
+    "index.html"
+  ]
+}
