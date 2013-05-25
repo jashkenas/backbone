@@ -1034,6 +1034,7 @@
     remove: function() {
       this.$el.remove();
       this.stopListening();
+      this.trigger('remove', this);
       return this;
     },
 
