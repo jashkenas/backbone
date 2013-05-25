@@ -327,4 +327,23 @@ $(document).ready(function() {
     equal(counter, 4);
   });
 
+  test("removed from DOM and triggers 'remove' event", 3, function() {
+    var View = Backbone.View.extend({
+      el: '<p>test</p>'
+    });
+
+    var view = new View();
+    document.body.appendChild(view.render().el);
+    ok(view.$el.width());
+
+    var removeEventCalled = false;
+    view.on('remove', function() {
+      removeEventCalled = true;
+    });
+
+    view.remove();
+    ok(!view.$el.width());
+    equal(removeEventCalled, true);
+  });
+
 });
