@@ -613,4 +613,21 @@ $(document).ready(function() {
     deepEqual({home: "root", index: "index.html", show: "show", search: "search"}, router.routes);
   });
 
+  test("#2538 - hashChange to pushState only if both requested.", 0, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root?a=b#x/y');
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){ ok(false); }
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true,
+      hashChange: false
+    });
+  });
+
 });
