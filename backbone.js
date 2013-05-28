@@ -216,6 +216,9 @@
   // listening to.
   _.each(listenMethods, function(implementation, method) {
     Events[method] = function(obj, name, callback) {
+      if(!obj||(typeof obj!=="object")) throw new Error("The first passed parameter must be a valid non-null object!");
+      if(!(""+name)) throw new Error("The second passed parameter must be or be able to converted to  a non-empty string!");
+      if(typeof callback!=="function") throw new Error("The third passed parameter must be a valid function!");
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
