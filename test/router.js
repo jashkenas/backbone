@@ -630,4 +630,30 @@ $(document).ready(function() {
     });
   });
 
+  test('No hash fallback.', 0, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){}
+      }
+    });
+
+    var Router = Backbone.Router.extend({
+      routes: {
+        hash: function() { ok(false); }
+      }
+    });
+    var router = new Router;
+
+    location.replace('http://example.com/');
+    Backbone.history.start({
+      pushState: true,
+      hashChange: false
+    });
+    location.replace('http://example.com/nomatch#hash');
+    Backbone.history.checkUrl();
+  });
+
 });
