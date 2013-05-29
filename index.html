@@ -2234,7 +2234,7 @@ router.on("route:help", function(page) {
       an argument to the callback. The <tt>name</tt> argument will be triggered as
       a <tt>"route:name"</tt> event whenever the route is matched.  If the
       <tt>callback</tt> argument is omitted <tt>router[name]</tt> will be used
-      instead.
+      instead. Routes added later may override previously declared routes.
     </p>
 
 <pre>
