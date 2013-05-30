@@ -558,6 +558,12 @@
       return this._validate({}, _.extend(options || {}, { validate: true }));
     },
 
+    // Toggle the value of an attribute, firing `"change"`.
+    toggle: function(attr, options) {
+      options = options ? _.clone(options) : {}
+      return this.set(attr, !this.get(attr), options)
+    },
+
     // Run validation against the next complete set of model attributes,
     // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
     _validate: function(attrs, options) {
