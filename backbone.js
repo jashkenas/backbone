@@ -542,6 +542,13 @@
     parse: function(resp, options) {
       return resp;
     },
+    
+    // **serialize** converts a model's attributes into data suitable for saving
+    // to a server. The default implementation renders a JSON string from the
+    // model's attributes object.
+    serialize: function(options) {
+      return JSON.stringify(options.attrs || this.toJSON(options));
+    },
 
     // Create a new model with identical attributes to this one.
     clone: function() {
@@ -1147,7 +1154,7 @@
     // Ensure that we have the appropriate request data.
     if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
       params.contentType = 'application/json';
-      params.data = JSON.stringify(options.attrs || model.toJSON(options));
+      params.data = model.serialize(options);
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.

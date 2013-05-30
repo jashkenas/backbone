@@ -455,6 +455,27 @@ $(document).ready(function() {
     equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
   });
 
+  test("save as XML", function() {
+    doc.serialize = function(options) {
+      var i = 0, xml = '<?xml version="1.0"?><items>', key,
+          keys = _.keys(doc.attributes).sort();
+          
+      for (i = 0; i < keys.length; i++) {
+        key = keys[i];
+        xml += '<item><key>' + key + '</key><value>' + doc.get(key) + '</value></item>';
+      }
+      xml += '</items>';
+      
+      options.contentType || (options.contentType = 'application/xml');
+      return xml;
+    };
+    
+    doc.clear().set({a: 1, b: 2});
+    doc.save();
+    equal(this.ajaxSettings.data, '<?xml version="1.0"?><items><item><key>a</key><value>1</value></item><item><key>b</key><value>2</value></item></items>');
+    equal(this.ajaxSettings.contentType, 'application/xml');
+  });
+
   test("save in positional style", 1, function() {
     var model = new Backbone.Model();
     model.sync = function(method, model, options) {
