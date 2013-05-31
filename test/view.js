@@ -114,6 +114,34 @@ $(document).ready(function() {
     equal(counter2, 3);
   });
 
+  test("propagateEvents single event", 1, function () {
+    var parentView = new Backbone.View({el: '<div id="test"><div id="subview"></div></div>'});
+    var subView = new Backbone.View({});
+
+    subView.setElement(parentView.$('#subview'));
+    parentView.propagateEvents(subView, 'event1');
+    parentView.on('event1', function () {
+      ok(true);
+    });
+    subView.trigger("event1");
+  });
+
+  test("propagateEvents events array", 2, function () {
+    var parentView = new Backbone.View({el: '<div id="test"><div id="subview"></div></div>'});
+
+    var subView = new Backbone.View({});
+    subView.setElement(parentView.$('#subview'));
+
+    parentView.propagateEvents(subView, ['event1', 'event2']);
+    parentView.on('event1', function () {
+      ok(true);
+    }).on("event2", function () {
+      ok(true);
+    });
+
+    subView.trigger("event1").trigger("event2");
+  });
+
   test("_ensureElement with DOM node el", 1, function() {
     var View = Backbone.View.extend({
       el: document.body
@@ -326,5 +354,4 @@ $(document).ready(function() {
     view2.$('#test').trigger('click');
     equal(counter, 4);
   });
-
 });
