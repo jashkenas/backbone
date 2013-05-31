@@ -1091,6 +1091,22 @@
       return this;
     },
 
+    propagateEvents: function (view, events) {
+      if (!_.isArray(events) && !_.isString("string")) return this;
+      if (_.isArray(events)) {
+        _.each(events, function (eventName) {
+          view.on(eventName, function () {
+            this.trigger.apply(this, [eventName].concat(Array.prototype.slice.call(arguments)));
+          }, this);
+        }, this);
+      } else {
+        view.on(events, function () {
+          this.trigger.apply(this, [events].concat(Array.prototype.slice.call(arguments)));
+        }, this);
+      }
+      return this;
+    },
+
     // Ensure that the View has a DOM element to render into.
     // If `this.el` is a string, pass it through `$()`, take the first
     // matching element, and re-assign it to `el`. Otherwise, create
