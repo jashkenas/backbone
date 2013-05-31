@@ -580,12 +580,16 @@
 
     <p>
       Backbone's only hard dependency is
-      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.4.3)</small>.
+      <b><a href="http://underscorejs.org/">Underscore.js</a></b>.
       For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
       and DOM manipulation with <a href="#View">Backbone.View</a>, include
-      <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
-      <a href="http://jquery.com">jQuery</a> <small>( >= 1.7.0)</small> or
-      <a href="http://zeptojs.com/">Zepto</a>.
+      <b><a href="http://jquery.com">jQuery</a></b>, and
+      <b><a href="https://github.com/douglascrockford/JSON-js">json2.js</a></b> for older
+      Internet Explorer support.
+      <i>(Mimics of the Underscore and jQuery APIs, such as
+      <a href="http://lodash.com">Lo-Dash</a> and
+      <a href="http://zeptojs.com">Zepto</a>, will
+      also tend to work, with varying degrees of compatibility.)</i>
     </p>
 
     <h2 id="introduction">Introduction</h2>
@@ -988,11 +992,6 @@ var Library = Backbone.Model.extend({
     </p>
 
     <p>
-      <tt>{url: "..."}</tt> and/or <tt>{urlRoot: "..."}</tt> options may be passed
-      when creating a new model that needs to have a custom one-off URL endpoint.
-    </p>
-
-    <p>
       If <tt>{parse: true}</tt> is passed as an <b>option</b>, the <b>attributes</b>
       will first be converted by <a href="#Model-parse">parse</a> before being
       <a href="#Model-set">set</a> on the model.
@@ -1128,7 +1127,7 @@ alert("Cake id: " + cake.id);
       <b class="header">changed</b><code>model.changed</code>
       <br />
       The <b>changed</b> property is the internal hash containing all the attributes
-      that have changed since the last <tt>"change"</tt> event was triggered.
+      that have changed since the last <a href="Model#set">set</a>.
       Please do not update <b>changed</b> directly since its state is internally maintained
       by <a href="#Model-set">set</a>.  A copy of <b>changed</b> can be acquired from
       <a href="#Model-changedAttributes">changedAttributes</a>.
@@ -1163,7 +1162,7 @@ alert("Dessert will be " + (new Meal).get('dessert'));
     <p id="Model-toJSON">
       <b class="header">toJSON</b><code>model.toJSON()</code>
       <br />
-      Return a copy of the model's <a href="#Model-attributes">attributes</a>
+      Return a shallow copy of the model's <a href="#Model-attributes">attributes</a>
       for JSON stringification.  This can be used for persistence,
       serialization, or for augmentation before being sent to the server. The
       name of this method is a bit confusing, as it doesn't actually return a
@@ -1485,7 +1484,7 @@ ActiveRecord::Base.include_root_in_json = false
     <p id="Model-hasChanged">
       <b class="header">hasChanged</b><code>model.hasChanged([attribute])</code>
       <br />
-      Has the model changed since the last <tt>"change"</tt> event? If an <b>attribute</b>
+      Has the model changed since the last <a href="#Model-set">set</a>? If an <b>attribute</b>
       is passed, returns <tt>true</tt> if that specific attribute has changed.
     </p>
 
@@ -1505,8 +1504,8 @@ book.on("change", function() {
     <p id="Model-changedAttributes">
       <b class="header">changedAttributes</b><code>model.changedAttributes([attributes])</code>
       <br />
-      Retrieve a hash of only the model's attributes that have changed, or
-      <tt>false</tt> if there are none. Optionally, an external
+      Retrieve a hash of only the model's attributes that have changed since the last
+      <a href="#Model-set">set</a>, or <tt>false</tt> if there are none. Optionally, an external
       <b>attributes</b> hash can be passed in, returning the attributes in that
       hash which differ from the model. This can be used to figure out which
       portions of a view should be updated, or what calls
@@ -1609,15 +1608,14 @@ var Library = Backbone.Collection.extend({
       may be included as an option. Passing <tt>false</tt> as the
       comparator option will prevent sorting. If you define an
       <b>initialize</b> function, it will be invoked when the collection is
-      created. There are several options that, if provided, are attached to the
-      collection directly: <tt>url</tt>, <tt>model</tt> and <tt>comparator</tt>.
+      created. There are a couple of options that, if provided, are attached to
+      the collection directly: <tt>model</tt> and <tt>comparator</tt>.
     </p>
 
 <pre>
 var tabs = new TabSet([tab1, tab2, tab3]);
 var spaces = new Backbone.Collection([], {
-  model: Space,
-  url: '/spaces'
+  model: Space
 });
 </pre>
 
@@ -2026,10 +2024,10 @@ var Tweets = Backbone.Collection.extend({
       <b class="header">fetch</b><code>collection.fetch([options])</code>
       <br />
       Fetch the default set of models for this collection from the server,
-      <a href="#Collection-set">setting</a> them on the collection when they arrive. 
-      The <b>options</b> hash takes <tt>success</tt> and <tt>error</tt> callbacks 
+      <a href="#Collection-set">setting</a> them on the collection when they arrive.
+      The <b>options</b> hash takes <tt>success</tt> and <tt>error</tt> callbacks
       which will both be passed <tt>(collection, response, options)</tt> as arguments.
-      When the model data returns from the server, it uses <a href="#Collection-set">set</a> 
+      When the model data returns from the server, it uses <a href="#Collection-set">set</a>
       to (intelligently) merge the fetched models, unless you pass <tt>{reset: true}</tt>,
       in which case the collection will be (efficiently) <a href="#Collection-reset">reset</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
@@ -2189,6 +2187,13 @@ var Workspace = Backbone.Router.extend({
     </p>
 
     <p>
+      Trailing slashes are treated as part of the URL, and (correctly) treated
+      as a unique route when accessed. <tt>docs</tt> and <tt>docs/</tt> will fire
+      different callbacks. If you can't avoid generating both types of URLs, you
+      can define a <tt>"docs(/)"</tt> matcher to capture both cases.
+    </p>
+
+    <p>
       When the visitor presses the back button, or enters a URL, and a particular
       route is matched, the name of the action will be fired as an
       <a href="#Events">event</a>, so that other objects can listen to the router,
@@ -2229,7 +2234,7 @@ router.on("route:help", function(page) {
       an argument to the callback. The <tt>name</tt> argument will be triggered as
       a <tt>"route:name"</tt> event whenever the route is matched.  If the
       <tt>callback</tt> argument is omitted <tt>router[name]</tt> will be used
-      instead.
+      instead. Routes added later may override previously declared routes.
     </p>
 
 <pre>
@@ -2370,7 +2375,7 @@ $(function(){
       with content-type <tt>application/json</tt>. When returning a JSON response,
       send down the attributes of the  model that have been changed by the server, and need
       to be updated on the client. When responding to a <tt>"read"</tt> request from a collection
-      (<a href="#Collection#fetch">Collection#fetch</a>), send down an array
+      (<a href="#Collection-fetch">Collection#fetch</a>), send down an array
       of model attribute objects.
     </p>
 
@@ -2493,7 +2498,7 @@ var DocumentRow = Backbone.View.extend({
 
   initialize: function() {
     this.listenTo(this.model, "change", this.render);
-  }
+  },
 
   render: function() {
     ...
@@ -3651,7 +3656,7 @@ var model = localBackbone.Model.extend(...);
       <li>
         There's no built-in performance penalty for choosing to structure your
         code with Backbone. And if you do want to optimize further, thin models and
-        templates with flexible granularity make it easy squeeze every last
+        templates with flexible granularity make it easy to squeeze every last
         drop of potential performance out of, say, IE8.
       </li>
     </ul>

@@ -963,8 +963,26 @@ $(document).ready(function() {
     equal(col.first().get('key'), 'other');
 
     col.set({id: 1, other: 'value'});
-    equal(col.first().get('key'), 'value');
+    equal(col.first().get('key'), 'other');
     equal(col.length, 1);
+  });
+
+  test('merge without mutation', function () {
+    var Model = Backbone.Model.extend({
+      initialize: function (attrs, options) {
+        if (attrs.child) {
+          this.set('child', new Model(attrs.child, options), options);
+        }
+      }
+    });
+    var Collection = Backbone.Collection.extend({model: Model});
+    var data = [{id: 1, child: {id: 2}}];
+    var collection = new Collection(data);
+    equal(collection.first().id, 1);
+    collection.set(data);
+    equal(collection.first().id, 1);
+    collection.set([{id: 2, child: {id: 2}}].concat(data));
+    deepEqual(collection.pluck('id'), [2, 1]);
   });
 
   test("`set` and model level `parse`", function() {
@@ -994,6 +1012,25 @@ $(document).ready(function() {
       }
     });
     collection.set({}, {parse: true});
+  });
+
+  test('`set` matches input order in the absence of a comparator', function () {
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    collection.set([{id: 3}, {id: 2}, {id: 1}]);
+    deepEqual(collection.models, [three, two, one]);
+    collection.set([{id: 1}, {id: 2}]);
+    deepEqual(collection.models, [one, two]);
+    collection.set([two, three, one]);
+    deepEqual(collection.models, [two, three, one]);
+    collection.set([{id: 1}, {id: 2}], {remove: false});
+    deepEqual(collection.models, [two, three, one]);
+    collection.set([{id: 1}, {id: 2}, {id: 3}], {merge: false});
+    deepEqual(collection.models, [one, two, three]);
+    collection.set([three, two, one, {id: 4}], {add: false});
+    deepEqual(collection.models, [one, two, three]);
   });
 
   test("#1894 - Push should not trigger a sort", 0, function() {
@@ -1081,20 +1118,26 @@ $(document).ready(function() {
     collection.add(collection.models, {merge: true}); // don't sort
   });
 
-  test("Attach options to collection.", 3, function() {
-      var url = '/somewhere';
-      var model = new Backbone.Model;
-      var comparator = function(){};
+  test("Attach options to collection.", 2, function() {
+    var model = new Backbone.Model;
+    var comparator = function(){};
 
-      var collection = new Backbone.Collection([], {
-        url: url,
-        model: model,
-        comparator: comparator
-      });
+    var collection = new Backbone.Collection([], {
+      model: model,
+      comparator: comparator
+    });
 
-      strictEqual(collection.url, url);
-      ok(collection.model === model);
-      ok(collection.comparator === comparator);
+    ok(collection.model === model);
+    ok(collection.comparator === comparator);
+  });
+
+  test("`add` overrides `set` flags", function () {
+    var collection = new Backbone.Collection();
+    collection.once('add', function (model, collection, options) {
+      collection.add({id: 2}, options);
+    });
+    collection.set({id: 1});
+    equal(collection.length, 2);
   });
 
 });
