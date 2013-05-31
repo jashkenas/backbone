@@ -437,7 +437,7 @@
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
       };
-      wrapError(this, options);
+      Backbone.wrapError(this, options);
       return this.sync('read', this, options);
     },
 
@@ -487,7 +487,7 @@
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
       };
-      wrapError(this, options);
+      Backbone.wrapError(this, options);
 
       method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
       if (method === 'patch') options.attrs = attrs;
@@ -521,7 +521,7 @@
         options.success();
         return false;
       }
-      wrapError(this, options);
+      Backbone.wrapError(this, options);
 
       var xhr = this.sync('delete', this, options);
       if (!options.wait) destroy();
@@ -863,7 +863,7 @@
         if (success) success(collection, resp, options);
         collection.trigger('sync', collection, resp, options);
       };
-      wrapError(this, options);
+      Backbone.wrapError(this, options);
       return this.sync('read', this, options);
     },
 
@@ -1569,7 +1569,7 @@
   };
 
   // Wrap an optional error callback with a fallback error event.
-  var wrapError = function(model, options) {
+  Backbone.wrapError = function(model, options) {
     var error = options.error;
     options.error = function(resp) {
       if (error) error(model, resp, options);
