@@ -1345,18 +1345,21 @@
       return match ? match[1] : '';
     },
 
+    getRawFragment: function(forcePushState) {
+      if (this._hasPushState || !this._wantsHashChange || forcePushState) {
+        fragment = this.location.pathname;
+        var root = this.root.replace(trailingSlash, '');
+        if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
+      } else {
+        fragment = this.getHash();
+      }
+      return fragment;
+    },
+
     // Get the cross-browser normalized URL fragment, either from the URL,
     // the hash, or the override.
     getFragment: function(fragment, forcePushState) {
-      if (fragment == null) {
-        if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = this.location.pathname;
-          var root = this.root.replace(trailingSlash, '');
-          if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
-        } else {
-          fragment = this.getHash();
-        }
-      }
+      fragment = fragment || this.getRawFragment(forcePushState);
       return fragment.replace(routeStripper, '');
     },
 
