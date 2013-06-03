@@ -460,7 +460,7 @@ $(document).ready(function() {
       }
     });
     Backbone.history.start({root: 'root'});
-    strictEqual(Backbone.history.root, '/root/');
+    strictEqual(Backbone.history.routeMapper.root, '/root/');
   });
 
   test("Transition from hashChange to pushState.", 1, function() {
@@ -492,7 +492,7 @@ $(document).ready(function() {
       }
     });
     Backbone.history.start({root: ''});
-    strictEqual(Backbone.history.root, '/');
+    strictEqual(Backbone.history.routeMapper.root, '/');
   });
 
   test("#1619: Router: nagivate with empty root", 1, function() {
