@@ -1311,7 +1311,10 @@
   var trailingSlash = /\/$/;
 
   // RouteMapper is responsible for mapping a raw fragment to a callback
-  // invocation.
+  // invocation. It takes a getRawFragment callable which returns the
+  // current raw fragment for this instance. This is either determined
+  // from the browser URL, browser location hash, or web server request,
+  // depending on the context in which this RouteMapper is used.
   var RouteMapper = Backbone.RouteMapper = function(getRawFragment) {
     this.handlers = [];
     this.root = '/';
@@ -1319,14 +1322,20 @@
   };
 
   _.extend(RouteMapper.prototype, {
+    // RawFragments are string paths that are tainted based on where they come
+    // from. Specifically, full paths need to be normalized relative to the
+    // root and hash fragments don't. This convenience function constructs
+    // a raw fragment from a path.
     pathRawFragment: function(path) {
       return {isPath: true, string: path};
     },
 
+    // This convenience function constructs a raw fragment from a hash.
     hashRawFragment: function(hash) {
       return {isPath: false, string: hash};
     },
 
+    // Pass configuration options into the RouteMapper.
     configure: function(options) {
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + options.root + '/').replace(rootStripper, '/');
@@ -1355,12 +1364,15 @@
     // Get the cross-browser normalized URL fragment, either from the URL,
     // the hash, or the override.
     getFragment: function(fragment, forcePushState) {
-      return this.normalizeFragment(
+      return this.normalizeRawFragment(
         fragment || this.getRawFragment(forcePushState)
       );
     },
 
-    normalizeFragment: function(fragment) {
+    // Users of this class may want to store the current fragment around. This
+    // gives you access to route normalization, which basically sanitizes the
+    // raw fragment by removing spaces, making it relative to root, etc.
+    normalizeRawFragment: function(fragment) {
       var fragmentString = fragment.string;
       if (fragment.isPath) {
         var root = this.root.replace(trailingSlash, '');
@@ -1408,6 +1420,8 @@
       return this.routeMapper.hashRawFragment(match ? match[1] : '');
     },
 
+    // Return a raw fragment extracted from either the browser's location href
+    // or location hash.
     getRawFragment: function(forcePushState) {
       if (this._hasPushState || !this._wantsHashChange || forcePushState) {
         return this.routeMapper.pathRawFragment(this.location.pathname);
@@ -1484,7 +1498,7 @@
         // Or if we've started out with a hash-based route, but we're currently
         // in a browser where it could be `pushState`-based instead...
         } else if (this._hasPushState && atRoot && loc.hash) {
-          this.fragment = this.routeMapper.normalizeFragment(this.getHashFragment());
+          this.fragment = this.routeMapper.normalizeRawFragment(this.getHashFragment());
           this.history.replaceState({}, document.title, this.routeMapper.root + this.fragment + loc.search);
         }
 
