@@ -656,4 +656,42 @@ $(document).ready(function() {
     Backbone.history.checkUrl();
   });
 
+  test('Do not rely on browser environment', 1, function() {
+    function ServerHistory(requestPath) {
+      this.requestRawFragment = Backbone.RouteMapper.pathRawFragment(requestPath);
+      this.routeMapper = new Backbone.RouteMapper(function() {
+        return this.requestRawFragment;
+      }.bind(this));
+    };
+
+    _.extend(ServerHistory.prototype, Backbone.Events, {
+      route: function() {
+        return this.routeMapper.route.apply(this.routeMapper, arguments);
+      },
+      navigate: function(fragment, options) {
+        // TODO: implement me and send a HTTP 3xx
+      },
+      start: function() {
+        this.routeMapper.loadUrl(this.requestRawFragment);
+      }
+    });
+
+    var history = new ServerHistory('/asdf');
+    var AppRouter = Backbone.Router.extend({
+      routes: {
+        "*actions": "defaultRoute"
+      }
+    });
+
+    var actionsReceived = [];
+    var appRouter = new AppRouter({history: history});
+
+    appRouter.on('route:defaultRoute', function(actions) {
+      actionsReceived.push(actions);
+    });
+
+    history.start();
+    deepEqual(actionsReceived, ['asdf']);
+  });
+
 });
