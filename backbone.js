@@ -1300,13 +1300,47 @@
   // Backbone.History
   // ----------------
 
+  var RouteMapper = Backbone.RouteMapper = function(getRawFragment) {
+    this.handlers = [];
+    this.getRawFragment = getRawFragment;
+  };
+
+  _.extend(RouteMapper.prototype, {
+    // Add a route to be tested when the fragment changes. Routes added later
+    // may override previous routes.
+    route: function(route, callback) {
+      this.handlers.unshift({route: route, callback: callback});
+    },
+
+    // Attempt to load the current URL fragment. If a route succeeds with a
+    // match, returns `true`. If no defined routes matches the fragment,
+    // returns `false`.
+    loadUrl: function(fragmentOverride) {
+      var fragment = this.getFragment(fragmentOverride);
+      var matched = _.any(this.handlers, function(handler) {
+        if (handler.route.test(fragment)) {
+          handler.callback(fragment);
+          return true;
+        }
+      });
+      return matched;
+    },
+
+    // Get the cross-browser normalized URL fragment, either from the URL,
+    // the hash, or the override.
+    getFragment: function(fragment, forcePushState) {
+      fragment = fragment || this.getRawFragment(forcePushState);
+      return fragment.replace(routeStripper, '');
+    }
+  });
+
   // Handles cross-browser history management, based on either
   // [pushState](http://diveintohtml5.info/history.html) and real URLs, or
   // [onhashchange](https://developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
   // and URL fragments. If the browser supports neither (old IE, natch),
   // falls back to polling.
   var History = Backbone.History = function() {
-    this.handlers = [];
+    this.routeMapper = new RouteMapper(this.getRawFragment.bind(this));
     _.bindAll(this, 'checkUrl');
 
     // Ensure that `History` can be used outside of the browser.
@@ -1356,11 +1390,19 @@
       return fragment;
     },
 
-    // Get the cross-browser normalized URL fragment, either from the URL,
-    // the hash, or the override.
     getFragment: function(fragment, forcePushState) {
-      fragment = fragment || this.getRawFragment(forcePushState);
-      return fragment.replace(routeStripper, '');
+      return this.routeMapper.getFragment(fragment, forcePushState);
+    },
+
+    route: function(route, callback) {
+      this.routeMapper.route(route, callback);
+    },
+
+    // Attempt to load the current URL fragment. If a route succeeds with a
+    // match, returns `true`. If no defined routes matches the fragment,
+    // returns `false`.
+    loadUrl: function(fragmentOverride) {
+      return this.routeMapper.loadUrl(fragmentOverride);
     },
 
     // Start the hash change handling, returning `true` if the current URL matches
@@ -1436,12 +1478,6 @@
       History.started = false;
     },
 
-    // Add a route to be tested when the fragment changes. Routes added later
-    // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
-    },
-
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl: function(e) {
@@ -1452,20 +1488,6 @@
       if (current === this.fragment) return false;
       if (this.iframe) this.navigate(current);
       this.loadUrl();
-    },
-
-    // Attempt to load the current URL fragment. If a route succeeds with a
-    // match, returns `true`. If no defined routes matches the fragment,
-    // returns `false`.
-    loadUrl: function(fragmentOverride) {
-      var fragment = this.fragment = this.getFragment(fragmentOverride);
-      var matched = _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
-        }
-      });
-      return matched;
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
