@@ -1300,6 +1300,10 @@
   // Backbone.History
   // ----------------
 
+
+  // Cached regex for stripping a leading hash/slash and trailing space.
+  var routeStripper = /^[#\/]|\s+$/g;
+
   var RouteMapper = Backbone.RouteMapper = function(getRawFragment) {
     this.handlers = [];
     this.getRawFragment = getRawFragment;
@@ -1329,9 +1333,14 @@
     // Get the cross-browser normalized URL fragment, either from the URL,
     // the hash, or the override.
     getFragment: function(fragment, forcePushState) {
-      fragment = fragment || this.getRawFragment(forcePushState);
+      return this.stripFragment(
+        fragment || this.getRawFragment(forcePushState)
+      );
+    },
+
+    stripFragment: function(fragment) {
       return fragment.replace(routeStripper, '');
-    }
+    },
   });
 
   // Handles cross-browser history management, based on either
@@ -1349,9 +1358,6 @@
       this.history = window.history;
     }
   };
-
-  // Cached regex for stripping a leading hash/slash and trailing space.
-  var routeStripper = /^[#\/]|\s+$/g;
 
   // Cached regex for stripping leading and trailing slashes.
   var rootStripper = /^\/+|\/+$/g;
@@ -1461,7 +1467,7 @@
         // Or if we've started out with a hash-based route, but we're currently
         // in a browser where it could be `pushState`-based instead...
         } else if (this._hasPushState && atRoot && loc.hash) {
-          this.fragment = this.getHash().replace(routeStripper, '');
+          this.fragment = this.routeMapper.stripFragment(this.getHash());
           this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
         }
 
