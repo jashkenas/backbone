@@ -564,12 +564,12 @@ $(document).ready(function() {
 
   test("#1794 - Trailing space in fragments.", 1, function() {
     var history = new Backbone.History;
-    strictEqual(history.getFragment('fragment   '), 'fragment');
+    strictEqual(history.getFragment({isPath: true, string: 'fragment   '}), 'fragment');
   });
 
   test("#1820 - Leading slash and trailing space.", 1, function() {
     var history = new Backbone.History;
-    strictEqual(history.getFragment('/fragment '), 'fragment');
+    strictEqual(history.getFragment({isPath: true, string: '/fragment '}), 'fragment');
   });
 
   test("#1980 - Optional parameters.", 2, function() {

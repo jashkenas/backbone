@@ -1347,11 +1347,9 @@
       );
     },
 
-    normalizeFragment: function(fragment, isHash) {
-      if (!isHash) {
-        //
-      }
-      return fragment.replace(routeStripper, '');
+    normalizeFragment: function(fragment) {
+      var fragmentString = fragment.string;
+      return fragmentString.replace(routeStripper, '');
     },
   });
 
@@ -1391,7 +1389,7 @@
     // in Firefox where location.hash will always be decoded.
     getHash: function(window) {
       var match = (window || this).location.href.match(/#(.*)$/);
-      return match ? match[1] : '';
+      return {isPath: false, string: match ? match[1] : ''};
     },
 
     getRawFragment: function(forcePushState) {
@@ -1399,6 +1397,7 @@
         fragment = this.location.pathname;
         var root = this.routeMapper.root.replace(trailingSlash, '');
         if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
+        fragment = {isPath: true, string: fragment};
       } else {
         fragment = this.getHash();
       }
@@ -1474,7 +1473,7 @@
         // Or if we've started out with a hash-based route, but we're currently
         // in a browser where it could be `pushState`-based instead...
         } else if (this._hasPushState && atRoot && loc.hash) {
-          this.fragment = this.routeMapper.normalizeFragment(this.getHash(), true);
+          this.fragment = this.routeMapper.normalizeFragment(this.getHash());
           this.history.replaceState({}, document.title, this.routeMapper.root + this.fragment + loc.search);
         }
 
@@ -1513,6 +1512,9 @@
     navigate: function(fragment, options) {
       if (!History.started) return false;
       if (!options || options === true) options = {trigger: options};
+      if (fragment) {
+        fragment = {isPath: true, string: fragment};
+      }
       fragment = this.getFragment(fragment || '');
       if (this.fragment === fragment) return;
       this.fragment = fragment;
@@ -1539,7 +1541,7 @@
       } else {
         return this.location.assign(url);
       }
-      if (options.trigger) return this.loadUrl(fragment);
+      if (options.trigger) return this.loadUrl({isPath: true, string: fragment});
     },
 
     // Update the hash location, either replacing the current entry, or adding
