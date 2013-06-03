@@ -1395,7 +1395,7 @@
         }
       }
       return fragmentString.replace(routeStripper, '');
-    },
+    }
   });
 
   // Handles cross-browser history management, based on either
