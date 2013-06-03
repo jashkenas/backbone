@@ -1213,6 +1213,7 @@
   var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
+    this.history = options.history;
     this._bindRoutes();
     this.initialize.apply(this, arguments);
   };
@@ -1231,6 +1232,15 @@
     // initialization logic.
     initialize: function(){},
 
+    // Use a getter rather than storing a reference to Backbone.history.
+    // We do this because Backbone.history was not always injectable, so
+    // users of this library may have written code that does not expect a
+    // reference to the current Backbone.history to stick around at
+    // construction time.
+    _getHistory: function() {
+      return this.history || Backbone.history;
+    },
+
     // Manually bind a single named route to a callback. For example:
     //
     //     this.route('search/:query/p:num', 'search', function(query, num) {
@@ -1245,19 +1255,19 @@
       }
       if (!callback) callback = this[name];
       var router = this;
-      Backbone.history.route(route, function(fragment) {
+      this._getHistory().route(route, function(fragment) {
         var args = router._extractParameters(route, fragment);
         callback && callback.apply(router, args);
         router.trigger.apply(router, ['route:' + name].concat(args));
         router.trigger('route', name, args);
-        Backbone.history.trigger('route', router, name, args);
+        router._getHistory().trigger('route', router, name, args);
       });
       return this;
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate: function(fragment, options) {
-      Backbone.history.navigate(fragment, options);
+      this._getHistory().navigate(fragment, options);
       return this;
     },
 
