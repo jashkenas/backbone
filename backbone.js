@@ -1352,8 +1352,8 @@
     // Attempt to load the current URL fragment. If a route succeeds with a
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
-    loadUrl: function(fragmentOverride) {
-      var fragment = this.getFragment(fragmentOverride);
+    loadUrl: function(rawFragmentOverride) {
+      var fragment = this.getFragment(rawFragmentOverride);
       var matched = _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
@@ -1365,15 +1365,17 @@
 
     // Get the cross-browser normalized URL fragment, either from the URL,
     // the hash, or the override.
-    getFragment: function(fragment, forcePushState) {
+    getFragment: function(rawFragmentOverride, forcePushState) {
       return this.normalizeRawFragment(
-        fragment || this.getRawFragment(forcePushState)
+        rawFragmentOverride || this.getRawFragment(forcePushState)
       );
     },
 
     // Users of this class may want to store the current fragment around. This
     // gives you access to route normalization, which basically sanitizes the
     // raw fragment by removing spaces, making it relative to root, etc.
+    // A "raw fragment" is the raw string and a boolean indicating whether
+    // it was a path or a hash. A "fragment" is the normalized string.
     normalizeRawFragment: function(fragment) {
       var fragmentString = fragment.string;
       if (fragment.isPath) {
@@ -1417,7 +1419,7 @@
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
-    getHashFragment: function(window) {
+    getHashRawFragment: function(window) {
       var match = (window || this).location.href.match(/#(.*)$/);
       return RouteMapper.hashRawFragment(match ? match[1] : '');
     },
@@ -1428,11 +1430,11 @@
       if (this._hasPushState || !this._wantsHashChange || forcePushState) {
         return RouteMapper.pathRawFragment(this.location.pathname);
       }
-      return this.getHashFragment();
+      return this.getHashRawFragment();
     },
 
-    getFragment: function(fragment, forcePushState) {
-      return this.routeMapper.getFragment(fragment, forcePushState);
+    getFragment: function(rawFragmentOverride, forcePushState) {
+      return this.routeMapper.getFragment(rawFragmentOverride, forcePushState);
     },
 
     route: function(route, callback) {
@@ -1442,8 +1444,8 @@
     // Attempt to load the current URL fragment. If a route succeeds with a
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
-    loadUrl: function(fragmentOverride) {
-      return this.routeMapper.loadUrl(fragmentOverride);
+    loadUrl: function(rawFragmentOverride) {
+      return this.routeMapper.loadUrl(rawFragmentOverride);
     },
 
     // Start the hash change handling, returning `true` if the current URL matches
@@ -1500,7 +1502,7 @@
         // Or if we've started out with a hash-based route, but we're currently
         // in a browser where it could be `pushState`-based instead...
         } else if (this._hasPushState && atRoot && loc.hash) {
-          this.fragment = this.routeMapper.normalizeRawFragment(this.getHashFragment());
+          this.fragment = this.routeMapper.normalizeRawFragment(this.getHashRawFragment());
           this.history.replaceState({}, document.title, this.routeMapper.root + this.fragment + loc.search);
         }
 
@@ -1522,7 +1524,7 @@
     checkUrl: function(e) {
       var current = this.getFragment();
       if (current === this.fragment && this.iframe) {
-        current = this.getFragment(this.getHashFragment(this.iframe));
+        current = this.getFragment(this.getHashRawFragment(this.iframe));
       }
       if (current === this.fragment) return false;
       if (this.iframe) this.navigate(current);
@@ -1539,10 +1541,11 @@
     navigate: function(fragment, options) {
       if (!History.started) return false;
       if (!options || options === true) options = {trigger: options};
+      var rawFragment = null;
       if (fragment) {
-        fragment = RouteMapper.pathRawFragment(fragment);
+        rawFragment = RouteMapper.pathRawFragment(fragment);
       }
-      fragment = this.getFragment(fragment || '');
+      fragment = this.getFragment(rawFragment);
       if (this.fragment === fragment) return;
       this.fragment = fragment;
       var url = this.routeMapper.root + fragment;
@@ -1555,7 +1558,7 @@
       // fragment to store history.
       } else if (this._wantsHashChange) {
         this._updateHash(this.location, fragment, options.replace);
-        if (this.iframe && (fragment !== this.getFragment(this.getHashFragment(this.iframe)))) {
+        if (this.iframe && (fragment !== this.getFragment(this.getHashRawFragment(this.iframe)))) {
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
