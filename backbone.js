@@ -1321,7 +1321,7 @@
     this.getRawFragment = getRawFragment;
   };
 
-  _.extend(RouteMapper.prototype, {
+  _.extend(RouteMapper, {
     // RawFragments are string paths that are tainted based on where they come
     // from. Specifically, full paths need to be normalized relative to the
     // root and hash fragments don't. This convenience function constructs
@@ -1333,8 +1333,10 @@
     // This convenience function constructs a raw fragment from a hash.
     hashRawFragment: function(hash) {
       return {isPath: false, string: hash};
-    },
+    }
+  });
 
+  _.extend(RouteMapper.prototype, {
     // Pass configuration options into the RouteMapper.
     configure: function(options) {
       // Normalize root to always include a leading and trailing slash.
@@ -1417,14 +1419,14 @@
     // in Firefox where location.hash will always be decoded.
     getHashFragment: function(window) {
       var match = (window || this).location.href.match(/#(.*)$/);
-      return this.routeMapper.hashRawFragment(match ? match[1] : '');
+      return RouteMapper.hashRawFragment(match ? match[1] : '');
     },
 
     // Return a raw fragment extracted from either the browser's location href
     // or location hash.
     getRawFragment: function(forcePushState) {
       if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-        return this.routeMapper.pathRawFragment(this.location.pathname);
+        return RouteMapper.pathRawFragment(this.location.pathname);
       }
       return this.getHashFragment();
     },
@@ -1538,7 +1540,7 @@
       if (!History.started) return false;
       if (!options || options === true) options = {trigger: options};
       if (fragment) {
-        fragment = this.routeMapper.pathRawFragment(fragment);
+        fragment = RouteMapper.pathRawFragment(fragment);
       }
       fragment = this.getFragment(fragment || '');
       if (this.fragment === fragment) return;
@@ -1566,7 +1568,7 @@
       } else {
         return this.location.assign(url);
       }
-      if (options.trigger) return this.loadUrl(this.routeMapper.pathRawFragment(fragment));
+      if (options.trigger) return this.loadUrl(RouteMapper.pathRawFragment(fragment));
     },
 
     // Update the hash location, either replacing the current entry, or adding
