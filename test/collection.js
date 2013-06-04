@@ -676,6 +676,39 @@ $(document).ready(function() {
     ok(c.model === Model);
     ok(c.at(0) instanceof Model);
   });
+  
+  test("Reset with large amount of models fails with 'Maximum call stack size exceeded'", function() {
+      var source = [];
+      var i=0;
+      for (;i<=65536;i++) {
+          source.push({id:i});
+      }
+      var success = true;
+      try{
+        otherCol.reset(source);
+      } catch(error) {
+        success = false;
+      }
+      ok(success, 'Reset collection failed' )
+      ok(otherCol.size() == source.length, 'Collection size is wrong' )
+  });
+  
+  test("Add large amount of models fails with 'Maximum call stack size exceeded'", function() {
+    var startSize = col.size();
+    var source = [];
+    var i=10;
+    for (;i<=65536;i++) {
+        source.push({id:i});
+    }
+    var success = true;
+    try{
+      col.add(source);
+    } catch(error) {
+      success = false;
+    }
+    ok(success, 'Reset collection success' );
+    ok(col.size() == startSize + source.length, 'Collection size is wrong' );
+  });
 
   test("null and undefined are invalid ids.", 2, function() {
     var model = new Backbone.Model({id: 1});

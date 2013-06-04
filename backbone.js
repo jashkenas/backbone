@@ -255,7 +255,12 @@
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
+    /**
+     * Fastest way to give info that attributes are empty
+     */
+    options.creation = true;
     this.set(attrs, options);
+    delete options['creation'];
     this.changed = {};
     this.initialize.apply(this, arguments);
   };
@@ -332,19 +337,18 @@
       this._changing  = true;
 
       if (!changing) {
-        this._previousAttributes = _.clone(this.attributes);
+        this._previousAttributes = options.creation ? {} : _.clone(this.attributes);
         this.changed = {};
       }
       current = this.attributes, prev = this._previousAttributes;
 
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
-
       // For each `set` attribute, update or delete the current value.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
+        if ((val !== undefined && options.creation) || !_.isEqual(current[attr], val)) changes.push(attr);
+        if ((val !== undefined && options.creation) || !_.isEqual(prev[attr], val)) {
           this.changed[attr] = val;
         } else {
           delete this.changed[attr];
@@ -716,10 +720,16 @@
         if (sortable) sort = true;
         this.length += toAdd.length;
         if (at != null) {
-          splice.apply(this.models, [at, 0].concat(toAdd));
+          // Prevent stack overflow exception on apply. https://bugs.webkit.org/show_bug.cgi?id=80797
+          for(i = 0, l = toAdd.length; i < l; i+= 65533) {
+            splice.apply(this.models, [at+i, 0].concat(slice.apply(toAdd,[i,i+65533])));
+          }
         } else {
           if (order) this.models.length = 0;
-          push.apply(this.models, order || toAdd);
+          // Prevent stack overflow exception on apply. https://bugs.webkit.org/show_bug.cgi?id=80797
+          for(i = 0, l = (order || toAdd).length; i < l ; i+=65533) {
+            push.apply(this.models, slice.apply(order || toAdd,[i,i+65533]));
+          }
         }
       }
 
