@@ -913,11 +913,9 @@
       options || (options = {});
       options.collection = this;
       var model = new this.model(attrs, options);
-      if (!model._validate(attrs, options)) {
-        this.trigger('invalid', this, attrs, options);
-        return false;
-      }
-      return model;
+      if (!model.validationError) return model;
+      this.trigger('invalid', this, attrs, options);
+      return false;
     },
 
     // Internal method to sever a model's ties to a collection.
