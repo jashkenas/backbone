@@ -257,7 +257,9 @@
     }
     this.set(attrs, options);
     this.changed = {};
-    this.initialize.apply(this, arguments);
+    if (!options._preventInitialize) {
+      this.initialize.apply(this, arguments);
+    }
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -691,6 +693,7 @@
 
         // This is a new model, push it to the `toAdd` list.
         } else if (add) {
+          model.initialize();
           toAdd.push(model);
 
           // Listen to added models' events, and index models for lookup by
@@ -910,7 +913,7 @@
         if (!attrs.collection) attrs.collection = this;
         return attrs;
       }
-      options || (options = {});
+      _.extend(options || {}, {_preventInitialize: true});
       options.collection = this;
       var model = new this.model(attrs, options);
       if (!model._validate(attrs, options)) {
