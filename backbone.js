@@ -565,7 +565,7 @@
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validationError = this.validate(attrs, options) || null;
       if (!error) return true;
-      this.trigger('invalid', this, error, _.extend(options || {}, {validationError: error}));
+      this.trigger('invalid', this, error, options || {});
       return false;
     }
 
@@ -914,7 +914,7 @@
       options.collection = this;
       var model = new this.model(attrs, options);
       if (!model.validationError) return model;
-      this.trigger('invalid', this, attrs, options);
+      this.trigger('invalid', attrs, model.validationError, options);
       return false;
     },
 

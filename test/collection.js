@@ -448,8 +448,8 @@ $(document).ready(function() {
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
-    col.on('invalid', function (collection, attrs, options) {
-      equal(options.validationError, 'fail');
+    col.on('invalid', function (attrs, error, options) {
+      equal(error, 'fail');
     });
     equal(col.create({"foo":"bar"}, {validate:true}), false);
   });
