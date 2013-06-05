@@ -788,11 +788,12 @@ object.off();
     <p id="Events-listenTo">
       <b class="header">listenTo</b><code>object.listenTo(other, event, callback)</code>
       <br />
-      Tell an <b>object</b> to listen to a particular event on an <b>other</b> object.
-      The advantage of using this form, instead of <tt>other.on(event, callback)</tt>,
-      is that <b>listenTo</b> allows the <b>object</b> to keep track of the events,
-      and they can be removed all at once later on. The <tt>this</tt> context for the
-      callback will be set to the listening <b>object</b>.
+      Tell an <b>object</b> to listen to a particular event on an <b>other</b>
+      object.  The advantage of using this form, instead of <tt>other.on(event,
+      callback, object)</tt>, is that <b>listenTo</b> allows the <b>object</b>
+      to keep track of the events, and they can be removed all at once later
+      on.  The <b>callback</b> will always be called with <b>object</b> as
+      context.
     </p>
 
 <pre>
