@@ -519,7 +519,7 @@
 
       if (this.isNew()) {
         options.success();
-        return Backbone.Deferred().reject();
+        return Backbone.Deferred().resolve();
       }
       wrapError(this, options);
 
