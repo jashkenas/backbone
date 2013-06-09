@@ -1183,7 +1183,10 @@
     // Make the request, allowing the user to override any Ajax options.
     var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
     model.trigger('request', model, xhr, options);
-    return xhr;
+    //return promise that will be resolved with model
+    return xhr && xhr.then ? xhr.then(function(){
+      return model;
+    }) : xhr;
   };
 
   var noXhrPatch = typeof window !== 'undefined' && !!window.ActiveXObject && !(window.XMLHttpRequest && (new XMLHttpRequest).dispatchEvent);
