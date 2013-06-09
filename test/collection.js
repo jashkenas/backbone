@@ -502,7 +502,7 @@ $(document).ready(function() {
     equal(coll.findWhere({a: 4}), void 0);
   });
 
-  test("Underscore methods", 13, function() {
+  test("Underscore methods", 14, function() {
     equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equal(col.any(function(model){ return model.id === 100; }), false);
     equal(col.any(function(model){ return model.id === 0; }), true);
@@ -520,6 +520,7 @@ $(document).ready(function() {
             .map(function(o){ return o.id * 2; })
             .value(),
          [4, 0]);
+    deepEqual(col.difference([c, d]), [a, b]);
   });
 
   test("sortedIndex", function () {
