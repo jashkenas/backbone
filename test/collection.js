@@ -87,7 +87,7 @@ $(document).ready(function() {
     equal(col2.get(model.clone()), col2.first());
   });
 
-  test("update index when id changes", 3, function() {
+  test("update index when id changes", 4, function() {
     var col = new Backbone.Collection();
     col.add([
       {id : 0, name : 'one'},
@@ -95,9 +95,10 @@ $(document).ready(function() {
     ]);
     var one = col.get(0);
     equal(one.get('name'), 'one');
-    one.set({id : 101});
+    col.on('change:name', function (model) { ok(this.get(model)); });
+    one.set({name: 'dalmatians', id : 101});
     equal(col.get(0), null);
-    equal(col.get(101).get('name'), 'one');
+    equal(col.get(101).get('name'), 'dalmatians');
   });
 
   test("at", 1, function() {
