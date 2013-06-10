@@ -734,7 +734,7 @@
       }
 
       // Trigger `sort` if the collection was sorted.
-      if (sort || (order && order.length)) this.trigger('sort', this, options);
+      if (sort) this.trigger('sort', this, options);
       return this;
     },
 
