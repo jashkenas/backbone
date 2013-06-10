@@ -865,7 +865,6 @@ $(document).ready(function() {
     equal(c.at(0).get('name'), 'test');
   });
 
-
   test("Reset includes previous models in triggered event.", 1, function() {
     var model = new Backbone.Model();
     var collection = new Backbone.Collection([model])
@@ -873,6 +872,16 @@ $(document).ready(function() {
       deepEqual(options.previousModels, [model]);
     });
     collection.reset([]);
+  });
+
+  test("`sort` fired after `set` in lieu of `reorder` event", 1, function() {
+    var collection = new Backbone.Collection([{key: 5}, {key: 7}, {key: 6}]);
+
+    collection.on('sort', function() {
+      ok(true);
+    });
+
+    collection.set([{key: 1}, {key: 3}, {key: 2}]);
   });
 
   test("set", function() {
