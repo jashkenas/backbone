@@ -559,7 +559,7 @@
     },
 
     // Run validation against the next complete set of model attributes or
-    // only the given attrs if `options.validate` == "partial",
+    // only the given attrs if `options.validate` == `"partial"`,
     // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
     _validate: function(attrs, options) {
       if (!options.validate || !this.validate) return true;
