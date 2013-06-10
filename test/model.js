@@ -520,6 +520,18 @@ $(document).ready(function() {
     equal(model.get('a'), 100);
   });
 
+  test("validate partially", function () {
+    var validateAttrs;
+    var model = new Backbone.Model({name: 'Foo'});
+
+    model.validate = function (attrs) {
+      validateAttrs = attrs;
+    }
+
+    model.set('last', 'Bar', {validate: 'partial'});
+    deepEqual(validateAttrs, {last: 'Bar'});
+  });
+
   test("validate on unset and clear", 6, function() {
     var error;
     var model = new Backbone.Model({name: "One"});
