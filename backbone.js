@@ -255,7 +255,7 @@
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
-    this.set(attrs, options);
+    this.set(attrs, _.defaults(options, {silent: true}));
     this.changed = {};
     this.initialize.apply(this, arguments);
   };
@@ -663,7 +663,7 @@
     // already exist in the collection, as necessary. Similar to **Model#set**,
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
-      options = _.defaults({}, options, setOptions);
+      options = _.defaults({}, options, setOptions, {silent: false});
       if (options.parse) models = this.parse(models, options);
       if (!_.isArray(models)) models = models ? [models] : [];
       var i, l, model, attrs, existing, sort;
