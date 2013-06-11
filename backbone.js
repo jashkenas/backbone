@@ -255,7 +255,7 @@
     if (defaults = _.result(this, 'defaults')) {
       attrs = _.defaults({}, attrs, defaults);
     }
-    this.set(attrs, options);
+    this.set(attrs, _.extend({silent: true}, options));
     this.changed = {};
     this.initialize.apply(this, arguments);
   };
