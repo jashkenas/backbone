@@ -1142,4 +1142,15 @@ $(document).ready(function() {
     equal(collection.length, 2);
   });
 
+  test("#2606 - Collection#create, success arguments", 1, function() {
+    var collection = new Backbone.Collection;
+    collection.url = 'test';
+    collection.create({}, {
+      success: function(model, resp, options) {
+        strictEqual(resp, 'response');
+      }
+    });
+    this.ajaxSettings.success('response');
+  });
+
 });
