@@ -872,16 +872,17 @@
     // wait for the server to agree.
     create: function(model, options) {
       options = options ? _.clone(options) : {};
-      if (!(model = this._prepareModel(model, options))) return false;
-      if (!options.wait) this.add(model, options);
+      if (!(model = this._prepareModel(model, options))) return Backbone.Deferred.reject();
+      if (!options.wait) model = this.add(model, options);
       var collection = this;
       var success = options.success;
       options.success = function(resp) {
-        if (options.wait) collection.add(model, options);
+        if (options.wait) model = collection.add(model, options);
         if (success) success(model, resp, options);
       };
-      model.save(null, options);
-      return model;
+      return model.save(null, options).then(function() {
+         return model;
+      });
     },
 
     // **parse** converts a response into a list of models to be added to the
