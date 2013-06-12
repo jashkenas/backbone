@@ -1069,14 +1069,16 @@
         if (!method) continue;
 
         var match = key.match(delegateEventSplitter);
-        var eventName = match[1], selector = match[2];
+        var eventNames = match[1].split(','), selector = match[2];
         method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.on(eventName, method);
-        } else {
-          this.$el.on(eventName, selector, method);
-        }
+  			for(var i in eventNames){
+					eventNames[i] += '.delegateEvents' + this.cid;
+					if (selector === '') {
+						this.$el.on(eventNames[i], method);
+					} else {
+						this.$el.on(eventNames[i], selector, method);
+					}
+				}
       }
       return this;
     },
