@@ -87,7 +87,7 @@ $(document).ready(function() {
     equal(col2.get(model.clone()), col2.first());
   });
 
-  test("update index when id changes", 3, function() {
+  test("update index when id changes", 4, function() {
     var col = new Backbone.Collection();
     col.add([
       {id : 0, name : 'one'},
@@ -95,9 +95,10 @@ $(document).ready(function() {
     ]);
     var one = col.get(0);
     equal(one.get('name'), 'one');
-    one.set({id : 101});
+    col.on('change:name', function (model) { ok(this.get(model)); });
+    one.set({name: 'dalmatians', id : 101});
     equal(col.get(0), null);
-    equal(col.get(101).get('name'), 'one');
+    equal(col.get(101).get('name'), 'dalmatians');
   });
 
   test("at", 1, function() {
@@ -502,7 +503,7 @@ $(document).ready(function() {
     equal(coll.findWhere({a: 4}), void 0);
   });
 
-  test("Underscore methods", 13, function() {
+  test("Underscore methods", 14, function() {
     equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equal(col.any(function(model){ return model.id === 100; }), false);
     equal(col.any(function(model){ return model.id === 0; }), true);
@@ -520,6 +521,7 @@ $(document).ready(function() {
             .map(function(o){ return o.id * 2; })
             .value(),
          [4, 0]);
+    deepEqual(col.difference([c, d]), [a, b]);
   });
 
   test("sortedIndex", function () {
@@ -1138,6 +1140,17 @@ $(document).ready(function() {
     });
     collection.set({id: 1});
     equal(collection.length, 2);
+  });
+
+  test("#2606 - Collection#create, success arguments", 1, function() {
+    var collection = new Backbone.Collection;
+    collection.url = 'test';
+    collection.create({}, {
+      success: function(model, resp, options) {
+        strictEqual(resp, 'response');
+      }
+    });
+    this.ajaxSettings.success('response');
   });
 
 });
