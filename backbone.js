@@ -1211,6 +1211,7 @@
   var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
+    this.history = options.history;
     this._bindRoutes();
     this.initialize.apply(this, arguments);
   };
@@ -1229,6 +1230,15 @@
     // initialization logic.
     initialize: function(){},
 
+    // Use a getter rather than storing a reference to Backbone.history.
+    // We do this because Backbone.history was not always injectable, so
+    // users of this library may have written code that does not expect a
+    // reference to the current Backbone.history to stick around at
+    // construction time.
+    _getHistory: function() {
+      return this.history || Backbone.history;
+    },
+
     // Manually bind a single named route to a callback. For example:
     //
     //     this.route('search/:query/p:num', 'search', function(query, num) {
@@ -1243,19 +1253,19 @@
       }
       if (!callback) callback = this[name];
       var router = this;
-      Backbone.history.route(route, function(fragment) {
+      this._getHistory().route(route, function(fragment) {
         var args = router._extractParameters(route, fragment);
         callback && callback.apply(router, args);
         router.trigger.apply(router, ['route:' + name].concat(args));
         router.trigger('route', name, args);
-        Backbone.history.trigger('route', router, name, args);
+        router._getHistory().trigger('route', router, name, args);
       });
       return this;
     },
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate: function(fragment, options) {
-      Backbone.history.navigate(fragment, options);
+      this._getHistory().navigate(fragment, options);
       return this;
     },
 
@@ -1298,13 +1308,101 @@
   // Backbone.History
   // ----------------
 
+
+  // Cached regex for stripping a leading hash/slash and trailing space.
+  var routeStripper = /^[#\/]|\s+$/g;
+
+  // Cached regex for stripping leading and trailing slashes.
+  var rootStripper = /^\/+|\/+$/g;
+
+  // Cached regex for removing a trailing slash.
+  var trailingSlash = /\/$/;
+
+  // RouteMapper is responsible for mapping a raw fragment to a callback
+  // invocation. It takes a getRawFragment callable which returns the
+  // current raw fragment for this instance. This is either determined
+  // from the browser URL, browser location hash, or web server request,
+  // depending on the context in which this RouteMapper is used.
+  var RouteMapper = Backbone.RouteMapper = function(getRawFragment) {
+    this.handlers = [];
+    this.root = '/';
+    this.getRawFragment = getRawFragment;
+  };
+
+  _.extend(RouteMapper, {
+    // RawFragments are string paths that are tainted based on where they come
+    // from. Specifically, full paths need to be normalized relative to the
+    // root and hash fragments don't. This convenience function constructs
+    // a raw fragment from a path.
+    pathRawFragment: function(path) {
+      return {isPath: true, string: path};
+    },
+
+    // This convenience function constructs a raw fragment from a hash.
+    hashRawFragment: function(hash) {
+      return {isPath: false, string: hash};
+    }
+  });
+
+  _.extend(RouteMapper.prototype, {
+    // Pass configuration options into the RouteMapper.
+    configure: function(options) {
+      // Normalize root to always include a leading and trailing slash.
+      this.root = ('/' + options.root + '/').replace(rootStripper, '/');
+    },
+
+    // Add a route to be tested when the fragment changes. Routes added later
+    // may override previous routes.
+    route: function(route, callback) {
+      this.handlers.unshift({route: route, callback: callback});
+    },
+
+    // Attempt to load the current URL fragment. If a route succeeds with a
+    // match, returns `true`. If no defined routes matches the fragment,
+    // returns `false`.
+    loadUrl: function(rawFragmentOverride) {
+      var fragment = this.getFragment(rawFragmentOverride);
+      var matched = _.any(this.handlers, function(handler) {
+        if (handler.route.test(fragment)) {
+          handler.callback(fragment);
+          return true;
+        }
+      });
+      return matched;
+    },
+
+    // Get the cross-browser normalized URL fragment, either from the URL,
+    // the hash, or the override.
+    getFragment: function(rawFragmentOverride, forcePushState) {
+      return this.normalizeRawFragment(
+        rawFragmentOverride || this.getRawFragment(forcePushState)
+      );
+    },
+
+    // Users of this class may want to store the current fragment around. This
+    // gives you access to route normalization, which basically sanitizes the
+    // raw fragment by removing spaces, making it relative to root, etc.
+    // A "raw fragment" is the raw string and a boolean indicating whether
+    // it was a path or a hash. A "fragment" is the normalized string.
+    normalizeRawFragment: function(fragment) {
+      var fragmentString = fragment.string;
+      if (fragment.isPath) {
+        var root = this.root.replace(trailingSlash, '');
+        if (!fragmentString.indexOf(root)) {
+          fragmentString = fragmentString.substr(root.length);
+        }
+      }
+      return fragmentString.replace(routeStripper, '');
+    }
+  });
+
   // Handles cross-browser history management, based on either
   // [pushState](http://diveintohtml5.info/history.html) and real URLs, or
   // [onhashchange](https://developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
   // and URL fragments. If the browser supports neither (old IE, natch),
   // falls back to polling.
   var History = Backbone.History = function() {
-    this.handlers = [];
+    this.routeMapper = new RouteMapper(this.getRawFragment.bind(this));
     _.bindAll(this, 'checkUrl');
 
     // Ensure that `History` can be used outside of the browser.
@@ -1314,17 +1412,8 @@
     }
   };
 
-  // Cached regex for stripping a leading hash/slash and trailing space.
-  var routeStripper = /^[#\/]|\s+$/g;
-
-  // Cached regex for stripping leading and trailing slashes.
-  var rootStripper = /^\/+|\/+$/g;
-
   // Cached regex for detecting MSIE.
   var isExplorer = /msie [\w.]+/;
-
-  // Cached regex for removing a trailing slash.
-  var trailingSlash = /\/$/;
 
   // Has the history handling already been started?
   History.started = false;
@@ -1338,24 +1427,33 @@
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
-    getHash: function(window) {
+    getHashRawFragment: function(window) {
       var match = (window || this).location.href.match(/#(.*)$/);
-      return match ? match[1] : '';
+      return RouteMapper.hashRawFragment(match ? match[1] : '');
     },
 
-    // Get the cross-browser normalized URL fragment, either from the URL,
-    // the hash, or the override.
-    getFragment: function(fragment, forcePushState) {
-      if (fragment == null) {
-        if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = this.location.pathname;
-          var root = this.root.replace(trailingSlash, '');
-          if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
-        } else {
-          fragment = this.getHash();
-        }
+    // Return a raw fragment extracted from either the browser's location href
+    // or location hash.
+    getRawFragment: function(forcePushState) {
+      if (this._hasPushState || !this._wantsHashChange || forcePushState) {
+        return RouteMapper.pathRawFragment(this.location.pathname);
       }
-      return fragment.replace(routeStripper, '');
+      return this.getHashRawFragment();
+    },
+
+    getFragment: function(rawFragmentOverride, forcePushState) {
+      return this.routeMapper.getFragment(rawFragmentOverride, forcePushState);
+    },
+
+    route: function(route, callback) {
+      this.routeMapper.route(route, callback);
+    },
+
+    // Attempt to load the current URL fragment. If a route succeeds with a
+    // match, returns `true`. If no defined routes matches the fragment,
+    // returns `false`.
+    loadUrl: function(rawFragmentOverride) {
+      return this.routeMapper.loadUrl(rawFragmentOverride);
     },
 
     // Start the hash change handling, returning `true` if the current URL matches
@@ -1364,19 +1462,17 @@
       if (History.started) throw new Error("Backbone.history has already been started");
       History.started = true;
 
+
       // Figure out the initial configuration. Do we need an iframe?
       // Is pushState desired ... is it available?
       this.options          = _.extend({}, {root: '/'}, this.options, options);
-      this.root             = this.options.root;
+      this.routeMapper.configure(this.options);
       this._wantsHashChange = this.options.hashChange !== false;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       var fragment          = this.getFragment();
       var docMode           = document.documentMode;
       var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
-
-      // Normalize root to always include a leading and trailing slash.
-      this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
       if (oldIE && this._wantsHashChange) {
         this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
@@ -1397,7 +1493,7 @@
       // opened by a non-pushState browser.
       this.fragment = fragment;
       var loc = this.location;
-      var atRoot = loc.pathname.replace(/[^\/]$/, '$&/') === this.root;
+      var atRoot = loc.pathname.replace(/[^\/]$/, '$&/') === this.routeMapper.root;
 
       // Transition from hashChange to pushState or vice versa if both are
       // requested.
@@ -1407,15 +1503,15 @@
         // browser, but we're currently in a browser that doesn't support it...
         if (!this._hasPushState && !atRoot) {
           this.fragment = this.getFragment(null, true);
-          this.location.replace(this.root + this.location.search + '#' + this.fragment);
+          this.location.replace(this.routeMapper.root + this.location.search + '#' + this.fragment);
           // Return immediately as browser will do redirect to new url
           return true;
 
         // Or if we've started out with a hash-based route, but we're currently
         // in a browser where it could be `pushState`-based instead...
         } else if (this._hasPushState && atRoot && loc.hash) {
-          this.fragment = this.getHash().replace(routeStripper, '');
-          this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
+          this.fragment = this.routeMapper.normalizeRawFragment(this.getHashRawFragment());
+          this.history.replaceState({}, document.title, this.routeMapper.root + this.fragment + loc.search);
         }
 
       }
@@ -1431,36 +1527,16 @@
       History.started = false;
     },
 
-    // Add a route to be tested when the fragment changes. Routes added later
-    // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
-    },
-
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl: function(e) {
       var current = this.getFragment();
       if (current === this.fragment && this.iframe) {
-        current = this.getFragment(this.getHash(this.iframe));
+        current = this.getFragment(this.getHashRawFragment(this.iframe));
       }
       if (current === this.fragment) return false;
       if (this.iframe) this.navigate(current);
       this.loadUrl();
-    },
-
-    // Attempt to load the current URL fragment. If a route succeeds with a
-    // match, returns `true`. If no defined routes matches the fragment,
-    // returns `false`.
-    loadUrl: function(fragmentOverride) {
-      var fragment = this.fragment = this.getFragment(fragmentOverride);
-      var matched = _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
-        }
-      });
-      return matched;
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
@@ -1473,10 +1549,14 @@
     navigate: function(fragment, options) {
       if (!History.started) return false;
       if (!options || options === true) options = {trigger: options};
-      fragment = this.getFragment(fragment || '');
+      var rawFragment = null;
+      if (fragment) {
+        rawFragment = RouteMapper.pathRawFragment(fragment);
+      }
+      fragment = this.getFragment(rawFragment);
       if (this.fragment === fragment) return;
       this.fragment = fragment;
-      var url = this.root + fragment;
+      var url = this.routeMapper.root + fragment;
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
@@ -1486,7 +1566,7 @@
       // fragment to store history.
       } else if (this._wantsHashChange) {
         this._updateHash(this.location, fragment, options.replace);
-        if (this.iframe && (fragment !== this.getFragment(this.getHash(this.iframe)))) {
+        if (this.iframe && (fragment !== this.getFragment(this.getHashRawFragment(this.iframe)))) {
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
@@ -1499,7 +1579,7 @@
       } else {
         return this.location.assign(url);
       }
-      if (options.trigger) return this.loadUrl(fragment);
+      if (options.trigger) return this.loadUrl(RouteMapper.pathRawFragment(fragment));
     },
 
     // Update the hash location, either replacing the current entry, or adding

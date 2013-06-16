@@ -460,7 +460,7 @@ $(document).ready(function() {
       }
     });
     Backbone.history.start({root: 'root'});
-    strictEqual(Backbone.history.root, '/root/');
+    strictEqual(Backbone.history.routeMapper.root, '/root/');
   });
 
   test("Transition from hashChange to pushState.", 1, function() {
@@ -492,7 +492,7 @@ $(document).ready(function() {
       }
     });
     Backbone.history.start({root: ''});
-    strictEqual(Backbone.history.root, '/');
+    strictEqual(Backbone.history.routeMapper.root, '/');
   });
 
   test("#1619: Router: nagivate with empty root", 1, function() {
@@ -564,12 +564,12 @@ $(document).ready(function() {
 
   test("#1794 - Trailing space in fragments.", 1, function() {
     var history = new Backbone.History;
-    strictEqual(history.getFragment('fragment   '), 'fragment');
+    strictEqual(history.getFragment(Backbone.RouteMapper.pathRawFragment('fragment   ')), 'fragment');
   });
 
   test("#1820 - Leading slash and trailing space.", 1, function() {
     var history = new Backbone.History;
-    strictEqual(history.getFragment('/fragment '), 'fragment');
+    strictEqual(history.getFragment(Backbone.RouteMapper.pathRawFragment('/fragment ')), 'fragment');
   });
 
   test("#1980 - Optional parameters.", 2, function() {
@@ -654,6 +654,44 @@ $(document).ready(function() {
     });
     location.replace('http://example.com/nomatch#hash');
     Backbone.history.checkUrl();
+  });
+
+  test('Do not rely on browser environment', 1, function() {
+    function ServerHistory(requestPath) {
+      this.requestRawFragment = Backbone.RouteMapper.pathRawFragment(requestPath);
+      this.routeMapper = new Backbone.RouteMapper(function() {
+        return this.requestRawFragment;
+      }.bind(this));
+    };
+
+    _.extend(ServerHistory.prototype, Backbone.Events, {
+      route: function() {
+        return this.routeMapper.route.apply(this.routeMapper, arguments);
+      },
+      navigate: function(fragment, options) {
+        // TODO: implement me and send a HTTP 3xx
+      },
+      start: function() {
+        this.routeMapper.loadUrl(this.requestRawFragment);
+      }
+    });
+
+    var history = new ServerHistory('/asdf');
+    var AppRouter = Backbone.Router.extend({
+      routes: {
+        "*actions": "defaultRoute"
+      }
+    });
+
+    var actionsReceived = [];
+    var appRouter = new AppRouter({history: history});
+
+    appRouter.on('route:defaultRoute', function(actions) {
+      actionsReceived.push(actions);
+    });
+
+    history.start();
+    deepEqual(actionsReceived, ['asdf']);
   });
 
 });
