@@ -1,0 +1,13 @@
+{
+  "name": "backbone",
+  "repo": "documentcloud/backbone",
+  "description": "Give your JS App some Backbone with Models, Views, Collections, and Events.",
+  "version": "1.0.0",
+  "keywords": ["model", "view", "controller", "router", "server", "client", "browser"],
+  "main": "backbone.js",
+  "scripts": ["backbone.js"],
+  "dependencies": {
+    "documentcloud/underscore": "~1.4.3"
+  },
+  "development": {}
+}
