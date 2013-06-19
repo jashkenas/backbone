@@ -308,7 +308,7 @@
     // the core primitive operation of a model, updating the data and notifying
     // anyone who needs to know about the change in state. The heart of the beast.
     set: function(key, val, options) {
-      var attr, attrs, unset, changes, silent, changing, prev, current;
+      var attr, attrs, unset, changes, silent, merge, recursive, changing, prev, current;
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
@@ -327,6 +327,8 @@
       // Extract attributes and options.
       unset           = options.unset;
       silent          = options.silent;
+      merge           = options.merge;
+      recursive       = options.recursive;
       changes         = [];
       changing        = this._changing;
       this._changing  = true;
@@ -349,7 +351,7 @@
         } else {
           delete this.changed[attr];
         }
-        unset ? delete current[attr] : current[attr] = val;
+        unset ? delete current[attr] : merge && recursive && current[attr] instanceof Backbone.Collection && val instanceof Backbone.Collection ? current[attr].add(val.models, { merge: true }) : current[attr] = val;
       }
 
       // Trigger all relevant attribute changes.

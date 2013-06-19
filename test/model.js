@@ -1108,4 +1108,44 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test("#2624 - recursively merge nested models", 6, function() {
+    var submodel = new Backbone.Model({id: 1, val1: 'should change', val2: 'should not change or be removed'});
+    var submodelChanged = new Backbone.Model({id: 1, val1: 'has changed'});
+    var subcollection = new Backbone.Collection([submodel]);
+    var subcollectionChanged = new Backbone.Collection([submodelChanged]);
+    var model = new Backbone.Model({id: 1, submodels: subcollection});
+    var modelChanged = new Backbone.Model({id: 1, submodels: subcollectionChanged});
+    var collection = new Backbone.Collection();
+
+    // default behavior (without merging recursively)
+    subcollection.add(submodel);
+    model.set('submodels', subcollection);
+    collection.add(model);
+    collection.add(modelChanged, {merge: true});
+    ok('has changed' === collection.get(1).get('submodels').get(1).get('val1'));
+    ok('undefined' === typeof collection.get(1).get('submodels').get(1).get('val2'));
+    // new behavior (with recursive merge)
+    collection.reset();
+    subcollection.reset();
+    subcollection.add(submodel);
+    model.set('submodels', subcollection);
+    collection.add(model);
+    collection.add(modelChanged, {merge: true, recursive: true});
+    ok('has changed' === collection.get(1).get('submodels').get(1).get('val1'));
+    ok('should not change or be removed' === collection.get(1).get('submodels').get(1).get('val2'));
+    // new behavior trying to merge only when current and new value are Backbone.Collections
+    collection.reset();
+    modelChanged.set('submodels', 'string');
+    collection.add(model);
+    collection.add(modelChanged, {merge: true, recursive: true});
+    ok(!(collection.get(1).get('submodels') instanceof Backbone.Collection));
+    model.set('submodels', 'string');
+    collection.reset();
+    modelChanged.set('submodels', subcollection);
+    subcollection.reset().add(submodel);
+    collection.add(model);
+    collection.add(modelChanged, {merge: true, recursive: true});
+    ok(collection.get(1).get('submodels') instanceof Backbone.Collection);
+  });
+
 });
