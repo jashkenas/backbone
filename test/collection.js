@@ -503,7 +503,7 @@ $(document).ready(function() {
     equal(coll.findWhere({a: 4}), void 0);
   });
 
-  test("Underscore methods", 14, function() {
+  test("Underscore methods", 15, function() {
     equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equal(col.any(function(model){ return model.id === 100; }), false);
     equal(col.any(function(model){ return model.id === 0; }), true);
