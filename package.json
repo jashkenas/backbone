@@ -17,5 +17,9 @@
   },
   "main"          : "backbone.js",
   "version"       : "1.0.0",
-  "license"       : "MIT"
+  "license"       : "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/documentcloud/backbone.git"
+  }
 }

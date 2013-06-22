@@ -613,4 +613,47 @@ $(document).ready(function() {
     deepEqual({home: "root", index: "index.html", show: "show", search: "search"}, router.routes);
   });
 
+  test("#2538 - hashChange to pushState only if both requested.", 0, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root?a=b#x/y');
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){ ok(false); }
+      }
+    });
+    Backbone.history.start({
+      root: 'root',
+      pushState: true,
+      hashChange: false
+    });
+  });
+
+  test('No hash fallback.', 0, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(){},
+        replaceState: function(){}
+      }
+    });
+
+    var Router = Backbone.Router.extend({
+      routes: {
+        hash: function() { ok(false); }
+      }
+    });
+    var router = new Router;
+
+    location.replace('http://example.com/');
+    Backbone.history.start({
+      pushState: true,
+      hashChange: false
+    });
+    location.replace('http://example.com/nomatch#hash');
+    Backbone.history.checkUrl();
+  });
+
 });
