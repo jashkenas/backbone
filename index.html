@@ -788,10 +788,12 @@ object.off();
     <p id="Events-listenTo">
       <b class="header">listenTo</b><code>object.listenTo(other, event, callback)</code>
       <br />
-      Tell an <b>object</b> to listen to a particular event on an <b>other</b> object.
-      The advantage of using this form, instead of <tt>other.on(event, callback)</tt>,
-      is that <b>listenTo</b> allows the <b>object</b> to keep track of the events,
-      and they can be removed all at once later on.
+      Tell an <b>object</b> to listen to a particular event on an <b>other</b>
+      object.  The advantage of using this form, instead of <tt>other.on(event,
+      callback, object)</tt>, is that <b>listenTo</b> allows the <b>object</b>
+      to keep track of the events, and they can be removed all at once later
+      on.  The <b>callback</b> will always be called with <b>object</b> as
+      context.
     </p>
 
 <pre>
@@ -2234,7 +2236,7 @@ router.on("route:help", function(page) {
       an argument to the callback. The <tt>name</tt> argument will be triggered as
       a <tt>"route:name"</tt> event whenever the route is matched.  If the
       <tt>callback</tt> argument is omitted <tt>router[name]</tt> will be used
-      instead.
+      instead. Routes added later may override previously declared routes.
     </p>
 
 <pre>
@@ -4124,6 +4126,10 @@ ActiveRecord::Base.include_root_in_json = false
         For semantic and cross browser reasons, routes will now ignore search
         parameters.  Routes like <tt>search?query=…&amp;page=3</tt> should become
         <tt>search/…/3</tt>.
+      </li>
+      <li>
+        <tt>Model#set</tt> no longer accepts another model as an argument.  This leads
+        to subtle problems and is easily replaced with <tt>model.set(other.attributes)</tt>.
       </li>
     </ul>
 
