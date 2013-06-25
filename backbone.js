@@ -250,7 +250,6 @@
     this.cid = _.uniqueId('c');
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
-    options._attrs || (options._attrs = attrs);
     defaults = _.result(this, 'defaults')
     this.set(attrs, _.extend({defaults: defaults}, options));
     this.changed = {};
@@ -683,7 +682,7 @@
         if (existing = this.get(model)) {
           if (remove) modelMap[existing.cid] = true;
           if (merge) {
-            attrs = attrs === model ? model.attributes : options._attrs;
+            if (attrs === model) attrs = model.attributes;
             existing.set(attrs, options);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
@@ -699,7 +698,6 @@
           if (model.id != null) this._byId[model.id] = model;
         }
         if (order) order.push(existing || model);
-        delete options._attrs;
       }
 
       // Remove nonexistent models if appropriate.
