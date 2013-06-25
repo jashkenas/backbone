@@ -250,12 +250,9 @@
     this.cid = _.uniqueId('c');
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
-    if (options.parse) attrs = this.parse(attrs, options) || {};
     options._attrs || (options._attrs = attrs);
-    if (defaults = _.result(this, 'defaults')) {
-      attrs = _.defaults({}, attrs, defaults);
-    }
-    this.set(attrs, options);
+    defaults = _.result(this, 'defaults')
+    this.set(attrs, _.extend({defaults: defaults}, options));
     this.changed = {};
     this.initialize.apply(this, arguments);
   };
@@ -320,6 +317,8 @@
       }
 
       options || (options = {});
+      if (options.parse) attrs = this.parse(attrs, options) || {};
+      attrs = _.defaults({}, attrs, options.defaults)
 
       // Run validation.
       if (!this._validate(attrs, options)) return false;
@@ -565,7 +564,7 @@
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validationError = this.validate(attrs, options) || null;
       if (!error) return true;
-      this.trigger('invalid', this, error, _.extend(options || {}, {validationError: error}));
+      this.trigger('invalid', this, error, _.defaults({validationError: error}, options));
       return false;
     }
 
@@ -914,7 +913,7 @@
       options.collection = this;
       var model = new this.model(attrs, options);
       if (!model.validationError) return model;
-      this.trigger('invalid', this, attrs, options);
+      this.trigger('invalid', this, attrs, _.defaults({validationError: model.validationError}, options));
       return false;
     },
 

@@ -951,6 +951,19 @@ $(document).ready(function() {
     equal(c.length, 2);
   });
 
+  test("set with default values defined", function() {
+    var Model = Backbone.Model.extend({
+      defaults: {
+        key: 'value'
+      }
+    });
+    var col = new Backbone.Collection([], {model: Model});
+    col.set([{}])
+
+    equal(col.first().get('key'), 'value');
+  });
+
+
   test("set + merge with default values defined", function() {
     var Model = Backbone.Model.extend({
       defaults: {
