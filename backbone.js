@@ -250,7 +250,7 @@
     this.cid = _.uniqueId('c');
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
-    defaults = _.result(this, 'defaults')
+    defaults = _.result(this, 'defaults');
     this.set(attrs, _.extend({defaults: defaults}, options));
     this.changed = {};
     this.initialize.apply(this, arguments);
@@ -316,8 +316,8 @@
       }
 
       options || (options = {});
-      if (options.parse) attrs = this.parse(attrs, options) || {};
-      attrs = _.defaults({}, attrs, options.defaults)
+      if (options.parse) attrs = this.parse(attrs, options);
+      attrs = _.defaults({}, attrs, options.defaults);
 
       // Run validation.
       if (!this._validate(attrs, options)) return false;
