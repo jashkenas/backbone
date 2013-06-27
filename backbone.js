@@ -431,10 +431,12 @@
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
       var model = this;
-      var success = options.success;
+      var success = options.success || [];
       options.success = function(resp) {
         if (!model.set(model.parse(resp, options), options)) return false;
-        if (success) success(model, resp, options);
+        _.each(_.isArray(success) ? success : [success], function(success) {
+          success(model, resp, options);
+        };
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
@@ -475,7 +477,7 @@
       // updated with the server-side state.
       if (options.parse === void 0) options.parse = true;
       var model = this;
-      var success = options.success;
+      var success = options.success || [];
       options.success = function(resp) {
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
@@ -484,7 +486,9 @@
         if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
           return false;
         }
-        if (success) success(model, resp, options);
+        _.each(_.isArray(success) ? success : [success], function(success) {
+          success(model, resp, options);
+        };
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
@@ -505,7 +509,7 @@
     destroy: function(options) {
       options = options ? _.clone(options) : {};
       var model = this;
-      var success = options.success;
+      var success = options.success || [];
 
       var destroy = function() {
         model.trigger('destroy', model, model.collection, options);
@@ -513,12 +517,16 @@
 
       options.success = function(resp) {
         if (options.wait || model.isNew()) destroy();
-        if (success) success(model, resp, options);
+        _.each(_.isArray(success) ? success : [success], function(success) {
+          success(model, resp, options);
+        };
         if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
       if (this.isNew()) {
-        options.success();
+        _.each(_.isArray(success) ? success : [success], function(success) {
+          success();
+        };
         return false;
       }
       wrapError(this, options);
@@ -855,12 +863,14 @@
     fetch: function(options) {
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
-      var success = options.success;
+      var success = options.success || [];
       var collection = this;
       options.success = function(resp) {
         var method = options.reset ? 'reset' : 'set';
         collection[method](resp, options);
-        if (success) success(collection, resp, options);
+        _.each(_.isArray(success) ? success : [success], function(success) {
+          success(collection, resp, options);
+        };
         collection.trigger('sync', collection, resp, options);
       };
       wrapError(this, options);
@@ -875,10 +885,12 @@
       if (!(model = this._prepareModel(model, options))) return false;
       if (!options.wait) this.add(model, options);
       var collection = this;
-      var success = options.success;
+      var success = options.success || [];
       options.success = function(model, resp, options) {
         if (options.wait) collection.add(model, options);
-        if (success) success(model, resp, options);
+        _.each(_.isArray(success) ? success : [success], function(success) {
+          success(model, resp, options);
+        };
       };
       model.save(null, options);
       return model;
@@ -1567,9 +1579,11 @@
 
   // Wrap an optional error callback with a fallback error event.
   var wrapError = function(model, options) {
-    var error = options.error;
+    var error = options.error || [];
     options.error = function(resp) {
-      if (error) error(model, resp, options);
+      _.each(_.isArray(error) ? error : [error], function(error) {
+        error(model, resp, options);
+      };
       model.trigger('error', model, resp, options);
     };
   };
