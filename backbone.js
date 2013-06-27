@@ -431,7 +431,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp) {
-        if (!model.set(model.parse(resp, options), options)) return false;
+        if (!model.set(resp, options)) return false;
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
       };
