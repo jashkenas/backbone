@@ -682,25 +682,20 @@
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-
         existing = undefined;
-
         if(_.isFunction(isEqual)){
 
-          var existings = _.filter(this.models, function(item){
+          var existingModels = _.filter(this.models, function(item){
             return isEqual(item, model);
           });
-
-          existings = _.difference( existings, usedModels );
-
-          if(existings.length > 0){
-
-            existing = existings[0];
+          existingModels = _.difference( existingModels, usedModels );
+          if(existingModels.length > 0){
+            existingModels = existings[0];
           }
         }
 
         if (existing || (existing = this.get(model))) {
-          
+
           usedModels.push(existing);
 
           if (remove) modelMap[existing.cid] = true;
