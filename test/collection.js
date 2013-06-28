@@ -920,6 +920,23 @@ $(document).ready(function() {
     });
     c.set([]);
     strictEqual(c.length, 0);
+
+    // Test adding models with isEqual
+    c.set([m1, m2, m3], {silent: true});
+    var models1 = _.map(c.models, function(item){
+        return item.cid;
+    });
+    c.set([{id: 2}], {
+      isEquals: function(m1, m2){
+        return _.isEqual(m1.attributes, m2.attributes)
+      }, 
+      silent: true
+    });
+    var models2 = _.map(c.models, function(item){
+        return item.cid;
+    });
+    strictEqual(models2[0], models1[1]);
+
   });
 
   test("set with only cids", 3, function() {
