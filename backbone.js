@@ -668,9 +668,10 @@
       if (!_.isArray(models)) models = models ? [models] : [];
       var i, l, model, attrs, existing, sort;
       var at = options.at;
+      var isEqual = options.isEqual || false;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var toAdd = [], toRemove = [], modelMap = {};
+      var toAdd = [], toRemove = [], modelMap = {}, usedModels = [];
       var add = options.add, merge = options.merge, remove = options.remove;
       var order = !sortable && add && remove ? [] : false;
 
@@ -681,7 +682,22 @@
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        if (existing = this.get(model)) {
+        existing = undefined;
+        if(_.isFunction(isEqual)){
+
+          var existingModels = _.filter(this.models, function(item){
+            return isEqual(item, model);
+          });
+          existingModels = _.difference( existingModels, usedModels );
+          if(existingModels.length > 0){
+            existing = existingModels[0];
+          }
+        }
+
+        if (existing || (existing = this.get(model))) {
+
+          usedModels.push(existing);
+
           if (remove) modelMap[existing.cid] = true;
           if (merge) {
             attrs = attrs === model ? model.attributes : options._attrs;

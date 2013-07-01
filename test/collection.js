@@ -920,6 +920,42 @@ $(document).ready(function() {
     });
     c.set([]);
     strictEqual(c.length, 0);
+
+    // Test adding models with isEqual
+    c.set([m1, m2, m3], {silent: true});
+    var models1 = _.map(c.models, function(item){
+        return item.cid;
+    });
+    c.set([{id: 2}], {
+      isEquals: function(m1, m2){
+        return _.isEqual(m1.attributes, m2.attributes)
+      }, 
+      silent: true
+    });
+    var models2 = _.map(c.models, function(item){
+        return item.cid;
+    });
+    strictEqual(models2[0], models1[1]);
+
+  });
+
+  test("set order is correct", function(){
+
+    var m1 = new Backbone.Model({test: 1}); 
+    var m2 = new Backbone.Model({test: 2});
+
+    var c = new Backbone.Collection([m1, m2]);
+
+    var m3 = new Backbone.Model({test: 3});
+    
+    c.set([m1, m3, m2], {isEqual: function(item1, item2){
+      return _.isEqual(item1.get("test"), item2.get("test") );
+    }});
+
+    equal(c.models[0].get("test"), 1);
+    equal(c.models[1].get("test"), 3);
+    equal(c.models[2].get("test"), 2);
+
   });
 
   test("set with only cids", 3, function() {
