@@ -690,7 +690,7 @@
           });
           existingModels = _.difference( existingModels, usedModels );
           if(existingModels.length > 0){
-            existingModels = existings[0];
+            existing = existingModels[0];
           }
         }
 

@@ -939,6 +939,25 @@ $(document).ready(function() {
 
   });
 
+  test("set order is correct", function(){
+
+    var m1 = new Backbone.Model({test: 1}); 
+    var m2 = new Backbone.Model({test: 2});
+
+    var c = new Backbone.Collection([m1, m2]);
+
+    var m3 = new Backbone.Model({test: 3});
+    
+    c.set([m1, m3, m2], {isEqual: function(item1, item2){
+      return _.isEqual(item1.get("test"), item2.get("test") );
+    }});
+
+    equal(c.models[0].get("test"), 1);
+    equal(c.models[1].get("test"), 3);
+    equal(c.models[2].get("test"), 2);
+
+  });
+
   test("set with only cids", 3, function() {
     var m1 = new Backbone.Model;
     var m2 = new Backbone.Model;
