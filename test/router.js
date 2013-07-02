@@ -221,9 +221,9 @@ $(document).ready(function() {
   });
 
   test("loadUrl is not called for identical routes.", 0, function() {
-    Backbone.history.loadUrl = function(){ ok(false); };
     location.replace('http://example.com#route');
     Backbone.history.navigate('route');
+    Backbone.history.loadUrl = function(){ ok(false); };
     Backbone.history.navigate('/route');
     Backbone.history.navigate('/route');
   });
