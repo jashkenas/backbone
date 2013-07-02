@@ -1108,4 +1108,15 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test("the 'force' option for Model.set()", 1, function() {
+    var model = new Backbone.Model({
+    	prop:10
+    });
+    model.on('change', function() {
+      ok(true);
+    });
+    model.set({prop: 10}, {force:true});	// this shall trigger "change"
+    model.set({prop: 10}, {force:true, silent:true});	// but this must not
+  });
+
 });

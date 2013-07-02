@@ -308,7 +308,7 @@
     // the core primitive operation of a model, updating the data and notifying
     // anyone who needs to know about the change in state. The heart of the beast.
     set: function(key, val, options) {
-      var attr, attrs, unset, changes, silent, changing, prev, current;
+      var attr, attrs, unset, changes, silent, force, changing, prev, current;
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
@@ -327,6 +327,7 @@
       // Extract attributes and options.
       unset           = options.unset;
       silent          = options.silent;
+      force          = !silent && options.force;
       changes         = [];
       changing        = this._changing;
       this._changing  = true;
@@ -343,8 +344,8 @@
       // For each `set` attribute, update or delete the current value.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
+        if (force || !_.isEqual(current[attr], val)) changes.push(attr);
+        if (force || !_.isEqual(prev[attr], val)) {
           this.changed[attr] = val;
         } else {
           delete this.changed[attr];
