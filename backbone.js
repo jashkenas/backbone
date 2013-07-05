@@ -1350,7 +1350,7 @@
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
           fragment = this.location.pathname;
           var root = this.root.replace(trailingSlash, '');
-          if (!fragment.indexOf(root)) fragment = fragment.substr(root.length);
+          if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
         } else {
           fragment = this.getHash();
         }
