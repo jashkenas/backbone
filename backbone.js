@@ -309,7 +309,7 @@
     // anyone who needs to know about the change in state. The heart of the beast.
     set: function(key, val, options) {
       var attr, attrs, unset, changes, silent, changing, prev, current;
-      if (key == null) return this;
+      if (_.isNull(key) || _.isUndefined(key)) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
       if (typeof key === 'object') {
@@ -390,7 +390,7 @@
     // Determine if the model has changed since the last `"change"` event.
     // If you specify an attribute name, determine if that attribute has changed.
     hasChanged: function(attr) {
-      if (attr == null) return !_.isEmpty(this.changed);
+      if (_.isNull(attr) || _.isUndefined(attr)) return !_.isEmpty(this.changed);
       return _.has(this.changed, attr);
     },
 
@@ -414,7 +414,7 @@
     // Get the previous value of an attribute, recorded at the time the last
     // `"change"` event was fired.
     previous: function(attr) {
-      if (attr == null || !this._previousAttributes) return null;
+      if (_.isNull(attr) || _.isUndefined(attr) || !this._previousAttributes) return null;
       return this._previousAttributes[attr];
     },
 
@@ -448,7 +448,7 @@
       var attrs, method, xhr, attributes = this.attributes;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
-      if (key == null || typeof key === 'object') {
+      if (_.isNull(key) || _.isUndefined(key) || typeof key === 'object') {
         attrs = key;
         options = val;
       } else {
@@ -550,7 +550,7 @@
 
     // A model is new if it has never been saved to the server, and lacks an id.
     isNew: function() {
-      return this.id == null;
+      return _.isNull(this.id) || _.isUndefined(this.id);
     },
 
     // Check if the model is currently in a valid state.
@@ -668,7 +668,7 @@
       if (!_.isArray(models)) models = models ? [models] : [];
       var i, l, model, attrs, existing, sort;
       var at = options.at;
-      var sortable = this.comparator && (at == null) && options.sort !== false;
+      var sortable = this.comparator && (_.isNull(at) || _.isUndefined(at)) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
       var toAdd = [], toRemove = [], modelMap = {};
       var add = options.add, merge = options.merge, remove = options.remove;
@@ -789,7 +789,7 @@
 
     // Get a model from the set by id.
     get: function(obj) {
-      if (obj == null) return void 0;
+      if (_.isNull(obj) || _.isUndefined(obj)) return void 0;
       return this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj];
     },
 
@@ -1143,7 +1143,7 @@
     }
 
     // Ensure that we have the appropriate request data.
-    if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
+    if ((_.isNull(options.data) || _.isUndefined(options.data)) && model && (method === 'create' || method === 'update' || method === 'patch')) {
       params.contentType = 'application/json';
       params.data = JSON.stringify(options.attrs || model.toJSON(options));
     }
@@ -1346,7 +1346,7 @@
     // Get the cross-browser normalized URL fragment, either from the URL,
     // the hash, or the override.
     getFragment: function(fragment, forcePushState) {
-      if (fragment == null) {
+      if (_.isNull(fragment) || _.isUndefined(fragment)) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
           fragment = this.location.pathname;
           var root = this.root.replace(trailingSlash, '');
