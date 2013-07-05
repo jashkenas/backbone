@@ -671,4 +671,19 @@ $(document).ready(function() {
     Backbone.history.navigate('');
   });
 
+  test('#2656 - No trailing slash on root.', 1, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url){
+          strictEqual(url, '/');
+        }
+      }
+    });
+    location.replace('http://example.com/path');
+    Backbone.history.start({pushState: true});
+    Backbone.history.navigate('');
+  });
+
 });
