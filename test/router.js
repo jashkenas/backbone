@@ -656,7 +656,7 @@ $(document).ready(function() {
     Backbone.history.checkUrl();
   });
 
-  test('Trailing slash on root.', 1, function() {
+  test('#2656 - No trailing slash on root.', 1, function() {
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {
       location: location,
@@ -669,21 +669,6 @@ $(document).ready(function() {
     location.replace('http://example.com/root/path');
     Backbone.history.start({pushState: true, root: 'root'});
     Backbone.history.navigate('');
-  });
-
-  test('Trailing slash on root.', 1, function() {
-    Backbone.history.stop();
-    Backbone.history = _.extend(new Backbone.History, {
-      location: location,
-      history: {
-        pushState: function(state, title, url){
-          strictEqual(url, '/root/');
-        }
-      }
-    });
-    location.replace('http://example.com/root/path');
-    Backbone.history.start({pushState: true, root: 'root'});
-    Backbone.history.navigate('/');
   });
 
 });
