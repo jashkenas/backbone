@@ -20,6 +20,6 @@
   "license"       : "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/documentcloud/backbone.git"
+    "url": "https://github.com/jashkenas/backbone.git"
   }
 }
