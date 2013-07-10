@@ -679,6 +679,10 @@
       for (i = 0, l = models.length; i < l; i++) {
         if (!(model = this._prepareModel(attrs = models[i], options))) continue;
 
+        if (typeof this.filter === 'function') {
+            if (false === this.filter(model)) continue   
+        }
+
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing = this.get(model)) {
