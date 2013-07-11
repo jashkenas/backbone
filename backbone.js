@@ -1340,7 +1340,13 @@
     // in Firefox where location.hash will always be decoded.
     getHash: function(window) {
       var match = (window || this).location.href.match(/#(.*)$/);
-      return match ? match[1] : '';
+      match = match ? match[1] : '';
+
+      // _ denotes the empty hash; it is used to avoid the page jump that would
+      // happen on setting an empty hash. therefore need to treat it as empty
+      if (match === '_') { match = '' }
+
+      return match;
     },
 
     // Get the cross-browser normalized URL fragment, either from the URL,
@@ -1509,12 +1515,15 @@
     // Update the hash location, either replacing the current entry, or adding
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
+      // if we set an empty fragment, the page jumps to the top. that's really irritating;
+      // therefore, we set a placeholder _ that's not available on the page: no more jump
+      var browserFragment = (fragment === '' ? '_' : fragment);
       if (replace) {
         var href = location.href.replace(/(javascript:|#).*$/, '');
-        location.replace(href + '#' + fragment);
+        location.replace(href + '#' + browserFragment);
       } else {
         // Some browsers require that `hash` contains a leading #.
-        location.hash = '#' + fragment;
+        location.hash = '#' + browserFragment;
       }
     }
 
