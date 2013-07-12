@@ -993,6 +993,7 @@
     this.cid = _.uniqueId('view');
     options || (options = {});
     _.extend(this, _.pick(options, viewOptions));
+    this.options = options;
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
