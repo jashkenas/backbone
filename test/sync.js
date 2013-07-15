@@ -110,15 +110,16 @@ $(document).ready(function() {
     ok(_.isEmpty(this.ajaxSettings.data));
   });
 
-  test("destroy", 3, function() {
+  test("destroy", 4, function() {
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     library.first().destroy({wait: true});
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
     equal(this.ajaxSettings.type, 'DELETE');
     equal(this.ajaxSettings.data, null);
+    equal(this.ajaxSettings.dataType, null); // #2218 - DELETE request sent with dataType == json doesn`t fire success callback when using jQuery 1.9+
   });
 
-  test("destroy with emulateHTTP", 3, function() {
+  test("destroy with emulateHTTP", 4, function() {
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     library.first().destroy({
       emulateHTTP: true,
@@ -127,6 +128,7 @@ $(document).ready(function() {
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
     equal(this.ajaxSettings.type, 'POST');
     equal(JSON.stringify(this.ajaxSettings.data), '{"_method":"DELETE"}');
+    equal(this.ajaxSettings.dataType, 'json');
   });
 
   test("urlError", 2, function() {
@@ -206,5 +208,4 @@ $(document).ready(function() {
     });
     strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
-
 });

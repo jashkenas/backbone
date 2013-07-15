@@ -1135,7 +1135,12 @@
     });
 
     // Default JSON-request options.
-    var params = {type: type, dataType: 'json'};
+    var params = {type: type};
+
+    // Do not use `json` dataType param for delete requests using native DELETE method. See #2218.
+    if (method !== 'delete' || options.emulateHTTP) {
+      params.dataType = 'json';
+    }
 
     // Ensure that we have a URL.
     if (!options.url) {
