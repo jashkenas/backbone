@@ -374,6 +374,12 @@
       return this;
     },
 
+    // Modify an attribute on the model, firing a `"change"` event for the
+    // model and the specified attribute.
+    modify: function(attr, func, options) {
+        return this.set(attr, func(this.get(attr)), options);
+    },
+
     // Remove an attribute from the model, firing `"change"`. `unset` is a noop
     // if the attribute doesn't exist.
     unset: function(attr, options) {
