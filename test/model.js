@@ -313,6 +313,26 @@ $(document).ready(function() {
     });
   });
 
+  test("modify", 4, function() {
+      var model = new Backbone.Model({text : 'LaTeX'});
+      model.modify('text', function(str) { return str.toLowerCase(); });
+      ok(model.get('text') === 'latex')
+
+      var i = 0,
+          counter = function() { i++; };
+      model.on('change', counter);
+      model.on('change:text', counter);
+
+      model.modify('text', function(str) { return str.toUpperCase(); });
+      ok(i === 2, 'modify should trigger events for both the model and the specified property');
+
+      model.modify('text', function(str) { return str.toUpperCase(); }, {silent: true});
+      ok(i === 2, 'modify should pass options to set');
+
+      model.modify('text', _.identity);
+      ok(i === 2, "change events aren't triggered if the property doesn't change");
+  });
+
   test("clear", 3, function() {
     var changed;
     var model = new Backbone.Model({id: 1, name : "Model"});
