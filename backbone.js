@@ -1236,6 +1236,7 @@
     //     });
     //
     route: function(route, name, callback) {
+      var originalRoute = route;
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (_.isFunction(name)) {
         callback = name;
@@ -1243,7 +1244,7 @@
       }
       if (!callback) callback = this[name];
       var router = this;
-      Backbone.history.route(route, function(fragment) {
+      Backbone.history.route(name, route, originalRoute, function(fragment) {
         var args = router._extractParameters(route, fragment);
         callback && callback.apply(router, args);
         router.trigger.apply(router, ['route:' + name].concat(args));
@@ -1433,8 +1434,28 @@
 
     // Add a route to be tested when the fragment changes. Routes added later
     // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
+    route: function(name, regexpRoute, originalRoute, callback) {
+      this.handlers.unshift({
+        name: name,
+        route: regexpRoute,
+        originalRoute: originalRoute,
+        callback: callback
+      });
+    },
+
+    producePath: function(name, options) {
+      var handler = _.find(this.handlers, function(handler){
+        return handler.name === name;
+      });
+
+      if (!handler) { throw "Could not find route with name: " + name };
+
+      var path = handler.originalRoute
+      _.each(options, function(value, key){
+        path = path.replace(":" + key, value);
+      });
+
+      return path;
     },
 
     // Checks the current URL to see if it has changed, and if it has,
