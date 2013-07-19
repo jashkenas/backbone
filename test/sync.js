@@ -11,20 +11,18 @@ $(document).ready(function() {
     length : 123
   };
 
-  module("Backbone.sync", _.extend(new Environment, {
+  module("Backbone.sync", {
 
     setup : function() {
-      Environment.prototype.setup.apply(this, arguments);
       library = new Library;
       library.create(attrs, {wait: false});
     },
 
     teardown: function() {
-      Environment.prototype.teardown.apply(this, arguments);
       Backbone.emulateHTTP = false;
     }
 
-  }));
+  });
 
   test("read", 4, function() {
     library.fetch();

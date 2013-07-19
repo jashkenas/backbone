@@ -6,10 +6,9 @@ $(document).ready(function() {
   });
   var doc, collection;
 
-  module("Backbone.Model", _.extend(new Environment, {
+  module("Backbone.Model", {
 
     setup: function() {
-      Environment.prototype.setup.apply(this, arguments);
       doc = new proxy({
         id     : '1-the-tempest',
         title  : "The Tempest",
@@ -20,7 +19,7 @@ $(document).ready(function() {
       collection.add(doc);
     }
 
-  }));
+  });
 
   test("initialize", 3, function() {
     var Model = Backbone.Model.extend({

@@ -2,11 +2,9 @@ $(document).ready(function() {
 
   var a, b, c, d, e, col, otherCol;
 
-  module("Backbone.Collection", _.extend(new Environment, {
+  module("Backbone.Collection", {
 
     setup: function() {
-      Environment.prototype.setup.apply(this, arguments);
-
       a         = new Backbone.Model({id: 3, label: 'a'});
       b         = new Backbone.Model({id: 2, label: 'b'});
       c         = new Backbone.Model({id: 1, label: 'c'});
@@ -16,7 +14,7 @@ $(document).ready(function() {
       otherCol  = new Backbone.Collection();
     }
 
-  }));
+  });
 
   test("new and sort", 9, function() {
     var counter = 0;
