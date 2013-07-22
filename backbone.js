@@ -1574,8 +1574,12 @@
   var wrapError = function(model, options) {
     var error = options.error;
     options.error = function(resp) {
-      if (error) error(model, resp, options);
+      var result = undefined;
+      if (error) {
+        result = error(model, resp, options);
+      }
       model.trigger('error', model, resp, options);
+      return result;
     };
   };
 
