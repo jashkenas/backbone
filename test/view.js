@@ -82,6 +82,29 @@ $(document).ready(function() {
     equal(view.counter, 3);
   });
 
+  test("delegateEvents working with overwritten callback", 4, function() {
+    var counter = 0;
+
+    var view = new Backbone.View({el: '<p><a id="test"></a></p>'});
+    view.increment = function(){ counter += 3; };
+
+    var events = {'click #test': 'increment'};
+
+    view.delegateEvents(events);
+    view.$('#test').trigger('click');
+    equal(counter, 3);
+
+    view.increment = function(){ counter++; };
+    view.$('#test').trigger('click');
+    equal(counter, 4);
+
+    view.$('#test').trigger('click');
+    equal(counter, 5);
+
+    view.delegateEvents(events);
+    view.$('#test').trigger('click');
+    equal(counter, 6);
+  });
 
   test("delegateEvents ignore undefined methods", 0, function() {
     var view = new Backbone.View({el: '<p></p>'});
