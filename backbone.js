@@ -1063,9 +1063,18 @@
     delegateEvents: function(events) {
       if (!(events || (events = _.result(this, 'events')))) return this;
       this.undelegateEvents();
+
+      var _this = this;
+      var getMethod = function(methodName) {
+        if (!_this[methodName]) return null;
+        return function() {
+          return _this[methodName].apply(_this, arguments);
+        };
+      };
+
       for (var key in events) {
         var method = events[key];
-        if (!_.isFunction(method)) method = this[events[key]];
+        if (!_.isFunction(method)) method = getMethod(method);
         if (!method) continue;
 
         var match = key.match(delegateEventSplitter);
