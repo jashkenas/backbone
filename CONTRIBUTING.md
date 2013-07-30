@@ -1,5 +1,10 @@
 ## How to contribute to Backbone.js
 
+* Do not use tickets to ask for help with (debugging) your application. Ask on
+the [mailing list](https://groups.google.com/forum/#!forum/backbonejs), 
+in the IRC channel (`#documentcloud` on Freenode), or if you understand your 
+specific problem, on [StackOverflow](http://stackoverflow.com/questions/tagged/backbone.js).
+
 * Before you open a ticket or send a pull request,
 [search](https://github.com/jashkenas/backbone/issues) for previous
 discussions about the same feature or issue. Add to the earlier ticket if you
