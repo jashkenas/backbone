@@ -1,4 +1,4 @@
-## How to contribute to Backbone.js
+## How to Open a Backbone.js Ticket
 
 * Do not use tickets to ask for help with (debugging) your application. Ask on
 the [mailing list](https://groups.google.com/forum/#!forum/backbonejs), 
