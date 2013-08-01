@@ -1163,7 +1163,7 @@ alert("Dessert will be " + (new Meal).get('dessert'));
     </p>
 
     <p id="Model-toJSON">
-      <b class="header">toJSON</b><code>model.toJSON()</code>
+      <b class="header">toJSON</b><code>model.toJSON([options])</code>
       <br />
       Return a shallow copy of the model's <a href="#Model-attributes">attributes</a>
       for JSON stringification.  This can be used for persistence,
@@ -1632,9 +1632,10 @@ var spaces = new Backbone.Collection([], {
     </p>
 
     <p id="Collection-toJSON">
-      <b class="header">toJSON</b><code>collection.toJSON()</code>
+      <b class="header">toJSON</b><code>collection.toJSON([options])</code>
       <br />
-      Return an array containing the attributes hash of each model in the
+      Return an array containing the attributes hash of each model 
+      (via <a href="#Model-toJSON">toJSON</a>) in the
       collection. This can be used to serialize and persist the
       collection as a whole. The name of this method is a bit confusing, because
       it conforms to
