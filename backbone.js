@@ -834,6 +834,14 @@
       return this;
     },
 
+    // Convenient way to sort a collection by a specific attributes from the collection's model
+    sortByAttribute: function(attr) {
+      this.comparator = function(model) {
+        return model.get(attr);
+      };
+      return this.sort();
+    },
+    
     // Figure out the smallest index at which a model should be inserted so as
     // to maintain order.
     sortedIndex: function(model, value, context) {
