@@ -1815,9 +1815,7 @@ var book = Library.get(110);
 var Chapter  = Backbone.Model;
 var chapters = new Backbone.Collection;
 
-chapters.comparator = function(chapter) {
-  return chapter.get("page");
-};
+chapters.comparator = 'page';
 
 chapters.add(new Chapter({page: 9, title: "The End"}));
 chapters.add(new Chapter({page: 5, title: "The Middle"}));
