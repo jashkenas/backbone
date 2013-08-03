@@ -558,6 +558,15 @@
       return this._validate({}, _.extend(options || {}, { validate: true }));
     },
 
+    // Validate attrs before setting them.
+    // It does not effect both events and validationError.
+    willBeValid: function(attrs, options) {
+      options || (options = {});
+      if (!this.validate) return true;
+      attrs = _.extend({}, this.attributes, attrs);
+      return !this.validate(attrs, _.extend(options, {validate:true}));
+    },
+
     // Run validation against the next complete set of model attributes,
     // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
     _validate: function(attrs, options) {
