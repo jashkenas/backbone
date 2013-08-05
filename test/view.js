@@ -35,6 +35,32 @@ $(document).ready(function() {
 
     strictEqual(new View().one, 1);
   });
+  
+  test("dependency injection", 4, function() {
+    var View = Backbone.View.extend({
+      dependencies: ['foo','bar','baz']
+    });
+    
+    view = new View({
+      foo: 1,
+      bar: 2,
+      baz: 3
+    });
+    
+    strictEqual(view.foo, 1);
+    strictEqual(view.bar, 2);
+    strictEqual(view.baz, 3);
+    
+    throws(
+      function() {
+        view = new View({
+          foo: 1
+        })
+      },
+      /One or more dependencies were expected but were undefined: bar, baz/,
+      "raised an error containing the undefined dependencies"
+    );
+  });
 
   test("delegateEvents", 6, function() {
     var counter1 = 0, counter2 = 0;

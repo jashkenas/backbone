@@ -993,6 +993,7 @@
     this.cid = _.uniqueId('view');
     options || (options = {});
     _.extend(this, _.pick(options, viewOptions));
+    this._injectDependencies(options);
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
@@ -1006,6 +1007,10 @@
 
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(View.prototype, Events, {
+
+    // A list of dependencies to inject into `this`.
+    // Expects an array of strings.
+    dependencies: [],
 
     // The default `tagName` of a View's element is `"div"`.
     tagName: 'div',
@@ -1102,6 +1107,19 @@
         this.setElement($el, false);
       } else {
         this.setElement(_.result(this, 'el'), false);
+      }
+    },
+
+    // Injects the dependencies onto `this`.
+    // Throws an error if the dependencies are not met.
+    _injectDependencies: function(options) {
+      var missingDependencies = _.filter(this.dependencies, function(dependency) {
+        return !_.has(options, dependency);
+      });
+      if (_.some(missingDependencies)) {
+        throw new Error("One or more dependencies were expected but were undefined: " + missingDependencies.join(', '));
+      } else {
+        _.extend(this, _.pick(options, this.dependencies));
       }
     }
 
