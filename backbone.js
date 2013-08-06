@@ -992,7 +992,7 @@
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
     options || (options = {});
-    _.extend(this, _.pick(options, viewOptions));
+    _.extend(this, _.pick(options, this.viewOptions));
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
@@ -1001,11 +1001,11 @@
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
-  // List of view options to be merged as properties.
-  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
-
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(View.prototype, Events, {
+
+    // List of view options to be merged as properties.
+    viewOptions: ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'],
 
     // The default `tagName` of a View's element is `"div"`.
     tagName: 'div',
