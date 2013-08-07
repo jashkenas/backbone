@@ -1107,4 +1107,16 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test("willBeValid", function() {
+    var model = new Backbone.Model({validA: true, validB: true});
+    model.validate = function(attrs) {
+      if (!(attrs.validA && attrs.validB)) return "invalid";
+    };
+    equal(model.willBeValid(), true);
+    equal(model.willBeValid({validA:false}), false);
+    model.set({validB:false});
+    equal(model.willBeValid(), false);
+    equal(model.willBeValid({validB:true}), true);
+  });
+
 });
