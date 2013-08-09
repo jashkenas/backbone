@@ -427,6 +427,7 @@
       <li>– <a href="#View-setElement">setElement</a></li>
       <li>– <a href="#View-attributes">attributes</a></li>
       <li>– <a href="#View-dollar">$ (jQuery)</a></li>
+      <li>– <a href="#View-template">template</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
@@ -2615,6 +2616,24 @@ ui.Chapter = Backbone.View.extend({
       end:   this.$(".end-page").text()
     };
   }
+});
+</pre>
+
+    <p id="View-template">
+      <b class="header">template</b><code>view.template([data])</code>
+      <br />
+      While not provided by the library, <b>template</b> is an oft-used
+      convention.  It is usually defined as a function that takes an optional
+      data argument and returns an html string.  In other words, it conforms to
+      the api of Underscores
+      <a href="http://underscorejs.org/#template"><b>template</b></a> function.
+      While this convention is common, it's certainly not required and not used
+      by everyone.
+    </p>
+
+<pre>
+var View = Backbone.View.extend({
+  template: _.template(…)
 });
 </pre>
 
