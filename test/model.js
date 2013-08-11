@@ -1107,4 +1107,12 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test("extend", 3, function() {
+    var Child = Backbone.Model.extend();
+    var childObj=new Child;
+    equal(Child.__super__,Backbone.Model.prototype);
+    equal(Child.prototype.constructor,Child);
+    equal(childObj.constructor,Child);
+  });
+
 });
