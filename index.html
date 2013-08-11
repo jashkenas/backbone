@@ -2622,11 +2622,10 @@ ui.Chapter = Backbone.View.extend({
     <p id="View-template">
       <b class="header">template</b><code>view.template([data])</code>
       <br />
-      While not provided by the library, <b>template</b> is an oft-used
-      convention.  It is usually defined as a function that takes an optional
-      data argument and returns an HTML string.  In other words, it conforms to
-      the API of Underscore's
-      <a href="http://underscorejs.org/#template"><b>template</b></a> function.
+      Conforms loosely to the result of Underscore's
+      <a href="http://underscorejs.org/#template"><b>template</b></a>
+      function, returning an HTML representation of the view.  While not
+      provided by the library, <b>template</b> is an oft-used convention.
     </p>
 
 <pre>
