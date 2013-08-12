@@ -790,7 +790,12 @@
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
-      return this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj];
+      obj = this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj];
+      if(typeof obj === "object"){
+        return obj;
+      } else {
+        return void 0;
+      }
     },
 
     // Get the model at the given index.

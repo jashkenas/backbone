@@ -1151,4 +1151,34 @@ $(document).ready(function() {
     this.ajaxSettings.success('response');
   });
 
+  test("#2719 - Collection#set does not think Object.prototype.methods are existing Models", 1, function() {
+    // Firefox has a Object.prototype.watch() method, other browsers do not
+    var collection = new Backbone.Collection,
+        data = {
+          id: 'watch'
+        },
+        model;
+
+    model = collection.set(data);
+    model = collection.get(data);
+    ok(typeof model !== 'function', 'returned a function()');
+  });
+
+  test("#2719 - Collection#get does not return Object.prototype.methods as Models", 2, function() {
+    // Firefox has a Object.prototype.watch() method, other browsers do not
+    var collection = new Backbone.Collection,
+        data = {
+          id: 'watch'
+        },
+        model;
+
+    model = collection.get(data);
+    ok(typeof model !== 'function', 'returned a function()');
+
+    collection.add(data);
+    model = collection.get(data);
+    ok(typeof model !== 'function', 'returned a function()');
+  });
+
+
 });
