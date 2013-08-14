@@ -237,6 +237,30 @@ $(document).ready(function() {
     equal(collection.first().get('name'), 'Alf');
   });
 
+  test("Issue #2719 - add with merge does not error on non-Backbone Models", function() {
+    var collection = new Backbone.Collection();
+
+    collection._byId.something = {
+      data: 'something has messed with the Collection cache'
+    };
+
+    collection.add({id: 'something', name: 'Real user data'}, {merge: true});
+    equal(collection.get('something').get('name'), 'Real user data');
+  });
+
+  test("Issue #2719 - add with merge does not error on prototype methods", function() {
+    var collection = new Backbone.Collection();
+
+    // Firefox has a Object.prototype.watch() method, other browsers do not so fake it out
+    if(!Object.prototype.watch){
+      collection._byId.watch = function watch(){};
+    }
+
+    collection.add({id: 'watch', name: 'Watch'}, {merge: true});
+    equal(collection.get('watch').get('name'), 'Watch');
+  });
+
+
   test("add model to collection with sort()-style comparator", 3, function() {
     var col = new Backbone.Collection;
     col.comparator = function(a, b) {
