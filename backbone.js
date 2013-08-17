@@ -155,7 +155,7 @@
       var listeners = this._listeners;
       if (!listeners) return this;
       var deleteListener = !name && !callback;
-      if (typeof name === 'object') callback = this;
+      if (!callback && typeof name === 'object') callback = this;
       if (obj) (listeners = {})[obj._listenerId] = obj;
       for (var id in listeners) {
         listeners[id].off(name, callback, this);

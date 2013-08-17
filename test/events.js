@@ -167,9 +167,9 @@ $(document).ready(function() {
     equal(_.size(a._listeners), 0);
     a.listenTo(b, 'all', fn).stopListening(b);
     equal(_.size(a._listeners), 0);
-    a.listenTo(b, 'all', fn).stopListening(undefined, 'all');
+    a.listenTo(b, 'all', fn).stopListening(null, 'all');
     equal(_.size(a._listeners), 0);
-    a.listenTo(b, 'all', fn).stopListening(undefined, undefined, fn);
+    a.listenTo(b, 'all', fn).stopListening(null, null, fn);
     equal(_.size(a._listeners), 0);
   });
 
