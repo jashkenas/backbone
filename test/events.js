@@ -159,6 +159,20 @@ $(document).ready(function() {
     ok(true);
   });
 
+  test("stopListening cleans up references", 4, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var fn = function() {};
+    a.listenTo(b, 'all', fn).stopListening();
+    equal(_.size(a._listeners), 0);
+    a.listenTo(b, 'all', fn).stopListening(b);
+    equal(_.size(a._listeners), 0);
+    a.listenTo(b, 'all', fn).stopListening(undefined, 'all');
+    equal(_.size(a._listeners), 0);
+    a.listenTo(b, 'all', fn).stopListening(undefined, undefined, fn);
+    equal(_.size(a._listeners), 0);
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);

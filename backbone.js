@@ -159,7 +159,7 @@
       if (obj) (listeners = {})[obj._listenerId] = obj;
       for (var id in listeners) {
         listeners[id].off(name, callback, this);
-        if (deleteListener) delete this._listeners[id];
+        if (deleteListener || _(listeners[id]._events).isEmpty()) delete this._listeners[id];
       }
       return this;
     }
