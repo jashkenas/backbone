@@ -219,7 +219,7 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
-      if (typeof name === 'object') callback = this;
+      if (!callback && typeof name === 'object') callback = this;
       obj[implementation](name, callback, this);
       return this;
     };
