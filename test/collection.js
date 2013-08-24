@@ -912,6 +912,10 @@ $(document).ready(function() {
     strictEqual(c.length, 2);
     strictEqual(m2.get('a'), 1);
 
+    // keepnew: true doesn't remove models that aren't saved to the server yet
+    c.set([m2], {keepnew: true});
+    strictEqual(c.length, 2);
+
     // Test removing models not passing an argument
     c.off('remove').on('remove', function(model) {
       ok(model === m2 || model === m3);
