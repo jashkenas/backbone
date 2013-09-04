@@ -938,10 +938,13 @@ $(document).ready(function() {
     model.destroy(opts);
   });
 
-  test("#1412 - Trigger 'sync' event.", 3, function() {
+  test("#1412 - Trigger 'sync' event.", 6, function() {
     var model = new Backbone.Model({id: 1});
     model.sync = function (method, model, options) { options.success(); };
     model.on('sync', function(){ ok(true); });
+    model.on('sync:fetch', function(){ ok(true); });
+    model.on('sync:save', function(){ ok(true); });
+    model.on('sync:destroy', function(){ ok(true); });
     model.fetch();
     model.save();
     model.destroy();
@@ -949,6 +952,7 @@ $(document).ready(function() {
 
   test("#1365 - Destroy: New models execute success callback.", 2, function() {
     new Backbone.Model()
+    .on('sync:destroy', function() { ok(false); })
     .on('sync', function() { ok(false); })
     .on('destroy', function(){ ok(true); })
     .destroy({ success: function(){ ok(true); }});

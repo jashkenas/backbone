@@ -435,7 +435,7 @@
       options.success = function(resp) {
         if (!model.set(model.parse(resp, options), options)) return false;
         if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
+        model.trigger('sync sync:fetch', model, resp, options);
       };
       wrapError(this, options);
       return this.sync('read', this, options);
@@ -485,7 +485,7 @@
           return false;
         }
         if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
+        model.trigger('sync sync:save', model, resp, options);
       };
       wrapError(this, options);
 
@@ -514,7 +514,7 @@
       options.success = function(resp) {
         if (options.wait || model.isNew()) destroy();
         if (success) success(model, resp, options);
-        if (!model.isNew()) model.trigger('sync', model, resp, options);
+        if (!model.isNew()) model.trigger('sync sync:destroy', model, resp, options);
       };
 
       if (this.isNew()) {
@@ -861,7 +861,7 @@
         var method = options.reset ? 'reset' : 'set';
         collection[method](resp, options);
         if (success) success(collection, resp, options);
-        collection.trigger('sync', collection, resp, options);
+        collection.trigger('sync sync:fetch', collection, resp, options);
       };
       wrapError(this, options);
       return this.sync('read', this, options);
