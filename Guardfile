@@ -9,10 +9,10 @@ guard 'shell' do
 
     if failed_count > 0
       n "#{failed_count} of #{tests_count} tests failed", 'Backbone', :failed
+      output
     else
       n "#{passed_count} tests passed", 'Backbone', :success
+      result
     end
-
-    result
   end
 end
