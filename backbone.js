@@ -1164,10 +1164,10 @@
     // Add any optional headesr
     var beforeSend = options.beforeSend;
     options.beforeSend = function(xhr) {
-	for(var key in Backbone.headers) {
-	    xhr.setRequestHeader(key, Backbone.headers[key]);
-	    if(beforeSend) return beforeSend.apply(this, arguments);
-	}
+    	for(var key in Backbone.headers) {
+    	    xhr.setRequestHeader(key, Backbone.headers[key]);
+    	}
+      if(beforeSend) return beforeSend.apply(this, arguments);
     }
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
