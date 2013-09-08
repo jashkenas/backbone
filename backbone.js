@@ -1161,15 +1161,6 @@
       params.data = params.data ? {model: params.data} : {};
     }
 
-    // Add any optional headesr
-    var beforeSend = options.beforeSend;
-    options.beforeSend = function(xhr) {
-    	for(var key in Backbone.headers) {
-    	    xhr.setRequestHeader(key, Backbone.headers[key]);
-    	}
-      if(beforeSend) return beforeSend.apply(this, arguments);
-    }
-
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
     // And an `X-HTTP-Method-Override` header.
     if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE' || type === 'PATCH')) {
@@ -1180,6 +1171,15 @@
         xhr.setRequestHeader('X-HTTP-Method-Override', type);
         if (beforeSend) return beforeSend.apply(this, arguments);
       };
+    }
+
+    // Add any optional headers
+    var beforeSend2 = options.beforeSend;
+    options.beforeSend = function(xhr) {
+      for(var key in Backbone.headers) {
+          xhr.setRequestHeader(key, Backbone.headers[key]);
+      }
+      if(beforeSend2) return beforeSend2.apply(this, arguments);
     }
 
     // Don't process data on a non-GET request.
