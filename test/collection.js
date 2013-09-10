@@ -1151,4 +1151,14 @@ $(document).ready(function() {
     this.ajaxSettings.success('response');
   });
 
+  test("#2750 - Changes to a collection's models should change toJSON() response", 3, function() {
+    var expected = [{ id :3 },{ id:2 },{ id:1 },{ id:0 }];
+    var newCol = col.map(function(model) {
+      return model.omit('label');
+    });
+    col.set(newCol, { unset: true });
+    deepEqual(col.toJSON(), expected, "toJSON should reflect the collection's model attributes");
+    strictEqual(col.at(0).get("label"), undefined, "label should be removed from the collection's models");
+    strictEqual(col.at(0).attributes.label, undefined, "label should be removed from the collection's models");
+  });
 });
