@@ -1298,7 +1298,8 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       begins the Ajax request to the server, and a <tt>"sync"</tt> event, after
       the server has successfully acknowledged the model's deletion. Pass
       <tt>{wait: true}</tt> if you'd like to wait for the server to respond
-      before removing the model from the collection.
+      before removing the model from the collection or <tt>{silent: true}</tt>
+      to suppress any event.
     </p>
 
 <pre>

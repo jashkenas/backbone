@@ -482,7 +482,10 @@ $(document).ready(function() {
     ok(_.isEqual(this.syncArgs.model, doc));
   });
 
-  test("destroy", 3, function() {
+  test("destroy", 4, function() {
+    doc.on('destroy',function () {
+      ok(true, "model.destroy triggers 'destroy' event");
+    });
     doc.destroy();
     equal(this.syncArgs.method, 'delete');
     ok(_.isEqual(this.syncArgs.model, doc));
@@ -496,6 +499,13 @@ $(document).ready(function() {
     a.sync = function() { throw "should not be called"; };
     a.destroy();
     ok(true, "non-persisted model should not call sync");
+  });
+
+  test("silent destroy", 1, function() {
+    var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
+    a.trigger = function() { throw "should not be called"; };
+    a.destroy({silent: true});
+    ok(true, "silently destroyed model should not call trigger");
   });
 
   test("validate", function() {
