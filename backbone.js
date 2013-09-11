@@ -155,11 +155,11 @@
       var listeners = this._listeners;
       if (!listeners) return this;
       var deleteListener = !name && !callback;
-      if (typeof name === 'object') callback = this;
+      if (!callback && typeof name === 'object') callback = this;
       if (obj) (listeners = {})[obj._listenerId] = obj;
       for (var id in listeners) {
         listeners[id].off(name, callback, this);
-        if (deleteListener) delete this._listeners[id];
+        if (deleteListener || _(listeners[id]._events).isEmpty()) delete this._listeners[id];
       }
       return this;
     }
@@ -219,7 +219,7 @@
       var listeners = this._listeners || (this._listeners = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
       listeners[id] = obj;
-      if (typeof name === 'object') callback = this;
+      if (!callback && typeof name === 'object') callback = this;
       obj[implementation](name, callback, this);
       return this;
     };
