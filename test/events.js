@@ -166,6 +166,17 @@ $(document).ready(function() {
     equal(_.size(a._listeningTo), 0);
   });
 
+  test("listenTo and stopListening cleaning up references", 2, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenTo(b, 'all', function(){ ok(true); });
+    b.trigger('anything');
+    a.listenTo(b, 'other', function(){ ok(false); });
+    a.stopListening(b, 'other');
+    a.stopListening(b, 'all');
+    equal(_.keys(a._listeningTo).length, 0);
+  });
+
   test("listenTo with empty callback doesn't throw an error", 1, function(){
     var e = _.extend({}, Backbone.Events);
     e.listenTo(e, "foo", null);
