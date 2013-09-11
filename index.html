@@ -427,6 +427,7 @@
       <li>– <a href="#View-setElement">setElement</a></li>
       <li>– <a href="#View-attributes">attributes</a></li>
       <li>– <a href="#View-dollar">$ (jQuery)</a></li>
+      <li>– <a href="#View-template">template</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
@@ -2615,6 +2616,21 @@ ui.Chapter = Backbone.View.extend({
       end:   this.$(".end-page").text()
     };
   }
+});
+</pre>
+
+    <p id="View-template">
+      <b class="header">template</b><code>view.template([data])</code>
+      <br />
+      Conforms loosely to the result of Underscore's
+      <a href="http://underscorejs.org/#template"><b>template</b></a>
+      function, returning an HTML representation of the view.  While not
+      provided by the library, <b>template</b> is an oft-used convention.
+    </p>
+
+<pre>
+var View = Backbone.View.extend({
+  template: _.template(…)
 });
 </pre>
 
