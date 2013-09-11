@@ -905,7 +905,7 @@
       options.collection = this;
       var model = new this.model(attrs, options);
       if (!model.validationError) return model;
-      this.trigger('invalid', this, attrs, options);
+      this.trigger('invalid', this, model.validationError, options);
       return false;
     },
 
