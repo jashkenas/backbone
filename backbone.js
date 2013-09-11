@@ -152,14 +152,14 @@
     // Tell this object to stop listening to either specific events ... or
     // to every object it's currently listening to.
     stopListening: function(obj, name, callback) {
-      var listeners = this._listeners;
-      if (!listeners) return this;
+      var listeningTo = this._listeningTo;
+      if (!listeningTo) return this;
       var deleteListener = !name && !callback;
       if (typeof name === 'object') callback = this;
-      if (obj) (listeners = {})[obj._listenerId] = obj;
-      for (var id in listeners) {
-        listeners[id].off(name, callback, this);
-        if (deleteListener) delete this._listeners[id];
+      if (obj) (listeningTo = {})[obj._listenerId] = obj;
+      for (var id in listeningTo) {
+        listeningTo[id].off(name, callback, this);
+        if (deleteListener) delete this._listeningTo[id];
       }
       return this;
     }
@@ -216,9 +216,9 @@
   // listening to.
   _.each(listenMethods, function(implementation, method) {
     Events[method] = function(obj, name, callback) {
-      var listeners = this._listeners || (this._listeners = {});
+      var listeningTo = this._listeningTo || (this._listeningTo = {});
       var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
-      listeners[id] = obj;
+      listeningTo[id] = obj;
       if (typeof name === 'object') callback = this;
       obj[implementation](name, callback, this);
       return this;
