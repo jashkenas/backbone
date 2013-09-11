@@ -154,12 +154,12 @@
     stopListening: function(obj, name, callback) {
       var listeningTo = this._listeningTo;
       if (!listeningTo) return this;
-      var deleteListener = !name && !callback;
+      var remove = !name && !callback;
       if (typeof name === 'object') callback = this;
-      if (obj) (listeningTo = {})[obj._listenerId] = obj;
+      if (obj) (listeningTo = {})[obj._listenId] = obj;
       for (var id in listeningTo) {
         listeningTo[id].off(name, callback, this);
-        if (deleteListener) delete this._listeningTo[id];
+        if (remove) delete this._listeningTo[id];
       }
       return this;
     }
@@ -217,7 +217,7 @@
   _.each(listenMethods, function(implementation, method) {
     Events[method] = function(obj, name, callback) {
       var listeningTo = this._listeningTo || (this._listeningTo = {});
-      var id = obj._listenerId || (obj._listenerId = _.uniqueId('l'));
+      var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
       listeningTo[id] = obj;
       if (typeof name === 'object') callback = this;
       obj[implementation](name, callback, this);
