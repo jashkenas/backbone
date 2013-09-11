@@ -251,12 +251,8 @@
     this.cid = _.uniqueId('c');
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
-    if (options.parse) attrs = this.parse(attrs, options) || {};
-    options._attrs || (options._attrs = attrs);
-    if (defaults = _.result(this, 'defaults')) {
-      attrs = _.defaults({}, attrs, defaults);
-    }
-    this.set(attrs, options);
+    defaults = _.result(this, 'defaults');
+    this.set(attrs, _.extend({defaults: defaults}, options));
     this.changed = {};
     this.initialize.apply(this, arguments);
   };
@@ -321,6 +317,8 @@
       }
 
       options || (options = {});
+      if (options.parse) attrs = this.parse(attrs, options);
+      attrs = _.defaults({}, attrs, options.defaults);
 
       // Run validation.
       if (!this._validate(attrs, options)) return false;
@@ -434,7 +432,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp) {
-        if (!model.set(model.parse(resp, options), options)) return false;
+        if (!model.set(resp, options)) return false;
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
       };
@@ -685,7 +683,7 @@
         if (existing = this.get(model)) {
           if (remove) modelMap[existing.cid] = true;
           if (merge) {
-            attrs = attrs === model ? model.attributes : options._attrs;
+            if (attrs === model) attrs = model.attributes;
             existing.set(attrs, options);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
@@ -701,7 +699,6 @@
           if (model.id != null) this._byId[model.id] = model;
         }
         if (order) order.push(existing || model);
-        delete options._attrs;
       }
 
       // Remove nonexistent models if appropriate.
@@ -905,7 +902,7 @@
       options.collection = this;
       var model = new this.model(attrs, options);
       if (!model.validationError) return model;
-      this.trigger('invalid', this, attrs, options);
+      this.trigger('invalid', this, attrs, _.defaults({validationError: model.validationError}, options));
       return false;
     },
 

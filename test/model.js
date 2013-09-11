@@ -1107,4 +1107,15 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
+  test("#2627 - set with parsed attributes", 1, function() {
+    var Model = Backbone.Model.extend({
+      parse: function(attrs) {
+        attrs.value += 1;
+        return attrs;
+      }
+    });
+    var model = new Model();
+    model.set({value: 1}, {parse: true})
+    equal(model.get('value'), 2);
+  });
 });
