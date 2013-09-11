@@ -992,7 +992,9 @@ var Library = Backbone.Model.extend({
       gains a <tt>collection</tt> property that will be used to indicate which
       collection the model belongs to, and is used to help compute the model's
       <a href="#Model-url">url</a>. The <tt>model.collection</tt> property is
-      otherwise added automatically when you first add a model to a collection.
+      normally created automatically when you first add a model to a collection.
+      Note that the reverse is not true, as passing this option to the constructor 
+      will not automatically add the model to the collection. Useful, sometimes.
     </p>
 
     <p>
