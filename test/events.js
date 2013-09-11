@@ -152,6 +152,20 @@ $(document).ready(function() {
     e.trigger("foo");
   });
 
+  test("stopListening cleans up references", 4, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var fn = function() {};
+    a.listenTo(b, 'all', fn).stopListening();
+    equal(_.size(a._listeners), 0);
+    a.listenTo(b, 'all', fn).stopListening(b);
+    equal(_.size(a._listeners), 0);
+    a.listenTo(b, 'all', fn).stopListening(null, 'all');
+    equal(_.size(a._listeners), 0);
+    a.listenTo(b, 'all', fn).stopListening(null, null, fn);
+    equal(_.size(a._listeners), 0);
+  });
+
   test("listenTo with empty callback doesn't throw an error", 1, function(){
     var e = _.extend({}, Backbone.Events);
     e.listenTo(e, "foo", null);
