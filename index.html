@@ -2622,15 +2622,16 @@ ui.Chapter = Backbone.View.extend({
     <p id="View-template">
       <b class="header">template</b><code>view.template([data])</code>
       <br />
-      Conforms loosely to the result of Underscore's
-      <a href="http://underscorejs.org/#template"><b>template</b></a>
-      function, returning an HTML representation of the view.  While not
-      provided by the library, <b>template</b> is an oft-used convention.
+      While templating for a view isn't a function provided directly by Backbone,
+      it's often a nice convention to define a <b>template</b> function on your 
+      views. In this way, when rendering your view, you have convenient access to
+      instance data (<tt>this.model</tt>, <tt>options</tt>, and so on). 
+      For example, using Underscore templates:
     </p>
 
 <pre>
-var View = Backbone.View.extend({
-  template: _.template(…)
+var LibraryView = Backbone.View.extend({
+  template: _.template(...)
 });
 </pre>
 
@@ -2646,7 +2647,7 @@ var View = Backbone.View.extend({
 
 <pre>
 var Bookmark = Backbone.View.extend({
-  template: _.template(…),
+  template: _.template(...),
   render: function() {
     this.$el.html(this.template(this.model.attributes));
     return this;
