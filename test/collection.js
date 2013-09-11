@@ -522,18 +522,6 @@ $(document).ready(function() {
     deepEqual(col.difference([c, d]), [a, b]);
   });
 
-  test("sortedIndex", function () {
-    var model = new Backbone.Model({key: 2});
-    var collection = new (Backbone.Collection.extend({
-      comparator: 'key'
-    }))([model, {key: 1}]);
-    equal(collection.sortedIndex(model), 1);
-    equal(collection.sortedIndex(model, 'key'), 1);
-    equal(collection.sortedIndex(model, function (model) {
-      return model.get('key');
-    }), 1);
-  });
-
   test("reset", 12, function() {
     var resetCount = 0;
     var models = col.models;
