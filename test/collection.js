@@ -225,13 +225,13 @@ $(document).ready(function() {
   });
 
   test("add with parse and merge", function() {
-    var Model = Backbone.Model.extend({
-      parse: function (data) {
-        return data.model;
-      }
-    });
     var collection = new Backbone.Collection();
-    collection.model = Model;
+    collection.parse = function(attrs) {
+      return _.map(attrs, function(model) {
+        if (model.model) return model.model;
+        return model;
+      });
+    };
     collection.add({id: 1});
     collection.add({model: {id: 1, name: 'Alf'}}, {parse: true, merge: true});
     equal(collection.first().get('name'), 'Alf');
@@ -975,12 +975,10 @@ $(document).ready(function() {
   });
 
   test("`set` and model level `parse`", function() {
-    var Model = Backbone.Model.extend({
-      parse: function (res) { return res.model; }
-    });
+    var Model = Backbone.Model.extend({});
     var Collection = Backbone.Collection.extend({
       model: Model,
-      parse: function (res) { return res.models; }
+      parse: function (res) { return _.pluck(res.models, 'model'); }
     });
     var model = new Model({id: 1});
     var collection = new Collection(model);
