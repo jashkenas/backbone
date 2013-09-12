@@ -1138,4 +1138,86 @@ $(document).ready(function() {
     this.ajaxSettings.success('response');
   });
 
+  test("#2612 - nested `parse` works with `Collection#set`", function() {
+
+    var Job = Backbone.Model.extend({
+      constructor: function() {
+        this.items = new Items();
+        Backbone.Model.apply(this, arguments);
+      },
+      parse: function(attrs) {
+        this.items.set(attrs.items, {parse: true});
+        return _.omit(attrs, 'items');
+      }
+    });
+
+    var Item = Backbone.Model.extend({
+      constructor: function() {
+        this.subItems = new Backbone.Collection();
+        Backbone.Model.apply(this, arguments);
+      },
+      parse: function(attrs) {
+        this.subItems.set(attrs.subItems, {parse: true});
+        return _.omit(attrs, 'subItems');
+      }
+    });
+
+    var Items = Backbone.Collection.extend({
+      model: Item
+    });
+
+    var data = {
+      name: 'JobName',
+      id: 1,
+      items: [{
+        id: 1,
+        name: 'Sub1',
+        subItems: [
+          {id: 1, subName: 'One'},
+          {id: 2, subName: 'Two'}
+        ]
+      }, {
+        id: 2,
+        name: 'Sub2',
+        subItems: [
+          {id: 3, subName: 'Three'},
+          {id: 4, subName: 'Four'}
+        ]
+      }]
+    };
+
+    var newData = {
+      name: 'NewJobName',
+      id: 1,
+      items: [{
+        id: 1,
+        name: 'NewSub1',
+        subItems: [
+          {id: 1,subName: 'NewOne'},
+          {id: 2,subName: 'NewTwo'}
+        ]
+      }, {
+        id: 2,
+        name: 'NewSub2',
+        subItems: [
+          {id: 3,subName: 'NewThree'},
+          {id: 4,subName: 'NewFour'}
+        ]
+      }]
+    };
+
+    var job = new Job(data, {parse: true});
+    equal(job.get('name'), 'JobName');
+    equal(job.items.at(0).get('name'), 'Sub1');
+    equal(job.items.length, 2);
+    equal(job.items.get(1).subItems.get(1).get('subName'), 'One');
+    equal(job.items.get(2).subItems.get(3).get('subName'), 'Three');
+    job.set(job.parse(newData, {parse: true}));
+    equal(job.get('name'), 'NewJobName');
+    equal(job.items.at(0).get('name'), 'NewSub1');
+    equal(job.items.length, 2);
+    equal(job.items.get(1).subItems.get(1).get('subName'), 'NewOne');
+    equal(job.items.get(2).subItems.get(3).get('subName'), 'NewThree');
+  });
+
 });
