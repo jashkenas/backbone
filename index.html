@@ -1913,19 +1913,14 @@ chapters.add(new Chapter({page: 1, title: "The Beginning"}));
 alert(chapters.pluck('title'));
 </pre>
 
-    <p class="warning">
-      Collections with a comparator will not automatically re-sort if you
-      later change model attributes, so you may wish to call
-      <tt>sort</tt> after changing model attributes that would affect the order.
-    </p>
-
     <p id="Collection-sort">
       <b class="header">sort</b><code>collection.sort([options])</code>
       <br />
       Force a collection to re-sort itself. You don't need to call this under
       normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a>
-      will sort itself whenever a model is added. To disable sorting when adding
-      a model, pass <tt>{sort: false}</tt> to <tt>add</tt>. Calling <b>sort</b>
+      will sort itself whenever a model is added or changed. To disable sorting when adding
+      a model, pass <tt>{sort: false}</tt> to <tt>add</tt>. To disable sorting when changing
+      a model, pass <tt>{sort: false}</tt> to <tt>model.set</tt>. Calling <b>sort</b>
       triggers a <tt>"sort"</tt> event on the collection.
     </p>
 
