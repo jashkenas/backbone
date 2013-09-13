@@ -923,6 +923,7 @@
     // events simply proxy through. "add" and "remove" events that originate
     // in other collections are ignored.
     _onModelEvent: function(event, model, collection, options) {
+      if (event == 'change') options = collection;
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
       if (model && event === 'change:' + model.idAttribute) {
