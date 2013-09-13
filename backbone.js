@@ -691,7 +691,7 @@
           if (merge) {
             attrs = attrs === model ? model.attributes : attrs;
             if (options.parse) attrs = existing.parse(attrs, options);
-            existing.set(attrs, options);
+            existing.set(attrs, _.extend({}, options, {sort: false}));
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
 
@@ -923,8 +923,12 @@
     // events simply proxy through. "add" and "remove" events that originate
     // in other collections are ignored.
     _onModelEvent: function(event, model, collection, options) {
+      if (event == 'change') options = collection;
+      var sortable = this.comparator && (!options || options && options.sort !== false);
+
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
+      if (sortable && event === 'change') this.sort(options);
       if (model && event === 'change:' + model.idAttribute) {
         delete this._byId[model.previous(model.idAttribute)];
         if (model.id != null) this._byId[model.id] = model;

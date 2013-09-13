@@ -1220,4 +1220,42 @@ $(document).ready(function() {
     equal(job.items.get(2).subItems.get(3).get('subName'), 'NewThree');
   });
 
+  test("`sort` after `change`", 3, function() {
+    var collection = new (Backbone.Collection.extend({
+      comparator: 'a'
+    }))([{id: 1}, {id: 2}, {id: 3}]);
+    collection.get(3).set('a', 3);
+    deepEqual(collection.pluck('id'), [3, 1, 2]);
+    collection.get(2).set('a', 2);
+    deepEqual(collection.pluck('id'), [2, 3, 1]);
+    collection.get(1).set('a', 1);
+    deepEqual(collection.pluck('id'), [1, 2, 3]);
+  });
+
+  test("`sort` after `change` only when necessary", 2, function () {
+    var collection = new (Backbone.Collection.extend({
+      comparator: 'a'
+    }))([{id: 1}, {id: 2}, {id: 3}]);
+    collection.on('sort', function () { ok(true); });
+    collection.get(1).set('a', 2); // do sort, model change
+    collection.get(2).set('a', 1); // do sort, model change
+    collection.get(2).set('a', 1); // don't sort, no model change
+  });
+
+  test("`sort` after `change` can optionally be turned off", 1, function() {
+    var collection = new (Backbone.Collection.extend({
+      comparator: 'a',
+      sort: function() { ok(true); }
+    }))([{id: 1}, {id: 2}, {id: 3}]);
+    collection.get(1).set('a', 3, {sort: false});
+    collection.get(2).set('a', 2, {sort: false});
+    collection.get(3).set('a', 1, {sort: false});
+  });
+
+  test("don't `sort` without comparator", 0, function() {
+    var collection = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}]);
+    collection.on('sort', function () { ok(true); });
+    collection.add({id: 4});
+  });
+
 });
