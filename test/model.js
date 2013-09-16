@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   var proxy = Backbone.Model.extend();
   var klass = Backbone.Collection.extend({
@@ -1107,4 +1107,4 @@ $(document).ready(function() {
     model.set({a: true});
   });
 
-});
+})();

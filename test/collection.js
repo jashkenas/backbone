@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   var a, b, c, d, e, col, otherCol;
 
@@ -1220,4 +1220,4 @@ $(document).ready(function() {
     equal(job.items.get(2).subItems.get(3).get('subName'), 'NewThree');
   });
 
-});
+})();

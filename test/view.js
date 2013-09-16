@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   var view;
 
@@ -327,4 +327,4 @@ $(document).ready(function() {
     equal(counter, 4);
   });
 
-});
+})();
