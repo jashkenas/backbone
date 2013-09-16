@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   module("Backbone.Events");
 
@@ -474,4 +474,4 @@ $(document).ready(function() {
     equal(obj, obj.stopListening());
   });
 
-});
+})();
