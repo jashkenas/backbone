@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   var Library = Backbone.Collection.extend({
     url : function() { return '/library'; }
@@ -207,4 +207,4 @@ $(document).ready(function() {
     strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
 
-});
+})();

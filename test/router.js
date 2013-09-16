@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 
   var router = null;
   var location = null;
@@ -686,4 +686,4 @@ $(document).ready(function() {
     Backbone.history.navigate('');
   });
 
-});
+})();
