@@ -292,7 +292,7 @@
     view.collection.trigger('x');
   });
 
-  test("Provide function for el.", 1, function() {
+  test("Provide function for el.", 2, function() {
     var View = Backbone.View.extend({
       el: function() {
         return "<p><a></a></p>";
@@ -300,7 +300,8 @@
     });
 
     var view = new View;
-    ok(view.$el.is('p:has(a)'));
+    ok(view.$el.is('p'));
+    ok(view.$el.has('a'));
   });
 
   test("events passed in options", 2, function() {
