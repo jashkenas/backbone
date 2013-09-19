@@ -1233,4 +1233,16 @@
     equal(job.items.get(2).subItems.get(3).get('subName'), 'NewThree');
   });
 
+  test("unshift trigger an 'add' event with unshift option", function(){
+    var colE = new Backbone.Collection();
+    var e = new Backbone.Model({id: 10, label : 'e'});
+    e.on('add', function (model, collection, options) {
+      equal(options.unshift, true);
+    });
+    colE.on('add', function (model, collection, options) {
+      equal(options.unshift, true);
+    });
+    colE.unshift(e);
+  });
+
 })();
