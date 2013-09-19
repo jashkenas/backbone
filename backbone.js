@@ -725,7 +725,10 @@
           splice.apply(this.models, [at, 0].concat(toAdd));
         } else {
           if (order) this.models.length = 0;
-          push.apply(this.models, order || toAdd);
+          var models = order || toAdd;
+          for (var i = 0, il = models.length; i < il; i++) {
+            this.models.push(models[i]);
+          }
         }
       }
 
