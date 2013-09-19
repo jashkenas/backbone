@@ -909,6 +909,17 @@
     strictEqual(c.length, 0);
   });
 
+  test("set large collection", function() {
+    var chromeCrashesOn = 150000; // ff crashes on 500000
+    var collection = new Backbone.Collection;
+    var models = [];
+    for (var i = 0, il = chromeCrashesOn; i < il; i++) {
+        models.push(new Backbone.Model({id: i}));
+    }
+    collection.set(models);
+    equal(collection.length, chromeCrashesOn);
+  });
+
   test("set with only cids", 3, function() {
     var m1 = new Backbone.Model;
     var m2 = new Backbone.Model;
