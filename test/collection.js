@@ -918,6 +918,8 @@
     }
     collection.set(models);
     equal(collection.length, n);
+    collection.reset().set(models, {at: 0});
+    equal(collection.length, n);
   });
 
   test("set with only cids", 3, function() {
