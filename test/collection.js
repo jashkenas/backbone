@@ -909,15 +909,15 @@
     strictEqual(c.length, 0);
   });
 
-  test("set large collection", function() {
-    var chromeCrashesOn = 150000; // ff crashes on 500000
-    var collection = new Backbone.Collection;
+  test("set with many models does not overflow the stack", function() {
+    var n = 150000;
+    var collection = new Backbone.Collection();
     var models = [];
-    for (var i = 0, il = chromeCrashesOn; i < il; i++) {
-        models.push(new Backbone.Model({id: i}));
+    for (var i = 0; i < n; i++) {
+      models.push({id: i});
     }
     collection.set(models);
-    equal(collection.length, chromeCrashesOn);
+    equal(collection.length, n);
   });
 
   test("set with only cids", 3, function() {
