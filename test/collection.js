@@ -1233,4 +1233,14 @@
     equal(job.items.get(2).subItems.get(3).get('subName'), 'NewThree');
   });
 
+  test("Collection autovivification", function () {
+    var collection = new Backbone.Collection();
+    equal(typeof collection.get(1), "undefined");
+    var colAV = new Backbone.Collection([], {autovivified: true});
+    var model = colAV.get("1");
+    equal(typeof model, typeof new colAV.model() );
+    equal(colAV.length, 1);
+    colAV.set({ id: 1, value: 1});
+    equal(colAV.get(1).get('value'), 1);
+  });
 })();
