@@ -1325,6 +1325,9 @@
   // Cached regex for removing a trailing slash.
   var trailingSlash = /\/$/;
 
+  // Cached regex for stripping urls of hash and query.
+  var pathStripper = /[?#].*$/;
+
   // Has the history handling already been started?
   History.started = false;
 
@@ -1451,8 +1454,8 @@
     // Attempt to load the current URL fragment. If a route succeeds with a
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
-    loadUrl: function(fragmentOverride) {
-      var fragment = this.fragment = this.getFragment(fragmentOverride);
+    loadUrl: function(fragment) {
+      fragment = this.fragment = this.getFragment(fragment);
       return _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
@@ -1472,11 +1475,13 @@
       if (!History.started) return false;
       if (!options || options === true) options = {trigger: !!options};
 
-      fragment = this.getFragment(fragment || '');
+      var url = this.root + (fragment = this.getFragment(fragment || ''));
+
+      // Strip the fragment of the query and hash for matching.
+      fragment = fragment.replace(pathStripper, '');
+
       if (this.fragment === fragment) return;
       this.fragment = fragment;
-
-      var url = this.root + fragment;
 
       // Don't include a trailing slash on the root.
       if (fragment === '' && url !== '/') url = url.slice(0, -1);
