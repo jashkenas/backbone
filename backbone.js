@@ -598,6 +598,7 @@
   var Collection = Backbone.Collection = function(models, options) {
     options || (options = {});
     if (options.model) this.model = options.model;
+    if (options.autovivified) this.autovivified = options.autovivified;
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
@@ -641,7 +642,7 @@
       options || (options = {});
       var i, l, index, model;
       for (i = 0, l = models.length; i < l; i++) {
-        model = this.get(models[i]);
+        model = this.get(models[i], true);
         if (!model) continue;
         delete this._byId[model.id];
         delete this._byId[model.cid];
@@ -686,7 +687,7 @@
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        if (existing = this.get(id)) {
+        if (existing = this.get(id, true)) {
           if (remove) modelMap[existing.cid] = true;
           if (merge) {
             attrs = attrs === model ? model.attributes : attrs;
@@ -797,9 +798,15 @@
     },
 
     // Get a model from the set by id.
-    get: function(obj) {
+    // Don't check for autovivification if strict is set.
+    get: function(obj, strict) {
       if (obj == null) return void 0;
-      return this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj];
+      var item = (this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj]);
+
+      var autovivify = !strict && this.autovivified && !item;
+
+      if (!autovivify) return item;
+      return this.add(new this.model({id: obj}));
     },
 
     // Get the model at the given index.
