@@ -571,8 +571,8 @@
         <td><a class="punch" href="https://raw.github.com/jashkenas/backbone/master/backbone.js">Edge Version (master)</a></td>
         <td>
           <i>Unreleased, use at your own risk</i>
-          <a class="travis-badge" href="https://travis-ci.org/documentcloud/backbone">
-            <img src="https://travis-ci.org/documentcloud/backbone.png" />
+          <a class="travis-badge" href="https://travis-ci.org/jashkenas/backbone">
+            <img src="https://travis-ci.org/jashkenas/backbone.png" />
           </a>
         </td>
       </tr>
@@ -1602,7 +1602,7 @@ var Library = Backbone.Collection.extend({
 </pre>
 
     <p id="Collection-constructor">
-      <b class="header">constructor / initialize</b><code>new Collection([models], [options])</code>
+      <b class="header">constructor / initialize</b><code>new Backbone.Collection([models], [options])</code>
       <br />
       When creating a Collection, you may choose to pass in the initial array
       of <b>models</b>.  The collection's <a href="#Collection-comparator">comparator</a>
@@ -1796,7 +1796,7 @@ ships.add([
     </p>
 
 <pre>
-var vanHalen = new Collection([eddie, alex, stone, roth]);
+var vanHalen = new Backbone.Collection([eddie, alex, stone, roth]);
 
 vanHalen.set([eddie, alex, stone, hagar]);
 
