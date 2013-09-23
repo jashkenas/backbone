@@ -1150,6 +1150,33 @@
     });
     this.ajaxSettings.success('response');
   });
+  
+  test("#2764 Managing collection with model with complex ids", function() {
+	var collection = new Backbone.Collection();
+	var id1 = {
+		one : 1,
+		two : 2,
+		three : 3
+	}
+	var id2 = {
+		one : 4,
+		two : 5,
+		three : 6
+	}
+  	var model1 = new Backbone.Model({
+  		id : id1
+  	});
+	var model2 = new Backbone.Model({
+		id : id2
+	});
+	model1.set('value', 'value');
+	model2.set('value', 'updated');
+
+	collection.add(model1);
+	collection.add(model2);
+	
+	equal(collection.length, 2);
+  });
 
   test("#2612 - nested `parse` works with `Collection#set`", function() {
 

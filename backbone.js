@@ -643,7 +643,7 @@
       for (i = 0, l = models.length; i < l; i++) {
         model = this.get(models[i]);
         if (!model) continue;
-        delete this._byId[model.id];
+        delete this._byId[JSON.stringify(model.id)];
         delete this._byId[model.cid];
         index = this.indexOf(model);
         this.models.splice(index, 1);
@@ -704,7 +704,7 @@
           // `id` and by `cid`.
           model.on('all', this._onModelEvent, this);
           this._byId[model.cid] = model;
-          if (model.id != null) this._byId[model.id] = model;
+          if (model.id != null) this._byId[JSON.stringify(model.id)] = model;
         }
         if (order) order.push(existing || model);
       }
@@ -799,7 +799,7 @@
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
-      return this._byId[obj.id] || this._byId[obj.cid] || this._byId[obj];
+      return this._byId[JSON.stringify(obj.id)] || this._byId[obj.cid] || this._byId[obj];
     },
 
     // Get the model at the given index.
@@ -932,7 +932,7 @@
       if (event === 'destroy') this.remove(model, options);
       if (model && event === 'change:' + model.idAttribute) {
         delete this._byId[model.previous(model.idAttribute)];
-        if (model.id != null) this._byId[model.id] = model;
+        if (model.id != null) this._byId[JSON.stringify(model.id)] = model;
       }
       this.trigger.apply(this, arguments);
     }
