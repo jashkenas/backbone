@@ -676,7 +676,7 @@
     Backbone.history = _.extend(new Backbone.History, {
       location: location,
       history: {
-        pushState: function(state, title, url){
+        pushState: function(state, title, url) {
           strictEqual(url, '/');
         }
       }
@@ -684,6 +684,29 @@
     location.replace('http://example.com/path');
     Backbone.history.start({pushState: true});
     Backbone.history.navigate('');
+  });
+
+  test('#2765 - Fragment matching sans query/hash.', 2, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/path?query#hash');
+        }
+      }
+    });
+
+    var Router = Backbone.Router.extend({
+      routes: {
+        path: function() { ok(true); }
+      }
+    });
+    var router = new Router;
+
+    location.replace('http://example.com/');
+    Backbone.history.start({pushState: true});
+    Backbone.history.navigate('path?query#hash', true);
   });
 
 })();
