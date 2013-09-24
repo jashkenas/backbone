@@ -681,6 +681,8 @@
         attrs = models[i];
         if (attrs instanceof Model) {
           id = model = attrs;
+        } else if (_.isFunction(targetModel)) {
+          id = model = this._prepareModel(attrs, options);
         } else {
           id = attrs[targetModel.prototype.idAttribute];
         }
