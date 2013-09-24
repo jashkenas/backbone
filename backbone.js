@@ -596,6 +596,7 @@
   // If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
+    this.cid = _.uniqueId('col');
     options || (options = {});
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
@@ -680,6 +681,8 @@
         attrs = models[i];
         if (attrs instanceof Model) {
           id = model = attrs;
+        } else if (_.isFunction(targetModel)) {
+          id = model = this._prepareModel(attrs, options);
         } else {
           id = attrs[targetModel.prototype.idAttribute];
         }
