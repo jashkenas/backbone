@@ -580,7 +580,7 @@
 
     <p>
       Backbone's only hard dependency is
-      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.4.3)</small>.
+      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.5.0)</small>.
       For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
       and DOM manipulation with <a href="#View">Backbone.View</a>, include
       <a href="https://github.com/douglascrockford/JSON-js">json2.js</a>, and either
@@ -2026,10 +2026,10 @@ var Tweets = Backbone.Collection.extend({
       <b class="header">fetch</b><code>collection.fetch([options])</code>
       <br />
       Fetch the default set of models for this collection from the server,
-      <a href="#Collection-set">setting</a> them on the collection when they arrive. 
-      The <b>options</b> hash takes <tt>success</tt> and <tt>error</tt> callbacks 
+      <a href="#Collection-set">setting</a> them on the collection when they arrive.
+      The <b>options</b> hash takes <tt>success</tt> and <tt>error</tt> callbacks
       which will both be passed <tt>(collection, response, options)</tt> as arguments.
-      When the model data returns from the server, it uses <a href="#Collection-set">set</a> 
+      When the model data returns from the server, it uses <a href="#Collection-set">set</a>
       to (intelligently) merge the fetched models, unless you pass <tt>{reset: true}</tt>,
       in which case the collection will be (efficiently) <a href="#Collection-reset">reset</a>.
       Delegates to <a href="#Sync">Backbone.sync</a>
@@ -3065,15 +3065,15 @@ var model = localBackbone.Model.extend(...);
     <p>
       <a href="http://elifesciences.github.io/lens/#about/figures/all/video_video1">eLife Lens</a>
       is a novel system for writing on the web. Instead of tying the content to a
-      presentation focused format, Lens treats 
-      <a href="http://blog.okfn.org/2013/01/15/content-as-data-towards-open-digital-publishing-with-substance/">content as data</a> 
-      and makes the links that exist within a document easy to navigate. Backbone.js 
-      is used to structure the views, 
-      <a href="http://interior.substance.io/modules/document.html">Substance Document</a> 
-      for representing content and 
-      <a href="http://ken.quasipartikel.at/">Ken</a> 
-      for faceted filtering. Read more in the official 
-      <a href="http://www.elifesciences.org/lens/">introduction post</a> 
+      presentation focused format, Lens treats
+      <a href="http://blog.okfn.org/2013/01/15/content-as-data-towards-open-digital-publishing-with-substance/">content as data</a>
+      and makes the links that exist within a document easy to navigate. Backbone.js
+      is used to structure the views,
+      <a href="http://interior.substance.io/modules/document.html">Substance Document</a>
+      for representing content and
+      <a href="http://ken.quasipartikel.at/">Ken</a>
+      for faceted filtering. Read more in the official
+      <a href="http://www.elifesciences.org/lens/">introduction post</a>
       or dig into the <a href="http://github.com/elifesciences/lens">source code</a>.
     </p>
 
@@ -3158,17 +3158,17 @@ var model = localBackbone.Model.extend(...);
 
     <p>
       <a href="http://www.zocdoc.com">ZocDoc</a> helps patients
-      find local, in-network doctors and dentists, see their real-time 
+      find local, in-network doctors and dentists, see their real-time
       availability, and instantly book appointments.
-      On the public side, the webapp uses Backbone.js to handle client-side state and rendering in 
+      On the public side, the webapp uses Backbone.js to handle client-side state and rendering in
       <a href="http://www.zocdoc.com/primary-care-doctors/los-angeles-13122pm">search pages</a>
-      and <a href="http://www.zocdoc.com/doctor/nathan-hashimoto-md-58078">doctor profiles</a>. 
-      In addition, the new version of the doctor-facing part of the website is a 
-      large single-page application that 
-      benefits from Backbone's structure and modularity. ZocDoc's Backbone 
-      classes are tested with 
-      <a href="http://pivotal.github.io/jasmine/">Jasmine</a>, and delivered 
-      to the end user with 
+      and <a href="http://www.zocdoc.com/doctor/nathan-hashimoto-md-58078">doctor profiles</a>.
+      In addition, the new version of the doctor-facing part of the website is a
+      large single-page application that
+      benefits from Backbone's structure and modularity. ZocDoc's Backbone
+      classes are tested with
+      <a href="http://pivotal.github.io/jasmine/">Jasmine</a>, and delivered
+      to the end user with
       <a href="http://getcassette.net/">Cassette</a>.
     </p>
 
