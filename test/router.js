@@ -709,4 +709,39 @@
     Backbone.history.navigate('path?query#hash', true);
   });
 
+  test('#2327 - Router with custom History object', 6, function() {
+    // clear Backbone.history
+    Backbone.history = _.extend(new Backbone.History, {
+        navigate: function() {
+            ok(false);
+        }
+    });
+  
+    var CustomHistory = Backbone.History.extend({
+        navigate: function(fragment, options) {
+            equal(fragment, "contacts");
+            deepEqual(options, {trigger: true});
+        }
+    });
+    
+    var customHistory = new CustomHistory;
+    
+    var routerWithDefaultHistoryObject = new Router({});
+    var routerWithCustomHistoryObject = new Router({history: customHistory});
+
+    // router is initialized with passed custom history object or Backbone.history
+    ok(routerWithDefaultHistoryObject.history === Backbone.history);
+    ok(routerWithCustomHistoryObject.history === customHistory);
+
+    // router sets all routes to custom history object
+    routerWithCustomHistoryObject.route("test1", function(){});
+    ok(customHistory.handlers.length == _.size(routerWithCustomHistoryObject.routes) + 2); // 2 -> 'implicit' and 'test' route
+    // and does not to default
+    ok(Backbone.history.handlers.length == _.size(routerWithDefaultHistoryObject.routes) + 1);
+    
+    // calling Router.navigate() will call custom history object.navigate()
+    routerWithCustomHistoryObject.navigate("contacts", {trigger: true});
+
+  });
+
 })();
