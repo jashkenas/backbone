@@ -70,7 +70,7 @@
     equal(this.ajaxSettings.type, 'POST');
     equal(this.ajaxSettings.dataType, 'json');
     equal(this.ajaxSettings.data._method, 'PUT');
-    var data = JSON.parse(this.ajaxSettings.data);
+    var data = this.ajaxSettings.data;
     equal(data.id, '2-the-tempest');
     equal(data.author, 'Tim Shakespeare');
     equal(data.length, 123);
@@ -96,7 +96,7 @@
     equal(this.ajaxSettings.url, '/library/2-the-tempest');
     equal(this.ajaxSettings.type, 'PUT');
     equal(this.ajaxSettings.contentType, 'application/x-www-form-urlencoded');
-    var data = JSON.parse(this.ajaxSettings.data);
+    var data = this.ajaxSettings.data;
     equal(data.id, '2-the-tempest');
     equal(data.author, 'Tim Shakespeare');
     equal(data.length, 123);
