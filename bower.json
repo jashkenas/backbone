@@ -1,0 +1,21 @@
+{
+  "name": "backbone",
+  "version":"1.0.0",
+  "main": [
+    "backbone.js"
+  ],
+  "dependencies": {
+    "underscore"  : ">=1.4.3"
+  },
+  "ignore": [
+    "test/",
+    "docs",
+    ".git/",
+    "examples/",
+    ".gitignore",
+	"index.html",
+	"index.js",
+	"CNAME",
+	"CONTRIBUTING.md"
+  ]
+}
