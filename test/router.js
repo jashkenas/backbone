@@ -709,4 +709,30 @@
     Backbone.history.navigate('path?query#hash', true);
   });
 
+  test('Support multiple Routers with overlapping routes', 2, function(){
+    var FeatureRouter = Backbone.Router.extend({
+      routes: {
+        'example': 'featureCallback'
+      },
+
+      featureCallback: function(){
+        ok(true);
+      }
+    });
+
+    var GlobalRouter = Backbone.Router.extend({
+      routes: {
+        'example': 'globalCallback'
+      },
+
+      globalCallback: function(){
+        ok(true);
+      }
+    });
+
+    var router1 = new FeatureRouter;
+    var router2 = new GlobalRouter;
+    Backbone.history.navigate('example', true);
+  });
+
 })();
