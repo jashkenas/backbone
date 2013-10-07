@@ -1210,6 +1210,7 @@
   var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
+    this.cid = _.uniqueId('c');
     this._bindRoutes();
     this.initialize.apply(this, arguments);
   };
@@ -1242,7 +1243,7 @@
       }
       if (!callback) callback = this[name];
       var router = this;
-      Backbone.history.route(route, function(fragment) {
+      Backbone.history.route(this.cid, route, function(fragment) {
         var args = router._extractParameters(route, fragment);
         callback && callback.apply(router, args);
         router.trigger.apply(router, ['route:' + name].concat(args));
@@ -1303,7 +1304,7 @@
   // and URL fragments. If the browser supports neither (old IE, natch),
   // falls back to polling.
   var History = Backbone.History = function() {
-    this.handlers = [];
+    this.routers = {};
     _.bindAll(this, 'checkUrl');
 
     // Ensure that `History` can be used outside of the browser.
@@ -1434,9 +1435,10 @@
     },
 
     // Add a route to be tested when the fragment changes. Routes added later
-    // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
+    // to the same Router may override previous routes.
+    route: function(routerId, route, callback) {
+      var handlers = this.routers[routerId] = this.routers[routerId] || [];
+      handlers.unshift({route: route, callback: callback});
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -1455,13 +1457,18 @@
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
     loadUrl: function(fragment) {
+      var matched = false;
       fragment = this.fragment = this.getFragment(fragment);
-      return _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
-        }
-      });
+      // Fire callback of first matched route in each router
+      _.each(this.routers, function(handlers){
+        matched = _.any(handlers, function(handler) {
+          if (handler.route.test(fragment)) {
+            handler.callback(fragment);
+            return true;
+          }
+        });
+      }, this);
+      return matched;
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
