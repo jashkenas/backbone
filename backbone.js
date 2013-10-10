@@ -661,7 +661,8 @@
     set: function(models, options) {
       options = _.defaults({}, options, setOptions);
       if (options.parse) models = this.parse(models, options);
-      if (!_.isArray(models)) models = models ? [models] : [];
+      var singular = !_.isArray(models);
+      models = singular ? (models ? [models] : []) : _.clone(models);
       var i, l, id, model, attrs, existing, sort;
       var at = options.at;
       var targetModel = this.model;
@@ -691,10 +692,12 @@
             existing.set(attrs, options);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
+          models[i] = existing;
 
         // This is a new model, push it to the `toAdd` list.
         } else if (add) {
           if (!(model = this._prepareModel(attrs, options))) continue;
+          models[i] = model;
           toAdd.push(model);
 
           // Listen to added models' events, and index models for lookup by
@@ -743,7 +746,9 @@
 
       // Trigger `sort` if the collection was sorted.
       if (sort || (order && order.length)) this.trigger('sort', this, options);
-      return this;
+      
+      // Return the added (or merged) model (or models).
+      return singular ? models[0] : models;
     },
 
     // When you have more items than you want to add or remove individually,
@@ -764,8 +769,7 @@
 
     // Add a model to the end of the collection.
     push: function(model, options) {
-      this.add(model, _.extend({at: this.length}, options));
-      return model;
+      return this.add(model, _.extend({at: this.length}, options));
     },
 
     // Remove a model from the end of the collection.
@@ -777,8 +781,7 @@
 
     // Add a model to the beginning of the collection.
     unshift: function(model, options) {
-      this.add(model, _.extend({at: 0}, options));
-      return model;
+      return this.add(model, _.extend({at: 0}, options));
     },
 
     // Remove a model from the beginning of the collection.

@@ -1043,6 +1043,13 @@
     new Collection().push({id: 1});
   });
 
+  test("#2428 - push duplicate models, return the correct one", 1, function() {
+    var col = new Backbone.Collection;
+    var model1 = col.push({id: 101});
+    var model2 = col.push({id: 101})
+    ok(model2.cid == model1.cid);
+  });
+
   test("`set` with non-normal id", function() {
     var Collection = Backbone.Collection.extend({
       model: Backbone.Model.extend({idAttribute: '_id'})
