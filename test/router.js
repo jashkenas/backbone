@@ -75,6 +75,8 @@
       "counter":                    "counter",
       "search/:query":              "search",
       "search/:query/p:page":       "search",
+      "charñ":                      "charUTF",
+      "char%C3%B1":                 "charEscaped",
       "contacts":                   "contacts",
       "contacts/new":               "newContact",
       "contacts/:id":               "loadContact",
@@ -103,9 +105,17 @@
       this.count++;
     },
 
-    search : function(query, page) {
+    search: function(query, page) {
       this.query = query;
       this.page = page;
+    },
+
+    charUTF: function() {
+      this.charType = 'UTF';
+    },
+
+    charEscaped: function() {
+      this.charType = 'escaped';
     },
 
     contacts: function(){
@@ -351,6 +361,13 @@
     equal(router.query, 'fat');
     equal(router.page, void 0);
     equal(lastRoute, 'search');
+  });
+
+  test("#2666 - Hashes with UTF8 in them.", 2, function() {
+    Backbone.history.navigate('charñ', {trigger: true});
+    equal(router.charType, 'UTF');
+    Backbone.history.navigate('char%C3%B1', {trigger: true});
+    equal(router.charType, 'escaped');
   });
 
   test("#1185 - Use pathname when hashChange is not wanted.", 1, function() {
