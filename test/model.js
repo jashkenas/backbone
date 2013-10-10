@@ -140,6 +140,22 @@
     equal(bar.get('p'), undefined);
   });
 
+  test("clone omitting one key", 3, function() {
+    var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
+    var b = a.clone({omit: 'foo'});
+    equal(b.get('foo'), undefined);
+    equal(b.get('bar'), a.get('bar'));
+    equal(b.get('baz'), a.get('baz'));
+  });
+
+  test("clone omitting an array of keys", 3, function() {
+    var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
+    var b = a.clone({omit: ['foo', 'bar']});
+    equal(b.get('foo'), undefined);
+    equal(b.get('bar'), undefined);
+    equal(b.get('baz'), a.get('baz'));
+  });
+
   test("isNew", 6, function() {
     var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
     ok(a.isNew(), "it should be new");

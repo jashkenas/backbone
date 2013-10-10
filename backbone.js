@@ -542,9 +542,13 @@
       return resp;
     },
 
-    // Create a new model with identical attributes to this one.
-    clone: function() {
-      return new this.constructor(this.attributes);
+    // Create a new model with identical attributes to this one. If `omit: keys`
+    // is passed, these attributes will not be cloned. `keys` can be a `string`
+    // or an `array` of `string`
+    clone: function(options) {
+      options || (options = {});
+      console.log(_.omit(this.attributes, options.omit));
+      return new this.constructor(_.omit(this.attributes, options.omit));
     },
 
     // A model is new if it has never been saved to the server, and lacks an id.
