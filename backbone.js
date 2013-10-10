@@ -59,8 +59,7 @@
 
   // Turn on `emulateJSON` to support legacy servers that can't deal with direct
   // `application/json` requests ... will encode the body as
-  // `application/x-www-form-urlencoded` instead and will send the model in a
-  // form param named `model`.
+  // `application/x-www-form-urlencoded` instead.
   Backbone.emulateJSON = false;
 
   // Backbone.Events
@@ -1141,13 +1140,17 @@
     // Ensure that we have the appropriate request data.
     if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
       params.contentType = 'application/json';
-      params.data = JSON.stringify(options.attrs || model.toJSON(options));
+      if (options.emulateJSON) {
+        params.data = options.attrs || model.toJSON(options);
+      } else {
+        params.data = JSON.stringify(options.attrs || model.toJSON(options));
+      }
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (options.emulateJSON) {
       params.contentType = 'application/x-www-form-urlencoded';
-      params.data = params.data ? {model: params.data} : {};
+      params.data = params.data ? params.data : {};
     }
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
