@@ -488,7 +488,7 @@
     ok(_.isEqual(this.syncArgs.model, doc));
 
     var newModel = new Backbone.Model;
-    equal(newModel.destroy(), false);
+    equal(newModel.destroy().state(), 'resolved');
   });
 
   test("non-persisted destroy", 1, function() {
@@ -958,10 +958,14 @@
     var model = new Backbone.Model;
     model.validate = function(){ return 'invalid'; };
     model.sync = function(){ ok(false); };
-    strictEqual(model.save(), false);
+    model.save().then(function() {
+      ok(false);
+    }, function() {
+      ok(true);
+    });
   });
 
-  test("#1377 - Save without attrs triggers 'error'.", 1, function() {
+  test("#1377 - Save without attrs triggers 'error'.", 2, function() {
     var Model = Backbone.Model.extend({
       url: '/test/',
       sync: function(method, model, options){ options.success(); },
@@ -969,7 +973,11 @@
     });
     var model = new Model({id: 1});
     model.on('invalid', function(){ ok(true); });
-    model.save();
+    model.save().then(function() {
+      ok(false);
+    }, function() {
+      ok(true);
+    });
   });
 
   test("#1545 - `undefined` can be passed to a model constructor without coersion", function() {
