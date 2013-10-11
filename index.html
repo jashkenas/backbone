@@ -2534,6 +2534,10 @@ var DocumentRow = Backbone.View.extend({
     <p id="View-constructor">
       <b class="header">constructor / initialize</b><code>new View([options])</code>
       <br />
+      There are several special
+      options that, if passed, will be attached directly to the view:
+      <tt>model</tt>, <tt>collection</tt>,
+      <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, <tt>tagName</tt>, <tt>attributes</tt> and <tt>events</tt>.
       If the view defines an <b>initialize</b> function, it will be called when
       the view is first created. If you'd like to create a view that references
       an element <i>already</i> in the DOM, pass in the element as an option:
@@ -3995,10 +3999,8 @@ ActiveRecord::Base.include_root_in_json = false
         model or list of models.
       </li>
       <li>
-        Backbone Views no longer attach "special" options as direct properties
-        on the view (<tt>model</tt>, <tt>attributes</tt>, <tt>className</tt>, and so on),
-        and no longer automatically attach options passed to the constructor as 
-        <tt>this.options</tt>.
+        Backbone Views no longer automatically attach options passed to the constructor as 
+        <tt>this.options</tt>, but you can do it yourself if you prefer.
       </li>
       <li>
         All <tt>"invalid"</tt> events now pass consistent arguments. First the
