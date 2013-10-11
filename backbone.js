@@ -543,7 +543,13 @@
     clone: function() {
       return new this.constructor(this.attributes);
     },
-
+    
+    //merge in a attributes from another model
+    merge: function(model, options) {
+      var attrs = (options && options.parse) ? this.parse(model.attributes, options) : model.attributes;
+      this.set(attrs, options);
+	},
+	
     // A model is new if it has never been saved to the server, and lacks an id.
     isNew: function() {
       return this.id == null;
@@ -688,9 +694,12 @@
         if (existing = this.get(id)) {
           if (remove) modelMap[existing.cid] = true;
           if (merge) {
-            attrs = attrs === model ? model.attributes : attrs;
-            if (options.parse) attrs = existing.parse(attrs, options);
-            existing.set(attrs, options);
+          	if (attrs === model) {
+          	  existing.merge(model, options);
+          	} else {
+          	  if (options.parse) attrs = existing.parse(attrs, options);
+          	  existing.set(attrs, options);
+          	}            
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
           models[i] = existing;

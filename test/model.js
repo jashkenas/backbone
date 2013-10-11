@@ -1106,5 +1106,54 @@
     });
     model.set({a: true});
   });
+  
+  test("merge without parse", 6, function() {
+    var model1 = new Backbone.Model({
+      conflict: "model1",
+      model1Only: "model1Only"
+    });
+    var model2 = new Backbone.Model({
+  	  conflict: "model2",
+  	  model2Only: "model2Only"
+    });
+    
+    model1.merge(model2);
+  	
+  	strictEqual(model1.get("conflict"), model2.get("conflict"), "model1 now has model2's conflict key");
+  	strictEqual(model1.get("model2Only"), model2.get("model2Only"), "model1 now has model2's model2Only key");
+  	strictEqual(model1.get("model1Only"), "model1Only", "model1's model1Only key has not changed");
+    strictEqual(model2.get("conflict"), "model2", "model2's conflict key is not changed");
+    strictEqual(model2.get("model2Only"), "model2Only", "model2's model2Only key is not changed");
+    strictEqual(model2.get("model1Only"), undefined, "model2 has no model1Only key");	
+  });
+  
+  test("merge with parse", 8, function() {
+    var CustomParseModel = Backbone.Model.extend({
+      parse: function(response) {
+        return $.extend({}, response, { parsed: true });
+      }
+    });
+    var model1 = new CustomParseModel({
+      conflict: "model1",
+      model1Only: "model1Only",
+      parsed: false
+    });
+    var model2 = new CustomParseModel({
+  	  conflict: "model2",
+  	  model2Only: "model2Only",
+  	  parsed: false
+    });
+    
+    model1.merge(model2, { parse: true });
+  	
+  	strictEqual(model1.get("conflict"), model2.get("conflict"), "model1 now has model2's conflict key");
+  	strictEqual(model1.get("model2Only"), model2.get("model2Only"), "model1 now has model2's model2Only key");
+  	strictEqual(model1.get("model1Only"), "model1Only", "model1's model1Only key has not changed");
+  	strictEqual(model1.get("parsed"), true, "model1's parse routine was executed");
+    strictEqual(model2.get("conflict"), "model2", "model2's conflict key is not changed");
+    strictEqual(model2.get("model2Only"), "model2Only", "model2's model2Only key is not changed");
+    strictEqual(model2.get("model1Only"), undefined, "model2 has no model1Only key");	
+  	strictEqual(model2.get("parsed"), false, "model2's parse routine was not executed");
+  });
 
 })();
