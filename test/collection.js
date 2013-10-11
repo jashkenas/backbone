@@ -287,6 +287,39 @@
     equal(otherRemoved, null);
   });
 
+  test("add and remove return values", 13, function() {
+    var Even = Backbone.Model.extend({
+      validate: function(attrs) {
+        if (attrs.id % 2 !== 0) return "odd";
+      }
+    });
+    var col = new Backbone.Collection;
+    col.model = Even;
+
+    var list = col.add([{id: 2}, {id: 4}], {validate: true});
+    equal(list.length, 2);
+    ok(list[0] instanceof Backbone.Model);
+    equal(list[1], col.last());
+    equal(list[1].get('id'), 4);
+
+    list = col.add([{id: 3}, {id: 6}], {validate: true});
+    equal(col.length, 3);
+    equal(list[0], false);
+    equal(list[1].get('id'), 6);
+
+    var result = col.add({id: 6});
+    equal(result.cid, list[1].cid);
+
+    result = col.remove({id: 6});
+    equal(col.length, 2);
+    equal(result.id, 6);
+
+    list = col.remove([{id: 2}, {id: 8}]);
+    equal(col.length, 1);
+    equal(list[0].get('id'), 2);
+    equal(list[1], null);
+  });
+
   test("shift and pop", 2, function() {
     var col = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
     equal(col.shift().get('a'), 'a');

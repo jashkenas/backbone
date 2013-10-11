@@ -634,11 +634,12 @@
 
     // Remove a model, or a list of models from the set.
     remove: function(models, options) {
-      models = _.isArray(models) ? models.slice() : [models];
+      var singular = !_.isArray(models);
+      models = singular ? [models] : _.clone(models);
       options || (options = {});
       var i, l, index, model;
       for (i = 0, l = models.length; i < l; i++) {
-        model = this.get(models[i]);
+        model = models[i] = this.get(models[i]);
         if (!model) continue;
         delete this._byId[model.id];
         delete this._byId[model.cid];
@@ -651,7 +652,7 @@
         }
         this._removeReference(model);
       }
-      return this;
+      return singular ? models[0] : models;
     },
 
     // Update a collection by `set`-ing a new list of models, adding new ones,
@@ -694,10 +695,10 @@
           }
           models[i] = existing;
 
-        // This is a new model, push it to the `toAdd` list.
+        // If this is a new, valid model, push it to the `toAdd` list.
         } else if (add) {
-          if (!(model = this._prepareModel(attrs, options))) continue;
-          models[i] = model;
+          model = models[i] = this._prepareModel(attrs, options);
+          if (!model) continue;
           toAdd.push(model);
 
           // Listen to added models' events, and index models for lookup by
@@ -727,9 +728,9 @@
           }
         } else {
           if (order) this.models.length = 0;
-          models = order || toAdd;
-          for (i = 0, l = models.length; i < l; i++) {
-            this.models.push(models[i]);
+          var orderedModels = order || toAdd;
+          for (i = 0, l = orderedModels.length; i < l; i++) {
+            this.models.push(orderedModels[i]);
           }
         }
       }
@@ -737,7 +738,7 @@
       // Silently sort the collection if appropriate.
       if (sort) this.sort({silent: true});
 
-      if (options.silent) return this;
+      if (options.silent) return models;
 
       // Trigger `add` events.
       for (i = 0, l = toAdd.length; i < l; i++) {
