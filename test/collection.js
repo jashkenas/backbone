@@ -556,7 +556,7 @@
     deepEqual(col.difference([c, d]), [a, b]);
   });
 
-  test("reset", 12, function() {
+  test("reset", 13, function() {
     var resetCount = 0;
     var models = col.models;
     col.on('reset', function() { resetCount += 1; });
@@ -576,6 +576,9 @@
     col.reset();
     equal(col.length, 0);
     equal(resetCount, 4);
+    var f = new Backbone.Model({id: 20, label : 'f'});
+    col.reset([undefined, f]);
+    equal(col.length, 2);
   });
 
   test ("reset with different values", function(){

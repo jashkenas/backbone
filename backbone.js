@@ -679,7 +679,7 @@
         attrs = models[i];
         if (attrs instanceof Model) {
           id = model = attrs;
-        } else {
+        } else if (attrs) {
           id = attrs[targetModel.prototype.idAttribute];
         }
 
@@ -745,7 +745,7 @@
         }
         if (sort || (order && order.length)) this.trigger('sort', this, options);
       }
-      
+
       // Return the added (or merged) model (or models).
       return singular ? models[0] : models;
     },
