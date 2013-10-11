@@ -544,12 +544,12 @@
       return new this.constructor(this.attributes);
     },
     
-    //merge in a attributes from another model
+    //merge in attributes from another model
     merge: function(model, options) {
       var attrs = (options && options.parse) ? this.parse(model.attributes, options) : model.attributes;
       this.set(attrs, options);
-	},
-	
+    },
+
     // A model is new if it has never been saved to the server, and lacks an id.
     isNew: function() {
       return this.id == null;
