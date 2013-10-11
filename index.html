@@ -2534,13 +2534,6 @@ var DocumentRow = Backbone.View.extend({
     <p id="View-constructor">
       <b class="header">constructor / initialize</b><code>new View([options])</code>
       <br />
-      When creating a new View, the options you pass &mdash; after being merged
-      into any default options already present on the view &mdash;
-      are attached to the view as <tt>this.options</tt> for future reference.
-      There are several special
-      options that, if passed, will be attached directly to the view:
-      <tt>model</tt>, <tt>collection</tt>,
-      <tt>el</tt>, <tt>id</tt>, <tt>className</tt>, <tt>tagName</tt> and <tt>attributes</tt>.
       If the view defines an <b>initialize</b> function, it will be called when
       the view is first created. If you'd like to create a view that references
       an element <i>already</i> in the DOM, pass in the element as an option:
@@ -2640,7 +2633,7 @@ ui.Chapter = Backbone.View.extend({
       While templating for a view isn't a function provided directly by Backbone,
       it's often a nice convention to define a <b>template</b> function on your 
       views. In this way, when rendering your view, you have convenient access to
-      instance data (<tt>this.model</tt>, <tt>options</tt>, and so on). 
+      instance data. 
       For example, using Underscore templates:
     </p>
 
@@ -4003,7 +3996,9 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
       <li>
         Backbone Views no longer attach "special" options as direct properties
-        on the view (<tt>model</tt>, <tt>attributes</tt>, <tt>className</tt>, and so on).
+        on the view (<tt>model</tt>, <tt>attributes</tt>, <tt>className</tt>, and so on),
+        and no longer automatically attach options passed to the constructor as 
+        <tt>this.options</tt>.
       </li>
       <li>
         All <tt>"invalid"</tt> events now pass consistent arguments. First the
