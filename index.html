@@ -286,7 +286,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(1.0.0)</span>
+      Backbone.js <span class="version">(1.1.0)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/jashkenas/backbone">GitHub Repository</a></li>
@@ -558,13 +558,13 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (1.0.0)</a></td>
-        <td class="text"><i>58kb, Full source, tons of comments</i></td>
+        <td><a class="punch" href="backbone.js">Development Version (1.1.0)</a></td>
+        <td class="text"><i>59kb, Full source, tons of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (1.0.0)</a></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (1.1.0)</a></td>
         <td class="text" style="line-height: 16px;">
-          <i>6.3kb, Packed and gzipped</i><br />
+          <i>6.4kb, Packed and gzipped</i><br />
           <small>(<a href="backbone-min.map">Source Map</a>)</small>
         </td>
       </tr>
@@ -1735,6 +1735,7 @@ var alphabetical = books.sortBy(function(book) {
       Add a model (or an array of models) to the collection, firing an <tt>"add"</tt>
       event. If a <a href="#Collection-model">model</a> property is defined, you may also pass
       raw attributes objects, and have them be vivified as instances of the model.
+      Returns the added (or preexisting, if duplicate) models.
       Pass <tt>{at: index}</tt> to splice the model into the collection at the
       specified <tt>index</tt>. If you're adding models to the collection that are
       <i>already</i> in the collection, they'll be ignored, unless you pass
@@ -1763,8 +1764,8 @@ ships.add([
     <p id="Collection-remove">
       <b class="header">remove</b><code>collection.remove(models, [options])</code>
       <br />
-      Remove a model (or an array of models) from the collection. Fires a
-      <tt>"remove"</tt> event, which you can use <tt>silent</tt> to suppress.
+      Remove a model (or an array of models) from the collection, and returns them. 
+      Fires a <tt>"remove"</tt> event, which you can use <tt>silent</tt> to suppress.
       The model's index before removal is available to listeners as
       <tt>options.index</tt>.
     </p>
@@ -1776,7 +1777,8 @@ ships.add([
       you have so many models to change that you'd rather just update the collection
       in bulk. Use <b>reset</b> to replace a collection with a new list
       of models (or attribute hashes), triggering a single <tt>"reset"</tt> event
-      at the end. For convenience, within a <tt>"reset"</tt> event, the list of any
+      at the end. Returns the newly-set models.
+      For convenience, within a <tt>"reset"</tt> event, the list of any
       previous models is available as <tt>options.previousModels</tt>.
     </p>
 
@@ -1806,7 +1808,8 @@ ships.add([
       its attributes will be merged; and if the collection contains any models that
       <i>aren't</i> present in the list, they'll be removed. All of the appropriate
       <tt>"add"</tt>, <tt>"remove"</tt>, and <tt>"change"</tt> events are fired
-      as this happens. If you'd like to customize the behavior, you can disable
+      as this happens. Returns the touched models in the collection.
+      If you'd like to customize the behavior, you can disable
       it with options: <tt>{add: false}</tt>, <tt>{remove: false}</tt>, or <tt>{merge: false}</tt>.
     </p>
 
@@ -3989,6 +3992,37 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header">1.1.0</b> &mdash; <small><i>Oct. 10, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.0.0...1.1.0">Diff</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Made the return values of Collection's <tt>set</tt>, <tt>add</tt>, 
+        <tt>remove</tt>, and <tt>reset</tt> more useful. Instead of returning
+        <tt>this</tt>, they now return the changed (added, removed or updated) 
+        model or list of models.
+      </li>
+      <li>
+        Backbone Views no longer attach "special" options as direct properties
+        on the view (<tt>model</tt>, <tt>attributes</tt>, <tt>className</tt>, and so on).
+      </li>
+      <li>
+        All <tt>"invalid"</tt> events now pass consistent arguments. First the
+        model in question, then the error object, then options.
+      </li>
+      <li>
+        You are no longer permitted to change the <b>id</b> of your model during
+        <tt>parse</tt>. Use <tt>idAttribute</tt> instead.
+      </li>
+      <li>
+        On the other hand, <tt>parse</tt> is now an excellent place to extract
+        and vivify incoming nested JSON into associated submodels.
+      </li>
+      <li>
+        Many tweaks, optimizations and bugfixes relating to Backbone 1.0, 
+        including URL overrides, mutation of options, bulk ordering, trailing
+        slashes, edge-case listener leaks, nested model parsing...
+      </li>
+    </ul>
 
     <b class="header">1.0.0</b> &mdash; <small><i>March 20, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/0.9.10...1.0.0">Diff</a><br />
     <ul style="margin-top: 5px;">

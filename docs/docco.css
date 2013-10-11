@@ -51,17 +51,9 @@ b, strong {
   font-family: "aller-bold";
 }
 
-p {
+p, ul, ol {
   margin: 15px 0 0px;
 }
-  .annotation ul, .annotation ol {
-    margin: 25px 0;
-  }
-    .annotation ul li, .annotation ol li {
-      font-size: 14px;
-      line-height: 18px;
-      margin: 10px 0;
-    }
 
 h1, h2, h3, h4, h5, h6 {
   color: #112233;

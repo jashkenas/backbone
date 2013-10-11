@@ -69,8 +69,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>AMD. Register as an anonymous module.
-</p>
+              <p>AMD. Register as an anonymous module.</p>
 
             </div>
             
@@ -85,8 +84,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Use global variables if the locals are undefined.
-</p>
+              <p>Use global variables if the locals are undefined.</p>
 
             </div>
             
@@ -103,8 +101,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>RequireJS isn&#39;t being used. Assume underscore and backbone are loaded in <script> tags
-</p>
+              <p>RequireJS isn&#39;t being used. Assume underscore and backbone are loaded in <script> tags</p>
 
             </div>
             
@@ -123,15 +120,10 @@
               </div>
               <p>A simple module to replace <code>Backbone.sync</code> with <em>localStorage</em>-based
 persistence. Models are given GUIDS, and saved into a JSON object. Simple
-as that.
-
-</p>
+as that.</p>
 <p>Hold reference to Underscore.js and Backbone.js in the closure in order
-to make things work even if they are removed from the global namespace
-
-</p>
-<p>Generate four random hex digits.
-</p>
+to make things work even if they are removed from the global namespace</p>
+<p>Generate four random hex digits.</p>
 
             </div>
             
@@ -148,8 +140,7 @@ to make things work even if they are removed from the global namespace
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Generate a pseudo-GUID by concatenating random hexadecimal.
-</p>
+              <p>Generate a pseudo-GUID by concatenating random hexadecimal.</p>
 
             </div>
             
@@ -168,8 +159,7 @@ to make things work even if they are removed from the global namespace
               </div>
               <p>Our Store is represented by a single JS object in <em>localStorage</em>. Create it
 with a meaningful name, like the name you&#39;d give a table.
-window.Store is deprectated, use Backbone.LocalStorage instead
-</p>
+window.Store is deprectated, use Backbone.LocalStorage instead</p>
 
             </div>
             
@@ -190,8 +180,7 @@ _.extend(Backbone.LocalStorage.prototype, {</pre></div></div>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Save the current state of the <strong>Store</strong> to <em>localStorage</em>.
-</p>
+              <p>Save the current state of the <strong>Store</strong> to <em>localStorage</em>.</p>
 
             </div>
             
@@ -209,8 +198,7 @@ _.extend(Backbone.LocalStorage.prototype, {</pre></div></div>
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Add a model, giving it a (hopefully)-unique GUID, if it doesn&#39;t already
-have an id of it&#39;s own.
-</p>
+have an id of it&#39;s own.</p>
 
             </div>
             
@@ -234,8 +222,7 @@ have an id of it&#39;s own.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Update a model by replacing its copy in <code>this.data</code>.
-</p>
+              <p>Update a model by replacing its copy in <code>this.data</code>.</p>
 
             </div>
             
@@ -255,8 +242,7 @@ have an id of it&#39;s own.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Retrieve a model from <code>this.data</code> by id.
-</p>
+              <p>Retrieve a model from <code>this.data</code> by id.</p>
 
             </div>
             
@@ -273,8 +259,7 @@ have an id of it&#39;s own.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>Return the array of all models currently in storage.
-</p>
+              <p>Return the array of all models currently in storage.</p>
 
             </div>
             
@@ -296,8 +281,7 @@ have an id of it&#39;s own.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Delete a model from <code>this.data</code>, returning it.
-</p>
+              <p>Delete a model from <code>this.data</code>, returning it.</p>
 
             </div>
             
@@ -325,8 +309,7 @@ have an id of it&#39;s own.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>fix for &quot;illegal access&quot; error on Android when JSON.parse is passed null
-</p>
+              <p>fix for &quot;illegal access&quot; error on Android when JSON.parse is passed null</p>
 
             </div>
             
@@ -347,8 +330,7 @@ have an id of it&#39;s own.
               </div>
               <p>localSync delegate to the model or collection&#39;s
 <em>localStorage</em> property, which should be an instance of <code>Store</code>.
-window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStorage.sync instead
-</p>
+window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStorage.sync instead</p>
 
             </div>
             
@@ -408,8 +390,7 @@ window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStora
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>add compatibility with $.ajax
-always execute callback for success and error
-</p>
+always execute callback for success and error</p>
 
             </div>
             
@@ -438,8 +419,7 @@ Backbone.getSyncMethod = <span class="keyword">function</span>(model) {
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Override &#39;Backbone.sync&#39; to default to localSync,
-the original &#39;Backbone.sync&#39; is still available in &#39;Backbone.ajaxSync&#39;
-</p>
+the original &#39;Backbone.sync&#39; is still available in &#39;Backbone.ajaxSync&#39;</p>
 
             </div>
             

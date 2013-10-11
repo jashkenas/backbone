@@ -51,11 +51,8 @@
               <p>An example Backbone application contributed by
 <a href="http://jgn.me/">Jérôme Gravel-Niquet</a>. This demo uses a simple
 <a href="backbone-localstorage.html">LocalStorage adapter</a>
-to persist Backbone models within your browser.
-
-</p>
-<p>Load the application once the DOM is ready, using <code>jQuery.ready</code>:
-</p>
+to persist Backbone models within your browser.</p>
+<p>Load the application once the DOM is ready, using <code>jQuery.ready</code>:</p>
 
             </div>
             
@@ -83,8 +80,7 @@ to persist Backbone models within your browser.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Our basic <strong>Todo</strong> model has <code>title</code>, <code>order</code>, and <code>done</code> attributes.
-</p>
+              <p>Our basic <strong>Todo</strong> model has <code>title</code>, <code>order</code>, and <code>done</code> attributes.</p>
 
             </div>
             
@@ -99,8 +95,7 @@ to persist Backbone models within your browser.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Default attributes for the todo item.
-</p>
+              <p>Default attributes for the todo item.</p>
 
             </div>
             
@@ -121,8 +116,7 @@ to persist Backbone models within your browser.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Toggle the <code>done</code> state of this todo item.
-</p>
+              <p>Toggle the <code>done</code> state of this todo item.</p>
 
             </div>
             
@@ -155,8 +149,7 @@ to persist Backbone models within your browser.
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>The collection of todos is backed by <em>localStorage</em> instead of a remote
-server.
-</p>
+server.</p>
 
             </div>
             
@@ -171,8 +164,7 @@ server.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Reference to this collection&#39;s model.
-</p>
+              <p>Reference to this collection&#39;s model.</p>
 
             </div>
             
@@ -187,8 +179,7 @@ server.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Save all of the todo items under the <code>&quot;todos-backbone&quot;</code> namespace.
-</p>
+              <p>Save all of the todo items under the <code>&quot;todos-backbone&quot;</code> namespace.</p>
 
             </div>
             
@@ -203,8 +194,7 @@ server.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Filter down the list of all todo items that are finished.
-</p>
+              <p>Filter down the list of all todo items that are finished.</p>
 
             </div>
             
@@ -221,13 +211,12 @@ server.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Filter down the list to only todo items that are still not finished.
-</p>
+              <p>Filter down the list to only todo items that are still not finished.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    remaining: <span class="keyword">function</span>() {
-      <span class="keyword">return</span> <span class="keyword">this</span>.without.apply(<span class="keyword">this</span>, <span class="keyword">this</span>.done());
+      <span class="keyword">return</span> <span class="keyword">this</span>.where({done: <span class="literal">false</span>});
     },</pre></div></div>
             
         </li>
@@ -240,8 +229,7 @@ server.
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>We keep the Todos in sequential order, despite being saved by unordered
-GUID in the database. This generates the next order number for new items.
-</p>
+GUID in the database. This generates the next order number for new items.</p>
 
             </div>
             
@@ -259,8 +247,7 @@ GUID in the database. This generates the next order number for new items.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Todos are sorted by their original insertion order.
-</p>
+              <p>Todos are sorted by their original insertion order.</p>
 
             </div>
             
@@ -277,8 +264,7 @@ GUID in the database. This generates the next order number for new items.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>Create our global collection of <strong>Todos</strong>.
-</p>
+              <p>Create our global collection of <strong>Todos</strong>.</p>
 
             </div>
             
@@ -306,8 +292,7 @@ GUID in the database. This generates the next order number for new items.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>The DOM element for a todo item...
-</p>
+              <p>The DOM element for a todo item...</p>
 
             </div>
             
@@ -322,8 +307,7 @@ GUID in the database. This generates the next order number for new items.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>... is a list tag.
-</p>
+              <p>... is a list tag.</p>
 
             </div>
             
@@ -338,8 +322,7 @@ GUID in the database. This generates the next order number for new items.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>Cache the template function for a single item.
-</p>
+              <p>Cache the template function for a single item.</p>
 
             </div>
             
@@ -354,8 +337,7 @@ GUID in the database. This generates the next order number for new items.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>The DOM events specific to an item.
-</p>
+              <p>The DOM events specific to an item.</p>
 
             </div>
             
@@ -378,8 +360,7 @@ GUID in the database. This generates the next order number for new items.
               </div>
               <p>The TodoView listens for changes to its model, re-rendering. Since there&#39;s
 a one-to-one correspondence between a <strong>Todo</strong> and a <strong>TodoView</strong> in this
-app, we set a direct reference on the model for convenience.
-</p>
+app, we set a direct reference on the model for convenience.</p>
 
             </div>
             
@@ -397,8 +378,7 @@ app, we set a direct reference on the model for convenience.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>Re-render the titles of the todo item.
-</p>
+              <p>Re-render the titles of the todo item.</p>
 
             </div>
             
@@ -418,8 +398,7 @@ app, we set a direct reference on the model for convenience.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Toggle the <code>&quot;done&quot;</code> state of the model.
-</p>
+              <p>Toggle the <code>&quot;done&quot;</code> state of the model.</p>
 
             </div>
             
@@ -436,8 +415,7 @@ app, we set a direct reference on the model for convenience.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>Switch this view into <code>&quot;editing&quot;</code> mode, displaying the input field.
-</p>
+              <p>Switch this view into <code>&quot;editing&quot;</code> mode, displaying the input field.</p>
 
             </div>
             
@@ -455,8 +433,7 @@ app, we set a direct reference on the model for convenience.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <p>Close the <code>&quot;editing&quot;</code> mode, saving changes to the todo.
-</p>
+              <p>Close the <code>&quot;editing&quot;</code> mode, saving changes to the todo.</p>
 
             </div>
             
@@ -479,8 +456,7 @@ app, we set a direct reference on the model for convenience.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <p>If you hit <code>enter</code>, we&#39;re through editing the item.
-</p>
+              <p>If you hit <code>enter</code>, we&#39;re through editing the item.</p>
 
             </div>
             
@@ -497,8 +473,7 @@ app, we set a direct reference on the model for convenience.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p>Remove the item, destroy the model.
-</p>
+              <p>Remove the item, destroy the model.</p>
 
             </div>
             
@@ -530,8 +505,7 @@ app, we set a direct reference on the model for convenience.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <p>Our overall <strong>AppView</strong> is the top-level piece of UI.
-</p>
+              <p>Our overall <strong>AppView</strong> is the top-level piece of UI.</p>
 
             </div>
             
@@ -547,8 +521,7 @@ app, we set a direct reference on the model for convenience.
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Instead of generating a new element, bind to the existing skeleton of
-the App already present in the HTML.
-</p>
+the App already present in the HTML.</p>
 
             </div>
             
@@ -563,8 +536,7 @@ the App already present in the HTML.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <p>Our template for the line of statistics at the bottom of the app.
-</p>
+              <p>Our template for the line of statistics at the bottom of the app.</p>
 
             </div>
             
@@ -579,8 +551,7 @@ the App already present in the HTML.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
-              <p>Delegated events for creating new items, and clearing completed ones.
-</p>
+              <p>Delegated events for creating new items, and clearing completed ones.</p>
 
             </div>
             
@@ -601,8 +572,7 @@ the App already present in the HTML.
               </div>
               <p>At initialization we bind to the relevant events on the <code>Todos</code>
 collection, when items are added or changed. Kick things off by
-loading any preexisting todos that might be saved in <em>localStorage</em>.
-</p>
+loading any preexisting todos that might be saved in <em>localStorage</em>.</p>
 
             </div>
             
@@ -631,8 +601,7 @@ loading any preexisting todos that might be saved in <em>localStorage</em>.
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>Re-rendering the App just means refreshing the statistics -- the rest
-of the app doesn&#39;t change.
-</p>
+of the app doesn&#39;t change.</p>
 
             </div>
             
@@ -662,8 +631,7 @@ of the app doesn&#39;t change.
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>Add a single todo item to the list by creating a view for it, and
-appending its element to the <code>&lt;ul&gt;</code>.
-</p>
+appending its element to the <code>&lt;ul&gt;</code>.</p>
 
             </div>
             
@@ -681,8 +649,7 @@ appending its element to the <code>&lt;ul&gt;</code>.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
-              <p>Add all items in the <strong>Todos</strong> collection at once.
-</p>
+              <p>Add all items in the <strong>Todos</strong> collection at once.</p>
 
             </div>
             
@@ -700,8 +667,7 @@ appending its element to the <code>&lt;ul&gt;</code>.
                 <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>If you hit return in the main input field, create new <strong>Todo</strong> model,
-persisting it to <em>localStorage</em>.
-</p>
+persisting it to <em>localStorage</em>.</p>
 
             </div>
             
@@ -722,8 +688,7 @@ persisting it to <em>localStorage</em>.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
-              <p>Clear all done todo items, destroying their models.
-</p>
+              <p>Clear all done todo items, destroying their models.</p>
 
             </div>
             
@@ -748,8 +713,7 @@ persisting it to <em>localStorage</em>.
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
-              <p>Finally, we kick things off by creating the <strong>App</strong>.
-</p>
+              <p>Finally, we kick things off by creating the <strong>App</strong>.</p>
 
             </div>
             
