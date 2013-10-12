@@ -745,7 +745,7 @@
         }
         if (sort || (order && order.length)) this.trigger('sort', this, options);
       }
-      
+
       // Return the added (or merged) model (or models).
       return singular ? models[0] : models;
     },
@@ -1475,11 +1475,11 @@
       // Strip the fragment of the query and hash for matching.
       fragment = fragment.replace(pathStripper, '');
 
-      if (this.fragment === fragment) return;
+      if (this.fragment === fragment && !options.force) return;
       this.fragment = fragment;
 
       // Don't include a trailing slash on the root.
-      if (fragment === '' && url !== '/') url = url.slice(0, -1);
+      if (fragment === '' && url !== '/' && !/\?/.test(url)) url = url.slice(0, -1);
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
