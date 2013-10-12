@@ -1320,6 +1320,9 @@
   // Cached regex for removing a trailing slash.
   var trailingSlash = /\/$/;
 
+  // Cached regex for stripping urls of hash.
+  var hashStripper = /[#].*$/;
+
   // Cached regex for stripping urls of hash and query.
   var pathStripper = /[?#].*$/;
 
@@ -1347,6 +1350,7 @@
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
           fragment = this.location.pathname;
           var root = this.root.replace(trailingSlash, '');
+          if (this.query) fragment += location.search;
           if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
         } else {
           fragment = this.getHash();
@@ -1365,6 +1369,7 @@
       // Is pushState desired ... is it available?
       this.options          = _.extend({root: '/'}, this.options, options);
       this.root             = this.options.root;
+      this.query            = this.options.query;
       this._wantsHashChange = this.options.hashChange !== false;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
@@ -1472,14 +1477,16 @@
 
       var url = this.root + (fragment = this.getFragment(fragment || ''));
 
-      // Strip the fragment of the query and hash for matching.
-      fragment = fragment.replace(pathStripper, '');
+      // Strip the fragment for matching.
+      // If the 'query' option is not true, strip the query and hash,
+      // otherwise only strip the hash.
+      fragment = fragment.replace(this.query ? hashStripper : pathStripper, '');
 
-      if (this.fragment === fragment && !options.force) return;
+      if (this.fragment === fragment) return;
       this.fragment = fragment;
 
       // Don't include a trailing slash on the root.
-      if (fragment === '' && url !== '/' && !/\?/.test(url)) url = url.slice(0, -1);
+      if (fragment === '' && url !== '/') url = url.slice(0, -1);
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
