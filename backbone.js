@@ -694,12 +694,12 @@
         if (existing = this.get(id)) {
           if (remove) modelMap[existing.cid] = true;
           if (merge) {
-          	if (attrs === model) {
-          	  existing.merge(model, options);
-          	} else {
-          	  if (options.parse) attrs = existing.parse(attrs, options);
-          	  existing.set(attrs, options);
-          	}            
+            if (attrs === model) {
+              existing.merge(model, options);
+            } else {
+              if (options.parse) attrs = existing.parse(attrs, options);
+              existing.set(attrs, options);
+            }
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
           models[i] = existing;
