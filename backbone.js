@@ -544,7 +544,7 @@
       return new this.constructor(this.attributes);
     },
     
-    //merge in attributes from another model
+    // Merge in attributes from another model.
     merge: function(model, options) {
       var attrs = (options && options.parse) ? this.parse(model.attributes, options) : model.attributes;
       this.set(attrs, options);
