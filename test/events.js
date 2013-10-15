@@ -184,6 +184,12 @@
     ok(true);
   });
 
+  test("listenTo with empty object doesn't throw an error", 1, function(){
+    var e = _.extend({}, Backbone.Events);
+    e.listenTo(null, "foo", null);
+    ok(true);
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
