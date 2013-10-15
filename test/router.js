@@ -726,4 +726,19 @@
     Backbone.history.navigate('path?query#hash', true);
   });
 
+  test('#2801 - Fragment matching with query.', 1, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          strictEqual(url, '/?query');
+        }
+      }
+    });
+    location.replace('http://example.com/');
+    Backbone.history.start({pushState: true, query: true});
+    Backbone.history.navigate('?query');
+  });
+
 })();
