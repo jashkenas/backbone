@@ -1,0 +1,22 @@
+{
+  "name": "backbone",
+  "main": "backbone.js",
+  "version": "1.1.0",
+  "dependencies"  : {
+    "underscore"  : ">=1.4.3"
+  },
+  "devDependencies": {
+    "phantomjs": "1.9.0-1",
+    "docco": "0.6.1",
+    "coffee-script": "1.6.1"
+  },
+  "ignore": [
+    "test/",
+    "Rakefile",
+    "docs/",
+    "raw/",
+    "examples/",
+    "index.html",
+    ".jshintrc"
+  ]
+}
