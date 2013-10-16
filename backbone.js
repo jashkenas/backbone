@@ -676,10 +676,10 @@
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (i = 0, l = models.length; i < l; i++) {
-        attrs = models[i];
+        attrs = models[i] || {};
         if (attrs instanceof Model) {
           id = model = attrs;
-        } else if (attrs) {
+        } else {
           id = attrs[targetModel.prototype.idAttribute];
         }
 
