@@ -107,7 +107,7 @@
     equal(col.pluck('label').join(' '), 'a b c d');
   });
 
-  test("add", 10, function() {
+  test("add", 14, function() {
     var added, opts, secondAdded;
     added = opts = secondAdded = null;
     e = new Backbone.Model({id: 10, label : 'e'});
@@ -136,6 +136,18 @@
     equal(atCol.length, 4);
     equal(atCol.at(1), e);
     equal(atCol.last(), h);
+
+    var coll = new Backbone.Collection(new Array(2));
+    var addCount = 0;
+    coll.on('add', function(){
+        addCount += 1;
+    });
+    coll.add([undefined, f, g]);
+    equal(coll.length, 5);
+    equal(addCount, 3);
+    coll.add(new Array(4));
+    equal(coll.length, 9);
+    equal(addCount, 7);
   });
 
   test("add multiple models", 6, function() {
@@ -556,7 +568,7 @@
     deepEqual(col.difference([c, d]), [a, b]);
   });
 
-  test("reset", 12, function() {
+  test("reset", 16, function() {
     var resetCount = 0;
     var models = col.models;
     col.on('reset', function() { resetCount += 1; });
@@ -576,6 +588,15 @@
     col.reset();
     equal(col.length, 0);
     equal(resetCount, 4);
+
+    var f = new Backbone.Model({id: 20, label : 'f'});
+    col.reset([undefined, f]);
+    equal(col.length, 2);
+    equal(resetCount, 5);
+
+    col.reset(new Array(4));
+    equal(col.length, 4);
+    equal(resetCount, 6);
   });
 
   test ("reset with different values", function(){

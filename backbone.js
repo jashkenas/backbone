@@ -676,7 +676,7 @@
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (i = 0, l = models.length; i < l; i++) {
-        attrs = models[i];
+        attrs = models[i] || {};
         if (attrs instanceof Model) {
           id = model = attrs;
         } else {
@@ -745,7 +745,7 @@
         }
         if (sort || (order && order.length)) this.trigger('sort', this, options);
       }
-      
+
       // Return the added (or merged) model (or models).
       return singular ? models[0] : models;
     },
