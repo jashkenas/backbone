@@ -852,9 +852,9 @@ view.stopListening(model);
       <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
-      <li><b>"request"</b> (model, xhr, options) &mdash; when a model (or collection) has started a request to the server. </li>
-      <li><b>"sync"</b> (model, resp, options) &mdash; when a model (or collection) has been successfully synced with the server. </li>
-      <li><b>"error"</b> (model, xhr, options) &mdash; when a model's <a href="#Model-save">save</a> call fails on the server. </li>
+      <li><b>"request"</b> (model, collection, xhr, options) &mdash; when a model or collection has started a request to the server. </li>
+      <li><b>"sync"</b> (model, collection, resp, options) &mdash; when a model or collection has been successfully synced with the server. </li>
+      <li><b>"error"</b> (model, collection, xhr, options) &mdash; when a model's <a href="#Model-save">save</a> call fails on the server. </li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client. </li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
