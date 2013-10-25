@@ -547,7 +547,7 @@
     equal(coll.findWhere({a: 4}), void 0);
   });
 
-  test("Underscore methods", 14, function() {
+  test("Underscore methods", 16, function() {
     equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equal(col.any(function(model){ return model.id === 100; }), false);
     equal(col.any(function(model){ return model.id === 0; }), true);
@@ -566,6 +566,9 @@
             .value(),
          [4, 0]);
     deepEqual(col.difference([c, d]), [a, b]);
+    ok(col.include(col.sample()));
+    var first = col.first();
+    ok(col.indexBy('id')[first.id] === first);
   });
 
   test("reset", 16, function() {
