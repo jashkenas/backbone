@@ -963,20 +963,6 @@
     strictEqual(c.length, 0);
   });
 
-  test("set with many models does not overflow the stack", function() {
-    var n = 150000;
-    var collection = new Backbone.Collection();
-    var models = [];
-    for (var i = 0; i < n; i++) {
-      models.push({id: i});
-    }
-    collection.set(models);
-    equal(collection.length, n);
-    collection.reset();
-    collection.set(models, {at: 0});
-    equal(collection.length, n);
-  });
-
   test("set with only cids", 3, function() {
     var m1 = new Backbone.Model;
     var m2 = new Backbone.Model;
