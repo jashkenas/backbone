@@ -596,6 +596,7 @@
     options || (options = {});
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
+    if (typeof this.comparator == "function") this.comparatorLength = this.comparator.length;
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, _.extend({silent: true}, options));
@@ -832,7 +833,7 @@
       options || (options = {});
 
       // Run sort based on type of `comparator`.
-      if (_.isString(this.comparator) || this.comparator.length === 1) {
+      if (_.isString(this.comparator) || (this.comparatorLength || this.comparator.length) === 1) {
         this.models = this.sortBy(this.comparator, this);
       } else {
         this.models.sort(_.bind(this.comparator, this));
