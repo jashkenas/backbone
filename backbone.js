@@ -833,7 +833,7 @@
       options || (options = {});
 
       // Run sort based on type of `comparator`.
-      if (_.isString(this.comparator) || (this.comparatorLength || this.comparator.length) === 1) {
+      if (_.isString(this.comparator) || (this.comparator.length || this.comparatorLength) === 1) {
         this.models = this.sortBy(this.comparator, this);
       } else {
         this.models.sort(_.bind(this.comparator, this));
