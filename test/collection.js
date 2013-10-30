@@ -1284,4 +1284,39 @@
     equal(job.items.get(2).subItems.get(3).get('subName'), 'NewThree');
   });
 
+  test('_addReference binds all collection events & adds to the lookup hashes', 9, function() {
+
+    var calls = {add: 0, remove: 0};
+
+    var Collection = Backbone.Collection.extend({
+
+      _addReference: function(model) {
+        Backbone.Collection.prototype._addReference.apply(this, arguments);
+        calls.add++;
+        equal(model, this._byId[model.id]);
+        equal(model, this._byId[model.cid]);
+        equal(model._events.all.length, 1);
+      },
+
+      _removeReference: function(model) {
+        Backbone.Collection.prototype._removeReference.apply(this, arguments);
+        calls.remove++;
+        equal(this._byId[model.id], void 0);
+        equal(this._byId[model.cid], void 0);
+        equal(model.collection, void 0);
+        equal(model._events.all, void 0);
+      }
+
+    });
+
+    var collection = new Collection();
+    var model = collection.add({id: 1});
+    collection.remove(model);
+
+    equal(calls.add, 1);
+    equal(calls.remove, 1);
+
+  });
+
+
 })();
