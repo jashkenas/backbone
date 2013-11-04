@@ -5,10 +5,10 @@
   var lastRoute = null;
   var lastArgs = [];
 
-  function onRoute(router, route, args) {
+  var onRoute = function(router, route, args) {
     lastRoute = route;
     lastArgs = args;
-  }
+  };
 
   var Location = function(href) {
     this.replace(href);
@@ -16,8 +16,11 @@
 
   _.extend(Location.prototype, {
 
+    parser: document.createElement('a'),
+
     replace: function(href) {
-      _.extend(this, _.pick($('<a></a>', {href: href})[0],
+      this.parser.href = href;
+      _.extend(this, _.pick(this.parser,
         'href',
         'hash',
         'host',
