@@ -687,7 +687,7 @@
       }
     });
     location.replace('http://example.com/root/path');
-    Backbone.history.start({pushState: true, root: 'root'});
+    Backbone.history.start({pushState: true, hashChange: false, root: 'root'});
     Backbone.history.navigate('');
   });
 
@@ -702,7 +702,7 @@
       }
     });
     location.replace('http://example.com/path');
-    Backbone.history.start({pushState: true});
+    Backbone.history.start({pushState: true, hashChange: false});
     Backbone.history.navigate('');
   });
 
@@ -725,7 +725,7 @@
     var router = new Router;
 
     location.replace('http://example.com/');
-    Backbone.history.start({pushState: true});
+    Backbone.history.start({pushState: true, hashChange: false});
     Backbone.history.navigate('path?query#hash', true);
   });
 
