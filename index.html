@@ -3941,22 +3941,30 @@ inbox.messages.fetch({reset: true});
       <b class="header">Binding "this"</b>
       <br />
       Perhaps the single most common JavaScript "gotcha" is the fact that when
-      you pass a function as a callback, its value for <tt>this</tt> is lost. With
-      Backbone, when dealing with <a href="#Events">events</a> and callbacks,
-      you'll often find it useful to rely on
-      <a href="http://underscorejs.org/#bind">_.bind</a> and
-      <a href="http://underscorejs.org/#bindAll">_.bindAll</a>
-      from Underscore.js.
-    </p>
+      you pass a function as a callback, its value for <tt>this</tt> is lost.
+      When dealing with <a href="#Events">events</a> and callbacks in Backbone,
+      you'll often find it useful to rely on <a href="#Events-listenTo">listenTo</a>
+      or the optional <tt>context</tt> argument that many of Underscore
+      and Backbone's methods use to specify the <tt>this</tt>
+      that will be used when the callback is later invoked. (See
+      <a href="http://underscorejs.org/#each">_.each</a>,
+      <a href="http://underscorejs.org/#map">_.map</a>, and
+      <a href="#Events-on">object.on</a>, to name a few).
+      <a href="#View-delegateEvents">View events</a> are automatically bound to
+      the view's context for you.
+    <p>
 
     <p>
-      Be aware that `bindAll` comes with its own set of "gotchas", particularly
-      in older browsers, and its use is generally discouraged in favor of other
-      scoping techniques. Event handlers designated in your <a href="#View-delegateEvents">
-      View's events hash</a> are automatically bound to the current view
-      instance, while Backbone Events can optionally take a third argument to
-      specify the <tt>this</tt> that will be used when the callback is later
-      invoked:
+      You may also find it helpful to use
+      <a href="http://underscorejs.org/#bind">_.bind</a> and
+      <a href="http://underscorejs.org/#bindAll">_.bindAll</a>
+      from Underscore.js. Be aware, however, that due to an imperfect shim in older
+      browsers, the bound function's <em>arity</em> (that is, its <tt>length</tt>
+      property) is not preserved when a native <tt>bind</tt> is not present.
+      This is known to cause problems with <tt>constructor</tt> and collection
+      <a href="#Collection-comparator"><tt>comparator</tt></a>
+      functions bound from within the object instance and this pattern is
+      highly discouraged for this reason.
     </p>
 
 <pre>
@@ -3967,6 +3975,8 @@ var MessageList = Backbone.View.extend({
     messages.on("reset", this.render, this);
     messages.on("add", this.addMessage, this);
     messages.on("remove", this.removeMessage, this);
+
+    messsages.each(this.addMessage, this);
   }
 
 });
