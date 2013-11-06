@@ -1917,6 +1917,9 @@ var book = library.get(110);
       "sort" comparator functions take two models, and return <tt>-1</tt> if
       the first model should come before the second, <tt>0</tt> if they are of
       the same rank and <tt>1</tt> if the first model should come after.
+      <i>Note that Backbone depends on the arity of your comparator function to
+      determine between the two styles, so be careful if your comparator function
+      is bound.</i>
     </p>
 
     <p>
