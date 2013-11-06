@@ -1525,6 +1525,8 @@
   // Helpers
   // -------
 
+  var propertyIsEnumerable = Object.prototype.propertyIsEnumerable;
+
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
@@ -1540,6 +1542,9 @@
     } else {
       child = function(){ return parent.apply(this, arguments); };
     }
+
+    // Ensure prototype is not enumerable in Firefox 3.6.
+    propertyIsEnumerable.call(child, 'prototype');
 
     // Add static properties to the constructor function, if supplied.
     _.extend(child, parent, staticProps);

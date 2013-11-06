@@ -1107,4 +1107,8 @@
     model.set({a: true});
   });
 
+  test("prototype of child class is not enumerable", function() {
+    ok(!_.include(_.keys(Backbone.Model.extend()), 'prototype'));
+  });
+
 })();
