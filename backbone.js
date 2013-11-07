@@ -4,25 +4,30 @@
 //     For all details and documentation:
 //     http://documentcloud.github.com/backbone
 
-(function(){
+(function(root, factory) {
+  // Set up Backbone appropriately for the environment.
+  if (typeof define === 'function' && define.amd) {
+    // AMD
+    define(['underscore', 'jquery', 'exports'], function(_, $, exports) {
+      // Export global even in AMD case in case this script is loaded with
+      // others that may still expect a global Backbone.
+      root.Backbone = factory(root, exports, _, $);
+    });
+  } else if (typeof exports !== 'undefined') {
+    // Node/CommonJS, no need for jQuery in that case.
+    factory(root, exports, require('underscore'));
+  } else {
+    // Browser globals
+    // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
+    root.Backbone = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$));
+  }
+}(this, function(root, Backbone, _, $) {
 
   // Initial Setup
   // -------------
 
-  // Save a reference to the global object.
-  var root = this;
-
   // Save the previous value of the `Backbone` variable.
   var previousBackbone = root.Backbone;
-
-  // The top-level namespace. All public Backbone classes and modules will
-  // be attached to this. Exported for both CommonJS and the browser.
-  var Backbone;
-  if (typeof exports !== 'undefined') {
-    Backbone = exports;
-  } else {
-    Backbone = root.Backbone = {};
-  }
 
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '0.5.3';
@@ -30,9 +35,6 @@
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
   if (!_ && (typeof require !== 'undefined')) _ = require('underscore')._;
-
-  // For Backbone's purposes, jQuery, Zepto, or Ender owns the `$` variable.
-  var $ = root.jQuery || root.Zepto || root.ender;
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
@@ -1161,4 +1163,5 @@
     return string.replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/\//g,'&#x2F;');
   };
 
-}).call(this);
+  return Backbone;
+}));
