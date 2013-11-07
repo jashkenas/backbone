@@ -5,7 +5,6 @@
   <link rel="stylesheet" href="vendor/qunit.css" type="text/css" media="screen" />
   <script type="text/javascript" src="vendor/json2.js"></script>
   <script type="text/javascript" src="vendor/qunit.js"></script>
-  <script type="text/javascript" src="vendor/jslitmus.js"></script>
   <script type="text/javascript" src="vendor/require.js"></script>
   <script>
     // Tests are loaded async, so wait for them
@@ -17,12 +16,6 @@
         'jquery': 'vendor/jquery',
         'underscore': 'vendor/underscore',
         'backbone': '../backbone'
-      },
-      // jQuery is old, so shim.
-      shim: {
-        jquery: {
-          exports: 'jQuery'
-        }
       }
     });
 
@@ -30,6 +23,7 @@
 
     require(['backbone'], function(Backbone) {
       require([
+        'environment',
         'noconflict',
         'events',
         'model',
