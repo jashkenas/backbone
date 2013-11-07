@@ -20,6 +20,11 @@
   // Save bytes in the minified (but not gzipped) version:
   var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
 
+  //use the faster Date.now if available.
+  var getTime = (Date.now || function() {
+    return new Date().getTime();
+  });
+
   // Create quick reference variables for speed access to core prototypes.
   var
     push             = ArrayProto.push,
@@ -284,7 +289,7 @@
   };
 
   // Shuffle an array, using the modern version of the
-  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisherâ€“Yates_shuffle).
+  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
   _.shuffle = function(obj) {
     var rand;
     var index = 0;
@@ -297,11 +302,12 @@
     return shuffled;
   };
 
-  // Sample **n** random values from an array.
-  // If **n** is not specified, returns a single random element from the array.
+  // Sample **n** random values from a collection.
+  // If **n** is not specified, returns a single random element.
   // The internal `guard` argument allows it to work with `map`.
   _.sample = function(obj, n, guard) {
-    if (arguments.length < 2 || guard) {
+    if (n == null || guard) {
+      if (obj.length !== +obj.length) obj = _.values(obj);
       return obj[_.random(obj.length - 1)];
     }
     return _.shuffle(obj).slice(0, Math.max(0, n));
@@ -314,7 +320,7 @@
 
   // Sort the object's values by a criterion produced by an iterator.
   _.sortBy = function(obj, value, context) {
-    var iterator = lookupIterator(value);
+    var iterator = value == null ? _.identity : lookupIterator(value);
     return _.pluck(_.map(obj, function(value, index, list) {
       return {
         value: value,
@@ -664,12 +670,13 @@
     var previous = 0;
     options || (options = {});
     var later = function() {
-      previous = options.leading === false ? 0 : new Date;
+      previous = options.leading === false ? 0 : getTime();
       timeout = null;
       result = func.apply(context, args);
+      context = args = null;
     };
     return function() {
-      var now = new Date;
+      var now = getTime();
       if (!previous && options.leading === false) previous = now;
       var remaining = wait - (now - previous);
       context = this;
@@ -679,6 +686,7 @@
         timeout = null;
         previous = now;
         result = func.apply(context, args);
+        context = args = null;
       } else if (!timeout && options.trailing !== false) {
         timeout = setTimeout(later, remaining);
       }
@@ -695,21 +703,28 @@
     return function() {
       context = this;
       args = arguments;
-      timestamp = new Date();
+      timestamp = getTime();
       var later = function() {
-        var last = (new Date()) - timestamp;
+        var last = getTime() - timestamp;
         if (last < wait) {
           timeout = setTimeout(later, wait - last);
         } else {
           timeout = null;
-          if (!immediate) result = func.apply(context, args);
+          if (!immediate) {
+            result = func.apply(context, args);
+            context = args = null;
+          }
         }
       };
       var callNow = immediate && !timeout;
       if (!timeout) {
         timeout = setTimeout(later, wait);
       }
-      if (callNow) result = func.apply(context, args);
+      if (callNow) {
+        result = func.apply(context, args);
+        context = args = null;
+      }
+
       return result;
     };
   };
@@ -731,11 +746,7 @@
   // allowing you to adjust arguments, run code before and after, and
   // conditionally execute the original function.
   _.wrap = function(func, wrapper) {
-    return function() {
-      var args = [func];
-      push.apply(args, arguments);
-      return wrapper.apply(this, args);
-    };
+    return _.partial(wrapper, func);
   };
 
   // Returns a function that is the composition of a list of functions, each
