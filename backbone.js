@@ -16,9 +16,11 @@
       root.Backbone = factory(root, exports, _, $);
     });
 
-  // Next for Node.js or CommonJS.
+  // Next for Node.js or CommonJS. jQuery may not be needed as a module.
   } else if (typeof exports !== 'undefined') {
-    factory(root, exports, require('underscore'));
+    var _ = require('underscore'), $;
+    try { $ = require('jquery'); } catch(e) {};
+    factory(root, exports, _, $);
 
   // Finally, as a browser global.
   } else {
@@ -115,7 +117,7 @@
       var retain, ev, events, names, i, l, j, k;
       if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
       if (!name && !callback && !context) {
-        this._events = {};
+        this._events = void 0;
         return this;
       }
       names = name ? [name] : _.keys(this._events);
