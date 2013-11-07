@@ -115,7 +115,7 @@
       var retain, ev, events, names, i, l, j, k;
       if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
       if (!name && !callback && !context) {
-        this._events = {};
+        this._events = void 0;
         return this;
       }
       names = name ? [name] : _.keys(this._events);
