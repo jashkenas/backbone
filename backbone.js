@@ -85,7 +85,7 @@
     var tag = document.createElement('div');
     var name, method;
     // Detect the right suffix.
-    ['matches', 'webkit' + sfx, 'moz' + sfx, 'ms' + sfx].some(function(item) {
+    _.some(['matches', 'webkit' + sfx, 'moz' + sfx, 'ms' + sfx], function(item) {
       var valid = (item in tag);
       name = item;
       return valid;
