@@ -4036,6 +4036,10 @@ ActiveRecord::Base.include_root_in_json = false
         and vivify incoming nested JSON into associated submodels.
       </li>
       <li>
+        Backbone Models no longer automatically attach the <tt>url</tt> and <tt>urlRoot</tt>
+        options passed to the constructor.
+      </li>
+      <li>
         Many tweaks, optimizations and bugfixes relating to Backbone 1.0,
         including URL overrides, mutation of options, bulk ordering, trailing
         slashes, edge-case listener leaks, nested model parsing...
