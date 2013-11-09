@@ -105,8 +105,9 @@
 
   // Make AJAX request to the server.
   // Usage:
-  //   var callback = function(error, data) {console.log('Done.', error, data);};
-  //   ajax({url: 'url', type: 'PATCH', data: 'data'}, callback);
+  //   var success = function(data) {console.log('Done.', data);};
+  //   var error = function(err) {console.error('Failure.', err);};
+  //   ajax({url: 'url', type: 'PATCH', data: '{data: 1}', success: success, error: error});
   utils.ajax = (function() {
     var xmlRe = /^(?:application|text)\/xml/;
     var jsonRe = /^application\/json/;
