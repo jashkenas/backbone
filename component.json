@@ -9,5 +9,5 @@
   },
   "main"          : "backbone.js",
   "scripts"       : ["backbone.js"],
-  "license"       : "MIT",
+  "license"       : "MIT"
 }
