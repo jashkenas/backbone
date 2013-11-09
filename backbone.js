@@ -1295,7 +1295,10 @@
           var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
           this.setElement($el, false);
         } else {
-          var el = _.extend(document.createElement(_.result(this, 'tagName')), attrs);
+          var el = document.createElement(_.result(this, 'tagName'));
+          _.each(attrs, function(val, name) {
+            el.setAttribute(name, val);
+          });
           this.setElement(el, false);
         }
       } else {
