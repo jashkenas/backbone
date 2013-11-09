@@ -865,7 +865,7 @@ view.stopListening(model);
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
       <li><b>"request"</b> (model, collection, xhr, options) &mdash; when a model or collection has started a request to the server. </li>
       <li><b>"sync"</b> (model, collection, resp, options) &mdash; when a model or collection has been successfully synced with the server. </li>
-      <li><b>"error"</b> (model, collection, xhr, options) &mdash; when a model's <a href="#Model-save">save</a> call fails on the server. </li>
+      <li><b>"error"</b> (model, collection, resp, options) &mdash; when a model's <a href="#Model-save">save</a> call fails on the server. </li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client. </li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
@@ -1295,8 +1295,7 @@ book.save({author: "Teddy"});
 
     <p>
       <b>save</b> accepts <tt>success</tt> and <tt>error</tt> callbacks in the
-      options hash, which are passed <tt>(model, response, options)</tt> and
-      <tt>(model, xhr, options)</tt> as arguments, respectively.
+      options hash, which will passed the arguments <tt>(model, response, options)</tt>.
       If a server-side validation fails, return a non-<tt>200</tt>
       HTTP response code, along with an error response in text or JSON.
     </p>
@@ -1313,8 +1312,7 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> object, or
       <tt>false</tt> if the model <a href="#Model-isNew">isNew</a>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response, options)</tt> and <tt>(model, xhr, options)</tt>
-      as arguments, respectively.
+      will be passed <tt>(model, response, options)</tt>.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
       through any collections that contain it, a <tt>"request"</tt> event as it
       begins the Ajax request to the server, and a <tt>"sync"</tt> event, after
