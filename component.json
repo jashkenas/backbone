@@ -5,7 +5,7 @@
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
   "repository"    : "jashkenas/backbone",
   "dependencies"  : {
-    "underscore"  : ">=1.4.3"
+    "jashkenas/underscore"  : ">=1.4.3"
   },
   "main"          : "backbone.js",
   "scripts"       : ["backbone.js"],
