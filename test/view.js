@@ -40,6 +40,7 @@
     var counter1 = 0, counter2 = 0;
 
     var view = new Backbone.View({el: '<p><a id="test"></a></p>'});
+    view.render().$el.appendTo('#qunit-fixture');
     view.increment = function(){ counter1++; };
     view.$el.on('click', function(){ counter2++; });
 
@@ -93,6 +94,7 @@
     var counter1 = 0, counter2 = 0;
 
     var view = new Backbone.View({el: '<p><a id="test"></a></p>'});
+    view.render().$el.appendTo('#qunit-fixture');
     view.increment = function(){ counter1++; };
     view.$el.on('click', function(){ counter2++; });
 
@@ -218,7 +220,7 @@
     $('body').trigger('fake$event').trigger('fake$event');
     equal(count, 2);
 
-    $('body').unbind('.namespaced');
+    $('body').off('.namespaced');
     $('body').trigger('fake$event');
     equal(count, 2);
   });
@@ -315,9 +317,11 @@
     });
 
     var view = new View({events:{'click #test':'increment'}});
+    view.render().$el.appendTo('#qunit-fixture');
     var view2 = new View({events:function(){
       return {'click #test':'increment'};
     }});
+    view2.render().$el.appendTo('#qunit-fixture');
 
     view.$('#test').trigger('click');
     view2.$('#test').trigger('click');
