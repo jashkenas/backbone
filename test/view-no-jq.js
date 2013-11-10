@@ -25,7 +25,7 @@
     var el = document.createElement('p');
     el.innerHTML = '<a><b>test</b></a>';
     view.setElement(el);
-    strictEqual(view.$('a b')[0].innerHTML, 'test');
+    strictEqual(view.find('a b').innerHTML, 'test');
   });
 
   test("initialize", 1, function() {
@@ -353,12 +353,12 @@
       return {'click #test':'increment'};
     }});
 
-    view.$('#test')[0].click();
-    view2.$('#test')[0].click();
+    view.find('#test').click();
+    view2.find('#test').click();
     equal(counter, 4);
 
-    view.$('#test')[0].click();
-    view2.$('#test')[0].click();
+    view.find('#test').click();
+    view2.find('#test').click();
     equal(counter, 8);
     el.parentNode.removeChild(el);
   });
