@@ -1583,7 +1583,12 @@
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
       if (oldIE && this._wantsHashChange) {
-        this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
+        var iframe = document.createElement('iframe');
+        iframe.setAttribute('src', 'javascript:0');
+        iframe.setAttribute('tabindex', '-1');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        this.iframe = iframe.contentWindow;
         this.navigate(fragment);
       }
 
