@@ -1596,7 +1596,6 @@
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
         window.addEventListener('popstate', this.checkUrl, false);
-        // TODO
       } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
         if (window.addEventListener) {
           window.addEventListener('hashchange', this.checkUrl, false);
@@ -1640,11 +1639,11 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      if (Backbone.$) {
-        Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
-      } else {
+      if (window.removeEventListener) {
         window.removeEventListener('popstate', this.checkUrl);
         window.removeEventListener('hashchange', this.checkUrl);
+      } else {
+        window.detachEvent('onhashchange', this.checkUrl);
       }
       clearInterval(this._checkUrlInterval);
       History.started = false;
