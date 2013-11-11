@@ -1292,16 +1292,11 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        if (Backbone.$) {
-          var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
-          this.setElement($el, false);
-        } else {
-          var el = document.createElement(_.result(this, 'tagName'));
-          _.each(attrs, function(val, name) {
-            el.setAttribute(name, val);
-          });
-          this.setElement(el, false);
-        }
+        var el = document.createElement(_.result(this, 'tagName'));
+        _.each(attrs, function(val, name) {
+          el.setAttribute(name, val);
+        });
+        this.setElement(el, false);
       } else {
         this.setElement(_.result(this, 'el'), false);
       }
