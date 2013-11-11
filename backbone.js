@@ -1595,16 +1595,13 @@
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
-        if (Backbone.$) {
-          Backbone.$(window).on('popstate', this.checkUrl);
-        } else {
-          window.addEventListener('popstate', this.checkUrl, false);
-        }
+        window.addEventListener('popstate', this.checkUrl, false);
+        // TODO
       } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        if (Backbone.$) {
-          Backbone.$(window).on('hashchange', this.checkUrl);
-        } else {
+        if (window.addEventListener) {
           window.addEventListener('hashchange', this.checkUrl, false);
+        } else {
+          window.attachEvent('onhashchange', this.checkUrl);
         }
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
