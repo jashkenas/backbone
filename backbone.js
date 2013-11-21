@@ -1293,9 +1293,14 @@
     // treated as `null` to normalize cross-browser behavior.
     _extractParameters: function(route, fragment) {
       var params = route.exec(fragment).slice(1);
-      return _.map(params, function(param) {
+      var args = _.map(params, function(param) {
         return param ? decodeURIComponent(param) : null;
       });
+
+      if (Backbone.qs)
+        args.push(Backbone.qs(args.pop()));
+
+      return args;
     }
 
   });

@@ -297,6 +297,14 @@
     equal(lastArgs[1], 'a=b&c=d');
   });
 
+  test("routes (query parsed)", 1, function() {
+    Backbone.qs = function (args) { return {a: 'b'}; }
+    location.replace('http://example.com#query/mandel?a=b');
+    Backbone.history.checkUrl();
+    Backbone.qs = null;
+    deepEqual(lastArgs[1], {a: 'b'});
+  });
+
   test("routes (query complex)", 4, function() {
     location.replace('http://example.com#a/b/complex-c/d?a=b');
     Backbone.history.checkUrl();
