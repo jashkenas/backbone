@@ -211,6 +211,11 @@
     equal(router.page, '20');
   });
 
+  test("routes via navigate with params", 1, function() {
+    Backbone.history.navigate('query/test?a=b', {trigger: true});
+    equal(router.queryArgs, 'a=b');
+  });
+
   test("routes via navigate for backwards-compatibility", 2, function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equal(router.query, 'manhattan');

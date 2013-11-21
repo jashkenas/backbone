@@ -1336,9 +1336,6 @@
   // Cached regex for removing a trailing slash.
   var trailingSlash = /\/$/;
 
-  // Cached regex for stripping urls of hash and query.
-  var pathStripper = /[?#].*$/;
-
   // Has the history handling already been started?
   History.started = false;
 
@@ -1487,9 +1484,6 @@
       if (!options || options === true) options = {trigger: !!options};
 
       var url = this.root + (fragment = this.getFragment(fragment || ''));
-
-      // Strip the fragment of the query and hash for matching.
-      fragment = fragment.replace(pathStripper, '');
 
       if (this.fragment === fragment) return;
       this.fragment = fragment;
