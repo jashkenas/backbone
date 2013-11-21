@@ -90,7 +90,7 @@
       ":repo/compare/*from...*to":  "github",
       "decode/:named/*splat":       "decode",
       "*first/complex-*part/*rest": "complex",
-      ":entity?*args":              "query",
+      "query/:entity":              "query",
       "function/:value":            ExternalObject.routingFunction,
       "*anything":                  "anything"
     },
@@ -288,13 +288,22 @@
   });
 
   test("routes (query)", 5, function() {
-    location.replace('http://example.com#mandel?a=b&c=d');
+    location.replace('http://example.com#query/mandel?a=b&c=d');
     Backbone.history.checkUrl();
     equal(router.entity, 'mandel');
     equal(router.queryArgs, 'a=b&c=d');
     equal(lastRoute, 'query');
     equal(lastArgs[0], 'mandel');
     equal(lastArgs[1], 'a=b&c=d');
+  });
+
+  test("routes (query complex)", 4, function() {
+    location.replace('http://example.com#a/b/complex-c/d?a=b');
+    Backbone.history.checkUrl();
+    equal(lastArgs[0], 'a/b');
+    equal(lastArgs[1], 'c');
+    equal(lastArgs[2], 'd');
+    equal(lastArgs[3], 'a=b');
   });
 
   test("routes (anything)", 1, function() {
@@ -604,7 +613,7 @@
   test("#2062 - Trigger 'route' event on router instance.", 2, function() {
     router.on('route', function(name, args) {
       strictEqual(name, 'routeEvent');
-      deepEqual(args, ['x']);
+      deepEqual(args, ['x', null]);
     });
     location.replace('http://example.com#route-event/x');
     Backbone.history.checkUrl();
