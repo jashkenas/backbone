@@ -319,6 +319,24 @@
     equal(lastArgs[3], 'a=b');
   });
 
+  test('routes (query pushState with hashChange)', 2, function() {
+    Backbone.history.stop();
+    Backbone.history.start({pushState: true, hashChange: true});
+    location.replace('http://example.com/query/mandel?a=b#hash');
+    Backbone.history.checkUrl();
+    equal(lastArgs[0], 'mandel');
+    equal(lastArgs[1], 'a=b#hash');
+  });
+
+  test('routes (query pushState without hashChange)', 2, function() {
+    Backbone.history.stop();
+    Backbone.history.start({pushState: true, hashChange: false});
+    location.replace('http://example.com/query/mandel?a=b#hash');
+    Backbone.history.checkUrl();
+    equal(lastArgs[0], 'mandel');
+    equal(lastArgs[1], 'a=b');
+  });
+
   test("routes (anything)", 1, function() {
     location.replace('http://example.com#doesnt-match-a-route');
     Backbone.history.checkUrl();
