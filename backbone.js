@@ -1296,10 +1296,20 @@
       var args = _.map(params, function(param) {
         return param ? decodeURIComponent(param) : null;
       });
+      return this._processArgs(args);
+    },
 
-      if (Backbone.qs)
-        args.push(Backbone.qs(args.pop()));
-
+    _processArgs: function(args) {
+      if (Backbone.History.parseQueryString) {
+        var lastArg = args.pop();
+        if (lastArg != null) {
+          var tokens = lastArg.split('#');
+          var query = tokens[0];
+          var hash = tokens[1];
+          args.push(Backbone.History.parseQueryString(query));
+          args.push(hash);
+        }
+      }
       return args;
     }
 

@@ -303,10 +303,10 @@
   });
 
   test("routes (query parsed)", 1, function() {
-    Backbone.qs = function (args) { return {a: 'b'}; }
+    Backbone.History.parseQueryString = function (args) { return {a: 'b'}; }
     location.replace('http://example.com#query/mandel?a=b');
     Backbone.history.checkUrl();
-    Backbone.qs = null;
+    Backbone.History.parseQueryString = null;
     deepEqual(lastArgs[1], {a: 'b'});
   });
 
@@ -335,6 +335,18 @@
     Backbone.history.checkUrl();
     equal(lastArgs[0], 'mandel');
     equal(lastArgs[1], 'a=b');
+  });
+
+  test('routes (query pushState parsed with hashChange)', 3, function() {
+    Backbone.History.parseQueryString = function (args) { return {a: 'b'}; }
+    Backbone.history.stop();
+    Backbone.history.start({pushState: true, hashChange: true});
+    location.replace('http://example.com/query/mandel?a=b#hash');
+    Backbone.history.checkUrl();
+    Backbone.History.parseQueryString = null;
+    equal(lastArgs[0], 'mandel');
+    deepEqual(lastArgs[1], {a: 'b'});
+    equal(lastArgs[2], 'hash');
   });
 
   test("routes (anything)", 1, function() {
