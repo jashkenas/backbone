@@ -16,6 +16,11 @@
         'jquery': 'vendor/jquery',
         'underscore': 'vendor/underscore',
         'backbone': '../backbone'
+      },
+      shim: {
+        'underscore': {
+          exports: '_'
+        }
       }
     });
 
@@ -38,12 +43,11 @@
   </script>
 </head>
 <body>
-  <h1 id="qunit-header">Backbone Test Suite</h1>
-  <h2 id="qunit-banner"></h2>
-  <h2 id="qunit-userAgent"></h2>
-  <ol id="qunit-tests"></ol>
-  <br /><br />
-  <h1 id="qunit-header"><a href="#">Backbone Speed Suite</a></h1>
-  <div id="jslitmus_container" style="margin: 20px 10px;"></div>
+  <div id="qunit"></div>
+  <div id="qunit-fixture">
+    <div id='testElement'>
+      <h1>Test</h1>
+    </div>
+  </div>
 </body>
 </html>
