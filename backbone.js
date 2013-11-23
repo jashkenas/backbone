@@ -1248,7 +1248,7 @@
       var router = this;
       Backbone.history.route(route, function(fragment) {
         var args = router._extractParameters(route, fragment);
-        callback && callback.apply(router, args);
+        if (callback) callback.apply(router, args);
         router.trigger.apply(router, ['route:' + name].concat(args));
         router.trigger('route', name, args);
         Backbone.history.trigger('route', router, name, args);
@@ -1280,12 +1280,10 @@
       route = route.replace(escapeRegExp, '\\$&')
                    .replace(optionalParam, '(?:$1)?')
                    .replace(namedParam, function(match, optional) {
-                     return optional ? match : '([^\/\?]+)';
+                     return optional ? match : '([^/?]+)';
                    })
-                   .replace(splatParam, '([^\?]*?)')
-                   .concat('(?:\\?(.*))?');
-
-      return new RegExp('^' + route + '$');
+                   .replace(splatParam, '([^?]*?)');
+      return new RegExp('^' + route + '(?:\\?(.*))?$');
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
@@ -1293,24 +1291,11 @@
     // treated as `null` to normalize cross-browser behavior.
     _extractParameters: function(route, fragment) {
       var params = route.exec(fragment).slice(1);
-      var args = _.map(params, function(param) {
+      return _.map(params, function(param, i) {
+        // Don't decode the search params.
+        if (i === params.length - 1) return param || null;
         return param ? decodeURIComponent(param) : null;
       });
-      return this._processArgs(args);
-    },
-
-    _processArgs: function(args) {
-      if (Backbone.History.parseQueryString) {
-        var lastArg = args.pop();
-        if (lastArg != null) {
-          var tokens = lastArg.split('#');
-          var query = tokens[0];
-          var hash = tokens[1];
-          args.push(Backbone.History.parseQueryString(query));
-          args.push(hash);
-        }
-      }
-      return args;
     }
 
   });
@@ -1346,6 +1331,9 @@
   // Cached regex for removing a trailing slash.
   var trailingSlash = /\/$/;
 
+  // Cached regex for stripping urls of hash.
+  var pathStripper = /#.*$/;
+
   // Has the history handling already been started?
   History.started = false;
 
@@ -1355,6 +1343,11 @@
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
     interval: 50,
+
+    // Are we at the app root?
+    atRoot: function() {
+      return this.location.pathname.replace(/[^\/]$/, '$&/') === this.root;
+    },
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
@@ -1370,8 +1363,6 @@
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
           fragment = this.location.pathname + this.location.search;
           var root = this.root.replace(trailingSlash, '');
-          var hash = this.getHash();
-          if (hash && this._wantsHashChange) fragment += '#' + hash;
           if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
         } else {
           fragment = this.getHash();
@@ -1419,7 +1410,6 @@
       // opened by a non-pushState browser.
       this.fragment = fragment;
       var loc = this.location;
-      var atRoot = loc.pathname.replace(/[^\/]$/, '$&/') === this.root;
 
       // Transition from hashChange to pushState or vice versa if both are
       // requested.
@@ -1427,17 +1417,17 @@
 
         // If we've started off with a route from a `pushState`-enabled
         // browser, but we're currently in a browser that doesn't support it...
-        if (!this._hasPushState && !atRoot) {
+        if (!this._hasPushState && !this.atRoot()) {
           this.fragment = this.getFragment(null, true);
-          this.location.replace(this.root + this.location.search + '#' + this.fragment);
+          this.location.replace(this.root + '#' + this.fragment);
           // Return immediately as browser will do redirect to new url
           return true;
 
         // Or if we've started out with a hash-based route, but we're currently
         // in a browser where it could be `pushState`-based instead...
-        } else if (this._hasPushState && atRoot && loc.hash) {
+        } else if (this._hasPushState && this.atRoot() && loc.hash) {
           this.fragment = this.getHash().replace(routeStripper, '');
-          this.history.replaceState({}, document.title, this.root + this.fragment + loc.search);
+          this.history.replaceState({}, document.title, this.root + this.fragment);
         }
 
       }
@@ -1496,6 +1486,9 @@
       if (!options || options === true) options = {trigger: !!options};
 
       var url = this.root + (fragment = this.getFragment(fragment || ''));
+
+      // Strip the hash for matching.
+      fragment = fragment.replace(pathStripper, '');
 
       if (this.fragment === fragment) return;
       this.fragment = fragment;
