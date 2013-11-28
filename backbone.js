@@ -67,6 +67,167 @@
   // form param named `model`.
   Backbone.emulateJSON = false;
 
+  // Backbone.utils
+  // --------------
+
+  var utils = Backbone.utils = {};
+
+  // Usage:
+  //   utils.matchesSelector(div, '.something');
+  utils.matchesSelector = (function() {
+    if (typeof document === 'undefined') return;
+    // Suffix.
+    var sfx = 'MatchesSelector';
+    var tag = document.createElement('div');
+    var name, method;
+    // Detect the right suffix.
+    _.some(['matches', 'webkit' + sfx, 'moz' + sfx, 'ms' + sfx], function(item) {
+      var valid = (item in tag);
+      name = item;
+      return valid;
+    });
+    if (name) {
+      return function(element, selector) {
+        return name ? element[name](selector) : method(element, selector);
+      };
+    } else {
+      return function(element, selector) {
+        var nodes = (element.parentNode || element.document).querySelectorAll(selector), i = -1;
+        while (nodes[++i] && nodes[i] != element);
+        return !!nodes[i];
+      };
+    }
+  })();
+
+  // Make AJAX request to the server.
+  // Usage:
+  //   var success = function(data) {console.log('Done.', data);};
+  //   var error = function(err) {console.error('Failure.', err);};
+  //   ajax({url: 'url', type: 'PATCH', data: '{data: 1}', success: success, error: error});
+  utils.ajax = (function() {
+    var xmlRe = /^(?:application|text)\/xml/;
+    var jsonRe = /^application\/json/;
+
+    var getData = function(accepts, xhr) {
+      if (accepts == null) accepts = xhr.getResponseHeader('content-type');
+      if (xmlRe.test(accepts)) {
+        return xhr.responseXML;
+      } else if (jsonRe.test(accepts)) {
+        return JSON.parse(xhr.responseText);
+      } else {
+        return xhr.responseText;
+      }
+    };
+
+    var isValid = function(xhr) {
+      return (xhr.status >= 200 && xhr.status < 300) ||
+        (xhr.status === 304) ||
+        (xhr.status === 0 && window.location.protocol === 'file:')
+    };
+
+    var end = function(xhr, options, deferred) {
+      return function() {
+        if (xhr.readyState !== 4) return;
+
+        var status = xhr.status;
+        var data = getData(options.headers && options.headers.Accept, xhr);
+
+        // Check for validity.
+        if (isValid(xhr)) {
+          if (options.success) options.success(data);
+          if (deferred) deferred.resolve(data);
+        } else {
+          var error = new Error('Server responded with a status of ' + status);
+          if (options.error) options.error(xhr, status, error);
+          if (deferred) deferred.reject(xhr);
+        }
+      }
+    };
+
+    return function(options) {
+      if (options == null) throw new Error('You must provide options');
+      if (options.type == null) options.type = 'GET';
+
+      var xhr = new XMLHttpRequest();
+      var deferred = Backbone.Deferred && Backbone.Deferred();
+
+      if (options.contentType) {
+        if (options.headers == null) options.headers = {};
+        options.headers['Content-Type'] = options.contentType;
+      }
+      if (options.credentials) options.withCredentials = true;
+      xhr.addEventListener('readystatechange', end(xhr, options, deferred));
+      xhr.open(options.type, options.url, true);
+      if (options.headers) for (var key in options.headers) {
+        xhr.setRequestHeader(key, options.headers[key]);
+      }
+      if (options.beforeSend) options.beforeSend(xhr);
+      xhr.send(options.data);
+
+      return deferred ? deferred.promise : void 0;
+    };
+  })();
+
+  utils.delegate = function(view, eventName, selector, callback) {
+    if (typeof selector === 'function') {
+      callback = selector;
+      selector = null;
+    }
+
+    if (typeof callback !== 'function') {
+      throw new TypeError('View#delegate expects callback function');
+    }
+
+    var root = view.el;
+    var bound = callback.bind(view);
+    var handler = selector ? function(event) {
+      for (var el = event.target; el && el !== root; el = el.parentNode) {
+        if (utils.matchesSelector(el, selector)) {
+          // event.currentTarget or event.target are read-only.
+          event.delegateTarget = el;
+          return bound(event);
+        }
+      }
+    } : bound;
+
+    root.addEventListener(eventName, handler, false);
+    view._handlers.push({
+      eventName: eventName, selector: selector,
+      callback: callback, handler: handler
+    });
+    return handler;
+  };
+
+  utils.undelegate = function(view, eventName, selector, callback) {
+    if (typeof selector === 'function') {
+      callback = selector;
+      selector = null;
+    }
+
+    var handlers = view._handlers;
+    var removeListener = function(item) {
+      view.el.removeEventListener(item.eventName, item.handler, false);
+    };
+
+    // Remove all handlers.
+    if (!eventName && !selector && !callback) {
+      handlers.forEach(removeListener);
+      view._handlers = [];
+    } else {
+      // Remove some handlers.
+      handlers
+        .filter(function(item) {
+          return item.eventName === eventName &&
+            (callback ? item.callback === callback : true) &&
+            (selector ? item.selector === selector : true);
+        })
+        .forEach(function(item) {
+          removeListener(item);
+          handlers.splice(handlers.indexOf(item), 1);
+        });
+    }
+  };
+
   // Backbone.Events
   // ---------------
 
@@ -992,6 +1153,8 @@
     this.cid = _.uniqueId('view');
     options || (options = {});
     _.extend(this, _.pick(options, viewOptions));
+    // Native event handlers list.
+    this._handlers = [];
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
@@ -1015,6 +1178,15 @@
       return this.$el.find(selector);
     },
 
+    // Native DOM methods.
+    find: function(selector) {
+      return this.el.querySelector(selector);
+    },
+
+    findAll: function(selector) {
+      return slice.call(this.el.querySelectorAll(selector));
+    },
+
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize: function(){},
@@ -1029,7 +1201,12 @@
     // Remove this view by taking the element out of the DOM, and removing any
     // applicable Backbone.Events listeners.
     remove: function() {
-      this.$el.remove();
+      var parent;
+      if (Backbone.$) {
+        this.$el.remove();
+      } else if (parent = this.el.parentNode) {
+        parent.removeChild(this.el);
+      }
       this.stopListening();
       return this;
     },
@@ -1037,9 +1214,15 @@
     // Change the view's element (`this.el` property), including event
     // re-delegation.
     setElement: function(element, delegate) {
-      if (this.$el) this.undelegateEvents();
-      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
-      this.el = this.$el[0];
+      if (Backbone.$) {
+        if (this.$el) this.undelegateEvents();
+        this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
+        this.el = this.$el[0];
+      } else {
+        if (this.el) this.undelegateEvents();
+        this.el = (typeof element === 'string') ?
+          document.querySelector(element) : element;
+      }
       if (delegate !== false) this.delegateEvents();
       return this;
     },
@@ -1069,12 +1252,13 @@
 
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
-        method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.on(eventName, method);
+
+        if (Backbone.$) {
+          eventName += '.delegateEvents' + this.cid;
+          method = _.bind(method, this);
+          this.$el.on(eventName, (selector ? selector : null), method);
         } else {
-          this.$el.on(eventName, selector, method);
+          utils.delegate(this, eventName, selector, method);
         }
       }
       return this;
@@ -1084,7 +1268,11 @@
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
-      this.$el.off('.delegateEvents' + this.cid);
+      if (Backbone.$) {
+        this.$el.off('.delegateEvents' + this.cid);
+      } else {
+        utils.undelegate(this);
+      }
       return this;
     },
 
@@ -1097,8 +1285,11 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
-        this.setElement($el, false);
+        var el = document.createElement(_.result(this, 'tagName'));
+        _.each(attrs, function(val, name) {
+          el.setAttribute(name, val);
+        });
+        this.setElement(el, false);
       } else {
         this.setElement(_.result(this, 'el'), false);
       }
@@ -1198,8 +1389,12 @@
 
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
   // Override this if you'd like to use a different library.
-  Backbone.ajax = function() {
+  Backbone.ajax = Backbone.$ ? function() {
     return Backbone.$.ajax.apply(Backbone.$, arguments);
+  } : utils.ajax;
+
+  if (Backbone.$) Backbone.Deferred = function() {
+    return new Backbone.$.Deferred();
   };
 
   // Backbone.Router
@@ -1381,16 +1576,25 @@
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
       if (oldIE && this._wantsHashChange) {
-        this.iframe = Backbone.$('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo('body')[0].contentWindow;
+        var iframe = document.createElement('iframe');
+        iframe.setAttribute('src', 'javascript:0');
+        iframe.setAttribute('tabindex', '-1');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        this.iframe = iframe.contentWindow;
         this.navigate(fragment);
       }
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
-        Backbone.$(window).on('popstate', this.checkUrl);
+        window.addEventListener('popstate', this.checkUrl, false);
       } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        Backbone.$(window).on('hashchange', this.checkUrl);
+        if (window.addEventListener) {
+          window.addEventListener('hashchange', this.checkUrl, false);
+        } else {
+          window.attachEvent('onhashchange', this.checkUrl);
+        }
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
@@ -1428,7 +1632,12 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
+      if (window.removeEventListener) {
+        window.removeEventListener('popstate', this.checkUrl);
+        window.removeEventListener('hashchange', this.checkUrl);
+      } else {
+        window.detachEvent('onhashchange', this.checkUrl);
+      }
       clearInterval(this._checkUrlInterval);
       History.started = false;
     },
