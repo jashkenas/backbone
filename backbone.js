@@ -168,6 +168,66 @@
     };
   })();
 
+  utils.delegate = function(view, eventName, selector, callback) {
+    if (typeof selector === 'function') {
+      callback = selector;
+      selector = null;
+    }
+
+    if (typeof callback !== 'function') {
+      throw new TypeError('View#delegate expects callback function');
+    }
+
+    var root = view.el;
+    var bound = callback.bind(view);
+    var handler = selector ? function(event) {
+      for (var el = event.target; el && el !== root; el = el.parentNode) {
+        if (utils.matchesSelector(el, selector)) {
+          // event.currentTarget or event.target are read-only.
+          event.delegateTarget = el;
+          return bound(event);
+        }
+      }
+    } : bound;
+
+    root.addEventListener(eventName, handler, false);
+    view._handlers.push({
+      eventName: eventName, selector: selector,
+      callback: callback, handler: handler
+    });
+    return handler;
+  };
+
+  utils.undelegate = function(view, eventName, selector, callback) {
+    if (typeof selector === 'function') {
+      callback = selector;
+      selector = null;
+    }
+
+    var handlers = view._handlers;
+    var removeListener = function(item) {
+      view.el.removeEventListener(item.eventName, item.handler, false);
+    };
+
+    // Remove all handlers.
+    if (!eventName && !selector && !callback) {
+      handlers.forEach(removeListener);
+      view._handlers = [];
+    } else {
+      // Remove some handlers.
+      handlers
+        .filter(function(item) {
+          return item.eventName === eventName &&
+            (callback ? item.callback === callback : true) &&
+            (selector ? item.selector === selector : true);
+        })
+        .forEach(function(item) {
+          removeListener(item);
+          handlers.splice(handlers.indexOf(item), 1);
+        });
+    }
+  };
+
   // Backbone.Events
   // ---------------
 
@@ -1160,74 +1220,11 @@
         this.el = this.$el[0];
       } else {
         if (this.el) this.undelegateEvents();
-        var el = (typeof element === 'string') ?
+        this.el = (typeof element === 'string') ?
           document.querySelector(element) : element;
-        this.el = el;
       }
       if (delegate !== false) this.delegateEvents();
       return this;
-    },
-
-    // Natively delegate an event.
-    // delegate('click', '.item', function() {})
-    delegate: function(eventName, selector, callback) {
-      if (typeof selector === 'function') {
-        callback = selector;
-        selector = null;
-      }
-
-      if (typeof callback !== 'function') {
-        throw new TypeError('View#delegate expects callback function');
-      }
-
-      var root = this.el;
-      var bound = callback.bind(this);
-      var handler = selector ? function(event) {
-        for (var el = event.target; el && el !== root; el = el.parentNode) {
-          if (utils.matchesSelector(el, selector)) {
-            // event.currentTarget or event.target are read-only.
-            event.delegateTarget = el;
-            return bound(event);
-          }
-        }
-      } : bound;
-
-      root.addEventListener(eventName, handler, false);
-      this._handlers.push({
-        eventName: eventName, selector: selector,
-        callback: callback, handler: handler
-      });
-      return handler;
-    },
-
-    // Natively undelegate an event.
-    undelegate: function(eventName, selector, callback) {
-      if (typeof selector === 'function') {
-        callback = selector;
-        selector = null;
-      }
-
-      var root = this.el;
-      var handlers = this._handlers;
-      var removeListener = function(item) {
-        root.removeEventListener(item.eventName, item.handler, false);
-      };
-
-      // Remove all handlers.
-      if (!eventName && !selector && !callback) {
-        _.each(handlers, removeListener);
-        this._handlers = [];
-      } else {
-        // Remove some handlers.
-        _.each(handlers, function(item) {
-          if (item.eventName === eventName &&
-              (callback ? item.callback === callback : true) &&
-              (selector ? item.selector === selector : true)) {
-            removeListener(item);
-            handlers.splice(handlers.indexOf(item), 1);
-          }
-        });
-      }
     },
 
     // Set callbacks, where `this.events` is a hash of
@@ -1261,7 +1258,7 @@
           method = _.bind(method, this);
           this.$el.on(eventName, (selector ? selector : null), method);
         } else {
-          this.delegate(eventName, selector, method);
+          utils.delegate(this, eventName, selector, method);
         }
       }
       return this;
@@ -1274,7 +1271,7 @@
       if (Backbone.$) {
         this.$el.off('.delegateEvents' + this.cid);
       } else {
-        this.undelegate();
+        utils.undelegate(this);
       }
       return this;
     },
