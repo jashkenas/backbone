@@ -1030,6 +1030,8 @@
     // applicable Backbone.Events listeners.
     remove: function() {
       this.$el.remove();
+      this.el = null;
+      this.$el = null;
       this.stopListening();
       return this;
     },
