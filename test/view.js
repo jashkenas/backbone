@@ -324,4 +324,13 @@
     equal(counter, 2);
   });
 
+  test("#2915 - null options are passed to initialize", function() {
+    var View = Backbone.View.extend({
+      initialize: function(options) {
+        strictEqual(options, null);
+      }
+    });
+    new View(null);
+  });
+
 })();
