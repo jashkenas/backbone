@@ -436,7 +436,7 @@
       options.success = function(resp) {
         if (!model.set(model.parse(resp, options), options)) return false;
         if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
+        model.trigger('sync fetched', model, resp, options);
       };
       wrapError(this, options);
       return this.sync('read', this, options);
@@ -486,7 +486,7 @@
           return false;
         }
         if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
+        model.trigger('sync saved', model, resp, options);
       };
       wrapError(this, options);
 
@@ -860,7 +860,7 @@
         var method = options.reset ? 'reset' : 'set';
         collection[method](resp, options);
         if (success) success(collection, resp, options);
-        collection.trigger('sync', collection, resp, options);
+        collection.trigger('sync fetched', collection, resp, options);
       };
       wrapError(this, options);
       return this.sync('read', this, options);
