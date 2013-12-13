@@ -967,6 +967,20 @@
     model.destroy();
   });
 
+  test("#1412 - Trigger 'fetched' event.", 1, function() {
+    var model = new Backbone.Model({id: 1});
+    model.sync = function (method, model, options) { options.success(); };
+    model.on('fetched', function(){ ok(true); });
+    model.fetch();
+  });
+
+  test("#1412 - Trigger 'saved' event.", 1, function() {
+    var model = new Backbone.Model({id: 1});
+    model.sync = function (method, model, options) { options.success(); };
+    model.on('saved', function(){ ok(true); });
+    model.save();
+  });
+
   test("#1365 - Destroy: New models execute success callback.", 2, function() {
     new Backbone.Model()
     .on('sync', function() { ok(false); })
