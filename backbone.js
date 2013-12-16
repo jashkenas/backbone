@@ -613,8 +613,16 @@
   var setOptions = {add: true, remove: true, merge: true};
   var addOptions = {add: true, remove: false};
 
+  // Cached regex to split change events for `_onModelEvent`.
+  var changeEventSplitter = /change:(.+)/;
+
   // Define the Collection's inheritable methods.
   _.extend(Collection.prototype, Events, {
+
+    // Defined attributes to be indexed for `getBy`. Note that each index is a
+    // simple hash: values are coerced to strings, and those stringified values
+    // must be unique within the collection.
+    indexedAttributes: [],
 
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
@@ -802,6 +810,11 @@
       return this._byId[obj] || this._byId[obj.id] || this._byId[obj.cid];
     },
 
+    // Get a model from the set by an attribute listed in `indexedAttributes`.
+    getBy: function(attr, val) {
+      return this._indices[attr][val];
+    },
+
     // Get the model at the given index.
     at: function(index) {
       return this.models[index];
@@ -900,6 +913,10 @@
       this.length = 0;
       this.models = [];
       this._byId  = {};
+      var indices = this._indices  = {};
+      _.each(this.indexedAttributes, function(attr) {
+        indices[attr] = {};
+      });
     },
 
     // Prepare a hash of attributes (or other model) to be added to this
@@ -917,6 +934,10 @@
     // Internal method to create a model's ties to a collection.
     _addReference: function(model, options) {
       this._byId[model.cid] = model;
+      var indices = this._indices;
+      _.each(this.indexedAttributes, function(attr) {
+        indices[attr][model.get(attr)] = model;
+      });
       if (model.id != null) this._byId[model.id] = model;
       if (!model.collection) model.collection = this;
       model.on('all', this._onModelEvent, this);
@@ -926,6 +947,10 @@
     _removeReference: function(model, options) {
       delete this._byId[model.id];
       delete this._byId[model.cid];
+      var indices = this._indices;
+      _.each(this.indexedAttributes, function(attr) {
+        if (indices[attr][model.get(attr)] === model) delete indices[attr][model.get(attr)];
+      });
       if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
     },
@@ -937,9 +962,20 @@
     _onModelEvent: function(event, model, collection, options) {
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
-      if (model && event === 'change:' + model.idAttribute) {
-        delete this._byId[model.previous(model.idAttribute)];
-        if (model.id != null) this._byId[model.id] = model;
+      if (model) {
+        var match, changedAttr, previousVal, indices = this._indices;
+        if (match = event.match(changeEventSplitter)) {
+          changedAttr = match[1];
+          previousVal = model.previous(changedAttr);
+        }
+        if (changedAttr === model.idAttribute) {
+          delete this._byId[previousVal];
+          if (model.id != null) this._byId[model.id] = model;
+        }
+        if (indices[changedAttr] && indices[changedAttr][previousVal] === model) {
+          delete indices[changedAttr][previousVal];
+          if (model.has(changedAttr)) indices[changedAttr][model.get(changedAttr)] = model;
+        }
       }
       this.trigger.apply(this, arguments);
     }
