@@ -363,4 +363,27 @@
     el.parentNode.removeChild(el);
   });
 
+  test("useNative for view-specific native DOM usage", 1, function() {
+    var el = document.createElement("p");
+    el.innerHTML = '<a id="test"></a>';
+    document.body.appendChild(el);
+
+    Backbone.$ = {};
+    var View = Backbone.View.extend({
+      useNative: true
+    });
+
+    ok((function() {
+      try {
+        var view = new View;
+        view.$('p');
+        return true;
+      } catch(e) {
+        return false;
+      }
+    })())
+
+    Backbone.$ = undefined;
+    el.parentNode.removeChild(el);
+  });
 })();

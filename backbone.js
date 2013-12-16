@@ -1169,13 +1169,18 @@
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(View.prototype, Events, {
 
+    // In case you want to include jQuery with your app
+    // for *some* views and use native methods for other views.
+    useNative: false,
+
     // The default `tagName` of a View's element is `"div"`.
     tagName: 'div',
 
     // jQuery delegate for element lookup, scoped to DOM elements within the
     // current view. This should be preferred to global lookups where possible.
     $: function(selector) {
-      return this.$el.find(selector);
+      return Backbone.$ && !this.useNative ?
+        this.$el.find(selector) : this.findAll(selector);
     },
 
     // Native DOM methods.
@@ -1202,7 +1207,7 @@
     // applicable Backbone.Events listeners.
     remove: function() {
       var parent;
-      if (Backbone.$) {
+      if (Backbone.$ && !this.useNative) {
         this.$el.remove();
       } else if (parent = this.el.parentNode) {
         parent.removeChild(this.el);
@@ -1214,7 +1219,7 @@
     // Change the view's element (`this.el` property), including event
     // re-delegation.
     setElement: function(element, delegate) {
-      if (Backbone.$) {
+      if (Backbone.$ && !this.useNative) {
         if (this.$el) this.undelegateEvents();
         this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
         this.el = this.$el[0];
@@ -1253,7 +1258,7 @@
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
 
-        if (Backbone.$) {
+        if (Backbone.$ && !this.useNative) {
           eventName += '.delegateEvents' + this.cid;
           method = _.bind(method, this);
           this.$el.on(eventName, (selector ? selector : null), method);
@@ -1268,7 +1273,7 @@
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
-      if (Backbone.$) {
+      if (Backbone.$ && !this.useNative) {
         this.$el.off('.delegateEvents' + this.cid);
       } else {
         utils.undelegate(this);
