@@ -552,6 +552,21 @@
     equal(coll.findWhere({a: 4}), void 0);
   });
 
+  test("getBy", 4, function() {
+    var IndexedCollection = Backbone.Collection.extend({
+      indexedAttributes: ['name']
+    });
+    var coll = new IndexedCollection([
+      {name: 'Alice'},
+      {name: 'Bob'},
+      {name: 'Eve'}
+    ]);
+    equal(coll.length, 3);
+    equal(coll.getBy('name', 'Alice'), coll.at(0));
+    equal(coll.getBy('name', 'Bob'), coll.at(1));
+    equal(coll.getBy('name', 'Eve'), coll.at(2));
+  });
+
   test("Underscore methods", 16, function() {
     equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equal(col.any(function(model){ return model.id === 100; }), false);
@@ -1289,17 +1304,20 @@
     equal(job.items.get(2).subItems.get(3).get('subName'), 'NewThree');
   });
 
-  test('_addReference binds all collection events & adds to the lookup hashes', 9, function() {
+  test('_addReference binds all collection events & adds to the lookup hashes', 11, function() {
 
     var calls = {add: 0, remove: 0};
 
     var Collection = Backbone.Collection.extend({
+
+      indexedAttributes: ['callsign'],
 
       _addReference: function(model) {
         Backbone.Collection.prototype._addReference.apply(this, arguments);
         calls.add++;
         equal(model, this._byId[model.id]);
         equal(model, this._byId[model.cid]);
+        equal(model, this._indices['callsign'][model.attributes.callsign]);
         equal(model._events.all.length, 1);
       },
 
@@ -1308,6 +1326,7 @@
         calls.remove++;
         equal(this._byId[model.id], void 0);
         equal(this._byId[model.cid], void 0);
+        equal(this._indices['callsign'][model.attributes.callsign], void 0);
         equal(model.collection, void 0);
         equal(model._events.all, void 0);
       }
@@ -1315,7 +1334,7 @@
     });
 
     var collection = new Collection();
-    var model = collection.add({id: 1});
+    var model = collection.add({id: 1, callsign: 'bravo'});
     collection.remove(model);
 
     equal(calls.add, 1);
