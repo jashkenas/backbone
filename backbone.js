@@ -457,10 +457,10 @@
       if (options.parse === void 0) options.parse = true;
       var model = this;
       var success = options.success;
-      options.success = function(resp) {
+      options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, options), options)) return false;
-        if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
+        if (success) success(model, resp, options, status, xhr);
+        model.trigger('sync', model, resp, options, status, xhr);
       };
       wrapError(this, options);
       return this.sync('read', this, options);
@@ -501,7 +501,7 @@
       if (options.parse === void 0) options.parse = true;
       var model = this;
       var success = options.success;
-      options.success = function(resp) {
+      options.success = function(resp, status, xhr) {
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
         var serverAttrs = model.parse(resp, options);
@@ -509,8 +509,8 @@
         if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
           return false;
         }
-        if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
+        if (success) success(model, resp, options, status, xhr);
+        model.trigger('sync', model, resp, options, status, xhr);
       };
       wrapError(this, options);
 
@@ -536,10 +536,10 @@
         model.trigger('destroy', model, model.collection, options);
       };
 
-      options.success = function(resp) {
+      options.success = function(resp, status, xhr) {
         if (options.wait || model.isNew()) destroy();
-        if (success) success(model, resp, options);
-        if (!model.isNew()) model.trigger('sync', model, resp, options);
+        if (success) success(model, resp, options, status, xhr);
+        if (!model.isNew()) model.trigger('sync', model, resp, options, status, xhr);
       };
 
       if (this.isNew()) {
@@ -889,11 +889,11 @@
       if (options.parse === void 0) options.parse = true;
       var success = options.success;
       var collection = this;
-      options.success = function(resp) {
+      options.success = function(resp, status, xhr) {
         var method = options.reset ? 'reset' : 'set';
         collection[method](resp, options);
-        if (success) success(collection, resp, options);
-        collection.trigger('sync', collection, resp, options);
+        if (success) success(collection, resp, options, status, xhr);
+        collection.trigger('sync', collection, resp, options, status, xhr);
       };
       wrapError(this, options);
       return this.sync('read', this, options);
@@ -1659,9 +1659,9 @@
   // Wrap an optional error callback with a fallback error event.
   var wrapError = function(model, options) {
     var error = options.error;
-    options.error = function(resp) {
-      if (error) error(model, resp, options);
-      model.trigger('error', model, resp, options);
+    options.error = function(xhr, status, errorThrown) {
+      if (error) error(model, xhr, options, status, errorThrown);
+      model.trigger('error', model, xhr, options, status, errorThrown);
     };
   };
 
