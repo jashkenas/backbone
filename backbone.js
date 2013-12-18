@@ -649,6 +649,8 @@
       for (i = 0, l = models.length; i < l; i++) {
         model = models[i] = this.get(models[i]);
         if (!model) continue;
+        delete this._byId[model.id];
+        delete this._byId[model.cid];
         index = this.indexOf(model);
         this.models.splice(index, 1);
         this.length--;
@@ -924,8 +926,6 @@
 
     // Internal method to sever a model's ties to a collection.
     _removeReference: function(model, options) {
-      delete this._byId[model.id];
-      delete this._byId[model.cid];
       if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
     },
