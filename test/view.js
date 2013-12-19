@@ -324,4 +324,18 @@
     equal(counter, 2);
   });
 
+  test("viewOptions set on view instance", 2, function() {
+    var View = Backbone.View.extend({
+      viewOptions:['myOpt']
+    });
+
+    var view = new View({
+      myOpt: 'value',
+      otherOpt: 'other'
+    });
+
+    strictEqual(view.myOpt, 'value');
+    strictEqual(view.otherOpt, undefined);
+  });
+
 })();

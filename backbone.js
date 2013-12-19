@@ -994,7 +994,7 @@
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
     options || (options = {});
-    _.extend(this, _.pick(options, viewOptions));
+    _.extend(this, _.pick(options, viewOptions.concat(this.viewOptions || [])));
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
