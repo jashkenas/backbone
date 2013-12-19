@@ -334,8 +334,8 @@
       otherOpt: 'other'
     });
 
-    strictEqual(view.myOpt, 'value')
-    strictEqual(view.otherOpt, undefined)
-  })
+    strictEqual(view.myOpt, 'value');
+    strictEqual(view.otherOpt, undefined);
+  });
 
 })();
