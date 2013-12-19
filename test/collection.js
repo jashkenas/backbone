@@ -1332,4 +1332,9 @@
     strictEqual(collection.length, 3);
   });
 
+  test('get new Number', function() {
+    var collection = new Backbone.Collection([{id: 1}]);
+    ok(collection.get(new Number(1)));
+  });
+
 })();
