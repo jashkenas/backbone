@@ -1323,5 +1323,13 @@
 
   });
 
+  test('Model with "undefined" id.', function() {
+    var collection = new Backbone.Collection([
+      {id: 'undefined'},
+      {id: 1},
+      {id: 2}
+    ]);
+    strictEqual(collection.length, 3);
+  });
 
 })();
