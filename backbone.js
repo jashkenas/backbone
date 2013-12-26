@@ -290,7 +290,7 @@
 
     // Get the value of an attribute.
     get: function(attr) {
-      return this.attributes[attr];
+      return setKey(this.attributes, attr);
     },
 
     // Get the HTML-escaped value of an attribute.
@@ -343,13 +343,13 @@
       // For each `set` attribute, update or delete the current value.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
+        if (!_.isEqual(setKey(current, attr), val)) changes.push(attr);
+        if (!_.isEqual(setKey(prev, attr), val)) {
           this.changed[attr] = val;
         } else {
           delete this.changed[attr];
         }
-        unset ? delete current[attr] : current[attr] = val;
+        unset ? setKey(current, attr, void(0), true) : setKey(current, attr, val);
       }
 
       // Trigger all relevant attribute changes.
@@ -416,7 +416,7 @@
     // `"change"` event was fired.
     previous: function(attr) {
       if (attr == null || !this._previousAttributes) return null;
-      return this._previousAttributes[attr];
+      return setKey(this._previousAttributes, attr);
     },
 
     // Get all of the attributes of the model at the time of the previous
@@ -1588,6 +1588,39 @@
       model.trigger('error', model, resp, options);
     };
   };
+
+  function setKey(obj, key, value, unset) {
+    var args = [].slice.call(arguments);
+    if (args.length < 2) return obj;
+    var keys = key.split('.');
+    if (args.length === 2) {
+      var v = void 0;
+      for (var i = 0, l = keys.length; i < l; i++) {
+        if (i == l - 1)
+          return i === 0 ? obj[keys[i]] : (typeof v == 'object' ?  v[keys[i]] : (v=void(0)));
+        else if (v)
+          if (typeof v[keys[i]] == 'object')
+            v = v[keys[i]]
+          else
+            return void(0);
+        else
+          v = obj[keys[i]];
+      }
+    }
+    if (args.length >= 3) {
+      var v = void 0;
+      for (var i = 0, l = keys.length; i < l; i++) {
+        if (i == l - 1)
+          v ? (unset ? delete v[keys[i]] : (v[keys[i]] = value)) : (unset ? delete obj[keys[i]] : (obj[keys[i]] = value));
+        else if (v)
+          v = (typeof v[keys[i]] === 'object') ? v[keys[i]] : (v[keys[i]] = {});
+        else
+          v = obj[keys[i]] || (obj[keys[i]] = {});
+      }
+    }
+    return obj;
+  }
+
 
   return Backbone;
 
