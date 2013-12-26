@@ -416,7 +416,7 @@
     // `"change"` event was fired.
     previous: function(attr) {
       if (attr == null || !this._previousAttributes) return null;
-      return this._previousAttributes[attr];
+      return setKey(this._previousAttributes, attr);
     },
 
     // Get all of the attributes of the model at the time of the previous
