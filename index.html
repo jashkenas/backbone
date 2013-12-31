@@ -2334,7 +2334,10 @@ app.navigate("help/troubleshooting", {trigger: true, replace: true});
       <br />
       When all of your <a href="#Router">Routers</a> have been created,
       and all of the routes are set up properly, call <tt>Backbone.history.start()</tt>
-      to begin monitoring <tt>hashchange</tt> events, and dispatching routes.
+      to begin monitoring <tt>hashchange</tt> events, and dispatching routes. 
+      Subsequent calls to <tt>Backbone.history.start()</tt> will throw an error,
+      and <tt>Backbone.History.started</tt> is a boolean value indicating whether
+      it has already been called.
     </p>
 
     <p>
