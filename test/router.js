@@ -90,7 +90,7 @@
       ":repo/compare/*from...*to":  "github",
       "decode/:named/*splat":       "decode",
       "*first/complex-*part/*rest": "complex",
-      ":entity?*args":              "query",
+      "query/:entity":              "query",
       "function/:value":            ExternalObject.routingFunction,
       "*anything":                  "anything"
     },
@@ -211,6 +211,11 @@
     equal(router.page, '20');
   });
 
+  test("routes via navigate with params", 1, function() {
+    Backbone.history.navigate('query/test?a=b', {trigger: true});
+    equal(router.queryArgs, 'a=b');
+  });
+
   test("routes via navigate for backwards-compatibility", 2, function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equal(router.query, 'manhattan');
@@ -288,13 +293,60 @@
   });
 
   test("routes (query)", 5, function() {
-    location.replace('http://example.com#mandel?a=b&c=d');
+    location.replace('http://example.com#query/mandel?a=b&c=d');
     Backbone.history.checkUrl();
     equal(router.entity, 'mandel');
     equal(router.queryArgs, 'a=b&c=d');
     equal(lastRoute, 'query');
     equal(lastArgs[0], 'mandel');
     equal(lastArgs[1], 'a=b&c=d');
+  });
+
+  test("routes (query parsed)", 1, function() {
+    Backbone.History.parseQueryString = function (args) { return {a: 'b'}; }
+    location.replace('http://example.com#query/mandel?a=b');
+    Backbone.history.checkUrl();
+    Backbone.History.parseQueryString = null;
+    deepEqual(lastArgs[1], {a: 'b'});
+  });
+
+  test("routes (query complex)", 4, function() {
+    location.replace('http://example.com#a/b/complex-c/d?a=b');
+    Backbone.history.checkUrl();
+    equal(lastArgs[0], 'a/b');
+    equal(lastArgs[1], 'c');
+    equal(lastArgs[2], 'd');
+    equal(lastArgs[3], 'a=b');
+  });
+
+  test('routes (query pushState with hashChange)', 2, function() {
+    Backbone.history.stop();
+    Backbone.history.start({pushState: true, hashChange: true});
+    location.replace('http://example.com/query/mandel?a=b#hash');
+    Backbone.history.checkUrl();
+    equal(lastArgs[0], 'mandel');
+    equal(lastArgs[1], 'a=b#hash');
+  });
+
+  test('routes (query pushState without hashChange)', 2, function() {
+    Backbone.history.stop();
+    Backbone.history.start({pushState: true, hashChange: false});
+    location.replace('http://example.com/query/mandel?a=b#hash');
+    Backbone.history.checkUrl();
+    equal(lastArgs[0], 'mandel');
+    equal(lastArgs[1], 'a=b');
+  });
+
+  test('routes (query pushState parsed with hashChange)', 3, function() {
+    Backbone.History.parseQueryString = function (args) { return {a: 'b'}; }
+    Backbone.history.stop();
+    Backbone.history.start({pushState: true, hashChange: true});
+    location.replace('http://example.com/query/mandel?a=b#hash');
+    Backbone.history.checkUrl();
+    Backbone.History.parseQueryString = null;
+    equal(lastArgs[0], 'mandel');
+    deepEqual(lastArgs[1], {a: 'b'});
+    equal(lastArgs[2], 'hash');
   });
 
   test("routes (anything)", 1, function() {
@@ -604,7 +656,7 @@
   test("#2062 - Trigger 'route' event on router instance.", 2, function() {
     router.on('route', function(name, args) {
       strictEqual(name, 'routeEvent');
-      deepEqual(args, ['x']);
+      deepEqual(args, ['x', null]);
     });
     location.replace('http://example.com#route-event/x');
     Backbone.history.checkUrl();

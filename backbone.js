@@ -1281,9 +1281,11 @@
       route = route.replace(escapeRegExp, '\\$&')
                    .replace(optionalParam, '(?:$1)?')
                    .replace(namedParam, function(match, optional) {
-                     return optional ? match : '([^\/]+)';
+                     return optional ? match : '([^\/\?]+)';
                    })
-                   .replace(splatParam, '(.*?)');
+                   .replace(splatParam, '([^\?]*?)')
+                   .concat('(?:\\?(.*))?');
+
       return new RegExp('^' + route + '$');
     },
 
@@ -1292,9 +1294,24 @@
     // treated as `null` to normalize cross-browser behavior.
     _extractParameters: function(route, fragment) {
       var params = route.exec(fragment).slice(1);
-      return _.map(params, function(param) {
+      var args = _.map(params, function(param) {
         return param ? decodeURIComponent(param) : null;
       });
+      return this._processArgs(args);
+    },
+
+    _processArgs: function(args) {
+      if (Backbone.History.parseQueryString) {
+        var lastArg = args.pop();
+        if (lastArg != null) {
+          var tokens = lastArg.split('#');
+          var query = tokens[0];
+          var hash = tokens[1];
+          args.push(Backbone.History.parseQueryString(query));
+          args.push(hash);
+        }
+      }
+      return args;
     }
 
   });
@@ -1330,9 +1347,6 @@
   // Cached regex for removing a trailing slash.
   var trailingSlash = /\/$/;
 
-  // Cached regex for stripping urls of hash and query.
-  var pathStripper = /[?#].*$/;
-
   // Has the history handling already been started?
   History.started = false;
 
@@ -1355,8 +1369,10 @@
     getFragment: function(fragment, forcePushState) {
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = this.location.pathname;
+          fragment = this.location.pathname + this.location.search;
           var root = this.root.replace(trailingSlash, '');
+          var hash = this.getHash();
+          if (hash && this._wantsHashChange) fragment += '#' + hash;
           if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
         } else {
           fragment = this.getHash();
@@ -1482,9 +1498,6 @@
       if (!options || options === true) options = {trigger: !!options};
 
       var url = this.root + (fragment = this.getFragment(fragment || ''));
-
-      // Strip the fragment of the query and hash for matching.
-      fragment = fragment.replace(pathStripper, '');
 
       if (this.fragment === fragment) return;
       this.fragment = fragment;
