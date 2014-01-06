@@ -90,7 +90,7 @@
       ":repo/compare/*from...*to":  "github",
       "decode/:named/*splat":       "decode",
       "*first/complex-*part/*rest": "complex",
-      ":entity?*args":              "query",
+      "query/:entity":              "query",
       "function/:value":            ExternalObject.routingFunction,
       "*anything":                  "anything"
     },
@@ -211,6 +211,11 @@
     equal(router.page, '20');
   });
 
+  test("routes via navigate with params", 1, function() {
+    Backbone.history.navigate('query/test?a=b', {trigger: true});
+    equal(router.queryArgs, 'a=b');
+  });
+
   test("routes via navigate for backwards-compatibility", 2, function() {
     Backbone.history.navigate('search/manhattan/p20', true);
     equal(router.query, 'manhattan');
@@ -288,7 +293,7 @@
   });
 
   test("routes (query)", 5, function() {
-    location.replace('http://example.com#mandel?a=b&c=d');
+    location.replace('http://example.com#query/mandel?a=b&c=d');
     Backbone.history.checkUrl();
     equal(router.entity, 'mandel');
     equal(router.queryArgs, 'a=b&c=d');
@@ -538,7 +543,7 @@
     Backbone.history.stop();
     location.replace('http://example.com/root/x/y?a=b');
     location.replace = function(url) {
-      strictEqual(url, '/root/?a=b#x/y');
+      strictEqual(url, '/root/#x/y?a=b');
     };
     Backbone.history = _.extend(new Backbone.History, {
       location: location,
@@ -555,7 +560,7 @@
 
   test("#1695 - hashChange to pushState with search.", 1, function() {
     Backbone.history.stop();
-    location.replace('http://example.com/root?a=b#x/y');
+    location.replace('http://example.com/root#x/y?a=b');
     Backbone.history = _.extend(new Backbone.History, {
       location: location,
       history: {
@@ -604,7 +609,7 @@
   test("#2062 - Trigger 'route' event on router instance.", 2, function() {
     router.on('route', function(name, args) {
       strictEqual(name, 'routeEvent');
-      deepEqual(args, ['x']);
+      deepEqual(args, ['x', null]);
     });
     location.replace('http://example.com#route-event/x');
     Backbone.history.checkUrl();
@@ -727,6 +732,49 @@
     location.replace('http://example.com/');
     Backbone.history.start({pushState: true, hashChange: false});
     Backbone.history.navigate('path?query#hash', true);
+  });
+
+  test('Do not decode the search params.', function() {
+    var Router = Backbone.Router.extend({
+      routes: {
+        path: function(params){
+          strictEqual(params, 'x=y%20z');
+        }
+      }
+    });
+    var router = new Router;
+    Backbone.history.navigate('path?x=y%20z', true);
+  });
+
+  test('Navigate to a hash url.', function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    Backbone.history.start({pushState: true});
+    var Router = Backbone.Router.extend({
+      routes: {
+        path: function(params) {
+          strictEqual(params, 'x=y');
+        }
+      }
+    });
+    var router = new Router;
+    location.replace('http://example.com/path?x=y#hash');
+    Backbone.history.checkUrl();
+  });
+
+  test('#navigate to a hash url.', function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    Backbone.history.start({pushState: true});
+    var Router = Backbone.Router.extend({
+      routes: {
+        path: function(params) {
+          strictEqual(params, 'x=y');
+        }
+      }
+    });
+    var router = new Router;
+    Backbone.history.navigate('path?x=y#hash', true);
   });
 
 })();
