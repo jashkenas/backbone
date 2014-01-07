@@ -624,7 +624,7 @@
       of data-structuring (models and collections) and user interface (views
       and URLs) primitives that are generally useful when building web applications with
       JavaScript. In an ecosystem where overarching, decides-everything-for-you
-      frameworks are commonplace, and many libraries require your site to be 
+      frameworks are commonplace, and many libraries require your site to be
       reorganized to suit their look, feel, and default behavior — Backbone should
       continue to be a tool that gives you the <i>freedom</i> to design the full
       experience of your web application.
@@ -679,11 +679,11 @@
       </li>
       <li>
         In 1.1, Backbone Views no longer have the <tt>options</tt> argument
-        attached as <tt>this.options</tt> automatically. Feel free to continue 
+        attached as <tt>this.options</tt> automatically. Feel free to continue
         attaching it if you like.
       </li>
       <li>
-        In 1.1, The <b>Collection</b> methods <tt>add</tt>, <tt>remove</tt>, 
+        In 1.1, The <b>Collection</b> methods <tt>add</tt>, <tt>remove</tt>,
         <tt>set</tt>, <tt>push</tt>, and <tt>shift</tt> now return the model
         (or models) added or removed from the collection.
       </li>
@@ -1015,7 +1015,7 @@ var Library = Backbone.Model.extend({
       collection the model belongs to, and is used to help compute the model's
       <a href="#Model-url">url</a>. The <tt>model.collection</tt> property is
       normally created automatically when you first add a model to a collection.
-      Note that the reverse is not true, as passing this option to the constructor 
+      Note that the reverse is not true, as passing this option to the constructor
       will not automatically add the model to the collection. Useful, sometimes.
     </p>
 
@@ -1774,7 +1774,7 @@ ships.add([
     <p id="Collection-remove">
       <b class="header">remove</b><code>collection.remove(models, [options])</code>
       <br />
-      Remove a model (or an array of models) from the collection, and returns them. 
+      Remove a model (or an array of models) from the collection, and returns them.
       Fires a <tt>"remove"</tt> event, which you can use <tt>silent</tt> to suppress.
       The model's index before removal is available to listeners as
       <tt>options.index</tt>.
@@ -2334,7 +2334,7 @@ app.navigate("help/troubleshooting", {trigger: true, replace: true});
       <br />
       When all of your <a href="#Router">Routers</a> have been created,
       and all of the routes are set up properly, call <tt>Backbone.history.start()</tt>
-      to begin monitoring <tt>hashchange</tt> events, and dispatching routes. 
+      to begin monitoring <tt>hashchange</tt> events, and dispatching routes.
       Subsequent calls to <tt>Backbone.history.start()</tt> will throw an error,
       and <tt>Backbone.History.started</tt> is a boolean value indicating whether
       it has already been called.
@@ -2648,9 +2648,9 @@ ui.Chapter = Backbone.View.extend({
       <b class="header">template</b><code>view.template([data])</code>
       <br />
       While templating for a view isn't a function provided directly by Backbone,
-      it's often a nice convention to define a <b>template</b> function on your 
+      it's often a nice convention to define a <b>template</b> function on your
       views. In this way, when rendering your view, you have convenient access to
-      instance data. 
+      instance data.
       For example, using Underscore templates:
     </p>
 
@@ -3092,13 +3092,13 @@ var model = localBackbone.Model.extend(...);
     <h2 id="examples-delicious">Delicious</h2>
 
     <p>
-      <a href="https://delicious.com/">Delicious</a> is a social bookmarking 
-      platform making it easy to save, sort, and store bookmarks from across 
-      the web. Delicious uses <a href="http://chaplinjs.org">Chaplin.js</a>, 
-      Backbone.js and AppCache to build a full-featured MVC web app. 
-      The use of Backbone helped the website and 
-      <a href="http://delicious.com/tools">mobile apps</a> share a 
-      single API service, and the reuse of the model tier made it significantly 
+      <a href="https://delicious.com/">Delicious</a> is a social bookmarking
+      platform making it easy to save, sort, and store bookmarks from across
+      the web. Delicious uses <a href="http://chaplinjs.org">Chaplin.js</a>,
+      Backbone.js and AppCache to build a full-featured MVC web app.
+      The use of Backbone helped the website and
+      <a href="http://delicious.com/tools">mobile apps</a> share a
+      single API service, and the reuse of the model tier made it significantly
       easier to share code during the recent Delicious redesign.
     </p>
 
@@ -4009,14 +4009,15 @@ ActiveRecord::Base.include_root_in_json = false
     <b class="header">1.1.0</b> &mdash; <small><i>Oct. 10, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.0.0...1.1.0">Diff</a><br />
     <ul style="margin-top: 5px;">
       <li>
-        Made the return values of Collection's <tt>set</tt>, <tt>add</tt>, 
+        Made the return values of Collection's <tt>set</tt>, <tt>add</tt>,
         <tt>remove</tt>, and <tt>reset</tt> more useful. Instead of returning
-        <tt>this</tt>, they now return the changed (added, removed or updated) 
+        <tt>this</tt>, they now return the changed (added, removed or updated)
         model or list of models.
       </li>
       <li>
-        Backbone Views no longer automatically attach options passed to the constructor as 
-        <tt>this.options</tt>, but you can do it yourself if you prefer.
+        Backbone Views no longer automatically attach options passed to the constructor as
+        <tt>this.options</tt> and Backbone Models no longer attach <tt>url</tt> and
+        <tt>urlRoot</tt> options, but you can do it yourself if you prefer.
       </li>
       <li>
         All <tt>"invalid"</tt> events now pass consistent arguments. First the
@@ -4031,7 +4032,7 @@ ActiveRecord::Base.include_root_in_json = false
         and vivify incoming nested JSON into associated submodels.
       </li>
       <li>
-        Many tweaks, optimizations and bugfixes relating to Backbone 1.0, 
+        Many tweaks, optimizations and bugfixes relating to Backbone 1.0,
         including URL overrides, mutation of options, bulk ordering, trailing
         slashes, edge-case listener leaks, nested model parsing...
       </li>
