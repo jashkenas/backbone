@@ -487,6 +487,19 @@
     equal(model.collection, collection);
   });
 
+  test("ensure create doesn't parse", 1, function() {
+    var collection = new Backbone.Collection;
+    var counter = 0;
+    collection.parse = function(models) {
+      counter++;
+      return models;
+    };
+    collection.url = '/test';
+    collection.create({});
+    this.syncArgs.options.success();
+    equal(counter, 0);
+  });
+
   test("create with validate:true enforces validation", 3, function() {
     var ValidatingModel = Backbone.Model.extend({
       validate: function(attrs) {
