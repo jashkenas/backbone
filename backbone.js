@@ -877,6 +877,7 @@
       if (!options.wait) this.add(model, options);
       var collection = this;
       var success = options.success;
+      if (options.parse === void 0) options.parse = false;
       options.success = function(model, resp) {
         if (options.wait) collection.add(model, options);
         if (success) success(model, resp, options);
