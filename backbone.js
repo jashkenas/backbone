@@ -1368,7 +1368,7 @@
     getFragment: function(fragment, forcePushState) {
       if (fragment == null) {
         if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = this.location.pathname + this.location.search;
+          fragment = decodeURI(this.location.pathname + this.location.search);
           var root = this.root.replace(trailingSlash, '');
           if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
         } else {
