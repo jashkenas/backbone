@@ -686,6 +686,11 @@
         <tt>set</tt>, <tt>push</tt>, and <tt>shift</tt> now return the model
         (or models) added or removed from the collection.
       </li>
+      <li>
+        In 1.1, models created using Collection's <tt>add</tt> or <tt>create</tt> and the
+        <tt>{validate: true}</tt> option are no longer validated again after they have been
+        initialized. They are now only validated once, before being initialized.
+      </li>
     </ul>
 
     <h2 id="Events">Backbone.Events</h2>
@@ -1401,7 +1406,30 @@ one.save({
       <b class="header">validationError</b><code>model.validationError</code>
       <br />
       The value returned by <a href="#Model-validate">validate</a> during the last failed validation.
+      This can be particularly useful for providing an error message when an
+      invalid model is instantiated with the <tt>{validate: true}</tt> option.
     </p>
+
+<pre class="runnable">
+var Chapter = Backbone.Model.extend({
+  initialize: function() {
+    if (this.validationError) {
+      alert("a chapter " + this.validationError);
+    }
+  },
+  validate: function(attrs, options) {
+    if (attrs.end &lt; attrs.start) {
+      return "can't end before it starts";
+    }
+  }
+});
+
+var one = new Chapter({
+  title: "Chapter One: The Beginning",
+  start: 15,
+  end:   10
+}, { validate: true });
+</pre>
 
     <p id="Model-isValid">
       <b class="header">isValid</b><code>model.isValid()</code>
@@ -4015,6 +4043,11 @@ ActiveRecord::Base.include_root_in_json = false
         <tt>remove</tt>, and <tt>reset</tt> more useful. Instead of returning
         <tt>this</tt>, they now return the changed (added, removed or updated)
         model or list of models.
+      </li>
+      <li>
+        Models created using Collection's <tt>add</tt> or <tt>create</tt> and the
+        <tt>{validate: true}</tt> option are no longer validated again after they have been
+        initialized. They are now only validated once, before being initialized.
       </li>
       <li>
         Backbone Views no longer automatically attach options passed to the constructor as
