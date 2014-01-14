@@ -645,19 +645,20 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       options || (options = {});
-      var i, l, index, model;
+      var i, l, index, model, removed = [];
       for (i = 0, l = models.length; i < l; i++) {
         model = models[i] = this.get(models[i]);
         if (!model) continue;
         delete this._byId[model.id];
         delete this._byId[model.cid];
-        index = this.indexOf(model);
-        this.models.splice(index, 1);
+        this.models.splice(this.indexOf(model), 1);
         this.length--;
-        if (!options.silent) {
-          options.index = index;
-          model.trigger('remove', model, this, options);
-        }
+        removed.push(model);
+      }
+      for (i = 0, l = removed.length; i < l; i++) {
+        model = removed[i];
+        if (this === model.collection) delete model.collection;
+        if (!options.silent) model.trigger('remove', model, this, options);
         this._removeReference(model, options);
       }
       return singular ? models[0] : models;
@@ -760,7 +761,9 @@
     reset: function(models, options) {
       options || (options = {});
       for (var i = 0, l = this.models.length; i < l; i++) {
-        this._removeReference(this.models[i], options);
+        var model = this.models[i];
+        if (this === model.collection) delete model.collection;
+        this._removeReference(model, options);
       }
       options.previousModels = this.models;
       this._reset();
@@ -926,7 +929,6 @@
 
     // Internal method to sever a model's ties to a collection.
     _removeReference: function(model, options) {
-      if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
     },
 
