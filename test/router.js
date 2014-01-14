@@ -777,4 +777,19 @@
     Backbone.history.navigate('path?x=y#hash', true);
   });
 
+  test('unicode pathname', 1, function() {
+    location.replace('http://example.com/myyjä');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {
+        myyjä: function() {
+          ok(true);
+        }
+      }
+    });
+    var router = new Router;
+    Backbone.history.start({pushState: true});
+  });
+
 })();
