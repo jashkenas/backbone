@@ -1053,6 +1053,14 @@
     return matches;
   }());
 
+  // Polyfill IE8's String#trim
+  var trimBeginRegex = /^\s\s*/;
+  var trimEndRegex = /\s\s*$/;
+  function trim(str) {
+    if (str.trim) return str.trim();
+    return str.replace(trimBeginRegex, '').replace(trimEndRegex, '');
+  }
+
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
@@ -1105,7 +1113,7 @@
     setElement: function(element, delegate) {
       if (this.el) this.undelegateEvents();
       if (typeof element == 'string') {
-        if (element.trim()[0] == '<') {
+        if (trim(element)[0] == '<') {
           var el = document.createElement('div');
           el.innerHTML = element;
           this.el = el.firstChild;
@@ -1167,7 +1175,8 @@
       var root = this.el, domEvents = this._domEvents, handler, node;
       if (!selector) handler = method;
       else handler = function (e) {
-        for (node = e.target; node && node != root; node = node.parentNode) {
+        node = e.target || e.srcElement;
+        for (; node && node != root; node = node.parentNode) {
           if (matchesSelector.call(node, selector)) {
             e.delegateTarget = node;
             return method.apply(this, arguments);

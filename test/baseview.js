@@ -5,16 +5,16 @@
       function(eventName, listener) {
         this.attachEvent('on' + eventName, listener);
       };
-  var dispatchEvent = Element.prototype.dispatchEvent ||
-      function(eventName, listener) {
-        this.fireEvent('on' + eventName, listener);
-      };
 
   function click(element) {
-    dispatchEvent.call(element, SyntheticEvent('click', {
+    var event = SyntheticEvent('click', {
       bubbles: true,
       cancelable: false
-    }));
+    });
+    if (element.dispatchEvent) {
+      return element.dispatchEvent(event);
+    }
+    element.fireEvent('onclick', event);
   }
 
   module("Backbone.BaseView", {
@@ -203,6 +203,10 @@
       }
     });
 
+    // Firing click event on a detached node with throw an unspecified error on
+    // IE8
+    document.body.appendChild(el);
+
     var view1 = new View;
     click(el);
     equal(1, count);
@@ -214,6 +218,8 @@
     view1.delegateEvents();
     click(el);
     equal(5, count);
+
+    document.body.removeChild(el);
   });
 
   test("#1048 - setElement uses provided object.", 2, function() {
@@ -230,10 +236,13 @@
     var button1 = document.createElement('button');
     var button2 = document.createElement('button');
 
+    document.body.appendChild(button1);
+    document.body.appendChild(button2);
+
     var View = Backbone.BaseView.extend({
       events: {
         click: function(e) {
-          ok(view.el === e.target);
+          ok(view.el === e.target || e.srcElement);
         }
       }
     });
@@ -243,6 +252,9 @@
 
     click(button1);
     click(button2);
+
+    document.body.removeChild(button1);
+    document.body.removeChild(button2);
   });
 
   test("#1172 - Clone attributes object", 2, function() {
