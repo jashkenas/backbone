@@ -1052,16 +1052,12 @@
     return matches;
   }());
 
-  // Polyfill IE8's String#trim
-  var trimBeginRegex = /^\s\s*/;
-  var trimEndRegex = /\s\s*$/;
-  function trim(str) {
-    if (str.trim) return str.trim();
-    return str.replace(trimBeginRegex, '').replace(trimEndRegex, '');
-  }
-
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+
+  // Cached regex to match an opening '<' of an HTML tag, possibly left-padded
+  // with whitespace.
+  var paddedLt = /^\s*</;
 
   // List of view options to be merged as properties.
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
@@ -1112,7 +1108,7 @@
     setElement: function(element, delegate) {
       if (this.el) this.undelegateEvents();
       if (typeof element == 'string') {
-        if (trim(element)[0] == '<') {
+        if (paddedLt.test(element)) {
           var el = document.createElement('div');
           el.innerHTML = element;
           this.el = el.firstChild;
