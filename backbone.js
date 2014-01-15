@@ -1035,20 +1035,19 @@
     var matches = ElementProto.matches ||
         ElementProto[_.find(['webkit', 'moz', 'ms', 'o'], function(prefix) {
           return !!ElementProto[prefix + 'MatchesSelector'];
-        })];
-
-    // Make our own `Element#matches` for IE8
-    matches = matches || function(selector) {
-      // We'll use querySelectorAll to find all element matching the selector,
-      // then check if the given element is included in that list.
-      // Executing the query on the parentNode reduces the resulting nodeList,
-      // document doesn't have a parentNode, though.
-      var nodeList = (this.parentNode || document).querySelectorAll(selector) || [];
-      for (var i = 0, l = nodeList.length; i < l; i++) {
-        if (nodeList[i] == this) return true;
-      }
-      return false;
-    };
+        })] ||
+        // Make our own `Element#matches` for IE8
+        function(selector) {
+          // We'll use querySelectorAll to find all element matching the selector,
+          // then check if the given element is included in that list.
+          // Executing the query on the parentNode reduces the resulting nodeList,
+          // document doesn't have a parentNode, though.
+          var nodeList = (this.parentNode || document).querySelectorAll(selector) || [];
+          for (var i = 0, l = nodeList.length; i < l; i++) {
+            if (nodeList[i] == this) return true;
+          }
+          return false;
+        };
 
     return matches;
   }());
