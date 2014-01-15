@@ -1212,7 +1212,7 @@
     // pass it to `setElement`.
     _ensureElement: function() {
       if (!this.el) {
-        var el = this.el = document.createElement(_.result(this, 'tagName'));
+        var el = document.createElement(_.result(this, 'tagName'));
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
