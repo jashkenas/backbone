@@ -1035,7 +1035,7 @@
     var matches = ElementProto.matches ||
         ElementProto[_.find(['webkit', 'moz', 'ms', 'o'], function(prefix) {
           return !!ElementProto[prefix + 'MatchesSelector'];
-        })] ||
+        }) + 'MatchesSelector'] ||
         // Make our own `Element#matches` for IE8
         function(selector) {
           // We'll use querySelectorAll to find all element matching the selector,
