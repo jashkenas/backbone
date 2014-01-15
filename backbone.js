@@ -1110,7 +1110,7 @@
           el.innerHTML = element;
           this.el = el.firstChild;
         }
-        else this.el = document.querySelector(element.trim());
+        else this.el = document.querySelector(element);
       }
       else this.el = element;
       if (delegate !== false) this.delegateEvents();
