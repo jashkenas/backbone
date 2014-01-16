@@ -1016,22 +1016,24 @@
   };
 
   // Caches a local reference to `Element.prototype` for faster access.
-  var ElementProto = Element.prototype;
+  var ElementProto = (typeof Element == 'function' ||
+                      /* jsdom */ typeof Element == 'object') &&
+      Element.prototype;
 
   // IE8 `addEventListener` polyfill.
-  var addEventListener = ElementProto.addEventListener ||
+  var addEventListener = ElementProto && ElementProto.addEventListener ||
       function(eventName, listener) {
         this.attachEvent('on' + eventName, listener);
       };
 
   // IE8 `removeEventListener` polyfill.
-  var removeEventListener = ElementProto.removeEventListener ||
+  var removeEventListener = ElementProto && ElementProto.removeEventListener ||
       function(eventName, listener) {
         this.detachEvent('on' + eventName, listener);
       };
 
   // Find the right `Element#matches` for IE>=9 and modern browsers.
-  var matchesSelector = ElementProto.matches ||
+  var matchesSelector = ElementProto && ElementProto.matches ||
       ElementProto[_.find(['webkit', 'moz', 'ms', 'o'], function(prefix) {
         return !!ElementProto[prefix + 'MatchesSelector'];
       }) + 'MatchesSelector'] ||
