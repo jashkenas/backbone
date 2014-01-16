@@ -287,12 +287,11 @@
     deepEqual(col.pluck('id'), [1, 2, 3]);
   });
 
-  test("remove", 5, function() {
+  test("remove", 4, function() {
     var removed = null;
     var otherRemoved = null;
     col.on('remove', function(model, col, options) {
       removed = model.get('label');
-      equal(options.index, 3);
     });
     otherCol.on('remove', function(model, col, options) {
       otherRemoved = true;
@@ -1323,5 +1322,13 @@
 
   });
 
+  test('#2929 removed model drops .collection property', 4, function () {
+    var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
+    collection.on('remove', function (model) {
+      equal(this.length, 0);
+      equal(model.collection, void 0);
+    });
+    collection.remove([1, 2]);
+  });
 
 })();
