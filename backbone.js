@@ -17,7 +17,7 @@
     });
 
   // Next for Node.js or CommonJS. jQuery may not be needed as a module.
-  } else if (typeof exports !== 'undefined') {
+  } else if (exports !== void 0) {
     var _ = require('underscore'), $;
     try { $ = require('jquery'); } catch(e) {}
     factory(root, exports, _, $);
@@ -1189,7 +1189,7 @@
   };
 
   var noXhrPatch =
-    typeof window !== 'undefined' && !!window.ActiveXObject &&
+    window !== void 0 && !!window.ActiveXObject &&
       !(window.XMLHttpRequest && (new XMLHttpRequest).dispatchEvent);
 
   // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
@@ -1320,7 +1320,7 @@
     _.bindAll(this, 'checkUrl');
 
     // Ensure that `History` can be used outside of the browser.
-    if (typeof window !== 'undefined') {
+    if (window !== void 0) {
       this.location = window.location;
       this.history = window.history;
     }
