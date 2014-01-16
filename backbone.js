@@ -1016,9 +1016,7 @@
   };
 
   // Caches a local reference to `Element.prototype` for faster access.
-  var ElementProto = (typeof Element == 'function' ||
-                      /* jsdom */ typeof Element == 'object') &&
-      Element.prototype;
+  var ElementProto = typeof Element != 'undefined' && Element.prototype;
 
   // IE8 `addEventListener` polyfill.
   var addEventListener = ElementProto && ElementProto.addEventListener ||
@@ -1192,9 +1190,9 @@
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
     _undelegateEvents: function() {
-      var el = this.el, domEvents = this._domEvents, i, item;
+      var el = this.el, domEvents = this._domEvents, i, l, item;
       if (el) {
-        for (i = 0; i < domEvents.length; i++) {
+        for (i = 0, l = domEvents.length; i < l; i++) {
           item = domEvents[i];
           removeEventListener.call(el, item.eventName, item.handler, false);
         }
