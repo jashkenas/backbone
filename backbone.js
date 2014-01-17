@@ -1163,10 +1163,10 @@
     // result of calling bound `method` with the parameters given to the
     // handler.
     _delegateEvents: function(eventName, selector, method) {
-      var root = this.el, domEvents = this._domEvents, handler, node;
+      var root = this.el, domEvents = this._domEvents, handler;
       if (!selector) handler = method;
       else handler = function (e) {
-        node = e.target || e.srcElement;
+        var node = e.target || e.srcElement;
         for (; node && node != root; node = node.parentNode) {
           if (matchesSelector.call(node, selector)) {
             e.delegateTarget = node;
