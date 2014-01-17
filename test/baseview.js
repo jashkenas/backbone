@@ -1,10 +1,11 @@
 (function() {
 
   var view;
-  var addEventListener = Element.prototype.addEventListener ||
-      function(eventName, listener) {
-        this.attachEvent('on' + eventName, listener);
-      };
+
+  var addEventListener = function(obj, eventName, listener, useCapture) {
+    if (obj.addEventListener) return obj.addEventListener(eventName, listener, useCapture);
+    else return obj.attachEvent('on' + eventName, listener);
+  };
 
   function click(element) {
     var event = SyntheticEvent('click', {
@@ -56,7 +57,7 @@
 
     var view = new Backbone.BaseView({el: '#testElement'});
     view.increment = function(){ counter1++; };
-    addEventListener.call(view.el, 'click', function(){ counter2++; });
+    addEventListener(view.el, 'click', function(){ counter2++; });
 
     var events = {'click h1': 'increment'};
 
@@ -109,7 +110,7 @@
 
     var view = new Backbone.BaseView({el: '#testElement'});
     view.increment = function(){ counter1++; };
-    addEventListener.call(view.el, 'click', function(){ counter2++; });
+    addEventListener(view.el, 'click', function(){ counter2++; });
 
     var events = {'click h1': 'increment'};
 

@@ -1015,20 +1015,20 @@
     this.delegateEvents();
   };
 
+  // Cross-platform `addEventListener`.
+  var addEventListener = function(obj, eventName, listener, useCapture) {
+    if (obj.addEventListener) return obj.addEventListener(eventName, listener, useCapture);
+    else return obj.attachEvent('on' + eventName, listener);
+  };
+
+  // Cross-platform `removeEventListener`.
+  var removeEventListener = function(obj, eventName, listener, useCapture) {
+    if (obj.removeEventListener) return obj.removeEventListener(eventName, listener, useCapture);
+    else return obj.detachEvent('on' + eventName, listener);
+  };
+
   // Caches a local reference to `Element.prototype` for faster access.
   var ElementProto = typeof Element != 'undefined' && Element.prototype;
-
-  // IE8 `addEventListener` polyfill.
-  var addEventListener = ElementProto && ElementProto.addEventListener ||
-      function(eventName, listener) {
-        this.attachEvent('on' + eventName, listener);
-      };
-
-  // IE8 `removeEventListener` polyfill.
-  var removeEventListener = ElementProto && ElementProto.removeEventListener ||
-      function(eventName, listener) {
-        this.detachEvent('on' + eventName, listener);
-      };
 
   // Find the right `Element#matches` for IE>=9 and modern browsers.
   var matchesSelector = ElementProto && ElementProto.matches ||
@@ -1175,7 +1175,7 @@
         }
       };
 
-      addEventListener.call(root, eventName, handler, false);
+      addEventListener(root, eventName, handler, false);
       domEvents.push({eventName: eventName, handler: handler});
     },
 
@@ -1194,7 +1194,7 @@
       if (el) {
         for (i = 0, l = domEvents.length; i < l; i++) {
           item = domEvents[i];
-          removeEventListener.call(el, item.eventName, item.handler, false);
+          removeEventListener(el, item.eventName, item.handler, false);
         }
         this._domEvents = [];
       }
@@ -1507,23 +1507,27 @@
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       var fragment          = this.getFragment();
       var docMode           = document.documentMode;
-      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
+      this._oldIE           = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
-      if (oldIE && this._wantsHashChange) {
-        var frame = Backbone.$('<iframe src="javascript:0" tabindex="-1">');
-        this.iframe = frame.hide().appendTo('body')[0].contentWindow;
+      if (this._oldIE && this._wantsHashChange) {
+        var frame = document.createElement('iframe');
+        frame.src = 'javascript:0';
+        frame.tabIndex = -1;
+        frame.style.display = 'none';
+        document.body.appendChild(frame);
+        this.iframe = frame.contentWindow;
         this.navigate(fragment);
       }
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
-        Backbone.$(window).on('popstate', this.checkUrl);
-      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        Backbone.$(window).on('hashchange', this.checkUrl);
+        addEventListener(window, 'popstate', this.checkUrl);
+      } else if (this._wantsHashChange && window.onhashchange && !this._oldIE) {
+        addEventListener(window, 'hashchange', this.checkUrl);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
@@ -1560,7 +1564,11 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
+      if (this._hasPushState) {
+        removeEventListener(window, 'popstate', this.checkUrl);
+      } else if (this._wantsHashChange && window.onhashchange && !this._oldIE) {
+        removeEventListener(window, 'hashchange', this.checkUrl);
+      }
       clearInterval(this._checkUrlInterval);
       History.started = false;
     },
