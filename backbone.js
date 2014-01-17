@@ -1015,15 +1015,38 @@
     this.delegateEvents();
   };
 
-  // Caches Element.prototype for convenience and runtime environment
-  // compatibiliy.
+  // Caches a local reference to `Element.prototype` for faster access.
   var ElementProto = typeof Element != 'undefined' && Element.prototype;
+
+  // IE8 `addEventListener` polyfill.
+  var addEventListener = ElementProto && ElementProto.addEventListener ||
+      function(eventName, listener) {
+        this.attachEvent('on' + eventName, listener);
+      };
+
+  // IE8 `removeEventListener` polyfill.
+  var removeEventListener = ElementProto && ElementProto.removeEventListener ||
+      function(eventName, listener) {
+        this.detachEvent('on' + eventName, listener);
+      };
 
   // Find the right `Element#matches` for IE>=9 and modern browsers.
   var matchesSelector = ElementProto && ElementProto.matches ||
       ElementProto[_.find(['webkit', 'moz', 'ms', 'o'], function(prefix) {
         return !!ElementProto[prefix + 'MatchesSelector'];
-      }) + 'MatchesSelector'];
+      }) + 'MatchesSelector'] ||
+      // Make our own `Element#matches` for IE8
+      function(selector) {
+        // We'll use querySelectorAll to find all element matching the selector,
+        // then check if the given element is included in that list.
+        // Executing the query on the parentNode reduces the resulting nodeList,
+        // document doesn't have a parentNode, though.
+        var nodeList = (this.parentNode || document).querySelectorAll(selector) || [];
+        for (var i = 0, l = nodeList.length; i < l; i++) {
+          if (nodeList[i] == this) return true;
+        }
+        return false;
+      };
 
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -1143,7 +1166,8 @@
       var root = this.el, domEvents = this._domEvents, handler, node;
       if (!selector) handler = method;
       else handler = function (e) {
-        for (node = e.target; node && node != root; node = node.parentNode) {
+        node = e.target || e.srcElement;
+        for (; node && node != root; node = node.parentNode) {
           if (matchesSelector.call(node, selector)) {
             e.delegateTarget = node;
             return method.apply(this, arguments);
@@ -1151,7 +1175,7 @@
         }
       };
 
-      root.addEventListener(eventName, handler, false);
+      addEventListener.call(root, eventName, handler, false);
       domEvents.push({eventName: eventName, handler: handler});
     },
 
@@ -1170,7 +1194,7 @@
       if (el) {
         for (i = 0, l = domEvents.length; i < l; i++) {
           item = domEvents[i];
-          el.removeEventListener(item.eventName, item.handler, false);
+          removeEventListener.call(el, item.eventName, item.handler, false);
         }
         this._domEvents = [];
       }
