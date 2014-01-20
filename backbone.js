@@ -42,6 +42,53 @@
   var slice = array.slice;
   var splice = array.splice;
 
+  // Caches a local reference to `Element.prototype` for faster access.
+  var ElementProto = typeof Element != 'undefined' && Element.prototype;
+
+  // Given an object `obj` and an operation `op`, which must be either `add` or
+  // `remove`, this function returns the either the native implementation of the
+  // [add|remove]EventListener method directly or a function that delegates to
+  // IE's [attach|detach]Event methods.
+  function makeEventListener(obj, op) {
+    if (obj[op + 'EventListener']) return obj[op + 'EventListener'];
+    else {
+      var func;
+      if (op == 'add') func = obj.attachEvent;
+      else if (op == 'remove') func = obj.detachEvent;
+      return function (eventName, listener) {
+        func.call(this, 'on' + eventName, listener);
+      };
+    }
+  }
+
+  // Caches the window's event listener methods for IE and Safari.
+  var windowAddEventListener = typeof window != 'undefined' &&
+      makeEventListener(window, 'add');
+  var windowRemoveEventListener = typeof window != 'undefined' &&
+      makeEventListener(window, 'remove');
+
+  // Caches the Element prototype's event listener methods for everything else.
+  var elementAddEventListener = makeEventListener(ElementProto, 'add');
+  var elementRemoveEventListener = makeEventListener(ElementProto, 'remove');
+
+  // Find the right `Element#matches` for IE>=9 and modern browsers.
+  var matchesSelector = ElementProto && ElementProto.matches ||
+      ElementProto[_.find(['webkit', 'moz', 'ms', 'o'], function(prefix) {
+        return !!ElementProto[prefix + 'MatchesSelector'];
+      }) + 'MatchesSelector'] ||
+      // Make our own `Element#matches` for IE8
+      function(selector) {
+        // We'll use querySelectorAll to find all element matching the selector,
+        // then check if the given element is included in that list.
+        // Executing the query on the parentNode reduces the resulting nodeList,
+        // document doesn't have a parentNode, though.
+        var nodeList = (this.parentNode || document).querySelectorAll(selector) || [];
+        for (var i = 0, l = nodeList.length; i < l; i++) {
+          if (nodeList[i] == this) return true;
+        }
+        return false;
+      };
+
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '1.1.0';
 
@@ -1015,39 +1062,6 @@
     this.delegateEvents();
   };
 
-  // Cross-platform `addEventListener`.
-  var addEventListener = function(obj, eventName, listener, useCapture) {
-    if (obj.addEventListener) return obj.addEventListener(eventName, listener, useCapture);
-    else return obj.attachEvent('on' + eventName, listener);
-  };
-
-  // Cross-platform `removeEventListener`.
-  var removeEventListener = function(obj, eventName, listener, useCapture) {
-    if (obj.removeEventListener) return obj.removeEventListener(eventName, listener, useCapture);
-    else return obj.detachEvent('on' + eventName, listener);
-  };
-
-  // Caches a local reference to `Element.prototype` for faster access.
-  var ElementProto = typeof Element != 'undefined' && Element.prototype;
-
-  // Find the right `Element#matches` for IE>=9 and modern browsers.
-  var matchesSelector = ElementProto && ElementProto.matches ||
-      ElementProto[_.find(['webkit', 'moz', 'ms', 'o'], function(prefix) {
-        return !!ElementProto[prefix + 'MatchesSelector'];
-      }) + 'MatchesSelector'] ||
-      // Make our own `Element#matches` for IE8
-      function(selector) {
-        // We'll use querySelectorAll to find all element matching the selector,
-        // then check if the given element is included in that list.
-        // Executing the query on the parentNode reduces the resulting nodeList,
-        // document doesn't have a parentNode, though.
-        var nodeList = (this.parentNode || document).querySelectorAll(selector) || [];
-        for (var i = 0, l = nodeList.length; i < l; i++) {
-          if (nodeList[i] == this) return true;
-        }
-        return false;
-      };
-
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
@@ -1175,7 +1189,7 @@
         }
       };
 
-      addEventListener(root, eventName, handler, false);
+      elementAddEventListener.call(root, eventName, handler, false);
       domEvents.push({eventName: eventName, handler: handler});
     },
 
@@ -1194,7 +1208,7 @@
       if (el) {
         for (i = 0, l = domEvents.length; i < l; i++) {
           item = domEvents[i];
-          removeEventListener(el, item.eventName, item.handler, false);
+          elementRemoveEventListener.call(el, item.eventName, item.handler, false);
         }
         this._domEvents = [];
       }
@@ -1524,10 +1538,10 @@
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState) {
-        addEventListener(window, 'popstate', this.checkUrl);
+      if (this._hasPushState && window.popstate) {
+        windowAddEventListener.call(window, 'popstate', this.checkUrl);
       } else if (this._wantsHashChange && window.onhashchange && !this._oldIE) {
-        addEventListener(window, 'hashchange', this.checkUrl);
+        windowAddEventListener.call(window, 'hashchange', this.checkUrl);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
@@ -1564,10 +1578,10 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      if (this._hasPushState) {
-        removeEventListener(window, 'popstate', this.checkUrl);
+      if (this._hasPushState && window.onpopstate) {
+        windowRemoveEventListener.call(window, 'popstate', this.checkUrl);
       } else if (this._wantsHashChange && window.onhashchange && !this._oldIE) {
-        removeEventListener(window, 'hashchange', this.checkUrl);
+        windowRemoveEventListener.call(window, 'hashchange', this.checkUrl);
       }
       clearInterval(this._checkUrlInterval);
       History.started = false;
