@@ -46,19 +46,15 @@
   var ElementProto = typeof Element != 'undefined' && Element.prototype;
 
   // Given an object `obj` and an operation `op`, which must be either `add` or
-  // `remove`, this function returns the either the native implementation of the
+  // `remove`, this function returns either the native implementation of the
   // [add|remove]EventListener method directly or a function that delegates to
   // IE's [attach|detach]Event methods.
   function makeEventListener(obj, op) {
     if (obj[op + 'EventListener']) return obj[op + 'EventListener'];
-    else {
-      var func;
-      if (op == 'add') func = obj.attachEvent;
-      else if (op == 'remove') func = obj.detachEvent;
-      return function (eventName, listener) {
-        func.call(this, 'on' + eventName, listener);
-      };
-    }
+    var func = op == 'add' ? obj.attachEvent : obj.detachEvent;
+    return function (eventName, listener) {
+      func.call(this, 'on' + eventName, listener);
+    };
   }
 
   // Caches the window's event listener methods for IE and Safari.
