@@ -1502,7 +1502,7 @@
       var url = this.root + (fragment = this.getFragment(fragment || ''));
 
       // Strip the hash for matching.
-      if (this.pathStripperEnable = true) fragment = fragment.replace(pathStripper, '');
+      if (this.pathStripperEnable == true) fragment = fragment.replace(pathStripper, '');
 
       if (this.fragment === fragment) return;
       this.fragment = fragment;
