@@ -1350,6 +1350,12 @@
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
     interval: 50,
+    
+    // Define if router'll remove queryString
+    // Usage: Backbone.history.pathStripperEnable = [true/false]
+    // If defined as false, router'll accept querystring with the url 
+    // Ex: /myurl?para=1 will be differente from /myurl?para=2
+    pathStripperEnable: true,
 
     // Are we at the app root?
     atRoot: function() {
@@ -1496,7 +1502,7 @@
       var url = this.root + (fragment = this.getFragment(fragment || ''));
 
       // Strip the hash for matching.
-      fragment = fragment.replace(pathStripper, '');
+      if (this.pathStripperEnable == true) fragment = fragment.replace(pathStripper, '');
 
       if (this.fragment === fragment) return;
       this.fragment = fragment;
