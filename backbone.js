@@ -1534,7 +1534,7 @@
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState && window.popstate) {
+      if (this._hasPushState && window.onpopstate) {
         windowAddEventListener.call(window, 'popstate', this.checkUrl);
       } else if (this._wantsHashChange && window.onhashchange && !this._oldIE) {
         windowAddEventListener.call(window, 'hashchange', this.checkUrl);
