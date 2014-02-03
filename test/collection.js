@@ -1323,5 +1323,16 @@
 
   });
 
+  test('Do not allow duplicate models to be `add`ed or `set`', function() {
+    var c = new Backbone.Collection();
+
+    c.add([{id: 1}, {id: 1}]);
+    equal(c.length, 1);
+    equal(c.models.length, 1);
+
+    c.set([{id: 1}, {id: 1}]);
+    equal(c.length, 1);
+    equal(c.models.length, 1);
+  });
 
 })();
