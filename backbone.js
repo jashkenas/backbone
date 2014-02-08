@@ -1557,6 +1557,7 @@
 
     // Set a convenience property in case the parent's prototype is needed
     // later.
+    child.__parent__ = parent;
     child.__super__ = parent.prototype;
 
     return child;
