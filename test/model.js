@@ -1127,4 +1127,12 @@
     model.set({a: true});
   });
 
+  test("attributs can override their json serizlization by providing toJSON", function() {
+    var value = {
+      toJSON: function() {return 1337}
+    }
+    var model = new Backbone.Model({key: value});
+    deepEqual(model.toJSON(), {key: 1337});
+  });
+
 })();

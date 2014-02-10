@@ -277,9 +277,17 @@
     // initialization logic.
     initialize: function(){},
 
-    // Return a copy of the model's `attributes` object.
+    // Return a copy of the model's attributes.
     toJSON: function(options) {
-      return _.clone(this.attributes);
+      var result = {}, attrs = this.attributes;
+      for (var prop in attrs) {
+        if (typeof attrs[prop].toJSON === 'function') {
+          result[prop] = attrs[prop].toJSON();
+        } else {
+          result[prop] = attrs[prop];
+        }
+      }
+      return result;
     },
 
     // Proxy `Backbone.sync` by default -- but override this if you need
