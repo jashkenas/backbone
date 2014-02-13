@@ -1478,6 +1478,10 @@
     // returns `false`.
     loadUrl: function(fragment) {
       fragment = this.fragment = this.getFragment(fragment);
+
+      // Trigger 'load' event
+      this.trigger('load', fragment);
+
       return _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);

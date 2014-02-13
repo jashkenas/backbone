@@ -792,4 +792,24 @@
     Backbone.history.start({pushState: true});
   });
 
+  test('Backbone.history should emit "load" event with current fragment', 2, function() {
+    location.replace('http://example.com/prefix/app/action');
+    Backbone.history.stop();
+
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    Backbone.history.on('load', function(fragment) {
+      return strictEqual(fragment, 'app/action');
+    });
+    var Router = Backbone.Router.extend({
+      routes: {
+        'app/action': function() {
+          ok(true);
+        }
+      }
+    });
+    var router = new Router;
+    Backbone.history.start({pushState: true, root: '/prefix/'});
+    Backbone.history.checkUrl();
+  });
+
 })();
