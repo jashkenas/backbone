@@ -285,7 +285,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(1.1.0)</span>
+      Backbone.js <span class="version">(1.1.1)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/jashkenas/backbone">GitHub Repository</a></li>
@@ -396,6 +396,7 @@
       <li>– <a href="#Router-constructor">constructor / initialize</a></li>
       <li>– <a href="#Router-route">route</a></li>
       <li>– <a href="#Router-navigate">navigate</a></li>
+      <li>– <a href="#Router-execute">execute</a></li>
     </ul>
 
     <a class="toc_title" href="#History">
@@ -558,13 +559,13 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (1.1.0)</a></td>
-        <td class="text"><i>59kb, Full source, tons of comments</i></td>
+        <td><a class="punch" href="backbone.js">Development Version (1.1.1)</a></td>
+        <td class="text"><i>60kb, Full source, tons of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (1.1.0)</a></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (1.1.1)</a></td>
         <td class="text" style="line-height: 16px;">
-          <i>6.4kb, Packed and gzipped</i><br />
+          <i>6.5kb, Packed and gzipped</i><br />
           <small>(<a href="backbone-min.map">Source Map</a>)</small>
         </td>
       </tr>
@@ -2305,6 +2306,25 @@ app.navigate("help/troubleshooting", {trigger: true});
 app.navigate("help/troubleshooting", {trigger: true, replace: true});
 </pre>
 
+    <p id="Router-execute">
+      <b class="header">execute</b><code>router.execute(callback, args)</code>
+      <br />
+      This method is called internally within the router, whenever a route 
+      matches and its corresponding <b>callback</b> is about to be executed. 
+      Override it to perform custom parsing or wrapping of your routes, for 
+      example, to parse query strings before handing them to your route
+      callback, like so:
+    </p>
+
+<pre>
+var Router = Backbone.Router.extend({
+  execute: function(callback, args) {
+    args.push(parseQueryString(args.pop()));
+    if (callback) callback.apply(this, args);
+  }
+});
+</pre>
+
     <h2 id="History">Backbone.history</h2>
 
     <p>
@@ -4007,6 +4027,24 @@ ActiveRecord::Base.include_root_in_json = false
     </div>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header">1.1.1</b> &mdash; <small><i>Feb. 13, 2014</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.0...1.1.1">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/jashkenas/backbone/1.1.1/index.html">Docs</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Backbone now registers itself for AMD (Require.js), Bower and Component, 
+        as well as being a CommonJS module and a regular (Java)Script. Whew.
+      </li>
+      <li>
+        Added an <tt>execute</tt> hook to the Router, which allows you to hook
+        in and custom-parse route arguments, like query strings, for example.
+      </li>
+      <li>
+        Performance fine-tuning for Backbone Events.
+      </li>
+      <li>
+        Better matching for Unicode in routes, in old browsers.
+      </li>
+    </ul>
 
     <b class="header">1.1.0</b> &mdash; <small><i>Oct. 10, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.0.0...1.1.0">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/jashkenas/backbone/1.1.0/index.html">Docs</a><br />
     <ul style="margin-top: 5px;">
