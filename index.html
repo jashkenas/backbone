@@ -5,7 +5,6 @@
   <meta http-equiv="X-UA-Compatible" content="chrome=1" />
   <meta name="viewport" content="width=device-width">
   <link rel="canonical" href="http://backbonejs.org" />
-  <link rel="icon" href="docs/images/favicon.ico" />
   <title>Backbone.js</title>
   <style>
     body {
@@ -286,7 +285,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(1.1.0)</span>
+      Backbone.js <span class="version">(1.1.1)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/jashkenas/backbone">GitHub Repository</a></li>
@@ -397,6 +396,7 @@
       <li>– <a href="#Router-constructor">constructor / initialize</a></li>
       <li>– <a href="#Router-route">route</a></li>
       <li>– <a href="#Router-navigate">navigate</a></li>
+      <li>– <a href="#Router-execute">execute</a></li>
     </ul>
 
     <a class="toc_title" href="#History">
@@ -440,6 +440,20 @@
     <ul class="toc_section">
       <li>– <a href="#Utility-Backbone-noConflict">Backbone.noConflict</a></li>
       <li>– <a href="#Utility-Backbone-$">Backbone.$</a></li>
+    </ul>
+
+    <a class="toc_title" href="#faq">
+      F.A.Q.
+    </a>
+    <ul class="toc_section">
+      <li>– <a href="#FAQ-why-backbone">Why Backbone?</a></li>
+      <li>– <a href="#FAQ-tim-toady">More Than One Way To Do It</a></li>
+      <li>– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
+      <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
+      <li>– <a href="#FAQ-extending">Extending Backbone</a></li>
+      <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
+      <li>– <a href="#FAQ-this">Binding "this"</a></li>
+      <li>– <a href="#FAQ-rails">Working with Rails</a></li>
     </ul>
 
     <a class="toc_title" href="#examples">
@@ -490,20 +504,6 @@
       <li>– <a href="#examples-blossom">Blossom</a></li>
       <li>– <a href="#examples-trello">Trello</a></li>
       <li>– <a href="#examples-tzigla">Tzigla</a></li>
-    </ul>
-
-    <a class="toc_title" href="#faq">
-      F.A.Q.
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#FAQ-why-backbone">Why Backbone?</a></li>
-      <li>– <a href="#FAQ-tim-toady">More Than One Way To Do It</a></li>
-      <li>– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
-      <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
-      <li>– <a href="#FAQ-extending">Extending Backbone</a></li>
-      <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
-      <li>– <a href="#FAQ-this">Binding "this"</a></li>
-      <li>– <a href="#FAQ-rails">Working with Rails</a></li>
     </ul>
 
     <a class="toc_title" href="#changelog">
@@ -559,13 +559,13 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (1.1.0)</a></td>
-        <td class="text"><i>59kb, Full source, tons of comments</i></td>
+        <td><a class="punch" href="backbone.js">Development Version (1.1.1)</a></td>
+        <td class="text"><i>60kb, Full source, tons of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (1.1.0)</a></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (1.1.1)</a></td>
         <td class="text" style="line-height: 16px;">
-          <i>6.4kb, Packed and gzipped</i><br />
+          <i>6.5kb, Packed and gzipped</i><br />
           <small>(<a href="backbone-min.map">Source Map</a>)</small>
         </td>
       </tr>
@@ -863,9 +863,9 @@ view.stopListening(model);
       <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
-      <li><b>"request"</b> (model, xhr, options) &mdash; when a model (or collection) has started a request to the server. </li>
-      <li><b>"sync"</b> (model, resp, options) &mdash; when a model (or collection) has been successfully synced with the server. </li>
-      <li><b>"error"</b> (model, xhr, options) &mdash; when a model's <a href="#Model-save">save</a> call fails on the server. </li>
+      <li><b>"request"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a request to the server. </li>
+      <li><b>"sync"</b> (model_or_collection, resp, options) &mdash; when a model or collection has been successfully synced with the server.</li>
+      <li><b>"error"</b> (model_or_collection, resp, options) &mdash; when model's or collection's request to remote server has failed. </li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client. </li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
@@ -1155,7 +1155,7 @@ alert("Cake id: " + cake.id);
       <b class="header">changed</b><code>model.changed</code>
       <br />
       The <b>changed</b> property is the internal hash containing all the attributes
-      that have changed since the last <a href="Model#set">set</a>.
+      that have changed since the last <a href="#Model-set">set</a>.
       Please do not update <b>changed</b> directly since its state is internally maintained
       by <a href="#Model-set">set</a>.  A copy of <b>changed</b> can be acquired from
       <a href="#Model-changedAttributes">changedAttributes</a>.
@@ -1295,8 +1295,7 @@ book.save({author: "Teddy"});
 
     <p>
       <b>save</b> accepts <tt>success</tt> and <tt>error</tt> callbacks in the
-      options hash, which are passed <tt>(model, response, options)</tt> and
-      <tt>(model, xhr, options)</tt> as arguments, respectively.
+      options hash, which will passed the arguments <tt>(model, response, options)</tt>.
       If a server-side validation fails, return a non-<tt>200</tt>
       HTTP response code, along with an error response in text or JSON.
     </p>
@@ -1313,8 +1312,7 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> object, or
       <tt>false</tt> if the model <a href="#Model-isNew">isNew</a>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response, options)</tt> and <tt>(model, xhr, options)</tt>
-      as arguments, respectively.
+      will be passed <tt>(model, response, options)</tt>.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
       through any collections that contain it, a <tt>"request"</tt> event as it
       begins the Ajax request to the server, and a <tt>"sync"</tt> event, after
@@ -1407,7 +1405,7 @@ one.save({
     </p>
 
     <p id="Model-isValid">
-      <b class="header">isValid</b><code>model.isValid</code>
+      <b class="header">isValid</b><code>model.isValid()</code>
       <br />
       Run <a href="#Model-validate">validate</a> to check the model state.
     </p>
@@ -1917,6 +1915,9 @@ var book = library.get(110);
       "sort" comparator functions take two models, and return <tt>-1</tt> if
       the first model should come before the second, <tt>0</tt> if they are of
       the same rank and <tt>1</tt> if the first model should come after.
+      <i>Note that Backbone depends on the arity of your comparator function to
+      determine between the two styles, so be careful if your comparator function
+      is bound.</i>
     </p>
 
     <p>
@@ -2303,6 +2304,25 @@ app.navigate("help/troubleshooting", {trigger: true});
 # Or ...
 
 app.navigate("help/troubleshooting", {trigger: true, replace: true});
+</pre>
+
+    <p id="Router-execute">
+      <b class="header">execute</b><code>router.execute(callback, args)</code>
+      <br />
+      This method is called internally within the router, whenever a route 
+      matches and its corresponding <b>callback</b> is about to be executed. 
+      Override it to perform custom parsing or wrapping of your routes, for 
+      example, to parse query strings before handing them to your route
+      callback, like so:
+    </p>
+
+<pre>
+var Router = Backbone.Router.extend({
+  execute: function(callback, args) {
+    args.push(parseQueryString(args.pop()));
+    if (callback) callback.apply(this, args);
+  }
+});
 </pre>
 
     <h2 id="History">Backbone.history</h2>
@@ -2808,6 +2828,354 @@ var model = localBackbone.Model.extend(...);
       this is the property for you.
     </p>
 
+    <h2 id="faq">F.A.Q.</h2>
+
+    <p id="FAQ-why-backbone">
+      <b class="header">Why use Backbone, not [other framework X]?</b>
+      <br />
+      If your eye hasn't already been caught by the adaptability and elan on display
+      in the above <a href="#examples">list of examples</a>, we can get more specific:
+      Backbone.js aims to provide the common foundation that data-rich web applications
+      with ambitious interfaces require &mdash; while very deliberately avoiding
+      painting you into a corner by making any decisions that you're
+      better equipped to make yourself.
+    </p>
+
+    <ul>
+      <li>
+        The focus is on supplying you with
+        <a href="#Collection-Underscore-Methods">helpful methods to manipulate and
+        query your data</a>, not on HTML widgets or reinventing the JavaScript
+        object model.
+      </li>
+      <li>
+        Backbone does not force you to use a single template engine. Views can bind
+        to HTML constructed in
+        <a href="http://underscorejs.org/#template">your</a>
+        <a href="http://guides.rubyonrails.org/layouts_and_rendering.html">favorite</a>
+        <a href="http://mustache.github.com">way</a>.
+      </li>
+      <li>
+        It's smaller. There are fewer kilobytes for your browser or phone to download,
+        and less <i>conceptual</i> surface area. You can read and understand
+        the source in an afternoon.
+      </li>
+      <li>
+        It doesn't depend on stuffing application logic into your HTML.
+        There's no embedded JavaScript, template logic, or binding hookup code in
+        <tt>data-</tt> or <tt>ng-</tt> attributes, and no need to invent your own HTML tags.
+      </li>
+      <li>
+        <a href="#Events">Synchronous events</a> are used as the fundamental
+        building block, not a difficult-to-reason-about run loop, or by constantly
+        polling and traversing your data structures to hunt for changes. And if
+        you want a specific event to be asynchronous and aggregated,
+        <a href="http://underscorejs.org/#debounce">no problem</a>.
+      </li>
+      <li>
+        Backbone scales well, from <a href="http://disqus.com">embedded widgets</a>
+        to <a href="http://www.usatoday.com">massive apps</a>.
+      </li>
+      <li>
+        Backbone is a library, not a framework, and plays well with others.
+        You can embed Backbone widgets in Dojo apps without trouble, or use Backbone
+        models as the data backing for D3 visualizations (to pick two entirely
+        random examples).
+      </li>
+      <li>
+        "Two way data-binding" is avoided. While it certainly makes for a nifty
+        demo, and works for the most basic CRUD, it doesn't tend to be terribly
+        useful in your real-world app. Sometimes you want to update on
+        every keypress, sometimes on blur, sometimes when the panel is closed,
+        and sometimes when the "save" button is clicked. In almost all cases, simply
+        serializing the form to JSON is faster and easier. All that aside, if your
+        heart is set, <a href="http://rivetsjs.com">go</a>
+        <a href="http://nytimes.github.com/backbone.stickit/">for it</a>.
+      </li>
+      <li>
+        There's no built-in performance penalty for choosing to structure your
+        code with Backbone. And if you do want to optimize further, thin models and
+        templates with flexible granularity make it easy to squeeze every last
+        drop of potential performance out of, say, IE8.
+      </li>
+    </ul>
+
+    <p id="FAQ-tim-toady">
+      <b class="header">There's More Than One Way To Do It</b>
+      <br />
+      It's common for folks just getting started to treat the examples listed
+      on this page as some sort of gospel truth. In fact, Backbone.js is intended
+      to be fairly agnostic about many common patterns in client-side code.
+      For example...
+    </p>
+
+    <p>
+      <b>References between Models and Views</b> can be handled several ways.
+      Some people like to have direct pointers, where views correspond 1:1 with
+      models (<tt>model.view</tt> and <tt>view.model</tt>). Others prefer to have intermediate
+      "controller" objects that orchestrate the creation and organization of
+      views into a hierarchy. Others still prefer the evented approach, and always
+      fire events instead of calling methods directly. All of these styles work well.
+    </p>
+
+    <p>
+      <b>Batch operations</b> on Models are common, but often best handled differently
+      depending on your server-side setup. Some folks don't mind making individual
+      Ajax requests. Others create explicit resources for RESTful batch operations:
+      <tt>/notes/batch/destroy?ids=1,2,3,4</tt>. Others tunnel REST over JSON, with the
+      creation of "changeset" requests:
+    </p>
+
+<pre>
+  {
+    "create":  [array of models to create]
+    "update":  [array of models to update]
+    "destroy": [array of model ids to destroy]
+  }
+</pre>
+
+    <p>
+      <b>Feel free to define your own events.</b> <a href="#Events">Backbone.Events</a>
+      is designed so that you can mix it in to any JavaScript object or prototype.
+      Since you can use any string as an event, it's often handy to bind
+      and trigger your own custom events: <tt>model.on("selected:true")</tt> or
+      <tt>model.on("editing")</tt>
+    </p>
+
+    <p>
+      <b>Render the UI</b> as you see fit. Backbone is agnostic as to whether you
+      use <a href="http://underscorejs.org/#template">Underscore templates</a>,
+      <a href="https://github.com/janl/mustache.js">Mustache.js</a>, direct DOM
+      manipulation, server-side rendered snippets of HTML, or
+      <a href="http://jqueryui.com/">jQuery UI</a> in your <tt>render</tt> function.
+      Sometimes you'll create a view for each model ... sometimes you'll have a
+      view that renders thousands of models at once, in a tight loop. Both can be
+      appropriate in the same app, depending on the quantity of data involved,
+      and the complexity of the UI.
+    </p>
+
+    <p id="FAQ-nested">
+      <b class="header">Nested Models &amp; Collections</b>
+      <br />
+      It's common to nest collections inside of models with Backbone. For example,
+      consider a <tt>Mailbox</tt> model that contains many <tt>Message</tt> models.
+      One nice pattern for handling this is have a <tt>this.messages</tt> collection
+      for each mailbox, enabling the lazy-loading of messages, when the mailbox
+      is first opened ... perhaps with <tt>MessageList</tt> views listening for
+      <tt>"add"</tt> and <tt>"remove"</tt> events.
+    </p>
+
+<pre>
+var Mailbox = Backbone.Model.extend({
+
+  initialize: function() {
+    this.messages = new Messages;
+    this.messages.url = '/mailbox/' + this.id + '/messages';
+    this.messages.on("reset", this.updateCounts);
+  },
+
+  ...
+
+});
+
+var inbox = new Mailbox;
+
+// And then, when the Inbox is opened:
+
+inbox.messages.fetch({reset: true});
+</pre>
+
+    <p>
+      If you're looking for something more opinionated, there are a number of
+      Backbone plugins that add sophisticated associations among models,
+      <a href="https://github.com/jashkenas/backbone/wiki/Extensions%2C-Plugins%2C-Resources">available on the wiki</a>.
+    </p>
+
+    <p>
+      Backbone doesn't include direct support for nested models and collections
+      or "has many" associations because there are a number
+      of good patterns for modeling structured data on the client side, and
+      <i>Backbone should provide the foundation for implementing any of them.</i>
+      You may want to&hellip;
+    </p>
+
+    <ul>
+      <li>
+        Mirror an SQL database's structure, or the structure of a NoSQL database.
+      </li>
+      <li>
+        Use models with arrays of "foreign key" ids, and join to top level
+        collections (a-la tables).
+      </li>
+      <li>
+        For associations that are numerous, use a range of ids instead of an
+        explicit list.
+      </li>
+      <li>
+        Avoid ids, and use direct references, creating a partial object graph
+        representing your data set.
+      </li>
+      <li>
+        Lazily load joined models from the server, or lazily deserialize nested
+        models from JSON documents.
+      </li>
+    </ul>
+
+    <p id="FAQ-bootstrap">
+      <b class="header">Loading Bootstrapped Models</b>
+      <br />
+      When your app first loads, it's common to have a set of initial models that
+      you know you're going to need, in order to render the page. Instead of
+      firing an extra AJAX request to <a href="#Collection-fetch">fetch</a> them,
+      a nicer pattern is to have their data already bootstrapped into the page.
+      You can then use <a href="#Collection-reset">reset</a> to populate your
+      collections with the initial data. At DocumentCloud, in the
+      <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the
+      workspace, we do something along these lines:
+    </p>
+
+<pre>
+&lt;script&gt;
+  var accounts = new Backbone.Collection;
+  accounts.reset(&lt;%= @accounts.to_json %&gt;);
+  var projects = new Backbone.Collection;
+  projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
+&lt;/script&gt;
+</pre>
+
+    <p>You have to <a href="http://mathiasbynens.be/notes/etago">escape</a>
+    <tt>&lt;/</tt> within the JSON string, to prevent javascript injection
+    attacks.
+
+    <p id="FAQ-extending">
+      <b class="header">Extending Backbone</b>
+      <br />
+      Many JavaScript libraries are meant to be insular and self-enclosed,
+      where you interact with them by calling their public API, but never peek
+      inside at the guts. Backbone.js is <i>not</i> that kind of library.
+    </p>
+
+    <p>
+      Because it serves as a foundation for your application, you're meant to
+      extend and enhance it in the ways you see fit &mdash; the entire source
+      code is <a href="docs/backbone.html">annotated</a> to make this easier
+      for you. You'll find that there's very little there apart from core
+      functions, and most of those can be overriden or augmented should you find
+      the need. If you catch yourself adding methods to <tt>Backbone.Model.prototype</tt>,
+      or creating your own base subclass, don't worry &mdash; that's how things are
+      supposed to work.
+    </p>
+
+    <p id="FAQ-mvc">
+      <b class="header">How does Backbone relate to "traditional" MVC?</b>
+      <br />
+      Different implementations of the
+      <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
+      pattern tend to disagree about the definition of a controller. If it helps any, in
+      Backbone, the <a href="#View">View</a> class can also be thought of as a
+      kind of controller, dispatching events that originate from the UI, with
+      the HTML template serving as the true view. We call it a View because it
+      represents a logical chunk of UI, responsible for the contents of a single
+      DOM element.
+    </p>
+
+    <p>
+      Comparing the overall structure of Backbone to a server-side MVC framework
+      like <b>Rails</b>, the pieces line up like so:
+    </p>
+
+    <ul>
+      <li>
+        <b>Backbone.Model</b> &ndash; Like a Rails model minus the class
+        methods. Wraps a row of data in business logic.
+      </li>
+      <li>
+        <b>Backbone.Collection</b> &ndash; A group of models on the client-side,
+        with sorting/filtering/aggregation logic.
+      </li>
+      <li>
+        <b>Backbone.Router</b> &ndash; Rails <tt>routes.rb</tt> + Rails controller
+        actions. Maps URLs to functions.
+      </li>
+      <li>
+        <b>Backbone.View</b> &ndash; A logical, re-usable piece of UI. Often,
+        but not always, associated with a model.
+      </li>
+      <li>
+        <b>Client-side Templates</b> &ndash; Rails <tt>.html.erb</tt> views,
+        rendering a chunk of HTML.
+      </li>
+    </ul>
+
+    <p id="FAQ-this">
+      <b class="header">Binding "this"</b>
+      <br />
+      Perhaps the single most common JavaScript "gotcha" is the fact that when
+      you pass a function as a callback, its value for <tt>this</tt> is lost.
+      When dealing with <a href="#Events">events</a> and callbacks in Backbone,
+      you'll often find it useful to rely on <a href="#Events-listenTo">listenTo</a>
+      or the optional <tt>context</tt> argument that many of Underscore
+      and Backbone's methods use to specify the <tt>this</tt>
+      that will be used when the callback is later invoked. (See
+      <a href="http://underscorejs.org/#each">_.each</a>,
+      <a href="http://underscorejs.org/#map">_.map</a>, and
+      <a href="#Events-on">object.on</a>, to name a few).
+      <a href="#View-delegateEvents">View events</a> are automatically bound to
+      the view's context for you.
+      You may also find it helpful to use
+      <a href="http://underscorejs.org/#bind">_.bind</a> and
+      <a href="http://underscorejs.org/#bindAll">_.bindAll</a>
+      from Underscore.js.
+    </p>
+
+<pre>
+var MessageList = Backbone.View.extend({
+
+  initialize: function() {
+    var messages = this.collection;
+    messages.on("reset", this.render, this);
+    messages.on("add", this.addMessage, this);
+    messages.on("remove", this.removeMessage, this);
+
+    messsages.each(this.addMessage, this);
+  }
+
+});
+
+// Later, in the app...
+
+Inbox.messages.add(newMessage);
+</pre>
+
+    <p id="FAQ-rails">
+      <b class="header">Working with Rails</b>
+      <br />
+      Backbone.js was originally extracted from
+      <a href="http://www.documentcloud.org">a Rails application</a>; getting
+      your client-side (Backbone) Models to sync correctly with your server-side
+      (Rails) Models is painless, but there are still a few things to be aware of.
+    </p>
+
+    <p>
+      By default, Rails versions prior to 3.1 add an extra layer of wrapping
+      around the JSON representation of models. You can disable this wrapping
+      by setting:
+    </p>
+
+<pre>
+ActiveRecord::Base.include_root_in_json = false
+</pre>
+
+    <p>
+      ... in your configuration. Otherwise, override
+      <a href="#Model-parse">parse</a> to pull model attributes out of the
+      wrapper. Similarly, Backbone PUTs and POSTs direct JSON representations
+      of models, where by default Rails expects namespaced attributes. You can
+      have your controllers filter attributes directly from <tt>params</tt>, or
+      you can override <a href="#Model-toJSON">toJSON</a> in Backbone to add
+      the extra wrapping Rails expects.
+    </p>
+
     <h2 id="examples">Examples</h2>
 
     <p>
@@ -3250,7 +3618,7 @@ var model = localBackbone.Model.extend(...);
 
     <p>
       <a href="http://www.walmart.com/">Walmart</a> used Backbone.js to create the new version
-      of <a href="http://mobile.walmart.com/r/phoenix">their mobile web application</a> and
+      of <a href="http://mobile.walmart.com/">their mobile web application</a> and
       created two new frameworks in the process.
       <a href="http://walmartlabs.github.com/thorax/">Thorax</a> provides mixins, inheritable
       events, as well as model and collection view bindings that integrate directly with
@@ -3661,352 +4029,27 @@ var model = localBackbone.Model.extend(...);
       </a>
     </div>
 
-    <h2 id="faq">F.A.Q.</h2>
-
-    <p id="FAQ-why-backbone">
-      <b class="header">Why use Backbone, not [other framework X]?</b>
-      <br />
-      If your eye hasn't already been caught by the adaptability and elan on display
-      in the above <a href="#examples">list of examples</a>, we can get more specific:
-      Backbone.js aims to provide the common foundation that data-rich web applications
-      with ambitious interfaces require &mdash; while very deliberately avoiding
-      painting you into a corner by making any decisions that you're
-      better equipped to make yourself.
-    </p>
-
-    <ul>
-      <li>
-        The focus is on supplying you with
-        <a href="#Collection-Underscore-Methods">helpful methods to manipulate and
-        query your data</a>, not on HTML widgets or reinventing the JavaScript
-        object model.
-      </li>
-      <li>
-        Backbone does not force you to use a single template engine. Views can bind
-        to HTML constructed in
-        <a href="http://underscorejs.org/#template">your</a>
-        <a href="http://guides.rubyonrails.org/layouts_and_rendering.html">favorite</a>
-        <a href="http://mustache.github.com">way</a>.
-      </li>
-      <li>
-        It's smaller. There are fewer kilobytes for your browser or phone to download,
-        and less <i>conceptual</i> surface area. You can read and understand
-        the source in an afternoon.
-      </li>
-      <li>
-        It doesn't depend on stuffing application logic into your HTML.
-        There's no embedded JavaScript, template logic, or binding hookup code in
-        <tt>data-</tt> or <tt>ng-</tt> attributes, and no need to invent your own HTML tags.
-      </li>
-      <li>
-        <a href="#Events">Synchronous events</a> are used as the fundamental
-        building block, not a difficult-to-reason-about run loop, or by constantly
-        polling and traversing your data structures to hunt for changes. And if
-        you want a specific event to be asynchronous and aggregated,
-        <a href="http://underscorejs.org/#debounce">no problem</a>.
-      </li>
-      <li>
-        Backbone scales well, from <a href="http://disqus.com">embedded widgets</a>
-        to <a href="http://www.usatoday.com">massive apps</a>.
-      </li>
-      <li>
-        Backbone is a library, not a framework, and plays well with others.
-        You can embed Backbone widgets in Dojo apps without trouble, or use Backbone
-        models as the data backing for D3 visualizations (to pick two entirely
-        random examples).
-      </li>
-      <li>
-        "Two way data-binding" is avoided. While it certainly makes for a nifty
-        demo, and works for the most basic CRUD, it doesn't tend to be terribly
-        useful in your real-world app. Sometimes you want to update on
-        every keypress, sometimes on blur, sometimes when the panel is closed,
-        and sometimes when the "save" button is clicked. In almost all cases, simply
-        serializing the form to JSON is faster and easier. All that aside, if your
-        heart is set, <a href="http://rivetsjs.com">go</a>
-        <a href="http://nytimes.github.com/backbone.stickit/">for it</a>.
-      </li>
-      <li>
-        There's no built-in performance penalty for choosing to structure your
-        code with Backbone. And if you do want to optimize further, thin models and
-        templates with flexible granularity make it easy to squeeze every last
-        drop of potential performance out of, say, IE8.
-      </li>
-    </ul>
-
-    <p id="FAQ-tim-toady">
-      <b class="header">There's More Than One Way To Do It</b>
-      <br />
-      It's common for folks just getting started to treat the examples listed
-      on this page as some sort of gospel truth. In fact, Backbone.js is intended
-      to be fairly agnostic about many common patterns in client-side code.
-      For example...
-    </p>
-
-    <p>
-      <b>References between Models and Views</b> can be handled several ways.
-      Some people like to have direct pointers, where views correspond 1:1 with
-      models (<tt>model.view</tt> and <tt>view.model</tt>). Others prefer to have intermediate
-      "controller" objects that orchestrate the creation and organization of
-      views into a hierarchy. Others still prefer the evented approach, and always
-      fire events instead of calling methods directly. All of these styles work well.
-    </p>
-
-    <p>
-      <b>Batch operations</b> on Models are common, but often best handled differently
-      depending on your server-side setup. Some folks don't mind making individual
-      Ajax requests. Others create explicit resources for RESTful batch operations:
-      <tt>/notes/batch/destroy?ids=1,2,3,4</tt>. Others tunnel REST over JSON, with the
-      creation of "changeset" requests:
-    </p>
-
-<pre>
-  {
-    "create":  [array of models to create]
-    "update":  [array of models to update]
-    "destroy": [array of model ids to destroy]
-  }
-</pre>
-
-    <p>
-      <b>Feel free to define your own events.</b> <a href="#Events">Backbone.Events</a>
-      is designed so that you can mix it in to any JavaScript object or prototype.
-      Since you can use any string as an event, it's often handy to bind
-      and trigger your own custom events: <tt>model.on("selected:true")</tt> or
-      <tt>model.on("editing")</tt>
-    </p>
-
-    <p>
-      <b>Render the UI</b> as you see fit. Backbone is agnostic as to whether you
-      use <a href="http://underscorejs.org/#template">Underscore templates</a>,
-      <a href="https://github.com/janl/mustache.js">Mustache.js</a>, direct DOM
-      manipulation, server-side rendered snippets of HTML, or
-      <a href="http://jqueryui.com/">jQuery UI</a> in your <tt>render</tt> function.
-      Sometimes you'll create a view for each model ... sometimes you'll have a
-      view that renders thousands of models at once, in a tight loop. Both can be
-      appropriate in the same app, depending on the quantity of data involved,
-      and the complexity of the UI.
-    </p>
-
-    <p id="FAQ-nested">
-      <b class="header">Nested Models &amp; Collections</b>
-      <br />
-      It's common to nest collections inside of models with Backbone. For example,
-      consider a <tt>Mailbox</tt> model that contains many <tt>Message</tt> models.
-      One nice pattern for handling this is have a <tt>this.messages</tt> collection
-      for each mailbox, enabling the lazy-loading of messages, when the mailbox
-      is first opened ... perhaps with <tt>MessageList</tt> views listening for
-      <tt>"add"</tt> and <tt>"remove"</tt> events.
-    </p>
-
-<pre>
-var Mailbox = Backbone.Model.extend({
-
-  initialize: function() {
-    this.messages = new Messages;
-    this.messages.url = '/mailbox/' + this.id + '/messages';
-    this.messages.on("reset", this.updateCounts);
-  },
-
-  ...
-
-});
-
-var inbox = new Mailbox;
-
-// And then, when the Inbox is opened:
-
-inbox.messages.fetch({reset: true});
-</pre>
-
-    <p>
-      If you're looking for something more opinionated, there are a number of
-      Backbone plugins that add sophisticated associations among models,
-      <a href="https://github.com/jashkenas/backbone/wiki/Extensions%2C-Plugins%2C-Resources">available on the wiki</a>.
-    </p>
-
-    <p>
-      Backbone doesn't include direct support for nested models and collections
-      or "has many" associations because there are a number
-      of good patterns for modeling structured data on the client side, and
-      <i>Backbone should provide the foundation for implementing any of them.</i>
-      You may want to&hellip;
-    </p>
-
-    <ul>
-      <li>
-        Mirror an SQL database's structure, or the structure of a NoSQL database.
-      </li>
-      <li>
-        Use models with arrays of "foreign key" ids, and join to top level
-        collections (a-la tables).
-      </li>
-      <li>
-        For associations that are numerous, use a range of ids instead of an
-        explicit list.
-      </li>
-      <li>
-        Avoid ids, and use direct references, creating a partial object graph
-        representing your data set.
-      </li>
-      <li>
-        Lazily load joined models from the server, or lazily deserialize nested
-        models from JSON documents.
-      </li>
-    </ul>
-
-    <p id="FAQ-bootstrap">
-      <b class="header">Loading Bootstrapped Models</b>
-      <br />
-      When your app first loads, it's common to have a set of initial models that
-      you know you're going to need, in order to render the page. Instead of
-      firing an extra AJAX request to <a href="#Collection-fetch">fetch</a> them,
-      a nicer pattern is to have their data already bootstrapped into the page.
-      You can then use <a href="#Collection-reset">reset</a> to populate your
-      collections with the initial data. At DocumentCloud, in the
-      <a href="http://en.wikipedia.org/wiki/ERuby">ERB</a> template for the
-      workspace, we do something along these lines:
-    </p>
-
-<pre>
-&lt;script&gt;
-  var accounts = new Backbone.Collection;
-  accounts.reset(&lt;%= @accounts.to_json %&gt;);
-  var projects = new Backbone.Collection;
-  projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
-&lt;/script&gt;
-</pre>
-
-    <p>You have to <a href="http://mathiasbynens.be/notes/etago">escape</a>
-    <tt>&lt;/</tt> within the JSON string, to prevent javascript injection
-    attacks.
-
-    <p id="FAQ-extending">
-      <b class="header">Extending Backbone</b>
-      <br />
-      Many JavaScript libraries are meant to be insular and self-enclosed,
-      where you interact with them by calling their public API, but never peek
-      inside at the guts. Backbone.js is <i>not</i> that kind of library.
-    </p>
-
-    <p>
-      Because it serves as a foundation for your application, you're meant to
-      extend and enhance it in the ways you see fit &mdash; the entire source
-      code is <a href="docs/backbone.html">annotated</a> to make this easier
-      for you. You'll find that there's very little there apart from core
-      functions, and most of those can be overriden or augmented should you find
-      the need. If you catch yourself adding methods to <tt>Backbone.Model.prototype</tt>,
-      or creating your own base subclass, don't worry &mdash; that's how things are
-      supposed to work.
-    </p>
-
-    <p id="FAQ-mvc">
-      <b class="header">How does Backbone relate to "traditional" MVC?</b>
-      <br />
-      Different implementations of the
-      <a href="http://en.wikipedia.org/wiki/Model–View–Controller">Model-View-Controller</a>
-      pattern tend to disagree about the definition of a controller. If it helps any, in
-      Backbone, the <a href="#View">View</a> class can also be thought of as a
-      kind of controller, dispatching events that originate from the UI, with
-      the HTML template serving as the true view. We call it a View because it
-      represents a logical chunk of UI, responsible for the contents of a single
-      DOM element.
-    </p>
-
-    <p>
-      Comparing the overall structure of Backbone to a server-side MVC framework
-      like <b>Rails</b>, the pieces line up like so:
-    </p>
-
-    <ul>
-      <li>
-        <b>Backbone.Model</b> &ndash; Like a Rails model minus the class
-        methods. Wraps a row of data in business logic.
-      </li>
-      <li>
-        <b>Backbone.Collection</b> &ndash; A group of models on the client-side,
-        with sorting/filtering/aggregation logic.
-      </li>
-      <li>
-        <b>Backbone.Router</b> &ndash; Rails <tt>routes.rb</tt> + Rails controller
-        actions. Maps URLs to functions.
-      </li>
-      <li>
-        <b>Backbone.View</b> &ndash; A logical, re-usable piece of UI. Often,
-        but not always, associated with a model.
-      </li>
-      <li>
-        <b>Client-side Templates</b> &ndash; Rails <tt>.html.erb</tt> views,
-        rendering a chunk of HTML.
-      </li>
-    </ul>
-
-    <p id="FAQ-this">
-      <b class="header">Binding "this"</b>
-      <br />
-      Perhaps the single most common JavaScript "gotcha" is the fact that when
-      you pass a function as a callback, its value for <tt>this</tt> is lost. With
-      Backbone, when dealing with <a href="#Events">events</a> and callbacks,
-      you'll often find it useful to rely on
-      <a href="http://underscorejs.org/#bind">_.bind</a> and
-      <a href="http://underscorejs.org/#bindAll">_.bindAll</a>
-      from Underscore.js.
-    </p>
-
-    <p>
-      When binding callbacks to Backbone events, you can choose to pass an optional
-      third argument to specify the <tt>this</tt> that will be used when the
-      callback is later invoked:
-    </p>
-
-<pre>
-var MessageList = Backbone.View.extend({
-
-  initialize: function() {
-    var messages = this.collection;
-    messages.on("reset", this.render, this);
-    messages.on("add", this.addMessage, this);
-    messages.on("remove", this.removeMessage, this);
-  }
-
-});
-
-// Later, in the app...
-
-Inbox.messages.add(newMessage);
-</pre>
-
-    <p id="FAQ-rails">
-      <b class="header">Working with Rails</b>
-      <br />
-      Backbone.js was originally extracted from
-      <a href="http://www.documentcloud.org">a Rails application</a>; getting
-      your client-side (Backbone) Models to sync correctly with your server-side
-      (Rails) Models is painless, but there are still a few things to be aware of.
-    </p>
-
-    <p>
-      By default, Rails versions prior to 3.1 add an extra layer of wrapping
-      around the JSON representation of models. You can disable this wrapping
-      by setting:
-    </p>
-
-<pre>
-ActiveRecord::Base.include_root_in_json = false
-</pre>
-
-    <p>
-      ... in your configuration. Otherwise, override
-      <a href="#Model-parse">parse</a> to pull model attributes out of the
-      wrapper. Similarly, Backbone PUTs and POSTs direct JSON representations
-      of models, where by default Rails expects namespaced attributes. You can
-      have your controllers filter attributes directly from <tt>params</tt>, or
-      you can override <a href="#Model-toJSON">toJSON</a> in Backbone to add
-      the extra wrapping Rails expects.
-    </p>
-
     <h2 id="changelog">Change Log</h2>
 
-    <b class="header">1.1.0</b> &mdash; <small><i>Oct. 10, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.0.0...1.1.0">Diff</a><br />
+    <b class="header">1.1.1</b> &mdash; <small><i>Feb. 13, 2014</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.0...1.1.1">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/jashkenas/backbone/1.1.1/index.html">Docs</a><br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Backbone now registers itself for AMD (Require.js), Bower and Component, 
+        as well as being a CommonJS module and a regular (Java)Script. Whew.
+      </li>
+      <li>
+        Added an <tt>execute</tt> hook to the Router, which allows you to hook
+        in and custom-parse route arguments, like query strings, for example.
+      </li>
+      <li>
+        Performance fine-tuning for Backbone Events.
+      </li>
+      <li>
+        Better matching for Unicode in routes, in old browsers.
+      </li>
+    </ul>
+
+    <b class="header">1.1.0</b> &mdash; <small><i>Oct. 10, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.0.0...1.1.0">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/jashkenas/backbone/1.1.0/index.html">Docs</a><br />
     <ul style="margin-top: 5px;">
       <li>
         Made the return values of Collection's <tt>set</tt>, <tt>add</tt>,
@@ -4038,7 +4081,7 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
     </ul>
 
-    <b class="header">1.0.0</b> &mdash; <small><i>March 20, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/0.9.10...1.0.0">Diff</a><br />
+    <b class="header">1.0.0</b> &mdash; <small><i>March 20, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/0.9.10...1.0.0">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/jashkenas/backbone/1.0.0/index.html">Docs</a><br />
     <ul style="margin-top: 5px;">
       <li>
         Renamed Collection's "update" to <a href="#Collection-set">set</a>, for
@@ -4072,7 +4115,7 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
     </ul>
 
-    <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/0.9.9...0.9.10">Diff</a><br />
+    <b class="header">0.9.10</b> &mdash; <small><i>Jan. 15, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/0.9.9...0.9.10">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/jashkenas/backbone/0.9.10/index.html">Docs</a><br />
     <ul style="margin-top: 5px;">
       <li>
         A <tt>"route"</tt> event is triggered on the router in addition

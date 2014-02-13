@@ -52,11 +52,8 @@
 <a href="http://jgn.me/">Jérôme Gravel-Niquet</a>. This demo uses a simple
 <a href="backbone-localstorage.html">LocalStorage adapter</a>
 to persist Backbone models within your browser.</p>
-<p>Load the application once the DOM is ready, using <code>jQuery.ready</code>:</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>$(<span class="keyword">function</span>(){</pre></div></div>
             
         </li>
         
@@ -64,12 +61,14 @@ to persist Backbone models within your browser.</p>
         <li id="section-2">
             <div class="annotation">
               
-              <div class="pilwrap for-h2">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h2>Todo Model</h2>
+              <p>Load the application once the DOM is ready, using <code>jQuery.ready</code>:</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>$(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span>{</span></pre></div></div>
             
         </li>
         
@@ -80,11 +79,9 @@ to persist Backbone models within your browser.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Our basic <strong>Todo</strong> model has <code>title</code>, <code>order</code>, and <code>done</code> attributes.</p>
+              <h2 id="todo-model">Todo Model</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> Todo = Backbone.Model.extend({</pre></div></div>
             
         </li>
         
@@ -95,17 +92,8 @@ to persist Backbone models within your browser.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Default attributes for the todo item.</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    defaults: <span class="keyword">function</span>() {
-      <span class="keyword">return</span> {
-        title: <span class="string">"empty todo..."</span>,
-        order: Todos.nextOrder(),
-        done: <span class="literal">false</span>
-      };
-    },</pre></div></div>
             
         </li>
         
@@ -116,15 +104,11 @@ to persist Backbone models within your browser.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Toggle the <code>done</code> state of this todo item.</p>
+              <p>Our basic <strong>Todo</strong> model has <code>title</code>, <code>order</code>, and <code>done</code> attributes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    toggle: <span class="keyword">function</span>() {
-      <span class="keyword">this</span>.save({done: !<span class="keyword">this</span>.get(<span class="string">"done"</span>)});
-    }
-
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> Todo = Backbone.Model.extend({</pre></div></div>
             
         </li>
         
@@ -132,12 +116,20 @@ to persist Backbone models within your browser.</p>
         <li id="section-6">
             <div class="annotation">
               
-              <div class="pilwrap for-h2">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <h2>Todo Collection</h2>
+              <p>Default attributes for the todo item.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    defaults: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">return</span> {
+        title: <span class="hljs-string">"empty todo..."</span>,
+        order: Todos.nextOrder(),
+        done: <span class="hljs-literal">false</span>
+      };
+    },</pre></div></div>
             
         </li>
         
@@ -148,12 +140,15 @@ to persist Backbone models within your browser.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>The collection of todos is backed by <em>localStorage</em> instead of a remote
-server.</p>
+              <p>Toggle the <code>done</code> state of this todo item.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> TodoList = Backbone.Collection.extend({</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    toggle: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">this</span>.save({done: !<span class="hljs-keyword">this</span>.get(<span class="hljs-string">"done"</span>)});
+    }
+
+  });</pre></div></div>
             
         </li>
         
@@ -164,11 +159,9 @@ server.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Reference to this collection&#39;s model.</p>
+              <h2 id="todo-collection">Todo Collection</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    model: Todo,</pre></div></div>
             
         </li>
         
@@ -179,11 +172,8 @@ server.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Save all of the todo items under the <code>&quot;todos-backbone&quot;</code> namespace.</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    localStorage: <span class="keyword">new</span> Backbone.LocalStorage(<span class="string">"todos-backbone"</span>),</pre></div></div>
             
         </li>
         
@@ -194,13 +184,12 @@ server.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Filter down the list of all todo items that are finished.</p>
+              <p>The collection of todos is backed by <em>localStorage</em> instead of a remote
+server.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    done: <span class="keyword">function</span>() {
-      <span class="keyword">return</span> <span class="keyword">this</span>.where({done: <span class="literal">true</span>});
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> TodoList = Backbone.Collection.extend({</pre></div></div>
             
         </li>
         
@@ -211,13 +200,11 @@ server.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Filter down the list to only todo items that are still not finished.</p>
+              <p>Reference to this collection’s model.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    remaining: <span class="keyword">function</span>() {
-      <span class="keyword">return</span> <span class="keyword">this</span>.where({done: <span class="literal">false</span>});
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    model: Todo,</pre></div></div>
             
         </li>
         
@@ -228,15 +215,11 @@ server.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>We keep the Todos in sequential order, despite being saved by unordered
-GUID in the database. This generates the next order number for new items.</p>
+              <p>Save all of the todo items under the <code>&quot;todos-backbone&quot;</code> namespace.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    nextOrder: <span class="keyword">function</span>() {
-      <span class="keyword">if</span> (!<span class="keyword">this</span>.length) <span class="keyword">return</span> <span class="number">1</span>;
-      <span class="keyword">return</span> <span class="keyword">this</span>.last().get(<span class="string">'order'</span>) + <span class="number">1</span>;
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    localStorage: <span class="hljs-keyword">new</span> Backbone.LocalStorage(<span class="hljs-string">"todos-backbone"</span>),</pre></div></div>
             
         </li>
         
@@ -247,13 +230,13 @@ GUID in the database. This generates the next order number for new items.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Todos are sorted by their original insertion order.</p>
+              <p>Filter down the list of all todo items that are finished.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    comparator: <span class="string">'order'</span>
-
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    done: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.where({done: <span class="hljs-literal">true</span>});
+    },</pre></div></div>
             
         </li>
         
@@ -264,11 +247,13 @@ GUID in the database. This generates the next order number for new items.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>Create our global collection of <strong>Todos</strong>.</p>
+              <p>Filter down the list to only todo items that are still not finished.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> Todos = <span class="keyword">new</span> TodoList;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    remaining: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.where({done: <span class="hljs-literal">false</span>});
+    },</pre></div></div>
             
         </li>
         
@@ -276,12 +261,18 @@ GUID in the database. This generates the next order number for new items.</p>
         <li id="section-15">
             <div class="annotation">
               
-              <div class="pilwrap for-h2">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <h2>Todo Item View</h2>
+              <p>We keep the Todos in sequential order, despite being saved by unordered
+GUID in the database. This generates the next order number for new items.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    nextOrder: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.length) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.last().get(<span class="hljs-string">'order'</span>) + <span class="hljs-number">1</span>;
+    },</pre></div></div>
             
         </li>
         
@@ -292,11 +283,13 @@ GUID in the database. This generates the next order number for new items.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>The DOM element for a todo item...</p>
+              <p>Todos are sorted by their original insertion order.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> TodoView = Backbone.View.extend({</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    comparator: <span class="hljs-string">'order'</span>
+
+  });</pre></div></div>
             
         </li>
         
@@ -307,11 +300,11 @@ GUID in the database. This generates the next order number for new items.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>... is a list tag.</p>
+              <p>Create our global collection of <strong>Todos</strong>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    tagName:  <span class="string">"li"</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> Todos = <span class="hljs-keyword">new</span> TodoList;</pre></div></div>
             
         </li>
         
@@ -322,11 +315,9 @@ GUID in the database. This generates the next order number for new items.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>Cache the template function for a single item.</p>
+              <h2 id="todo-item-view">Todo Item View</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    template: _.template($(<span class="string">'#item-template'</span>).html()),</pre></div></div>
             
         </li>
         
@@ -337,17 +328,8 @@ GUID in the database. This generates the next order number for new items.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>The DOM events specific to an item.</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    events: {
-      <span class="string">"click .toggle"</span>   : <span class="string">"toggleDone"</span>,
-      <span class="string">"dblclick .view"</span>  : <span class="string">"edit"</span>,
-      <span class="string">"click a.destroy"</span> : <span class="string">"clear"</span>,
-      <span class="string">"keypress .edit"</span>  : <span class="string">"updateOnEnter"</span>,
-      <span class="string">"blur .edit"</span>      : <span class="string">"close"</span>
-    },</pre></div></div>
             
         </li>
         
@@ -358,16 +340,11 @@ GUID in the database. This generates the next order number for new items.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>The TodoView listens for changes to its model, re-rendering. Since there&#39;s
-a one-to-one correspondence between a <strong>Todo</strong> and a <strong>TodoView</strong> in this
-app, we set a direct reference on the model for convenience.</p>
+              <p>The DOM element for a todo item…</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    initialize: <span class="keyword">function</span>() {
-      <span class="keyword">this</span>.listenTo(<span class="keyword">this</span>.model, <span class="string">'change'</span>, <span class="keyword">this</span>.render);
-      <span class="keyword">this</span>.listenTo(<span class="keyword">this</span>.model, <span class="string">'destroy'</span>, <span class="keyword">this</span>.remove);
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> TodoView = Backbone.View.extend({</pre></div></div>
             
         </li>
         
@@ -378,16 +355,11 @@ app, we set a direct reference on the model for convenience.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>Re-render the titles of the todo item.</p>
+              <p>… is a list tag.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    render: <span class="keyword">function</span>() {
-      <span class="keyword">this</span>.$el.html(<span class="keyword">this</span>.template(<span class="keyword">this</span>.model.toJSON()));
-      <span class="keyword">this</span>.$el.toggleClass(<span class="string">'done'</span>, <span class="keyword">this</span>.model.get(<span class="string">'done'</span>));
-      <span class="keyword">this</span>.input = <span class="keyword">this</span>.$(<span class="string">'.edit'</span>);
-      <span class="keyword">return</span> <span class="keyword">this</span>;
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    tagName:  <span class="hljs-string">"li"</span>,</pre></div></div>
             
         </li>
         
@@ -398,13 +370,11 @@ app, we set a direct reference on the model for convenience.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Toggle the <code>&quot;done&quot;</code> state of the model.</p>
+              <p>Cache the template function for a single item.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    toggleDone: <span class="keyword">function</span>() {
-      <span class="keyword">this</span>.model.toggle();
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    template: _.template($(<span class="hljs-string">'#item-template'</span>).html()),</pre></div></div>
             
         </li>
         
@@ -415,13 +385,16 @@ app, we set a direct reference on the model for convenience.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>Switch this view into <code>&quot;editing&quot;</code> mode, displaying the input field.</p>
+              <p>The DOM events specific to an item.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    edit: <span class="keyword">function</span>() {
-      <span class="keyword">this</span>.$el.addClass(<span class="string">"editing"</span>);
-      <span class="keyword">this</span>.input.focus();
+            <div class="content"><div class='highlight'><pre>    events: {
+      <span class="hljs-string">"click .toggle"</span>   : <span class="hljs-string">"toggleDone"</span>,
+      <span class="hljs-string">"dblclick .view"</span>  : <span class="hljs-string">"edit"</span>,
+      <span class="hljs-string">"click a.destroy"</span> : <span class="hljs-string">"clear"</span>,
+      <span class="hljs-string">"keypress .edit"</span>  : <span class="hljs-string">"updateOnEnter"</span>,
+      <span class="hljs-string">"blur .edit"</span>      : <span class="hljs-string">"close"</span>
     },</pre></div></div>
             
         </li>
@@ -433,18 +406,15 @@ app, we set a direct reference on the model for convenience.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <p>Close the <code>&quot;editing&quot;</code> mode, saving changes to the todo.</p>
+              <p>The TodoView listens for changes to its model, re-rendering. Since there’s
+a one-to-one correspondence between a <strong>Todo</strong> and a <strong>TodoView</strong> in this
+app, we set a direct reference on the model for convenience.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    close: <span class="keyword">function</span>() {
-      <span class="keyword">var</span> value = <span class="keyword">this</span>.input.val();
-      <span class="keyword">if</span> (!value) {
-        <span class="keyword">this</span>.clear();
-      } <span class="keyword">else</span> {
-        <span class="keyword">this</span>.model.save({title: value});
-        <span class="keyword">this</span>.$el.removeClass(<span class="string">"editing"</span>);
-      }
+            <div class="content"><div class='highlight'><pre>    initialize: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.model, <span class="hljs-string">'change'</span>, <span class="hljs-keyword">this</span>.render);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.model, <span class="hljs-string">'destroy'</span>, <span class="hljs-keyword">this</span>.remove);
     },</pre></div></div>
             
         </li>
@@ -456,12 +426,15 @@ app, we set a direct reference on the model for convenience.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <p>If you hit <code>enter</code>, we&#39;re through editing the item.</p>
+              <p>Re-render the titles of the todo item.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    updateOnEnter: <span class="keyword">function</span>(e) {
-      <span class="keyword">if</span> (e.keyCode == <span class="number">13</span>) <span class="keyword">this</span>.close();
+            <div class="content"><div class='highlight'><pre>    render: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">this</span>.$el.html(<span class="hljs-keyword">this</span>.template(<span class="hljs-keyword">this</span>.model.toJSON()));
+      <span class="hljs-keyword">this</span>.$el.toggleClass(<span class="hljs-string">'done'</span>, <span class="hljs-keyword">this</span>.model.get(<span class="hljs-string">'done'</span>));
+      <span class="hljs-keyword">this</span>.input = <span class="hljs-keyword">this</span>.$(<span class="hljs-string">'.edit'</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
     },</pre></div></div>
             
         </li>
@@ -473,15 +446,13 @@ app, we set a direct reference on the model for convenience.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p>Remove the item, destroy the model.</p>
+              <p>Toggle the <code>&quot;done&quot;</code> state of the model.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    clear: <span class="keyword">function</span>() {
-      <span class="keyword">this</span>.model.destroy();
-    }
-
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    toggleDone: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">this</span>.model.toggle();
+    },</pre></div></div>
             
         </li>
         
@@ -489,12 +460,17 @@ app, we set a direct reference on the model for convenience.</p>
         <li id="section-27">
             <div class="annotation">
               
-              <div class="pilwrap for-h2">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              <h2>The Application</h2>
+              <p>Switch this view into <code>&quot;editing&quot;</code> mode, displaying the input field.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    edit: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">this</span>.$el.addClass(<span class="hljs-string">"editing"</span>);
+      <span class="hljs-keyword">this</span>.input.focus();
+    },</pre></div></div>
             
         </li>
         
@@ -505,11 +481,19 @@ app, we set a direct reference on the model for convenience.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <p>Our overall <strong>AppView</strong> is the top-level piece of UI.</p>
+              <p>Close the <code>&quot;editing&quot;</code> mode, saving changes to the todo.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> AppView = Backbone.View.extend({</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    close: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">var</span> value = <span class="hljs-keyword">this</span>.input.val();
+      <span class="hljs-keyword">if</span> (!value) {
+        <span class="hljs-keyword">this</span>.clear();
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>.model.save({title: value});
+        <span class="hljs-keyword">this</span>.$el.removeClass(<span class="hljs-string">"editing"</span>);
+      }
+    },</pre></div></div>
             
         </li>
         
@@ -520,12 +504,13 @@ app, we set a direct reference on the model for convenience.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
-              <p>Instead of generating a new element, bind to the existing skeleton of
-the App already present in the HTML.</p>
+              <p>If you hit <code>enter</code>, we’re through editing the item.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    el: $(<span class="string">"#todoapp"</span>),</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    updateOnEnter: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+      <span class="hljs-keyword">if</span> (e.keyCode == <span class="hljs-number">13</span>) <span class="hljs-keyword">this</span>.close();
+    },</pre></div></div>
             
         </li>
         
@@ -536,11 +521,15 @@ the App already present in the HTML.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <p>Our template for the line of statistics at the bottom of the app.</p>
+              <p>Remove the item, destroy the model.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    statsTemplate: _.template($(<span class="string">'#stats-template'</span>).html()),</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    clear: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">this</span>.model.destroy();
+    }
+
+  });</pre></div></div>
             
         </li>
         
@@ -551,15 +540,9 @@ the App already present in the HTML.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
-              <p>Delegated events for creating new items, and clearing completed ones.</p>
+              <h2 id="the-application">The Application</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    events: {
-      <span class="string">"keypress #new-todo"</span>:  <span class="string">"createOnEnter"</span>,
-      <span class="string">"click #clear-completed"</span>: <span class="string">"clearCompleted"</span>,
-      <span class="string">"click #toggle-all"</span>: <span class="string">"toggleAllComplete"</span>
-    },</pre></div></div>
             
         </li>
         
@@ -570,26 +553,8 @@ the App already present in the HTML.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
-              <p>At initialization we bind to the relevant events on the <code>Todos</code>
-collection, when items are added or changed. Kick things off by
-loading any preexisting todos that might be saved in <em>localStorage</em>.</p>
-
+              
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    initialize: <span class="keyword">function</span>() {
-
-      <span class="keyword">this</span>.input = <span class="keyword">this</span>.$(<span class="string">"#new-todo"</span>);
-      <span class="keyword">this</span>.allCheckbox = <span class="keyword">this</span>.$(<span class="string">"#toggle-all"</span>)[<span class="number">0</span>];
-
-      <span class="keyword">this</span>.listenTo(Todos, <span class="string">'add'</span>, <span class="keyword">this</span>.addOne);
-      <span class="keyword">this</span>.listenTo(Todos, <span class="string">'reset'</span>, <span class="keyword">this</span>.addAll);
-      <span class="keyword">this</span>.listenTo(Todos, <span class="string">'all'</span>, <span class="keyword">this</span>.render);
-
-      <span class="keyword">this</span>.footer = <span class="keyword">this</span>.$(<span class="string">'footer'</span>);
-      <span class="keyword">this</span>.main = $(<span class="string">'#main'</span>);
-
-      Todos.fetch();
-    },</pre></div></div>
             
         </li>
         
@@ -600,26 +565,11 @@ loading any preexisting todos that might be saved in <em>localStorage</em>.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
-              <p>Re-rendering the App just means refreshing the statistics -- the rest
-of the app doesn&#39;t change.</p>
+              <p>Our overall <strong>AppView</strong> is the top-level piece of UI.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    render: <span class="keyword">function</span>() {
-      <span class="keyword">var</span> done = Todos.done().length;
-      <span class="keyword">var</span> remaining = Todos.remaining().length;
-
-      <span class="keyword">if</span> (Todos.length) {
-        <span class="keyword">this</span>.main.show();
-        <span class="keyword">this</span>.footer.show();
-        <span class="keyword">this</span>.footer.html(<span class="keyword">this</span>.statsTemplate({done: done, remaining: remaining}));
-      } <span class="keyword">else</span> {
-        <span class="keyword">this</span>.main.hide();
-        <span class="keyword">this</span>.footer.hide();
-      }
-
-      <span class="keyword">this</span>.allCheckbox.checked = !remaining;
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> AppView = Backbone.View.extend({</pre></div></div>
             
         </li>
         
@@ -630,15 +580,12 @@ of the app doesn&#39;t change.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
-              <p>Add a single todo item to the list by creating a view for it, and
-appending its element to the <code>&lt;ul&gt;</code>.</p>
+              <p>Instead of generating a new element, bind to the existing skeleton of
+the App already present in the HTML.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    addOne: <span class="keyword">function</span>(todo) {
-      <span class="keyword">var</span> view = <span class="keyword">new</span> TodoView({model: todo});
-      <span class="keyword">this</span>.$(<span class="string">"#todo-list"</span>).append(view.render().el);
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    el: $(<span class="hljs-string">"#todoapp"</span>),</pre></div></div>
             
         </li>
         
@@ -649,13 +596,11 @@ appending its element to the <code>&lt;ul&gt;</code>.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
-              <p>Add all items in the <strong>Todos</strong> collection at once.</p>
+              <p>Our template for the line of statistics at the bottom of the app.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    addAll: <span class="keyword">function</span>() {
-      Todos.each(<span class="keyword">this</span>.addOne, <span class="keyword">this</span>);
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    statsTemplate: _.template($(<span class="hljs-string">'#stats-template'</span>).html()),</pre></div></div>
             
         </li>
         
@@ -666,17 +611,14 @@ appending its element to the <code>&lt;ul&gt;</code>.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
-              <p>If you hit return in the main input field, create new <strong>Todo</strong> model,
-persisting it to <em>localStorage</em>.</p>
+              <p>Delegated events for creating new items, and clearing completed ones.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    createOnEnter: <span class="keyword">function</span>(e) {
-      <span class="keyword">if</span> (e.keyCode != <span class="number">13</span>) <span class="keyword">return</span>;
-      <span class="keyword">if</span> (!<span class="keyword">this</span>.input.val()) <span class="keyword">return</span>;
-
-      Todos.create({title: <span class="keyword">this</span>.input.val()});
-      <span class="keyword">this</span>.input.val(<span class="string">''</span>);
+            <div class="content"><div class='highlight'><pre>    events: {
+      <span class="hljs-string">"keypress #new-todo"</span>:  <span class="hljs-string">"createOnEnter"</span>,
+      <span class="hljs-string">"click #clear-completed"</span>: <span class="hljs-string">"clearCompleted"</span>,
+      <span class="hljs-string">"click #toggle-all"</span>: <span class="hljs-string">"toggleAllComplete"</span>
     },</pre></div></div>
             
         </li>
@@ -688,21 +630,26 @@ persisting it to <em>localStorage</em>.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
-              <p>Clear all done todo items, destroying their models.</p>
+              <p>At initialization we bind to the relevant events on the <code>Todos</code>
+collection, when items are added or changed. Kick things off by
+loading any preexisting todos that might be saved in <em>localStorage</em>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    clearCompleted: <span class="keyword">function</span>() {
-      _.invoke(Todos.done(), <span class="string">'destroy'</span>);
-      <span class="keyword">return</span> <span class="literal">false</span>;
-    },
+            <div class="content"><div class='highlight'><pre>    initialize: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
 
-    toggleAllComplete: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-      <span class="keyword">var</span> done = <span class="keyword">this</span>.allCheckbox.checked;
-      Todos.each(<span class="function"><span class="keyword">function</span> <span class="params">(todo)</span> {</span> todo.save({<span class="string">'done'</span>: done}); });
-    }
+      <span class="hljs-keyword">this</span>.input = <span class="hljs-keyword">this</span>.$(<span class="hljs-string">"#new-todo"</span>);
+      <span class="hljs-keyword">this</span>.allCheckbox = <span class="hljs-keyword">this</span>.$(<span class="hljs-string">"#toggle-all"</span>)[<span class="hljs-number">0</span>];
 
-  });</pre></div></div>
+      <span class="hljs-keyword">this</span>.listenTo(Todos, <span class="hljs-string">'add'</span>, <span class="hljs-keyword">this</span>.addOne);
+      <span class="hljs-keyword">this</span>.listenTo(Todos, <span class="hljs-string">'reset'</span>, <span class="hljs-keyword">this</span>.addAll);
+      <span class="hljs-keyword">this</span>.listenTo(Todos, <span class="hljs-string">'all'</span>, <span class="hljs-keyword">this</span>.render);
+
+      <span class="hljs-keyword">this</span>.footer = <span class="hljs-keyword">this</span>.$(<span class="hljs-string">'footer'</span>);
+      <span class="hljs-keyword">this</span>.main = $(<span class="hljs-string">'#main'</span>);
+
+      Todos.fetch();
+    },</pre></div></div>
             
         </li>
         
@@ -713,11 +660,124 @@ persisting it to <em>localStorage</em>.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
+              <p>Re-rendering the App just means refreshing the statistics — the rest
+of the app doesn’t change.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    render: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">var</span> done = Todos.done().length;
+      <span class="hljs-keyword">var</span> remaining = Todos.remaining().length;
+
+      <span class="hljs-keyword">if</span> (Todos.length) {
+        <span class="hljs-keyword">this</span>.main.show();
+        <span class="hljs-keyword">this</span>.footer.show();
+        <span class="hljs-keyword">this</span>.footer.html(<span class="hljs-keyword">this</span>.statsTemplate({done: done, remaining: remaining}));
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>.main.hide();
+        <span class="hljs-keyword">this</span>.footer.hide();
+      }
+
+      <span class="hljs-keyword">this</span>.allCheckbox.checked = !remaining;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>Add a single todo item to the list by creating a view for it, and
+appending its element to the <code>&lt;ul&gt;</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    addOne: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(todo)</span> {</span>
+      <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">new</span> TodoView({model: todo});
+      <span class="hljs-keyword">this</span>.$(<span class="hljs-string">"#todo-list"</span>).append(view.render().el);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>Add all items in the <strong>Todos</strong> collection at once.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    addAll: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      Todos.each(<span class="hljs-keyword">this</span>.addOne, <span class="hljs-keyword">this</span>);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>If you hit return in the main input field, create new <strong>Todo</strong> model,
+persisting it to <em>localStorage</em>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    createOnEnter: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> {</span>
+      <span class="hljs-keyword">if</span> (e.keyCode != <span class="hljs-number">13</span>) <span class="hljs-keyword">return</span>;
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.input.val()) <span class="hljs-keyword">return</span>;
+
+      Todos.create({title: <span class="hljs-keyword">this</span>.input.val()});
+      <span class="hljs-keyword">this</span>.input.val(<span class="hljs-string">''</span>);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>Clear all done todo items, destroying their models.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    clearCompleted: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      _.invoke(Todos.done(), <span class="hljs-string">'destroy'</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    },
+
+    toggleAllComplete: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">var</span> done = <span class="hljs-keyword">this</span>.allCheckbox.checked;
+      Todos.each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(todo)</span> {</span> todo.save({<span class="hljs-string">'done'</span>: done}); });
+    }
+
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
               <p>Finally, we kick things off by creating the <strong>App</strong>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> App = <span class="keyword">new</span> AppView;
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> App = <span class="hljs-keyword">new</span> AppView;
 
 });</pre></div></div>
             

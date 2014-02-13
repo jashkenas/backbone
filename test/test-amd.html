@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Backbone Test Suite</title>
+  <link rel="stylesheet" href="vendor/qunit.css" type="text/css" media="screen" />
+  <script type="text/javascript" src="vendor/json2.js"></script>
+  <script type="text/javascript" src="vendor/qunit.js"></script>
+  <script type="text/javascript" src="vendor/require.js"></script>
+  <script>
+    // Tests are loaded async, so wait for them
+    // to load before starting.
+    QUnit.config.autostart = false;
+
+    require.config({
+      paths: {
+        'jquery': 'vendor/jquery',
+        'underscore': 'vendor/underscore',
+        'backbone': '../backbone'
+      },
+      shim: {
+        'underscore': {
+          exports: '_'
+        }
+      }
+    });
+
+    var root = this;
+
+    require(['backbone'], function(Backbone) {
+      require([
+        'environment',
+        'noconflict',
+        'events',
+        'model',
+        'collection',
+        'router',
+        'view',
+        'sync'
+      ], function() {
+        QUnit.start();
+      });
+    });
+  </script>
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture">
+    <div id='testElement'>
+      <h1>Test</h1>
+    </div>
+  </div>
+</body>
+</html>
