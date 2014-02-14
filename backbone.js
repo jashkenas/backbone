@@ -1056,6 +1056,7 @@
     this.cid = _.uniqueId('view');
     options || (options = {});
     _.extend(this, _.pick(options, viewOptions));
+    this._domEvents = [];
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
@@ -1073,9 +1074,6 @@
 
   // Set up all inheritable **Backbone.BaseView** properties and methods.
   _.extend(BaseView.prototype, Events, {
-
-    // Private list to hold all the DOM event delegation listeners.
-    _domEvents: [],
 
     // The default `tagName` of a View's element is `"div"`.
     tagName: 'div',
