@@ -1175,7 +1175,7 @@
     // result of calling bound `method` with the parameters given to the
     // handler.
     _delegateEvents: function(eventName, selector, method) {
-      var root = this.el, domEvents = this._domEvents, handler;
+      var root = this.el, handler;
       if (!selector) handler = method;
       else handler = function (e) {
         var node = e.target || e.srcElement;
@@ -1188,7 +1188,7 @@
       };
 
       elementAddEventListener.call(root, eventName, handler, false);
-      domEvents.push({eventName: eventName, handler: handler});
+      this._domEvents.push({eventName: eventName, handler: handler});
     },
 
     // Delegates to `_undelegateEvents` so `BaseView` subclasses can override
