@@ -1143,7 +1143,8 @@
     // This only works for delegate-able events: not `focus`, `blur`, not
     // `change`, `submit`, and `reset` in Internet Explorer, not `focusin` and
     // `focusout` in Firefox, and not `mouseenter` and `mouseleave` for Chrome <
-    // 30 and Safari.
+    // 30 and Safari. You should use `Backbone.View` if a greater cross-browser
+    // compatibility is desired.
     //
     // Pass the event name, selector and the bound method to `_delegateEvents`
     // for each mapping in `events`.
