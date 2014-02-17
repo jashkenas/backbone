@@ -864,8 +864,8 @@ view.stopListening(model);
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
       <li><b>"request"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a request to the server. </li>
-      <li><b>"sync"</b> (model_or_collection, resp, options, status, xhr) &mdash; when a model or collection has been successfully synced with the server.</li>
-      <li><b>"error"</b> (model_or_collection, xhr, options, status, errorThrown) &mdash; when model's or collection's request to remote server has failed. </li>
+      <li><b>"sync"</b> (model_or_collection, resp, options) &mdash; when a model or collection has been successfully synced with the server.</li>
+      <li><b>"error"</b> (model_or_collection, xhr, options) &mdash; when model's or collection's request to remote server has failed. </li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client. </li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
@@ -1228,8 +1228,8 @@ alert(JSON.stringify(artist));
       latest server state. A <tt>"change"</tt> event will be triggered if the
       server's state differs from the current attributes. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response, options, status)</tt> and <tt>(model,
-      xhr, options, status, errorThrown)</tt> as arguments, respectively.
+      are passed <tt>(model, response, options)</tt> and <tt>(model, xhr, options)</tt>
+      as arguments, respectively.
     </p>
 
 <pre>
@@ -1313,8 +1313,8 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a> object, or
       <tt>false</tt> if the model <a href="#Model-isNew">isNew</a>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
-      are passed <tt>(model, response, options, status, xhr)</tt> and
-      <tt>(model, xhr, options, status, errorThrown)</tt> as arguments, respectively.
+      are passed <tt>(model, response, options)</tt> and <tt>(model, xhr, options)</tt>
+      as arguments, respectively.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
       through any collections that contain it, a <tt>"request"</tt> event as it
       begins the Ajax request to the server, and a <tt>"sync"</tt> event, after
@@ -2062,8 +2062,8 @@ var Tweets = Backbone.Collection.extend({
       Fetch the default set of models for this collection from the server,
       <a href="#Collection-set">setting</a> them on the collection when they arrive.
       The <b>options</b> hash takes <tt>success</tt> and <tt>error</tt> callbacks,
-      which are passed <tt>(collection, response, options, status, xhr)</tt> and
-      <tt>(collection, xhr, options, status, errorThrown)</tt> as arguments, respectively.
+      which are passed <tt>(collection, response, options)</tt> and
+      <tt>(collection, xhr, options)</tt> as arguments, respectively.
       When the model data returns from the server, it uses <a href="#Collection-set">set</a>
       to (intelligently) merge the fetched models, unless you pass <tt>{reset: true}</tt>,
       in which case the collection will be (efficiently) <a href="#Collection-reset">reset</a>.

@@ -457,10 +457,12 @@
       if (options.parse === void 0) options.parse = true;
       var model = this;
       var success = options.success;
-      options.success = function(resp, status, xhr) {
+      options.success = function(resp, textStatus, xhr) {
+        xhr.textStatus = textStatus;
+        options = _.extend({ xhr: xhr }, options);
         if (!model.set(model.parse(resp, options), options)) return false;
-        if (success) success(model, resp, options, status, xhr);
-        model.trigger('sync', model, resp, options, status, xhr);
+        if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
       return this.sync('read', this, options);
@@ -501,7 +503,9 @@
       if (options.parse === void 0) options.parse = true;
       var model = this;
       var success = options.success;
-      options.success = function(resp, status, xhr) {
+      options.success = function(resp, textStatus, xhr) {
+        xhr.textStatus = textStatus;
+        options = _.extend({ xhr: xhr }, options);
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
         var serverAttrs = model.parse(resp, options);
@@ -509,8 +513,8 @@
         if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
           return false;
         }
-        if (success) success(model, resp, options, status, xhr);
-        model.trigger('sync', model, resp, options, status, xhr);
+        if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
 
@@ -536,10 +540,12 @@
         model.trigger('destroy', model, model.collection, options);
       };
 
-      options.success = function(resp, status, xhr) {
+      options.success = function(resp, textStatus, xhr) {
+        xhr.textStatus = textStatus;
+        options = _.extend({ xhr: xhr }, options);
         if (options.wait || model.isNew()) destroy();
-        if (success) success(model, resp, options, status, xhr);
-        if (!model.isNew()) model.trigger('sync', model, resp, options, status, xhr);
+        if (success) success(model, resp, options);
+        if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
       if (this.isNew()) {
@@ -889,11 +895,13 @@
       if (options.parse === void 0) options.parse = true;
       var success = options.success;
       var collection = this;
-      options.success = function(resp, status, xhr) {
+      options.success = function(resp, textStatus, xhr) {
+        xhr.textStatus = textStatus;
+        options = _.extend({ xhr: xhr }, options);
         var method = options.reset ? 'reset' : 'set';
         collection[method](resp, options);
-        if (success) success(collection, resp, options, status, xhr);
-        collection.trigger('sync', collection, resp, options, status, xhr);
+        if (success) success(collection, resp, options);
+        collection.trigger('sync', collection, resp, options);
       };
       wrapError(this, options);
       return this.sync('read', this, options);
@@ -1659,9 +1667,11 @@
   // Wrap an optional error callback with a fallback error event.
   var wrapError = function(model, options) {
     var error = options.error;
-    options.error = function(xhr, status, errorThrown) {
-      if (error) error(model, xhr, options, status, errorThrown);
-      model.trigger('error', model, xhr, options, status, errorThrown);
+    options.error = function(xhr, textStatus, errorThrown) {
+      xhr.textStatus = textStatus;
+      xhr.errorThrown = errorThrown;
+      if (error) error(model, xhr, options);
+      model.trigger('error', model, xhr, options);
     };
   };
 
