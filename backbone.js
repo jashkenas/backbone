@@ -1395,23 +1395,27 @@
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       var fragment          = this.getFragment();
       var docMode           = document.documentMode;
-      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
+      this._oldIE           = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
-      if (oldIE && this._wantsHashChange) {
-        var frame = Backbone.$('<iframe src="javascript:0" tabindex="-1">');
-        this.iframe = frame.hide().appendTo('body')[0].contentWindow;
+      if (this._oldIE && this._wantsHashChange) {
+        var frame = document.createElement('iframe');
+        frame.src = 'javascript:0';
+        frame.tabIndex = -1;
+        frame.style.display = 'none';
+        document.body.appendChild(frame);
+        this.iframe = frame.contentWindow;
         this.navigate(fragment);
       }
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
-        Backbone.$(window).on('popstate', this.checkUrl);
-      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        Backbone.$(window).on('hashchange', this.checkUrl);
+        addEventListener(window, 'popstate', this.checkUrl, false);
+      } else if (this._wantsHashChange && 'onhashchange' in window && !this._oldIE) {
+        addEventListener(window, 'hashchange', this.checkUrl, false);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
@@ -1448,7 +1452,11 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
+      if (this._hasPushState) {
+        removeEventListener(window, 'popstate', this.checkUrl);
+      } else if (this._wantsHashChange && 'onhashchange' in window && !this._oldIE) {
+        removeEventListener(window, 'hashchange', this.checkUrl);
+      }
       clearInterval(this._checkUrlInterval);
       History.started = false;
     },
@@ -1588,6 +1596,16 @@
 
   // Set up inheritance for the model, collection, router, view and history.
   Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
+
+  // Cross-platform `addEventListener` and `removeEventListener` shims.
+  var addEventListener = window.addEventListener || function (eventName, listener) {
+    return attachEvent('on' + eventName, listener);
+  };
+
+  // Cross-platform `removeEventListener`.
+  var removeEventListener = window.removeEventListener || function (eventName, listener) {
+    return detachEvent('on' + eventName, listener);
+  };
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
