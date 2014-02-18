@@ -26,6 +26,22 @@
     strictEqual(view.$('a b').html(), 'test');
   });
 
+  test("make", 3, function() {
+    var div = view.make('div', {id: 'test-div'}, "one two three");
+
+    equal(div.tagName.toLowerCase(), 'div');
+    equal(div.id, 'test-div');
+    equal($(div).text(), 'one two three');
+  });
+
+  test("make can take falsy values for content", 2, function() {
+    var div = view.make('div', {id: 'test-div'}, 0);
+    equal($(div).text(), '0');
+
+    div = view.make('div', {id: 'test-div'}, '');
+    equal($(div).text(), '');
+  });
+
   test("initialize", 1, function() {
     var View = Backbone.View.extend({
       initialize: function() {

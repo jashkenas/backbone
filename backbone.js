@@ -1124,6 +1124,18 @@
       return this;
     },
 
+    // For hooking into small amounts of DOM Elements, where a full-blown template isn't
+    // needed, use **make** to manufacture elements, one at a time.
+    //
+    //     var el = this.make('li', {'class': 'row'}, this.model.escape('title'));
+    //
+    make: function(tagName, attributes, content) {
+      var $el = Backbone.$('<' + tagName + '>');
+      if (attributes) $el.attr(attributes);
+      if (content != null) $el.html(content);
+      return $el[0];
+    },
+
     // Ensure that the View has a DOM element to render into.
     // If `this.el` is a string, pass it through `$()`, take the first
     // matching element, and re-assign it to `el`. Otherwise, create
@@ -1133,8 +1145,7 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
-        this.setElement($el, false);
+        this.setElement(this.make(_.result(this, 'tagName'), attrs), false);
       } else {
         this.setElement(_.result(this, 'el'), false);
       }
