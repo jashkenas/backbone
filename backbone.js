@@ -1105,13 +1105,7 @@
 
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
-        method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.on(eventName, method);
-        } else {
-          this.$el.on(eventName, selector, method);
-        }
+        this.delegate(eventName, selector, method);
       }
       return this;
     },
@@ -1121,6 +1115,21 @@
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
       this.$el.off('.delegateEvents' + this.cid);
+      return this;
+    },
+
+    // Add a single event listener to the element.
+    delegate: function(eventName, selector, method) {
+      if (_.isFunction(selector)) {
+        method = selector;
+        selector = undefined;
+      }
+      eventName += '.delegateEvents' + this.cid;
+      if (!selector) {
+        this.$el.on(eventName, _.bind(method, this));
+      } else {
+        this.$el.on(eventName, selector, _.bind(method, this));
+      }
       return this;
     },
 

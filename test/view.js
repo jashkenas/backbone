@@ -76,6 +76,21 @@
     equal(counter2, 3);
   });
 
+  test("delegate", 2, function() {
+    var counter1 = 0, counter2 = 0;
+
+    var view = new Backbone.View({el: '#testElement'});
+    view.increment = function(){ counter1++; };
+    view.$el.on('click', function(){ counter2++; });
+
+    view.delegate('click', 'h1', view.increment);
+    view.delegate('click', view.increment);
+
+    view.$('h1').trigger('click');
+    equal(counter1, 2);
+    equal(counter2, 1);
+  })
+
   test("delegateEvents allows functions for callbacks", 3, function() {
     var view = new Backbone.View({el: '<p></p>'});
     view.counter = 0;
