@@ -1419,7 +1419,7 @@
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState && window.onpopstate) {
+      if (this._hasPushState && 'onpopstate' in window) {
         addEventListener('popstate', this.checkUrl, false);
       } else if (this._wantsHashChange && 'onhashchange' in window && !this._oldIE) {
         addEventListener('hashchange', this.checkUrl, false);
@@ -1464,7 +1464,7 @@
         return detachEvent('on' + eventName, listener);
       };
 
-      if (this._hasPushState && window.onpopstate) {
+      if (this._hasPushState && 'onpopstate' in window) {
         removeEventListener('popstate', this.checkUrl);
       } else if (this._wantsHashChange && 'onhashchange' in window && !this._oldIE) {
         removeEventListener('hashchange', this.checkUrl);
