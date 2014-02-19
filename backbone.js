@@ -1062,11 +1062,20 @@
       return this;
     },
 
-    // Remove this view by taking the element out of the DOM, and removing any
-    // applicable Backbone.Events listeners.
+    // Remove this view by taking the element out of the document, remove all
+    // the DOM event listeners attached to it, and remove any applicable
+    // Backbone.Events listeners.
     remove: function() {
-      this.$el.remove();
+      this.undelegateEvents();
+      this.removeElement();
       this.stopListening();
+      return this;
+    },
+
+    // Remove this view's element from the document and remove all the event
+    // listeners attached to it.
+    removeElement: function() {
+      this.$el.remove();
       return this;
     },
 
