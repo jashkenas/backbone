@@ -1036,14 +1036,15 @@
     // Backbone.Events listeners.
     remove: function() {
       this.undelegateEvents();
-      this.removeElement();
+      this._removeElement();
       this.stopListening();
       return this;
     },
 
     // Remove this view's element from the document and remove all the event
-    // listeners attached to it.
-    removeElement: function() {
+    // listeners attached to it. Useful for subclasses to override in order to
+    // utilize an alternative DOM manipulation API.
+    _removeElement: function() {
       this.$el.remove();
       return this;
     },
@@ -1075,7 +1076,7 @@
     delegateEvents: function(events) {
       if (!(events || (events = _.result(this, 'events')))) return this;
       this.undelegateEvents();
-      var delegate = this.delegate;
+      var _delegate = this._delegate;
       for (var key in events) {
         var method = events[key];
         if (!_.isFunction(method)) method = this[events[key]];
@@ -1084,14 +1085,15 @@
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
         method = method.bind && method.bind(this) || _.bind(method, this);
-        delegate.call(this, eventName, selector, method);
+        _delegate.call(this, eventName, selector, method);
       }
       return this;
     },
 
     // Add a single event listener to the element responding only to the
-    // optional `selector` or catches all `eventName` events.
-    delegate: function(eventName, selector, method) {
+    // optional `selector` or catches all `eventName` events. Subclasses can
+    // override this to utilize an alternative DOM event management API.
+    _delegate: function(eventName, selector, method) {
       eventName += '.delegateEvents' + this.cid;
       if (!selector) {
         this.$el.on(eventName, method);
@@ -1101,17 +1103,26 @@
       return this;
     },
 
-    // Clears all callbacks previously bound to the view with `delegateEvents`.
-    // You usually don't need to use this, but may wish to if you have multiple
-    // Backbone views attached to the same DOM element.
+    // Undo what `delegateEvents` did. You usually don't need to use this, but
+    // may wish to if you have multiple Backbone views attached to the same DOM
+    // element.
     undelegateEvents: function() {
-      if (this.$el) this.$el.off('.delegateEvents' + this.cid);
+      if (this.$el) this._undelegate();
+      return this;
+    },
+
+    // Clears all callbacks previously bound to the view by
+    // `delegateEvents`. Subclasses can override this to utilize an alternative
+    // DOM event management API.
+    _undelegate: function() {
+      this.$el.off('.delegateEvents' + this.cid);
       return this;
     },
 
     // Creates the actual context for this view using the given `root` and a
-    // hash of `attributes`. `root` can be a CSS selector or an HTML string, a
-    // jQuery context or and Element.
+    // hash of `attributes` and returns the created element. `root` can be a CSS
+    // selector or an HTML string, a jQuery context or and Element. Subclasses
+    // can override this to utilize and alternative DOM manipulation API.
     _createContext: function(root, attributes) {
       var $el;
       if (typeof root == 'string') {
