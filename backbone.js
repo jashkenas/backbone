@@ -1083,8 +1083,7 @@
     // re-delegation.
     setElement: function(element, delegate) {
       this.undelegateEvents();
-      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
-      this.el = this.$el[0];
+      this._createContext(element);
       if (delegate !== false) this.delegateEvents();
       return this;
     },
@@ -1141,14 +1140,21 @@
       return this;
     },
 
-    // For hooking into small amounts of DOM Elements, where a full-blown template isn't
-    // needed, use **make** to manufacture elements, one at a time.
-    //
-    //     var el = this.make('li', {'class': 'row'}, this.model.escape('title'));
-    //
-    make: function(tagName, attributes, content) {
-      var $el = Backbone.$('<' + tagName + '>', attributes).html(content);
-      return $el[0];
+    // Creates the actual context for this view using the given `root` and a
+    // hash of `attributes`. `root` can be a CSS selector or an HTML string, a
+    // jQuery context or and Element.
+    _createContext: function(root, attributes) {
+      var $el;
+      if (typeof root == 'string') {
+        $el = Backbone.$(root);
+      } else if (root instanceof Backbone.$) {
+        $el = root;
+      } else {
+        $el = Backbone.$(root);
+      }
+      if (!_.isEmpty(attributes)) $el.attr(attributes);
+      this.$el = $el;
+      return (this.el = $el[0]);
     },
 
     // Ensure that the View has a DOM element to render into.
@@ -1160,7 +1166,8 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        this.setElement(this.make(_.result(this, 'tagName'), attrs), false);
+        var el = document.createElement(_.result(this, 'tagName'));
+        this.setElement(this._createContext(el, attrs), false);
       } else {
         this.setElement(_.result(this, 'el'), false);
       }
