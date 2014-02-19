@@ -1067,6 +1067,7 @@
     delegateEvents: function(events) {
       if (!(events || (events = _.result(this, 'events')))) return this;
       this.undelegateEvents();
+      var delegate = this.delegate;
       for (var key in events) {
         var method = events[key];
         if (!_.isFunction(method)) method = this[events[key]];
@@ -1074,23 +1075,20 @@
 
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
-        this.delegate(eventName, selector, method);
+        method = method.bind && method.bind(this) || _.bind(method, this);
+        delegate.call(this, eventName, selector, method);
       }
       return this;
     },
 
-
-    // Add a single event listener to the element.
+    // Add a single event listener to the element responding only to the
+    // optional `selector` or catches all `eventName` events.
     delegate: function(eventName, selector, method) {
-      if (_.isFunction(selector)) {
-        method = selector;
-        selector = undefined;
-      }
       eventName += '.delegateEvents' + this.cid;
       if (!selector) {
-        this.$el.on(eventName, _.bind(method, this));
+        this.$el.on(eventName, method);
       } else {
-        this.$el.on(eventName, selector, _.bind(method, this));
+        this.$el.on(eventName, selector, method);
       }
       return this;
     },
