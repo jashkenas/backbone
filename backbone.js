@@ -1042,7 +1042,7 @@
     // Change the view's element (`this.el` property), including event
     // re-delegation.
     setElement: function(element, delegate) {
-      if (this.$el) this.undelegateEvents();
+      this.undelegateEvents();
       this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
       this.el = this.$el[0];
       if (delegate !== false) this.delegateEvents();
@@ -1079,13 +1079,6 @@
       return this;
     },
 
-    // Clears all callbacks previously bound to the view with `delegateEvents`.
-    // You usually don't need to use this, but may wish to if you have multiple
-    // Backbone views attached to the same DOM element.
-    undelegateEvents: function() {
-      this.$el.off('.delegateEvents' + this.cid);
-      return this;
-    },
 
     // Add a single event listener to the element.
     delegate: function(eventName, selector, method) {
@@ -1099,6 +1092,14 @@
       } else {
         this.$el.on(eventName, selector, _.bind(method, this));
       }
+      return this;
+    },
+
+    // Clears all callbacks previously bound to the view with `delegateEvents`.
+    // You usually don't need to use this, but may wish to if you have multiple
+    // Backbone views attached to the same DOM element.
+    undelegateEvents: function() {
+      if (this.$el) this.$el.off('.delegateEvents' + this.cid);
       return this;
     },
 
