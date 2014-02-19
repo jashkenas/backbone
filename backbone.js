@@ -1391,6 +1391,7 @@
       this.options          = _.extend({root: '/'}, this.options, options);
       this.root             = this.options.root;
       this._wantsHashChange = this.options.hashChange !== false;
+      this._hasHashChange   = 'onhashchange' in window;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       var fragment          = this.getFragment();
@@ -1406,14 +1407,15 @@
       try {
         var body = document.body;
         var docMode = document.documentMode || 0;
-        var frame =  document.createElement('<iframe src="javascript:0" style="display:none" tabindex="-1">');
-        this._oldIE = docMode < 8;
-        this.iframe = body.insertBefore(frame, body.firstChild).contentWindow;
-      } catch(e) {
-        this._oldIE = false;
-      }
+        if (docMode < 8) {
+          var frame = document.createElement(
+            '<iframe src="javascript:0" style="display:none" tabindex="-1">'
+          );
+          this.iframe = body.appendChild(frame).contentWindow;
+        }
+      } catch(e){}
 
-      if (this._oldIE && this._wantsHashChange) {
+      if (this.iframe && this._wantsHashChange) {
         this.navigate(fragment);
       }
 
@@ -1421,7 +1423,7 @@
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState && 'onpopstate' in window) {
         addEventListener('popstate', this.checkUrl, false);
-      } else if (this._wantsHashChange && 'onhashchange' in window && !this._oldIE) {
+      } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
         addEventListener('hashchange', this.checkUrl, false);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
@@ -1466,7 +1468,7 @@
 
       if (this._hasPushState && 'onpopstate' in window) {
         removeEventListener('popstate', this.checkUrl);
-      } else if (this._wantsHashChange && 'onhashchange' in window && !this._oldIE) {
+      } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
         removeEventListener('hashchange', this.checkUrl);
       }
       clearInterval(this._checkUrlInterval);
