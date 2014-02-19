@@ -1397,6 +1397,11 @@
       var docMode           = document.documentMode;
       this._oldIE           = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
+      // Cross-platform `addEventListener`.
+      var addEventListener = window.addEventListener || function (eventName, listener) {
+        return attachEvent('on' + eventName, listener);
+      };
+
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
@@ -1412,7 +1417,7 @@
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState) {
+      if (this._hasPushState && window.onpopstate) {
         addEventListener(window, 'popstate', this.checkUrl, false);
       } else if (this._wantsHashChange && 'onhashchange' in window && !this._oldIE) {
         addEventListener(window, 'hashchange', this.checkUrl, false);
@@ -1452,7 +1457,12 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      if (this._hasPushState) {
+      // Cross-platform `removeEventListener`.
+      var removeEventListener = window.removeEventListener || function (eventName, listener) {
+        return detachEvent('on' + eventName, listener);
+      };
+
+      if (this._hasPushState && window.onpopstate) {
         removeEventListener(window, 'popstate', this.checkUrl);
       } else if (this._wantsHashChange && 'onhashchange' in window && !this._oldIE) {
         removeEventListener(window, 'hashchange', this.checkUrl);
@@ -1596,16 +1606,6 @@
 
   // Set up inheritance for the model, collection, router, view and history.
   Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
-
-  // Cross-platform `addEventListener` and `removeEventListener` shims.
-  var addEventListener = window.addEventListener || function (eventName, listener) {
-    return attachEvent('on' + eventName, listener);
-  };
-
-  // Cross-platform `removeEventListener`.
-  var removeEventListener = window.removeEventListener || function (eventName, listener) {
-    return detachEvent('on' + eventName, listener);
-  };
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
