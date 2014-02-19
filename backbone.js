@@ -1394,8 +1394,6 @@
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       var fragment          = this.getFragment();
-      var docMode           = document.documentMode;
-      this._oldIE           = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
       // Cross-platform `addEventListener`.
       var addEventListener = window.addEventListener || function (eventName, listener) {
@@ -1405,13 +1403,17 @@
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
+      try {
+        var body = document.body;
+        var docMode = document.documentMode || 0;
+        var frame =  document.createElement('<iframe src="javascript:0" style="display:none" tabindex="-1">');
+        this._oldIE = docMode < 8;
+        this.iframe = body.insertBefore(frame, body.firstChild).contentWindow;
+      } catch(e) {
+        this._oldIE = false;
+      }
+
       if (this._oldIE && this._wantsHashChange) {
-        var frame = document.createElement('iframe');
-        frame.src = 'javascript:0';
-        frame.tabIndex = -1;
-        frame.style.display = 'none';
-        document.body.appendChild(frame);
-        this.iframe = frame.contentWindow;
         this.navigate(fragment);
       }
 
