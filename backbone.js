@@ -1334,9 +1334,6 @@
   // Cached regex for stripping leading and trailing slashes.
   var rootStripper = /^\/+|\/+$/g;
 
-  // Cached regex for detecting MSIE.
-  var isExplorer = /msie [\w.]+/;
-
   // Cached regex for removing a trailing slash.
   var trailingSlash = /\/$/;
 
