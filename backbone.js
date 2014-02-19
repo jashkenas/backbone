@@ -1467,9 +1467,9 @@
       };
 
       if (this._hasPushState && 'onpopstate' in window) {
-        removeEventListener('popstate', this.checkUrl);
+        removeEventListener('popstate', this.checkUrl, false);
       } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
-        removeEventListener('hashchange', this.checkUrl);
+        removeEventListener('hashchange', this.checkUrl, false);
       }
       clearInterval(this._checkUrlInterval);
       History.started = false;
