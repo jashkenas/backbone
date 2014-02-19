@@ -1134,19 +1134,11 @@
       return this;
     },
 
-    // Undo what `delegateEvents` did. You usually don't need to use this, but
-    // may wish to if you have multiple Backbone views attached to the same DOM
-    // element.
+    // Clears all callbacks previously bound to the view by `delegateEvents`.
+    // You usually don't need to use this, but may wish to if you have multiple
+    // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
-      if (this.$el) this._undelegate();
-      return this;
-    },
-
-    // Clears all callbacks previously bound to the view by
-    // `delegateEvents`. Subclasses can override this to utilize an alternative
-    // DOM event management API.
-    _undelegate: function() {
-      this.$el.off('.delegateEvents' + this.cid);
+      if (this.$el) this.$el.off('.delegateEvents' + this.cid);
       return this;
     },
 
