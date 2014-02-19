@@ -1420,9 +1420,9 @@
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState && window.onpopstate) {
-        addEventListener(window, 'popstate', this.checkUrl, false);
+        addEventListener('popstate', this.checkUrl, false);
       } else if (this._wantsHashChange && 'onhashchange' in window && !this._oldIE) {
-        addEventListener(window, 'hashchange', this.checkUrl, false);
+        addEventListener('hashchange', this.checkUrl, false);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
@@ -1465,9 +1465,9 @@
       };
 
       if (this._hasPushState && window.onpopstate) {
-        removeEventListener(window, 'popstate', this.checkUrl);
+        removeEventListener('popstate', this.checkUrl);
       } else if (this._wantsHashChange && 'onhashchange' in window && !this._oldIE) {
-        removeEventListener(window, 'hashchange', this.checkUrl);
+        removeEventListener('hashchange', this.checkUrl);
       }
       clearInterval(this._checkUrlInterval);
       History.started = false;
