@@ -40,6 +40,49 @@
   var slice = array.slice;
   var splice = array.splice;
 
+  // Caches a local reference to `Element.prototype` for faster access.
+  var ElementProto = typeof Element != 'undefined' && Element.prototype;
+
+  // Given an object `obj` and an operation `op`, which must be either `add` or
+  // `remove`, this function returns either the native implementation of the
+  // [add|remove]EventListener method directly or a function that delegates to
+  // IE's [attach|detach]Event methods.
+  function makeEventListener(obj, op) {
+    if (obj[op + 'EventListener']) return obj[op + 'EventListener'];
+    var func = op == 'add' ? obj.attachEvent : obj.detachEvent;
+    return function (eventName, listener) {
+      func.call(this, 'on' + eventName, listener);
+    };
+  }
+
+  // Caches the window's event listener methods for IE and Safari.
+  var windowAddEventListener = typeof window != 'undefined' &&
+      makeEventListener(window, 'add');
+  var windowRemoveEventListener = typeof window != 'undefined' &&
+      makeEventListener(window, 'remove');
+
+  // Caches the Element prototype's event listener methods for everything else.
+  var elementAddEventListener = makeEventListener(ElementProto, 'add');
+  var elementRemoveEventListener = makeEventListener(ElementProto, 'remove');
+
+  // Find the right `Element#matches` for IE>=9 and modern browsers.
+  var matchesSelector = ElementProto && ElementProto.matches ||
+      ElementProto[_.find(['webkit', 'moz', 'ms', 'o'], function(prefix) {
+        return !!ElementProto[prefix + 'MatchesSelector'];
+      }) + 'MatchesSelector'] ||
+      // Make our own `Element#matches` for IE8
+      function(selector) {
+        // We'll use querySelectorAll to find all element matching the selector,
+        // then check if the given element is included in that list.
+        // Executing the query on the parentNode reduces the resulting nodeList,
+        // document doesn't have a parentNode, though.
+        var nodeList = (this.parentNode || document).querySelectorAll(selector) || [];
+        for (var i = 0, l = nodeList.length; i < l; i++) {
+          if (nodeList[i] == this) return true;
+        }
+        return false;
+      };
+
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '1.1.1';
 
@@ -980,8 +1023,8 @@
     };
   });
 
-  // Backbone.View
-  // -------------
+  // Backbone.BaseView
+  // ------------------
 
   // Backbone Views are almost more convention than they are actual code. A View
   // is simply a JavaScript object that represents a logical chunk of UI in the
@@ -991,12 +1034,28 @@
   // having to worry about render order ... and makes it easy for the view to
   // react to specific changes in the state of your models.
 
-  // Creating a Backbone.View creates its initial element outside of the DOM,
-  // if an existing element is not provided...
-  var View = Backbone.View = function(options) {
+  // Backbone has a `BaseView` and `View`. BaseView is a fast-by-default
+  // implementation that uses the browser's DOM API to construct its `el` root
+  // element and event delegation.
+
+  // Backbone.View is a very thin layer on top of BaseView that uses jQuery for
+  // element creation and event delegation.
+
+  // The main difference between these two classes is while BaseView is fast,
+  // it is not compatible with older browsers such as IE7. Due to browser
+  // differences, some useful events such as `mouseenter`, `mouseleave`,
+  // `focusin` and `focusout` may not be available. View uses jQuery internally
+  // so it can listen to more events such as those above. Namespaced events are
+  // also supported. View is more consistent among browsers due to jQuery's
+  // event simulation, but at a cost of at least 60% performance lost.
+
+  // Creating a Backbone.BaseView creates its initial element outside of the
+  // DOM, if an existing element is not provided...
+  var BaseView = Backbone.BaseView = function(options) {
     this.cid = _.uniqueId('view');
     options || (options = {});
     _.extend(this, _.pick(options, viewOptions));
+    this._domEvents = [];
     this._ensureElement();
     this.initialize.apply(this, arguments);
     this.delegateEvents();
@@ -1005,19 +1064,24 @@
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
+  // Cached regex to match an opening '<' of an HTML tag, possibly left-padded
+  // with whitespace.
+  var paddedLt = /^\s*</;
+
   // List of view options to be merged as properties.
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
 
-  // Set up all inheritable **Backbone.View** properties and methods.
-  _.extend(View.prototype, Events, {
+  // Set up all inheritable **Backbone.BaseView** properties and methods.
+  _.extend(BaseView.prototype, Events, {
 
     // The default `tagName` of a View's element is `"div"`.
     tagName: 'div',
 
-    // jQuery delegate for element lookup, scoped to DOM elements within the
-    // current view. This should be preferred to global lookups where possible.
+    // Delegate to `querySelectorAll` for element lookup, scoped to DOM elements
+    // within the current view. This should be preferred to global lookups where
+    // possible.
     $: function(selector) {
-      return this.$el.find(selector);
+      return this.el.querySelectorAll(selector);
     },
 
     // Initialize is an empty function by default. Override it with your own
@@ -1031,20 +1095,33 @@
       return this;
     },
 
-    // Remove this view by taking the element out of the DOM, and removing any
-    // applicable Backbone.Events listeners.
+    // Remove this view by taking the element out of the DOM, remove all the DOM
+    // event listeners attached to it, and remove any applicable Backbone.Events
+    // listeners.
     remove: function() {
-      this.$el.remove();
+      this.undelegateEvents();
+      var el = this.el;
+      var parentNode = el.parentNode;
+      if (parentNode) parentNode.removeChild(el);
       this.stopListening();
       return this;
     },
 
     // Change the view's element (`this.el` property), including event
-    // re-delegation.
+    // re-delegation. If element is string, create or find that element and
+    // change this view's element to it. Otherwise, assume it is a DOM element
+    // and change this view's element to it.
     setElement: function(element, delegate) {
-      if (this.$el) this.undelegateEvents();
-      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
-      this.el = this.$el[0];
+      if (this.el) this.undelegateEvents();
+      if (typeof element == 'string') {
+        if (paddedLt.test(element)) {
+          var el = document.createElement('div');
+          el.innerHTML = element;
+          this.el = el.firstChild;
+        }
+        else this.el = document.querySelector(element);
+      }
+      else this.el = element;
       if (delegate !== false) this.delegateEvents();
       return this;
     },
@@ -1062,48 +1139,94 @@
     // pairs. Callbacks will be bound to the view, with `this` set properly.
     // Uses event delegation for efficiency.
     // Omitting the selector binds the event to `this.el`.
-    // This only works for delegate-able events: not `focus`, `blur`, and
-    // not `change`, `submit`, and `reset` in Internet Explorer.
+    // This only works for delegate-able events: not `focus`, `blur`, not
+    // `change`, `submit`, and `reset` in Internet Explorer, not `focusin` and
+    // `focusout` in Firefox, and not `mouseenter` and `mouseleave` for Chrome <
+    // 30 and Safari. You should use `Backbone.View` if a greater cross-browser
+    // compatibility is desired.
+    //
+    // Pass the event name, selector and the bound method to `_delegateEvents`
+    // for each mapping in `events`.
     delegateEvents: function(events) {
       if (!(events || (events = _.result(this, 'events')))) return this;
       this.undelegateEvents();
+      var _delegateEvents = this._delegateEvents;
       for (var key in events) {
         var method = events[key];
-        if (!_.isFunction(method)) method = this[events[key]];
+        if (typeof method != 'function') method = this[events[key]];
         if (!method) continue;
 
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
-        method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.on(eventName, method);
-        } else {
-          this.$el.on(eventName, selector, method);
-        }
+        method = method.bind && method.bind(this) || _.bind(method, this);
+        _delegateEvents.call(this, eventName, selector, method);
       }
+
+      return this;
+    },
+
+    // Make a event delegation handler for the given `eventName` and `selector`
+    // and attach it to `this.el`.
+    // If selector is empty, the method will be bound to `this.el`. If not, a
+    // new handler that will recursively traverse up the event target's DOM
+    // hierarchy looking for a node that matches the selector. If one is found,
+    // the event's `delegateTarget` property is set to it and the return the
+    // result of calling bound `method` with the parameters given to the
+    // handler.
+    _delegateEvents: function(eventName, selector, method) {
+      var root = this.el, handler;
+      if (!selector) handler = method;
+      else handler = function (e) {
+        var node = e.target || e.srcElement;
+        for (; node && node != root; node = node.parentNode) {
+          if (matchesSelector.call(node, selector)) {
+            e.delegateTarget = node;
+            return method.apply(this, arguments);
+          }
+        }
+      };
+
+      elementAddEventListener.call(root, eventName, handler, false);
+      this._domEvents.push({eventName: eventName, handler: handler});
+    },
+
+    // Delegates to `_undelegateEvents` so `BaseView` subclasses can override
+    // the default event undelegation routine.
+    undelegateEvents: function() {
+      this._undelegateEvents();
       return this;
     },
 
     // Clears all callbacks previously bound to the view with `delegateEvents`.
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
-    undelegateEvents: function() {
-      this.$el.off('.delegateEvents' + this.cid);
-      return this;
+    _undelegateEvents: function() {
+      var el = this.el, domEvents = this._domEvents, i, l, item;
+      if (el) {
+        for (i = 0, l = domEvents.length; i < l; i++) {
+          item = domEvents[i];
+          elementRemoveEventListener.call(el, item.eventName, item.handler, false);
+        }
+        this._domEvents = [];
+      }
     },
 
-    // Ensure that the View has a DOM element to render into.
-    // If `this.el` is a string, pass it through `$()`, take the first
-    // matching element, and re-assign it to `el`. Otherwise, create
-    // an element from the `id`, `className` and `tagName` properties.
+    // Ensure that the View has a DOM element to render into. If `this.el`
+    // exists, it must be a string, a function or a DOM element. If it is a
+    // string or a DOM element, pass it through `setElement`. If it is a
+    // function, pass its result to `setElement`. Otherwise, create an element
+    // from the `id`, `className`, `tagName` and `attributes` properties, and
+    // pass it to `setElement`.
     _ensureElement: function() {
       if (!this.el) {
+        var el = document.createElement(_.result(this, 'tagName'));
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
-        this.setElement($el, false);
+        for (var k in attrs) {
+          el.setAttribute(k, attrs[k]);
+        }
+        this.setElement(el, false);
       } else {
         this.setElement(_.result(this, 'el'), false);
       }
@@ -1395,23 +1518,27 @@
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       var fragment          = this.getFragment();
       var docMode           = document.documentMode;
-      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
+      this._oldIE           = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
 
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
-      if (oldIE && this._wantsHashChange) {
-        var frame = Backbone.$('<iframe src="javascript:0" tabindex="-1">');
-        this.iframe = frame.hide().appendTo('body')[0].contentWindow;
+      if (this._oldIE && this._wantsHashChange) {
+        var frame = document.createElement('iframe');
+        frame.src = 'javascript:0';
+        frame.tabIndex = -1;
+        frame.style.display = 'none';
+        document.body.appendChild(frame);
+        this.iframe = frame.contentWindow;
         this.navigate(fragment);
       }
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState) {
-        Backbone.$(window).on('popstate', this.checkUrl);
-      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        Backbone.$(window).on('hashchange', this.checkUrl);
+      if (this._hasPushState && window.onpopstate) {
+        windowAddEventListener.call(window, 'popstate', this.checkUrl);
+      } else if (this._wantsHashChange && window.onhashchange && !this._oldIE) {
+        windowAddEventListener.call(window, 'hashchange', this.checkUrl);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
@@ -1448,7 +1575,11 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
+      if (this._hasPushState && window.onpopstate) {
+        windowRemoveEventListener.call(window, 'popstate', this.checkUrl);
+      } else if (this._wantsHashChange && window.onhashchange && !this._oldIE) {
+        windowRemoveEventListener.call(window, 'hashchange', this.checkUrl);
+      }
       clearInterval(this._checkUrlInterval);
       History.started = false;
     },
@@ -1587,7 +1718,7 @@
   };
 
   // Set up inheritance for the model, collection, router, view and history.
-  Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
+  Model.extend = Collection.extend = Router.extend = BaseView.extend = History.extend = extend;
 
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
@@ -1602,6 +1733,52 @@
       model.trigger('error', model, resp, options);
     };
   };
+
+  // A View class backed by jQuery.
+  Backbone.View = BaseView.extend({
+
+    // jQuery delegate for element lookup, scoped to DOM elements within the
+    // current view. This should be preferred to global lookups where possible.
+    $: function(selector) {
+      return this.$el.find(selector);
+    },
+
+    // Remove `this.el` from the document, remove all the delegated event
+    // listeners and Backbone listeners.
+    remove: function() {
+      this.$el.remove();
+      this.stopListening();
+      return this;
+    },
+
+    // Makes sure `this.$el` and `this.el` is there and redelegates events when
+    // necessary.
+    setElement: function(element, delegate) {
+      if (this.$el) this.undelegateEvents();
+      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
+      this.el = this.$el[0];
+      if (delegate !== false) this.delegateEvents();
+      return this;
+    },
+
+    // Since jQuery delegated event listeners do not get invoked if the event
+    // occurs on the root, we attach the bound method directly to the root
+    // element if the selector is falsy, otherwise just call `$.fn.on` with the
+    // signature for event delegation.
+    _delegateEvents: function(eventName, selector, method) {
+      var $el = this.$el;
+      eventName += '.delegateEvents' + this.cid;
+      if (!selector) $el.on(eventName, method);
+      else $el.on(eventName, selector, method);
+    },
+
+    // Delegate to jQuery to remove all delegated DOM event listeners attached
+    // to `this.el`.
+    _undelegateEvents: function() {
+      this.$el.off('.delegateEvents' + this.cid);
+    }
+
+  });
 
   return Backbone;
 
