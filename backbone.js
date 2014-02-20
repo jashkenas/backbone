@@ -1403,19 +1403,15 @@
 
       // Proxy an iframe to handle location events on older versions of IE
       try {
-        var body = document.body;
-        var docMode = document.documentMode || 0;
-        if (docMode < 8) {
+        if ((document.documentMode || 0) < 8) {
           var frame = document.createElement(
             '<iframe src="javascript:0" style="display:none" tabindex="-1">'
           );
-          this.iframe = body.appendChild(frame).contentWindow;
+          var body = document.body;
+          this.iframe = body.insertBefore(frame, body.firstChild).contentWindow;
+          if (this._wantsHashChange) this.navigate(fragment);
         }
       } catch(e){}
-
-      if (this.iframe && this._wantsHashChange) {
-        this.navigate(fragment);
-      }
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
