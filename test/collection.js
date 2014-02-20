@@ -1335,4 +1335,22 @@
     equal(c.models.length, 1);
   });
 
+  test("success and error scope should be consistent with $.ajax context", 4, function() {
+    var c = new Backbone.Collection();
+    
+    var opts = {
+      data: { 'a': 'b' },
+      success: function () { deepEqual(this.data, { 'a': 'b' }); },
+      error: function () { deepEqual(this.data, { 'a': 'b' }); }
+    };
+
+    Backbone.sync = function(method, model, options) { options.success(); };
+    c.fetch(opts);
+    c.create({}, opts);
+
+    Backbone.sync = function(method, model, options) { options.error(); };
+    c.fetch(opts);
+    c.create({}, opts);
+  });
+
 })();

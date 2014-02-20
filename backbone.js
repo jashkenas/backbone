@@ -433,7 +433,7 @@
       var success = options.success;
       options.success = function(resp) {
         if (!model.set(model.parse(resp, options), options)) return false;
-        if (success) success(model, resp, options);
+        if (success) success.call(this, model, resp, options);
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
@@ -483,7 +483,7 @@
         if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
           return false;
         }
-        if (success) success(model, resp, options);
+        if (success) success.call(this, model, resp, options);
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
@@ -512,7 +512,7 @@
 
       options.success = function(resp) {
         if (options.wait || model.isNew()) destroy();
-        if (success) success(model, resp, options);
+        if (success) success.call(this, model, resp, options);
         if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
@@ -863,7 +863,7 @@
       options.success = function(resp) {
         var method = options.reset ? 'reset' : 'set';
         collection[method](resp, options);
-        if (success) success(collection, resp, options);
+        if (success) success.call(this, collection, resp, options);
         collection.trigger('sync', collection, resp, options);
       };
       wrapError(this, options);
@@ -881,7 +881,7 @@
       var success = options.success;
       options.success = function(model, resp) {
         if (options.wait) collection.add(model, options);
-        if (success) success(model, resp, options);
+        if (success) success.call(this, model, resp, options);
       };
       model.save(null, options);
       return model;
@@ -1598,7 +1598,7 @@
   var wrapError = function(model, options) {
     var error = options.error;
     options.error = function(resp) {
-      if (error) error(model, resp, options);
+      if (error) error.call(this, model, resp, options);
       model.trigger('error', model, resp, options);
     };
   };
