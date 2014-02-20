@@ -1150,7 +1150,7 @@
       var $el = root instanceof Backbone.$ ? root : Backbone.$(root);
       $el.attr(attributes || {});
       this.$el = $el;
-      return (this.el = $el[0]);
+      this.el = $el[0];
     },
 
     // Ensure that the View has a DOM element to render into.
@@ -1162,8 +1162,8 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        var el = document.createElement(_.result(this, 'tagName'));
-        this.setElement(this._createContext(el, attrs), false);
+        this._createContext(document.createElement(_.result(this, 'tagName')), attrs);
+        this.setElement(this.el, false);
       } else {
         this.setElement(_.result(this, 'el'), false);
       }
