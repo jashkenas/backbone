@@ -26,14 +26,13 @@
     strictEqual(view.$('a b').html(), 'test');
   });
 
-  test("_createContext", 5, function() {
-    var div = view._createContext('<div>', {id: 'test-div'});
+  test("_createContext", 4, function() {
+    view._createContext('<div>', {id: 'test-div'});
 
-    equal(div.tagName.toLowerCase(), 'div');
-    equal(div.id, 'test-div');
-    equal(view.el, div);
+    equal(view.el.tagName.toLowerCase(), 'div');
+    equal(view.el.id, 'test-div');
     ok(view.$el instanceof Backbone.$);
-    equal(view.$el[0], div);
+    equal(view.$el[0], view.el);
   });
 
   test("initialize", 1, function() {
