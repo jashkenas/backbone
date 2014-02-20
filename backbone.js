@@ -1077,7 +1077,6 @@
     // utilize an alternative DOM manipulation API.
     _removeElement: function() {
       this.$el.remove();
-      return this;
     },
 
     // Change the view's element (`this.el` property), including event
@@ -1131,7 +1130,6 @@
       } else {
         this.$el.on(eventName, selector, method);
       }
-      return this;
     },
 
     // Clears all callbacks previously bound to the view by `delegateEvents`.
