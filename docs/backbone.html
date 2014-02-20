@@ -27,7 +27,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>Backbone.js <span class="hljs-number">1.1</span><span class="hljs-number">.1</span>
+              <pre><code>Backbone.js <span class="hljs-number">1.1</span><span class="hljs-number">.2</span>
 </code></pre>
             </div>
             
@@ -97,9 +97,8 @@ others that may still expect a global Backbone.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports !== <span class="hljs-string">'undefined'</span>) {
-    <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), $;
-    <span class="hljs-keyword">try</span> { $ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'jquery'</span>); } <span class="hljs-keyword">catch</span>(e) {}
-    factory(root, exports, _, $);</pre></div></div>
+    <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
+    factory(root, exports, _);</pre></div></div>
             
         </li>
         
@@ -192,7 +191,7 @@ restored later on, if <code>noConflict</code> is used.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  Backbone.VERSION = <span class="hljs-string">'1.1.1'</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Backbone.VERSION = <span class="hljs-string">'1.1.2'</span>;</pre></div></div>
             
         </li>
         
@@ -3270,7 +3269,7 @@ against the current location hash.</p>
                      <span class="hljs-keyword">return</span> optional ? match : <span class="hljs-string">'([^/?]+)'</span>;
                    })
                    .replace(splatParam, <span class="hljs-string">'([^?]*?)'</span>);
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">'^'</span> + route + <span class="hljs-string">'(?:\\?(.*))?$'</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span class="hljs-string">'^'</span> + route + <span class="hljs-string">'(?:\\?([\\s\\S]*))?$'</span>);
     },</pre></div></div>
             
         </li>
@@ -3751,7 +3750,7 @@ but possibly useful for unit testing Routers.</p>
             
             <div class="content"><div class='highlight'><pre>    stop: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
       Backbone.$(window).off(<span class="hljs-string">'popstate'</span>, <span class="hljs-keyword">this</span>.checkUrl).off(<span class="hljs-string">'hashchange'</span>, <span class="hljs-keyword">this</span>.checkUrl);
-      clearInterval(<span class="hljs-keyword">this</span>._checkUrlInterval);
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._checkUrlInterval) clearInterval(<span class="hljs-keyword">this</span>._checkUrlInterval);
       History.started = <span class="hljs-literal">false</span>;
     },</pre></div></div>
             
