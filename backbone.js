@@ -1147,15 +1147,8 @@
     // selector or an HTML string, a jQuery context or and Element. Subclasses
     // can override this to utilize and alternative DOM manipulation API.
     _createContext: function(root, attributes) {
-      var $el;
-      if (typeof root == 'string') {
-        $el = Backbone.$(root);
-      } else if (root instanceof Backbone.$) {
-        $el = root;
-      } else {
-        $el = Backbone.$(root);
-      }
-      if (!_.isEmpty(attributes)) $el.attr(attributes);
+      var $el = root instanceof Backbone.$ ? root : Backbone.$(root);
+      $el.attr(attributes || {});
       this.$el = $el;
       return (this.el = $el[0]);
     },
