@@ -1292,7 +1292,7 @@
                      return optional ? match : '([^/?]+)';
                    })
                    .replace(splatParam, '([^?]*?)');
-      return new RegExp('^' + route + '(?:\\?(.*))?$');
+      return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
