@@ -1093,11 +1093,12 @@
     // optional `selector` or catches all `eventName` events. Subclasses can
     // override this to utilize an alternative DOM event management API.
     _delegate: function(eventName, selector, method) {
+      var $el = this.$el;
       eventName += '.delegateEvents' + this.cid;
       if (!selector) {
-        this.$el.on(eventName, method);
+        $el.on(eventName, method);
       } else {
-        this.$el.on(eventName, selector, method);
+        $el.on(eventName, selector, method);
       }
     },
 
