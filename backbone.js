@@ -1393,7 +1393,7 @@
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       var fragment          = this.getFragment();
 
-      // Cross-platform `addEventListener`.
+      // Add a cross-platform `addEventListener` shim for older browsers.
       var addEventListener = window.addEventListener || function (eventName, listener) {
         return attachEvent('on' + eventName, listener);
       };
@@ -1401,6 +1401,7 @@
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
+      // Proxy an iframe to handle location events on older versions of IE
       try {
         var body = document.body;
         var docMode = document.documentMode || 0;
@@ -1458,7 +1459,7 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      // Cross-platform `removeEventListener`.
+      // Add a cross-platform `removeEventListener` shim for older browsers.
       var removeEventListener = window.removeEventListener || function (eventName, listener) {
         return detachEvent('on' + eventName, listener);
       };
