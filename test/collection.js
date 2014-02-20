@@ -437,7 +437,7 @@
 
   test("model destroy removes from all collections", 3, function() {
     var e = new Backbone.Model({id: 5, title: 'Othello'});
-    e.sync = function(method, model, options) { options.success(); };
+    e.sync = function(method, model, options) { options.success(null, 'success', {}); };
     var colE = new Backbone.Collection([e]);
     var colF = new Backbone.Collection([e]);
     e.destroy();
@@ -474,7 +474,9 @@
     collection.on('error', function () {
       ok(true);
     });
-    collection.sync = function (method, model, options) { options.error(); };
+    collection.sync = function (method, model, options) {
+      options.error({}, 'error', 'Internal Server Error');
+    };
     collection.fetch();
   });
 
@@ -487,7 +489,7 @@
     };
     collection.url = '/test';
     collection.fetch();
-    this.syncArgs.options.success();
+    this.syncArgs.options.success({}, 'success', {});
     equal(counter, 1);
   });
 
@@ -775,7 +777,8 @@
       }
     };
     col.sync = m.sync = function( method, collection, options ){
-      options.success(collection, [], options);
+//      options.success(collection, [], options);
+      options.success({}, 'success', {});
     };
     col.fetch(opts);
     col.create(m, opts);
@@ -784,7 +787,9 @@
   test("#1412 - Trigger 'request' and 'sync' events.", 4, function() {
     var collection = new Backbone.Collection;
     collection.url = '/test';
-    Backbone.ajax = function(settings){ settings.success(); };
+    Backbone.ajax = function(options) {
+      options.success({}, 'success', {});
+    };
 
     collection.on('request', function(obj, xhr, options) {
       ok(obj === collection, "collection has correct 'request' event after fetching");
@@ -808,7 +813,9 @@
   test("#1447 - create with wait adds model.", 1, function() {
     var collection = new Backbone.Collection;
     var model = new Backbone.Model;
-    model.sync = function(method, model, options){ options.success(); };
+    model.sync = function(method, model, options) {
+      options.success(null, 'success', {});
+    };
     collection.on('add', function(){ ok(true); });
     collection.create(model, {wait: true});
   });
@@ -871,7 +878,7 @@
       })
     });
     new Collection().fetch();
-    this.ajaxSettings.success([model]);
+    this.ajaxSettings.success([model], 'success', {});
   });
 
   test("`sort` shouldn't always fire on `add`", 1, function() {
@@ -1151,7 +1158,7 @@
     }));
     var ajax = Backbone.ajax;
     Backbone.ajax = function (params) {
-      _.defer(params.success);
+      _.defer(params.success, {}, 'success', {});
       return {someHeader: 'headerValue'};
     };
     collection.fetch({
@@ -1218,7 +1225,7 @@
         strictEqual(resp, 'response');
       }
     });
-    this.ajaxSettings.success('response');
+    this.ajaxSettings.success('response', 'success', {});
   });
 
   test("#2612 - nested `parse` works with `Collection#set`", function() {

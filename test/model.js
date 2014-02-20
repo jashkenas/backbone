@@ -430,7 +430,7 @@
       if (attrs.admin) return "Can't change admin status.";
     };
     model.sync = function(method, model, options) {
-      options.success.call(this, {admin: true});
+      options.success({admin: true,}, 'success', {});
     };
     model.on('invalid', function(model, error) {
       lastError = error;
@@ -453,7 +453,7 @@
       ok(true);
     });
     model.sync = function (method, model, options) {
-      options.error();
+      options.error({}, 'error', 'Internal Server Error');
     };
     model.save({data: 2, id: 1});
     model.fetch();
@@ -477,7 +477,7 @@
   test("save in positional style", 1, function() {
     var model = new Backbone.Model();
     model.sync = function(method, model, options) {
-      options.success();
+      options.success({}, 'success', {});
     };
     model.save('title', 'Twelfth Night');
     equal(model.get('title'), 'Twelfth Night');
@@ -486,8 +486,8 @@
   test("save with non-object success response", 2, function () {
     var model = new Backbone.Model();
     model.sync = function(method, model, options) {
-      options.success('', options);
-      options.success(null, options);
+      options.success('', 'success', {});
+      options.success(null, 'success', {});
     };
     model.save({testing:'empty'}, {
       success: function (model) {
@@ -763,7 +763,7 @@
     deepEqual(JSON.parse(this.ajaxSettings.data), {x: 3, y: 2});
     equal(model.get('x'), 1);
     equal(changed, 0);
-    this.syncArgs.options.success({});
+    this.syncArgs.options.success({}, 'success', {});
     equal(model.get('x'), 3);
     equal(changed, 1);
   });
@@ -778,7 +778,7 @@
   test("#1030 - `save` with `wait` results in correct attributes if success is called during sync", 2, function() {
     var model = new Backbone.Model({x: 1, y: 2});
     model.sync = function(method, model, options) {
-      options.success();
+      options.success(null, 'success', {});
     };
     model.on("change:x", function() { ok(true); });
     model.save({x: 3}, {wait: true});
@@ -951,7 +951,7 @@
       }
     };
     model.sync = function(method, model, options) {
-      options.success();
+      options.success(null, 'success', {});
     };
     model.save({id: 1}, opts);
     model.fetch(opts);
@@ -960,7 +960,9 @@
 
   test("#1412 - Trigger 'sync' event.", 3, function() {
     var model = new Backbone.Model({id: 1});
-    model.sync = function (method, model, options) { options.success(); };
+    model.sync = function (method, model, options) {
+      options.success({}, 'success', {});
+    };
     model.on('sync', function(){ ok(true); });
     model.fetch();
     model.save();
@@ -984,7 +986,9 @@
   test("#1377 - Save without attrs triggers 'error'.", 1, function() {
     var Model = Backbone.Model.extend({
       url: '/test/',
-      sync: function(method, model, options){ options.success(); },
+      sync: function(method, model, options) {
+        throw "should not be called";
+      },
       validate: function(){ return 'invalid'; }
     });
     var model = new Model({id: 1});
@@ -1007,7 +1011,7 @@
     var Model = Backbone.Model.extend({
       sync: function(method, model, options) {
         setTimeout(function(){
-          options.success();
+          options.success(null, 'success', {});
           start();
         }, 0);
       }

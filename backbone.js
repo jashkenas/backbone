@@ -541,7 +541,7 @@
       };
 
       options.success = function(resp, textStatus, xhr) {
-        xhr.textStatus = textStatus;
+        xhr && (xhr.textStatus = textStatus);
         options = _.extend({ xhr: xhr }, options);
         if (options.wait || model.isNew()) destroy();
         if (success) success(model, resp, options);
