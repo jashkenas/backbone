@@ -1229,7 +1229,9 @@ alert(JSON.stringify(artist));
       server's state differs from the current attributes. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
       are passed <tt>(model, response, options)</tt> and <tt>(model, xhr, options)</tt>
-      as arguments, respectively.
+      as arguments, respectively. In the success callback, options.xhr contains the
+      jqXHR instance. xhr.statusText, and for error callbacks also xhr.errorThrown, are
+      populated with the corresponding arguments passed to jqXHR callbacks.
     </p>
 
 <pre>
@@ -1314,7 +1316,9 @@ book.save("author", "F.D.R.", {error: function(){ ... }});
       <tt>false</tt> if the model <a href="#Model-isNew">isNew</a>. Accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
       are passed <tt>(model, response, options)</tt> and <tt>(model, xhr, options)</tt>
-      as arguments, respectively.
+      as arguments, respectively. In the success callback, options.xhr contains the                                     
+      jqXHR instance. xhr.statusText, and for error callbacks also xhr.errorThrown, are                                 
+      populated with the corresponding arguments passed to jqXHR callbacks.
       Triggers a <tt>"destroy"</tt> event on the model, which will bubble up
       through any collections that contain it, a <tt>"request"</tt> event as it
       begins the Ajax request to the server, and a <tt>"sync"</tt> event, after
@@ -2063,7 +2067,10 @@ var Tweets = Backbone.Collection.extend({
       <a href="#Collection-set">setting</a> them on the collection when they arrive.
       The <b>options</b> hash takes <tt>success</tt> and <tt>error</tt> callbacks,
       which are passed <tt>(collection, response, options)</tt> and
-      <tt>(collection, xhr, options)</tt> as arguments, respectively.
+      <tt>(collection, xhr, options)</tt> as arguments, respectively. In the success
+      callback, options.xhr contains the jqXHR instance. xhr.statusText, and for error
+      callbacks also xhr.errorThrown, are populated with the corresponding arguments
+      passed to jqXHR callbacks. 
       When the model data returns from the server, it uses <a href="#Collection-set">set</a>
       to (intelligently) merge the fetched models, unless you pass <tt>{reset: true}</tt>,
       in which case the collection will be (efficiently) <a href="#Collection-reset">reset</a>.
