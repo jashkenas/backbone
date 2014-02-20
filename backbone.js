@@ -1142,7 +1142,7 @@
 
     // Creates the actual context for this view using the given `root` and a
     // hash of `attributes` and returns the created element. `root` can be a CSS
-    // selector or an HTML string, a jQuery context or and Element. Subclasses
+    // selector or an HTML string, a jQuery context or an element. Subclasses
     // can override this to utilize and alternative DOM manipulation API.
     _createContext: function(root, attributes) {
       var $el = root instanceof Backbone.$ ? root : Backbone.$(root);
