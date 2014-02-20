@@ -1098,6 +1098,7 @@
       if (!selector) {
         $el.on(eventName, method);
       } else {
+        // `selector` is actually `method` in 2 argument form.
         $el.on(eventName, selector, method);
       }
     },
