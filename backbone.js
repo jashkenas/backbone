@@ -1449,6 +1449,7 @@
     // but possibly useful for unit testing Routers.
     stop: function() {
       Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
+      // Some environments will throw when clearing an undefined interval.
       if (this._checkUrlInterval) clearInterval(this._checkUrlInterval);
       History.started = false;
     },
