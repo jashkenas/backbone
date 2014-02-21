@@ -1075,7 +1075,6 @@
     delegateEvents: function(events) {
       if (!(events || (events = _.result(this, 'events')))) return this;
       this.undelegateEvents();
-      var _delegate = this._delegate;
       for (var key in events) {
         var method = events[key];
         if (!_.isFunction(method)) method = this[events[key]];
@@ -1083,8 +1082,7 @@
 
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
-        method = method.bind && method.bind(this) || _.bind(method, this);
-        _delegate.call(this, eventName, selector, method);
+        this.delegate(eventName, selector, _.bind(method, this));
       }
       return this;
     },
@@ -1092,14 +1090,14 @@
     // Add a single event listener to the element responding only to the
     // optional `selector` or catches all `eventName` events. Subclasses can
     // override this to utilize an alternative DOM event management API.
-    _delegate: function(eventName, selector, method) {
-      var $el = this.$el;
+    delegate: function(eventName, selector, method) {
       eventName += '.delegateEvents' + this.cid;
       if (!selector) {
-        $el.on(eventName, method);
+        this.$el.on(eventName, method);
       } else {
-        // `selector` is actually `method` in 2 argument form.
-        $el.on(eventName, selector, method);
+        // When `delegate` is called with two arguments, `selector` is actually
+        // the `method`
+        this.$el.on(eventName, selector, method);
       }
     },
 
