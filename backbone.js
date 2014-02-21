@@ -1334,9 +1334,6 @@
   // Cached regex for stripping leading and trailing slashes.
   var rootStripper = /^\/+|\/+$/g;
 
-  // Cached regex for detecting MSIE.
-  var isExplorer = /msie [\w.]+/;
-
   // Cached regex for removing a trailing slash.
   var trailingSlash = /\/$/;
 
@@ -1391,27 +1388,40 @@
       this.options          = _.extend({root: '/'}, this.options, options);
       this.root             = this.options.root;
       this._wantsHashChange = this.options.hashChange !== false;
+      this._hasHashChange   = 'onhashchange' in window;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       var fragment          = this.getFragment();
-      var docMode           = document.documentMode;
-      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
+
+      // Add a cross-platform `addEventListener` shim for older browsers.
+      var addEventListener = window.addEventListener || function (eventName, listener) {
+        return attachEvent('on' + eventName, listener);
+      };
 
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
-      if (oldIE && this._wantsHashChange) {
-        var frame = Backbone.$('<iframe src="javascript:0" tabindex="-1">');
-        this.iframe = frame.hide().appendTo('body')[0].contentWindow;
-        this.navigate(fragment);
-      }
+      // Proxy an iframe to handle location events on older versions of IE.
+      try {
+        // `documentMode` is defined only in IE>=8.
+        if ((document.documentMode || 0) < 8) {
+          // In IE<=7 `createElement` will accept html but throws elsewhere.
+          var frame = document.createElement(
+            '<iframe src="javascript:0" style="display:none" tabindex="-1">'
+          );
+          var body = document.body;
+          // Using `appendChild` will throw if the document is not ready.
+          this.iframe = body.insertBefore(frame, body.firstChild).contentWindow;
+          if (this._wantsHashChange) this.navigate(fragment);
+        }
+      } catch(e){}
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._hasPushState) {
-        Backbone.$(window).on('popstate', this.checkUrl);
-      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        Backbone.$(window).on('hashchange', this.checkUrl);
+        addEventListener('popstate', this.checkUrl, false);
+      } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
+        addEventListener('hashchange', this.checkUrl, false);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
@@ -1448,7 +1458,16 @@
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
+      // Add a cross-platform `removeEventListener` shim for older browsers.
+      var removeEventListener = window.removeEventListener || function (eventName, listener) {
+        return detachEvent('on' + eventName, listener);
+      };
+
+      if (this._hasPushState) {
+        removeEventListener('popstate', this.checkUrl, false);
+      } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
+        removeEventListener('hashchange', this.checkUrl, false);
+      }
       // Some environments will throw when clearing an undefined interval.
       if (this._checkUrlInterval) clearInterval(this._checkUrlInterval);
       History.started = false;
