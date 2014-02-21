@@ -1,4 +1,4 @@
-//     Backbone.js 1.1.1
+//     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 //     Backbone may be freely distributed under the MIT license.
@@ -41,7 +41,7 @@
   var splice = array.splice;
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '1.1.1';
+  Backbone.VERSION = '1.1.2';
 
   // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
   // the `$` variable.
@@ -1292,7 +1292,7 @@
                      return optional ? match : '([^/?]+)';
                    })
                    .replace(splatParam, '([^?]*?)');
-      return new RegExp('^' + route + '(?:\\?(.*))?$');
+      return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
@@ -1401,13 +1401,16 @@
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
-      // Proxy an iframe to handle location events on older versions of IE
+      // Proxy an iframe to handle location events on older versions of IE.
       try {
+        // `documentMode` is defined only in IE>=8.
         if ((document.documentMode || 0) < 8) {
+          // In IE<=7 `createElement` will accept html but throws elsewhere.
           var frame = document.createElement(
             '<iframe src="javascript:0" style="display:none" tabindex="-1">'
           );
           var body = document.body;
+          // Using `appendChild` will throw if the document is not ready.
           this.iframe = body.insertBefore(frame, body.firstChild).contentWindow;
           if (this._wantsHashChange) this.navigate(fragment);
         }
@@ -1465,7 +1468,8 @@
       } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
         removeEventListener('hashchange', this.checkUrl, false);
       }
-      clearInterval(this._checkUrlInterval);
+      // Some environments will throw when clearing an undefined interval.
+      if (this._checkUrlInterval) clearInterval(this._checkUrlInterval);
       History.started = false;
     },
 
