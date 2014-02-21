@@ -26,20 +26,13 @@
     strictEqual(view.$('a b').html(), 'test');
   });
 
-  test("make", 3, function() {
-    var div = view.make('div', {id: 'test-div'}, "one two three");
+  test("_createContext", 4, function() {
+    view._createContext('<div>', {id: 'test-div'});
 
-    equal(div.tagName.toLowerCase(), 'div');
-    equal(div.id, 'test-div');
-    equal($(div).text(), 'one two three');
-  });
-
-  test("make can take falsy values for content", 2, function() {
-    var div = view.make('div', {id: 'test-div'}, 0);
-    equal($(div).text(), '0');
-
-    div = view.make('div', {id: 'test-div'}, '');
-    equal($(div).text(), '');
+    equal(view.el.tagName.toLowerCase(), 'div');
+    equal(view.el.id, 'test-div');
+    ok(view.$el instanceof Backbone.$);
+    equal(view.$el[0], view.el);
   });
 
   test("initialize", 1, function() {
@@ -76,15 +69,15 @@
     equal(counter2, 3);
   });
 
-  test("delegate", 2, function() {
+  test("_delegate", 2, function() {
     var counter1 = 0, counter2 = 0;
 
     var view = new Backbone.View({el: '#testElement'});
     view.increment = function(){ counter1++; };
     view.$el.on('click', function(){ counter2++; });
 
-    view.delegate('click', 'h1', view.increment);
-    view.delegate('click', view.increment);
+    view._delegate('click', 'h1', view.increment);
+    view._delegate('click', view.increment);
 
     view.$('h1').trigger('click');
     equal(counter1, 2);

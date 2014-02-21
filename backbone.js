@@ -1031,20 +1031,28 @@
       return this;
     },
 
-    // Remove this view by taking the element out of the DOM, and removing any
-    // applicable Backbone.Events listeners.
+    // Remove this view by taking the element out of the document, remove all
+    // the DOM event listeners attached to it, and remove any applicable
+    // Backbone.Events listeners.
     remove: function() {
-      this.$el.remove();
+      this.undelegateEvents();
+      this._removeElement();
       this.stopListening();
       return this;
+    },
+
+    // Remove this view's element from the document and remove all the event
+    // listeners attached to it. Useful for subclasses to override in order to
+    // utilize an alternative DOM manipulation API.
+    _removeElement: function() {
+      this.$el.remove();
     },
 
     // Change the view's element (`this.el` property), including event
     // re-delegation.
     setElement: function(element, delegate) {
-      if (this.$el) this.undelegateEvents();
-      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
-      this.el = this.$el[0];
+      this.undelegateEvents();
+      this._createContext(element);
       if (delegate !== false) this.delegateEvents();
       return this;
     },
@@ -1067,6 +1075,7 @@
     delegateEvents: function(events) {
       if (!(events || (events = _.result(this, 'events')))) return this;
       this.undelegateEvents();
+      var _delegate = this._delegate;
       for (var key in events) {
         var method = events[key];
         if (!_.isFunction(method)) method = this[events[key]];
@@ -1074,42 +1083,43 @@
 
         var match = key.match(delegateEventSplitter);
         var eventName = match[1], selector = match[2];
-        this.delegate(eventName, selector, method);
+        method = method.bind && method.bind(this) || _.bind(method, this);
+        _delegate.call(this, eventName, selector, method);
       }
       return this;
     },
 
-    // Clears all callbacks previously bound to the view with `delegateEvents`.
+    // Add a single event listener to the element responding only to the
+    // optional `selector` or catches all `eventName` events. Subclasses can
+    // override this to utilize an alternative DOM event management API.
+    _delegate: function(eventName, selector, method) {
+      var $el = this.$el;
+      eventName += '.delegateEvents' + this.cid;
+      if (!selector) {
+        $el.on(eventName, method);
+      } else {
+        // `selector` is actually `method` in 2 argument form.
+        $el.on(eventName, selector, method);
+      }
+    },
+
+    // Clears all callbacks previously bound to the view by `delegateEvents`.
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
-      this.$el.off('.delegateEvents' + this.cid);
+      if (this.$el) this.$el.off('.delegateEvents' + this.cid);
       return this;
     },
 
-    // Add a single event listener to the element.
-    delegate: function(eventName, selector, method) {
-      if (_.isFunction(selector)) {
-        method = selector;
-        selector = undefined;
-      }
-      eventName += '.delegateEvents' + this.cid;
-      if (!selector) {
-        this.$el.on(eventName, _.bind(method, this));
-      } else {
-        this.$el.on(eventName, selector, _.bind(method, this));
-      }
-      return this;
-    },
-
-    // For hooking into small amounts of DOM Elements, where a full-blown template isn't
-    // needed, use **make** to manufacture elements, one at a time.
-    //
-    //     var el = this.make('li', {'class': 'row'}, this.model.escape('title'));
-    //
-    make: function(tagName, attributes, content) {
-      var $el = Backbone.$('<' + tagName + '>', attributes).html(content);
-      return $el[0];
+    // Creates the actual context for this view using the given `root` and a
+    // hash of `attributes` and returns the created element. `root` can be a CSS
+    // selector or an HTML string, a jQuery context or an element. Subclasses
+    // can override this to utilize an alternative DOM manipulation API.
+    _createContext: function(root, attributes) {
+      var $el = root instanceof Backbone.$ ? root : Backbone.$(root);
+      $el.attr(attributes || {});
+      this.$el = $el;
+      this.el = $el[0];
     },
 
     // Ensure that the View has a DOM element to render into.
@@ -1121,7 +1131,8 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        this.setElement(this.make(_.result(this, 'tagName'), attrs), false);
+        this._createContext(document.createElement(_.result(this, 'tagName')), attrs);
+        this.setElement(this.el, false);
       } else {
         this.setElement(_.result(this, 'el'), false);
       }
