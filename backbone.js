@@ -1050,9 +1050,9 @@
 
     // Change the view's element (`this.el` property), including event
     // re-delegation.
-    setElement: function(element, delegate) {
+    setElement: function(element, delegate, attributes) {
       this.undelegateEvents();
-      this._createContext(element);
+      this._createContext(element, attributes);
       if (delegate !== false) this.delegateEvents();
       return this;
     },
@@ -1129,8 +1129,7 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        this._createContext(document.createElement(_.result(this, 'tagName')), attrs);
-        this.setElement(this.el, false);
+        this.setElement(document.createElement(_.result(this, 'tagName')), false, attrs);
       } else {
         this.setElement(_.result(this, 'el'), false);
       }
