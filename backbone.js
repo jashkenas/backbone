@@ -1099,6 +1099,7 @@
         // the `method`
         this.$el.on(eventName, selector, method);
       }
+      return this;
     },
 
     // Clears all callbacks previously bound to the view by `delegateEvents`.
