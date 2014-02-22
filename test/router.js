@@ -331,6 +331,23 @@
     Backbone.history.checkUrl();
   });
 
+  test("does not fire event when route callback explicitly returned false", 1, function() {
+    var router = new Router({});
+    var passed = true;
+
+    router.execute = function() {
+      return false;
+    };
+
+    router.on('route', function() {
+      passed = false;
+    });
+
+    location.replace('http://example.com#route-event/x');
+    Backbone.history.checkUrl();
+    ok(passed);
+  });
+
   test("#933, #908 - leading slash", 2, function() {
     location.replace('http://example.com/root/foo');
 
