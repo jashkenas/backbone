@@ -331,21 +331,34 @@
     Backbone.history.checkUrl();
   });
 
-  test("does not fire event when route callback explicitly returned false", 1, function() {
-    var router = new Router({});
-    var passed = true;
+  test("No events are triggered if #execute returns false.", 1, function() {
+    var Router = Backbone.Router.extend({
 
-    router.execute = function() {
-      return false;
-    };
+      routes: {
+        foo: function() {
+          ok(true);
+        }
+      },
 
-    router.on('route', function() {
-      passed = false;
+      execute: function(callback, args) {
+        callback.apply(this, args);
+        return false;
+      }
+
     });
 
-    location.replace('http://example.com#route-event/x');
+    var router = new Router;
+
+    router.on('route route:foo', function() {
+      ok(false);
+    });
+
+    Backbone.history.on('route', function() {
+      ok(false);
+    });
+
+    location.replace('http://example.com#foo');
     Backbone.history.checkUrl();
-    ok(passed);
   });
 
   test("#933, #908 - leading slash", 2, function() {
