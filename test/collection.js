@@ -1333,6 +1333,8 @@
     c.set([{id: 1}, {id: 1}]);
     equal(c.length, 1);
     equal(c.models.length, 1);
-  });
 
+    // Does not run check when model is not added
+    c.set([{id: 1}], {add: false});
+  });
 })();

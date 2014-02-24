@@ -711,6 +711,7 @@
 
         // Do not add multiple models with the same `id`.
         model = existing || model;
+        if (!model) continue;
         if (order && (model.isNew() || !modelMap[model.id])) order.push(model);
         modelMap[model.id] = true;
       }
