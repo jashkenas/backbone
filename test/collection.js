@@ -1333,8 +1333,13 @@
     c.set([{id: 1}, {id: 1}]);
     equal(c.length, 1);
     equal(c.models.length, 1);
-
-    // Does not run check when model is not added
-    c.set([{id: 1}], {add: false});
   });
+
+  test('#3020: #set with {add: false} should not throw.', 2, function() {
+    var collection = new Backbone.Collection;
+    collection.set([{id: 1}], {add: false});
+    strictEqual(collection.length, 0);
+    strictEqual(collection.models.length, 0);
+  });
+
 })();
