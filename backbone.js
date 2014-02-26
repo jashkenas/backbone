@@ -131,7 +131,7 @@
         }
 
         // Find any remaining events.
-        var remaining = null;
+        var remaining = [];
         for (var j = 0, k = events.length; j < k; j++) {
           var event = events[j];
           if (
@@ -139,19 +139,16 @@
             callback !== event.callback._callback ||
             context && context !== event.context
           ) {
-            if (!remaining) remaining = [];
             remaining.push(event);
           }
         }
 
-        // Clean up if there are no events left.
-        if (!remaining) {
+        // Replace events if there are any remaining.  Otherwise, clean up.
+        if (remaining.length) {
+          this._events[name] = remaining;
+        } else {
           delete this._events[name];
-          continue;
         }
-
-        // Replace events.
-        this._events[name] = remaining;
       }
 
       return this;
