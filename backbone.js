@@ -108,19 +108,19 @@
     // callbacks for the event. If `name` is null, removes all bound
     // callbacks for all events.
     off: function(name, callback, context) {
-      var retain, ev, events, names, i, l, j, k;
+      var retain, ev, events, names;
       if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
       if (!name && !callback && !context) {
         this._events = void 0;
         return this;
       }
       names = name ? [name] : _.keys(this._events);
-      for (i = 0, l = names.length; i < l; i++) {
+      for (var i = 0, length = names.length; i < length; i++) {
         name = names[i];
         if (events = this._events[name]) {
           this._events[name] = retain = [];
           if (callback || context) {
-            for (j = 0, k = events.length; j < k; j++) {
+            for (var j = 0, k = events.length; j < k; j++) {
               ev = events[j];
               if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
                   (context && context !== ev.context)) {
@@ -188,7 +188,7 @@
     // Handle space separated event names.
     if (eventSplitter.test(name)) {
       var names = name.split(eventSplitter);
-      for (var i = 0, l = names.length; i < l; i++) {
+      for (var i = 0, length = names.length; i < length; i++) {
         obj[action].apply(obj, [names[i]].concat(rest));
       }
       return false;
@@ -353,7 +353,7 @@
       // Trigger all relevant attribute changes.
       if (!silent) {
         if (changes.length) this._pending = options;
-        for (var i = 0, l = changes.length; i < l; i++) {
+        for (var i = 0, length = changes.length; i < length; i++) {
           this.trigger('change:' + changes[i], this, current[changes[i]], options);
         }
       }
@@ -643,13 +643,12 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       options || (options = {});
-      var i, l, index, model;
-      for (i = 0, l = models.length; i < l; i++) {
-        model = models[i] = this.get(models[i]);
+      for (var i = 0, length = models.length; i < length; i++) {
+        var model = models[i] = this.get(models[i]);
         if (!model) continue;
         delete this._byId[model.id];
         delete this._byId[model.cid];
-        index = this.indexOf(model);
+        var index = this.indexOf(model);
         this.models.splice(index, 1);
         this.length--;
         if (!options.silent) {
