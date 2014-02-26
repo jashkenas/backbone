@@ -108,28 +108,50 @@
     // callbacks for the event. If `name` is null, removes all bound
     // callbacks for all events.
     off: function(name, callback, context) {
-      var retain, ev, events, names;
       if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
+
+      // Remove all callbacks for all events.
       if (!name && !callback && !context) {
         this._events = void 0;
         return this;
       }
-      names = name ? [name] : _.keys(this._events);
+
+      var names = name ? [name] : _.keys(this._events);
       for (var i = 0, length = names.length; i < length; i++) {
         name = names[i];
-        if (events = this._events[name]) {
-          this._events[name] = retain = [];
-          if (callback || context) {
-            for (var j = 0, k = events.length; j < k; j++) {
-              ev = events[j];
-              if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
-                  (context && context !== ev.context)) {
-                retain.push(ev);
-              }
-            }
-          }
-          if (!retain.length) delete this._events[name];
+
+        // Bail out if there are no events stored.
+        var events = this._events[name];
+        if (!events) continue;
+
+        // Remove all callbacks for this event.
+        if (!callback && !context) {
+          delete this._events[name];
+          continue;
         }
+
+        // Find any remaining events.
+        var remaining = null;
+        for (var j = 0, k = events.length; j < k; j++) {
+          var event = events[j];
+          if (
+            callback && callback !== event.callback &&
+            callback !== event.callback._callback ||
+            context && context !== event.context
+          ) {
+            if (!remaining) remaining = [];
+            remaining.push(event);
+          }
+        }
+
+        // Clean up if there are no events left.
+        if (!remaining) {
+          delete this._events[name];
+          continue;
+        }
+
+        // Replace events.
+        this._events[name] = remaining;
       }
 
       return this;
