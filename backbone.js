@@ -1401,20 +1401,19 @@
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
-      // Proxy an iframe to handle location events on older versions of IE.
-      try {
-        // `documentMode` is defined only in IE>=8.
-        if ((document.documentMode || 0) < 8) {
-          // In IE<=7 `createElement` will accept html but throws elsewhere.
-          var frame = document.createElement(
-            '<iframe src="javascript:0" style="display:none" tabindex="-1">'
-          );
-          var body = document.body;
-          // Using `appendChild` will throw if the document is not ready.
-          this.iframe = body.insertBefore(frame, body.firstChild).contentWindow;
-          if (this._wantsHashChange) this.navigate(fragment);
-        }
-      } catch(e){}
+      // Proxy an iframe to handle location events if the browser doesn't
+      // support the `hashchange` event, HTML5 history, or the user wants
+      // `hashChange` but not `pushState`.
+      if (!this._hasHashChange && this._wantsHashChange && (!this._wantsPushState || !this._hasPushState)) {
+        var iframe = document.createElement('iframe');
+        iframe.src = 'javascript:0';
+        iframe.style.display = 'none';
+        iframe.tabIndex = -1;
+        var body = document.body;
+        // Using `appendChild` will throw on IE < 9 if the document is not ready.
+        this.iframe = body.insertBefore(iframe, body.firstChild).contentWindow;
+        this.navigate(fragment);
+      }
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
