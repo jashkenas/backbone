@@ -1145,11 +1145,10 @@
     // hash of `attributes` and returns the created element. `root` can be a CSS
     // selector or an HTML string, a jQuery context or an element. Subclasses
     // can override this to utilize an alternative DOM manipulation API.
-    _createContext: function(root, attributes) {
-      var $el = root instanceof Backbone.$ ? root : Backbone.$(root);
-      $el.attr(attributes || {});
-      this.$el = $el;
-      this.el = $el[0];
+    _createContext: function(el, attributes) {
+      var $el = el instanceof Backbone.$ ? el : Backbone.$(el);
+      this.$el = $el.attr(attributes || {});
+      this.el = this.$el[0];
     },
 
     // Ensure that the View has a DOM element to render into.
