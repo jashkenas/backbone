@@ -60,6 +60,17 @@
     strictEqual(collection.last().get('a'), 4);
   });
 
+  test("clone preserves model and comparator", 3, function() {
+    var Model = Backbone.Model.extend(),
+        comparator = function() {};
+
+    var col = (new Backbone.Collection([{id: 1}], {model: Model, comparator: comparator})).clone();
+    col.add({id: 2});
+    ok(col.at(0) instanceof Model);
+    ok(col.at(1) instanceof Model);
+    strictEqual(col.comparator, comparator);
+  });
+
   test("get", 6, function() {
     equal(col.get(0), d);
     equal(col.get(d.clone()), d);
