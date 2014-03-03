@@ -914,7 +914,10 @@
 
     // Create a new collection with an identical list of models as this one.
     clone: function() {
-      return new this.constructor(this.models);
+      return new this.constructor(this.models, {
+        model: this.model,
+        comparator: this.comparator
+      });
     },
 
     // Private method to reset all internal state. Called when the collection
