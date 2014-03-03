@@ -290,6 +290,12 @@
     // CouchDB users may want to set this to `"_id"`.
     idAttribute: 'id',
 
+    // The function that will generate an id for a model given that model's
+    // attributes.
+    generateId: function (attrs) {
+      return attrs[this.idAttribute];
+    },
+
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize: function(){},
@@ -354,9 +360,6 @@
       }
       current = this.attributes, prev = this._previousAttributes;
 
-      // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
-
       // For each `set` attribute, update or delete the current value.
       for (attr in attrs) {
         val = attrs[attr];
@@ -368,6 +371,10 @@
         }
         unset ? delete current[attr] : current[attr] = val;
       }
+
+      var prevId = this.id;
+      this.id = this.generateId(current);
+      if (prevId !== this.id) this.trigger('changeId', this, prevId, options);
 
       // Trigger all relevant attribute changes.
       if (!silent) {
@@ -571,7 +578,7 @@
 
     // A model is new if it has never been saved to the server, and lacks an id.
     isNew: function() {
-      return !this.has(this.idAttribute);
+      return this.id == null;
     },
 
     // Check if the model is currently in a valid state.
@@ -704,7 +711,7 @@
         if (attrs instanceof Model) {
           id = model = attrs;
         } else {
-          id = attrs[this.model.prototype.idAttribute || 'id'];
+          id = this.model.prototype.generateId(attrs);
         }
 
         // If a duplicate is found, prevent it from being added and
@@ -961,8 +968,8 @@
     _onModelEvent: function(event, model, collection, options) {
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
-      if (model && event === 'change:' + model.idAttribute) {
-        delete this._byId[model.previous(model.idAttribute)];
+      if (event === 'changeId') {
+        if (collection != null) delete this._byId[collection];
         if (model.id != null) this._byId[model.id] = model;
       }
       this.trigger.apply(this, arguments);

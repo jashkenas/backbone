@@ -1353,4 +1353,9 @@
     strictEqual(collection.models.length, 0);
   });
 
+  test("Models shouldn't be lost by set({id: 1}, {silent: true})", function () {
+    var collection = new Backbone.Collection([{name: 'Curly'}]);
+    collection.first().set({id: 1}, {silent: true});
+    equal(collection.get(1), collection.first());
+  });
 })();
