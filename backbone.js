@@ -374,7 +374,7 @@
 
       var prevId = this.id;
       this.id = this.generateId(current);
-      if (prevId !== this.id) this.trigger('changeId', this, prevId, options);
+      if (prevId !== this.id) this.trigger('change-id', this, prevId, options);
 
       // Trigger all relevant attribute changes.
       if (!silent) {
@@ -968,7 +968,7 @@
     _onModelEvent: function(event, model, collection, options) {
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
-      if (event === 'changeId') {
+      if (event === 'change-id') {
         if (collection != null) delete this._byId[collection];
         if (model.id != null) this._byId[model.id] = model;
       }
