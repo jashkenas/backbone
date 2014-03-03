@@ -1416,4 +1416,14 @@
     ok(collection.at(1) instanceof B);
     equal(collection.at(1).id, 'b-1');
   });
+
+  test("create with wait, model instance, #3028", 1, function() {
+    var collection = new Backbone.Collection();
+    var model = new Backbone.Model({id: 1});
+    model.sync = function(){
+      equal(this.collection, collection);
+    };
+    collection.create(model, {wait: true});
+  });
+
 })();
