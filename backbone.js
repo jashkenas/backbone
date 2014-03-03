@@ -558,8 +558,8 @@
     // that will be called.
     url: function() {
       var base =
-        _.result(this, 'urlRoot') ||
         _.result(this.collection, 'url') ||
+        _.result(this, 'urlRoot') ||
         urlError();
       if (this.isNew()) return base;
       return base.replace(/([^\/])$/, '$1/') + encodeURIComponent(this.id);
