@@ -1147,7 +1147,7 @@
     // can override this to utilize an alternative DOM manipulation API.
     _setEl: function(el, attributes) {
       this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
-      this.$el.attr(attributes || {});
+      if (attributes) this.$el.attr(attributes);
       this.el = this.$el[0];
     },
 
