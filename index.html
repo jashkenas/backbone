@@ -2454,16 +2454,14 @@ $(function(){
     </ul>
 
     <p>
-      As an example, a Rails handler responding to an <tt>"update"</tt> call from
-      <tt>Backbone</tt> might look like this: <i>(In real code, never use
-      </i><tt>update_attributes</tt><i> blindly, and always whitelist the attributes
-      you allow to be changed.)</i>
+      As an example, a Rails 4 handler responding to an <tt>"update"</tt> call from
+      <tt>Backbone</tt> might look like this:
     </p>
 
 <pre>
 def update
   account = Account.find params[:id]
-  account.update_attributes params
+  account.update_attributes params.require(:account).permit(:name, :otherparam)
   render :json => account
 end
 </pre>
