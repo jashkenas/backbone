@@ -1520,11 +1520,19 @@
         return detachEvent('on' + eventName, listener);
       };
 
+      // Remove window listeners.
       if (this._hasPushState) {
         removeEventListener('popstate', this.checkUrl, false);
       } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
         removeEventListener('hashchange', this.checkUrl, false);
       }
+
+      // Clean up the iframe if necessary.
+      if (this.iframe) {
+        document.body.removeChild(this.iframe.frameElement);
+        this.iframe = null;
+      }
+
       // Some environments will throw when clearing an undefined interval.
       if (this._checkUrlInterval) clearInterval(this._checkUrlInterval);
       History.started = false;
