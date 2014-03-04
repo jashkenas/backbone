@@ -71,15 +71,6 @@
     equal(view.el.id, 'test-div');
   });
 
-  test("_setEl", 4, function() {
-    view._setEl('<div>', {id: 'test-div'});
-
-    equal(view.el.tagName.toLowerCase(), 'div');
-    equal(view.el.id, 'test-div');
-    ok(view.$el instanceof Backbone.$);
-    equal(view.$el[0], view.el);
-  });
-
   test("initialize", 1, function() {
     var View = ViewUnderTest.extend({
       initialize: function() {
