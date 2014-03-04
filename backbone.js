@@ -1083,7 +1083,7 @@
     // re-delegation.
     setElement: function(element, delegate, attributes) {
       this.undelegateEvents();
-      this._createContext(element, attributes);
+      this._setEl(element, attributes);
       if (delegate !== false) this.delegateEvents();
       return this;
     },
@@ -1141,11 +1141,11 @@
       return this;
     },
 
-    // Creates the actual context for this view using the given `root` and a
-    // hash of `attributes` and returns the created element. `root` can be a CSS
+    // Creates the actual context for this view using the given `el` and a
+    // hash of `attributes` and returns the created element. `el` can be a CSS
     // selector or an HTML string, a jQuery context or an element. Subclasses
     // can override this to utilize an alternative DOM manipulation API.
-    _createContext: function(el, attributes) {
+    _setEl: function(el, attributes) {
       this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
       this.$el.attr(attributes || {});
       this.el = this.$el[0];
