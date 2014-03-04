@@ -29,7 +29,7 @@
     var result = view.$('a b');
 
     strictEqual(result[0].innerHTML, 'test');
-    ok(result instanceof NodeList || result instanceof Array || result instanceof Backbone.$);
+    ok(result.length === +result.length);
   });
 
   test("_setEl", 2, function() {
