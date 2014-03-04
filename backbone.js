@@ -1141,10 +1141,10 @@
       return this;
     },
 
-    // Creates the actual context for this view using the given `el` and a
-    // hash of `attributes` and returns the created element. `el` can be a CSS
-    // selector or an HTML string, a jQuery context or an element. Subclasses
-    // can override this to utilize an alternative DOM manipulation API.
+    // Creates the `this.el` and `this.$el` references for the View using the
+    // given `el` and a hash of `attributes`. `el` can be a CSS selector or an
+    // HTML string, a jQuery context or an element. Subclasses can override
+    // this to utilize an alternative DOM manipulation API.
     _setEl: function(el, attributes) {
       this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
       if (attributes) this.$el.attr(attributes);
