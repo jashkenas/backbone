@@ -61,14 +61,17 @@
   });
 
   test("clone preserves model and comparator", 3, function() {
-    var Model = Backbone.Model.extend(),
-        comparator = function() {};
+    var Model = Backbone.Model.extend();
+    var comparator = function(model){ return model.id; };
 
-    var col = (new Backbone.Collection([{id: 1}], {model: Model, comparator: comparator})).clone();
-    col.add({id: 2});
-    ok(col.at(0) instanceof Model);
-    ok(col.at(1) instanceof Model);
-    strictEqual(col.comparator, comparator);
+    var collection = new Backbone.Collection([{id: 1}], {
+      model: Model,
+      comparator: comparator
+    }).clone();
+    collection.add({id: 2});
+    ok(collection.at(0) instanceof Model);
+    ok(collection.at(1) instanceof Model);
+    strictEqual(collection.comparator, comparator);
   });
 
   test("get", 6, function() {
@@ -1358,4 +1361,5 @@
     collection.first().set({id: 1}, {silent: true});
     equal(collection.get(1), collection.first());
   });
+
 })();
