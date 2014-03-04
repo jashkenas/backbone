@@ -55,21 +55,24 @@
     equal(view.el.other, void 0);
   });
 
-  test("$", 1, function() {
+  test("$", 2, function() {
     var view = new ViewUnderTest;
     view.setElement('<p><a><b>test</b></a></p>');
-    strictEqual(view.$('a b')[0].innerHTML, 'test');
+    var result = view.$('a b');
+
+    strictEqual(result[0].innerHTML, 'test');
+    ok(result instanceof NodeList || result instanceof Array || result instanceof Backbone.$);
   });
 
-  test("_createContext", 2, function() {
-    view._createContext('<div>', {id: 'test-div'});
+  test("_setEl", 2, function() {
+    view._setEl('<div>', {id: 'test-div'});
 
     equal(view.el.tagName.toLowerCase(), 'div');
     equal(view.el.id, 'test-div');
   });
 
-  test("_createContext", 4, function() {
-    view._createContext('<div>', {id: 'test-div'});
+  test("_setEl", 4, function() {
+    view._setEl('<div>', {id: 'test-div'});
 
     equal(view.el.tagName.toLowerCase(), 'div');
     equal(view.el.id, 'test-div');
