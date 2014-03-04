@@ -287,7 +287,7 @@
     document.body.appendChild(button1);
     document.body.appendChild(button2);
 
-    Test = View.extend({
+    var Test = View.extend({
       events: {
         click: function(e) {
           ok(view.el === e.target || e.srcElement);
