@@ -1614,13 +1614,17 @@ var Library = Backbone.Collection.extend({
 <pre>
 var Library = Backbone.Collection.extend({
 
-  model: function(attrs, options) {
-    if (condition) {
-      return new PublicDocument(attrs, options);
-    } else {
-      return new PrivateDocument(attrs, options);
-    }
-  }
+  model: Backbone.Model.extend({
+    constructor: function(attrs, options) {
+      if (condition) {
+        return new PublicDocument(attrs, options);
+      } else {
+        return new PrivateDocument(attrs, options);
+      }
+    },
+
+    idAttribute: '_id'
+  })
 
 });
 </pre>
@@ -2314,9 +2318,9 @@ app.navigate("help/troubleshooting", {trigger: true, replace: true});
     <p id="Router-execute">
       <b class="header">execute</b><code>router.execute(callback, args)</code>
       <br />
-      This method is called internally within the router, whenever a route 
-      matches and its corresponding <b>callback</b> is about to be executed. 
-      Override it to perform custom parsing or wrapping of your routes, for 
+      This method is called internally within the router, whenever a route
+      matches and its corresponding <b>callback</b> is about to be executed.
+      Override it to perform custom parsing or wrapping of your routes, for
       example, to parse query strings before handing them to your route
       callback, like so:
     </p>
@@ -3303,12 +3307,12 @@ ActiveRecord::Base.include_root_in_json = false
     <h2 id="examples-earth">Earth</h2>
 
     <p>
-      <a href="http://earth.nullschool.net">Earth.nullschool.net</a> displays real-time weather 
-      conditions on an interactive animated globe, and Backbone provides the 
-      foundation upon which all of the site's components are built. Despite the 
-      presence of several other javascript libraries, Backbone's non-opinionated 
-      design made it effortless to mix-in the <a href="#Events">Events</a> functionality used for 
-      distributing state changes throughout the page. When the decision was made 
+      <a href="http://earth.nullschool.net">Earth.nullschool.net</a> displays real-time weather
+      conditions on an interactive animated globe, and Backbone provides the
+      foundation upon which all of the site's components are built. Despite the
+      presence of several other javascript libraries, Backbone's non-opinionated
+      design made it effortless to mix-in the <a href="#Events">Events</a> functionality used for
+      distributing state changes throughout the page. When the decision was made
       to switch to Backbone, large blocks of custom logic simply disappeared.
     </p>
 
@@ -4034,13 +4038,13 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
-    <b class="header">1.1.2</b> &mdash; <small><i>Feb. 20, 2014</i></small> 
-    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.1...1.1.2">Diff</a> 
+    <b class="header">1.1.2</b> &mdash; <small><i>Feb. 20, 2014</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.1...1.1.2">Diff</a>
     &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/jashkenas/backbone/1.1.2/index.html">Docs</a>
     <br />
     <ul style="margin-top: 5px;">
       <li>
-        Backbone no longer tries to require jQuery in Node/CommonJS environments, 
+        Backbone no longer tries to require jQuery in Node/CommonJS environments,
         for better compatibility with folks using Browserify.
         If you'd like to have Backbone use jQuery from Node, assign it like so:
         <tt>Backbone.$ = require('jquery');</tt>
@@ -4053,7 +4057,7 @@ ActiveRecord::Base.include_root_in_json = false
     <b class="header">1.1.1</b> &mdash; <small><i>Feb. 13, 2014</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.0...1.1.1">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/jashkenas/backbone/1.1.1/index.html">Docs</a><br />
     <ul style="margin-top: 5px;">
       <li>
-        Backbone now registers itself for AMD (Require.js), Bower and Component, 
+        Backbone now registers itself for AMD (Require.js), Bower and Component,
         as well as being a CommonJS module and a regular (Java)Script. Whew.
       </li>
       <li>
