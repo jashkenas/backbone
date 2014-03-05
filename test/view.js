@@ -330,8 +330,8 @@
   test("views stopListening", 0, function() {
     var Test = View.extend({
       initialize: function() {
-        this.listenTo(this.model, 'all x', function(){ ok(false); }, this);
-        this.listenTo(this.collection, 'all x', function(){ ok(false); }, this);
+        this.listenTo(this.model, 'all x', function(){ ok(false); });
+        this.listenTo(this.collection, 'all x', function(){ ok(false); });
       }
     });
 
@@ -376,6 +376,27 @@
     click(view.$('h1')[0]);
     click(view.$('h1')[0]);
     equal(counter, 2);
+  });
+
+  test("remove", 2, function() {
+    document.body.appendChild(view.el);
+
+    addEventListener.call(view.el, 'click', function() { ok(true); });
+    view.delegate('click', function() { ok(false); });
+    view.listenTo(view, 'all x', function() { ok(false); });
+
+    view.remove();
+
+    notEqual(view.el.parentNode, document.body);
+
+    click(view.el);
+    view.trigger('x');
+  });
+
+  test("_removeElement", 1, function() {
+    document.body.appendChild(view.el);
+    view._removeElement();
+    notEqual(view.el.parentNode, document.body);
   });
 
   // Cross-browser helpers
