@@ -393,10 +393,12 @@
     view.trigger('x');
   });
 
-  test("_removeElement", 1, function() {
+  test('_removeElement', 2, function() {
+    var el = view.el;
     document.body.appendChild(view.el);
     view._removeElement();
-    notEqual(view.el.parentNode, document.body);
+    strictEqual(view.el, el);
+    ok(!document.body.contains(view.el));
   });
 
   // Cross-browser helpers
