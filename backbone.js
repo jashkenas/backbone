@@ -1080,8 +1080,8 @@
     },
 
     // Change the view's element (`this.el` property), including event
-    // re-delegation.
-    setElement: function(element, delegate, attributes) {
+    // re-delegation. Pass along a set of attributes to be applied to the element.
+    setElement: function(element, attributes, delegate) {
       this.undelegateEvents();
       this._setEl(element, attributes);
       if (delegate !== false) this.delegateEvents();
@@ -1160,9 +1160,9 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        this.setElement(document.createElement(_.result(this, 'tagName')), false, attrs);
+        this.setElement(document.createElement(_.result(this, 'tagName')), attrs, false);
       } else {
-        this.setElement(_.result(this, 'el'), false);
+        this.setElement(_.result(this, 'el'), null, false);
       }
     }
 
