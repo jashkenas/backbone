@@ -207,4 +207,15 @@
     strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
 
+  test("Attach ajax settings to options argument", 1, function() {
+    var model = new Backbone.Model();
+    model.url = '/test';
+
+    model.on('request', function (model, xhr, options) {
+      ok(options.settings);
+    });
+
+    model.sync('create', model);
+  });
+
 })();
