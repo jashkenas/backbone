@@ -29,6 +29,11 @@
     ok(result.length === +result.length);
   });
 
+  test("_setEl", 2, function() {
+    view._setEl('<div>', {id: 'test-div'});
+    strictEqual(view.el.tagName.toLowerCase(), 'div');
+    strictEqual(view.el.id, 'test-div');
+  });
 
   test("jQuery", function() {
     var view = new Backbone.View;
@@ -37,6 +42,8 @@
     if (Backbone.$) {
       ok(view.$el instanceof Backbone.$);
       equal(view.$el[0], view.el);
+    } else {
+      ok(view.el.nodeType === 1);
     }
   });
 
@@ -370,7 +377,7 @@
     document.body.appendChild(view.el);
     view._removeElement();
     strictEqual(view.el, el);
-    ok(!document.body.contains(view.el));
+    strictEqual(view.el.parentNode, null);
   });
 
 })();
