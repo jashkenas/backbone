@@ -377,7 +377,7 @@
     document.body.appendChild(view.el);
     view._removeElement();
     strictEqual(view.el, el);
-    strictEqual(view.el.parentNode, null);
+    notEqual(view.el.parentNode, document.body);
   });
 
 })();
