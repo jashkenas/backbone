@@ -456,15 +456,9 @@
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
       var model = this;
-      var success = options.success;
-      options.success = function(resp, textStatus, xhr) {
-        xhr.textStatus = textStatus;
-        options = _.extend({ xhr: xhr }, options);
-        if (!model.set(model.parse(resp, options), options)) return false;
-        if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
-      };
-      wrapError(this, options);
+      wrapCallbacks(this, options, function(resp, options) {
+        if (!model.set(model.parse(resp, options), options)) return true;
+      });
       return this.sync('read', this, options);
     },
 
@@ -502,21 +496,15 @@
       // updated with the server-side state.
       if (options.parse === void 0) options.parse = true;
       var model = this;
-      var success = options.success;
-      options.success = function(resp, textStatus, xhr) {
-        xhr.textStatus = textStatus;
-        options = _.extend({ xhr: xhr }, options);
+      wrapCallbacks(this, options, function(resp, options) {
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
         var serverAttrs = model.parse(resp, options);
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
-          return false;
+          return true;
         }
-        if (success) success(model, resp, options);
-        model.trigger('sync', model, resp, options);
-      };
-      wrapError(this, options);
+      });
 
       method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
       if (method === 'patch') options.attrs = attrs;
@@ -534,25 +522,20 @@
     destroy: function(options) {
       options = options ? _.clone(options) : {};
       var model = this;
-      var success = options.success;
 
       var destroy = function() {
         model.trigger('destroy', model, model.collection, options);
       };
 
-      options.success = function(resp, textStatus, xhr) {
-        xhr && (xhr.textStatus = textStatus);
-        options = _.extend({ xhr: xhr }, options);
-        if (options.wait || model.isNew()) destroy();
-        if (success) success(model, resp, options);
-        if (!model.isNew()) model.trigger('sync', model, resp, options);
-      };
-
       if (this.isNew()) {
-        options.success();
+        destroy();
+        if (options.success) options.success(model, null, options);
         return false;
       }
-      wrapError(this, options);
+
+      wrapCallbacks(model, options, function(resp, options) {
+        if (options.wait) destroy();
+      });
 
       var xhr = this.sync('delete', this, options);
       if (!options.wait) destroy();
@@ -893,17 +876,11 @@
     fetch: function(options) {
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
-      var success = options.success;
       var collection = this;
-      options.success = function(resp, textStatus, xhr) {
-        xhr.textStatus = textStatus;
-        options = _.extend({ xhr: xhr }, options);
+      wrapCallbacks(collection, options, function(resp, options) {
         var method = options.reset ? 'reset' : 'set';
         collection[method](resp, options);
-        if (success) success(collection, resp, options);
-        collection.trigger('sync', collection, resp, options);
-      };
-      wrapError(this, options);
+      });
       return this.sync('read', this, options);
     },
 
@@ -1664,9 +1641,19 @@
     throw new Error('A "url" property or function must be specified');
   };
 
-  // Wrap an optional error callback with a fallback error event.
-  var wrapError = function(model, options) {
+  // Wrap optional success and error callbacks.
+  var wrapCallbacks = function(model, options, successCallback) {
+    var success = options.success;
     var error = options.error;
+    options.success = function(resp, textStatus, xhr) {
+      xhr.textStatus = textStatus;
+      options = _.extend({ xhr: xhr }, options);
+      var abort = successCallback.call(this, resp, options);
+      if (!abort) {
+        if (success) success(model, resp, options);
+        model.trigger('sync', model, resp, options);
+      }
+    }
     options.error = function(xhr, textStatus, errorThrown) {
       xhr.textStatus = textStatus;
       xhr.errorThrown = errorThrown;

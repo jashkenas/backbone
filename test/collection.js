@@ -777,7 +777,6 @@
       }
     };
     col.sync = m.sync = function( method, collection, options ){
-//      options.success(collection, [], options);
       options.success({}, 'success', {});
     };
     col.fetch(opts);
