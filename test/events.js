@@ -152,10 +152,11 @@
     e.trigger("foo");
   });
 
-  test("stopListening cleans up references", 4, function() {
+  test("stopListening cleans up references", 6, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     var fn = function() {};
+    b.on('other', fn);
     a.listenTo(b, 'all', fn).stopListening();
     equal(_.size(a._listeningTo), 0);
     a.listenTo(b, 'all', fn).stopListening(b);
@@ -164,6 +165,9 @@
     equal(_.size(a._listeningTo), 0);
     a.listenTo(b, 'all', fn).stopListening(null, null, fn);
     equal(_.size(a._listeningTo), 0);
+    a.listenTo(b, 'all', fn).listenTo(b, 'all', fn).stopListening(null, 'all');
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._listeners), 0);
   });
 
   test("listenTo and stopListening cleaning up references", 2, function() {
@@ -172,6 +176,17 @@
     a.listenTo(b, 'all', function(){ ok(true); });
     b.trigger('anything');
     a.listenTo(b, 'other', function(){ ok(false); });
+    a.stopListening(b, 'other');
+    a.stopListening(b, 'all');
+    equal(_.keys(a._listeningTo).length, 0);
+  });
+
+  test("listenToOnce and stopListening cleaning up references", 2, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenToOnce(b, 'all', function(){ ok(true); });
+    b.trigger('anything');
+    a.listenToOnce(b, 'other', function(){ ok(false); });
     a.stopListening(b, 'other');
     a.stopListening(b, 'all');
     equal(_.keys(a._listeningTo).length, 0);
@@ -326,6 +341,47 @@
     obj.on('x y all', fail);
     obj.off(null, fail);
     obj.trigger('x y');
+  });
+
+  test("off removes object from listeners", 6, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var c = _.extend({}, Backbone.Events);
+    var d = _.extend({}, Backbone.Events);
+    var fn = function() {};
+
+    b.listenTo(a, 'all', fn);
+    c.listenTo(a, 'all', fn);
+    c.listenTo(d, 'x', fn);
+
+    equal(_.size(b._listeningTo), 1);
+    equal(_.size(c._listeningTo), 2);
+    equal(_.size(a._listeners), 2);
+    a.off();
+    equal(_.size(b._listeningTo), 0);
+    equal(_.size(c._listeningTo), 1);
+    equal(_.size(a._listeners), 0);
+  });
+
+  test("off w/event name removes object from listeners", 8, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var c = _.extend({}, Backbone.Events);
+    var fn = function() {};
+
+    b.listenTo(a, 'x', fn);
+    c.listenTo(a, 'x y', fn);
+
+    equal(_.size(b._listeningTo), 1);
+    equal(_.size(c._listeningTo), 1);
+    equal(_.size(a._listeners), 2);
+    a.off('x');
+    equal(_.size(b._listeningTo), 0);
+    equal(_.size(c._listeningTo), 1);
+    equal(_.size(a._listeners), 1);
+    a.off('y');
+    equal(_.size(c._listeningTo), 0);
+    equal(_.size(a._listeners), 0);
   });
 
   test("#1310 - off does not skip consecutive events", 0, function() {
