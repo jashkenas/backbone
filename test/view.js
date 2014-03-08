@@ -363,21 +363,25 @@
   test("remove", 0, function() {
     document.body.appendChild(view.el);
 
-    view.delegate('click', function() { ok(false); });
     view.listenTo(view, 'all x', function() { ok(false); });
 
     view.remove();
 
     view.$el.trigger('x');
-    view.trigger('x');
   });
 
-  test('_removeElement', 2, function() {
+  test('_remove', 2, function() {
     var el = view.el;
     document.body.appendChild(view.el);
-    view._removeElement();
+
+    view.delegate('click', function() { ok(false); });
+
+    view._remove();
+
     strictEqual(view.el, el);
     notEqual(view.el.parentNode, document.body);
+
+    view.trigger('x');
   });
 
 })();
