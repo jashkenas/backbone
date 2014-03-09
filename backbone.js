@@ -1066,7 +1066,6 @@
     // the DOM event listeners attached to it, and remove any applicable
     // Backbone.Events listeners.
     remove: function() {
-      this.undelegateEvents();
       this._removeElement();
       this.stopListening();
       return this;
