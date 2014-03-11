@@ -1082,9 +1082,19 @@
     // re-delegation. Pass along a set of attributes to be applied to the element.
     setElement: function(element, attributes, delegate) {
       this.undelegateEvents();
-      this._setEl(element, attributes);
+      this._setElement(element, attributes);
       if (delegate !== false) this.delegateEvents();
       return this;
+    },
+
+    // Creates the `this.el` and `this.$el` references for the View using the
+    // given `el` and a hash of `attributes`. `el` can be a CSS selector or an
+    // HTML string, a jQuery context or an element. Subclasses can override
+    // this to utilize an alternative DOM manipulation API.
+    _setElement: function(el, attributes) {
+      this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
+      if (attributes) this.$el.attr(attributes);
+      this.el = this.$el[0];
     },
 
     // Set callbacks, where `this.events` is a hash of
@@ -1138,16 +1148,6 @@
     undelegateEvents: function() {
       if (this.$el) this.$el.off('.delegateEvents' + this.cid);
       return this;
-    },
-
-    // Creates the `this.el` and `this.$el` references for the View using the
-    // given `el` and a hash of `attributes`. `el` can be a CSS selector or an
-    // HTML string, a jQuery context or an element. Subclasses can override
-    // this to utilize an alternative DOM manipulation API.
-    _setEl: function(el, attributes) {
-      this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
-      if (attributes) this.$el.attr(attributes);
-      this.el = this.$el[0];
     },
 
     // Ensure that the View has a DOM element to render into.
