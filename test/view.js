@@ -29,12 +29,6 @@
     ok(result.length === +result.length);
   });
 
-  test("_setEl", 2, function() {
-    view._setEl('<div>', {id: 'test-div'});
-    strictEqual(view.el.tagName.toLowerCase(), 'div');
-    strictEqual(view.el.id, 'test-div');
-  });
-
   test("jQuery", function() {
     var view = new Backbone.View;
     view.setElement('<p><a><b>test</b></a></p>');
@@ -360,7 +354,8 @@
     equal(counter, 2);
   });
 
-  test("remove", 0, function() {
+  test("remove", 2, function() {
+    var el = view.el;
     document.body.appendChild(view.el);
 
     view.delegate('click', function() { ok(false); });
@@ -368,16 +363,11 @@
 
     view.remove();
 
-    view.$el.trigger('x');
-    view.trigger('x');
-  });
-
-  test('_removeElement', 2, function() {
-    var el = view.el;
-    document.body.appendChild(view.el);
-    view._removeElement();
     strictEqual(view.el, el);
     notEqual(view.el.parentNode, document.body);
+
+    view.$el.trigger('click');
+    view.trigger('x');
   });
 
 })();

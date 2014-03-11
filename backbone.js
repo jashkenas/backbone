@@ -1066,7 +1066,7 @@
     // the DOM event listeners attached to it, and remove any applicable
     // Backbone.Events listeners.
     remove: function() {
-      this._removeElement();
+      this._remove();
       this.stopListening();
       return this;
     },
@@ -1074,7 +1074,7 @@
     // Remove this view's element from the document and remove all the event
     // listeners attached to it. Useful for subclasses to override in order to
     // utilize an alternative DOM manipulation API.
-    _removeElement: function() {
+    _remove: function() {
       this.$el.remove();
     },
 
