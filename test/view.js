@@ -153,7 +153,7 @@
 
     view.$('h1').trigger('click');
     view.$el.trigger('click');
-  })
+  });
 
   test("undelegate with passed handler", 1, function() {
     view = new Backbone.View({el: '#testElement'});
