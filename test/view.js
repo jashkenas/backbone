@@ -145,6 +145,7 @@
   });
 
   test("undelegate", 0, function() {
+    view = new Backbone.View({el: '#testElement'});
     view.delegate('click', function() { ok(false); });
     view.delegate('click', 'h1', function() { ok(false); });
 
@@ -155,6 +156,7 @@
   })
 
   test("undelegate with passed handler", 1, function() {
+    view = new Backbone.View({el: '#testElement'});
     var listener = view.delegate('click', function() { ok(false); });
     view.delegate('click', function() { ok(true); });
     view.undelegate('click', listener);
@@ -163,6 +165,7 @@
 
   test("undelegate with selector", 2, function() {
     var counter1 = 0, counter2 = 0;
+    view = new Backbone.View({el: '#testElement'});
     view.delegate('click', function() { counter1++; });
     view.delegate('click', 'h1', function() { counter2++; });
 
@@ -171,7 +174,22 @@
     view.$('h1').trigger('click');
     view.$el.trigger('click');
 
-    equal(counter1, 1);
+    equal(counter1, 2);
+    equal(counter2, 0);
+  });
+
+  test("undelegate with handler and selector", 2, function() {
+    var counter1 = 0, counter2 = 0;
+    view = new Backbone.View({el: '#testElement'});
+    view.delegate('click', function() { counter1++; });
+    var handler = view.delegate('click', 'h1', function() { counter2++; });
+
+    view.undelegate('click', 'h1', handler);
+
+    view.$('h1').trigger('click');
+    view.$el.trigger('click');
+
+    equal(counter1, 2);
     equal(counter2, 0);
   });
 
