@@ -262,13 +262,13 @@
     equal(5, count);
   });
 
-  test("custom events, with namespaces", 2, function() {
+  test("custom events", 2, function() {
     var count = 0;
 
     var View = Backbone.View.extend({
       el: $('body'),
       events: function() {
-        return {"fake$event.namespaced": "run"};
+        return {"fake$event": "run"};
       },
       run: function() {
         count++;
@@ -279,7 +279,7 @@
     $('body').trigger('fake$event').trigger('fake$event');
     equal(count, 2);
 
-    $('body').off('.namespaced');
+    $('body').off('fake$event');
     $('body').trigger('fake$event');
     equal(count, 2);
   });
