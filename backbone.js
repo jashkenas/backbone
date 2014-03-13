@@ -1071,15 +1071,15 @@
       return this;
     },
 
-    // Remove this view's element from the document and remove all the event
-    // listeners attached to it. Useful for subclasses to override in order to
-    // utilize an alternative DOM manipulation API.
+    // Remove this view's element from the document and all event listeners
+    // attached to it. Exposed for subclasses using an alternative DOM
+    // manipulation API.
     _remove: function() {
       this.$el.remove();
     },
 
-    // Change the view's element (`this.el` property), including event
-    // re-delegation. Pass along a set of attributes to be applied to the element.
+    // Change the view's element (`this.el` property) and re-delegate the
+    // view's events on the new element.
     setElement: function(element, attributes, delegate) {
       this.undelegateEvents();
       this._setElement(element, attributes);
@@ -1087,10 +1087,11 @@
       return this;
     },
 
-    // Creates the `this.el` and `this.$el` references for the View using the
+    // Creates the `this.el` and `this.$el` references for this view using the
     // given `el` and a hash of `attributes`. `el` can be a CSS selector or an
     // HTML string, a jQuery context or an element. Subclasses can override
-    // this to utilize an alternative DOM manipulation API.
+    // this to utilize an alternative DOM manipulation API and are only required
+    // to set the `this.el` property.
     _setElement: function(el, attributes) {
       this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
       if (attributes) this.$el.attr(attributes);
@@ -1110,8 +1111,6 @@
     // pairs. Callbacks will be bound to the view, with `this` set properly.
     // Uses event delegation for efficiency.
     // Omitting the selector binds the event to `this.el`.
-    // This only works for delegate-able events: not `focus`, `blur`, and
-    // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents: function(events) {
       if (!(events || (events = _.result(this, 'events')))) return this;
       this.undelegateEvents();
@@ -1127,9 +1126,9 @@
       return this;
     },
 
-    // Add a single event listener to the element responding only to the
-    // optional `selector` or catches all `eventName` events. Subclasses can
-    // override this to utilize an alternative DOM event management API.
+    // Add a single event listener to the view's element (or a child element
+    // using `selector`). This only works for delegate-able events: not `focus`,
+    // `blur`, and not `change`, `submit`, and `reset` in Internet Explorer.
     delegate: function(eventName, selector, listener) {
       this.$el.on(eventName + '.delegateEvents' + this.cid, selector, listener);
 
@@ -1147,8 +1146,8 @@
       return this;
     },
 
-    // Remove a single event from the delegated events. `selector` and `listener`
-    // are both optional.
+    // A finer-grained `undelegateEvents` for removing a single delegated event.
+    // `selector` and `listener` are both optional.
     undelegate: function(eventName, selector, listener) {
       this.$el.off(eventName + '.delegateEvents' + this.cid, selector, listener);
     },
