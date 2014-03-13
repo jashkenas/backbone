@@ -33,11 +33,13 @@
     var view = new Backbone.View;
     view.setElement('<p><a><b>test</b></a></p>');
 
+    strictEqual(view.el.nodeType, 1);
+
     if (Backbone.$) {
       ok(view.$el instanceof Backbone.$);
-      equal(view.$el[0], view.el);
+      strictEqual(view.$el[0], view.el);
     } else {
-      ok(view.el.nodeType === 1);
+      strictEqual(view.$el, undefined);
     }
   });
 
