@@ -1150,8 +1150,7 @@
     // Remove a single event from the delegated events. `selector` and `listener`
     // are both optional.
     undelegate: function(eventName, selector, listener) {
-      eventName += '.delegateEvents' + this.cid;
-      this.$el.off(eventName, selector, listener);
+      this.$el.off(eventName + '.delegateEvents' + this.cid, selector, listener);
     },
 
     // Ensure that the View has a DOM element to render into.
