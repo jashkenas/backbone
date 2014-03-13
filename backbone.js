@@ -1129,19 +1129,14 @@
 
     // Add a single event listener to the element responding only to the
     // optional `selector` or catches all `eventName` events. Subclasses can
-    // override this to utilize an alternative DOM event management API. Returns
-    // the listener for easy undelegation with `undelegate`.
+    // override this to utilize an alternative DOM event management API.
     delegate: function(eventName, selector, listener) {
-      eventName += '.delegateEvents' + this.cid;
-      // When `delegate` is called with two arguments, `selector` is actually
-      // the `listener`
-      var listener = _.isFunction(selector) ? selector : listener;
-      if (selector === '') {
-        this.$el.on(eventName, listener);
-      } else {
-        this.$el.on(eventName, selector, listener);
-      }
-      return listener;
+      this.$el.on(eventName + '.delegateEvents' + this.cid, selector, listener);
+
+      // Return the listener for easy undelegation with `undelegate`. When
+      // `delegate` is called with two arguments, `selector` is actually the
+      // `listener`.
+      return _.isFunction(selector) ? selector : listener;
     },
 
     // Clears all callbacks previously bound to the view by `delegateEvents`.
