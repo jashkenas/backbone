@@ -1031,7 +1031,6 @@
     _.extend(this, _.pick(options, viewOptions));
     this._ensureElement();
     this.initialize.apply(this, arguments);
-    this.delegateEvents();
   };
 
   // Cached regex to split keys for `delegate`.
@@ -1073,11 +1072,11 @@
 
     // Change the view's element (`this.el` property), including event
     // re-delegation.
-    setElement: function(element, delegate) {
+    setElement: function(element) {
       if (this.$el) this.undelegateEvents();
       this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
       this.el = this.$el[0];
-      if (delegate !== false) this.delegateEvents();
+      this.delegateEvents();
       return this;
     },
 
@@ -1135,9 +1134,9 @@
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
         var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
-        this.setElement($el, false);
+        this.setElement($el);
       } else {
-        this.setElement(_.result(this, 'el'), false);
+        this.setElement(_.result(this, 'el'));
       }
     }
 
