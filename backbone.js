@@ -36,9 +36,7 @@
 
   // Create local references to array methods we'll want to use later.
   var array = [];
-  var push = array.push;
   var slice = array.slice;
-  var splice = array.splice;
 
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '1.1.2';
@@ -703,6 +701,7 @@
       var toAdd = [], toRemove = [], modelMap = {};
       var add = options.add, merge = options.merge, remove = options.remove;
       var order = !sortable && add && remove ? [] : false;
+      var targetProto = this.model.prototype;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
@@ -710,8 +709,10 @@
         attrs = models[i] || {};
         if (attrs instanceof Model) {
           id = model = attrs;
+        } else if (targetProto.generateId) {
+          id = targetProto.generateId(attrs);
         } else {
-          id = this.model.prototype.generateId(attrs);
+          id = attrs[targetProto.idAttribute || Model.prototype.idAttribute];
         }
 
         // If a duplicate is found, prevent it from being added and
@@ -1030,7 +1031,6 @@
     _.extend(this, _.pick(options, viewOptions));
     this._ensureElement();
     this.initialize.apply(this, arguments);
-    this.delegateEvents();
   };
 
   // Cached regex to split keys for `delegate`.
@@ -1080,10 +1080,10 @@
 
     // Change the view's element (`this.el` property) and re-delegate the
     // view's events on the new element.
-    setElement: function(element, attributes, delegate) {
+    setElement: function(element, attributes) {
       this.undelegateEvents();
       this._setElement(element, attributes);
-      if (delegate !== false) this.delegateEvents();
+      this.delegateEvents();
       return this;
     },
 
@@ -1161,7 +1161,7 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        this.setElement(document.createElement(_.result(this, 'tagName')), attrs, false);
+        this.setElement(document.createElement(_.result(this, 'tagName')), attrs);
       } else {
         this.setElement(_.result(this, 'el'), null, false);
       }

@@ -1362,4 +1362,58 @@
     equal(collection.get(1), collection.first());
   });
 
+  test('Polymorphic models work with "simple" constructors', function () {
+    var A = Backbone.Model.extend();
+    var B = Backbone.Model.extend();
+    var C = Backbone.Collection.extend({
+      model: function (attrs) {
+        return attrs.type === 'a' ? new A(attrs) : new B(attrs);
+      }
+    });
+    var collection = new C([{id: 1, type: 'a'}, {id: 2, type: 'b'}]);
+    equal(collection.length, 2);
+    ok(collection.at(0) instanceof A);
+    equal(collection.at(0).id, 1);
+    ok(collection.at(1) instanceof B);
+    equal(collection.at(1).id, 2);
+  });
+
+  test('Polymorphic models work with "advanced" constructors', function () {
+    var A = Backbone.Model.extend({idAttribute: '_id'});
+    var B = Backbone.Model.extend({idAttribute: '_id'});
+    var C = Backbone.Collection.extend({
+      model: Backbone.Model.extend({
+        constructor: function (attrs) {
+          return attrs.type === 'a' ? new A(attrs) : new B(attrs);
+        },
+
+        idAttribute: '_id'
+      })
+    });
+    var collection = new C([{_id: 1, type: 'a'}, {_id: 2, type: 'b'}]);
+    equal(collection.length, 2);
+    ok(collection.at(0) instanceof A);
+    equal(collection.at(0).id, 1);
+    ok(collection.at(1) instanceof B);
+    equal(collection.at(1).id, 2);
+
+    A.prototype.generateId = B.prototype.generateId = function (attrs) {
+      return attrs.type + '-' + attrs.id;
+    }
+    C = Backbone.Collection.extend({
+      model: Backbone.Model.extend({
+        constructor: function (attrs) {
+          return attrs.type === 'a' ? new A(attrs) : new B(attrs);
+        },
+
+        generateId: A.prototype.generateId
+      })
+    });
+    collection = new C([{id: 1, type: 'a'}, {id: 1, type: 'b'}]);
+    equal(collection.length, 2);
+    ok(collection.at(0) instanceof A);
+    equal(collection.at(0).id, 'a-1');
+    ok(collection.at(1) instanceof B);
+    equal(collection.at(1).id, 'b-1');
+  });
 })();
