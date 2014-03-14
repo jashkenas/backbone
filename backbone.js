@@ -1130,11 +1130,6 @@
     // `blur`, and not `change`, `submit`, and `reset` in Internet Explorer.
     delegate: function(eventName, selector, listener) {
       this.$el.on(eventName + '.delegateEvents' + this.cid, selector, listener);
-
-      // Return the listener for easy undelegation with `undelegate`. When
-      // `delegate` is called with two arguments, `selector` is actually the
-      // `listener`.
-      return _.isFunction(selector) ? selector : listener;
     },
 
     // Clears all callbacks previously bound to the view by `delegateEvents`.

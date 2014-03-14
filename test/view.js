@@ -77,21 +77,19 @@
     equal(counter2, 3);
   });
 
-  test("delegate", 4, function() {
+  test("delegate", 2, function() {
     var counter1 = 0, counter2 = 0;
 
     var view = new Backbone.View({el: '#testElement'});
     view.increment = function(){ counter1++; };
     view.$el.on('click', function(){ counter2++; });
 
-    var listener1 = view.delegate('click', 'h1', view.increment);
-    var listener2 = view.delegate('click', view.increment);
+    view.delegate('click', 'h1', view.increment);
+    view.delegate('click', view.increment);
 
     view.$('h1').trigger('click');
     equal(counter1, 2);
     equal(counter2, 1);
-    strictEqual(listener1, view.increment);
-    strictEqual(listener2, view.increment);
   });
 
   test("delegateEvents allows functions for callbacks", 3, function() {
@@ -161,7 +159,8 @@
 
   test("undelegate with passed handler", 1, function() {
     view = new Backbone.View({el: '#testElement'});
-    var listener = view.delegate('click', function() { ok(false); });
+    var listener = function() { ok(false); };
+    view.delegate('click', listener);
     view.delegate('click', function() { ok(true); });
     view.undelegate('click', listener);
     view.$el.trigger('click');
