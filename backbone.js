@@ -1444,6 +1444,14 @@
         var body = document.body;
         // Using `appendChild` will throw on IE < 9 if the document is not ready.
         this.iframe = body.insertBefore(iframe, body.firstChild).contentWindow;
+
+        // if "document.domain" was redefined, IE < 8 will blocked
+        try {
+          var doc = this.iframe.document;
+          doc = null;
+        } catch(err) {
+          delete this.iframe;
+        }
         this.navigate(fragment);
       }
 
