@@ -1063,7 +1063,7 @@
     },
 
     // Remove this view by taking the element out of the document, remove all
-    // the DOM event listeners attached to it, and remove any applicable
+    // the DOM event listeners attached to it and any applicable
     // Backbone.Events listeners.
     remove: function() {
       this._remove();
