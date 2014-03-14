@@ -1065,7 +1065,7 @@
     // Remove this view by taking the element out of the DOM, and removing any
     // applicable Backbone.Events listeners.
     remove: function() {
-      this._remove();
+      this._removeElement();
       this.stopListening();
       return this;
     },
@@ -1073,7 +1073,7 @@
     // Remove this view's element from the document and all event listeners
     // attached to it. Exposed for subclasses using an alternative DOM
     // manipulation API.
-    _remove: function() {
+    _removeElement: function() {
       this.$el.remove();
     },
 
@@ -1117,10 +1117,8 @@
         var method = events[key];
         if (!_.isFunction(method)) method = this[events[key]];
         if (!method) continue;
-
         var match = key.match(delegateEventSplitter);
-        var eventName = match[1], selector = match[2];
-        this.delegate(eventName, selector, _.bind(method, this));
+        this.delegate(match[1], match[2], _.bind(method, this));
       }
       return this;
     },

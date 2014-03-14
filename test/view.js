@@ -29,18 +29,13 @@
     ok(result.length === +result.length);
   });
 
-  test("jQuery", function() {
+  test("$el", 3, function() {
     var view = new Backbone.View;
     view.setElement('<p><a><b>test</b></a></p>');
-
     strictEqual(view.el.nodeType, 1);
 
-    if (Backbone.$) {
-      ok(view.$el instanceof Backbone.$);
-      strictEqual(view.$el[0], view.el);
-    } else {
-      strictEqual(view.$el, undefined);
-    }
+    ok(view.$el instanceof Backbone.$);
+    strictEqual(view.$el[0], view.el);
   });
 
   test("initialize", 1, function() {
@@ -78,18 +73,14 @@
   });
 
   test("delegate", 2, function() {
-    var counter1 = 0, counter2 = 0;
-
     var view = new Backbone.View({el: '#testElement'});
-    view.increment = function(){ counter1++; };
-    view.$el.on('click', function(){ counter2++; });
-
-    view.delegate('click', 'h1', view.increment);
-    view.delegate('click', view.increment);
-
+    view.delegate('click', 'h1', function() {
+      ok(true);
+    });
+    view.delegate('click', function() {
+      ok(true);
+    });
     view.$('h1').trigger('click');
-    equal(counter1, 2);
-    equal(counter2, 1);
   });
 
   test("delegateEvents allows functions for callbacks", 3, function() {
@@ -167,33 +158,22 @@
   });
 
   test("undelegate with selector", 2, function() {
-    var counter1 = 0, counter2 = 0;
     view = new Backbone.View({el: '#testElement'});
-    view.delegate('click', function() { counter1++; });
-    view.delegate('click', 'h1', function() { counter2++; });
-
+    view.delegate('click', function() { ok(true); });
+    view.delegate('click', 'h1', function() { ok(false); });
     view.undelegate('click', 'h1');
-
     view.$('h1').trigger('click');
     view.$el.trigger('click');
-
-    equal(counter1, 2);
-    equal(counter2, 0);
   });
 
   test("undelegate with handler and selector", 2, function() {
-    var counter1 = 0, counter2 = 0;
     view = new Backbone.View({el: '#testElement'});
-    view.delegate('click', function() { counter1++; });
-    var handler = view.delegate('click', 'h1', function() { counter2++; });
-
+    view.delegate('click', function() { ok(true); });
+    var handler = function(){ ok(false); };
+    view.delegate('click', 'h1', handler);
     view.undelegate('click', 'h1', handler);
-
     view.$('h1').trigger('click');
     view.$el.trigger('click');
-
-    equal(counter1, 2);
-    equal(counter2, 0);
   });
 
   test("_ensureElement with DOM node el", 1, function() {
@@ -284,25 +264,18 @@
   });
 
   test("custom events", 2, function() {
-    var count = 0;
-
     var View = Backbone.View.extend({
       el: $('body'),
-      events: function() {
-        return {"fake$event": "run"};
-      },
-      run: function() {
-        count++;
+      events: {
+        "fake$event": function() { ok(true); }
       }
     });
 
     var view = new View;
     $('body').trigger('fake$event').trigger('fake$event');
-    equal(count, 2);
 
     $('body').off('fake$event');
     $('body').trigger('fake$event');
-    equal(count, 2);
   });
 
   test("#1048 - setElement uses provided object.", 2, function() {
@@ -353,7 +326,7 @@
       }
     });
 
-    ok(new View().el.tagName.toLowerCase() == 'p');
+    ok(new View().$el.is('p'));
   });
 
   test("views stopListening", 0, function() {
@@ -382,8 +355,8 @@
     });
 
     var view = new View;
-    ok(view.el.tagName.toLowerCase() == 'p');
-    ok(view.$('a').length != 0);
+    ok(view.$el.is('p'));
+    ok(view.$el.has('a'));
   });
 
   test("events passed in options", 1, function() {
@@ -406,20 +379,19 @@
     equal(counter, 2);
   });
 
-  test("remove", 2, function() {
-    var el = view.el;
+  test("remove", 1, function() {
+    var view = new Backbone.View;
     document.body.appendChild(view.el);
 
     view.delegate('click', function() { ok(false); });
     view.listenTo(view, 'all x', function() { ok(false); });
 
     view.remove();
-
-    strictEqual(view.el, el);
-    notEqual(view.el.parentNode, document.body);
-
     view.$el.trigger('click');
     view.trigger('x');
+
+    // In IE8 and below, parentNode still exists but is not document.body.
+    notEqual(view.el.parentNode, document.body);
   });
 
 })();
