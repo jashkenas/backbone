@@ -1163,7 +1163,7 @@
         if (this.className) attrs['class'] = _.result(this, 'className');
         this.setElement(document.createElement(_.result(this, 'tagName')), attrs);
       } else {
-        this.setElement(_.result(this, 'el'), null, false);
+        this.setElement(_.result(this, 'el'));
       }
     }
 
