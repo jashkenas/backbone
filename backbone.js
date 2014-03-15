@@ -1079,9 +1079,9 @@
 
     // Change the view's element (`this.el` property) and re-delegate the
     // view's events on the new element.
-    setElement: function(element, attributes) {
+    setElement: function(element) {
       this.undelegateEvents();
-      this._setElement(element, attributes);
+      this._setElement(element);
       this.delegateEvents();
       return this;
     },
@@ -1091,9 +1091,8 @@
     // HTML string, a jQuery context or an element. Subclasses can override
     // this to utilize an alternative DOM manipulation API and are only required
     // to set the `this.el` property.
-    _setElement: function(el, attributes) {
+    _setElement: function(el) {
       this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
-      if (attributes) this.$el.attr(attributes);
       this.el = this.$el[0];
     },
 
@@ -1153,10 +1152,17 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        this.setElement(document.createElement(_.result(this, 'tagName')), attrs);
+        this.setElement(document.createElement(_.result(this, 'tagName')));
+        this._setAttributes(attrs);
       } else {
         this.setElement(_.result(this, 'el'));
       }
+    },
+
+    // Set attributes from a hash on this view's element.  Exposed for
+    // subclasses using an alternative DOM manipulation API.
+    _setAttributes: function(attributes) {
+      this.$el.attr(attributes);
     }
 
   });
