@@ -306,29 +306,29 @@
     document.body.removeChild(el);
   });
 
-  if (Backbone.$) {
-    test("custom events", 2, function() {
-      var count = 0;
+  test("custom events", 2, function() {
+    var count = 0;
 
-      var Test = View.extend({
-        el: 'body',
-        events: function() {
-          return {"fake$event": "run"};
-        },
-        run: function() {
-          count++;
-        }
-      });
-
-      var view = new Test;
-      $('body').trigger('fake$event').trigger('fake$event');
-      equal(count, 2);
-
-      $('body').off('fake$event');
-      $('body').trigger('fake$event');
-      equal(count, 2);
+    var Test = View.extend({
+      el: 'body',
+      events: function() {
+        return {"fake$event": "run"};
+      },
+      run: function() {
+        count++;
+      }
     });
-  }
+
+    var view = new Test;
+    var event = new CustomEvent("fake$event");
+    document.body.dispatchEvent(event);
+    document.body.dispatchEvent(event);
+    equal(count, 2);
+
+    view.undelegate("fake$event");
+    document.body.dispatchEvent(event);
+    equal(count, 2);
+  });
 
   test("#1048 - setElement uses provided object.", 2, function() {
     var el = document.body;
