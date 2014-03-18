@@ -939,7 +939,10 @@
     // Prepare a hash of attributes (or other model) to be added to this
     // collection.
     _prepareModel: function(attrs, options) {
-      if (attrs instanceof Model) return attrs;
+      if (attrs instanceof Model) {
+        if (!attrs.collection) attrs.collection = this;
+        return attrs;
+      }
       options = options ? _.clone(options) : {};
       options.collection = this;
       var model = new this.model(attrs, options);
@@ -952,7 +955,6 @@
     _addReference: function(model, options) {
       this._byId[model.cid] = model;
       if (model.id != null) this._byId[model.id] = model;
-      if (!model.collection) model.collection = this;
       model.on('all', this._onModelEvent, this);
     },
 
