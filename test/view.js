@@ -1,14 +1,10 @@
 (function() {
-
-  // When testing alternative View implementations, change this variable.
-  var View = Backbone.View;
-
   var view;
 
   module("Backbone.View", {
 
     setup: function() {
-      view = new View({
+      view = new Backbone.View({
         id        : 'test-view',
         className : 'test-view',
         other     : 'non-special-option'
@@ -24,7 +20,7 @@
   });
 
   test("$", 2, function() {
-    var view = new View;
+    var view = new Backbone.View;
     view.setElement('<p><a><b>test</b></a></p>');
     var result = view.$('a b');
 
@@ -34,7 +30,7 @@
 
 
   test("$el", function() {
-    var view = new View;
+    var view = new Backbone.View;
     view.setElement('<p><a><b>test</b></a></p>');
     strictEqual(view.el.nodeType, 1);
 
@@ -45,19 +41,19 @@
   });
 
   test("initialize", 1, function() {
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       initialize: function() {
         this.one = 1;
       }
     });
 
-    strictEqual(new Test().one, 1);
+    strictEqual(new View().one, 1);
   });
 
   test("delegateEvents", 6, function() {
     var counter1 = 0, counter2 = 0;
 
-    var view = new View({el: '#testElement'});
+    var view = new Backbone.View({el: '#testElement'});
     view.increment = function(){ counter1++; };
     addEventListener.call(view.el, 'click', function(){ counter2++; });
 
@@ -80,7 +76,7 @@
 
 
   test("delegate", 2, function() {
-    var view = new View({el: '#testElement'});
+    var view = new Backbone.View({el: '#testElement'});
     view.delegate('click', 'h1', function() {
       ok(true);
     });
@@ -92,7 +88,7 @@
 
 
   test("delegateEvents allows functions for callbacks", 3, function() {
-    view = new View({el: '<p></p>'});
+    var view = new Backbone.View({el: '<p></p>'});
     view.counter = 0;
 
     var events = {
@@ -119,7 +115,7 @@
 
 
   test("delegateEvents ignore undefined methods", 0, function() {
-    view = new View({el: '<p></p>'});
+    var view = new Backbone.View({el: '<p></p>'});
 
     document.body.appendChild(view.el);
 
@@ -132,7 +128,7 @@
   test("undelegateEvents", 6, function() {
     var counter1 = 0, counter2 = 0;
 
-    view = new View({el: '#testElement'});
+    var view = new Backbone.View({el: '#testElement'});
     view.increment = function(){ counter1++; };
     addEventListener.call(view.el, 'click', function(){ counter2++; });
 
@@ -156,7 +152,7 @@
 
 
   test("undelegate", 0, function() {
-    view = new View({el: '#testElement'});
+    var view = new Backbone.View({el: '#testElement'});
     view.delegate('click', function() { ok(false); });
     view.delegate('click', 'h1', function() { ok(false); });
 
@@ -167,7 +163,7 @@
   });
 
   test("undelegate with passed handler", 1, function() {
-    view = new View({el: '#testElement'});
+    var view = new Backbone.View({el: '#testElement'});
     var listener = function() { ok(false); };
     view.delegate('click', listener);
     view.delegate('click', function() { ok(true); });
@@ -176,7 +172,7 @@
   });
 
   test("undelegate with selector", 2, function() {
-    view = new View({el: '#testElement'});
+    var view = new Backbone.View({el: '#testElement'});
     view.delegate('click', function() { ok(true); });
     view.delegate('click', 'h1', function() { ok(false); });
     view.undelegate('click', 'h1');
@@ -185,7 +181,7 @@
   });
 
   test("undelegate with handler and selector", 2, function() {
-    view = new View({el: '#testElement'});
+    var view = new Backbone.View({el: '#testElement'});
     view.delegate('click', function() { ok(true); });
     var handler = function(){ ok(false); };
     view.delegate('click', 'h1', handler);
@@ -213,34 +209,34 @@
   });
 
   test("_ensureElement with DOM node el", 1, function() {
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       el: document.body
     });
 
-    equal(new Test().el, document.body);
+    equal(new View().el, document.body);
   });
 
   test("_ensureElement with string el", 3, function() {
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       el: "body"
     });
-    strictEqual(new Test().el, document.body);
+    strictEqual(new View().el, document.body);
 
-    Test = View.extend({
+    View = View.extend({
       el: "#testElement > h1"
     });
     var children = document.getElementById('testElement').childNodes;
     var h1 = _.findWhere(children, {nodeType: 1});
-    strictEqual(new Test().el, h1);
+    strictEqual(new View().el, h1);
 
-    Test = View.extend({
+    View = Backbone.View.extend({
       el: "#nonexistent"
     });
-    ok(!new Test().el);
+    ok(!new View().el);
   });
 
   test("with className and id functions", 2, function() {
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       className: function() {
         return 'className';
       },
@@ -249,37 +245,37 @@
       }
     });
 
-    strictEqual(new Test().el.className, 'className');
-    strictEqual(new Test().el.id, 'id');
+    strictEqual(new View().el.className, 'className');
+    strictEqual(new View().el.id, 'id');
   });
 
   test("with attributes", 2, function() {
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       attributes: {
         id: 'id',
         'class': 'class'
       }
     });
 
-    strictEqual(new Test().el.className, 'class');
-    strictEqual(new Test().el.id, 'id');
+    strictEqual(new View().el.className, 'class');
+    strictEqual(new View().el.id, 'id');
   });
 
   test("with attributes as a function", 1, function() {
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       attributes: function() {
         return {'class': 'dynamic'};
       }
     });
 
-    strictEqual(new Test().el.className, 'dynamic');
+    strictEqual(new View().el.className, 'dynamic');
   });
 
   test("multiple views per element", 3, function() {
     var count = 0;
     var el = document.createElement('p');
 
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       el: el,
       events: {
         click: function() {
@@ -290,11 +286,11 @@
 
     document.body.appendChild(el);
 
-    var view1 = new Test;
+    var view1 = new View;
     click(el);
     equal(1, count);
 
-    var view2 = new Test;
+    var view2 = new View;
     click(el);
     equal(3, count);
 
@@ -308,7 +304,7 @@
   test("custom events", 2, function() {
     var count = 0;
 
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       el: 'body',
       events: function() {
         return {"fake$event": "run"};
@@ -318,8 +314,9 @@
       }
     });
 
-    var view = new Test;
+    var view = new View;
     var event = new CustomEvent("fake$event");
+    trigger(document.body, event, 'fake$event');
     trigger(document.body, event, 'fake$event');
     equal(count, 2);
 
@@ -331,7 +328,7 @@
   test("#1048 - setElement uses provided object.", 2, function() {
     var el = document.body;
 
-    view = new View({el: el});
+    var view = new Backbone.View({el: el});
     ok(view.el === el);
 
     view.setElement(el = document.body);
@@ -345,7 +342,7 @@
     document.body.appendChild(button1);
     document.body.appendChild(button2);
 
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       events: {
         click: function(e) {
           ok(view.el === e.target || e.srcElement);
@@ -353,7 +350,7 @@
       }
     });
 
-    var view = new Test({el: button1});
+    var view = new View({el: button1});
     view.setElement(button2);
 
     click(button1);
@@ -364,26 +361,26 @@
   });
 
   test("#1172 - Clone attributes object", 2, function() {
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       attributes: {foo: 'bar'}
     });
 
-    var view1 = new Test({id: 'foo'});
+    var view1 = new View({id: 'foo'});
     strictEqual(view1.el.id, 'foo');
 
-    var view2 = new Test();
+    var view2 = new View();
     ok(!view2.el.id);
   });
 
   test("views stopListening", 0, function() {
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       initialize: function() {
         this.listenTo(this.model, 'all x', function(){ ok(false); });
         this.listenTo(this.collection, 'all x', function(){ ok(false); });
       }
     });
 
-    var view = new Test({
+    var view = new View({
       model: new Backbone.Model,
       collection: new Backbone.Collection
     });
@@ -394,19 +391,19 @@
   });
 
   test("Provide function for el.", 2, function() {
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       el: function() {
         return "<p><a></a></p>";
       }
     });
 
-    var view = new Test;
-    ok(view.el.tagName.toLowerCase() == 'p');
+    var view = new View;
+    ok(view.el.tagName == 'P');
     ok(view.$('a').length != 0);
   });
 
   test("remove", 1, function() {
-    var view = new View;
+    var view = new Backbone.View;
     document.body.appendChild(view.el);
 
     view.delegate('click', function() { ok(false); });
@@ -423,14 +420,14 @@
   test("events passed in options", 1, function() {
     var counter = 0;
 
-    var Test = View.extend({
+    var View = Backbone.View.extend({
       el: '#testElement',
       increment: function() {
         counter++;
       }
     });
 
-    var view = new Test({
+    var view = new View({
       events: {
         'click h1': 'increment'
       }
