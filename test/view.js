@@ -321,12 +321,11 @@
 
     var view = new Test;
     var event = new CustomEvent("fake$event");
-    document.body.dispatchEvent(event);
-    document.body.dispatchEvent(event);
+    trigger(document.body, event, 'fake$event');
     equal(count, 2);
 
     view.undelegate("fake$event");
-    document.body.dispatchEvent(event);
+    trigger(document.body, event, 'fake$event');
     equal(count, 2);
   });
 
@@ -444,9 +443,19 @@
   });
 
   // Cross-browser helpers
-  var addEventListener = typeof Element != 'undefined' && Element.prototype.addEventListener || function(eventName, listener) {
+  var ElementProto = (typeof Element != 'undefined' && Element.prototype) || {};
+
+  var addEventListener = ElementProto.addEventListener || function(eventName, listener) {
     return this.attachEvent('on' + eventName, listener);
   };
+
+  function trigger(element, event, eventName) {
+    if (element.dispatchEvent) {
+      element.dispatchEvent(event);
+    } else {
+      element.fireEvent(eventName, event);
+    }
+  }
 
   function click(element) {
     var event;
@@ -466,11 +475,7 @@
       event.bubbles = true;
       event.cancelable = true;
     }
-
-    if (element.dispatchEvent) {
-      return element.dispatchEvent(event);
-    }
-    element.fireEvent('onclick', event);
+    trigger(element, event, 'onclick');
   }
 
 })();
