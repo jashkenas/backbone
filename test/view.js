@@ -1,19 +1,14 @@
 (function() {
   var view;
 
-  module("Backbone.View", {
-
-    setup: function() {
-      view = new Backbone.View({
-        id        : 'test-view',
-        className : 'test-view',
-        other     : 'non-special-option'
-      });
-    }
-
-  });
+  module("Backbone.View");
 
   test("constructor", 3, function() {
+    var view = new Backbone.View({
+      id        : 'test-view',
+      className : 'test-view',
+      other     : 'non-special-option'
+    });
     equal(view.el.id, 'test-view');
     equal(view.el.className, 'test-view');
     equal(view.el.other, void 0);
