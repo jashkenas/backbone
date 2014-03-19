@@ -1,6 +1,6 @@
 (function() {
 
-  // When testing alternative View implementations, change this varaible.
+  // When testing alternative View implementations, change this variable.
   var View = Backbone.View;
 
   var view;
