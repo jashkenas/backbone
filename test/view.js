@@ -39,8 +39,8 @@
     strictEqual(view.el.nodeType, 1);
 
     if (Backbone.$) {
-      ok(Backbone.$ ? view.$el instanceof Backbone.$ : true);
-      strictEqual(Backbone.$ ? view.$el[0] : view.el, view.el);
+      ok(view.$el instanceof Backbone.$);
+      strictEqual(view.$el[0], view.el);
     }
   });
 
