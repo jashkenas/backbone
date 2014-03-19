@@ -380,8 +380,8 @@
   test("views stopListening", 0, function() {
     var Test = View.extend({
       initialize: function() {
-        this.listenTo(this.model, 'all x', function(){ ok(false); }, this);
-        this.listenTo(this.collection, 'all x', function(){ ok(false); }, this);
+        this.listenTo(this.model, 'all x', function(){ ok(false); });
+        this.listenTo(this.collection, 'all x', function(){ ok(false); });
       }
     });
 
