@@ -229,9 +229,8 @@
     Test = View.extend({
       el: "#testElement > h1"
     });
-    var h1 = _.filter(document.getElementById('testElement').childNodes, function(node) {
-      return node.nodeType == 1;
-    })[0];
+    var children = document.getElementById('testElement').childNodes;
+    var h1 = _.findWhere(children, {nodeType: 1});
     strictEqual(new Test().el, h1);
 
     Test = View.extend({
