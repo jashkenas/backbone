@@ -176,12 +176,22 @@
     view.$el.trigger('click');
   });
 
-  test("_createElement produces the correct DOM el", 1, function() {
+  test("tagName can be provided as a function", 1, function() {
     var View = Backbone.View.extend({
       tagName: 'span'
     });
 
     equal(new View().el.tagName, 'SPAN');
+  });
+
+  test("tagName can be provided as a function", 1, function() {
+    var View = Backbone.View.extend({
+      tagName: function() {
+        return 'p';
+      }
+    });
+
+    ok(new View().$el.is('p'));
   });
 
   test("_ensureElement with DOM node el", 1, function() {
@@ -325,16 +335,6 @@
 
     var view2 = new View();
     ok(!view2.el.id);
-  });
-
-  test("#1228 - tagName can be provided as a function", 1, function() {
-    var View = Backbone.View.extend({
-      tagName: function() {
-        return 'p';
-      }
-    });
-
-    ok(new View().$el.is('p'));
   });
 
   test("views stopListening", 0, function() {
