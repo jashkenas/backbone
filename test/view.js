@@ -176,6 +176,14 @@
     view.$el.trigger('click');
   });
 
+  test("_createElement produces the correct DOM el", 1, function() {
+    var View = Backbone.View.extend({
+      tagName: 'span'
+    });
+
+    equal(new View().el.tagName, 'SPAN');
+  });
+
   test("_ensureElement with DOM node el", 1, function() {
     var View = Backbone.View.extend({
       el: document.body
