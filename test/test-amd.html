@@ -21,7 +21,9 @@
 
     var root = this;
 
-    require(['backbone'], function(Backbone) {
+    require(['backbone', 'jquery'], function(Backbone, $) {
+      Backbone.$ = $;
+
       require([
         'environment',
         'noconflict',
