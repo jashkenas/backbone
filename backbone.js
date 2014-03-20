@@ -1145,6 +1145,11 @@
       this.$el.off(eventName + '.delegateEvents' + this.cid, selector, listener);
     },
 
+    // Produces a DOM element according to the `tagName` parameter.
+    _createElement: function(tagName) {
+      return document.createElement(tagName);
+    },
+
     // Ensure that the View has a DOM element to render into.
     // If `this.el` is a string, pass it through `$()`, take the first
     // matching element, and re-assign it to `el`. Otherwise, create
@@ -1154,7 +1159,7 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        this.setElement(document.createElement(_.result(this, 'tagName')));
+        this.setElement(this._createElement(_.result(this, 'tagName')));
         this._setAttributes(attrs);
       } else {
         this.setElement(_.result(this, 'el'));
