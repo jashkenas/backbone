@@ -1,6 +1,4 @@
 (function() {
-  var view;
-
   module("Backbone.View");
 
   test("constructor", 3, function() {
@@ -22,7 +20,6 @@
     strictEqual(result[0].innerHTML, 'test');
     ok(result.length === +result.length);
   });
-
 
   test("$el", function() {
     var view = new Backbone.View;
@@ -69,7 +66,6 @@
     equal(counter2, 3);
   });
 
-
   test("delegate", 2, function() {
     var view = new Backbone.View({el: '#testElement'});
     view.delegate('click', 'h1', function() {
@@ -80,7 +76,6 @@
     });
     click(view.$('h1')[0]);
   });
-
 
   test("delegateEvents allows functions for callbacks", 3, function() {
     var view = new Backbone.View({el: '<p></p>'});
@@ -107,7 +102,6 @@
 
     document.body.removeChild(view.el);
   });
-
 
   test("delegateEvents ignore undefined methods", 0, function() {
     var view = new Backbone.View({el: '<p></p>'});
@@ -144,7 +138,6 @@
     equal(counter1, 2);
     equal(counter2, 3);
   });
-
 
   test("undelegate", 0, function() {
     var view = new Backbone.View({el: '#testElement'});
@@ -217,7 +210,7 @@
     });
     strictEqual(new View().el, document.body);
 
-    View = View.extend({
+    View = Backbone.View.extend({
       el: "#testElement > h1"
     });
     var children = document.getElementById('testElement').childNodes;
