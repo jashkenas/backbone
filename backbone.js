@@ -1145,7 +1145,8 @@
       this.$el.off(eventName + '.delegateEvents' + this.cid, selector, listener);
     },
 
-    // Produces a DOM element according to the `tagName` parameter.
+    // Produces a DOM element to be assigned to your view. Exposed for
+    // subclasses using an alternative DOM manipulation API.
     _createElement: function(tagName) {
       return document.createElement(tagName);
     },
