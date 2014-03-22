@@ -176,7 +176,7 @@
     view.$el.trigger('click');
   });
 
-  test("tagName can be provided as a function", 1, function() {
+  test("tagName can be provided as a string", 1, function() {
     var View = Backbone.View.extend({
       tagName: 'span'
     });
