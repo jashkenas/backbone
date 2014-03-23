@@ -387,7 +387,7 @@
     equal(counter, 2);
   });
 
-  test("merge specified view options", 2, function () {
+  test("merge specified view options", 3, function () {
     var objectToAssign = {};
 
     var View = Backbone.View.extend({
@@ -395,10 +395,12 @@
     });
 
     var view = new View({
-      foo: objectToAssign
+      foo: objectToAssign,
+      bar: objectToAssign
     });
 
     strictEqual(view.foo, objectToAssign);
+    strictEqual(view.bar, undefined);
 
     // ensure Backbone.View works as expected
     var view2 = new Backbone.View({

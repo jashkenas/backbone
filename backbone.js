@@ -1030,7 +1030,7 @@
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
     options || (options = {});
-    _.extend(this, _.pick(options, _.extend([], defaultViewOptions, this.viewOptions)));
+    _.extend(this, _.pick(options, defaultViewOptions.concat(this.viewOptions || [])));
     this._ensureElement();
     this.initialize.apply(this, arguments);
   };
