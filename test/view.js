@@ -387,6 +387,30 @@
     equal(counter, 2);
   });
 
+  test("merge specified view options", 3, function () {
+    var objectToAssign = {};
+
+    var View = Backbone.View.extend({
+      viewOptions: ['foo']
+    });
+
+    var view = new View({
+      foo: objectToAssign,
+      bar: objectToAssign
+    });
+
+    strictEqual(view.foo, objectToAssign);
+    strictEqual(view.bar, undefined);
+
+    // ensure Backbone.View works as expected
+    var view2 = new Backbone.View({
+      foo: objectToAssign
+    });
+
+    equal(view2.foo, undefined);
+
+  });
+
   test("remove", 1, function() {
     var view = new Backbone.View;
     document.body.appendChild(view.el);
