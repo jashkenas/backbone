@@ -837,4 +837,21 @@
     Backbone.history.start({pushState: true});
   });
 
+  test('Router#execute receives callback, args, name.', 3, function() {
+    location.replace('http://example.com#foo/123/bar?x=y');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {'foo/:id/bar': 'foo'},
+      foo: function(){},
+      execute: function(callback, args, name) {
+        strictEqual(callback, this.foo);
+        deepEqual(args, ['123', 'x=y']);
+        strictEqual(name, 'foo');
+      }
+    });
+    var router = new Router;
+    Backbone.history.start();
+  });
+
 })();
