@@ -647,12 +647,6 @@
     // initialization logic.
     initialize: function(){},
 
-    // Method for checking whether an object should be considered a model for
-    // the purposes of adding to the collection.
-    isModel: function (model) {
-      return model instanceof Model
-    },
-
     // The JSON representation of a Collection is an array of the
     // models' attributes.
     toJSON: function(options) {
@@ -713,7 +707,7 @@
       // from being added.
       for (var i = 0, length = models.length; i < length; i++) {
         attrs = models[i] || {};
-        if (this.isModel(attrs)) {
+        if (this._isModel(attrs)) {
           id = model = attrs;
         } else if (targetProto.generateId) {
           id = targetProto.generateId(attrs);
@@ -955,6 +949,12 @@
       if (!model.validationError) return model;
       this.trigger('invalid', this, model.validationError, options);
       return false;
+    },
+
+    // Method for checking whether an object should be considered a model for
+    // the purposes of adding to the collection.
+    _isModel: function (model) {
+      return model instanceof Model;
     },
 
     // Internal method to create a model's ties to a collection.
