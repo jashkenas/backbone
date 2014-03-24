@@ -782,20 +782,20 @@
             if (!this.models.length) {
               this.models = orderedModels;  
             } else {
-              var newModels = [];
+              var newModels = new Array(orderedModels.length + this.models.length);
               var i = 0, j = 0;
 
               while (i < orderedModels.length && j < this.models.length) {
                 if (comparator( orderedModels[i], this.models[j] ) < 0) {
-                  newModels.push(orderedModels[i++]);
+                  newModels[i+j] = orderedModels[i++];
                 }
                 else{
-                  newModels.push(this.models[j++]);
+                  newModels[i+j] = this.models[j++];
                 }
               }
 
-              while (i < orderedModels.length) newModels.push(orderedModels[i++]);
-              while (j < this.models.length) newModels.push(this.models[j++]);
+              while (i < orderedModels.length) newModels[i+j] = orderedModels[i++];
+              while (j < this.models.length) newModels[i+j] = this.models[j++];
 
               this.models = newModels;
             }
