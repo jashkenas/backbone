@@ -736,12 +736,7 @@
           model = models[i] = this._prepareModel(attrs, options);
           if (!model) continue;
 
-          if (sortable && toAdd.length) {
-            for (var i = 0; i < toAdd.length && comparator( model, toAdd[i] ) == 1; i++);
-            toAdd.splice(i, 0, model);
-          } else {
-            toAdd.push(model);
-          }
+          toAdd.push(model);
           this._addReference(model, options);
         }
 
@@ -771,7 +766,7 @@
           }
         } else {
           var orderedModels = order || toAdd;
-          if (!this.models.length || !sortable || this._previousComparator !== this.comparator) {
+          if (!sortable || this._previousComparator !== this.comparator) {
             sort = sortable;
             this._previousComparator = false;
             if (order) this.models.length = 0;
@@ -782,7 +777,7 @@
             // Inserting at the right spot right away
             sort = false;
             for (var i = 0, j = 0, length = orderedModels.length; i < length; i++) {
-              while (j < this.models.length && comparator( orderedModels[i], this.models[j] ) == 1) j++;
+              for (j=0; j < this.models.length && comparator( orderedModels[i], this.models[j] ) == 1; j++);
               this.models.splice(j, 0, orderedModels[i]);
             } 
           }
