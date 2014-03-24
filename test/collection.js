@@ -1426,4 +1426,15 @@
     collection.create(model, {wait: true});
   });
 
+  test("#3017 - create with an error response triggers an error event", 1, function () {
+    var collection = new Backbone.Collection();
+    var model = new Backbone.Model();
+    collection.url = '/test';
+    collection.on('error', function () {
+      ok(true);
+    });
+    collection.sync = function (method, model, options) { options.error(); };
+    collection.create(model);
+  });
+
 })();
