@@ -771,7 +771,7 @@
           }
         } else {
           var orderedModels = order || toAdd;
-          if (!sortable || this._previousComparator !== this.comparator) {
+          if (!this.models.length || !sortable || this._previousComparator !== this.comparator) {
             sort = sortable;
             this._previousComparator = false;
             if (order) this.models.length = 0;
