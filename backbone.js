@@ -766,6 +766,7 @@
           }
         } else {
           var orderedModels = order || toAdd;
+          
           if (!sortable || this._previousComparator !== this.comparator) {
             sort = sortable;
             this._previousComparator = false;
@@ -776,10 +777,28 @@
           } else {
             // Inserting at the right spot right away
             sort = false;
-            for (var i = 0, j = 0, length = orderedModels.length; i < length; i++) {
-              for (j=0; j < this.models.length && comparator( orderedModels[i], this.models[j] ) == 1; j++);
-              this.models.splice(j, 0, orderedModels[i]);
-            } 
+            orderedModels.sort(comparator);
+
+            if (!this.models.length) {
+              this.models = orderedModels;  
+            } else {
+              var newModels = [];
+              var i = 0, j = 0;
+
+              while (i < orderedModels.length && j < this.models.length) {
+                if (comparator( orderedModels[i], this.models[j] ) < 0) {
+                  newModels.push(orderedModels[i++]);
+                }
+                else{
+                  newModels.push(this.models[j++]);
+                }
+              }
+
+              while (i < orderedModels.length) newModels.push(orderedModels[i++]);
+              while (j < this.models.length) newModels.push(this.models[j++]);
+
+              this.models = newModels;
+            }
           }
         }
       }
