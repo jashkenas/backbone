@@ -707,7 +707,7 @@
       // from being added.
       for (var i = 0, length = models.length; i < length; i++) {
         attrs = models[i] || {};
-        if (attrs instanceof Model) {
+        if (this._isModel(attrs)) {
           id = model = attrs;
         } else if (targetProto.generateId) {
           id = targetProto.generateId(attrs);
@@ -939,7 +939,7 @@
     // Prepare a hash of attributes (or other model) to be added to this
     // collection.
     _prepareModel: function(attrs, options) {
-      if (attrs instanceof Model) {
+      if (this._isModel(attrs)) {
         if (!attrs.collection) attrs.collection = this;
         return attrs;
       }
@@ -949,6 +949,12 @@
       if (!model.validationError) return model;
       this.trigger('invalid', this, model.validationError, options);
       return false;
+    },
+
+    // Method for checking whether an object should be considered a model for
+    // the purposes of adding to the collection.
+    _isModel: function (model) {
+      return model instanceof Model;
     },
 
     // Internal method to create a model's ties to a collection.
