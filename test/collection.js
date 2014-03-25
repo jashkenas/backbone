@@ -874,11 +874,12 @@
     this.ajaxSettings.success([model]);
   });
 
-  test("`sort` shouldn't always fire on `add`", 1, function() {
+  test("`sort` shouldn't always fire on `add`", 0, function() {
     var c = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}], {
       comparator: 'id'
     });
-    c.sort = function(){ ok(true); };
+    var originalSort = c.sort;
+    c.sort = function(){ ok(true); originalSort.call(c); };
     c.add([]);
     c.add({id: 1});
     c.add([{id: 2}, {id: 3}]);
@@ -1160,12 +1161,12 @@
     Backbone.ajax = ajax;
   });
 
-  test("`add` only `sort`s when necessary", 2, function () {
+  test("`add` only `sort`s when necessary", 1, function () {
     var collection = new (Backbone.Collection.extend({
       comparator: 'a'
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
-    collection.add({id: 4}); // do sort, new model
+    collection.add({id: 4}); // don't sort, new model on an sorted collection
     collection.add({id: 1, a: 1}, {merge: true}); // do sort, comparator change
     collection.add({id: 1, b: 1}, {merge: true}); // don't sort, no comparator change
     collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no comparator change
@@ -1173,19 +1174,44 @@
     collection.add(collection.models, {merge: true}); // don't sort
   });
 
-  test("`add` only `sort`s when necessary with comparator function", 3, function () {
+  test("`add` only `sort`s when necessary with comparator function", 2, function () {
     var collection = new (Backbone.Collection.extend({
       comparator: function(a, b) {
         return a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
       }
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function () { ok(true); });
-    collection.add({id: 4}); // do sort, new model
+    collection.add({id: 4}); // dont sort, new model on an sorted collection
     collection.add({id: 1, a: 1}, {merge: true}); // do sort, model change
     collection.add({id: 1, b: 1}, {merge: true}); // do sort, model change
     collection.add({id: 1, a: 1}, {merge: true}); // don't sort, no model change
     collection.add(collection.models); // don't sort, nothing new
     collection.add(collection.models, {merge: true}); // don't sort
+  });
+
+  test("`add` `sort`s only when collection not sorted, ", 4, function () {
+    var collection = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}], {
+      comparator: 'id'
+    });
+    collection.on('sort', function () { ok(true); });
+    collection.add([]);
+    collection.add({id: 2});
+    collection.add([{id: 3}, {id: 4}]);
+    collection.add({id: 5}, {at: 1}); // sets collection to an unsorted state
+    collection.add({id: 6}); // do sort and reset to the sorted state
+    collection.add({id: 7}); // already sorted
+
+    // sets collection to unsorted state
+    collection.comparator = function (model) {
+      return model.get("a");
+    }
+    collection.add({id: 8, a: 9}); // do sort and reset to the sorted state
+    collection.add([{id: 9, a: 8},{id:  10, a: 7}]); // already sorted
+    collection.add({id: 11, a: 6},{sort: false}); // avoiding sort when adding sets colletion unsorted state
+    collection.add({id: 12, a: 5}); // do sort and reset to the sorted state
+    collection.add({id: 13, a: 4}); // no sort is called
+    collection.add([{id: 1, a: 1},{id: 2, a: 2}], {merge: true}); // existing model(s) were changed, do sort
+    collection.add({id: 14, a: 3}); // no sort is called
   });
 
   test("Attach options to collection.", 2, function() {

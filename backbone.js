@@ -702,6 +702,7 @@
       var add = options.add, merge = options.merge, remove = options.remove;
       var order = !sortable && add && remove ? [] : false;
       var targetProto = this.model.prototype;
+      var comparator;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
@@ -731,6 +732,7 @@
         } else if (add) {
           model = models[i] = this._prepareModel(attrs, options);
           if (!model) continue;
+
           toAdd.push(model);
           this._addReference(model, options);
         }
@@ -752,17 +754,43 @@
 
       // See if sorting is needed, update `length` and splice in new models.
       if (toAdd.length || (order && order.length)) {
-        if (sortable) sort = true;
         this.length += toAdd.length;
         if (at != null) {
+          sort = false;
+          this._previousComparator = undefined;
           for (var i = 0, length = toAdd.length; i < length; i++) {
             this.models.splice(at + i, 0, toAdd[i]);
           }
         } else {
-          if (order) this.models.length = 0;
           var orderedModels = order || toAdd;
-          for (var i = 0, length = orderedModels.length; i < length; i++) {
-            this.models.push(orderedModels[i]);
+          
+          if (!this.models.length || !sortable || this._previousComparator !== this.comparator) {
+            sort = sortable;
+            this._previousComparator = undefined;
+            if (order) this.models.length = 0;
+            for (var i = 0, length = orderedModels.length; i < length; i++) {
+              this.models.push(orderedModels[i]);
+            }
+          } else {
+            var newModels = new Array(orderedModels.length + this.models.length);
+            var i = 0, j = 0;
+
+            comparator = this._prepareComparator(this.comparator);
+            orderedModels.sort(comparator);
+
+            while (i < orderedModels.length && j < this.models.length) {
+              if (comparator( orderedModels[i], this.models[j] ) < 0) {
+                newModels[i+j] = orderedModels[i++];
+              }
+              else{
+                newModels[i+j] = this.models[j++];
+              }
+            }
+
+            while (i < orderedModels.length) newModels[i+j] = orderedModels[i++];
+            while (j < this.models.length) newModels[i+j] = this.models[j++];
+
+            this.models = newModels;
           }
         }
       }
@@ -870,6 +898,9 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
+      // Check as sorted and retain the comparator used to do so.
+      this._previousComparator = this.comparator;
+
       if (!options.silent) this.trigger('sort', this, options);
       return this;
     },
@@ -934,6 +965,7 @@
       this.length = 0;
       this.models = [];
       this._byId  = {};
+      this._previousComparator = undefined;
     },
 
     // Prepare a hash of attributes (or other model) to be added to this
@@ -968,6 +1000,25 @@
     _removeReference: function(model, options) {
       if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
+    },
+
+    // Internal method to serve a compator for sorting 
+    _prepareComparator: function(comparator) {
+      var attr, extract;
+      
+      if (_.isFunction(comparator) && comparator.length !== 1) {
+        return _.bind(comparator, this);
+      }
+
+      if (_.isString(comparator)) {
+        extract = function(model) { return model.get(comparator); };
+      } else {
+        extract = _.bind(comparator, this);
+      }
+
+      return function (left, right) {
+        return extract(right) - extract(left);
+      }
     },
 
     // Internal method called every time a model in the set fires an event.
