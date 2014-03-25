@@ -760,7 +760,7 @@
         this.length += toAdd.length;
         if (at != null) {
           sort = false;
-          this._previousComparator = false;
+          this._previousComparator = undefined;
           for (var i = 0, length = toAdd.length; i < length; i++) {
             this.models.splice(at + i, 0, toAdd[i]);
           }
@@ -769,7 +769,7 @@
           
           if (!sortable || this._previousComparator !== this.comparator) {
             sort = sortable;
-            this._previousComparator = false;
+            this._previousComparator = undefined;
             if (order) this.models.length = 0;
             for (var i = 0, length = orderedModels.length; i < length; i++) {
               this.models.push(orderedModels[i]);
@@ -973,7 +973,7 @@
       this.length = 0;
       this.models = [];
       this._byId  = {};
-      this._previousComparator = false;
+      this._previousComparator = undefined;
     },
 
     // Prepare a hash of attributes (or other model) to be added to this
@@ -1019,9 +1019,7 @@
       }
 
       return function (left, right) {
-        if (extract(left) === extract(right)) return 0;
-
-        return extract(left) < extract(right) ? -1: 1;
+        return extract(right) - extract(left);
       }
     },
 
