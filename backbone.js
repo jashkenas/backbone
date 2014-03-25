@@ -704,9 +704,6 @@
       var targetProto = this.model.prototype;
       var comparator;
 
-      // when the collection should remain sorted, it assures that comparator will comply
-      if (sortable) comparator = this._prepareComparator(this.comparator);
-
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (var i = 0, length = models.length; i < length; i++) {
@@ -767,7 +764,7 @@
         } else {
           var orderedModels = order || toAdd;
           
-          if (!sortable || this._previousComparator !== this.comparator) {
+          if (!this.models.length || !sortable || this._previousComparator !== this.comparator) {
             sort = sortable;
             this._previousComparator = undefined;
             if (order) this.models.length = 0;
@@ -775,30 +772,25 @@
               this.models.push(orderedModels[i]);
             }
           } else {
-            // Inserting at the right spot right away
-            sort = false;
+            var newModels = new Array(orderedModels.length + this.models.length);
+            var i = 0, j = 0;
+
+            comparator = this._prepareComparator(this.comparator);
             orderedModels.sort(comparator);
 
-            if (!this.models.length) {
-              this.models = orderedModels;  
-            } else {
-              var newModels = new Array(orderedModels.length + this.models.length);
-              var i = 0, j = 0;
-
-              while (i < orderedModels.length && j < this.models.length) {
-                if (comparator( orderedModels[i], this.models[j] ) < 0) {
-                  newModels[i+j] = orderedModels[i++];
-                }
-                else{
-                  newModels[i+j] = this.models[j++];
-                }
+            while (i < orderedModels.length && j < this.models.length) {
+              if (comparator( orderedModels[i], this.models[j] ) < 0) {
+                newModels[i+j] = orderedModels[i++];
               }
-
-              while (i < orderedModels.length) newModels[i+j] = orderedModels[i++];
-              while (j < this.models.length) newModels[i+j] = this.models[j++];
-
-              this.models = newModels;
+              else{
+                newModels[i+j] = this.models[j++];
+              }
             }
+
+            while (i < orderedModels.length) newModels[i+j] = orderedModels[i++];
+            while (j < this.models.length) newModels[i+j] = this.models[j++];
+
+            this.models = newModels;
           }
         }
       }
