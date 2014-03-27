@@ -1470,7 +1470,7 @@
       this._hasHashChange   = 'onhashchange' in window;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
-      var fragment          = this.getFragment();
+      this.fragment         = this.getFragment();
 
       // Add a cross-platform `addEventListener` shim for older browsers.
       var addEventListener = window.addEventListener || function (eventName, listener) {
@@ -1491,7 +1491,7 @@
         var body = document.body;
         // Using `appendChild` will throw on IE < 9 if the document is not ready.
         this.iframe = body.insertBefore(iframe, body.firstChild).contentWindow;
-        this.navigate(fragment);
+        this.navigate(this.fragment);
       }
 
       // Depending on whether we're using pushState or hashes, and whether
@@ -1503,11 +1503,6 @@
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
-
-      // Determine if we need to change the base url, for a pushState link
-      // opened by a non-pushState browser.
-      this.fragment = fragment;
-      var loc = this.location;
 
       // Transition from hashChange to pushState or vice versa if both are
       // requested.
@@ -1523,7 +1518,7 @@
 
         // Or if we've started out with a hash-based route, but we're currently
         // in a browser where it could be `pushState`-based instead...
-        } else if (this._hasPushState && this.atRoot() && loc.hash) {
+        } else if (this._hasPushState && this.atRoot()) {
           this.fragment = this.getHash().replace(routeStripper, '');
           this.history.replaceState({}, document.title, this.root + this.fragment);
         }
