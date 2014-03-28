@@ -854,4 +854,17 @@
     Backbone.history.start();
   });
 
+  test("pushState to hashChange with only search params.", 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com?a=b');
+    location.replace = function(url) {
+      strictEqual(url, '/#?a=b');
+    };
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: null
+    });
+    Backbone.history.start({pushState: true});
+  });
+
 })();
