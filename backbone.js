@@ -1431,7 +1431,8 @@
 
     // Are we at the app root?
     atRoot: function() {
-      return this.location.pathname.replace(/[^\/]$/, '$&/') === this.root;
+      var path = this.location.pathname.replace(/[^\/]$/, '$&/');
+      return path === this.root && !this.location.search;
     },
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
