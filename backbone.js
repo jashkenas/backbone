@@ -468,6 +468,7 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, val, options) {
+      var oldAttrs = _.clone(this.attributes);
       var attrs, method, xhr, attributes = this.attributes;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
@@ -500,9 +501,25 @@
       var model = this;
       var success = options.success;
       options.success = function(resp) {
+	var serverAttrs = model.parse(resp, options);
+
+	// iterate over attributes and toss out server attributres
+	// that correspond to attributes that have changed since
+	// save() was called.
+
+	_.each(
+	  attributes,
+	  function(value,key) {
+	    if(oldAttrs[key] != attributes[key]) {
+	      if(serverAttrs)
+		delete serverAttrs[key];
+	    }
+	  }
+	);
+
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
-        var serverAttrs = model.parse(resp, options);
+	
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
           return false;
