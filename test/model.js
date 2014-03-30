@@ -785,6 +785,22 @@
     equal(model.get('x'), 3);
   });
 
+  test(" - `save` without `wait` will cause changes that happened after save, but before the result to disappear",1,function() 
+  {
+    var model = new Backbone.Model({x:1,y:2});
+    var the_success;
+    model.sync = function(method,model,options) {
+      the_success = options.success;
+    };
+
+    model.save();
+    model.set('y',3);
+
+    the_success({x:1,y:2});
+
+    equal(model.get('y'),3);
+  });
+
   test("save with wait validates attributes", function() {
     var model = new Backbone.Model();
     model.url = '/test';
