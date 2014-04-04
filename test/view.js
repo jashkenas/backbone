@@ -289,29 +289,25 @@
     document.body.removeChild(el);
   });
 
-  test("custom events", 2, function() {
-    var count = 0;
+  if (Backbone.$) {
+    test("custom events", 1, function() {
+      var View = Backbone.View.extend({
+        el: 'body',
+        events: function() {
+          return {"fake$event": "run"};
+        },
+        run: function() {
+          ok(true);
+        }
+      });
 
-    var View = Backbone.View.extend({
-      el: 'body',
-      events: function() {
-        return {"fake$event": "run"};
-      },
-      run: function() {
-        count++;
-      }
+      var view = new View;
+      Backbone.$('body').trigger('fake$event');
+
+      view.undelegate("fake$event");
+      Backbone.$('body').trigger('fake$event');
     });
-
-    var view = new View;
-    var event = new CustomEvent("fake$event");
-    trigger(document.body, event, 'fake$event');
-    trigger(document.body, event, 'fake$event');
-    equal(count, 2);
-
-    view.undelegate("fake$event");
-    trigger(document.body, event, 'fake$event');
-    equal(count, 2);
-  });
+  }
 
   test("#1048 - setElement uses provided object.", 2, function() {
     var el = document.body;
@@ -433,14 +429,6 @@
     return this.attachEvent('on' + eventName, listener);
   };
 
-  function trigger(element, event, eventName) {
-    if (element.dispatchEvent) {
-      element.dispatchEvent(event);
-    } else {
-      element.fireEvent(eventName, event);
-    }
-  }
-
   function click(element) {
     var event;
     if (document.createEvent) {
@@ -459,7 +447,11 @@
       event.bubbles = true;
       event.cancelable = true;
     }
-    trigger(element, event, 'onclick');
+    if (element.dispatchEvent) {
+      element.dispatchEvent(event);
+    } else {
+      element.fireEvent(eventName, event);
+    }
   }
 
 })();
