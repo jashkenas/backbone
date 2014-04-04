@@ -15,15 +15,14 @@
       root.Backbone = factory(root, exports, _, $);
     });
 
-  // Next for Node.js, CommonJS, or Ender
-  // (When not using Ender, the 4th arg will be undefined, same as if it was omitted)
+  // Next for Node.js, CommonJS
   } else if (typeof exports !== 'undefined') {
     var _ = require('underscore');
-    factory(root, exports, _, root.ender);
+    factory(root, exports, _, (root.jQuery || root.Zepto || root.ender || root.$));
 
   // Finally, as a browser global.
   } else {
-    root.Backbone = factory(root, {}, root._, (root.jQuery || root.Zepto || root.$));
+    root.Backbone = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$));
   }
 
 }(this, function(root, Backbone, _, $) {
