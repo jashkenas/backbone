@@ -1444,7 +1444,7 @@
       var path = decodeURI(this.location.pathname + this.location.search);
       var root = this.root.slice(0, -1);
       if (!path.indexOf(root)) path = path.slice(root.length);
-      return path;
+      return path.slice(1);
     },
 
     // Get the cross-browser normalized URL fragment from the path or hash.
@@ -1514,16 +1514,14 @@
         // If we've started off with a route from a `pushState`-enabled
         // browser, but we're currently in a browser that doesn't support it...
         if (!this._hasPushState && !this.atRoot()) {
-          this.fragment = this.getPath().replace(routeStripper, '');
-          this.location.replace(this.root + '#' + this.fragment);
+          this.location.replace(this.root + '#' + this.getPath());
           // Return immediately as browser will do redirect to new url
           return true;
 
         // Or if we've started out with a hash-based route, but we're currently
         // in a browser where it could be `pushState`-based instead...
         } else if (this._hasPushState && this.atRoot()) {
-          this.fragment = this.getHash().replace(routeStripper, '');
-          this.history.replaceState({}, document.title, this.root + this.fragment);
+          this.navigate(this.getHash(), {replace: true});
         }
 
       }
@@ -1568,7 +1566,7 @@
     checkUrl: function(e) {
       var current = this.getFragment();
       if (current === this.fragment && this.iframe) {
-        current = this.getFragment(this.getHash(this.iframe));
+        current = this.getHash(this.iframe);
       }
       if (current === this.fragment) return false;
       if (this.iframe) this.navigate(current);
@@ -1618,7 +1616,7 @@
       // fragment to store history.
       } else if (this._wantsHashChange) {
         this._updateHash(this.location, fragment, options.replace);
-        if (this.iframe && (fragment !== this.getFragment(this.getHash(this.iframe)))) {
+        if (this.iframe && (fragment !== this.getHash(this.iframe))) {
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
