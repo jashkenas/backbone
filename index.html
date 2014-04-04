@@ -362,7 +362,7 @@
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-toJSON">toJSON</a></li>
       <li>– <a href="#Collection-sync">sync</a></li>
-      <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (28)</b></a></li>
+      <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (32)</b></a></li>
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
       <li>– <a href="#Collection-reset">reset</a></li>
@@ -488,7 +488,6 @@
       <li>– <a href="#examples-slavery-footprint">Slavery Footprint</a></li>
       <li>– <a href="#examples-stripe">Stripe</a></li>
       <li>– <a href="#examples-airbnb">Airbnb</a></li>
-      <li>– <a href="#examples-diaspora">Diaspora</a></li>
       <li>– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
       <li>- <a href="#examples-artsy">Art.sy</a></li>
       <li>– <a href="#examples-pandora">Pandora</a></li>
@@ -804,8 +803,8 @@ object.off();
     <p id="Events-once">
       <b class="header">once</b><code>object.once(event, callback, [context])</code>
       <br />
-      Just like <a href="#Events-on">on</a>, but causes the bound callback to only
-      fire once before being removed. Handy for saying "the next time that X happens, do this".
+      Just like <a href="#Events-on">on</a>, but causes the bound callback to fire
+      only once before being removed. Handy for saying "the next time that X happens, do this".
     </p>
 
     <p id="Events-listenTo">
@@ -843,7 +842,7 @@ view.stopListening(model);
       <b class="header">listenToOnce</b><code>object.listenToOnce(other, event, callback)</code>
       <br />
       Just like <a href="#Events-listenTo">listenTo</a>, but causes the bound
-      callback to only fire once before being removed.
+      callback to fire only once before being removed.
     </p>
 
     <p id="Events-catalog">
@@ -1682,9 +1681,9 @@ alert(JSON.stringify(collection));
     </p>
 
     <p id="Collection-Underscore-Methods">
-      <b class="header">Underscore Methods (28)</b>
+      <b class="header">Underscore Methods (32)</b>
       <br />
-      Backbone proxies to <b>Underscore.js</b> to provide 28 iteration functions
+      Backbone proxies to <b>Underscore.js</b> to provide 32 iteration functions
       on <b>Backbone.Collection</b>. They aren't all documented here, but
       you can take a look at the Underscore documentation for the full details&hellip;
     </p>
@@ -1710,13 +1709,18 @@ alert(JSON.stringify(collection));
       <li><a href="http://underscorejs.org/#size">size</a></li>
       <li><a href="http://underscorejs.org/#first">first (head, take)</a></li>
       <li><a href="http://underscorejs.org/#initial">initial</a></li>
-      <li><a href="http://underscorejs.org/#rest">rest (tail)</a></li>
+      <li><a href="http://underscorejs.org/#rest">rest (tail, drop)</a></li>
       <li><a href="http://underscorejs.org/#last">last</a></li>
       <li><a href="http://underscorejs.org/#without">without</a></li>
       <li><a href="http://underscorejs.org/#indexOf">indexOf</a></li>
       <li><a href="http://underscorejs.org/#lastIndexOf">lastIndexOf</a></li>
       <li><a href="http://underscorejs.org/#isEmpty">isEmpty</a></li>
       <li><a href="http://underscorejs.org/#chain">chain</a></li>
+      <li><a href="http://underscorejs.org/#difference">difference</a></li>
+      <li><a href="http://underscorejs.org/#sample">sample</a></li>
+      <li><a href="http://underscorejs.org/#partition">partition</a></li>
+      <li><a href="http://underscorejs.org/#countBy">countBy</a></li>
+      <li><a href="http://underscorejs.org/#indexBy">indexBy</a></li>
     </ul>
 
 <pre>
@@ -2387,7 +2391,7 @@ var Router = Backbone.Router.extend({
 
     <p>
       Because hash-based history in Internet Explorer relies on an
-      <tt>&lt;iframe&gt;</tt>, be sure to only call <tt>start()</tt> after the DOM
+      <tt>&lt;iframe&gt;</tt>, be sure to call <tt>start()</tt> only after the DOM
       is ready.
     </p>
 
@@ -3955,7 +3959,7 @@ ActiveRecord::Base.include_root_in_json = false
       <a href="http://www.newschallenge.org/">Knight Foundation News Challenge</a>
       winners, <a href="http://mapbox.com/">MapBox</a>, created an open-source
       map design studio with Backbone.js:
-      <a href="http://mapbox.github.com/tilemill/">TileMill</a>.
+      <a href="https://www.mapbox.com/tilemill/">TileMill</a>.
       TileMill lets you manage map layers based on shapefiles and rasters, and
       edit their appearance directly in the browser with the
       <a href="https://github.com/mapbox/carto">Carto styling language</a>.
@@ -3964,7 +3968,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <div style="text-align: center;">
-      <a href="http://mapbox.github.com/tilemill/">
+      <a href="https://www.mapbox.com/tilemill/">
         <img width="544" height="375" data-original="docs/images/tilemill.jpg" alt="TileMill" class="example_retina" />
       </a>
     </div>
