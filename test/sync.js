@@ -1,7 +1,15 @@
 (function() {
 
+  var LibraryUtil = {
+    isBookMissing: function(id) {
+      return (id == 5);
+    }
+  };
   var Library = Backbone.Collection.extend({
-    url : function() { return '/library'; }
+    url : function(options) {
+      return '/library' +
+             (LibraryUtil.isBookMissing(options && options.book_id) ? '/missing/' : "");
+    }
   });
   var library;
 
@@ -37,6 +45,11 @@
     equal(this.ajaxSettings.url, '/library');
     equal(this.ajaxSettings.data.a, 'a');
     equal(this.ajaxSettings.data.one, 1);
+  });
+
+  test("proxying options object to the method 'url(...)'", 1, function() {
+    library.fetch({options: {book_id: 5}});
+    equal(this.ajaxSettings.url, '/library/missing/');
   });
 
   test("create", 6, function() {

@@ -1160,12 +1160,18 @@
     };
   });
 
+  /**
+   *  There is a dependency on Underscore.js
+   *  The method below has been modified to allow the tests to work.
+   *  Method has been modified just like in this pull request:
+   *    https://github.com/jashkenas/underscore/pull/1100
+   */
   // If the value of the named `property` is a function then invoke it with the
-  // `object` as context; otherwise, return it.
-  _.result = function(object, property) {
+  // `object` as context and the 'args' array as arguments; otherwise, return it.
+  _.result = function(object, property, args) {
     if (object == null) return void 0;
     var value = object[property];
-    return _.isFunction(value) ? value.call(object) : value;
+    return _.isFunction(value) ? value.apply(object, args) : value;
   };
 
   // Add your own custom functions to the Underscore object.
