@@ -1213,7 +1213,7 @@
 
     // Ensure that we have a URL.
     if (!options.url) {
-      params.url = _.result(model, 'url') || urlError();
+      params.url = _.result(model, 'url', options.options && [options.options]) || urlError();
     }
 
     // Ensure that we have the appropriate request data.
