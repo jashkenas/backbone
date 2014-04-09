@@ -504,6 +504,7 @@
         model.attributes = attributes;
         var serverAttrs = model.parse(resp, options);
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
+        if (options.validate) options.validate = false;
         if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
           return false;
         }
