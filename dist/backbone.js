@@ -187,11 +187,6 @@
 
     return Backbone;
 }));
-
-
-
-
-
 /*jslint browser: true, passfail: true, maxerr: 10, maxlen: 120 */
 /*global Backbone*/
 
@@ -242,7 +237,6 @@ Backbone.registerModule('Backbone.extend', ['_'],
             return child;
         };
     });
-
 /*jslint browser: true, passfail: true, maxerr: 10, maxlen: 120 */
 /*global Backbone*/
 
@@ -255,7 +249,6 @@ Backbone.registerModule('Backbone.urlError', [],
             throw new Error('A "url" property or function must be specified');
         };
     });
-
 /*jslint browser: true, passfail: true, maxerr: 10, maxlen: 120 */
 /*global Backbone*/
 
@@ -274,7 +267,6 @@ Backbone.registerModule('Backbone.wrapError', [],
             };
         };
     });
-
 /*jslint browser: true, passfail: true, maxerr: 10, maxlen: 120 */
 /*global Backbone*/
 
@@ -406,7 +398,6 @@ Backbone.registerModule('Backbone.sync', ['Backbone', '_', 'Backbone.urlError'],
         };
 
     });
-
 /*jslint browser: true, passfail: true, maxerr: 10, maxlen: 120 */
 /*global Backbone*/
 
@@ -1158,7 +1149,6 @@ Backbone.registerModule('Backbone.Model', ['Backbone', '_', 'Backbone.Events', '
 
         return Model;
     });
-
 /*jslint browser: true, passfail: true, maxerr: 10, maxlen: 120 */
 /*global Backbone*/
 
@@ -1707,7 +1697,6 @@ Backbone.registerModule('Backbone.Collection', ['Backbone', '_', 'Backbone.Event
 
         return Collection;
     });
-
 /*jslint browser: true, passfail: true, maxerr: 10, maxlen: 120 */
 /*global Backbone*/
 
@@ -1832,7 +1821,6 @@ Backbone.registerModule('Backbone.Router', ['Backbone', '_', 'Backbone.Events'],
 
         return Router;
     });
-
 /*jslint browser: true, passfail: true, maxerr: 10, maxlen: 120 */
 /*global Backbone, attachEvent, detachEvent*/
 
@@ -2134,7 +2122,6 @@ Backbone.registerModule('Backbone.History', ['Backbone', '_', 'Backbone.Events']
 
         return History;
     });
-
 /*jslint browser: true, passfail: true, maxerr: 10, maxlen: 120 */
 /*global Backbone*/
 
