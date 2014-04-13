@@ -144,7 +144,7 @@
             parts = parts.slice(1);
         }
 
-        pl = parts.length
+        pl = parts.length;
 
         for (i = 0; i < pl; i++) {
             if (parent[parts[i]] === undefined) {
