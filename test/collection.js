@@ -286,15 +286,10 @@
 
   test("reverse sort with a sortBy stylecomparator", function() {
     var col = new Backbone.Collection;
-    col.comparator = function(a) {
-      return a.get('name');
-    };
-    var tom = new Backbone.Model({name: 'Tom'});
-    var rob = new Backbone.Model({name: 'Rob'});
-    var tim = new Backbone.Model({name: 'Tim'});
-    col.add(tom);
-    col.add(rob);
-    col.add(tim);
+    col.comparator = 'name';
+    var tom = col.add(new Backbone.Model({name: 'Tom'}));
+    var rob = col.add(new Backbone.Model({name: 'Rob'}));
+    var tim = col.add(new Backbone.Model({name: 'Tim'}));
 
     equal(col.indexOf(rob), 0);
     equal(col.indexOf(tim), 1);
