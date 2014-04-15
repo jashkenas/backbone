@@ -870,8 +870,6 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      if (options.reverse) this.models = this.models.reverse();
-
       if (!options.silent) this.trigger('sort', this, options);
       return this;
     },

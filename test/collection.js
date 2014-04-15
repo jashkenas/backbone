@@ -284,23 +284,6 @@
     equal(col.indexOf(tom), 2);
   });
 
-  test("reverse sort with a sortBy stylecomparator", function() {
-    var col = new Backbone.Collection;
-    col.comparator = 'name';
-    var tom = col.add(new Backbone.Model({name: 'Tom'}));
-    var rob = col.add(new Backbone.Model({name: 'Rob'}));
-    var tim = col.add(new Backbone.Model({name: 'Tim'}));
-
-    equal(col.indexOf(rob), 0);
-    equal(col.indexOf(tim), 1);
-    equal(col.indexOf(tom), 2);
-
-    col.sort({reverse: true});
-    equal(col.indexOf(tom), 0);
-    equal(col.indexOf(tim), 1);
-    equal(col.indexOf(rob), 2);
-  });
-
   test("comparator that depends on `this`", 2, function() {
     var col = new Backbone.Collection;
     col.negative = function(num) {
