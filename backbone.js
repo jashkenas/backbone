@@ -325,6 +325,10 @@
       return this.get(attr) != null;
     },
 
+    hasAll: function(attrs) {
+      return _.map(attrs, this.has, this).indexOf(false) < 0;
+    },
+
     // Set a hash of model attributes on the object, firing `"change"`. This is
     // the core primitive operation of a model, updating the data and notifying
     // anyone who needs to know about the change in state. The heart of the beast.
