@@ -664,7 +664,8 @@
       for (var i = 0, length = models.length; i < length; i++) {
         var model = models[i] = this.get(models[i]);
         if (!model) continue;
-        delete this._byId[model.id];
+        var id = this.modelId(model.attributes);
+        if (id != null) delete this._byId[id];
         delete this._byId[model.cid];
         var index = this.indexOf(model);
         this.models.splice(index, 1);
@@ -698,19 +699,14 @@
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
       for (var i = 0, length = models.length; i < length; i++) {
-        attrs = models[i] || {};
-        if (this._isModel(attrs)) {
-          id = model = attrs;
-        } else {
-          id = attrs[this.model.prototype.idAttribute || 'id'];
-        }
+        attrs = models[i];
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        if (existing = this.get(id)) {
+        if (existing = this.get(attrs)) {
           if (remove) modelMap[existing.cid] = true;
-          if (merge) {
-            attrs = attrs === model ? model.attributes : attrs;
+          if (merge && attrs !== existing) {
+            attrs = this._isModel(attrs) ? attrs.attributes : attrs;
             if (options.parse) attrs = existing.parse(attrs, options);
             existing.set(attrs, options);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
@@ -728,8 +724,9 @@
         // Do not add multiple models with the same `id`.
         model = existing || model;
         if (!model) continue;
-        if (order && (model.isNew() || !modelMap[model.id])) order.push(model);
-        modelMap[model.id] = true;
+        id = this.modelId(model.attributes);
+        if (order && (model.isNew() || !modelMap[id])) order.push(model);
+        modelMap[id] = true;
       }
 
       // Remove nonexistent models if appropriate.
@@ -820,7 +817,8 @@
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
-      return this._byId[obj] || this._byId[obj.id] || this._byId[obj.cid];
+      var id = this.modelId(this._isModel(obj) ? obj.attributes : obj);
+      return this._byId[obj] || this._byId[id] || this._byId[obj.cid];
     },
 
     // Get the model at the given index.
@@ -918,6 +916,11 @@
       });
     },
 
+    // Define how to uniquely identify models in the collection.
+    modelId: function (attrs) {
+      return attrs[this.model.prototype.idAttribute || 'id'];
+    },
+
     // Private method to reset all internal state. Called when the collection
     // is first initialized or reset.
     _reset: function() {
@@ -950,7 +953,8 @@
     // Internal method to create a model's ties to a collection.
     _addReference: function(model, options) {
       this._byId[model.cid] = model;
-      if (model.id != null) this._byId[model.id] = model;
+      var id = this.modelId(model.attributes);
+      if (id != null) this._byId[id] = model;
       model.on('all', this._onModelEvent, this);
     },
 
@@ -967,9 +971,13 @@
     _onModelEvent: function(event, model, collection, options) {
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
-      if (model && event === 'change:' + model.idAttribute) {
-        delete this._byId[model.previous(model.idAttribute)];
-        if (model.id != null) this._byId[model.id] = model;
+      if (event === 'change') {
+        var prevId = this.modelId(model.previousAttributes());
+        var id = this.modelId(model.attributes);
+        if (prevId !== id) {
+          if (prevId != null) delete this._byId[prevId];
+          if (id != null) this._byId[id] = model;
+        }
       }
       this.trigger.apply(this, arguments);
     }

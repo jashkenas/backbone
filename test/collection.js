@@ -84,10 +84,9 @@
   });
 
   test("get with non-default ids", 5, function() {
-    var col = new Backbone.Collection();
     var MongoModel = Backbone.Model.extend({idAttribute: '_id'});
     var model = new MongoModel({_id: 100});
-    col.add(model);
+    var col = new Backbone.Collection([model], {model: MongoModel});
     equal(col.get(100), model);
     equal(col.get(model.cid), model);
     equal(col.get(model), model);
@@ -1363,6 +1362,68 @@
       equal(this.collection, collection);
     };
     collection.create(model, {wait: true});
+  });
+
+  test("modelId", function() {
+    var Stooge = Backbone.Model.extend();
+    var StoogeCollection = Backbone.Collection.extend({model: Stooge});
+
+    // Default to using `Collection::model::idAttribute`.
+    equal(StoogeCollection.prototype.modelId({id: 1}), 1);
+    Stooge.prototype.idAttribute = '_id';
+    equal(StoogeCollection.prototype.modelId({_id: 1}), 1);
+  });
+
+  test('Polymorphic models work with "simple" constructors', function () {
+    var A = Backbone.Model.extend();
+    var B = Backbone.Model.extend();
+    var C = Backbone.Collection.extend({
+      model: function (attrs) {
+        return attrs.type === 'a' ? new A(attrs) : new B(attrs);
+      }
+    });
+    var collection = new C([{id: 1, type: 'a'}, {id: 2, type: 'b'}]);
+    equal(collection.length, 2);
+    ok(collection.at(0) instanceof A);
+    equal(collection.at(0).id, 1);
+    ok(collection.at(1) instanceof B);
+    equal(collection.at(1).id, 2);
+  });
+
+  test('Polymorphic models work with "advanced" constructors', function () {
+    var A = Backbone.Model.extend({idAttribute: '_id'});
+    var B = Backbone.Model.extend({idAttribute: '_id'});
+    var C = Backbone.Collection.extend({
+      model: Backbone.Model.extend({
+        constructor: function (attrs) {
+          return attrs.type === 'a' ? new A(attrs) : new B(attrs);
+        },
+
+        idAttribute: '_id'
+      })
+    });
+    var collection = new C([{_id: 1, type: 'a'}, {_id: 2, type: 'b'}]);
+    equal(collection.length, 2);
+    ok(collection.at(0) instanceof A);
+    equal(collection.at(0), collection.get(1));
+    ok(collection.at(1) instanceof B);
+    equal(collection.at(1), collection.get(2));
+
+    C = Backbone.Collection.extend({
+      model: function (attrs) {
+        return attrs.type === 'a' ? new A(attrs) : new B(attrs);
+      },
+
+      modelId: function (attrs) {
+        return attrs.type + '-' + attrs.id;
+      }
+    });
+    collection = new C([{id: 1, type: 'a'}, {id: 1, type: 'b'}]);
+    equal(collection.length, 2);
+    ok(collection.at(0) instanceof A);
+    equal(collection.at(0), collection.get('a-1'));
+    ok(collection.at(1) instanceof B);
+    equal(collection.at(1), collection.get('b-1'));
   });
 
 })();
