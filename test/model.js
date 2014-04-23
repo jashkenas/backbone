@@ -1127,19 +1127,4 @@
     model.set({a: true});
   });
 
-  test("generateId", function() {
-    var Model = Backbone.Model.extend();
-
-    // Simple default uses `idAttribute`
-    equal(Model.prototype.generateId({id: 1}), 1);
-    Model.prototype.idAttribute = '_id';
-    equal(Model.prototype.generateId({_id: 1}), 1);
-
-    // Composite key example
-    Model.prototype.generateId = function (attrs) {
-      return attrs.a + '-' + attrs.b;
-    };
-    equal((new Model({a: 123, b: 456})).id, '123-456');
-  });
-
 })();
