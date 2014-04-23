@@ -1279,7 +1279,7 @@ setInterval(function() {
 <pre class="runnable">
 Backbone.sync = function(method, model) {
   alert(method + ": " + JSON.stringify(model));
-  model.id = 1;
+  model.set('id', 1);
 };
 
 var book = new Backbone.Model({
