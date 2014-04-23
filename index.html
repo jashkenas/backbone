@@ -489,7 +489,6 @@
       <li>– <a href="#examples-slavery-footprint">Slavery Footprint</a></li>
       <li>– <a href="#examples-stripe">Stripe</a></li>
       <li>– <a href="#examples-airbnb">Airbnb</a></li>
-      <li>– <a href="#examples-diaspora">Diaspora</a></li>
       <li>– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
       <li>- <a href="#examples-artsy">Art.sy</a></li>
       <li>– <a href="#examples-pandora">Pandora</a></li>
@@ -804,8 +803,8 @@ object.off();
     <p id="Events-once">
       <b class="header">once</b><code>object.once(event, callback, [context])</code>
       <br />
-      Just like <a href="#Events-on">on</a>, but causes the bound callback to only
-      fire once before being removed. Handy for saying "the next time that X happens, do this".
+      Just like <a href="#Events-on">on</a>, but causes the bound callback to fire
+      only once before being removed. Handy for saying "the next time that X happens, do this".
     </p>
 
     <p id="Events-listenTo">
@@ -843,7 +842,7 @@ view.stopListening(model);
       <b class="header">listenToOnce</b><code>object.listenToOnce(other, event, callback)</code>
       <br />
       Just like <a href="#Events-listenTo">listenTo</a>, but causes the bound
-      callback to only fire once before being removed.
+      callback to fire only once before being removed.
     </p>
 
     <p id="Events-catalog">
@@ -1280,7 +1279,7 @@ setInterval(function() {
 <pre class="runnable">
 Backbone.sync = function(method, model) {
   alert(method + ": " + JSON.stringify(model));
-  model.id = 1;
+  model.set('id', 1);
 };
 
 var book = new Backbone.Model({
@@ -2392,7 +2391,7 @@ var Router = Backbone.Router.extend({
 
     <p>
       Because hash-based history in Internet Explorer relies on an
-      <tt>&lt;iframe&gt;</tt>, be sure to only call <tt>start()</tt> after the DOM
+      <tt>&lt;iframe&gt;</tt>, be sure to call <tt>start()</tt> only after the DOM
       is ready.
     </p>
 
@@ -3968,7 +3967,7 @@ ActiveRecord::Base.include_root_in_json = false
       <a href="http://www.newschallenge.org/">Knight Foundation News Challenge</a>
       winners, <a href="http://mapbox.com/">MapBox</a>, created an open-source
       map design studio with Backbone.js:
-      <a href="http://mapbox.github.com/tilemill/">TileMill</a>.
+      <a href="https://www.mapbox.com/tilemill/">TileMill</a>.
       TileMill lets you manage map layers based on shapefiles and rasters, and
       edit their appearance directly in the browser with the
       <a href="https://github.com/mapbox/carto">Carto styling language</a>.
@@ -3977,7 +3976,7 @@ ActiveRecord::Base.include_root_in_json = false
     </p>
 
     <div style="text-align: center;">
-      <a href="http://mapbox.github.com/tilemill/">
+      <a href="https://www.mapbox.com/tilemill/">
         <img width="544" height="375" data-original="docs/images/tilemill.jpg" alt="TileMill" class="example_retina" />
       </a>
     </div>
