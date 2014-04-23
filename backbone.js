@@ -1610,6 +1610,9 @@
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
+        //you can't trust Backbone.history.history when running in the Android browser.
+        this.history=window.history;
+        
         this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
 
       // If hash changes haven't been explicitly disabled, update the hash
