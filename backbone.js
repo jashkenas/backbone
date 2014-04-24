@@ -586,6 +586,58 @@
       if (!error) return true;
       this.trigger('invalid', this, error, _.extend(options, {validationError: error}));
       return false;
+    },
+
+    // Listens for changes on the model such that:
+    //
+    //  * Multiple sequential model updates cause the callback
+    //    to execute only once
+    //  * The callback is only executed if all dependency property
+    //    values are defined
+    //
+    // `model.when(dependencies, callback [, thisArg])`
+    //
+    //  * `dependencies` specifies the names of model properties that are
+    //    dependencies of the callback function. `dependencies` can be
+    //    * a string (in the case of a single dependency) or
+    //    * an array of strings (in the case of many dependencies).
+    //  * `callback(values...)` the callback function that is invoked after dependency
+    //    properties change. The values of dependency properties are passed
+    //    as arguments to the callback, in the same order specified by `dependencies`.
+    //  * `thisArg` value to use as `this` when executing `callback`.
+    when: function (dependencies, fn, thisArg){
+
+      // Support passing a single string as `dependencies`
+      if(!(dependencies instanceof Array)) {
+        dependencies = [dependencies];
+      }
+
+      // `callFn()` will invoke `fn` with values of dependency properties
+      // on the next tick of the JavaScript event loop.
+      var get = _.bind(this.get, this),
+          callFn = _.debounce(function(){
+
+            // Extract the values for each dependency property.
+            var args = dependencies.map(get),
+                allAreDefined = !args.some(function (d) {
+                  return typeof d === 'undefined' || d === null;
+                });
+
+            // Only call the function if all values are defined.
+            if(allAreDefined) {
+
+              // Call `fn` with the dependency property values.
+              fn.apply(thisArg, args);
+            }
+          }, 0);
+
+      // Invoke `fn` once for initialization.
+      callFn();
+
+      // Invoke `fn` when dependency properties change.
+      dependencies.forEach(function(property){
+        this.on('change:' + property, callFn);
+      }, this);
     }
 
   });
