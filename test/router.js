@@ -189,6 +189,29 @@
     equal(lastArgs[0], 'news');
   });
 
+  test("routes (simple, trailing slash is significant)", 4, function() {
+    location.replace('http://example.com#search/news/');
+    Backbone.history.checkUrl();
+    equal(typeof router.query, 'function');
+    equal(router.page, void 0);
+    equal(lastRoute, 'anything');
+    equal(lastArgs[0], 'search/news/');
+  });
+
+  test("routes (simple, trailing slash is insignificant)", 4, function() {
+    location.replace('http://example.com#search/news/');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var route = new Router({ trailingSlashIsSignificant : false });
+    Backbone.history.on('route', onRoute);
+    Backbone.history.start();
+    Backbone.history.checkUrl();
+    equal(route.query, 'news');
+    equal(route.page, void 0);
+    equal(lastRoute, 'search');
+    equal(lastArgs[0], 'news');
+  });
+
   test("routes (simple, but unicode)", 4, function() {
     location.replace('http://example.com#search/тест');
     Backbone.history.checkUrl();
