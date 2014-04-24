@@ -1285,6 +1285,9 @@
   var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
+    if ('trailingSlashIsSignificant' in options) {
+        routeTrailingSlashPattern = options.trailingSlashIsSignificant ? '' : '[/]?';
+    }
     this._bindRoutes();
     this.initialize.apply(this, arguments);
   };
@@ -1295,6 +1298,7 @@
   var namedParam    = /(\(\?)?:\w+/g;
   var splatParam    = /\*\w+/g;
   var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
+  var routeTrailingSlashPattern = '';
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
@@ -1361,7 +1365,8 @@
                      return optional ? match : '([^/?]+)';
                    })
                    .replace(splatParam, '([^?]*?)');
-      return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
+
+      return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?' + routeTrailingSlashPattern + '$');
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
