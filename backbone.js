@@ -1169,14 +1169,26 @@
       this.$el.attr(attributes);
     },
 
-    // Set or change the model
+    // Set or change the view's model
     // remove listener on old model
     // set listeners on the new one
     setModel: function(model) {
-      if(!model || model === this.model) return this;
+      if(!model || model === this.model || !(model instanceof Model)) return this;
       if(this.model) this._unsetListeners(this.model, this.modelEvents);
       this.model = model;
       if(this.modelEvents) this._setListeners(this.model, this.modelEvents);
+      return this;
+    },
+
+    // Set or change the view's collection
+    // remove listener on the old collection
+    // set listeners on the new one
+    setCollection: function(collection) {
+      if(!collection || collection === this.collection || !(collection instanceof Collection)) return this;
+      if(this.collection) this._unsetListeners(this.collection, this.collectionEvents);
+      this.collection = collection;
+      if(this.collectionEvents) this._setListeners(this.collection, this.collectionEvents);
+      return this;
     },
 
     // remove listeners from an Event object based on hash configuration

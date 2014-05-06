@@ -433,4 +433,37 @@
 
   });
 
+  test("setCollection", 3, function() {
+
+    var ChildView = Backbone.View.extend({
+      collectionEvents: {
+        'add': 'render'
+      },
+      render: function() {
+        this.$el.text(this.collection.pluck('id').join());
+      }
+    });
+    function generateCollectionData(numberItem) {
+      return _.map(_.range(1,numberItem+1), function(n) {
+        return {id:n};
+      });
+    }
+
+    var c1 = new Backbone.Collection(generateCollectionData(5));
+    var c2 = new Backbone.Collection(generateCollectionData(10));
+
+    var view = new ChildView({
+      collection: c1
+    });
+
+    view.render();
+    equal(view.$el.text(), '1,2,3,4,5');
+    view.setCollection(c2);
+    view.render();
+    equal(view.$el.text(), '1,2,3,4,5,6,7,8,9,10');
+    c2.add({id:11});
+    equal(view.$el.text(), '1,2,3,4,5,6,7,8,9,10,11');
+
+  });
+
 })();
