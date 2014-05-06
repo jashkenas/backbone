@@ -403,7 +403,7 @@
   });
 
 
-  test("setModel", 3, function() {
+  test("setModel", 4, function() {
 
     var ChildView = Backbone.View.extend({
       modelEvents: {
@@ -425,6 +425,8 @@
 
     view.render();
     equal(view.$el.text(), 'bar');
+    m1.set('foo', 'babar');
+    equal(view.$el.text(), 'babar');
     view.setModel(m2);
     view.render();
     equal(view.$el.text(), 'baz');
@@ -433,7 +435,7 @@
 
   });
 
-  test("setCollection", 3, function() {
+  test("setCollection", 4, function() {
 
     var ChildView = Backbone.View.extend({
       collectionEvents: {
@@ -458,6 +460,8 @@
 
     view.render();
     equal(view.$el.text(), '1,2,3,4,5');
+    c1.add({id:6});
+    equal(view.$el.text(), '1,2,3,4,5,6');
     view.setCollection(c2);
     view.render();
     equal(view.$el.text(), '1,2,3,4,5,6,7,8,9,10');
