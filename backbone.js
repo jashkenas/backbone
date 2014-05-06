@@ -1167,6 +1167,30 @@
     // subclasses using an alternative DOM manipulation API.
     _setAttributes: function(attributes) {
       this.$el.attr(attributes);
+    },
+
+    // Set or change the model
+    // remove listener on old model
+    // set listeners on the new one
+    setModel: function(model) {
+      if(!model || model === this.model) return this;
+      if(this.model) this._unsetListeners(this.model, this.modelEvents);
+      this.model = model;
+      if(this.modelEvents) this._setListeners(this.model, this.modelEvents);
+    },
+
+    // remove listeners from an Event object based on hash configuration
+    _unsetListeners: function(objectToUnlisten, events) {
+      _.each(events, function(methodeName, eventName) {
+        this.stopListening(objectToUnlisten, eventName, this[methodeName]);
+      }, this);
+    },
+
+    // add listeners to an Event object based on hash configuration
+    _setListeners: function(objectToListen, events) {
+      _.each(events, function(methodeName, eventName) {
+        this.listenTo(objectToListen, eventName, this[methodeName]);
+      }, this);
     }
 
   });

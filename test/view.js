@@ -402,4 +402,35 @@
     notEqual(view.el.parentNode, document.body);
   });
 
+
+  test("setModel", 3, function() {
+
+    var ChildView = Backbone.View.extend({
+      modelEvents: {
+        'change': 'render'
+      },
+      render: function() {
+        this.$el.text(this.model.get('foo'));
+      }
+    });
+
+    var m1 = new Backbone.Model();
+    var m2 = new Backbone.Model();
+    m1.set('foo', 'bar');
+    m2.set('foo', 'baz');
+
+    var view = new ChildView({
+      model: m1
+    });
+
+    view.render();
+    equal(view.$el.text(), 'bar');
+    view.setModel(m2);
+    view.render();
+    equal(view.$el.text(), 'baz');
+    m2.set('foo', 'quux');
+    equal(view.$el.text(), 'quux');
+
+  });
+
 })();
