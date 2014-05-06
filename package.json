@@ -4,7 +4,7 @@
   "url"           : "http://backbonejs.org",
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
   "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
-  "dependencies"  : {
+  "peerDependencies"  : {
     "underscore"  : ">=1.5.0"
   },
   "devDependencies": {
