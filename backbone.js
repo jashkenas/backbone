@@ -1028,6 +1028,8 @@
     options || (options = {});
     _.extend(this, _.pick(options, viewOptions));
     this._ensureElement();
+    this.setModel(options.model);
+    this.setCollection(options.collection);
     this.initialize.apply(this, arguments);
   };
 
@@ -1035,7 +1037,7 @@
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
   // List of view options to be merged as properties.
-  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
+  var viewOptions = ['el', 'id', 'attributes', 'className', 'tagName', 'events', 'modelEvents', 'collectionEvents'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(View.prototype, Events, {
@@ -1167,6 +1169,42 @@
     // subclasses using an alternative DOM manipulation API.
     _setAttributes: function(attributes) {
       this.$el.attr(attributes);
+    },
+
+    // Set or change the view's model
+    // remove listener on old model
+    // set listeners on the new one
+    setModel: function(model) {
+      if(!model || model === this.model || !(model instanceof Model)) return this;
+      if(this.model) this._unsetListeners(this.model, this.modelEvents);
+      this.model = model;
+      if(this.modelEvents) this._setListeners(this.model, this.modelEvents);
+      return this;
+    },
+
+    // Set or change the view's collection
+    // remove listener on the old collection
+    // set listeners on the new one
+    setCollection: function(collection) {
+      if(!collection || collection === this.collection || !(collection instanceof Collection)) return this;
+      if(this.collection) this._unsetListeners(this.collection, this.collectionEvents);
+      this.collection = collection;
+      if(this.collectionEvents) this._setListeners(this.collection, this.collectionEvents);
+      return this;
+    },
+
+    // remove listeners from an Event object based on hash configuration
+    _unsetListeners: function(objectToUnlisten, events) {
+      _.each(events, function(methodeName, eventName) {
+        this.stopListening(objectToUnlisten, eventName, this[methodeName]);
+      }, this);
+    },
+
+    // add listeners to an Event object based on hash configuration
+    _setListeners: function(objectToListen, events) {
+      _.each(events, function(methodeName, eventName) {
+        this.listenTo(objectToListen, eventName, this[methodeName]);
+      }, this);
     }
 
   });

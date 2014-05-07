@@ -402,4 +402,72 @@
     notEqual(view.el.parentNode, document.body);
   });
 
+
+  test("setModel", 4, function() {
+
+    var ChildView = Backbone.View.extend({
+      modelEvents: {
+        'change': 'render'
+      },
+      render: function() {
+        this.$el.text(this.model.get('foo'));
+      }
+    });
+
+    var m1 = new Backbone.Model();
+    var m2 = new Backbone.Model();
+    m1.set('foo', 'bar');
+    m2.set('foo', 'baz');
+
+    var view = new ChildView({
+      model: m1
+    });
+
+    view.render();
+    equal(view.$el.text(), 'bar');
+    m1.set('foo', 'babar');
+    equal(view.$el.text(), 'babar');
+    view.setModel(m2);
+    view.render();
+    equal(view.$el.text(), 'baz');
+    m2.set('foo', 'quux');
+    equal(view.$el.text(), 'quux');
+
+  });
+
+  test("setCollection", 4, function() {
+
+    var ChildView = Backbone.View.extend({
+      collectionEvents: {
+        'add': 'render'
+      },
+      render: function() {
+        this.$el.text(this.collection.pluck('id').join());
+      }
+    });
+    function generateCollectionData(numberItem) {
+      return _.map(_.range(1,numberItem+1), function(n) {
+        return {id:n};
+      });
+    }
+
+    var c1 = new Backbone.Collection(generateCollectionData(5));
+    var c2 = new Backbone.Collection(generateCollectionData(10));
+
+    var view = new ChildView({
+      collection: c1
+    });
+
+    view.render();
+    equal(view.$el.text(), '1,2,3,4,5');
+    c1.add({id:6});
+    equal(view.$el.text(), '1,2,3,4,5,6');
+    view.setCollection(c2);
+    view.render();
+    equal(view.$el.text(), '1,2,3,4,5,6,7,8,9,10');
+    c2.add({id:11});
+    equal(view.$el.text(), '1,2,3,4,5,6,7,8,9,10,11');
+
+  });
+
 })();
