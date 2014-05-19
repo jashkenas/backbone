@@ -110,6 +110,20 @@
     equal(model.url(), '/nested/1/collection/2');
   });
 
+  test("url when using shallowApi property to determine url at runtime", 2, function() {
+    var Model = Backbone.Model.extend({
+      shallowApi: true,
+      urlRoot: '/collection'
+    });
+
+    var model = new Model();
+    model.collection = new klass();
+    model.collection.url = '/nested/2/collection';
+    equal(model.url(), '/nested/2/collection');
+    model.set({id: 7});
+    equal(model.url(), '/collection/7');
+  });
+
   test("underscore methods", 5, function() {
     var model = new Backbone.Model({ 'foo': 'a', 'bar': 'b', 'baz': 'c' });
     var model2 = model.clone();
