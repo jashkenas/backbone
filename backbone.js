@@ -548,11 +548,27 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url: function() {
+      if (this.shallowApi) return this.shallowUrl();
       var base =
         _.result(this, 'urlRoot') ||
         _.result(this.collection, 'url') ||
         urlError();
       if (this.isNew()) return base;
+      return base.replace(/([^\/])$/, '$1/') + encodeURIComponent(this.id);
+    },
+
+    // Shallow URL given the models location on the server is nested. If
+    // endpoints are nested shallow, set `shallowApi: true`. To have the
+    // url calculated by collection for CREATE and INDEX actions and by
+    // the model for member actions.
+    shallowUrl: function () {
+      if (this.isNew()) {
+        return _.result(this.collection, 'url');
+      }
+      var base =
+        _.result(this, 'urlRoot') ||
+        _.result(this.collection, 'url') ||
+        urlError();
       return base.replace(/([^\/])$/, '$1/') + encodeURIComponent(this.id);
     },
 
