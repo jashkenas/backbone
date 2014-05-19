@@ -5,7 +5,8 @@
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
   "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
   "dependencies"  : {
-    "underscore"  : ">=1.5.0"
+    "underscore"  : ">=1.5.0",
+    "jquery"      : ">=1.9"
   },
   "devDependencies": {
     "phantomjs": "1.9.7-1",
