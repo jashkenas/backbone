@@ -25,12 +25,12 @@
       return a.id > b.id ? -1 : 1;
     };
     col.sort();
-    equal(counter, 1);
+    equal(counter, 0);
     equal(col.first(), a, "a should be first");
     equal(col.last(), d, "d should be last");
     col.comparator = function(model) { return model.id; };
     col.sort();
-    equal(counter, 2);
+    equal(counter, 1);
     equal(col.first(), d, "d should be first");
     equal(col.last(), a, "a should be last");
     equal(col.length, 4);
