@@ -120,6 +120,11 @@
     deepEqual(model.omit('foo', 'bar'), {'baz': 'c'});
   });
 
+  test("chain", function() {
+    var model = new Backbone.Model({ a: 0, b: 1, c: 2 });
+    deepEqual(model.chain().pick("a", "b", "c").values().compact().value(), [1, 2]);
+  });
+
   test("clone", 10, function() {
     var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
     var b = a.clone();
