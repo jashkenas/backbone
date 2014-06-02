@@ -543,6 +543,27 @@
     equal(coll.one, 1);
   });
 
+  test("opt-out of reset", function() {
+    var NormalCollection = Backbone.Collection.extend({
+      initialize: function(items) {
+        this.add(_.take(items, 1)); //this will be removed
+      }
+    });
+
+    var OptOutCollection = Backbone.Collection.extend({
+      initialize: function(items) {
+        this.add(_.take(items, 1));
+        return false;
+      }
+    });
+
+    var ncol = new NormalCollection([{a: 1}, {b: 2}]);
+    var ocol = new OptOutCollection([{a: 1}, {b: 2}]);
+
+    equal(ncol.length, 2, "resets anything done in initialize by default");
+    equal(ocol.length, 1, "returning false from initialize does not reset the collection");
+  });
+
   test("toJSON", 1, function() {
     equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });
