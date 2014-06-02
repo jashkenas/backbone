@@ -265,14 +265,16 @@
   var Model = Backbone.Model = function(attributes, options) {
     var attrs = attributes || {};
     options || (options = {});
-    this.cid = _.uniqueId('c');
-    this.attributes = {};
-    if (options.collection) this.collection = options.collection;
-    if (options.parse) attrs = this.parse(attrs, options) || {};
-    attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
-    this.set(attrs, options);
-    this.changed = {};
-    this.initialize.apply(this, arguments);
+    if(!options.empty){
+      this.cid = _.uniqueId('c');
+      this.attributes = {};
+      if (options.collection) this.collection = options.collection;
+      if (options.parse) attrs = this.parse(attrs, options) || {};
+      attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
+      this.set(attrs, options);
+      this.changed = {};
+      this.initialize.apply(this, arguments);
+    }
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -702,7 +704,15 @@
         if (this._isModel(attrs)) {
           id = model = attrs;
         } else {
-          var idAttr = ((typeof targetModel === 'function')? targetModel().idAttribute : targetModel.prototype.idAttribute) || 'id';
+          var idAttr;
+          if(typeof this.model === 'function'){
+            if(this.model.prototype && !this.model.prototype.idAttribute){
+              idAttr = this.model(attrs, {empty:true}).idAttribute;
+            } else {
+              idAttr = this.model.prototype.idAttribute;
+            }
+          }
+          idAttr = idAttr || 'id';
           id = attrs[idAttr];
         }
 
