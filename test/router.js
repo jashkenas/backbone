@@ -882,4 +882,15 @@
     strictEqual(Backbone.history.fragment, 'shop/search?keyword=short dress');
   });
 
+  test('#3175 - Urls in the params', 1, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com#login?a=value&backUrl=https%3A%2F%2Fwww.msn.com%2Fidp%2Fidpdemo%3Fspid%3Dspdemo%26target%3Db');
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var router = new Backbone.Router;
+    router.route('login', function(params) {
+      strictEqual(params, 'a=value&backUrl=https%3A%2F%2Fwww.msn.com%2Fidp%2Fidpdemo%3Fspid%3Dspdemo%26target%3Db');
+    });
+    Backbone.history.start();
+  });
+
 })();
