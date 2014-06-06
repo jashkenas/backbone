@@ -207,7 +207,9 @@ the <code>$</code> variable.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  Backbone.$ = $;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Backbone.$ = $;
+
+  Backbone.isEqual = _.isEqual;</pre></div></div>
             
         </li>
         
@@ -964,8 +966,8 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">for</span> (attr <span class="hljs-keyword">in</span> attrs) {
         val = attrs[attr];
-        <span class="hljs-keyword">if</span> (!_.isEqual(current[attr], val)) changes.push(attr);
-        <span class="hljs-keyword">if</span> (!_.isEqual(prev[attr], val)) {
+        <span class="hljs-keyword">if</span> (!Backbone.isEqual(current[attr], val)) changes.push(attr);
+        <span class="hljs-keyword">if</span> (!Backbone.isEqual(prev[attr], val)) {
           <span class="hljs-keyword">this</span>.changed[attr] = val;
         } <span class="hljs-keyword">else</span> {
           <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.changed[attr];
@@ -1099,7 +1101,7 @@ determining if there <em>would be</em> a change.</p>
       <span class="hljs-keyword">var</span> val, changed = <span class="hljs-literal">false</span>;
       <span class="hljs-keyword">var</span> old = <span class="hljs-keyword">this</span>._changing ? <span class="hljs-keyword">this</span>._previousAttributes : <span class="hljs-keyword">this</span>.attributes;
       <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attr <span class="hljs-keyword">in</span> diff) {
-        <span class="hljs-keyword">if</span> (_.isEqual(old[attr], (val = diff[attr]))) <span class="hljs-keyword">continue</span>;
+        <span class="hljs-keyword">if</span> (Backbone.isEqual(old[attr], (val = diff[attr]))) <span class="hljs-keyword">continue</span>;
         (changed || (changed = {}))[attr] = val;
       }
       <span class="hljs-keyword">return</span> changed;
