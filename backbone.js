@@ -89,9 +89,10 @@
     },
 
     // Bind an event to only be triggered a single time. After the first time
-    // the callback is invoked, it will be removed. Importantly, if name references
-    // multiple events using the space separated syntax, the event will fire once
-    // per event, not once for all the events.
+    // the callback is invoked, it will be removed. When multiple events are
+    // passed in using the space separated syntax, the event will fire once for every
+    // event you passed in, not once for a combination of all events
+
     once: function(name, callback, context) {
       if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
       var self = this;
