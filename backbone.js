@@ -1579,7 +1579,7 @@
       // Strip the hash and decode for matching.
       fragment = decodeURI(fragment.replace(pathStripper, ''));
 
-      if (this.fragment === fragment) return;
+      if (this.fragment === fragment && !options.trigger) return;
       this.fragment = fragment;
 
       // Don't include a trailing slash on the root.
