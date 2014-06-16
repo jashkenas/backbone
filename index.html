@@ -4066,6 +4066,12 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Better matching for Unicode in routes, in old browsers.
       </li>
+      <li>
+        Backbone Routers now handle query params in route fragments, passing
+        them into the handler as the last argument.  Routes specified as
+        strings should no longer include the query string
+        (<tt>'foo?:query'</tt> should be <tt>'foo'</tt>).
+      </li>
     </ul>
 
     <b class="header">1.1.0</b> &mdash; <small><i>Oct. 10, 2013</i></small> &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.0.0...1.1.0">Diff</a> &mdash; <a href="http://htmlpreview.github.com/?https://raw.github.com/jashkenas/backbone/1.1.0/index.html">Docs</a><br />
