@@ -1032,10 +1032,12 @@
   };
 
   // Cached regex to split keys for `delegate`.
-  var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+  var delegateEventSplitter = /^(@model)?\s?(\S+)\s*(.*)?$/;
 
   // List of view options to be merged as properties.
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
+
+  var delegateModelEvents = [];
 
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(View.prototype, Events, {
@@ -1115,7 +1117,7 @@
         if (!_.isFunction(method)) method = this[events[key]];
         if (!method) continue;
         var match = key.match(delegateEventSplitter);
-        this.delegate(match[1], match[2], _.bind(method, this));
+        this.delegate(match[2], match[3], _.bind(method, this), match[1]);
       }
       return this;
     },
@@ -1123,8 +1125,17 @@
     // Add a single event listener to the view's element (or a child element
     // using `selector`). This only works for delegate-able events: not `focus`,
     // `blur`, and not `change`, `submit`, and `reset` in Internet Explorer.
-    delegate: function(eventName, selector, listener) {
-      this.$el.on(eventName + '.delegateEvents' + this.cid, selector, listener);
+    delegate: function(eventName, selector, listener, model) {
+      if (model && this.model) {
+        this.listenTo(this.model, eventName, listener);
+        delegateModelEvents.push({
+          model: this.model,
+          event: eventName,
+          callback: listener
+        });
+      } else {
+        this.$el.on(eventName + '.delegateEvents' + this.cid, selector, listener);
+      }
     },
 
     // Clears all callbacks previously bound to the view by `delegateEvents`.
@@ -1132,6 +1143,11 @@
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
       if (this.$el) this.$el.off('.delegateEvents' + this.cid);
+
+      _.each(delegateModelEvents, _.bind(function(idx, delegate) {
+        this.stopListening(delegate.model, delegate.event, delegate.callback);
+      }, this));
+
       return this;
     },
 

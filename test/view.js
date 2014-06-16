@@ -72,6 +72,31 @@
     equal(counter2, 3);
   });
 
+  test("delegateEvents can listen for events on the model", 1, function() {
+    var counter = 0;
+
+    var model = new Backbone.Model
+    var view = new Backbone.View({el: '#testElement', model: model});
+    view.increment = function(){ counter++ };
+
+    var events = {'@model change': 'increment'}
+
+    view.delegateEvents(events);
+    model.trigger('change');
+    equal(counter, 1);
+  });
+
+  test("delegate listens for model events", 1, function() {
+    var model = new Backbone.Model();
+    var view = new Backbone.View({ el: '#testElement', model: model});
+
+    view.delegate('@model change', '', function() {
+      ok(true);
+    }, model);
+
+    model.trigger('change');
+  });
+
   test("delegate", 2, function() {
     var view = new Backbone.View({el: '#testElement'});
     view.delegate('click', 'h1', function() {
@@ -135,6 +160,24 @@
     view.$('h1').trigger('click');
     equal(counter1, 2);
     equal(counter2, 3);
+  });
+
+  test("undelegateEvents removes model events", 2, function() {
+    var counter = 0;
+
+    var model = new Backbone.Model();
+    var view = new Backbone.View({ model: model, el: '#testElement' });
+    view.increment = function(){ counter++ };
+
+    var events = { '@model customEvent': 'increment' }
+
+    view.delegateEvents(events);
+    model.trigger('customEvent');
+    equal(counter, 1);
+
+    view.undelegateEvents();
+    model.trigger('customEvent');
+    equal(counter, 1);
   });
 
   test("undelegate", 0, function() {
