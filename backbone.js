@@ -45,6 +45,8 @@
   // the `$` variable.
   Backbone.$ = $;
 
+  Backbone.isEqual = _.isEqual;
+
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
   Backbone.noConflict = function() {
@@ -358,8 +360,8 @@
       // For each `set` attribute, update or delete the current value.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
+        if (!Backbone.isEqual(current[attr], val)) changes.push(attr);
+        if (!Backbone.isEqual(prev[attr], val)) {
           this.changed[attr] = val;
         } else {
           delete this.changed[attr];
@@ -421,7 +423,7 @@
       var val, changed = false;
       var old = this._changing ? this._previousAttributes : this.attributes;
       for (var attr in diff) {
-        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
+        if (Backbone.isEqual(old[attr], (val = diff[attr]))) continue;
         (changed || (changed = {}))[attr] = val;
       }
       return changed;
