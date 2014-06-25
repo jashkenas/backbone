@@ -611,14 +611,14 @@
     var col2 = new Backbone.Collection(models, {
       comparator: 'a'
     });
-    equal(coll.where({a: 1}).length, 3);
-    equal(coll.where({a: 2}).length, 1);
-    equal(coll.where({a: 3}).length, 1);
-    equal(coll.where({b: 1}).length, 0);
-    equal(coll.where({b: 2}).length, 2);
-    equal(coll.where({a: 1, b: 2}).length, 1);
-    equal(coll.findWhere({a: 1}), model);
-    equal(coll.findWhere({a: 4}), void 0);
+    equal(col2.where({a: 1}).length, 3);
+    equal(col2.where({a: 2}).length, 1);
+    equal(col2.where({a: 3}).length, 1);
+    equal(col2.where({b: 1}).length, 0);
+    equal(col2.where({b: 2}).length, 2);
+    equal(col2.where({a: 1, b: 2}).length, 1);
+    equal(col2.findWhere({a: 1}), model);
+    equal(col2.findWhere({a: 4}), void 0);
   });
 
   test("Underscore methods", 16, function() {
