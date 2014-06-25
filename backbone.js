@@ -828,16 +828,75 @@
       return this.models[index];
     },
 
+    // Perform a binary search for a model in a sorted collection.
+    search: function (toFind, options) {
+      if (!this.comparator) throw new Error('Cannot search an unsorted Collection');
+      options || (options = {});
+
+      // Create `compare` function for searching.
+      var compare;
+      if (_.isFunction(toFind)) {
+        // User provided the `compare` function.
+        compare = toFind;
+      } else if (_.isFunction(this.comparator)) {
+        // Use the comparator function, `toFind` is a model.
+        if (this.comparator.length === 2) {
+          compare = _(this.comparator).bind(this, toFind);
+        } else {
+          compare = _(function (valResult, model) {
+            var modelResult = this.comparator(model);
+            return valResult === modelResult ? 0 : (valResult > modelResult ? 1 : -1);
+          }).bind(this, this.comparator(toFind));
+        }
+      } else {
+        // Comparator is a string indicating the model property used to sort
+        // `toFind` is value sought.
+        compare = _(function (model) {
+          var modelValue = model.get(this.comparator);
+          return toFind === modelValue ? 0 : (toFind > modelValue ? 1 : -1);
+        }).bind(this);
+      }
+
+      // Perform binary search.
+      var found = false, max = this.length - 1, min = 0, index, relValue;
+      while (max >= min && !found) {
+        index = Math.floor((max + min) / 2);
+        relValue = compare(this.at(index));
+        if (relValue > 0) {
+          min = index + 1;
+        } else if (relValue < 0) {
+          max = index - 1;
+        } else if (options.getMax && index < max && compare(this.at(index + 1)) === 0) {
+          min = index + 1;
+        } else if (options.getMin && index > min && compare(this.at(index - 1)) === 0) {
+          max = index - 1;
+        } else {
+          found = true;
+        }
+      }
+      if (!found) return options.returnIndex ? -1 : void 0;
+      return options.returnIndex ? index : this.at(index);
+    },
+
     // Return models with matching attributes. Useful for simple cases of
     // `filter`.
     where: function(attrs, first) {
-      if (_.isEmpty(attrs)) return first ? void 0 : [];
-      return this[first ? 'find' : 'filter'](function(model) {
-        for (var key in attrs) {
-          if (attrs[key] !== model.get(key)) return false;
-        }
-        return true;
-      });
+      if (_.isEmpty(attrs)) {
+        return first ? void 0 : [];
+      } else if (!_.isEqual(_.keys(attrs), [this.comparator])) {
+        return this[first ? 'find' : 'filter'](function(model) {
+          for (var key in attrs) {
+            if (attrs[key] !== model.get(key)) return false;
+          }
+          return true;
+        });
+      } else if (first) {
+        return this.search(attrs[this.comparator], {getMin: true});
+      } else {
+        var minIndex = this.search(attrs[this.comparator], {returnIndex: true, getMin: true});
+        var maxIndex = this.search(attrs[this.comparator], {returnIndex: true, getMax: true});
+        return minIndex == null ? [] : this.models.slice(minIndex, maxIndex + 1);
+      }
     },
 
     // Return the first model with matching attributes. Useful for simple cases
