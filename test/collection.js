@@ -1,6 +1,6 @@
 (function() {
 
-  var a, b, c, d, e, col, otherCol;
+  var a, b, c, d, e, f, g, h, col, otherCol;
 
   module("Backbone.Collection", {
 
@@ -10,6 +10,9 @@
       c         = new Backbone.Model({id: 1, label: 'c'});
       d         = new Backbone.Model({id: 0, label: 'd'});
       e         = null;
+      f         = Backbone.Model.extend({idAttribute : '_id'});
+      g         = Backbone.Collection.extend({model : f});
+      h         = Backbone.Collection.extend({model : function(attr,options){return new f(attr,options);}});
       col       = new Backbone.Collection([a,b,c,d]);
       otherCol  = new Backbone.Collection();
     }
@@ -102,7 +105,7 @@
   test('get with "undefined" id', function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 'undefined'}]);
     equal(collection.get(1).id, 1);
-  }),
+  });
 
   test("update index when id changes", 4, function() {
     var col = new Backbone.Collection();
@@ -1109,7 +1112,7 @@
   test("#2428 - push duplicate models, return the correct one", 1, function() {
     var col = new Backbone.Collection;
     var model1 = col.push({id: 101});
-    var model2 = col.push({id: 101})
+    var model2 = col.push({id: 101});
     ok(model2.cid == model1.cid);
   });
 
@@ -1363,6 +1366,22 @@
       equal(this.collection, collection);
     };
     collection.create(model, {wait: true});
+  });
+
+  test("update model in collection with custom model idAttribute from regular JS object", function(){
+    var model = new f({_id:4,foo:'bar'});
+    var collection = new g(model);
+
+    collection.set({_id:4,foo:'bazz'});
+    equal(collection.get(4).get('foo'),'bazz');
+  });
+
+  test("update model in collection that has a model function with custom model idAttribute from regular JS object", function(){
+    var model = new f({_id:4,foo:'bar'});
+    var collection = new h(model);
+
+    collection.set({_id:4,foo:'bazz'});
+    equal(collection.get(4).get('foo'),'bazz');
   });
 
 })();
