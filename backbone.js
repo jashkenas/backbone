@@ -765,7 +765,7 @@
         for (var i = 0, length = toAdd.length; i < length; i++) {
           (model = toAdd[i]).trigger('add', model, this, options);
         }
-        if (sort || (order && order.length)) this.trigger('sort', this, options);
+        if (sort) this.trigger('sort', this, options);
       }
 
       // Return the added (or merged) model (or models).

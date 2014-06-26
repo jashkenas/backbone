@@ -1096,6 +1096,17 @@
     deepEqual(collection.models, [one, two, three]);
   });
 
+  test('#3199 - Order should not trigger a sort', 0, function() {
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    collection.on('sort', function() {
+      ok(false);
+    });
+    collection.set([{id: 3}, {id: 2}, {id: 1}]);
+  });
+
   test("#1894 - Push should not trigger a sort", 0, function() {
     var Collection = Backbone.Collection.extend({
       comparator: 'id',
