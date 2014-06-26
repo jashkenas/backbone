@@ -836,25 +836,25 @@
       // Create `compare` function for searching.
       var compare;
       if (_.isFunction(toFind)) {
-        // User provided the `compare` function.
+        // The user has provided the `compare` function.
         compare = toFind;
       } else if (_.isFunction(this.comparator)) {
         // Use the comparator function, `toFind` is a model.
         if (this.comparator.length === 2) {
-          compare = _(this.comparator).bind(this, toFind);
+          compare = _.bind(this.comparator, this, toFind);
         } else {
-          compare = _(function (valResult, model) {
+          compare = _.bind(function (valResult, model) {
             var modelResult = this.comparator(model);
             return valResult === modelResult ? 0 : (valResult > modelResult ? 1 : -1);
-          }).bind(this, this.comparator(toFind));
+          }, this, this.comparator(toFind));
         }
       } else {
-        // Comparator is a string indicating the model property used to sort
-        // `toFind` is value sought.
-        compare = _(function (model) {
+        // `comparator` is a string indicating the model property used to sort
+        // `toFind` is the value sought.
+        compare = _.bind(function (model) {
           var modelValue = model.get(this.comparator);
           return toFind === modelValue ? 0 : (toFind > modelValue ? 1 : -1);
-        }).bind(this);
+        }, this);
       }
 
       // Perform binary search.
