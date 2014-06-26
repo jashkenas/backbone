@@ -839,7 +839,7 @@
         // The user has provided the `compare` function.
         compare = toFind;
       } else if (_.isFunction(this.comparator)) {
-        // Use the comparator function, `toFind` is a model.
+        // Use the `comparator` function, `toFind` is a model.
         if (this.comparator.length === 2) {
           compare = _.bind(this.comparator, this, toFind);
         } else {
