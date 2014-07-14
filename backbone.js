@@ -524,6 +524,7 @@
       var success = options.success;
 
       var destroy = function() {
+        model.stopListening();
         model.trigger('destroy', model, model.collection, options);
       };
 
