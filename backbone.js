@@ -674,7 +674,7 @@
           options.index = index;
           model.trigger('remove', model, this, options);
         }
-        this._removeReference(model, options);
+        this._removeReference(model);
       }
       return singular ? models[0] : models;
     },
@@ -718,7 +718,7 @@
           model = models[i] = this._prepareModel(attrs, options);
           if (!model) continue;
           toAdd.push(model);
-          this._addReference(model, options);
+          this._addReference(model);
         }
 
         // Do not add multiple models with the same `id`.
@@ -776,7 +776,7 @@
     reset: function(models, options) {
       options || (options = {});
       for (var i = 0, length = this.models.length; i < length; i++) {
-        this._removeReference(this.models[i], options);
+        this._removeReference(this.models[i]);
       }
       options.previousModels = this.models;
       this._reset();
@@ -951,7 +951,7 @@
     },
 
     // Internal method to create a model's ties to a collection.
-    _addReference: function(model, options) {
+    _addReference: function(model) {
       this._byId[model.cid] = model;
       var id = this.modelId(model.attributes);
       if (id != null) this._byId[id] = model;
@@ -959,7 +959,7 @@
     },
 
     // Internal method to sever a model's ties to a collection.
-    _removeReference: function(model, options) {
+    _removeReference: function(model) {
       if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
     },
