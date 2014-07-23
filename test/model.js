@@ -479,6 +479,13 @@
     equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
   });
 
+  test("save with PATCH and different attrs", function() {
+    doc.clear().save({b: 2, d: 4}, {patch: true, attrs: {B: 1, D: 3}});
+    equal(this.syncArgs.options.attrs.D, 3);
+    equal(this.syncArgs.options.attrs.d, undefined);
+    equal(this.ajaxSettings.data, "{\"B\":1,\"D\":3}");
+  });
+
   test("save in positional style", 1, function() {
     var model = new Backbone.Model();
     model.sync = function(method, model, options) {
