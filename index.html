@@ -1154,7 +1154,7 @@ alert("Cake id: " + cake.id);
       <b class="header">changed</b><code>model.changed</code>
       <br />
       The <b>changed</b> property is the internal hash containing all the attributes
-      that have changed since the last <a href="#Model-set">set</a>.
+      that have changed since its last <a href="#Model-set">set</a>.
       Please do not update <b>changed</b> directly since its state is internally maintained
       by <a href="#Model-set">set</a>.  A copy of <b>changed</b> can be acquired from
       <a href="#Model-changedAttributes">changedAttributes</a>.
@@ -1508,7 +1508,7 @@ ActiveRecord::Base.include_root_in_json = false
     <p id="Model-hasChanged">
       <b class="header">hasChanged</b><code>model.hasChanged([attribute])</code>
       <br />
-      Has the model changed since the last <a href="#Model-set">set</a>? If an <b>attribute</b>
+      Has the model changed since its last <a href="#Model-set">set</a>? If an <b>attribute</b>
       is passed, returns <tt>true</tt> if that specific attribute has changed.
     </p>
 
