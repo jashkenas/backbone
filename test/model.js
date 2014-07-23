@@ -484,6 +484,7 @@
     equal(this.syncArgs.options.attrs.D, 3);
     equal(this.syncArgs.options.attrs.d, undefined);
     equal(this.ajaxSettings.data, "{\"B\":1,\"D\":3}");
+    deepEqual(doc.attributes, {b: 2, d: 4});
   });
 
   test("save in positional style", 1, function() {
