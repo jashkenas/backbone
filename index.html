@@ -2826,8 +2826,13 @@ var model = localBackbone.Model.extend(...);
       <br />
       If you have multiple copies of <tt>jQuery</tt> on the page, or simply want
       to tell Backbone to use a particular object as its DOM / Ajax library,
-      this is the property for you.
+      this is the property for you. If you're loading Backbone with CommonJS
+      (e.g. node, component, or browserify) you must set this property manually.
     </p>
+    
+<pre>
+var Backbone.$ = require('jquery');
+</pre>
 
     <h2 id="faq">F.A.Q.</h2>
 
