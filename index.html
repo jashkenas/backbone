@@ -2450,6 +2450,7 @@ $(function(){
       <li><b>create &rarr; POST &nbsp; </b><tt>/collection</tt></li>
       <li><b>read &rarr; GET &nbsp; </b><tt>/collection[/id]</tt></li>
       <li><b>update &rarr; PUT &nbsp; </b><tt>/collection/id</tt></li>
+      <li><b>patch &rarr; PATCH &nbsp; </b><tt>/collection/id</tt></li>
       <li><b>delete &rarr; DELETE &nbsp; </b><tt>/collection/id</tt></li>
     </ul>
 
@@ -2487,7 +2488,7 @@ end
       <br />
       If you want to work with a legacy web server that doesn't support Backbone's
       default REST/HTTP approach, you may choose to turn on <tt>Backbone.emulateHTTP</tt>.
-      Setting this option will fake <tt>PUT</tt> and <tt>DELETE</tt> requests with
+      Setting this option will fake <tt>PUT</tt>, <tt>PATCH</tt> and <tt>DELETE</tt> requests with
       a HTTP <tt>POST</tt>, setting the <tt>X-HTTP-Method-Override</tt> header
       with the true method. If <tt>emulateJSON</tt> is also on, the true method
       will be passed as an additional <tt>_method</tt> parameter.
