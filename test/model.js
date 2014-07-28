@@ -297,6 +297,16 @@
     model.unset('a');
     equal(i, 2, 'Unset does not fire an event for missing attributes.');
   });
+  
+  test("array support on unset", 1, function() {
+    var i = 0;
+    var counter = function(){ i++; };
+    var model = new Backbone.Model({a: 1, b: 2, c: 3});
+    model.on("change", counter);
+    model.unset('a');
+    model.unset(['b', 'c']);
+    equal(i, 2, 'Unset correctly handles arrays and strings as attributes.');
+  });
 
   test("unset and changedAttributes", 1, function() {
     var model = new Backbone.Model({a: 1});
