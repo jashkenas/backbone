@@ -558,7 +558,7 @@
 
     // **parse** converts a response into the hash of attributes to be `set` on
     // the model. The default implementation is just to pass the response along.
-    parse: function(resp, options) {
+    parse: function(resp) {
       return resp;
     },
 
@@ -688,7 +688,7 @@
       if (options.parse) models = this.parse(models, options);
       var singular = !_.isArray(models);
       models = singular ? (models ? [models] : []) : models.slice();
-      var id, model, attrs, existing, sort;
+      var id, model, existing, sort;
       var at = options.at;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
@@ -904,7 +904,7 @@
 
     // **parse** converts a response into a list of models to be added to the
     // collection. The default implementation is just to pass it through.
-    parse: function(resp, options) {
+    parse: function(resp) {
       return resp;
     },
 
