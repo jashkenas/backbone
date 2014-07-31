@@ -1636,6 +1636,14 @@ var Library = Backbone.Collection.extend({
       the collection directly: <tt>model</tt> and <tt>comparator</tt>.
     </p>
 
+    <p class="warning">
+      Note that passing <b>options</b> in, makes <b>models</b> parameter mandatory. If you pass
+      <b>options</b> only, if will be treated as <b>models</b> parameter and parsed to fit the
+      first element in <tt>collection.models</tt>. <b>options</b> parameter will assume default
+      settings.<br/ >
+      This also applies to <tt>collection.reset</tt>.
+    </p>
+
 <pre>
 var tabs = new TabSet([tab1, tab2, tab3]);
 var spaces = new Backbone.Collection([], {
