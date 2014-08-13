@@ -1633,7 +1633,8 @@ var Library = Backbone.Collection.extend({
       comparator option will prevent sorting. If you define an
       <b>initialize</b> function, it will be invoked when the collection is
       created. There are a couple of options that, if provided, are attached to
-      the collection directly: <tt>model</tt> and <tt>comparator</tt>.
+      the collection directly: <tt>model</tt> and <tt>comparator</tt>.<br />
+      Pass <tt>null</tt> for <tt>models</tt> to create an empty Collection with <tt>options</tt>.
     </p>
 
 <pre>
@@ -1791,7 +1792,8 @@ ships.add([
       of models (or attribute hashes), triggering a single <tt>"reset"</tt> event
       at the end. Returns the newly-set models.
       For convenience, within a <tt>"reset"</tt> event, the list of any
-      previous models is available as <tt>options.previousModels</tt>.
+      previous models is available as <tt>options.previousModels</tt>.<br />
+      Pass <tt>null</tt> for <tt>models</tt> to empty your Collection with <tt>options</tt>.
     </p>
 
     <p>
