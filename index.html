@@ -358,6 +358,7 @@
     <ul class="toc_section">
       <li>– <a href="#Collection-extend">extend</a></li>
       <li>– <a href="#Collection-model">model</a></li>
+      <li>– <a href="#Collection-modelId">modelId</a></li>
       <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-toJSON">toJSON</a></li>
@@ -1618,6 +1619,37 @@ var Library = Backbone.Collection.extend({
       return new PublicDocument(attrs, options);
     } else {
       return new PrivateDocument(attrs, options);
+    }
+  }
+
+});
+</pre>
+
+    <p id="Collection-modelId">
+      <b class="header">modelId</b><code>collection.modelId(attrs)</code>
+      <br />
+      Return the attribute that uniquely identifies models in the collection.
+      By default this returns the value in <tt>attrs</tt> with the key of the
+      collection's model's <tt>idAttribute</tt>.
+      Override this if you are using a constructor for <tt>collection.model</tt>.
+    </p>
+
+<pre>
+var Library = Backbone.Collection.extend({
+
+  model: function(attrs, options) {
+    if (condition) {
+      return new PublicDocument(attrs, options);
+    } else {
+      return new PrivateDocument(attrs, options);
+    }
+  },
+
+  modelId: function(attrs, options) {
+    if (condition) {
+      return PublicDocument.prototype.idAttribute;
+    } else {
+      return PrivateDocument.prototype.idAttribute;
     }
   }
 
