@@ -358,7 +358,7 @@
     <ul class="toc_section">
       <li>– <a href="#Collection-extend">extend</a></li>
       <li>– <a href="#Collection-model">model</a></li>
-      <li>– <a href="#Collection-modelId">modelId</a></li>
+      <li>– <a href="#Collection- d">modelId</a></li>
       <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-toJSON">toJSON</a></li>
@@ -1611,6 +1611,12 @@ var Library = Backbone.Collection.extend({
       with a constructor that returns a model.
     </p>
 
+    <p>
+      <b>Important:</b> If the models returned by this method have a different
+      <tt>idAttribute</tt> than the default you must overwrite the
+      <a href="#Collection-modelId">modelId</a> method on the collection.
+    </p>
+
 <pre>
 var Library = Backbone.Collection.extend({
 
@@ -1647,9 +1653,9 @@ var Library = Backbone.Collection.extend({
 
   modelId: function(attrs, options) {
     if (condition) {
-      return PublicDocument.prototype.idAttribute;
+      return attrs[PublicDocument.prototype.idAttribute];
     } else {
-      return PrivateDocument.prototype.idAttribute;
+      return attrs[PrivateDocument.prototype.idAttribute];
     }
   }
 
@@ -2863,7 +2869,7 @@ var model = localBackbone.Model.extend(...);
       this is the property for you. If you're loading Backbone with CommonJS
       (e.g. node, component, or browserify) you must set this property manually.
     </p>
-    
+
 <pre>
 var Backbone.$ = require('jquery');
 </pre>

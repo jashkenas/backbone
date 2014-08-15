@@ -1426,4 +1426,26 @@
     equal(collection.at(1), collection.get('b-1'));
   });
 
+  test('idAttributes should be retrieved from Collection#model functions', 3, function() {
+    var M = Backbone.Model.extend({idAttribute: 'number'});
+    var C = Backbone.Collection.extend({
+      model: function(attrs) {
+        return new M(attrs);
+      },
+
+      modelId: function(attrs) {
+        return attrs.number;
+      }
+    });
+
+    var model = new M({number: 1, id: 2});
+    equal(model.id, 1);
+
+    var collection = new C();
+    collection.add(model);
+    collection.add({number: 1, id: 3}, {merge: true});
+    equal(collection.length, 1);
+    equal(collection.at(0).get('id'), 3);
+  });
+
 })();
