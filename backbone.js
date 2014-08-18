@@ -1415,7 +1415,14 @@
     // Are we at the app root?
     atRoot: function() {
       var path = this.location.pathname.replace(/[^\/]$/, '$&/');
-      return path === this.root && !this.location.search;
+      return path === this.root && !this.getSearch();
+    },
+
+    // In IE6, the hash fragment and search params are incorrect if the
+    // fragment contains `?`.
+    getSearch: function() {
+      var match = this.location.href.replace(/#.*/, '').match(/\?.+/);
+      return match ? match[0] : '';
     },
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
@@ -1427,7 +1434,7 @@
 
     // Get the pathname and search params, without the root.
     getPath: function() {
-      var path = decodeURI(this.location.pathname + this.location.search);
+      var path = decodeURI(this.location.pathname + this.getSearch());
       var root = this.root.slice(0, -1);
       if (!path.indexOf(root)) path = path.slice(root.length);
       return path.slice(1);
