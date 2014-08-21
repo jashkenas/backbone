@@ -837,7 +837,7 @@
       var compare;
       if (_.isFunction(toFind)) {
         // The user has provided the `compare` function.
-        compare = toFind;
+        compare = _.bind(toFind, this);
       } else if (_.isFunction(this.comparator)) {
         // Use the `comparator` function, `toFind` is a model.
         if (this.comparator.length === 2) {
@@ -874,8 +874,8 @@
           found = true;
         }
       }
-      if (!found) return options.returnIndex ? -1 : void 0;
-      return options.returnIndex ? index : this.at(index);
+      
+      return found ? index : -1;
     },
 
     // Return models with matching attributes. Useful for simple cases of
