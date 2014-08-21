@@ -547,7 +547,7 @@
     equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });
 
-  test("search", 12, function() {
+  test("search", 7, function() {
     var model1 = new Backbone.Model({a: 0});
     var model2 = new Backbone.Model({a: 3});
     var models = [
@@ -557,36 +557,31 @@
       comparator: 'a'
     });
     
-    equal(coll.search(1).get('a'), 1);
-    equal(coll.search(1, {getMin: true}), coll.at(1));
-    equal(coll.search(1, {getMax: true}), coll.at(3));
-    equal(coll.search(2, {returnIndex: true}), 4);
-    equal(coll.search(3, {returnIndex: true}), 5);
-    equal(coll.search(4, {returnIndex: true}), -1);
-    ok(!coll.search(4));
+    equal(coll.at(coll.search(1)).get('a'), 1);
+    equal(coll.search(1, {getMin: true}), 1);
+    equal(coll.search(1, {getMax: true}), 3);
+    ok(coll.search(4) === -1);
 
-    equal(coll.search(function (model) {
+    equal(coll.at(coll.search(function (model) {
       var v = model.get('a');
       if (v < 2) return 1;
       if (v > 2) return -1;
       return 0;
-    }).get('a'), 2);
+    })).get('a'), 2);
 
     var col2 = new Backbone.Collection(models, {
       comparator: function (m) {
         return 5 - m.get('a');
       }
     });
-    equal(col2.search(model1, {returnIndex: true}), 5);
-    equal(col2.search(model2, {returnIndex: true}), 0);
 
     var col3 = new Backbone.Collection(models, {
       comparator: function (m1, m2) {
         return m2.get('a') - m1.get('a');
       }
     });
-    equal(col3.search(model1), model1);
-    equal(col3.search(model2), model2);
+    equal(col3.at(col3.search(model1)), model1);
+    equal(col3.at(col3.search(model2)), model2);
   });
 
   test("where and findWhere", 16, function() {

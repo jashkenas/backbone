@@ -891,10 +891,10 @@
           return true;
         });
       } else if (first) {
-        return this.search(attrs[this.comparator], {getMin: true});
+        return this.at(this.search(attrs[this.comparator], {getMin: true}));
       } else {
-        var minIndex = this.search(attrs[this.comparator], {returnIndex: true, getMin: true});
-        var maxIndex = this.search(attrs[this.comparator], {returnIndex: true, getMax: true});
+        var minIndex = this.search(attrs[this.comparator], {getMin: true});
+        var maxIndex = this.search(attrs[this.comparator], {getMax: true});
         return minIndex == null ? [] : this.models.slice(minIndex, maxIndex + 1);
       }
     },
