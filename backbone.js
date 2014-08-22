@@ -1599,7 +1599,7 @@
       this.fragment = fragment;
 
       // Don't include a trailing slash on the root.
-      if (fragment === '' && url !== '/') url = url.slice(0, -1);
+      if (fragment === '' && url.length > 1 && url[url.length - 1] === '/') url = url.slice(0, -1);
 
       // If pushState is available, we use it to set the fragment as a real URL.
       if (this._hasPushState) {
