@@ -305,7 +305,7 @@
 
     // Get the value of an attribute.
     get: function(attr) {
-      return this.attributes[attr];
+      return property(this.attributes, attr);
     },
 
     // Get the HTML-escaped value of an attribute.
@@ -818,8 +818,8 @@
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
-      var id = this.modelId(this._isModel(obj) ? obj.attributes : obj);
-      return this._byId[obj] || this._byId[id] || this._byId[obj.cid];
+      var id = this.modelId(this._isModel(obj) ? obj.attributes : obj)
+      return property(this._byId, obj) || property(this._byId, id) || property(this._byId, obj.cid);
     },
 
     // Get the model at the given index.
@@ -1680,6 +1680,13 @@
 
     return child;
   };
+
+  // Extract own properties from objects
+  var property = function (object, key) {
+    if (_.has(object, key)) {
+      return object[key];
+    }
+  }
 
   // Set up inheritance for the model, collection, router, view and history.
   Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;

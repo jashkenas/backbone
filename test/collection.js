@@ -1426,4 +1426,10 @@
     equal(collection.at(1), collection.get('b-1'));
   });
 
+  test('#3279: get does not return Object prototype properties', function() {
+    var collection = new Backbone.Collection;
+    strictEqual(collection.get('toString'), undefined);
+    strictEqual(collection.get(new Backbone.Model({id: 'toString'})), undefined);
+    strictEqual(collection.get({cid: 'toString'}), undefined);
+  });
 })();
