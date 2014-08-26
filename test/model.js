@@ -1140,4 +1140,9 @@
     model.set({a: true});
   });
 
+  test('#3279 - get does not return Object prototype properties' , function() {
+    var model = new Backbone.Model;
+    strictEqual(model.get('constructor'), undefined);
+  });
+
 })();
