@@ -82,8 +82,8 @@
     // the callback to all events fired.
     on: function(name, callback, context) {
       if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
-      this._events || (this._events = {});
-      var events = this._events[name] || (this._events[name] = []);
+      this._backboneEvents || (this._backboneEvents = {});
+      var events = this._backboneEvents[name] || (this._backboneEvents[name] = []);
       events.push({callback: callback, context: context, ctx: context || this});
       return this;
     },
@@ -106,25 +106,25 @@
     // callbacks for the event. If `name` is null, removes all bound
     // callbacks for all events.
     off: function(name, callback, context) {
-      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
+      if (!this._backboneEvents || !eventsApi(this, 'off', name, [callback, context])) return this;
 
       // Remove all callbacks for all events.
       if (!name && !callback && !context) {
-        this._events = void 0;
+        this._backboneEvents = void 0;
         return this;
       }
 
-      var names = name ? [name] : _.keys(this._events);
+      var names = name ? [name] : _.keys(this._backboneEvents);
       for (var i = 0, length = names.length; i < length; i++) {
         name = names[i];
 
         // Bail out if there are no events stored.
-        var events = this._events[name];
+        var events = this._backboneEvents[name];
         if (!events) continue;
 
         // Remove all callbacks for this event.
         if (!callback && !context) {
-          delete this._events[name];
+          delete this._backboneEvents[name];
           continue;
         }
 
@@ -143,9 +143,9 @@
 
         // Replace events if there are any remaining.  Otherwise, clean up.
         if (remaining.length) {
-          this._events[name] = remaining;
+          this._backboneEvents[name] = remaining;
         } else {
-          delete this._events[name];
+          delete this._backboneEvents[name];
         }
       }
 
@@ -157,11 +157,11 @@
     // (unless you're listening on `"all"`, which will cause your callback to
     // receive the true name of the event as the first argument).
     trigger: function(name) {
-      if (!this._events) return this;
+      if (!this._backboneEvents) return this;
       var args = slice.call(arguments, 1);
       if (!eventsApi(this, 'trigger', name, args)) return this;
-      var events = this._events[name];
-      var allEvents = this._events.all;
+      var events = this._backboneEvents[name];
+      var allEvents = this._backboneEvents.all;
       if (events) triggerEvents(events, args);
       if (allEvents) triggerEvents(allEvents, arguments);
       return this;
@@ -178,7 +178,7 @@
       for (var id in listeningTo) {
         obj = listeningTo[id];
         obj.off(name, callback, this);
-        if (remove || _.isEmpty(obj._events)) delete this._listeningTo[id];
+        if (remove || _.isEmpty(obj._backboneEvents)) delete this._listeningTo[id];
       }
       return this;
     }
