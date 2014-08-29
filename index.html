@@ -4056,9 +4056,7 @@ ActiveRecord::Base.include_root_in_json = false
     <br />
     <ul style="margin-top: 5px;">
       <li>
-        Added new hooks to Views to allow key internal methods to be overridden
-        by a view adapter plugin. If you were looking for a way to use
-        Backbone without jQuery this is the way to do it. See the
+        Added new hooks to Views to allow them to work without jQuery. See the
         <a href="https://github.com/jashkenas/backbone/wiki/Using-Backbone-without-jQuery">wiki page</a>
         for more info.
       </li>
@@ -4092,6 +4090,10 @@ ActiveRecord::Base.include_root_in_json = false
         Added <tt>delegate</tt> and <tt>undelegate</tt> as finer-grained versions
         of <tt>delegateEvents</tt> and <tt>undelegateEvents</tt>. Useful for plugin
         authors to use a consistent events interface in Backbone.
+      </li>
+      <li>
+        A collection will only fire a "sort" event if its order was actually
+        updated, not on every <tt>set</tt>.
       </li>
       <li>
         Any passed <tt>options.attrs</tt> are now respected when saving a model with
