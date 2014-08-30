@@ -830,8 +830,10 @@
 
     // Perform a binary search for a model in a sorted collection.
     search: function (toFind, options) {
-      if (!this.comparator) throw new Error('Cannot search an unsorted Collection');
       options || (options = {});
+
+      if (!this.comparator) throw new Error('Cannot search an unsorted Collection');
+      if (options.getMin && options.getMax) throw new Error('Cannot set both getMin and getMax');
 
       // Create `compare` function for searching.
       var compare;
