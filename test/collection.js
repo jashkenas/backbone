@@ -119,6 +119,7 @@
 
   test("at", 1, function() {
     equal(col.at(2), c);
+    equal(col.at(-2), c);
   });
 
   test("pluck", 1, function() {
