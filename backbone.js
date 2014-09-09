@@ -578,6 +578,11 @@
       return this._validate({}, _.extend(options || {}, { validate: true }));
     },
 
+    // Check if the model is empty.
+    isEmpty: function() {
+      return _.isEmpty(this.attributes);
+    },
+
     // Run validation against the next complete set of model attributes,
     // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
     _validate: function(attrs, options) {
