@@ -578,11 +578,6 @@
       return this._validate({}, _.extend(options || {}, { validate: true }));
     },
 
-    // Check if the model is empty.
-    isEmpty: function() {
-      return _.isEmpty(this.attributes);
-    },
-
     // Run validation against the next complete set of model attributes,
     // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
     _validate: function(attrs, options) {
@@ -597,7 +592,7 @@
   });
 
   // Underscore methods that we want to implement on the Model.
-  var modelMethods = ['keys', 'values', 'pairs', 'invert', 'pick', 'omit', 'chain'];
+  var modelMethods = ['keys', 'values', 'pairs', 'invert', 'pick', 'omit', 'chain', 'isEmpty'];
 
   // Mix in each Underscore method as a proxy to `Model#attributes`.
   _.each(modelMethods, function(method) {
