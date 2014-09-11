@@ -760,8 +760,10 @@
 
       // Unless silenced, it's time to fire all appropriate add/sort events.
       if (!options.silent) {
+        var addOpts = at != null ? _.clone(options) : options;
         for (var i = 0, length = toAdd.length; i < length; i++) {
-          (model = toAdd[i]).trigger('add', model, this, options);
+          if (at != null) addOpts.index = at + i;
+          (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
         if (sort || (order && order.length)) this.trigger('sort', this, options);
       }

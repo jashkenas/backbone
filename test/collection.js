@@ -1426,4 +1426,20 @@
     equal(collection.at(1), collection.get('b-1'));
   });
 
+  test("#3039: adding at index fires with correct at", 3, function() {
+    var col = new Backbone.Collection([{at: 0}, {at: 4}]);
+    col.on('add', function(model, col, options) {
+        equal(model.get('at'), options.index);
+    });
+    col.add([{at: 1}, {at: 2}, {at: 3}], {at: 1});
+  });
+
+  test("#3039: index is not sent when at is not specified", 2, function() {
+    var col = new Backbone.Collection([{at: 0}]);
+    col.on('add', function(model, col, options) {
+        equal(undefined, options.index);
+    });
+    col.add([{at: 1}, {at: 2}]);
+  });
+
 })();
