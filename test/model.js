@@ -204,6 +204,19 @@
     strictEqual(model.has('undefined'), false);
   });
 
+  test("matches", 4, function() {
+    var model = new Backbone.Model();
+
+    strictEqual(model.matches({'name': 'Jonas', 'cool': true}), false);
+
+    model.set({name: 'Jonas', 'cool': true});
+
+    strictEqual(model.matches({'name': 'Jonas'}), true);
+    strictEqual(model.matches({'name': 'Jonas', 'cool': true}), true);
+    strictEqual(model.matches({'name': 'Jonas', 'cool': false}), false);
+  });
+
+
   test("set and unset", 8, function() {
     var a = new Backbone.Model({id: 'id', foo: 1, bar: 2, baz: 3});
     var changeCount = 0;
