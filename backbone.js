@@ -1572,11 +1572,11 @@
     // Attempt to load the current URL fragment. If a route succeeds with a
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
-    loadUrl: function(fragment) {
+    loadUrl: function(fragment, options) {
       fragment = this.fragment = this.getFragment(fragment);
       return _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
-          handler.callback(fragment);
+          handler.callback(fragment, options);
           return true;
         }
       });
@@ -1625,7 +1625,7 @@
       } else {
         return this.location.assign(url);
       }
-      if (options.trigger) return this.loadUrl(fragment);
+      if (options.trigger) return this.loadUrl(fragment, options);
     },
 
     // Update the hash location, either replacing the current entry, or adding
