@@ -371,7 +371,7 @@
       if (!silent) {
         if (changes.length) this._pending = options;
         for (var i = 0, length = changes.length; i < length; i++) {
-          this.trigger('change:' + changes[i], this, current[changes[i]], options);
+          this.trigger('change:' + changes[i], this, current[changes[i]], changes[i] , options);
         }
       }
 
