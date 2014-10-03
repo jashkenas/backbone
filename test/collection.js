@@ -770,8 +770,9 @@
     var m = new Backbone.Model({x:1});
     var col = new Backbone.Collection();
     var opts = {
-      success: function(collection, resp, options){
-        ok(options);
+      opts: true,
+      success: function(collection, resp, options) {
+        ok(options.opts);
       }
     };
     col.sync = m.sync = function( method, collection, options ){
