@@ -775,7 +775,7 @@
       }
     };
     col.sync = m.sync = function( method, collection, options ){
-      options.success(collection, [], options);
+      options.success({});
     };
     col.fetch(opts);
     col.create(m, opts);
@@ -1189,15 +1189,15 @@
   });
 
   test("Attach options to collection.", 2, function() {
-    var model = new Backbone.Model;
+    var Model = Backbone.Model;
     var comparator = function(){};
 
     var collection = new Backbone.Collection([], {
-      model: model,
+      model: Model,
       comparator: comparator
     });
 
-    ok(collection.model === model);
+    ok(collection.model === Model);
     ok(collection.comparator === comparator);
   });
 
