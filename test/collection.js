@@ -648,6 +648,16 @@
     });
   });
 
+  test("reset does not alter options by reference", 2, function() {
+    var col = new Backbone.Collection([{id:1}]);
+    var origOpts = {};
+    col.on("reset", function(col, opts){
+      equal(origOpts.previousModels, undefined);
+      equal(opts.previousModels[0].id, 1);
+    });
+    col.reset([], origOpts);
+  });
+
   test("trigger custom events on models", 1, function() {
     var fired = null;
     a.on("custom", function() { fired = true; });
