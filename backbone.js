@@ -686,7 +686,6 @@
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
       options = _.defaults({}, options, setOptions);
-      if (options.parse) models = this.parse(models, options);
       var singular = !_.isArray(models);
       models = singular ? (models ? [models] : []) : models.slice();
       var id, model, attrs, existing, sort;
@@ -880,6 +879,7 @@
       var collection = this;
       options.success = function(resp) {
         var method = options.reset ? 'reset' : 'set';
+        if (options.parse) resp = this.parse(resp, options);
         collection[method](resp, options);
         if (success) success(collection, resp, options);
         collection.trigger('sync', collection, resp, options);
