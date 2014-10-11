@@ -338,6 +338,14 @@
     });
   });
 
+  test("#3196 - Unsetting attributes via set method should fire a change event", 1, function() {
+    var model = new Backbone.Model({foo: 1});
+    var isChangeEventFired = false;
+    model.on('change:foo', function(){ isChangeEventFired = true; });
+    model.set({foo: 1}, {unset: true});
+    ok(isChangeEventFired);
+  });
+
   test("clear", 3, function() {
     var changed;
     var model = new Backbone.Model({id: 1, name : "Model"});
