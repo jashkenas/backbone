@@ -358,7 +358,7 @@
       // For each `set` attribute, update or delete the current value.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
+        if (!_.isEqual(current[attr], val) || (unset && current[attr] !== void 0)) changes.push(attr);
         if (!_.isEqual(prev[attr], val)) {
           this.changed[attr] = val;
         } else {
