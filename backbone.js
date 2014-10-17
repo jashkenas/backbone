@@ -453,7 +453,6 @@
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
       };
-      wrapError(this, options);
       return this.sync('read', this, options);
     },
 
@@ -503,7 +502,6 @@
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
       };
-      wrapError(this, options);
 
       method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
       if (method === 'patch' && !options.attrs) options.attrs = attrs;
@@ -538,7 +536,6 @@
         options.success();
         return false;
       }
-      wrapError(this, options);
 
       var xhr = this.sync('delete', this, options);
       if (!options.wait) destroy();
@@ -885,7 +882,6 @@
         if (success) success(collection, resp, options);
         collection.trigger('sync', collection, resp, options);
       };
-      wrapError(this, options);
       return this.sync('read', this, options);
     },
 
@@ -1247,11 +1243,13 @@
       params.processData = false;
     }
 
-    // Pass along `textStatus` and `errorThrown` from jQuery.
+    // Pass along `textStatus` and `errorThrown` from jQuery, and trigger model.
     var error = options.error;
     options.error = function(xhr, textStatus, errorThrown) {
       options.textStatus = textStatus;
       options.errorThrown = errorThrown;
+      model.trigger('error', model, xhr, options);
+
       if (error) error.apply(this, arguments);
     };
 
@@ -1690,15 +1688,6 @@
   // Throw an error when a URL is needed, and none is supplied.
   var urlError = function() {
     throw new Error('A "url" property or function must be specified');
-  };
-
-  // Wrap an optional error callback with a fallback error event.
-  var wrapError = function(model, options) {
-    var error = options.error;
-    options.error = function(resp) {
-      if (error) error(model, resp, options);
-      model.trigger('error', model, resp, options);
-    };
   };
 
   return Backbone;

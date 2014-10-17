@@ -474,8 +474,10 @@
     collection.on('error', function () {
       ok(true);
     });
-    collection.sync = function (method, model, options) { options.error(); };
-    collection.fetch();
+    Backbone.ajax = function(options) {
+        options.error();
+    };
+    collection.fetch({url: "test"});
   });
 
   test("ensure fetch only parses once", 1, function() {
