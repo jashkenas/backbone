@@ -474,7 +474,7 @@
     collection.on('error', function () {
       ok(true);
     });
-    Backbone.ajax = function(options) {
+    Backbone.$.ajax = function(options) {
         options.error();
     };
     collection.fetch({url: "test"});

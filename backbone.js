@@ -1243,18 +1243,8 @@
       params.processData = false;
     }
 
-    // Pass along `textStatus` and `errorThrown` from jQuery, and trigger model.
-    var error = options.error;
-    options.error = function(xhr, textStatus, errorThrown) {
-      options.textStatus = textStatus;
-      options.errorThrown = errorThrown;
-      model.trigger('error', model, xhr, options);
-
-      if (error) error.apply(this, arguments);
-    };
-
     // Make the request, allowing the user to override any Ajax options.
-    var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
+    var xhr = options.xhr = Backbone.ajax(_.extend(params, options), model);
     model.trigger('request', model, xhr, options);
     return xhr;
   };
@@ -1270,8 +1260,18 @@
 
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
   // Override this if you'd like to use a different library.
-  Backbone.ajax = function() {
-    return Backbone.$.ajax.apply(Backbone.$, arguments);
+  Backbone.ajax = function(options, model) {
+    // Pass along `textStatus` and `errorThrown` from jQuery, and trigger model.
+    var error = options.error;
+    options.error = function(xhr, textStatus, errorThrown) {
+      options.textStatus = textStatus;
+      options.errorThrown = errorThrown;
+      model.trigger('error', model, xhr, options);
+
+      if (error) error.apply(this, arguments);
+    };
+
+    return Backbone.$.ajax.call(Backbone.$, options);
   };
 
   // Backbone.Router

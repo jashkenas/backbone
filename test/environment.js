@@ -15,7 +15,7 @@
     history.pushState = history.replaceState = function(){};
 
     // Capture ajax settings for comparison.
-    Backbone.ajax = function(settings) {
+    Backbone.$.ajax = function(settings) {
       env.ajaxSettings = settings;
     };
 

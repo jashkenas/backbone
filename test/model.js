@@ -457,7 +457,7 @@
     model.on('error', function () {
       ok(true);
     });
-    Backbone.ajax = function(options) {
+    Backbone.$.ajax = function(options) {
         options.error();
     };
     model.save({data: 2, id: 1}, {url: "test"});
