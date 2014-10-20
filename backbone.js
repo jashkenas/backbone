@@ -239,6 +239,13 @@
       var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
       listeningTo[id] = obj;
       if (!callback && typeof name === 'object') callback = this;
+      if (implementation === 'once') {
+        var cb = callback;
+        callback = function () {
+          this.stopListening.apply(this, _.rest(arguments));
+          return cb.apply(this, arguments);
+        };
+      }
       obj[implementation](name, callback, this);
       return this;
     };
