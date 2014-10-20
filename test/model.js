@@ -457,12 +457,12 @@
     model.on('error', function () {
       ok(true);
     });
-    model.sync = function (method, model, options) {
-      options.error();
+    Backbone.$.ajax = function(options) {
+        options.error();
     };
-    model.save({data: 2, id: 1});
-    model.fetch();
-    model.destroy();
+    model.save({data: 2, id: 1}, {url: "test"});
+    model.fetch({url: "test"});
+    model.destroy({url: "test"});
   });
 
   test("save with PATCH", function() {
