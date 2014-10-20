@@ -177,12 +177,23 @@
     equal(_.keys(a._listeningTo).length, 0);
   });
 
-  test("listenToOnce cleans up references after the event has fired", 2, function() {
+  test("listenToOnce without context cleans up references after the event has fired", 2, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     a.listenToOnce(b, 'all', function(){ ok(true); });
     b.trigger('anything');
     equal(_.keys(a._listeningTo).length, 0);
+  });
+
+  test("listenToOnce with event maps cleans up references", 2, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    a.listenToOnce(b, {
+      a: function() { ok(true); },
+      b: function() { ok(false); }
+    });
+    b.trigger('a');
+    equal(_.keys(a._listeningTo).length, 1);
   });
 
   test("listenTo with empty callback doesn't throw an error", 1, function(){
