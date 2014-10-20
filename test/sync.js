@@ -144,6 +144,22 @@
     Backbone.sync('create', model);
   });
 
+  test("model/collection save/fetch/destroy methods forward original Opts to sync", 4, function () {
+    var model = new Backbone.Model();
+    var col = new Backbone.Collection();
+    var myOptions = {
+      url: "test",
+      error: function() {}
+    };
+    Backbone.sync = function (method, model, options, origOpts) {
+      ok(_.isEqual(origOpts, myOptions));
+    };
+    model.save({data: 2, id: 1}, myOptions);
+    model.fetch(myOptions);
+    model.destroy(myOptions);
+    col.fetch(myOptions);
+  });
+
   test("Backbone.ajax", 1, function() {
     Backbone.ajax = function(settings){
       strictEqual(settings.url, '/test');

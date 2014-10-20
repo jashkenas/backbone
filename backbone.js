@@ -443,8 +443,8 @@
     // Fetch the model from the server. If the server's representation of the
     // model differs from its current attributes, they will be overridden,
     // triggering a `"change"` event.
-    fetch: function(options) {
-      options = options ? _.clone(options) : {};
+    fetch: function(origOpts) {
+      var options = origOpts ? _.clone(origOpts) : {};
       if (options.parse === void 0) options.parse = true;
       var model = this;
       var success = options.success;
@@ -454,24 +454,24 @@
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
-      return this.sync('read', this, options);
+      return this.sync('read', this, options, origOpts);
     },
 
     // Set a hash of model attributes, and sync the model to the server.
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
-    save: function(key, val, options) {
+    save: function(key, val, origOpts) {
       var attrs, method, xhr, attributes = this.attributes;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
       if (key == null || typeof key === 'object') {
         attrs = key;
-        options = val;
+        origOpts = val;
       } else {
         (attrs = {})[key] = val;
       }
 
-      options = _.extend({validate: true}, options);
+      var options = _.extend({validate: true}, origOpts);
 
       // If we're not waiting and attributes exist, save acts as
       // `set(attr).save(null, opts)` with validation. Otherwise, check if
@@ -507,7 +507,7 @@
 
       method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
       if (method === 'patch' && !options.attrs) options.attrs = attrs;
-      xhr = this.sync(method, this, options);
+      xhr = this.sync(method, this, options, origOpts);
 
       // Restore attributes.
       if (attrs && options.wait) this.attributes = attributes;
@@ -518,8 +518,8 @@
     // Destroy this model on the server if it was already persisted.
     // Optimistically removes the model from its collection, if it has one.
     // If `wait: true` is passed, waits for the server to respond before removal.
-    destroy: function(options) {
-      options = options ? _.clone(options) : {};
+    destroy: function(origOpts) {
+      var options = origOpts ? _.clone(origOpts) : {};
       var model = this;
       var success = options.success;
 
@@ -540,7 +540,7 @@
       }
       wrapError(this, options);
 
-      var xhr = this.sync('delete', this, options);
+      var xhr = this.sync('delete', this, options, origOpts);
       if (!options.wait) destroy();
       return xhr;
     },
@@ -874,8 +874,8 @@
     // Fetch the default set of models for this collection, resetting the
     // collection when they arrive. If `reset: true` is passed, the response
     // data will be passed through the `reset` method instead of `set`.
-    fetch: function(options) {
-      options = options ? _.clone(options) : {};
+    fetch: function(origOpts) {
+      var options = origOpts ? _.clone(origOpts) : {};
       if (options.parse === void 0) options.parse = true;
       var success = options.success;
       var collection = this;
@@ -886,7 +886,7 @@
         collection.trigger('sync', collection, resp, options);
       };
       wrapError(this, options);
-      return this.sync('read', this, options);
+      return this.sync('read', this, options, origOpts);
     },
 
     // Create a new instance of a model in this collection. Add the model to the
@@ -1201,7 +1201,7 @@
   // instead of `application/json` with the model in a param named `model`.
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
-  Backbone.sync = function(method, model, options) {
+  Backbone.sync = function(method, model, options, origOpts) {
     var type = methodMap[method];
 
     // Default options, unless specified.
