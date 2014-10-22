@@ -744,7 +744,7 @@
         this.length += toAdd.length;
         if (at != null) {
           for (var i = 0, length = toAdd.length; i < length; i++) {
-            this.models.splice(at + i, 0, toAdd[i]);
+            this.models.splice(+at + i, 0, toAdd[i]);
           }
         } else {
           if (order) this.models.length = 0;
