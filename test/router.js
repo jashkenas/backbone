@@ -741,6 +741,21 @@
     Backbone.history.navigate('');
   });
 
+  test('#2656 - No trailing slash on root.', 1, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url){
+          strictEqual(url, '/root?x=1');
+        }
+      }
+    });
+    location.replace('http://example.com/root/path');
+    Backbone.history.start({pushState: true, hashChange: false, root: 'root'});
+    Backbone.history.navigate('?x=1');
+  });
+
   test('#2765 - Fragment matching sans query/hash.', 2, function() {
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {
