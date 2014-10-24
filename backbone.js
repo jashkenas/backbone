@@ -1437,7 +1437,7 @@
       var path = decodeURI(this.location.pathname + this.getSearch());
       var root = this.root.slice(0, -1);
       if (!path.indexOf(root)) path = path.slice(root.length);
-      return path.slice(1);
+      return path.charAt(0) === '/' ? path.slice(1) : path;
     },
 
     // Get the cross-browser normalized URL fragment from the path or hash.
