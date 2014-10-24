@@ -908,4 +908,20 @@
     Backbone.history.start();
   });
 
+  test('#3358 - pushState to hashChange transition with search params', 1, function() {
+    Backbone.history.stop();
+    location.replace('/root?foo=bar');
+    location.replace = function(url) {
+      strictEqual(url, '/root/#?foo=bar');
+    };
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: undefined,
+        replaceState: undefined
+      }
+    });
+    Backbone.history.start({root: '/root', pushState: true});
+  });
+
 })();
