@@ -248,14 +248,14 @@
             }
           });
         } else {
-          var cb = callback, args = slice.call(arguments);
+          var cb = callback;
           callback = function () {
-            this.stopListening.apply(this, args);
+            this.stopListening.apply(this, obj, name, cb);
             return cb.apply(this, arguments);
           };
         }
       }
-      obj[implementation](name, callback, this);
+      obj.on(name, callback, this);
       return this;
     };
   });
