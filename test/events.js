@@ -189,7 +189,7 @@
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     a.listenToOnce(b, {
-      a: function() { ok(true); },
+      a: function() { ok(this === a); },
       b: function() { ok(false); }
     });
     b.trigger('a');
