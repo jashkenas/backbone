@@ -240,11 +240,20 @@
       listeningTo[id] = obj;
       if (!callback && typeof name === 'object') callback = this;
       if (implementation === 'once') {
-        var cb = callback;
-        callback = function () {
-          this.stopListening.apply(this, _.rest(arguments));
-          return cb.apply(this, arguments);
-        };
+        if (typeof name === 'object') {
+          _.each(name, function(cb, event) {
+             name[event] = function() {
+              this.stopListening(obj, event, cb);
+              return cb.apply(this, arguments);
+            }
+          });
+        } else {
+          var cb = callback, args = slice.call(arguments);
+          callback = function () {
+            this.stopListening.apply(this, args);
+            return cb.apply(this, arguments);
+          };
+        }
       }
       obj[implementation](name, callback, this);
       return this;
