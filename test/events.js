@@ -189,10 +189,10 @@
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     a.listenToOnce(b, {
-      a: function() { ok(this === a); },
-      b: function() { ok(false); }
+      one: function() { ok(this === a); },
+      two: function() { ok(false); }
     });
-    b.trigger('a');
+    b.trigger('one');
     equal(_.keys(a._listeningTo).length, 1);
   });
 
