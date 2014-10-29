@@ -249,7 +249,7 @@
       onces[name] = callback;
     }
     for (var event in onces) {
-      obj.once(event, _.bind(this.stopListening, this, obj, event, onces[event]), this);
+      obj.once(event, _.bind(this.stopListening, this, obj, event, onces[event]));
     }
     return this;
   };
