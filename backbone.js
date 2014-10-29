@@ -236,24 +236,25 @@
     var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
     listeningTo[id] = obj;
     if (!callback && typeof name === 'object') callback = this;
-    obj.on(name, callback, this);
-    return this;
+    return obj.on(name, callback, this);
   };
 
   Events.listenToOnce = function(obj, name, callback) {
-    if (typeof name === 'object') {
-      _.each(name, function(cb, event) {
-         name[event] = function() {
-          this.stopListening(obj, event, cb);
-          return cb.apply(this, arguments);
-        }
-      });
-    } else {
-      var cb = callback;
-      callback = function () {
-        this.stopListening.apply(this, obj, name, cb);
-        return cb.apply(this, arguments);
+    var ctx = this;
+    var wrapCb = function(event, cb) {
+      var wrapped = function() {
+        ctx.stopListening(obj, event, wrapped);
+        return cb.apply(ctx, arguments);
       };
+      return wrapped;
+    }
+
+    if (typeof name === 'object') {
+      for (var event in name) {
+        name[event] = wrapCb(event, name[event]);
+      }
+    } else {
+      callback = wrapCb(name, callback);
     }
     return this.listenTo(obj, name, callback);
   }
