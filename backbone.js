@@ -249,7 +249,9 @@
       onces[name] = callback;
     }
     for (var event in onces) {
-      obj.once(event, _.bind(this.stopListening, this, obj, event, onces[event]));
+      callback = _.partial(this.stopListening, obj, event, onces[event]);
+      callback._callback = onces[event];
+      this.listenTo(obj, event, callback);
     }
     return this;
   };
