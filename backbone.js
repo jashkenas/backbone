@@ -241,24 +241,18 @@
   };
 
   Events.listenToOnce = function(obj, name, callback) {
-    var ctx = this;
-    var wrapCb = function(event, cb) {
-      var wrapped = function() {
-        ctx.stopListening(obj, event, wrapped);
-        return cb.apply(ctx, arguments);
-      };
-      return wrapped;
-    }
+    this.listenTo(obj, name, callback);
 
-    if (typeof name === 'object') {
-      for (var event in name) {
-        name[event] = wrapCb(event, name[event]);
-      }
-    } else {
-      callback = wrapCb(name, callback);
+    var onces = name;
+    if (typeof onces !== 'object') {
+      onces = {};
+      onces[name] = callback;
     }
-    return this.listenTo(obj, name, callback);
-  }
+    for (var event in onces) {
+      obj.once(event, _.bind(this.stopListening, this, obj, event, onces[event]), this);
+    }
+    return this;
+  };
 
   // Aliases for backwards compatibility.
   Events.bind   = Events.on;
