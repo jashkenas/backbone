@@ -236,7 +236,8 @@
     var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
     listeningTo[id] = obj;
     if (!callback && typeof name === 'object') callback = this;
-    return obj.on(name, callback, this);
+    obj.on(name, callback, this);
+    return this;
   };
 
   Events.listenToOnce = function(obj, name, callback) {
