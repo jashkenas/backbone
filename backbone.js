@@ -167,6 +167,30 @@
       return this;
     },
 
+    // Inversion-of-control versions of `on` and `once`. Tell *this* object to
+    // listen to an event in another object ... keeping track of what it's
+    // listening to.
+    listenTo: function(obj, name, callback) {
+      var listeningTo = this._listeningTo || (this._listeningTo = {});
+      var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
+      listeningTo[id] = obj;
+      if (!callback && typeof name === 'object') callback = this;
+      obj.on(name, callback, this);
+      return this;
+    },
+
+    listenToOnce: function(obj, name, callback) {
+      if (typeof name === 'object') {
+        for (var event in name) this.listenToOnce(obj, event, name[event]);
+        return this;
+      }
+      var once = _.partial(this.stopListening, obj, name, callback);
+      once._callback = callback;
+      this.listenTo(obj, name, callback);
+      this.listenTo(obj, name, once);
+      return this;
+    },
+
     // Tell this object to stop listening to either specific events ... or
     // to every object it's currently listening to.
     stopListening: function(obj, name, callback) {
@@ -226,30 +250,6 @@
       case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
       default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args); return;
     }
-  };
-
-  // Inversion-of-control versions of `on` and `once`. Tell *this* object to
-  // listen to an event in another object ... keeping track of what it's
-  // listening to.
-  Events.listenTo = function(obj, name, callback) {
-    var listeningTo = this._listeningTo || (this._listeningTo = {});
-    var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
-    listeningTo[id] = obj;
-    if (!callback && typeof name === 'object') callback = this;
-    obj.on(name, callback, this);
-    return this;
-  };
-
-  Events.listenToOnce = function(obj, name, callback) {
-    if (typeof name === 'object') {
-      for (var event in name) this.listenToOnce(obj, event, name[event]);
-      return this;
-    }
-    var once = _.partial(this.stopListening, obj, name, callback);
-    once._callback = callback;
-    this.listenTo(obj, name, callback);
-    this.listenTo(obj, name, once);
-    return this;
   };
 
   // Aliases for backwards compatibility.
