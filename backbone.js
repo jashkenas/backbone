@@ -185,7 +185,7 @@
         return this;
       }
       var cb = _.once(function() {
-        this.stopListening(obj, name, callback);
+        this.stopListening(obj, name, cb);
         callback.apply(this, arguments);
       });
       cb._callback = callback;
