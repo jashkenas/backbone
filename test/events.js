@@ -106,6 +106,19 @@
     b.trigger('event2');
   });
 
+  test("listenToOnce", 2, function() {
+    // Same as the previous test, but we use once rather than having to explicitly unbind
+    var obj = { counterA: 0, counterB: 0 };
+    _.extend(obj, Backbone.Events);
+    var incrA = function(){ obj.counterA += 1; obj.trigger('event'); };
+    var incrB = function(){ obj.counterB += 1; };
+    obj.listenToOnce(obj, 'event', incrA);
+    obj.listenToOnce(obj, 'event', incrB);
+    obj.trigger('event');
+    equal(obj.counterA, 1, 'counterA should have only been incremented once.');
+    equal(obj.counterB, 1, 'counterB should have only been incremented once.');
+  });
+
   test("listenToOnce and stopListening", 1, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
