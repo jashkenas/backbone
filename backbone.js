@@ -184,10 +184,12 @@
         for (var event in name) this.listenToOnce(obj, event, name[event]);
         return this;
       }
-      var once = _.partial(this.stopListening, obj, name, callback);
-      once._callback = callback;
-      this.listenTo(obj, name, callback);
-      this.listenTo(obj, name, once);
+      var cb = function() {
+        this.stopListening(obj, name, callback);
+        callback.apply(this, arguments);
+      }
+      cb._callback = callback;
+      this.listenTo(obj, name, cb);
       return this;
     },
 
