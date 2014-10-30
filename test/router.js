@@ -308,8 +308,11 @@
     equal(router.anything, 'doesnt-match-a-route');
   });
 
-  test("routes (function)", 3, function() {
+  test("routes (function)", 4, function() {
     router.on('route', function(name) {
+      ok(name === '');
+    });
+    router.on('pre-route', function(name) {
       ok(name === '');
     });
     equal(ExternalObject.value, 'unset');
@@ -325,13 +328,14 @@
     strictEqual(router.path, 'c/d/e');
   });
 
-  test("fires event when router doesn't have callback on it", 1, function() {
+  test("fires event when router doesn't have callback on it", 2, function() {
     router.on("route:noCallback", function(){ ok(true); });
+    router.on("pre-route:noCallback", function(){ ok(true); });
     location.replace('http://example.com#noCallback');
     Backbone.history.checkUrl();
   });
 
-  test("No events are triggered if #execute returns false.", 1, function() {
+  test("Only the pre-events are triggered if #execute returns false.", 3, function() {
     var Router = Backbone.Router.extend({
 
       routes: {
@@ -348,6 +352,14 @@
     });
 
     var router = new Router;
+
+    router.on('pre-route pre-route:foo', function() {
+      ok(true);
+    });
+
+    Backbone.history.on('pre-route', function() {
+      ok(true);
+    });
 
     router.on('route route:foo', function() {
       ok(false);
@@ -636,8 +648,12 @@
     strictEqual(router.z, '123');
   });
 
-  test("#2062 - Trigger 'route' event on router instance.", 2, function() {
+  test("#2062 - Trigger 'route' event on router instance.", 4, function() {
     router.on('route', function(name, args) {
+      strictEqual(name, 'routeEvent');
+      deepEqual(args, ['x', null]);
+    });
+    router.on('pre-route', function(name, args) {
       strictEqual(name, 'routeEvent');
       deepEqual(args, ['x', null]);
     });

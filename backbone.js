@@ -1317,6 +1317,9 @@
       var router = this;
       Backbone.history.route(route, function(fragment) {
         var args = router._extractParameters(route, fragment);
+        router.trigger.apply(router, ['pre-route:' + name].concat(args));
+        router.trigger('pre-route', name, args);
+        Backbone.history.trigger('pre-route', router, name, args);
         if (router.execute(callback, args) !== false) {
           router.trigger.apply(router, ['route:' + name].concat(args));
           router.trigger('route', name, args);
