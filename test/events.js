@@ -228,24 +228,6 @@
     b.trigger('one');
   });
 
-  test("listenToOnce, stopListening cleans up references", 8, function() {
-    var a = _.extend({}, Backbone.Events);
-    var b = _.extend({}, Backbone.Events);
-    var fn = function() {};
-    a.listenToOnce(b, 'event', fn).stopListening();
-    equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
-    a.listenToOnce(b, 'event', fn).stopListening(b);
-    equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
-    a.listenToOnce(b, 'event', fn).stopListening(b, 'event');
-    equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
-    a.listenToOnce(b, 'event', fn).stopListening(b, 'event', fn);
-    equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
-  });
-
   test("listenTo with empty callback doesn't throw an error", 1, function(){
     var e = _.extend({}, Backbone.Events);
     e.listenTo(e, "foo", null);
