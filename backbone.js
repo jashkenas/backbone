@@ -1136,7 +1136,11 @@
     // using `selector`). This only works for delegate-able events: not `focus`,
     // `blur`, and not `change`, `submit`, and `reset` in Internet Explorer.
     delegate: function(eventName, selector, listener) {
-      this.$el.on(eventName + '.delegateEvents' + this.cid, selector, listener);
+      var eventTypes = eventName.split(',');
+      var self = this;
+      _(eventTypes).each(function(eventNameItem) {
+        self.$el.on(eventNameItem + '.delegateEvents' + self.cid, selector, listener);
+      });
     },
 
     // Clears all callbacks previously bound to the view by `delegateEvents`.
