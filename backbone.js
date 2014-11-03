@@ -189,8 +189,7 @@
         callback.apply(this, arguments);
       });
       cb._callback = callback;
-      this.listenTo(obj, name, cb);
-      return this;
+      return this.listenTo(obj, name, cb);
     },
 
     // Tell this object to stop listening to either specific events ... or
