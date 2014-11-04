@@ -547,15 +547,53 @@
     equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });
 
-  test("where and findWhere", 8, function() {
+  test("search", 7, function() {
+    var model1 = new Backbone.Model({a: 0});
+    var model2 = new Backbone.Model({a: 3});
+    var models = [
+      model1, {a: 1}, {a: 1}, {a: 1}, {a: 2}, model2
+    ];
+    var coll = new Backbone.Collection(models, {
+      comparator: 'a'
+    });
+    
+    equal(coll.at(coll.search(1)).get('a'), 1);
+    equal(coll.search(1, {getMin: true}), 1);
+    equal(coll.search(1, {getMax: true}), 3);
+    ok(coll.search(4) === -1);
+
+    equal(coll.at(coll.search(function (model) {
+      var v = model.get('a');
+      if (v < 2) return 1;
+      if (v > 2) return -1;
+      return 0;
+    })).get('a'), 2);
+
+    var col2 = new Backbone.Collection(models, {
+      comparator: function (m) {
+        return 5 - m.get('a');
+      }
+    });
+
+    var col3 = new Backbone.Collection(models, {
+      comparator: function (m1, m2) {
+        return m2.get('a') - m1.get('a');
+      }
+    });
+    equal(col3.at(col3.search(model1)), model1);
+    equal(col3.at(col3.search(model2)), model2);
+  });
+
+  test("where and findWhere", 16, function() {
     var model = new Backbone.Model({a: 1});
-    var coll = new Backbone.Collection([
+    var models = [
       model,
       {a: 1},
       {a: 1, b: 2},
       {a: 2, b: 2},
       {a: 3}
-    ]);
+    ];
+    var coll = new Backbone.Collection(models);
     equal(coll.where({a: 1}).length, 3);
     equal(coll.where({a: 2}).length, 1);
     equal(coll.where({a: 3}).length, 1);
@@ -564,6 +602,18 @@
     equal(coll.where({a: 1, b: 2}).length, 1);
     equal(coll.findWhere({a: 1}), model);
     equal(coll.findWhere({a: 4}), void 0);
+
+    var col2 = new Backbone.Collection(models, {
+      comparator: 'a'
+    });
+    equal(col2.where({a: 1}).length, 3);
+    equal(col2.where({a: 2}).length, 1);
+    equal(col2.where({a: 3}).length, 1);
+    equal(col2.where({b: 1}).length, 0);
+    equal(col2.where({b: 2}).length, 2);
+    equal(col2.where({a: 1, b: 2}).length, 1);
+    equal(col2.findWhere({a: 1}), model);
+    equal(col2.findWhere({a: 4}), void 0);
   });
 
   test("Underscore methods", 16, function() {
