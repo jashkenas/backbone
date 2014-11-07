@@ -704,7 +704,7 @@
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        if (existing = this.get(attrs)) {
+        if (existing === this.get(attrs)) {
           if (remove) modelMap[existing.cid] = true;
           if (merge && attrs !== existing) {
             attrs = this._isModel(attrs) ? attrs.attributes : attrs;
