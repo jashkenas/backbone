@@ -255,6 +255,36 @@
     strictEqual(new View().el.className, 'dynamic');
   });
 
+  test("with css", 3, function() {
+    var View = Backbone.View.extend({
+      css: {
+        'height': '300px',
+        'width': '200px',
+        'box-sizing': 'border-box'
+      }
+    });
+
+    strictEqual(new View().el.style.width, '200px');
+    strictEqual(new View().el.style.height, '300px');
+    strictEqual(new View().el.style.boxSizing, 'border-box');
+  });
+
+  test("with css as a function", 3, function() {
+    var View = Backbone.View.extend({
+      css: function() {
+        return {
+          'height': '300px',
+          'width': '200px',
+          'box-sizing': 'border-box'
+        };
+      }
+    });
+
+    strictEqual(new View().el.style.width, '200px');
+    strictEqual(new View().el.style.height, '300px');
+    strictEqual(new View().el.style.boxSizing, 'border-box');
+  });
+
   test("multiple views per element", 3, function() {
     var count = 0;
     var $el = $('<p></p>');
