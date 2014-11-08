@@ -5,5 +5,5 @@
   "dependencies"  : {
     "underscore"  : ">=1.5.0"
   },
-  "ignore"        : ["backbone-min.js", "docs", "examples", "test", "*.yml", "*.map", "*.html", "*.ico", "*.md", "CNAME"]
+  "ignore"        : ["docs", "examples", "test", "*.yml", "*.html", "*.ico", "*.md", "CNAME"]
 }
