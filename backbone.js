@@ -1056,7 +1056,7 @@
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
   // List of view options to be merged as properties.
-  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
+  var viewOptions = ['model', 'collection', 'el', 'id', 'css', 'attributes', 'className', 'tagName', 'events'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(View.prototype, Events, {
@@ -1175,10 +1175,12 @@
     _ensureElement: function() {
       if (!this.el) {
         var attrs = _.extend({}, _.result(this, 'attributes'));
+        var css = _.extend({}, _.result(this, 'css'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
         this.setElement(this._createElement(_.result(this, 'tagName')));
         this._setAttributes(attrs);
+        this._setStyles(css);
       } else {
         this.setElement(_.result(this, 'el'));
       }
@@ -1188,6 +1190,11 @@
     // subclasses using an alternative DOM manipulation API.
     _setAttributes: function(attributes) {
       this.$el.attr(attributes);
+    },
+
+    // Set the css from a hash on this view's element.
+    _setStyles: function(css) {
+      this.$el.css(css);
     }
 
   });
