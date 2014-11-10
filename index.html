@@ -1549,7 +1549,7 @@ var bill = new Backbone.Model({
 });
 
 bill.on("change:name", function(model, name) {
-  alert("Changed name from " + bill.previous("name") + " to " + name);
+  alert("Changed name from " + model.previous("name") + " to " + name);
 });
 
 bill.set({name : "Bill Jones"});
