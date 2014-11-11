@@ -697,6 +697,9 @@
   });
 
   test("#861, adding models to a collection which do not pass validation, with validate:true", function() {
+      // 'error' is not triggered -- 'invalid' is
+      var invalidCalled = false; 
+      
       var Model = Backbone.Model.extend({
         validate: function(attrs) {
           if (attrs.id == 3) return "id can't be 3";
@@ -708,10 +711,13 @@
       });
 
       var collection = new Collection;
-      collection.on("error", function() { ok(true); });
+      collection.on("invalid", function() { invalidCalled = true; });
 
       collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}], {validate:true});
-      deepEqual(collection.pluck('id'), [1, 2, 4, 5, 6]);
+      deepEqual(collection.pluck("id"), [1, 2, 4, 5, 6]);
+      
+      // assure that the invalid callback was called
+      ok(invalidCalled);
   });
 
   test("Invalid models are discarded with validate:true.", 5, function() {
