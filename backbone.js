@@ -774,7 +774,7 @@
           if (at != null) addOpts.index = at + i;
           (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
-        if (sort || (order && order.length)) this.trigger('sort', this, options);
+        if (sort) this.trigger('sort', this, options);
       }
 
       // Return the added (or merged) model (or models).
