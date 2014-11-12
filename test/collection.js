@@ -889,6 +889,28 @@
     var c = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}], {
       comparator: 'id'
     });
+    c.sort = function(){ throw 'called sort with a value that can be run with _.sortIndex'; };
+    c.add([]);
+    c.add({id: 1});
+    c.add([{id: 2}, {id: 3}]);
+    c.add({id: 4});
+
+    c = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}], {
+      comparator: function(model) {
+        return model.id;
+      }
+    });
+    c.sort = function(){ throw 'called sort with a value that can be run with _.sortIndex'; };
+    c.add([]);
+    c.add({id: 1});
+    c.add([{id: 2}, {id: 3}]);
+    c.add({id: 4});
+
+    c = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}], {
+      comparator: function(model1, model2) {
+        return model1.id - model2.id;
+      }
+    });
     c.sort = function(){ ok(true); };
     c.add([]);
     c.add({id: 1});

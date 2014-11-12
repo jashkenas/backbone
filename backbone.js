@@ -698,7 +698,7 @@
       if (options.parse) models = this.parse(models, options);
       var singular = !_.isArray(models);
       models = singular ? (models ? [models] : []) : models.slice();
-      var id, model, attrs, existing, sort;
+      var id, model, attrs, existing, sort, simpleSort;
       var at = options.at;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
@@ -749,16 +749,17 @@
 
       // See if sorting is needed, update `length` and splice in new models.
       if (toAdd.length || (order && order.length)) {
-        if (sortable) sort = true;
         this.length += toAdd.length;
-        if (at != null) {
-          for (var i = 0, length = toAdd.length; i < length; i++) {
-            this.models.splice(at + i, 0, toAdd[i]);
-          }
-        } else {
-          if (order) this.models.length = 0;
-          var orderedModels = order || toAdd;
-          for (var i = 0, length = orderedModels.length; i < length; i++) {
+        if (order) this.models.length = 0;
+        simpleSort = !sort && sortable && (this.comparator.length === 1 || _.isString(this.comparator));
+        sort = sort || (!simpleSort && sortable);
+        var orderedModels = order || toAdd;
+        for (var i = 0, length = orderedModels.length; i < length; i++) {
+          if (simpleSort) {
+            this.models.splice(_.sortedIndex(this.models, orderedModels[i], this.comparator, this), 0, orderedModels[i]);
+          } else if (at != null) {
+            this.models.splice(at + i, 0, orderedModels[i]);
+          } else {
             this.models.push(orderedModels[i]);
           }
         }
@@ -774,7 +775,7 @@
           if (at != null) addOpts.index = at + i;
           (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
-        if (sort || (order && order.length)) this.trigger('sort', this, options);
+        if (sort || simpleSort || (order && order.length)) this.trigger('sort', this, options);
       }
 
       // Return the added (or merged) model (or models).
