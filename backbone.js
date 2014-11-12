@@ -826,6 +826,15 @@
       return slice.apply(this.models, arguments);
     },
 
+    // Splice removes a number of models and optionally replace them
+    splice: function(index, howMany /* [, replaceModel1[, ... replaceModelN]] */) {
+      var toAdd = slice.call(arguments, 2);
+      var removed = slice.call(this.models, index, index + howMany);
+      this.remove(removed);
+      if (toAdd.length > 0) this.add(toAdd, {at: index});
+      return removed;
+    },
+
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
