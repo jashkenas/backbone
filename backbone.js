@@ -504,7 +504,7 @@
       options.success = function(resp) {
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
-        var serverAttrs = model.parse(resp, options);
+        var serverAttrs = options.parse ? model.parse(resp, options) : resp;
         if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
           return false;
@@ -695,7 +695,6 @@
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
       options = _.defaults({}, options, setOptions);
-      if (options.parse) models = this.parse(models, options);
       var singular = !_.isArray(models);
       models = singular ? (models ? [models] : []) : models.slice();
       var id, model, attrs, existing, sort;
@@ -887,6 +886,7 @@
       var collection = this;
       options.success = function(resp) {
         var method = options.reset ? 'reset' : 'set';
+        if (options.parse) resp = this.parse(resp, options);
         collection[method](resp, options);
         if (success) success(collection, resp, options);
         collection.trigger('sync', collection, resp, options);
