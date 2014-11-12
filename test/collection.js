@@ -364,6 +364,14 @@
     equal(array[0].get('b'), 'b');
   });
 
+  test("splice", 3, function() {
+    var col = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
+    var removed = col.splice(1, 2, {d: 'd'}, {e: 'e'});
+    equal(removed.length, 2);
+    equal(removed[0].get('b'), 'b');
+    equal(col.at(2).get('e'), 'e');
+  });
+
   test("events are unbound on remove", 3, function() {
     var counter = 0;
     var dj = new Backbone.Model();
