@@ -696,22 +696,22 @@
     equal(col.length, 0);
   });
 
-  test("#861, adding models to a collection which do not pass validation, with validate:true", function() {
-      var Model = Backbone.Model.extend({
-        validate: function(attrs) {
-          if (attrs.id == 3) return "id can't be 3";
-        }
-      });
+  test("#861, adding models to a collection which do not pass validation, with validate:true", 2, function() {
+    var Model = Backbone.Model.extend({
+      validate: function(attrs) {
+        if (attrs.id == 3) return "id can't be 3";
+      }
+    });
 
-      var Collection = Backbone.Collection.extend({
-        model: Model
-      });
+    var Collection = Backbone.Collection.extend({
+      model: Model
+    });
 
-      var collection = new Collection;
-      collection.on("error", function() { ok(true); });
+    var collection = new Collection;
+    collection.on("invalid", function() { ok(true); });
 
-      collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}], {validate:true});
-      deepEqual(collection.pluck('id'), [1, 2, 4, 5, 6]);
+    collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}], {validate:true});
+    deepEqual(collection.pluck("id"), [1, 2, 4, 5, 6]);
   });
 
   test("Invalid models are discarded with validate:true.", 5, function() {
