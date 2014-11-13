@@ -738,6 +738,7 @@
         id = this.modelId(model.attributes);
         if (order && (model.isNew() || !modelMap[id])) {
           order.push(model);
+
           // Check to see if this is actually a new model at this index.
           orderChanged = orderChanged || !this.models[i] || model.cid !== this.models[i].cid;
         }
@@ -754,7 +755,7 @@
       }
 
       // See if sorting is needed, update `length` and splice in new models.
-      if (toAdd.length || (orderChanged && order && order.length)) {
+      if (toAdd.length || orderChanged) {
         if (sortable) sort = true;
         this.length += toAdd.length;
         if (at != null) {
