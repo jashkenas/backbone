@@ -867,6 +867,8 @@
       if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
       options || (options = {});
 
+      var before = _.pluck(this.models, 'cid');
+
       // Run sort based on type of `comparator`.
       if (_.isString(this.comparator) || this.comparator.length === 1) {
         this.models = this.sortBy(this.comparator, this);
@@ -874,7 +876,9 @@
         this.models.sort(_.bind(this.comparator, this));
       }
 
-      if (!options.silent) this.trigger('sort', this, options);
+      if (!options.silent && !_.isEqual(_.pluck(this.models, 'cid'), before)) {
+        this.trigger('sort', this, options);
+      }
       return this;
     },
 
