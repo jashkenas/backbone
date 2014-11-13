@@ -16,23 +16,20 @@
 
   });
 
-  test("new and sort", 9, function() {
+  test("new and sort", 6, function() {
     var counter = 0;
     col.on('sort', function(){ counter++; });
-    equal(col.first(), a, "a should be first");
-    equal(col.last(), d, "d should be last");
+    deepEqual(col.pluck('label'), ['a', 'b', 'c', 'd']);
     col.comparator = function(a, b) {
       return a.id > b.id ? -1 : 1;
     };
     col.sort();
     equal(counter, 1);
-    equal(col.first(), a, "a should be first");
-    equal(col.last(), d, "d should be last");
+    deepEqual(col.pluck('label'), ['a', 'b', 'c', 'd']);
     col.comparator = function(model) { return model.id; };
     col.sort();
     equal(counter, 2);
-    equal(col.first(), d, "d should be first");
-    equal(col.last(), a, "a should be last");
+    deepEqual(col.pluck('label'), ['d', 'c', 'b', 'a']);
     equal(col.length, 4);
   });
 
@@ -1110,9 +1107,7 @@
   test("#1894 - Push should not trigger a sort", 0, function() {
     var Collection = Backbone.Collection.extend({
       comparator: 'id',
-      sort: function() {
-        ok(false);
-      }
+      sort: function() { ok(false); }
     });
     new Collection().push({id: 1});
   });
@@ -1136,7 +1131,7 @@
   test("#1894 - `sort` can optionally be turned off", 0, function() {
     var Collection = Backbone.Collection.extend({
       comparator: 'id',
-      sort: function() { ok(true); }
+      sort: function() { ok(false); }
     });
     new Collection().add({id: 1}, {sort: false});
   });
@@ -1441,7 +1436,7 @@
   test("#3039: adding at index fires with correct at", 3, function() {
     var col = new Backbone.Collection([{at: 0}, {at: 4}]);
     col.on('add', function(model, col, options) {
-        equal(model.get('at'), options.index);
+      equal(model.get('at'), options.index);
     });
     col.add([{at: 1}, {at: 2}, {at: 3}], {at: 1});
   });
@@ -1449,7 +1444,7 @@
   test("#3039: index is not sent when at is not specified", 2, function() {
     var col = new Backbone.Collection([{at: 0}]);
     col.on('add', function(model, col, options) {
-        equal(undefined, options.index);
+      equal(undefined, options.index);
     });
     col.add([{at: 1}, {at: 2}]);
   });
@@ -1460,10 +1455,21 @@
       var three = new Backbone.Model({id: 3});
       var collection = new Backbone.Collection([one, two, three]);
       collection.on('sort', function() {
-          ok(true);
+        ok(true);
       });
       collection.set([{id: 3}, {id: 2}, {id: 1}]);
   });
+
+  test('#3199 - Adding a model should trigger a sort', 1, function() {
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    collection.on('sort', function() {
+      ok(true);
+    });
+    collection.set([{id: 3}, {id: 2}, {id: 1}, {id: 0}]);
+  })
 
   test('#3199 - Order not changing should not trigger a sort', 0, function() {
     var one = new Backbone.Model({id: 1});
@@ -1471,7 +1477,7 @@
     var three = new Backbone.Model({id: 3});
     var collection = new Backbone.Collection([one, two, three]);
     collection.on('sort', function() {
-        ok(false);
+      ok(false);
     });
     collection.set([{id: 1}, {id: 2}, {id: 3}]);
   });
