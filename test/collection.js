@@ -1454,4 +1454,26 @@
     col.add([{at: 1}, {at: 2}]);
   });
 
+  test('#3199 - Order changing should trigger a sort', 1, function() {
+      var one = new Backbone.Model({id: 1});
+      var two = new Backbone.Model({id: 2});
+      var three = new Backbone.Model({id: 3});
+      var collection = new Backbone.Collection([one, two, three]);
+      collection.on('sort', function() {
+          ok(true);
+      });
+      collection.set([{id: 3}, {id: 2}, {id: 1}]);
+  });
+
+  test('#3199 - Order not changing should not trigger a sort', 0, function() {
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    collection.on('sort', function() {
+        ok(false);
+    });
+    collection.set([{id: 1}, {id: 2}, {id: 3}]);
+  });
+
 })();
