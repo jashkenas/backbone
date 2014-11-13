@@ -705,6 +705,7 @@
       var toAdd = [], toRemove = [], modelMap = {};
       var add = options.add, merge = options.merge, remove = options.remove;
       var order = !sortable && add && remove ? [] : false;
+      var orderChanged = false;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
@@ -735,7 +736,12 @@
         model = existing || model;
         if (!model) continue;
         id = this.modelId(model.attributes);
-        if (order && (model.isNew() || !modelMap[id])) order.push(model);
+        if (order && (model.isNew() || !modelMap[id])) {
+          order.push(model);
+          // Check to see if this is actually a new model at this index.
+          orderChanged = orderChanged || !this.models[i] || model.cid !== this.models[i].cid;
+        }
+
         modelMap[id] = true;
       }
 
@@ -748,7 +754,7 @@
       }
 
       // See if sorting is needed, update `length` and splice in new models.
-      if (toAdd.length || (order && order.length)) {
+      if (toAdd.length || (orderChanged && order && order.length)) {
         if (sortable) sort = true;
         this.length += toAdd.length;
         if (at != null) {
@@ -774,7 +780,7 @@
           if (at != null) addOpts.index = at + i;
           (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
-        if (sort || (order && order.length)) this.trigger('sort', this, options);
+        if (sort || orderChanged) this.trigger('sort', this, options);
       }
 
       // Return the added (or merged) model (or models).
