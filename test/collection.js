@@ -1482,4 +1482,11 @@
     collection.set([{id: 1}, {id: 2}, {id: 3}]);
   });
 
+  test("add supports negative indexes", 1, function() {
+    var collection = new Backbone.Collection([{id: 1}]);
+    collection.add([{id: 2}, {id: 3}], {at: -1});
+    collection.add([{id: 2.5}], {at: -2});
+    equal(collection.pluck('id').join(','), "1,2,2.5,3");
+  });
+
 })();
