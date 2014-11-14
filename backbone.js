@@ -700,6 +700,7 @@
       models = singular ? (models ? [models] : []) : models.slice();
       var id, model, attrs, existing, sort;
       var at = options.at;
+      if (at < 0) at += this.length + 1;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
       var toAdd = [], toRemove = [], modelMap = {};
