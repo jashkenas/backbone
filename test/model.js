@@ -930,6 +930,22 @@
     model.set({x: 1});
   });
 
+  test("nested `change` with sparse", 2, function() {
+    var model = new Backbone.Model();
+
+    model.once('change', function() {
+      deepEqual(this.changedAttributes(), {x: true});
+
+      model.on('change', function() {
+        deepEqual(this.changedAttributes(), {y: true});
+      });
+
+      model.set({y: true}, {sparse: true});
+    });
+
+    model.set({x: true}, {sparse: true});
+  });
+
   test("nested set multiple times", 1, function() {
     var model = new Backbone.Model();
     model.on('change:b', function() {
