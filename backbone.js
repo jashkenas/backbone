@@ -280,6 +280,7 @@
     if (options.parse) attrs = this.parse(attrs, options) || {};
     attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
     this.set(attrs, options);
+    this._previousAttributes = {};
     this.changed = {};
     this.initialize.apply(this, arguments);
   };

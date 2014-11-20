@@ -374,9 +374,12 @@
     equal(model.get('two'), 4);
   });
 
-  test("change, hasChanged, changedAttributes, previous, previousAttributes", 9, function() {
+  test("change, hasChanged, changedAttributes, previous, previousAttributes", 12, function() {
     var model = new Backbone.Model({name: "Tim", age: 10});
     deepEqual(model.changedAttributes(), false);
+    equal(model.hasChanged('name'), false);
+    equal(model.previous('name'), null);
+    deepEqual(model.previousAttributes(), {});
     model.on('change', function() {
       ok(model.hasChanged('name'), 'name changed');
       ok(!model.hasChanged('age'), 'age did not');
