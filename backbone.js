@@ -1477,12 +1477,12 @@
 
       // Figure out the initial configuration. Do we need an iframe?
       // Is pushState desired ... is it available?
-      this.options          = _.extend({root: '/'}, this.options, options);
-      this.root             = this.options.root;
-      this._wantsHashChange = this.options.hashChange !== false;
+      options               = _.extend({root: '/'}, options);
+      this.root             = options.root;
+      this._wantsHashChange = options.hashChange !== false;
       this._hasHashChange   = 'onhashchange' in window;
-      this._wantsPushState  = !!this.options.pushState;
-      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
+      this._wantsPushState  = !!options.pushState;
+      this._hasPushState    = !!(options.pushState && this.history && this.history.pushState);
       this.fragment         = this.getFragment();
 
       // Add a cross-platform `addEventListener` shim for older browsers.
@@ -1536,7 +1536,7 @@
 
       }
 
-      if (!this.options.silent) return this.loadUrl();
+      if (!options.silent) return this.loadUrl();
     },
 
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
