@@ -248,6 +248,16 @@
     ok(true);
   });
 
+  test("listenTo with string callback binds properly", 1, function() {
+    var a = { ok: function(){ ok(true); } };
+    var b = _.extend({}, Backbone.Events);
+
+    _.extend(a, Backbone.Events)
+
+    a.listenTo(b, 'event', 'ok');
+    b.trigger('event');
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);

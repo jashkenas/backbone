@@ -175,6 +175,7 @@
       var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
       listeningTo[id] = obj;
       if (!callback && typeof name === 'object') callback = this;
+      if (typeof callback === 'string') callback = this[callback];
       obj.on(name, callback, this);
       return this;
     },
