@@ -565,7 +565,7 @@
     Backbone.history.stop();
     location.replace('http://example.com/root/x/y?a=b');
     location.replace = function(url) {
-      strictEqual(url, '/root/#x/y?a=b');
+      strictEqual(url, '/root#x/y?a=b');
     };
     Backbone.history = _.extend(new Backbone.History, {
       location: location,
@@ -904,7 +904,7 @@
     Backbone.history.stop();
     location.replace('/root?foo=bar');
     location.replace = function(url) {
-      strictEqual(url, '/root/#?foo=bar');
+      strictEqual(url, '/root#?foo=bar');
     };
     Backbone.history = _.extend(new Backbone.History, {
       location: location,
