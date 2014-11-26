@@ -81,7 +81,7 @@
     // Bind an event to a `callback` function. Passing `"all"` will bind
     // the callback to all events fired.
     on: function(name, callback, context) {
-      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
+      if (!eventsApi(this, 'on', name, callback, [context]) || !callback) return this;
       this._events || (this._events = {});
       var events = this._events[name] || (this._events[name] = []);
       events.push({callback: callback, context: context, ctx: context || this});
@@ -91,7 +91,7 @@
     // Bind an event to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
     once: function(name, callback, context) {
-      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
+      if (!eventsApi(this, 'once', name, callback, [context]) || !callback) return this;
       var self = this;
       var once = _.once(function() {
         self.off(name, once);
@@ -106,7 +106,7 @@
     // callbacks for the event. If `name` is null, removes all bound
     // callbacks for all events.
     off: function(name, callback, context) {
-      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
+      if (!this._events || !eventsApi(this, 'off', name, callback, [context])) return this;
 
       // Remove all callbacks for all events.
       if (!name && !callback && !context) {
@@ -159,7 +159,7 @@
     trigger: function(name) {
       if (!this._events) return this;
       var args = slice.call(arguments, 1);
-      if (!eventsApi(this, 'trigger', name, args)) return this;
+      if (!eventsApi(this, 'trigger', name, null, args)) return this;
       var events = this._events[name];
       var allEvents = this._events.all;
       if (events) triggerEvents(events, args);
@@ -224,7 +224,7 @@
   // Implement fancy features of the Events API such as multiple event
   // names `"change blur"` and jQuery-style event maps `{change: action}`
   // in terms of the existing API.
-  var eventsApi = function(obj, action, name, rest) {
+  var eventsApi = function(obj, action, name, callback, rest) {
     if (!name) return true;
 
     // Handle event maps.
@@ -239,8 +239,14 @@
     if (eventSplitter.test(name)) {
       var names = name.split(eventSplitter);
       for (var i = 0, length = names.length; i < length; i++) {
-        obj[action].apply(obj, [names[i]].concat(rest));
+        obj[action].apply(obj, [names[i], callback].concat(rest));
       }
+      return false;
+    }
+
+    // Handle string callbacks.
+    if (callback && _.isString(callback)) {
+      obj[action].apply(obj, [name, obj[callback]].concat(rest));
       return false;
     }
 

@@ -377,13 +377,6 @@
     _.extend({}, Backbone.Events).on('test').trigger('test');
   });
 
-  test("if callback is truthy but not a function, `on` should throw an error just like jQuery", 1, function() {
-    var view = _.extend({}, Backbone.Events).on('test', 'noop');
-    raises(function() {
-      view.trigger('test');
-    });
-  });
-
   test("remove all events for a specific context", 4, function() {
     var obj = _.extend({}, Backbone.Events);
     obj.on('x y all', function() { ok(true); });
@@ -684,4 +677,35 @@
     b.trigger('anything');
     equal(_.keys(a._listeningTo).length, 0);
   });
+
+  test("`on` accepts string as callback", function() {
+    var counter = 0;
+    var obj = _.extend({ foo: function() { counter++; } }, Backbone.Events);
+
+    obj.on('foo', 'foo');
+    obj.trigger('foo');
+    equal(counter, 1);
+  });
+
+  test("`once` accepts string as callback", function() {
+    var counter = 0;
+    var obj = _.extend({ foo: function() { counter++; } }, Backbone.Events);
+
+    obj.once('foo', 'foo');
+    obj.trigger('foo');
+    obj.trigger('foo');
+    equal(counter, 1);
+  });
+
+  test("`off` accepts string as callback", function() {
+    var counter = 0;
+    var obj = _.extend({ foo: function() { counter++; } }, Backbone.Events);
+
+    obj.on('foo', obj.foo);
+    obj.trigger('foo');
+    obj.off('foo', 'foo');
+    obj.trigger('foo');
+    equal(counter, 1);
+  });
+
 })();
