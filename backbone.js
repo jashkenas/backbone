@@ -159,7 +159,7 @@
     trigger: function(name) {
       if (!this._events) return this;
       var args = slice.call(arguments, 1);
-      if (!eventsApi(this, 'trigger', name, null, args)) return this;
+      if (!eventsApi(this, 'trigger', name, null, null, args)) return this;
       var events = this._events[name];
       var allEvents = this._events.all;
       if (events) triggerEvents(events, args);
@@ -227,12 +227,10 @@
   var eventsApi = function(obj, action, name, callback, context, rest) {
     if (!name) return true;
 
-    rest || (rest = []);
-
     // Handle event maps.
     if (typeof name === 'object') {
       for (var key in name) {
-        obj[action].apply(obj, [key, name[key], context].concat(rest));
+        obj[action].apply(obj, [key, name[key]].concat(rest || [context]));
       }
       return false;
     }
@@ -241,14 +239,14 @@
     if (eventSplitter.test(name)) {
       var names = name.split(eventSplitter);
       for (var i = 0, length = names.length; i < length; i++) {
-        obj[action].apply(obj, [names[i], callback, context].concat(rest));
+        obj[action].apply(obj, [names[i]].concat(rest || [callback, context]));
       }
       return false;
     }
 
     // Handle string callbacks.
     if (callback && _.isString(callback)) {
-      obj[action].apply(obj, [name, (context || obj)[callback], context].concat(rest));
+      obj[action].apply(obj, [name].concat(rest || [(context || obj)[callback], context]));
       return false;
     }
 

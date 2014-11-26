@@ -272,6 +272,26 @@
     equal(obj.counter, 2);
   });
 
+  test("trigger with event maps", function() {
+    var counter = 0;
+    var obj = _.extend({ inc: function(count) { counter += count } }, Backbone.Events);
+
+    obj.on('foo', obj.inc);
+    obj.on('bar', obj.inc);
+    obj.trigger({ 'foo': 2, 'bar': 3 });
+    equal(counter, 5);
+  });
+
+  test("trigger with multiple event names", function() {
+    var counter = 0;
+    var obj = _.extend({ inc: function(count) { counter += count } }, Backbone.Events);
+
+    obj.on('foo', obj.inc);
+    obj.on('bar', obj.inc);
+    obj.trigger({ 'foo bar': 2 });
+    equal(counter, 4);
+  });
+
   test("on, then unbind all functions", 1, function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
