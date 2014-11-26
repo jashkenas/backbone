@@ -687,11 +687,32 @@
     equal(counter, 1);
   });
 
+  test("`on` with string as callback uses context to get callback", function() {
+    var counter = 0;
+    var obj = _.extend({}, Backbone.Events);
+    var obj2 = _.extend({ foo: function() { counter++; } });
+
+    obj.on('foo', 'foo', obj2);
+    obj.trigger('foo');
+    equal(counter, 1);
+  });
+
   test("`once` accepts string as callback", function() {
     var counter = 0;
     var obj = _.extend({ foo: function() { counter++; } }, Backbone.Events);
 
     obj.once('foo', 'foo');
+    obj.trigger('foo');
+    obj.trigger('foo');
+    equal(counter, 1);
+  });
+
+  test("`once` with string as callback uses context to get callback", function() {
+    var counter = 0;
+    var obj = _.extend({}, Backbone.Events);
+    var obj2 = _.extend({ foo: function() { counter++; } });
+
+    obj.once('foo', 'foo', obj2);
     obj.trigger('foo');
     obj.trigger('foo');
     equal(counter, 1);
@@ -704,6 +725,18 @@
     obj.on('foo', obj.foo);
     obj.trigger('foo');
     obj.off('foo', 'foo');
+    obj.trigger('foo');
+    equal(counter, 1);
+  });
+
+  test("`off` with string as callback uses context to get callback", function() {
+    var counter = 0;
+    var obj = _.extend({}, Backbone.Events);
+    var obj2 = _.extend({ foo: function() { counter++; } });
+
+    obj.on('foo', obj2.foo, obj2);
+    obj.trigger('foo');
+    obj.off('foo', 'foo', obj2);
     obj.trigger('foo');
     equal(counter, 1);
   });
