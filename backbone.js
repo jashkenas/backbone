@@ -245,7 +245,7 @@
     }
 
     // Handle string callbacks.
-    if (callback && _.isString(callback)) {
+    if (typeof callback === 'string') {
       obj[action].apply(obj, [name].concat(rest || [(context || obj)[callback], context]));
       return false;
     }
