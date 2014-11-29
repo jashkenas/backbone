@@ -12,6 +12,7 @@
     "docco": "0.6.3",
     "coffee-script": "1.7.1"
   },
+  "main": "backbone.js",
   "scripts": {
     "test": "phantomjs test/vendor/runner.js test/index.html?noglobals=true && coffee test/model.coffee",
     "build": "uglifyjs backbone.js --mangle --source-map backbone-min.map -o backbone-min.js",
@@ -24,5 +25,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/jashkenas/backbone.git"
-  }
+  },
+  "files": [
+    "backbone.js", "backbone-min.js", "backbone-min.map", "LICENSE"
+  ]
 }
