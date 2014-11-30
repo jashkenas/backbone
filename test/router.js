@@ -375,14 +375,6 @@
     strictEqual(Backbone.history.getFragment(), 'foo');
   });
 
-  test("#1003 - History is started before navigate is called", 1, function() {
-    Backbone.history.stop();
-    Backbone.history.navigate = function(){ ok(Backbone.History.started); };
-    Backbone.history.start();
-    // If this is not an old IE navigate will not be called.
-    if (!Backbone.history.iframe) ok(true);
-  });
-
   test("#967 - Route callback gets passed encoded values.", 3, function() {
     var route = 'has%2Fslash/complex-has%23hash/has%20space';
     Backbone.history.navigate(route, {trigger: true});
@@ -573,7 +565,7 @@
     Backbone.history.stop();
     location.replace('http://example.com/root/x/y?a=b');
     location.replace = function(url) {
-      strictEqual(url, '/root/#x/y?a=b');
+      strictEqual(url, '/root#x/y?a=b');
     };
     Backbone.history = _.extend(new Backbone.History, {
       location: location,
@@ -906,6 +898,22 @@
       strictEqual(params, 'a=value&backUrl=https%3A%2F%2Fwww.msn.com%2Fidp%2Fidpdemo%3Fspid%3Dspdemo%26target%3Db');
     });
     Backbone.history.start();
+  });
+
+  test('#3358 - pushState to hashChange transition with search params', 1, function() {
+    Backbone.history.stop();
+    location.replace('/root?foo=bar');
+    location.replace = function(url) {
+      strictEqual(url, '/root#?foo=bar');
+    };
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: undefined,
+        replaceState: undefined
+      }
+    });
+    Backbone.history.start({root: '/root', pushState: true});
   });
 
 })();
