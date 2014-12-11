@@ -457,8 +457,8 @@
       if (options.parse === void 0) options.parse = true;
       var model = this;
       var success = options.success;
-      options.success = function(resp) {
-        if (!model.set(model.parse(resp, options), options)) return false;
+      options.success = function(resp, status) {
+        if (status !== "notmodified" && !model.set(model.parse(resp, options), options)) return false;
         if (success) success(model, resp, options);
         model.trigger('sync', model, resp, options);
       };
@@ -893,9 +893,11 @@
       if (options.parse === void 0) options.parse = true;
       var success = options.success;
       var collection = this;
-      options.success = function(resp) {
-        var method = options.reset ? 'reset' : 'set';
-        collection[method](resp, options);
+      options.success = function(resp, status) {
+        if (status !== "notmodified") {
+          var method = options.reset ? 'reset' : 'set';
+          collection[method](resp, options);
+        }
         if (success) success(collection, resp, options);
         collection.trigger('sync', collection, resp, options);
       };
