@@ -278,6 +278,21 @@
         overflow: scroll;
       }
     }
+    img.figure {
+      width: 100%;
+    }
+    div.columns {
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+    }
+      div.columns ul {
+        margin: 10px 0;
+      }
+    div.col-50 {
+      display: table-cell;
+      width: 50%;
+    }
   </style>
 </head>
 <body>
@@ -292,9 +307,17 @@
       <li>&raquo; <a href="docs/backbone.html">Annotated Source</a></li>
     </ul>
 
-    <a class="toc_title" href="#introduction">
-      Introduction
+    <a class="toc_title" href="#Getting-started">
+      Getting Started
     </a>
+    <ul class="toc_section">
+      <li>- <a href="#introduction">Introduction</a></li>
+      <li>– <a href="#Model-View-separation">Model/View separation</a></li>
+      <li>– <a href="#Model-Collections">Model Collections</a></li>
+      <li>– <a href="#API-integration">API integration</a></li>
+      <li>– <a href="#View-isolation">View isolation</a></li>
+      <li>– <a href="#Routing">Routing</a></li>
+    </ul>
 
     <a class="toc_title" href="#upgrading">
       Upgrading
@@ -592,8 +615,9 @@
       <a href="http://zeptojs.com">Zepto</a>, will
       also tend to work, with varying degrees of compatibility.)</i>
     </p>
+    <h2 id="Getting-started">Getting Started</h2>
 
-    <h2 id="introduction">Introduction</h2>
+    <h3 id="introduction">Introduction</h3>
 
     <p>
       When working on a web application that involves a lot of JavaScript, one
@@ -637,6 +661,127 @@
     <p>
       Many of the examples that follow are runnable. Click the <i>play</i> button
       to execute them.
+    </p>
+
+    <h3 id="Model-View-separation">Model/View Separation</h3>
+
+    <img class="figure" src="docs/images/intro-model-view.svg" alt="Model-View Separation.">
+
+    <div class="columns">
+      <div class="col-50">
+        <b>Model</b>
+        <ul>
+          <li>Manages application data.</li>
+          <li>Loads and saves persisted data.</li>
+          <li>Notifies when data changes.</li>
+        </ul>
+      </div>
+      <div class="col-50">
+        <b>View</b>
+        <ul>
+          <li>Renders model data as markup.</li>
+          <li>Captures user input.</li>
+          <li>Sends input data to the model.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>
+      A <b>Model</b> manages an internal table of data attributes, and triggers <tt>"change"</tt> events when any of its data is modified. A Model handles data sync with a persistence layer, and should be extended with all application logic concerning data and its uses.
+    </p>
+
+    <p>
+      A <b>View</b> manages the visual layer placed in front of a model. A View defines methodology for rendering its model as visual markup, and then listens to its model for <tt>"change"</tt> events that prompt the view to re-render. Additionally, a view is concerned with capturing input from its user interface, and sending that data along to its model.
+    </p>
+
+    <h3 id="Model-Collections">Model Collections</h3>
+
+    <img class="figure" src="docs/images/intro-collections.svg" alt="Model Collections.">
+
+    <p>
+      A <b>Collection</b> manages a set of models, and handles the loading and creation of new models through a persistence layer. A Collection triggers special events when models are added, removed, and sorted within the set. Additionally, a Collection proxies all events of its models, allowing you to listen for updates from any model in the set.
+    </p>
+
+    <p>
+      A <b>View</b> may listen and send data to a Collection the same as it would a single Model. This is commonly utilized to render lists of subviews based on the contents of a collection. Backbone is unopinionated about how view/subview relationships work, so you may consider a higher-level framework such as <a href="http://marionettejs.com/">Marionette</a> to help with this.
+    </p>
+
+    <h3 id="API-integration">API Integration</h3>
+
+    <p>
+      Backbone is pre-configured to sync with a RESTful API. Simply create a new <b>Collection</b> with the <tt>url</tt> of your resource endpoint:
+    </p>
+
+<pre>
+var Books = Backbone.Collection.extend({
+  url: '/books'
+});
+</pre>
+
+    <p>
+      The <b>Collection</b> and <b>Model</b> components together form a direct mapping of REST resources using the following methods:
+    </p>
+
+<pre>
+GET  /books/ .... collection.fetch();
+POST /books/ .... collection.create();
+GET  /books/1 ... model.fetch();
+PUT  /books/1 ... model.save();
+DEL  /books/1 ... model.destroy();
+</pre>
+    
+    <p>
+      When fetching raw JSON data from an API, a <b>Collection</b> will automatically populate itself with data formatted as an array, while a <b>Model</b> will automatically populate itself with data formatted as an object:
+    </p>
+
+<pre>
+[{"id": 1}] ..... populates a Collection with one model.
+{"id": 1} ....... populates a Model with one attribute.
+</pre>
+
+    <p>
+      However, it's fairly common to encounter APIs that return data in a different format than what Backbone expects. For example, consider fetching a <b>Collection</b> from an API that returns the collection array wrapped in meta data:
+    </p>
+
+<pre>
+{
+  "page": 1,
+  "limit": 10,
+  "total": 2,
+  "books": [
+    {"id": 1, "title": "Pride and Prejudice"},
+    {"id": 4, "title": "The Great Gatsby"}
+  ] 
+}
+</pre>
+
+    <p>
+      In the above example data, a <b>Collection</b> should populate using the <tt>"books"</tt> array rather than the root object structure. This difference is easily reconciled using a <tt>parse</tt> method that returns the desired portion of API data:
+    </p>
+
+<pre>
+var Books = Backbone.Collection.extend({
+  url: '/books',
+  parse: function(data) {
+    return data.books;
+  }
+});
+</pre>
+
+    <h3 id="View-isolation">View Isolation</h3>
+
+    <img class="figure" src="docs/images/intro-views.svg" alt="View isolation.">
+
+    <p>
+      As a general rule, <b>View</b> objects should remain unaware of one another (unless a view's specific responsibility is to manage subviews). This simplifies application design by limiting a view's responsibility to its own rendering and behavior. Multiple views may synchronize their updates by sharing a common model.
+    </p>
+
+    <h3 id="Routing">Routing</h3>
+
+    <img class="figure" src="docs/images/intro-routing.svg" alt="Routing.">
+
+    <p>
+      A <b>Router</b> provides linkable, bookmarkable, shareable URLs for important locations within a single-page web application. A Router tracks this deep link using either the document <a href="http://en.wikipedia.org/wiki/Fragment_identifier">fragment</a>, or else the browser History API. When the deep link changes, a Router has the opportunity to perform updates on the application model and/or views to reflect the current URL state.
     </p>
 
     <h2 id="upgrading">Upgrading to 1.1</h2>
