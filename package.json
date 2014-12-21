@@ -6,7 +6,7 @@
   "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
   "dependencies"  : {
     "underscore"  : ">=1.6.0",
-    "jquery"      : ">=2.0.0"
+    "jquery"      : "*"
   },
   "devDependencies": {
     "phantomjs": "1.9.7-8",
