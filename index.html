@@ -315,7 +315,7 @@
       <li>– <a href="#Model-View-separation">Model/View separation</a></li>
       <li>– <a href="#Model-Collections">Model Collections</a></li>
       <li>– <a href="#API-integration">API integration</a></li>
-      <li>– <a href="#View-isolation">View isolation</a></li>
+      <li>– <a href="#View-rendering">View rendering</a></li>
       <li>– <a href="#Routing">Routing</a></li>
     </ul>
 
@@ -687,11 +687,18 @@
     </div>
 
     <p>
-      A <b>Model</b> manages an internal table of data attributes, and triggers <tt>"change"</tt> events when any of its data is modified. A Model handles data sync with a persistence layer, and should be extended with all application logic concerning data and its uses.
+      A <b>Model</b> manages an internal table of data attributes, and 
+      triggers <tt>"change"</tt> events when any of its data is modified. 
+      A Model handles data sync with a persistence layer, and should be 
+      extended with all application logic concerning data and its uses.
     </p>
 
     <p>
-      A <b>View</b> manages the visual layer placed in front of a model. A View defines methodology for rendering its model as visual markup, and then listens to its model for <tt>"change"</tt> events that prompt the view to re-render. Additionally, a view is concerned with capturing input from its user interface, and sending that data along to its model.
+      A <b>View</b> manages the visual layer placed in front of a model. 
+      A View defines methodology for rendering its model as visual markup, 
+      and then listens to its model for <tt>"change"</tt> events that prompt 
+      the view to re-render. Additionally, a view is concerned with capturing 
+      input from its user interface, and sending that data along to its model.
     </p>
 
     <h3 id="Model-Collections">Model Collections</h3>
@@ -699,17 +706,24 @@
     <img class="figure" src="docs/images/intro-collections.svg" alt="Model Collections.">
 
     <p>
-      A <b>Collection</b> manages a set of models, and handles the loading and creation of new models through a persistence layer. A Collection triggers special events when models are added, removed, and sorted within the set. Additionally, a Collection proxies all events of its models, allowing you to listen for updates from any model in the set.
+      A <b>Collection</b> manages a set of models, and handles the loading and 
+      creation of new models through a persistence layer. A Collection triggers 
+      special events when models are added, removed, and sorted within the set. 
+      Additionally, a Collection proxies all events of its models, allowing you 
+      to listen for updates from any model in the set.
     </p>
 
     <p>
-      A <b>View</b> may listen and send data to a Collection the same as it would a single Model. This is commonly utilized to render lists of subviews based on the contents of a collection. Backbone is unopinionated about how view/subview relationships work, so you may consider a higher-level framework such as <a href="http://marionettejs.com/">Marionette</a> to help with this.
+      A <b>View</b> may listen and send data to a Collection the same as it 
+      would a single Model. This is commonly utilized to render lists of 
+      subviews based on the contents of a collection.
     </p>
 
     <h3 id="API-integration">API Integration</h3>
 
     <p>
-      Backbone is pre-configured to sync with a RESTful API. Simply create a new <b>Collection</b> with the <tt>url</tt> of your resource endpoint:
+      Backbone is pre-configured to sync with a RESTful API. Simply create a 
+      new Collection with the <tt>url</tt> of your resource endpoint:
     </p>
 
 <pre>
@@ -719,7 +733,8 @@ var Books = Backbone.Collection.extend({
 </pre>
 
     <p>
-      The <b>Collection</b> and <b>Model</b> components together form a direct mapping of REST resources using the following methods:
+      The <b>Collection</b> and <b>Model</b> components together form a direct 
+      mapping of REST resources using the following methods:
     </p>
 
 <pre>
@@ -731,7 +746,10 @@ DEL  /books/1 ... model.destroy();
 </pre>
     
     <p>
-      When fetching raw JSON data from an API, a <b>Collection</b> will automatically populate itself with data formatted as an array, while a <b>Model</b> will automatically populate itself with data formatted as an object:
+      When fetching raw JSON data from an API, a <b>Collection</b> will 
+      automatically populate itself with data formatted as an array, while 
+      a <b>Model</b> will automatically populate itself with data formatted 
+      as an object:
     </p>
 
 <pre>
@@ -740,7 +758,10 @@ DEL  /books/1 ... model.destroy();
 </pre>
 
     <p>
-      However, it's fairly common to encounter APIs that return data in a different format than what Backbone expects. For example, consider fetching a <b>Collection</b> from an API that returns the collection array wrapped in meta data:
+      However, it's fairly common to encounter APIs that return data in a 
+      different format than what Backbone expects. For example, consider 
+      fetching a <b>Collection</b> from an API that returns the collection 
+      array wrapped in meta data:
     </p>
 
 <pre>
@@ -756,7 +777,10 @@ DEL  /books/1 ... model.destroy();
 </pre>
 
     <p>
-      In the above example data, a <b>Collection</b> should populate using the <tt>"books"</tt> array rather than the root object structure. This difference is easily reconciled using a <tt>parse</tt> method that returns the desired portion of API data:
+      In the above example data, a <b>Collection</b> should populate using the 
+      <tt>"books"</tt> array rather than the root object structure. This 
+      difference is easily reconciled using a <tt>parse</tt> method that 
+      returns the desired portion of API data:
     </p>
 
 <pre>
@@ -768,12 +792,22 @@ var Books = Backbone.Collection.extend({
 });
 </pre>
 
-    <h3 id="View-isolation">View Isolation</h3>
+    <h3 id="View-rendering">View Rendering</h3>
 
-    <img class="figure" src="docs/images/intro-views.svg" alt="View isolation.">
+    <img class="figure" src="docs/images/intro-views.svg" alt="View rendering.">
 
     <p>
-      As a general rule, <b>View</b> objects should remain unaware of one another (unless a view's specific responsibility is to manage subviews). This simplifies application design by limiting a view's responsibility to its own rendering and behavior. Multiple views may synchronize their updates by sharing a common model.
+      Each <b>View</b> manages the rendering and behavior within its own 
+      container element. This simplifies application design by limiting a 
+      view's responsibility to its own internal workings. Separate views may 
+      synchronize their updates through a shared model.
+    </p>
+
+    <p>
+      Backbone remains unopinionated about the process used to render <b>View</b> 
+      objects and their subviews; you define how your models get translated 
+      into visual markup. Some basic approaches to rendering views can be found 
+      in the <a href="https://github.com/jashkenas/backbone/wiki/Backbone%2C-The-Primer">Backbone primer</a>.
     </p>
 
     <h3 id="Routing">Routing</h3>
@@ -781,7 +815,17 @@ var Books = Backbone.Collection.extend({
     <img class="figure" src="docs/images/intro-routing.svg" alt="Routing.">
 
     <p>
-      A <b>Router</b> provides linkable, bookmarkable, shareable URLs for important locations within a single-page web application. A Router tracks this deep link using either the document <a href="http://en.wikipedia.org/wiki/Fragment_identifier">fragment</a>, or else the browser History API. When the deep link changes, a Router has the opportunity to perform updates on the application model and/or views to reflect the current URL state.
+      In single-page web applications, we still want to provide linkable, 
+      bookmarkable, and shareable URLs to important locations in an app. 
+      Thankfully, <a href="#Router">there are ways</a> to change the URL 
+      without reloading the page.
+    </p>
+
+    <p>
+      A <b>Router</b> detects changes to the URL, and has the opportunity 
+      to update application models and/or views to reflect this new URL 
+      state. Conversely, an application may call upon the Router to set 
+      the URL at key locations as a user navigates through the app.
     </p>
 
     <h2 id="upgrading">Upgrading to 1.1</h2>
