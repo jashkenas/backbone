@@ -325,6 +325,13 @@
     strictEqual(router.path, 'c/d/e');
   });
 
+  test("Decode parameters containing non url legal params.", 2, function() {
+    location.replace('http://example.com#decode/a%z/c/d/e');
+    Backbone.history.checkUrl();
+    strictEqual(router.named, 'a%z');
+    strictEqual(router.path, 'c/d/e');
+  });
+
   test("fires event when router doesn't have callback on it", 1, function() {
     router.on("route:noCallback", function(){ ok(true); });
     location.replace('http://example.com#noCallback');

@@ -1390,7 +1390,38 @@
       return _.map(params, function(param, i) {
         // Don't decode the search params.
         if (i === params.length - 1) return param || null;
-        return param ? decodeURIComponent(param) : null;
+        // decodeURIComponent on a param already partially decoded by decodeURI call causes a URIError.
+        // See http://stackoverflow.com/questions/747641/what-is-the-difference-between-decodeuricomponent-and-decodeuri
+        // In that situation, decode URI separators that still need to be decoded that decodeURI does not touch:
+        //  [ '%3B', ';' ],
+        //  [ '%2F', '/' ],
+        //  [ '%3F', '?' ],
+        //  [ '%3A', ':' ],
+        //  [ '%40', '@' ],
+        //  [ '%26', '&' ],
+        //  [ '%3D', '=' ],
+        //  [ '%2B', '+' ],
+        //  [ '%24', '$' ],
+        //  [ '%2C', ',' ],
+        //  [ '%23', '#' ]
+        try {
+          return param ? decodeURIComponent(param) : null;
+        } catch(urierr) {
+          if (param && param.indexOf('%' > -1)) {
+            return param.replace(/%3B/g,';')
+              .replace(/%2F/g,'/')
+              .replace(/%3F/g,'?')
+              .replace(/%3A/g,':')
+              .replace(/%40/g,'@')
+              .replace(/%26/g,'&')
+              .replace(/%3D/g,'=')
+              .replace(/%2B/g,'+')
+              .replace(/%24/g,'$')
+              .replace(/%2C/g,',')
+              .replace(/%23/g,'#');
+          }
+          return param ? param : null
+        }
       });
     }
 
