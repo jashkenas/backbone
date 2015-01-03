@@ -558,8 +558,8 @@
     });
     
     equal(coll.at(coll.search(1)).get('a'), 1);
-    equal(coll.search(1, {getMin: true}), 1);
-    equal(coll.search(1, {getMax: true}), 3);
+    equal(coll.search(1), 1);
+    equal(coll.search(1, true), 3);
     ok(coll.search(4) === -1);
 
     equal(coll.at(coll.search(function (model) {

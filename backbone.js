@@ -829,11 +829,8 @@
     },
 
     // Perform a binary search for a model in a sorted collection.
-    search: function (toFind, options) {
-      options || (options = {});
-
+    search: function (toFind, getMax) {
       if (!this.comparator) throw new Error('Cannot search an unsorted Collection');
-      if (options.getMin && options.getMax) throw new Error('Cannot set both getMin and getMax');
 
       // Create `compare` function for searching.
       var compare;
@@ -846,16 +843,14 @@
           compare = _.bind(this.comparator, this, toFind);
         } else {
           compare = _.bind(function (valResult, model) {
-            var modelResult = this.comparator(model);
-            return valResult === modelResult ? 0 : (valResult > modelResult ? 1 : -1);
+            return _.comparator(valResult, this.comparator(model));
           }, this, this.comparator(toFind));
         }
       } else {
         // `comparator` is a string indicating the model property used to sort
         // `toFind` is the value sought.
         compare = _.bind(function (model) {
-          var modelValue = model.get(this.comparator);
-          return toFind === modelValue ? 0 : (toFind > modelValue ? 1 : -1);
+          return _.comparator(toFind, model.get(this.comparator));
         }, this);
       }
 
@@ -868,9 +863,9 @@
           min = index + 1;
         } else if (relValue < 0) {
           max = index - 1;
-        } else if (options.getMax && index < max && compare(this.at(index + 1)) === 0) {
+        } else if (getMax && index < max && compare(this.at(index + 1)) === 0) {
           min = index + 1;
-        } else if (options.getMin && index > min && compare(this.at(index - 1)) === 0) {
+        } else if (!getMax && index > min && compare(this.at(index - 1)) === 0) {
           max = index - 1;
         } else {
           found = true;
@@ -893,10 +888,10 @@
           return true;
         });
       } else if (first) {
-        return this.at(this.search(attrs[this.comparator], {getMin: true}));
+        return this.at(this.search(attrs[this.comparator]));
       } else {
-        var minIndex = this.search(attrs[this.comparator], {getMin: true});
-        var maxIndex = this.search(attrs[this.comparator], {getMax: true});
+        var minIndex = this.search(attrs[this.comparator]);
+        var maxIndex = this.search(attrs[this.comparator], true);
         return minIndex == null ? [] : this.models.slice(minIndex, maxIndex + 1);
       }
     },
