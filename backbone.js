@@ -878,14 +878,10 @@
     // Return models with matching attributes. Useful for simple cases of
     // `filter`.
     where: function(attrs, first) {
-      if (_.isEmpty(attrs)) {
-        return first ? void 0 : [];
-      } else if (!_.isEqual(_.keys(attrs), [this.comparator])) {
+      if (_.isEmpty(attrs) || !_.isEqual(_.keys(attrs), [this.comparator])) {
+        var matches = _.matches(attrs);
         return this[first ? 'find' : 'filter'](function(model) {
-          for (var key in attrs) {
-            if (attrs[key] !== model.get(key)) return false;
-          }
-          return true;
+          return matches(model.attributes);
         });
       } else if (first) {
         return this.at(this.search(attrs[this.comparator]));
