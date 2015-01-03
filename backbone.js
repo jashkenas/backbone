@@ -978,13 +978,13 @@
       this._byId[model.cid] = model;
       var id = this.modelId(model.attributes);
       if (id != null) this._byId[id] = model;
-      model.on('all', this._onModelEvent, this);
+      this.listenTo(model, 'all', this._onModelEvent);
     },
 
     // Internal method to sever a model's ties to a collection.
     _removeReference: function(model, options) {
       if (this === model.collection) delete model.collection;
-      model.off('all', this._onModelEvent, this);
+      this.stopListening(model, 'all', this._onModelEvent);
     },
 
     // Internal method called every time a model in the set fires an event.
