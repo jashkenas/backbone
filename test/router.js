@@ -775,12 +775,12 @@
     var Router = Backbone.Router.extend({
       routes: {
         path: function(params){
-          strictEqual(params, 'x=y z');
+          strictEqual(params, 'x=y%3Fz');
         }
       }
     });
     var router = new Router;
-    Backbone.history.navigate('path?x=y%20z', true);
+    Backbone.history.navigate('path?x=y%3Fz', true);
   });
 
   test('Navigate to a hash url.', function() {
