@@ -1440,7 +1440,9 @@
       return path === this.root && !this.getSearch();
     },
 
-    // Decode unicode escapes without decoding `%25`.
+    // Unicode characters in `location.pathname` are percent encoded so they're
+    // decoded for comparison. `%25` should not be decoded since it may be part
+    // of an encoded parameter.
     decodeFragment: function(fragment) {
       return decodeURI(fragment.replace(/%25/g, '%2525'));
     },
