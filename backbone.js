@@ -81,7 +81,7 @@
     // Bind an event to a `callback` function. Passing `"all"` will bind
     // the callback to all events fired.
     on: function(name, callback, context) {
-      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
+      if (!eventsApi(this, 'on', name, callback, context) || !callback) return this;
       this._events || (this._events = {});
       var events = this._events[name] || (this._events[name] = []);
       events.push({callback: callback, context: context, ctx: context || this});
@@ -91,7 +91,7 @@
     // Bind an event to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
     once: function(name, callback, context) {
-      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
+      if (!eventsApi(this, 'once', name, callback, context) || !callback) return this;
       var self = this;
       var once = _.once(function() {
         self.off(name, once);
@@ -106,7 +106,7 @@
     // callbacks for the event. If `name` is null, removes all bound
     // callbacks for all events.
     off: function(name, callback, context) {
-      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
+      if (!this._events || !eventsApi(this, 'off', name, callback, context)) return this;
 
       // Remove all callbacks for all events.
       if (!name && !callback && !context) {
@@ -159,7 +159,7 @@
     trigger: function(name) {
       if (!this._events) return this;
       var args = slice.call(arguments, 1);
-      if (!eventsApi(this, 'trigger', name, args)) return this;
+      if (!eventsApi(this, 'trigger', name, null, null, args)) return this;
       var events = this._events[name];
       var allEvents = this._events.all;
       if (events) triggerEvents(events, args);
@@ -174,7 +174,11 @@
       var listeningTo = this._listeningTo || (this._listeningTo = {});
       var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
       listeningTo[id] = obj;
-      if (!callback && typeof name === 'object') callback = this;
+      if (!callback && typeof name === 'object') {
+        callback = this;
+      } else if (typeof callback === 'string') {
+        callback = this[callback];
+      }
       obj.on(name, callback, this);
       return this;
     },
@@ -184,6 +188,7 @@
         for (var event in name) this.listenToOnce(obj, event, name[event]);
         return this;
       }
+      if (typeof callback === 'string') callback = this[callback];
       var cb = _.once(function() {
         this.stopListening(obj, name, cb);
         callback.apply(this, arguments);
@@ -198,7 +203,11 @@
       var listeningTo = this._listeningTo;
       if (!listeningTo) return this;
       var remove = !name && !callback;
-      if (!callback && typeof name === 'object') callback = this;
+      if (!callback && typeof name === 'object') {
+        callback = this;
+      } else if (typeof callback === 'string') {
+        callback = this[callback];
+      }
       if (obj) (listeningTo = {})[obj._listenId] = obj;
       for (var id in listeningTo) {
         obj = listeningTo[id];
@@ -207,7 +216,6 @@
       }
       return this;
     }
-
   };
 
   // Regular expression used to split event strings.
@@ -216,13 +224,13 @@
   // Implement fancy features of the Events API such as multiple event
   // names `"change blur"` and jQuery-style event maps `{change: action}`
   // in terms of the existing API.
-  var eventsApi = function(obj, action, name, rest) {
+  var eventsApi = function(obj, action, name, callback, context, rest) {
     if (!name) return true;
 
     // Handle event maps.
     if (typeof name === 'object') {
       for (var key in name) {
-        obj[action].apply(obj, [key, name[key]].concat(rest));
+        obj[action].apply(obj, [key, name[key]].concat(rest || [context]));
       }
       return false;
     }
@@ -231,8 +239,14 @@
     if (eventSplitter.test(name)) {
       var names = name.split(eventSplitter);
       for (var i = 0, length = names.length; i < length; i++) {
-        obj[action].apply(obj, [names[i]].concat(rest));
+        obj[action].apply(obj, [names[i]].concat(rest || [callback, context]));
       }
+      return false;
+    }
+
+    // Handle string callbacks.
+    if (typeof callback === 'string') {
+      obj[action].apply(obj, [name].concat(rest || [(context || obj)[callback], context]));
       return false;
     }
 
