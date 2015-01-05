@@ -248,6 +248,16 @@
     ok(true);
   });
 
+  test("listenTo with string callback binds properly", 1, function() {
+    var a = { ok: function(){ ok(true); } };
+    var b = _.extend({}, Backbone.Events);
+
+    _.extend(a, Backbone.Events)
+
+    a.listenTo(b, 'event', 'ok');
+    b.trigger('event');
+  });
+
   test("trigger all for each event", 3, function() {
     var a, b, obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
@@ -538,4 +548,140 @@
     equal(obj, obj.stopListening());
   });
 
+  test("listenTo and stopListening with string callbacks", 1, function() {
+    var a = {
+      one: function(){ ok(true); },
+      two: function(){ ok(false); }
+    };
+    var b = _.extend({}, Backbone.Events);
+    _.extend(a, Backbone.Events);
+    a.listenTo(b, 'all', 'one');
+    b.trigger('anything');
+    a.listenTo(b, 'all', 'two');
+    a.stopListening();
+    b.trigger('anything');
+  });
+
+  test("listenToOnce with string callback", 2, function() {
+    // Same as the previous test, but we use once rather than having to explicitly unbind
+    var obj = {
+      counterA: 0,
+      counterB: 0,
+      incrA: function(){ this.counterA += 1; this.trigger('event'); },
+      incrB: function(){ this.counterB += 1; }
+    };
+    _.extend(obj, Backbone.Events);
+
+    obj.listenToOnce(obj, 'event', 'incrA');
+    obj.listenToOnce(obj, 'event', 'incrB');
+    obj.trigger('event');
+    equal(obj.counterA, 1, 'counterA should have only been incremented once.');
+    equal(obj.counterB, 1, 'counterB should have only been incremented once.');
+  });
+
+  test("listenToOnce and stopListening with string callbacks", 1, function() {
+    var a = {
+      one: function(){ ok(true); },
+      two: function(){ ok(false); }
+    };
+    var b = _.extend({}, Backbone.Events);
+    _.extend(a, Backbone.Events);
+    a.listenToOnce(b, 'all', 'one');
+    b.trigger('anything');
+    b.trigger('anything');
+    a.listenToOnce(b, 'all', 'two');
+    a.stopListening();
+    b.trigger('anything');
+  });
+
+  test("listenTo, listenToOnce and stopListening with string callbacks", 1, function() {
+    var a = {
+      one: function(){ ok(true); },
+      two: function(){ ok(false); }
+    };
+    var b = _.extend({}, Backbone.Events);
+    _.extend(a, Backbone.Events);
+    a.listenToOnce(b, 'all', 'one');
+    b.trigger('anything');
+    b.trigger('anything');
+    a.listenTo(b, 'all', 'two');
+    a.stopListening();
+    b.trigger('anything');
+  });
+
+  test("listenTo yourself with string callback", 1, function(){
+    var e = { fn: function(){ ok(true); } };
+    _.extend(e, Backbone.Events);
+    e.listenTo(e, "foo", 'fn');
+    e.trigger("foo");
+  });
+
+  test("listenTo yourself with string callback cleans yourself up with stopListening", 1, function(){
+    var e = { fn: function(){ ok(true); } };
+    _.extend(e, Backbone.Events);
+    e.listenTo(e, "foo", 'fn');
+    e.trigger("foo");
+    e.stopListening();
+    e.trigger("foo");
+  });
+
+  test("stopListening with string callback cleans up references", 8, function() {
+    var a = { fn: function() {} };
+    var b = _.extend({}, Backbone.Events);
+    _.extend(a, Backbone.Events);
+    a.listenTo(b, 'event', 'fn').stopListening();
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events), 0);
+    a.listenTo(b, 'event', 'fn').stopListening(b);
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events), 0);
+    a.listenTo(b, 'event', 'fn').stopListening(b, 'event');
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events), 0);
+    a.listenTo(b, 'event', 'fn').stopListening(b, 'event', 'fn');
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events), 0);
+  });
+
+  test("stopListening with string callback cleans up references from listenToOnce with string callback", 8, function() {
+    var a = { fn: function() {} };
+    var b = _.extend({}, Backbone.Events);
+    _.extend(a, Backbone.Events);
+    a.listenToOnce(b, 'event', 'fn').stopListening();
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events), 0);
+    a.listenToOnce(b, 'event', 'fn').stopListening(b);
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events), 0);
+    a.listenToOnce(b, 'event', 'fn').stopListening(b, 'event');
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events), 0);
+    a.listenToOnce(b, 'event', 'fn').stopListening(b, 'event', 'fn');
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._events), 0);
+  });
+
+  test("listenTo and stopListening with string callbacks clean up references", 2, function() {
+    var a = {
+      one: function(){ ok(true); },
+      two: function(){ ok(false); }
+    };
+    var b = _.extend({}, Backbone.Events);
+    _.extend(a, Backbone.Events);
+    a.listenTo(b, 'all', 'one');
+    b.trigger('anything');
+    a.listenTo(b, 'other', 'two');
+    a.stopListening(b, 'other');
+    a.stopListening(b, 'all');
+    equal(_.keys(a._listeningTo).length, 0);
+  });
+
+  test("listenToOnce without context and with string callback cleans up references after the event has fired", 2, function() {
+    var a = { fn: function(){ ok(true); } };
+    var b = _.extend({}, Backbone.Events);
+    _.extend(a, Backbone.Events);
+    a.listenToOnce(b, 'all', 'fn');
+    b.trigger('anything');
+    equal(_.keys(a._listeningTo).length, 0);
+  });
 })();

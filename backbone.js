@@ -174,7 +174,11 @@
       var listeningTo = this._listeningTo || (this._listeningTo = {});
       var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
       listeningTo[id] = obj;
-      if (!callback && typeof name === 'object') callback = this;
+      if (!callback && typeof name === 'object') {
+        callback = this;
+      } else if (typeof callback === 'string') {
+        callback = this[callback];
+      }
       obj.on(name, callback, this);
       return this;
     },
@@ -184,6 +188,7 @@
         for (var event in name) this.listenToOnce(obj, event, name[event]);
         return this;
       }
+      if (typeof callback === 'string') callback = this[callback];
       var cb = _.once(function() {
         this.stopListening(obj, name, cb);
         callback.apply(this, arguments);
@@ -198,7 +203,11 @@
       var listeningTo = this._listeningTo;
       if (!listeningTo) return this;
       var remove = !name && !callback;
-      if (!callback && typeof name === 'object') callback = this;
+      if (!callback && typeof name === 'object') {
+        callback = this;
+      } else if (typeof callback === 'string') {
+        callback = this[callback];
+      }
       if (obj) (listeningTo = {})[obj._listenId] = obj;
       for (var id in listeningTo) {
         obj = listeningTo[id];
@@ -207,7 +216,6 @@
       }
       return this;
     }
-
   };
 
   // Regular expression used to split event strings.
