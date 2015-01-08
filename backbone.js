@@ -568,7 +568,12 @@
         _.result(this.collection, 'url') ||
         urlError();
       if (this.isNew()) return base;
-      return base.replace(/([^\/])$/, '$1/') + encodeURIComponent(this.id);
+      var p, queryString = '';
+      if ((p = base.indexOf('?')) !== -1) {
+        queryString = base.substr(p);
+        base = base.substring(0, p);
+      }
+      return base.replace(/([^\/])$/, '$1/') + encodeURIComponent(this.id) + queryString;
     },
 
     // **parse** converts a response into the hash of attributes to be `set` on
