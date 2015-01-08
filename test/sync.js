@@ -1,7 +1,7 @@
 (function() {
 
   var Library = Backbone.Collection.extend({
-    url : function() { return '/library'; }
+    url : function() { return '/library?foo=1&bar=2'; }
   });
   var library;
 
@@ -26,7 +26,7 @@
 
   test("read", 4, function() {
     library.fetch();
-    equal(this.ajaxSettings.url, '/library');
+    equal(this.ajaxSettings.url, '/library?foo=1&bar=2');
     equal(this.ajaxSettings.type, 'GET');
     equal(this.ajaxSettings.dataType, 'json');
     ok(_.isEmpty(this.ajaxSettings.data));
@@ -34,13 +34,13 @@
 
   test("passing data", 3, function() {
     library.fetch({data: {a: 'a', one: 1}});
-    equal(this.ajaxSettings.url, '/library');
+    equal(this.ajaxSettings.url, '/library?foo=1&bar=2');
     equal(this.ajaxSettings.data.a, 'a');
     equal(this.ajaxSettings.data.one, 1);
   });
 
   test("create", 6, function() {
-    equal(this.ajaxSettings.url, '/library');
+    equal(this.ajaxSettings.url, '/library?foo=1&bar=2');
     equal(this.ajaxSettings.type, 'POST');
     equal(this.ajaxSettings.dataType, 'json');
     var data = JSON.parse(this.ajaxSettings.data);
@@ -51,7 +51,7 @@
 
   test("update", 7, function() {
     library.first().save({id: '1-the-tempest', author: 'William Shakespeare'});
-    equal(this.ajaxSettings.url, '/library/1-the-tempest');
+    equal(this.ajaxSettings.url, '/library/1-the-tempest?foo=1&bar=2');
     equal(this.ajaxSettings.type, 'PUT');
     equal(this.ajaxSettings.dataType, 'json');
     var data = JSON.parse(this.ajaxSettings.data);
@@ -66,7 +66,7 @@
       emulateHTTP: true,
       emulateJSON: true
     });
-    equal(this.ajaxSettings.url, '/library/2-the-tempest');
+    equal(this.ajaxSettings.url, '/library/2-the-tempest?foo=1&bar=2');
     equal(this.ajaxSettings.type, 'POST');
     equal(this.ajaxSettings.dataType, 'json');
     equal(this.ajaxSettings.data._method, 'PUT');
@@ -80,7 +80,7 @@
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'}, {
       emulateHTTP: true
     });
-    equal(this.ajaxSettings.url, '/library/2-the-tempest');
+    equal(this.ajaxSettings.url, '/library/2-the-tempest?foo=1&bar=2');
     equal(this.ajaxSettings.type, 'POST');
     equal(this.ajaxSettings.contentType, 'application/json');
     var data = JSON.parse(this.ajaxSettings.data);
@@ -93,7 +93,7 @@
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'}, {
       emulateJSON: true
     });
-    equal(this.ajaxSettings.url, '/library/2-the-tempest');
+    equal(this.ajaxSettings.url, '/library/2-the-tempest?foo=1&bar=2');
     equal(this.ajaxSettings.type, 'PUT');
     equal(this.ajaxSettings.contentType, 'application/x-www-form-urlencoded');
     var data = JSON.parse(this.ajaxSettings.data.model);
@@ -105,7 +105,7 @@
   test("read model", 3, function() {
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     library.first().fetch();
-    equal(this.ajaxSettings.url, '/library/2-the-tempest');
+    equal(this.ajaxSettings.url, '/library/2-the-tempest?foo=1&bar=2');
     equal(this.ajaxSettings.type, 'GET');
     ok(_.isEmpty(this.ajaxSettings.data));
   });
@@ -113,7 +113,7 @@
   test("destroy", 3, function() {
     library.first().save({id: '2-the-tempest', author: 'Tim Shakespeare'});
     library.first().destroy({wait: true});
-    equal(this.ajaxSettings.url, '/library/2-the-tempest');
+    equal(this.ajaxSettings.url, '/library/2-the-tempest?foo=1&bar=2');
     equal(this.ajaxSettings.type, 'DELETE');
     equal(this.ajaxSettings.data, null);
   });
@@ -124,7 +124,7 @@
       emulateHTTP: true,
       emulateJSON: true
     });
-    equal(this.ajaxSettings.url, '/library/2-the-tempest');
+    equal(this.ajaxSettings.url, '/library/2-the-tempest?foo=1&bar=2');
     equal(this.ajaxSettings.type, 'POST');
     equal(JSON.stringify(this.ajaxSettings.data), '{"_method":"DELETE"}');
   });
