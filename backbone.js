@@ -1436,8 +1436,7 @@
 
     // Are we at the app root?
     atRoot: function() {
-      var path = this.location.pathname.replace(/[^\/]$/, '$&/');
-      return path === this.root && !this.getSearch();
+      return this.location.pathname === this.root && !this.getSearch();
     },
 
     // In IE6, the hash fragment and search params are incorrect if the
@@ -1457,7 +1456,7 @@
     // Get the pathname and search params, without the root.
     getPath: function() {
       var path = decodeURI(this.location.pathname + this.getSearch());
-      var root = this.root.slice(0, -1);
+      var root = this.root;
       if (!path.indexOf(root)) path = path.slice(root.length);
       return path.charAt(0) === '/' ? path.slice(1) : path;
     },
@@ -1490,8 +1489,8 @@
       this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
       this.fragment         = this.getFragment();
 
-      // Normalize root to always include a leading and trailing slash.
-      this.root = ('/' + this.root + '/').replace(rootStripper, '/');
+      // Normalize root to always include a leading slash.
+      this.root = (this.root || '/').replace(/^[^\/]/, '/$&');
 
       // Transition from hashChange to pushState or vice versa if both are
       // requested.
@@ -1500,8 +1499,7 @@
         // If we've started off with a route from a `pushState`-enabled
         // browser, but we're currently in a browser that doesn't support it...
         if (!this._hasPushState && !this.atRoot()) {
-          var root = this.root.slice(0, -1) || '/';
-          this.location.replace(root + '#' + this.getPath());
+          this.location.replace(this.root + '#' + this.getPath());
           // Return immediately as browser will do redirect to new url
           return true;
 
@@ -1621,11 +1619,12 @@
       // Normalize the fragment.
       fragment = this.getFragment(fragment || '');
 
-      // Don't include a trailing slash on the root.
+      // Append a trailing slash if needed.
       var root = this.root;
-      if (fragment === '' || fragment.charAt(0) === '?') {
-        root = root.slice(0, -1) || '/';
+      if (fragment && this._hasPushState) {
+        if (root.charAt(root.length - 1) !== '/' && fragment.charAt(0) !== '?') root += '/';
       }
+
       var url = root + fragment;
 
       // Strip the hash and decode for matching.

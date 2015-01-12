@@ -424,7 +424,7 @@
     Backbone.history.stop();
     location.replace('http://example.com/root');
     Backbone.history = _.extend(new Backbone.History, {location: location});
-    Backbone.history.start({hashChange: false, root: '/root/', silent: true});
+    Backbone.history.start({hashChange: false, root: '/root', silent: true});
     strictEqual(Backbone.history.getFragment(), '');
   });
 
@@ -507,7 +507,7 @@
       }
     });
     Backbone.history.start({root: 'root'});
-    strictEqual(Backbone.history.root, '/root/');
+    strictEqual(Backbone.history.root, '/root');
   });
 
   test("Transition from hashChange to pushState.", 1, function() {
