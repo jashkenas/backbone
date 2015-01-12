@@ -1418,9 +1418,6 @@
   // Cached regex for stripping a leading hash/slash and trailing space.
   var routeStripper = /^[#\/]|\s+$/g;
 
-  // Cached regex for stripping leading and trailing slashes.
-  var rootStripper = /^\/+|\/+$/g;
-
   // Cached regex for stripping urls of hash.
   var pathStripper = /#.*$/;
 
@@ -1491,7 +1488,7 @@
       this.fragment         = this.getFragment();
 
       // Normalize root to always include a leading slash.
-      this.root = (this.root || '/').replace(/^[^\/]/, '/$&');
+      if (this.root.charAt(0) !== '/') this.root = '/' + this.root;
 
       // Transition from hashChange to pushState or vice versa if both are
       // requested.
