@@ -748,6 +748,21 @@
     Backbone.history.navigate('?x=1');
   });
 
+  test('Trailing slash on root.', 1, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url){
+          strictEqual(url, '/root/');
+        }
+      }
+    });
+    location.replace('http://example.com/root/path');
+    Backbone.history.start({pushState: true, root: '/root/'});
+    Backbone.history.navigate('');
+  });
+
   test('#2765 - Fragment matching sans query/hash.', 2, function() {
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {
