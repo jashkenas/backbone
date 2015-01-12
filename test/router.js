@@ -580,6 +580,23 @@
     });
   });
 
+  test("Transition from pushState to hashChange with trailing slash.", 0, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root');
+    location.replace = function() { ok(false); };
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: null,
+        replaceState: null
+      }
+    });
+    Backbone.history.start({
+      root: '/root/',
+      pushState: true
+    });
+  });
+
   test("#1695 - hashChange to pushState with search.", 1, function() {
     Backbone.history.stop();
     location.replace('http://example.com/root#x/y?a=b');

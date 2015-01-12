@@ -1433,7 +1433,9 @@
 
     // Are we at the app root?
     atRoot: function() {
-      return this.location.pathname === this.root && !this.getSearch();
+      var path = this.location.pathname;
+      if (this.root.charAt(this.root.length - 1) === '/') path = path.replace(/[^\/]$/, '$&/');
+      return path === this.root && !this.getSearch();
     },
 
     // In IE6, the hash fragment and search params are incorrect if the
