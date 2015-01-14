@@ -1153,4 +1153,12 @@
     model.set({a: true});
   });
 
+  test("#3196 - Unsetting attributes via set method should assume void value", function() {
+    var model = new Backbone.Model({foo: 1});
+    model.on('change:foo', function() {
+      ok(true);
+    });
+    model.set({foo: 1}, {unset: true});
+  })
+
 })();
