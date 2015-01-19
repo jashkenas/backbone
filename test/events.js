@@ -541,11 +541,12 @@
   test("#3448 - listenToOnce with space-separated events", 2, function() {
     var one = _.extend({}, Backbone.Events);
     var two = _.extend({}, Backbone.Events);
-    one.listenToOnce(two, 'x y', function() { ok(true); });
-    two.trigger('x');
-    two.trigger('x');
-    two.trigger('y');
-    two.trigger('y');
+    var count = 1;
+    one.listenToOnce(two, 'x y', function(n) { ok(n === count++); });
+    two.trigger('x', 1);
+    two.trigger('x', 1);
+    two.trigger('y', 2);
+    two.trigger('y', 2);
   });
 
 })();
