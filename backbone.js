@@ -184,12 +184,19 @@
         for (var event in name) this.listenToOnce(obj, event, name[event]);
         return this;
       }
-      var cb = _.once(function() {
-        this.stopListening(obj, name, cb);
+      if (eventSplitter.test(name)) {
+        var names = name.split(eventSplitter);
+        for (var i = 0, length = names.length; i < length; i++) {
+          this.listenToOnce(obj, names[i], callback);
+        }
+        return this;
+      }
+      var once = _.once(function() {
+        this.stopListening(obj, name, once);
         callback.apply(this, arguments);
       });
-      cb._callback = callback;
-      return this.listenTo(obj, name, cb);
+      once._callback = callback;
+      return this.listenTo(obj, name, once);
     },
 
     // Tell this object to stop listening to either specific events ... or
