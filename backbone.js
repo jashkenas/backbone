@@ -158,8 +158,8 @@
         obj = listeningTo[id].obj;
         events = listeningTo[id].events;
         obj.off(name, callback, this);
-        if (!remove) offApi(events, name, callback, this);
-        if (remove || _.isEmpty(events)) delete this._listeningTo[id];
+        if (!remove) events = offApi(events, name, callback, this);
+        if (remove || !events) delete this._listeningTo[id];
       }
       if (_.isEmpty(this._listeningTo)) this._listeningTo = void 0;
       return this;
@@ -269,7 +269,7 @@
           delete events[name];
         }
       }
-      return events;
+      return _.isEmpty(events) ? void 0 : events;
   };
 
   // A difficult-to-believe, but optimized internal dispatch function for
