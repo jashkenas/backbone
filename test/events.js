@@ -521,6 +521,11 @@
     _.extend({}, Backbone.Events).once('event').trigger('event');
   });
 
+  test("listenToOnce without a callback is a noop", 0, function() {
+    var obj = _.extend({}, Backbone.Events);
+    obj.listenToOnce(obj, 'event').trigger('event');
+  });
+
   test("event functions are chainable", function() {
     var obj = _.extend({}, Backbone.Events);
     var obj2 = _.extend({}, Backbone.Events);
