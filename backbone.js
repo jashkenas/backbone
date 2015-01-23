@@ -133,7 +133,7 @@
       var listeningTo = this._listeningTo || (this._listeningTo = {});
       listeningTo[id] || (listeningTo[id] = {obj: obj, events: {}});
       obj.on(name, callback, this);
-      listeningTo[id].events = onApi(listeningTo[id].events, name, callback, this);
+      listeningTo[id].events = onApi(listeningTo[id].events, name, callback);
       return this;
     },
 
@@ -150,16 +150,14 @@
     // Tell this object to stop listening to either specific events ... or
     // to every object it's currently listening to.
     stopListening: function(obj, name, callback) {
-      var listeningTo = this._listeningTo, events;
+      var listeningTo = this._listeningTo;
       if (!listeningTo || !listenApi(this, 'stopListening', obj, name, callback)) return this;
-      var remove = !name && !callback;
       if (obj) listeningTo = _.pick(listeningTo, obj._listenId);
       for (var id in listeningTo) {
-        obj = listeningTo[id].obj;
-        events = listeningTo[id].events;
-        obj.off(name, callback, this);
-        if (!remove) events = offApi(events, name, callback, this);
-        if (remove || !events) delete this._listeningTo[id];
+        var listenee = listeningTo[id];
+        listenee.obj.off(name, callback, this);
+        var events = offApi(listenee.events, name, callback);
+        if (!events) delete this._listeningTo[id];
       }
       if (_.isEmpty(this._listeningTo)) this._listeningTo = void 0;
       return this;
