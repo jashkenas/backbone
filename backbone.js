@@ -152,12 +152,13 @@
     stopListening: function(obj, name, callback) {
       var listeningTo = this._listeningTo;
       if (!listeningTo || !listenApi(this, 'stopListening', obj, name, callback)) return this;
-      if (obj) listeningTo = _.pick(listeningTo, obj._listenId);
-      for (var id in listeningTo) {
-        var listenee = listeningTo[id];
+      var listeneeIds = (obj) ? [obj._listenId] : _.keys(listeningTo);
+      for (var i = 0, length = listeneeIds.length; i < length; i++) {
+        var listenee = listeningTo[listeneeIds[i]];
+        if (!listenee) continue;
         listenee.obj.off(name, callback, this);
         var events = offApi(listenee.events, name, callback);
-        if (!events) delete this._listeningTo[id];
+        if (!events) delete this._listeningTo[listeneeIds[i]];
       }
       if (_.isEmpty(this._listeningTo)) this._listeningTo = void 0;
       return this;
