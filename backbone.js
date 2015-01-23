@@ -191,6 +191,7 @@
         }
         return this;
       }
+      if (!callback) return this;
       var once = _.once(function() {
         this.stopListening(obj, name, once);
         callback.apply(this, arguments);
