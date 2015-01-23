@@ -1489,4 +1489,10 @@
     equal(collection.pluck('id').join(','), "1,2,2.5,3");
   });
 
+  test("#set accepts options.at as a string", 1, function() {
+    var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
+    collection.add([{id: 3}], {at: '1'});
+    deepEqual(collection.pluck('id'), [1, 3, 2]);
+  });
+
 })();
