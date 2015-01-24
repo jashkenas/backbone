@@ -341,14 +341,12 @@
   test("callback list is not altered during trigger", 2, function () {
     var counter = 0, obj = _.extend({}, Backbone.Events);
     var incr = function(){ counter++; };
-    obj.on('event', function(){ obj.on('event', incr).on('all', incr); })
-    .trigger('event');
+    var incrOn = function(){ obj.on('event', incr).on('all', incr); };
+    var incrOff = function(){ obj.off('event', incr).off('all', incr); };
+    obj.on('all', incrOn).on('event', incrOn).trigger('event');
     equal(counter, 0, 'bind does not alter callback list');
-    obj.off()
-    .on('event', function(){ obj.off('event', incr).off('all', incr); })
-    .on('event', incr)
-    .on('all', incr)
-    .trigger('event');
+    obj.off().on('all', incrOff).on('event', incrOff)
+    .on('event', incr).on('all', incr).trigger('event');
     equal(counter, 2, 'unbind does not alter callback list');
   });
 
