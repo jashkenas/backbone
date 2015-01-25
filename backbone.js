@@ -109,7 +109,7 @@
     trigger: function(name) {
       if (!this._events) return this;
       var args = slice.call(arguments, 1);
-      eventsApi(triggerApi, this, name, void 0, args);
+      eventsApi(triggerApi, this, name, triggerApi, args);
       return this;
     },
 
@@ -223,8 +223,9 @@
     return _.isEmpty(events) ? void 0 : events;
   };
 
-  var triggerApi = function(obj, name, c, args) {
+  var triggerApi = function(obj, name, sentinel, args) {
     if (obj._events) {
+      if (sentinel !== triggerApi) args = [sentinel].concat(args);
       var events = obj._events[name];
       var allEvents = obj._events.all;
       if (events) triggerEvents(events, args);
