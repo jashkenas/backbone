@@ -15,33 +15,40 @@
     equal(obj.counter, 5, 'counter should be incremented five times.');
   });
 
-  test("binding and triggering multiple events", 4, function() {
+  test("binding and triggering multiple events", 9, function() {
     var obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
+    var arg = {};
 
-    obj.on('a b c', function() { obj.counter += 1; });
+    obj.on('a b c', function(x) {
+      obj.counter += 1;
+      strictEqual(x, arg);
+    });
 
-    obj.trigger('a');
+    obj.trigger('a', arg);
     equal(obj.counter, 1);
 
-    obj.trigger('a b');
+    obj.trigger('a b', arg);
     equal(obj.counter, 3);
 
-    obj.trigger('c');
+    obj.trigger('c', arg);
     equal(obj.counter, 4);
 
     obj.off('a c');
-    obj.trigger('a b c');
+    obj.trigger('a b c', arg);
     equal(obj.counter, 5);
   });
 
-  test("binding and triggering with event maps", function() {
+  test("binding and triggering with event maps", 14, function() {
     var obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
 
-    var increment = function() {
+    var increment = function(x, y) {
       this.counter += 1;
+      strictEqual(x, arg);
+      strictEqual(y, arg2);
     };
+    var arg = {}, arg2 = {};
 
     obj.on({
       a: increment,
@@ -49,20 +56,20 @@
       c: increment
     }, obj);
 
-    obj.trigger('a');
+    obj.trigger({ a: arg }, arg2);
     equal(obj.counter, 1);
 
-    obj.trigger('a b');
+    obj.trigger({ a: arg, b: arg }, arg2);
     equal(obj.counter, 3);
 
-    obj.trigger('c');
+    obj.trigger({ c: arg }, arg2);
     equal(obj.counter, 4);
 
     obj.off({
       a: increment,
       c: increment
     }, obj);
-    obj.trigger('a b c');
+    obj.trigger({ a: arg, b: arg, c: arg }, arg2);
     equal(obj.counter, 5);
   });
 
