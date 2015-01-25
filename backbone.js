@@ -81,22 +81,15 @@
     // Bind an event to a `callback` function. Passing `"all"` will bind
     // the callback to all events fired.
     on: function(name, callback, context) {
-      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
-      this._events = onApi(this._events || {}, name, callback, context, this);
+      this._events = eventsApi(onApi, this._events || {}, name, callback, context, this);
       return this;
     },
 
     // Bind an event to only be triggered a single time. After the first time
     // the callback is invoked, it will be removed.
     once: function(name, callback, context) {
-      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
-      var self = this;
-      var once = _.once(function() {
-        self.off(name, once);
-        callback.apply(this, arguments);
-      });
-      once._callback = callback;
-      return this.on(name, once, context);
+      name = onceMap(name, callback, _.bind(this.off, this));
+      return this.on(name, callback, context);
     },
 
     // Remove one or many callbacks. If `context` is null, removes all
@@ -104,8 +97,8 @@
     // callbacks for the event. If `name` is null, removes all bound
     // callbacks for all events.
     off: function(name, callback, context) {
-      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
-      this._events = offApi(this._events, name, callback, context);
+      if (!this._events) return this;
+      this._events = eventsApi(offApi, this._events, name, callback, context);
       return this;
     },
 
@@ -116,11 +109,7 @@
     trigger: function(name) {
       if (!this._events) return this;
       var args = slice.call(arguments, 1);
-      if (!eventsApi(this, 'trigger', name, args)) return this;
-      var events = this._events[name];
-      var allEvents = this._events.all;
-      if (events) triggerEvents(events, args);
-      if (allEvents) triggerEvents(allEvents, arguments);
+      eventsApi(triggerApi, this, name, void 0, args);
       return this;
     },
 
@@ -128,39 +117,36 @@
     // listen to an event in another object ... keeping track of what it's
     // listening to.
     listenTo: function(obj, name, callback) {
-      if (!listenApi(this, 'listenTo', obj, name, callback)) return this;
+      if (!obj) return this;
       var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
       var listeningTo = this._listeningTo || (this._listeningTo = {});
-      listeningTo[id] || (listeningTo[id] = {obj: obj, events: {}});
+      var listenee = listeningTo[id] || (listeningTo[id] = {obj: obj, events: {}});
       obj.on(name, callback, this);
-      listeningTo[id].events = onApi(listeningTo[id].events, name, callback);
+      listenee.events = eventsApi(onApi, listenee.events, name, callback);
       return this;
     },
 
     listenToOnce: function(obj, name, callback) {
-      if (!listenApi(this, 'listenToOnce', obj, name, callback) || !callback) return this;
-      var once = _.once(function() {
-        this.stopListening(obj, name, once);
-        callback.apply(this, arguments);
-      });
-      once._callback = callback;
-      return this.listenTo(obj, name, once);
+      name = onceMap(name, callback, _.bind(this.stopListening, this, obj));
+      return this.listenTo(obj, name, callback);
     },
 
     // Tell this object to stop listening to either specific events ... or
     // to every object it's currently listening to.
     stopListening: function(obj, name, callback) {
       var listeningTo = this._listeningTo;
-      if (!listeningTo || !listenApi(this, 'stopListening', obj, name, callback)) return this;
+      if (!listeningTo) return this;
+
       var listeneeIds = (obj) ? [obj._listenId] : _.keys(listeningTo);
       for (var i = 0, length = listeneeIds.length; i < length; i++) {
-        var listenee = listeningTo[listeneeIds[i]];
-        if (!listenee) continue;
+        var id = listeneeIds[i];
+        var listenee = listeningTo[id];
+        if (!listenee) break;
         listenee.obj.off(name, callback, this);
-        var events = offApi(listenee.events, name, callback);
-        if (!events) delete this._listeningTo[listeneeIds[i]];
+        var events = eventsApi(offApi, listenee.events, name, callback);
+        if (!events) delete listeningTo[id];
       }
-      if (_.isEmpty(this._listeningTo)) this._listeningTo = void 0;
+      if (_.isEmpty(listeningTo)) this._listeningTo = void 0;
       return this;
     }
 
@@ -172,103 +158,98 @@
   // Implement fancy features of the Events API such as multiple event
   // names `"change blur"` and jQuery-style event maps `{change: action}`
   // in terms of the existing API.
-  var eventsApi = function(obj, action, name, rest) {
-    if (!name) return true;
-
-    // Handle event maps.
-    if (typeof name === 'object') {
-      for (var key in name) {
-        obj[action].apply(obj, [key, name[key]].concat(rest));
+  var eventsApi = function(api, events, name, callback, context, ctx) {
+    var i = 0, names, length;
+    if (name && typeof name === 'object') {
+      // Handle event maps.
+      for (names = _.keys(name), length = names.length; i < length; i++) {
+        events = api(events, names[i], name[names[i]], context, ctx);
       }
-      return false;
-    }
-
-    // Handle space separated event names.
-    if (eventSplitter.test(name)) {
-      var names = name.split(eventSplitter);
-      for (var i = 0, length = names.length; i < length; i++) {
-        obj[action].apply(obj, [names[i]].concat(rest));
+    } else if (name && eventSplitter.test(name)) {
+      // Handle space separated event names.
+      for (names = name.split(eventSplitter), length = names.length; i < length; i++) {
+        events = api(events, names[i], callback, context, ctx);
       }
-      return false;
+    } else {
+      events = api(events, name, callback, context, ctx);
     }
-
-    return true;
-  };
-
-  // Implement the fancy Events API features for the inversion-of-control
-  // methods.
-  var listenApi = function(obj, action, other, name, callback) {
-    if (!name) return true;
-
-    // Handle event maps.
-    if (typeof name === 'object') {
-      for (var key in name) {
-        obj[action](other, key, name[key]);
-      }
-      return false;
-    }
-
-    // Handle space separated event names.
-    if (eventSplitter.test(name)) {
-      var names = name.split(eventSplitter);
-      for (var i = 0, length = names.length; i < length; i++) {
-        obj[action](other, names[i], callback);
-      }
-      return false;
-    }
-
-    return true;
+    return events;
   };
 
   // Handles actually adding the event handler.
   var onApi = function(events, name, callback, context, ctx) {
-    var eventHandlers = events[name] || [];
-    events[name] = eventHandlers.concat({callback: callback, context: context, ctx: context || ctx});
+    if (callback) {
+      var handlers = events[name] || [];
+      events[name] = handlers.concat({callback: callback, context: context, ctx: context || ctx});
+    }
     return events;
   };
 
   // Handles removing any event handlers that are no longer wanted.
   var offApi = function(events, name, callback, context) {
-      // Remove all callbacks for all events.
-      if (!name && !callback && !context) {
-        return;
-      }
+    // Remove all callbacks for all events.
+    if (!events || !name && !context && !callback) return;
 
-      var names = name ? [name] : _.keys(events);
-      for (var i = 0, length = names.length; i < length; i++) {
-        name = names[i];
+    var names = name ? [name] : _.keys(events);
+    for (var i = 0, length = names.length; i < length; i++) {
+      name = names[i];
 
-        // Bail out if there are no events stored.
-        var handlers = events[name];
-        if (!handlers) continue;
+      // Bail out if there are no events stored.
+      var handlers = events[name];
+      if (!handlers) continue;
 
-        // Remove all handlers for this event.
-        if (!callback && !context) {
-          delete events[name];
-          continue;
-        }
-
-        // Find any remaining events.
-        var remaining = [];
+      // Find any remaining events.
+      var remaining = [];
+      if (callback || context) {
         for (var j = 0, k = handlers.length; j < k; j++) {
           var handler = handlers[j];
           if (
             callback && callback !== handler.callback &&
-            callback !== handler.callback._callback ||
-            context && context !== handler.context
+              callback !== handler.callback._callback ||
+                context && context !== handler.context
           ) {
             remaining.push(handler);
           }
         }
-
-        // Replace events if there are any remaining.  Otherwise, clean up.
-        if (remaining.length) {
-          events[name] = remaining;
-        } else {
-          delete events[name];
-        }
       }
-      return _.isEmpty(events) ? void 0 : events;
+
+      // Replace events if there are any remaining.  Otherwise, clean up.
+      if (remaining.length) {
+        events[name] = remaining;
+      } else {
+        delete events[name];
+      }
+    }
+    return _.isEmpty(events) ? void 0 : events;
+  };
+
+  var triggerApi = function(obj, name, c, args) {
+    if (obj._events) {
+      var events = obj._events[name];
+      var allEvents = obj._events.all;
+      if (events) triggerEvents(events, args);
+      if (allEvents) triggerEvents(allEvents, [name].concat(args));
+    }
+    return obj;
+  };
+
+  // Maps the normalized event callbacks into onceWrappers.
+  var onceMap = function(name, callback, offer) {
+    return eventsApi(function(map, name, callback, offer) {
+      if (callback) map[name] = onceWrap(name, callback, offer);
+      return map;
+    }, {}, name, callback, offer);
+  };
+
+  // Wraps an event callback, using the `offer` function to off the event
+  // once it's been called.
+  var onceWrap = function(name, callback, offer) {
+    var once = _.once(function() {
+      offer(name, once);
+      callback.apply(this, arguments);
+    });
+    once._callback = callback;
+    return once;
   };
 
   // A difficult-to-believe, but optimized internal dispatch function for
