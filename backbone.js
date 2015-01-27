@@ -208,7 +208,7 @@
 
       // Bail out if there are no events stored.
       var handlers = events[name];
-      if (!handlers) continue;
+      if (!handlers) break;
 
       // Find any remaining events.
       var remaining = [];
