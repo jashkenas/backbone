@@ -120,6 +120,11 @@
     deepEqual(model.omit('foo', 'bar'), {'baz': 'c'});
   });
 
+  test("chain", function() {
+    var model = new Backbone.Model({ a: 0, b: 1, c: 2 });
+    deepEqual(model.chain().pick("a", "b", "c").values().compact().value(), [1, 2]);
+  });
+
   test("clone", 10, function() {
     var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
     var b = a.clone();
@@ -198,6 +203,19 @@
     strictEqual(model.has('null'), false);
     strictEqual(model.has('undefined'), false);
   });
+
+  test("matches", 4, function() {
+    var model = new Backbone.Model();
+
+    strictEqual(model.matches({'name': 'Jonas', 'cool': true}), false);
+
+    model.set({name: 'Jonas', 'cool': true});
+
+    strictEqual(model.matches({'name': 'Jonas'}), true);
+    strictEqual(model.matches({'name': 'Jonas', 'cool': true}), true);
+    strictEqual(model.matches({'name': 'Jonas', 'cool': false}), false);
+  });
+
 
   test("set and unset", 8, function() {
     var a = new Backbone.Model({id: 'id', foo: 1, bar: 2, baz: 3});
@@ -472,6 +490,14 @@
     equal(this.syncArgs.options.attrs.d, 4);
     equal(this.syncArgs.options.attrs.a, undefined);
     equal(this.ajaxSettings.data, "{\"b\":2,\"d\":4}");
+  });
+
+  test("save with PATCH and different attrs", function() {
+    doc.clear().save({b: 2, d: 4}, {patch: true, attrs: {B: 1, D: 3}});
+    equal(this.syncArgs.options.attrs.D, 3);
+    equal(this.syncArgs.options.attrs.d, undefined);
+    equal(this.ajaxSettings.data, "{\"B\":1,\"D\":3}");
+    deepEqual(doc.attributes, {b: 2, d: 4});
   });
 
   test("save in positional style", 1, function() {
@@ -1125,21 +1151,6 @@
       ok(true);
     });
     model.set({a: true});
-  });
-
-  test("generateId", function() {
-    var Model = Backbone.Model.extend();
-
-    // Simple default uses `idAttribute`
-    equal(Model.prototype.generateId({id: 1}), 1);
-    Model.prototype.idAttribute = '_id';
-    equal(Model.prototype.generateId({_id: 1}), 1);
-
-    // Composite key example
-    Model.prototype.generateId = function (attrs) {
-      return attrs.a + '-' + attrs.b;
-    };
-    equal((new Model({a: 123, b: 456})).id, '123-456');
   });
 
 })();
