@@ -109,7 +109,9 @@
     trigger: function(name) {
       if (!this._events) return this;
       var args = slice.call(arguments, 1);
-      eventsApi(triggerApi, this, name, triggerApi, args);
+
+      // Use `eventsApi` to normalize `name` into the proper event names.
+      eventsApi(triggerApi, this, name, triggerSentinel, args);
       return this;
     },
 
@@ -121,6 +123,8 @@
       var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
       var listeningTo = this._listeningTo || (this._listeningTo = {});
       var listenee = listeningTo[id] || (listeningTo[id] = {obj: obj, events: {}});
+
+      // Bind callbacks on obj, and keep track of them on listenee.
       obj.on(name, callback, this);
       listenee.events = eventsApi(onApi, listenee.events, name, callback);
       return this;
@@ -141,8 +145,15 @@
       for (var i = 0, length = listeneeIds.length; i < length; i++) {
         var id = listeneeIds[i];
         var listenee = listeningTo[id];
+
+        // If listenee doesn't exist, this object is not currently
+        // listening to obj. Break out early.
         if (!listenee) break;
+
         listenee.obj.off(name, callback, this);
+
+        // Events will only ever be falsey if all the event callbacks
+        // are removed. If so, stop delete the listenee.
         var events = eventsApi(offApi, listenee.events, name, callback);
         if (!events) delete listeningTo[id];
       }
@@ -157,7 +168,8 @@
 
   // Implement fancy features of the Events API such as multiple event
   // names `"change blur"` and jQuery-style event maps `{change: action}`
-  // in terms of the existing API.
+  // in terms of the existing API. Consider this just a special purpose
+  // reduce function.
   var eventsApi = function(api, events, name, callback, context, ctx) {
     var i = 0, names, length;
     if (name && typeof name === 'object') {
@@ -223,9 +235,17 @@
     return _.isEmpty(events) ? void 0 : events;
   };
 
+  // When triggering with an `{event: value}` object, `value` should be
+  // prepended to the arguments passed onto the event callbacks.
+  var triggerSentinel = {};
+
+  // Handles triggering the appropriate event callbacks.
   var triggerApi = function(obj, name, sentinel, args) {
     if (obj._events) {
-      if (sentinel !== triggerApi) args = [sentinel].concat(args);
+      // Prepend `sentinel` onto args when trigger was called with
+      // an object.
+      if (sentinel !== triggerSentinel) args = [sentinel].concat(args);
+
       var events = obj._events[name];
       var allEvents = obj._events.all;
       if (events) triggerEvents(events, args);
@@ -234,7 +254,8 @@
     return obj;
   };
 
-  // Maps the normalized event callbacks into once wrappers.
+  // Reduces the event callbacks into a map of `{event: onceWrapper}`.
+  // `offer` is used to unbind the `onceWrapper` after it as been called.
   var onceMap = function(name, callback, offer) {
     return eventsApi(function(map, name, callback, offer) {
       if (callback) {
