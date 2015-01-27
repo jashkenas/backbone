@@ -137,7 +137,7 @@
       var listeningTo = this._listeningTo;
       if (!listeningTo) return this;
 
-      var listeneeIds = (obj) ? [obj._listenId] : _.keys(listeningTo);
+      var listeneeIds = obj ? [obj._listenId] : _.keys(listeningTo);
       for (var i = 0, length = listeneeIds.length; i < length; i++) {
         var id = listeneeIds[i];
         var listenee = listeningTo[id];
@@ -234,23 +234,18 @@
     return obj;
   };
 
-  // Maps the normalized event callbacks into onceWrappers.
+  // Maps the normalized event callbacks into once wrappers.
   var onceMap = function(name, callback, offer) {
     return eventsApi(function(map, name, callback, offer) {
-      if (callback) map[name] = onceWrap(name, callback, offer);
+      if (callback) {
+        var once = map[name] = _.once(function() {
+          offer(name, once);
+          callback.apply(this, arguments);
+        });
+        once._callback = callback;
+      }
       return map;
     }, {}, name, callback, offer);
-  };
-
-  // Wraps an event callback, using the `offer` function to off the event
-  // once it's been called.
-  var onceWrap = function(name, callback, offer) {
-    var once = _.once(function() {
-      offer(name, once);
-      callback.apply(this, arguments);
-    });
-    once._callback = callback;
-    return once;
   };
 
   // A difficult-to-believe, but optimized internal dispatch function for
