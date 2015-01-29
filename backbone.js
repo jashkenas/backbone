@@ -124,8 +124,7 @@
           if (
             callback && callback !== event.callback &&
             callback !== event.callback._callback ||
-            context && context !== event.context ||
-            name && name !== eventName
+            context && context !== event.context
           ) {
             remaining.push(event);
           } else if (listener && --listener.count === 0){
