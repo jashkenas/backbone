@@ -540,6 +540,101 @@
     equal(coll.one, 1);
   });
 
+  test("delegateEvents", 2, function() {
+    var counter1 = 0, counter2 = 0;
+
+    var collection = new Backbone.Collection([{id:1, name:'test'}]);
+
+    collection.increment = function(){ counter1++; };
+    collection.on('add', function(){ counter2++; });
+
+    var events = {'add': 'increment'};
+
+    collection.delegateEvents(events);
+    collection.trigger('add')
+    equal(counter1, 1);
+    equal(counter2, 1);
+
+  });
+
+  test("delegate", 2, function() {
+    var collection = new Backbone.Collection([{id:1, name:'test'}]);
+    collection.delegate('add', function() {
+      ok(true);
+    });
+    collection.delegate('add', function() {
+      ok(true);
+    });
+    collection.trigger('add')
+  });
+
+  test("delegateEvents allows functions for callbacks", 2, function() {
+    var collection = new Backbone.Collection([{id:1, name:'test'}]);
+    collection.counter = 0;
+
+    var events = {
+      add: function() {
+        this.counter++;
+      }
+    };
+
+    collection.delegateEvents(events);
+    collection.trigger('add');
+    equal(collection.counter, 1);
+
+    collection.trigger('add');
+    equal(collection.counter, 2);
+
+  });
+
+
+  test("delegateEvents ignore undefined methods", 0, function() {
+    var collection = new Backbone.Collection([{id:1, name:'test'}]);
+    collection.delegateEvents({'add': 'undefinedMethod'});
+    collection.trigger('add');
+  });
+
+  test("undelegateEvents", 4, function() {
+    var counter1 = 0, counter2 = 0;
+
+    var collection = new Backbone.Collection([{id:1, name:'test'}]);
+    collection.increment = function(){ counter1++; };
+    collection.on('add', function(){ counter2++; });
+
+    var events = {'add': 'increment'};
+
+    collection.delegateEvents(events);
+    collection.trigger('add');
+    equal(counter1, 1);
+    equal(counter2, 1);
+
+    collection.undelegateEvents();
+    collection.trigger('add');
+    equal(counter1, 1);
+    equal(counter2, 2);
+
+  });
+
+  test("undelegate", 0, function() {
+    var collection = new Backbone.Collection([{id:1, name:'test'}]);
+    collection.delegate('add', function() { ok(false); });
+    collection.delegate('remove', function() { ok(false); });
+
+    collection.undelegate('add');
+    ollection.undelegate('remove');
+
+    collection.trigger('remove');
+    collection.trigger('add');
+  });
+
+  test("undelegate with passed handler", 1, function() {
+    var collection = new Backbone.Collection([{id:1, name:'test'}]);
+    var listener = function() { ok(false); };
+    collection.delegate('add', listener);
+    collection.undelegate('add', listener);
+    collection.trigger('add');
+  });
+
   test("toJSON", 1, function() {
     equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });

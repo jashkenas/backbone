@@ -66,6 +66,99 @@
     equal(model.get('last_name'), 'Unknown');
   });
 
+  test("delegateEvents", 2, function() {
+    var counter1 = 0, counter2 = 0;
+
+    var model = new Backbone.Model({id:1, name:'test'});
+
+    model.increment = function(){ counter1++; };
+    model.on('change', function(){ counter2++; });
+
+    var events = {'change:id': 'increment'};
+
+    model.delegateEvents(events);
+    model.trigger('change:id')
+    model.trigger('change')
+    equal(counter1, 1);
+    equal(counter2, 1);
+
+  });
+
+  test("delegate", 2, function() {
+    var model = new Backbone.Model({id:1, name:'test'});
+    model.delegate('change:id', function() {
+      ok(true);
+    });
+    model.delegate('change', function() {
+      ok(true);
+    });
+    model.trigger('change:id')
+    model.trigger('change')
+  });
+
+  test("delegateEvents allows functions for callbacks", 2, function() {
+    var model = new Backbone.Model({id:1, name:'test'});
+    model.counter = 0;
+
+    var events = {
+      change: function() {
+        this.counter++;
+      }
+    };
+
+    model.delegateEvents(events);
+    model.trigger('change')
+    equal(model.counter, 1);
+
+    model.trigger('change')
+    equal(model.counter, 2);
+  });
+
+
+  test("delegateEvents ignore undefined methods", 0, function() {
+    var model = new Backbone.Model({id:1, name:'test'});
+    model.delegateEvents({'change': 'undefinedMethod'});
+    model.trigger('change')
+  });
+
+  test("undelegateEvents", 2, function() {
+    var counter1 = 0, counter2 = 0;
+
+    var model = new Backbone.Model({id:1, name:'test'});
+    model.increment = function(){ counter1++; };
+    model.on('change', function(){ counter2++; });
+
+    var events = {'change:id': 'increment'};
+
+    model.delegateEvents(events);
+    model.trigger('change:id');
+    model.trigger('change');
+    equal(counter1, 1);
+    equal(counter2, 1);
+
+  });
+
+  test("undelegate", 0, function() {
+    var model = new Backbone.Model({id:1, name:'test'});
+    model.delegate('change', function() { ok(false); });
+    model.delegate('change:id', function() { ok(false); });
+
+    model.undelegate('change');
+    model.undelegate('change:id');
+
+    model.trigger('change:id');
+    model.trigger('change');
+  });
+
+  test("undelegate with passed handler", 1, function() {
+    var model = new Backbone.Model({id:1, name:'test'});
+    var listener = function() { ok(false); };
+
+    model.delegate('change', listener);
+    model.undelegate('change', listener);
+    model.trigger('change');
+  });
+
   test("parse can return null", 1, function() {
     var Model = Backbone.Model.extend({
       parse: function(attrs) {
