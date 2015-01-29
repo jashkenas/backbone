@@ -290,6 +290,7 @@
     this.set(attrs, options);
     this.changed = {};
     this.initialize.apply(this, arguments);
+    this.delegateEvents();
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -308,6 +309,49 @@
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize: function(){},
+
+
+    // Set callbacks, where `this.events` is a hash of
+    //
+    // *{"event": "callback"}*
+    //
+    //     {
+    //       'change':  'edit',
+    //       'change:id':     'save',
+    //       'sync':       function(e) { ... }
+    //     }
+    //
+    // pairs. Callbacks will be bound to the model, with `this` set properly.
+    // Uses event delegation for efficiency.
+    delegateEvents: function(events) {
+      if (!(events || (events = _.result(this, 'events')))) return this;
+      this.undelegateEvents();
+      for (var key in events) {
+        var method = events[key];
+        if (!_.isFunction(method)) method = this[events[key]];
+        if (!method) continue;
+        var match = key.match(delegateEventSplitter);
+        this.delegate(match[1], _.bind(method, this));
+      }
+      return this;
+    },
+
+    // Add a single event listener to the model.
+    delegate: function(eventName, listener) {
+      this.on(eventName, listener);
+    },
+
+    // Clears all callbacks previously bound to the model by `delegateEvents`.
+    undelegateEvents: function() {
+      if (this) this.off();
+      return this;
+    },
+
+    // A finer-grained `undelegateEvents` for removing a single delegated event.
+    //`listener` is optional.
+    undelegate: function(eventName, listener) {
+      this.off(eventName, listener);
+    },
 
     // Return a copy of the model's `attributes` object.
     toJSON: function(options) {
@@ -645,6 +689,7 @@
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
+    this.delegateEvents();
     if (models) this.reset(models, _.extend({silent: true}, options));
   };
 
@@ -662,6 +707,48 @@
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
     initialize: function(){},
+
+    // Set callbacks, where `this.events` is a hash of
+    //
+    // *{"event": "callback"}*
+    //
+    //     {
+    //       'add':  'edit',
+    //       'reset':     'save',
+    //       'sync':       function(e) { ... }
+    //     }
+    //
+    // pairs. Callbacks will be bound to the collection, with `this` set properly.
+    // Uses event delegation for efficiency.
+    delegateEvents: function(events) {
+      if (!(events || (events = _.result(this, 'events')))) return this;
+      this.undelegateEvents();
+      for (var key in events) {
+        var method = events[key];
+        if (!_.isFunction(method)) method = this[events[key]];
+        if (!method) continue;
+        var match = key.match(delegateEventSplitter);
+        this.delegate(match[1], _.bind(method, this));
+      }
+      return this;
+    },
+
+    // Add a single event listener to the collectiion.
+    delegate: function(eventName, listener) {
+      this.on(eventName, listener);
+    },
+
+    // Clears all callbacks previously bound to the collection by `delegateEvents`.
+    undelegateEvents: function() {
+      if (this) this.off();
+      return this;
+    },
+
+    // A finer-grained `undelegateEvents` for removing a single delegated event.
+    //`listener` is optional.
+    undelegate: function(eventName, listener) {
+      this.off(eventName, listener);
+    },
 
     // The JSON representation of a Collection is an array of the
     // models' attributes.
