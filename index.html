@@ -2598,9 +2598,15 @@ new DocumentRow({
       whether they've already been inserted into the page or not. In this
       fashion, views can be rendered at any time, and inserted into the DOM all
       at once, in order to get high-performance UI rendering with as few
-      reflows and repaints as possible. <tt>this.el</tt> is created from the
-      view's <tt>tagName</tt>, <tt>className</tt>, <tt>id</tt> and <tt>attributes</tt> properties,
-      if specified. If not, <b>el</b> is an empty <tt>div</tt>.
+      reflows and repaints as possible.
+    </p>
+
+    <p>
+      <tt>this.el</tt> can be resolved from a DOM selector string or an Element;
+      otherwise it will be created from the view's <tt>tagName</tt>, <tt>className</tt>,
+      <tt>id</tt> and <a href="#View-attributes"><tt>attributes</tt></a> properties.
+      If none are set, <tt>this.el</tt> is an empty <tt>div</tt>. <b>el</b> may also be passed in to
+      the view's constructor on instantiation.
     </p>
 
 <pre class="runnable">
