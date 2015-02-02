@@ -478,6 +478,40 @@
     model.destroy();
   });
 
+  test("#3283 - save, fetch, destroy calls success with context", 3, function () {
+    var model = new Backbone.Model();
+    var obj = {};
+    var options = {
+      context: obj,
+      success: function() {
+        equal(this, obj);
+      }
+    };
+    model.sync = function (method, model, options) {
+      options.success.call(options.context);
+    };
+    model.save({data: 2, id: 1}, options);
+    model.fetch(options);
+    model.destroy(options);
+  });
+
+  test("#3283 - save, fetch, destroy calls error with context", 3, function () {
+    var model = new Backbone.Model();
+    var obj = {};
+    var options = {
+      context: obj,
+      error: function() {
+        equal(this, obj);
+      }
+    };
+    model.sync = function (method, model, options) {
+      options.error.call(options.context);
+    };
+    model.save({data: 2, id: 1}, options);
+    model.fetch(options);
+    model.destroy(options);
+  });
+
   test("save with PATCH", function() {
     doc.clear().set({id: 1, a: 1, b: 2, c: 3, d: 4});
     doc.save();
