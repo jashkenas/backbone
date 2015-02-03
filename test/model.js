@@ -204,6 +204,19 @@
     strictEqual(model.has('undefined'), false);
   });
 
+  test("matches", 4, function() {
+    var model = new Backbone.Model();
+
+    strictEqual(model.matches({'name': 'Jonas', 'cool': true}), false);
+
+    model.set({name: 'Jonas', 'cool': true});
+
+    strictEqual(model.matches({'name': 'Jonas'}), true);
+    strictEqual(model.matches({'name': 'Jonas', 'cool': true}), true);
+    strictEqual(model.matches({'name': 'Jonas', 'cool': false}), false);
+  });
+
+
   test("set and unset", 8, function() {
     var a = new Backbone.Model({id: 'id', foo: 1, bar: 2, baz: 3});
     var changeCount = 0;
@@ -463,6 +476,40 @@
     model.save({data: 2, id: 1});
     model.fetch();
     model.destroy();
+  });
+
+  test("#3283 - save, fetch, destroy calls success with context", 3, function () {
+    var model = new Backbone.Model();
+    var obj = {};
+    var options = {
+      context: obj,
+      success: function() {
+        equal(this, obj);
+      }
+    };
+    model.sync = function (method, model, options) {
+      options.success.call(options.context);
+    };
+    model.save({data: 2, id: 1}, options);
+    model.fetch(options);
+    model.destroy(options);
+  });
+
+  test("#3283 - save, fetch, destroy calls error with context", 3, function () {
+    var model = new Backbone.Model();
+    var obj = {};
+    var options = {
+      context: obj,
+      error: function() {
+        equal(this, obj);
+      }
+    };
+    model.sync = function (method, model, options) {
+      options.error.call(options.context);
+    };
+    model.save({data: 2, id: 1}, options);
+    model.fetch(options);
+    model.destroy(options);
   });
 
   test("save with PATCH", function() {

@@ -15,33 +15,40 @@
     equal(obj.counter, 5, 'counter should be incremented five times.');
   });
 
-  test("binding and triggering multiple events", 4, function() {
+  test("binding and triggering multiple events", 9, function() {
     var obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
+    var arg = {};
 
-    obj.on('a b c', function() { obj.counter += 1; });
+    obj.on('a b c', function(x) {
+      obj.counter += 1;
+      strictEqual(x, arg);
+    });
 
-    obj.trigger('a');
+    obj.trigger('a', arg);
     equal(obj.counter, 1);
 
-    obj.trigger('a b');
+    obj.trigger('a b', arg);
     equal(obj.counter, 3);
 
-    obj.trigger('c');
+    obj.trigger('c', arg);
     equal(obj.counter, 4);
 
     obj.off('a c');
-    obj.trigger('a b c');
+    obj.trigger('a b c', arg);
     equal(obj.counter, 5);
   });
 
-  test("binding and triggering with event maps", function() {
+  test("binding and triggering with event maps", 14, function() {
     var obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
 
-    var increment = function() {
+    var increment = function(x, y) {
       this.counter += 1;
+      strictEqual(x, arg);
+      strictEqual(y, arg2);
     };
+    var arg = {}, arg2 = {};
 
     obj.on({
       a: increment,
@@ -49,20 +56,20 @@
       c: increment
     }, obj);
 
-    obj.trigger('a');
+    obj.trigger({ a: arg }, arg2);
     equal(obj.counter, 1);
 
-    obj.trigger('a b');
+    obj.trigger({ a: arg, b: arg }, arg2);
     equal(obj.counter, 3);
 
-    obj.trigger('c');
+    obj.trigger({ c: arg }, arg2);
     equal(obj.counter, 4);
 
     obj.off({
       a: increment,
       c: increment
     }, obj);
-    obj.trigger('a b c');
+    obj.trigger({ a: arg, b: arg, c: arg }, arg2);
     equal(obj.counter, 5);
   });
 
@@ -521,6 +528,11 @@
     _.extend({}, Backbone.Events).once('event').trigger('event');
   });
 
+  test("listenToOnce without a callback is a noop", 0, function() {
+    var obj = _.extend({}, Backbone.Events);
+    obj.listenToOnce(obj, 'event').trigger('event');
+  });
+
   test("event functions are chainable", function() {
     var obj = _.extend({}, Backbone.Events);
     var obj2 = _.extend({}, Backbone.Events);
@@ -536,6 +548,17 @@
     equal(obj, obj.off('a c'));
     equal(obj, obj.stopListening(obj2, 'a'));
     equal(obj, obj.stopListening());
+  });
+
+  test("#3448 - listenToOnce with space-separated events", 2, function() {
+    var one = _.extend({}, Backbone.Events);
+    var two = _.extend({}, Backbone.Events);
+    var count = 1;
+    one.listenToOnce(two, 'x y', function(n) { ok(n === count++); });
+    two.trigger('x', 1);
+    two.trigger('x', 1);
+    two.trigger('y', 2);
+    two.trigger('y', 2);
   });
 
 })();

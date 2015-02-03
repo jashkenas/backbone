@@ -184,12 +184,20 @@
         for (var event in name) this.listenToOnce(obj, event, name[event]);
         return this;
       }
-      var cb = _.once(function() {
-        this.stopListening(obj, name, cb);
+      if (eventSplitter.test(name)) {
+        var names = name.split(eventSplitter);
+        for (var i = 0, length = names.length; i < length; i++) {
+          this.listenToOnce(obj, names[i], callback);
+        }
+        return this;
+      }
+      if (!callback) return this;
+      var once = _.once(function() {
+        this.stopListening(obj, name, once);
         callback.apply(this, arguments);
       });
-      cb._callback = callback;
-      return this.listenTo(obj, name, cb);
+      once._callback = callback;
+      return this.listenTo(obj, name, once);
     },
 
     // Tell this object to stop listening to either specific events ... or
@@ -328,6 +336,11 @@
       return this.get(attr) != null;
     },
 
+    // Special-cased proxy to underscore's `_.matches` method.
+    matches: function(attrs) {
+      return _.matches(attrs)(this.attributes);
+    },
+
     // Set a hash of model attributes on the object, firing `"change"`. This is
     // the core primitive operation of a model, updating the data and notifying
     // anyone who needs to know about the change in state. The heart of the beast.
@@ -459,7 +472,7 @@
       var success = options.success;
       options.success = function(resp) {
         if (!model.set(model.parse(resp, options), options)) return false;
-        if (success) success(model, resp, options);
+        if (success) success.call(options.context, model, resp, options);
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
@@ -509,7 +522,7 @@
         if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
           return false;
         }
-        if (success) success(model, resp, options);
+        if (success) success.call(options.context, model, resp, options);
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
@@ -539,7 +552,7 @@
 
       options.success = function(resp) {
         if (options.wait || model.isNew()) destroy();
-        if (success) success(model, resp, options);
+        if (success) success.call(options.context, model, resp, options);
         if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
@@ -700,6 +713,7 @@
       models = singular ? (models ? [models] : []) : models.slice();
       var id, model, attrs, existing, sort;
       var at = options.at;
+      if (at != null) at = +at;
       if (at < 0) at += this.length + 1;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
@@ -896,7 +910,7 @@
       options.success = function(resp) {
         var method = options.reset ? 'reset' : 'set';
         collection[method](resp, options);
-        if (success) success(collection, resp, options);
+        if (success) success.call(options.context, collection, resp, options);
         collection.trigger('sync', collection, resp, options);
       };
       wrapError(this, options);
@@ -914,7 +928,7 @@
       var success = options.success;
       options.success = function(model, resp) {
         if (options.wait) collection.add(model, options);
-        if (success) success(model, resp, options);
+        if (success) success.call(options.context, model, resp, options);
       };
       model.save(null, options);
       return model;
@@ -1266,7 +1280,7 @@
     options.error = function(xhr, textStatus, errorThrown) {
       options.textStatus = textStatus;
       options.errorThrown = errorThrown;
-      if (error) error.apply(this, arguments);
+      if (error) error.call(options.context, xhr, textStatus, errorThrown);
     };
 
     // Make the request, allowing the user to override any Ajax options.
@@ -1721,7 +1735,7 @@
   var wrapError = function(model, options) {
     var error = options.error;
     options.error = function(resp) {
-      if (error) error(model, resp, options);
+      if (error) error.call(options.context, model, resp, options);
       model.trigger('error', model, resp, options);
     };
   };

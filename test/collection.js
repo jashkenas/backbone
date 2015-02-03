@@ -475,6 +475,21 @@
     collection.fetch();
   });
 
+  test("#3283 - fetch with an error response calls error with context", 1, function () {
+    var collection = new Backbone.Collection();
+    var obj = {};
+    var options = {
+      context: obj,
+      error: function() {
+        equal(this, obj);
+      }
+    };
+    collection.sync = function (method, model, options) {
+      options.error.call(options.context);
+    };
+    collection.fetch(options);
+  });
+
   test("ensure fetch only parses once", 1, function() {
     var collection = new Backbone.Collection;
     var counter = 0;
@@ -811,6 +826,24 @@
     });
     collection.create({id: 1});
     collection.off();
+  });
+
+  test("#3283 - fetch, create calls success with context", 2, function() {
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    Backbone.ajax = function(settings) {
+      settings.success.call(settings.context);
+    };
+    var obj = {};
+    var options = {
+      context: obj,
+      success: function() {
+        equal(this, obj);
+      }
+    };
+
+    collection.fetch(options);
+    collection.create({id: 1}, options);
   });
 
   test("#1447 - create with wait adds model.", 1, function() {
@@ -1487,6 +1520,12 @@
     collection.add([{id: 2}, {id: 3}], {at: -1});
     collection.add([{id: 2.5}], {at: -2});
     equal(collection.pluck('id').join(','), "1,2,2.5,3");
+  });
+
+  test("#set accepts options.at as a string", 1, function() {
+    var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
+    collection.add([{id: 3}], {at: '1'});
+    deepEqual(collection.pluck('id'), [1, 3, 2]);
   });
 
 })();
