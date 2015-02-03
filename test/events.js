@@ -172,40 +172,68 @@
     e.trigger("foo");
   });
 
-  test("stopListening cleans up references", 8, function() {
+  test("stopListening cleans up references", 12, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     var fn = function() {};
+    b.on('event', fn);
     a.listenTo(b, 'event', fn).stopListening();
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
+    equal(_.size(b._events), 1);
+    equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn).stopListening(b);
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
+    equal(_.size(b._events), 1);
+    equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn).stopListening(b, 'event');
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
+    equal(_.size(b._events), 1);
+    equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn).stopListening(b, 'event', fn);
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
+    equal(_.size(b._events), 1);
+    equal(_.size(b._listeners), 0);
   });
 
-  test("stopListening cleans up references from listenToOnce", 8, function() {
+  test("stopListening cleans up references from listenToOnce", 12, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     var fn = function() {};
+    b.on('event', fn);
     a.listenToOnce(b, 'event', fn).stopListening();
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
+    equal(_.size(b._events), 1);
+    equal(_.size(b._listeners), 0);
     a.listenToOnce(b, 'event', fn).stopListening(b);
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
+    equal(_.size(b._events), 1);
+    equal(_.size(b._listeners), 0);
     a.listenToOnce(b, 'event', fn).stopListening(b, 'event');
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
+    equal(_.size(b._events), 1);
+    equal(_.size(b._listeners), 0);
     a.listenToOnce(b, 'event', fn).stopListening(b, 'event', fn);
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 0);
+    equal(_.size(b._events), 1);
+    equal(_.size(b._listeners), 0);
+  });
+
+  test("listenTo and off cleaning up references", 6, function() {
+    var a = _.extend({}, Backbone.Events);
+    var b = _.extend({}, Backbone.Events);
+    var fn = function() {};
+    a.listenTo(b, 'event', fn);
+    b.off('event');
+    equal(_.keys(a._listeningTo).length, 0);
+    equal(_.keys(b._listeners).length, 0);
+    a.listenTo(b, 'event', fn);
+    b.off(null, fn);
+    equal(_.keys(a._listeningTo).length, 0);
+    equal(_.keys(b._listeners).length, 0);
+    a.listenTo(b, 'event', fn);
+    b.off(null, null, a);
+    equal(_.keys(a._listeningTo).length, 0);
+    equal(_.keys(b._listeners).length, 0);
   });
 
   test("listenTo and stopListening cleaning up references", 2, function() {

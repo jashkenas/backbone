@@ -1362,7 +1362,7 @@
         equal(this._byId[model.id], void 0);
         equal(this._byId[model.cid], void 0);
         equal(model.collection, void 0);
-        equal(model._events.all, void 0);
+        equal(model._events, void 0);
       }
 
     });
