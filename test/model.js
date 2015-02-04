@@ -556,6 +556,15 @@
     });
   });
 
+  test("save with wait and supplied id", function() {
+    var Model = Backbone.Model.extend({
+      urlRoot: '/collection'
+    });
+    var model = new Model();
+    model.save({id: 42}, {wait: true});
+    equal(this.ajaxSettings.url, '/collection/42');
+  });
+
   test("fetch", 2, function() {
     doc.fetch();
     equal(this.syncArgs.method, 'read');
