@@ -200,7 +200,7 @@
       }
 
       // Find any remaining events.
-      var ev = list, tail = ev;
+      var ev = list, tail = list;
       while ((ev = ev.next)) {
         if (
           callback && callback !== ev.callback &&
@@ -215,7 +215,7 @@
       }
 
       // Update tail event if the list has any events.  Otherwise, clean up.
-      if (list.next) {
+      if (tail !== list) {
         list.tail = tail;
       } else {
         delete events[name];
