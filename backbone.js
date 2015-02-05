@@ -210,6 +210,7 @@
           tail = ev;
         } else {
           tail.next = ev.next;
+          ev.skip = true;
         }
       }
 
@@ -320,7 +321,7 @@
       case 3: caller = trigger3; break;
       default: caller = triggerApply; break;
     }
-    while ((ev = ev.next)) caller(ev.callback, ev.ctx, a1, a2, a3, args);
+    while ((ev = ev.next)) if (!ev.skip) caller(ev.callback, ev.ctx, a1, a2, a3, args);
   };
 
   // Proxy Underscore methods to a Backbone class' prototype using a
