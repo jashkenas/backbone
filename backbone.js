@@ -308,18 +308,13 @@
   // triggering events. Tries to keep the usual cases speedy (most internal
   // Backbone events have 3 arguments).
   var triggerEvents = function(events, args) {
-    var ev = events, a1 = args[0], a2 = args[1], a3 = args[2], caller;
+    var ev = events, a1 = args[0], a2 = args[1], a3 = args[2];
     switch (args.length) {
-      case 0:
-        while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx); return;
-      case 1:
-        while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx, a1); return;
-      case 2:
-        while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx, a1, a2); return;
-      case 3:
-        while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx, a1, a2, a3); return;
-      default:
-        while ((ev = ev.next)) if (!ev.skip) ev.callback.apply(ev.ctx, args); return;
+      case 0: while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx); return;
+      case 1: while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx, a1); return;
+      case 2: while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx, a1, a2); return;
+      case 3: while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx, a1, a2, a3); return;
+      default: while ((ev = ev.next)) if (!ev.skip) ev.callback.apply(ev.ctx, args); return;
     }
   };
 
