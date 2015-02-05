@@ -306,15 +306,21 @@
   // A difficult-to-believe, but optimized internal dispatch function for
   // triggering events. Tries to keep the usual cases speedy (most internal
   // Backbone events have 3 arguments).
+  var trigger0 = function(cb, ctx) { cb.call(ctx); };
+  var trigger1 = function(cb, ctx, a1) { cb.call(ctx, a1); };
+  var trigger2 = function(cb, ctx, a1, a2) { cb.call(ctx, a1, a2); };
+  var trigger3 = function(cb, ctx, a1, a2, a3) { cb.call(ctx, a1, a2, a3); };
+  var triggerApply = function(cb, ctx, a1, a2, a3, args) { cb.apply(ctx, args); };
   var triggerEvents = function(events, args) {
-    var ev = events, a1 = args[0], a2 = args[1], a3 = args[2];
+    var ev = events, a1 = args[0], a2 = args[1], a3 = args[2], caller;
     switch (args.length) {
-      case 0: while ((ev = ev.next)) ev.callback.call(ev.ctx); return;
-      case 1: while ((ev = ev.next)) ev.callback.call(ev.ctx, a1); return;
-      case 2: while ((ev = ev.next)) ev.callback.call(ev.ctx, a1, a2); return;
-      case 3: while ((ev = ev.next)) ev.callback.call(ev.ctx, a1, a2, a3); return;
-      default: while ((ev = ev.next)) ev.callback.apply(ev.ctx, args); return;
+      case 0: caller = trigger0; break;
+      case 1: caller = trigger1; break;
+      case 2: caller = trigger2; break;
+      case 3: caller = trigger3; break;
+      default: caller = triggerApply; break;
     }
+    while ((ev = ev.next)) caller(ev.callback, ev.ctx, a1, a2, a3, args);
   };
 
   // Proxy Underscore methods to a Backbone class' prototype using a
