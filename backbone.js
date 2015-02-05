@@ -138,7 +138,7 @@
   var onApi = function(events, name, callback, context, ctx) {
     if (callback) {
       var list = events[name] || (events[name] = {});
-      var ev = {callback: callback, context: context, ctx: context || ctx, next: false};
+      var ev = {callback: callback, context: context, ctx: context || ctx, next: false, skip: false};
       var tail = list.tail || list;
       list.tail = tail.next = ev;
     }
