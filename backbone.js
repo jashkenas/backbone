@@ -213,7 +213,7 @@
         }
       }
 
-      // Replace events if there are any remaining.  Otherwise, clean up.
+      // Update tail event if the list has any events.  Otherwise, clean up.
       if (list.next) {
         list.tail = tail;
       } else {

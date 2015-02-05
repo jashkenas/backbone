@@ -366,20 +366,20 @@
     equal(obj.counter, 3, 'counter should have been incremented three times');
   });
 
-  test("callback list never skips a still bound callback", 3, function () {
+  test("callback list never skips a still bound callback", 2, function () {
       var counter = 0, obj = _.extend({}, Backbone.Events);
-      var fn = function(){};
-      var fnOff = function(){ obj.off('event', fn); };
+      var fn = function(){ ok(false, 'linked list should not orphan nodes'); };
+      var fnOff = function(){ obj.off('event', fnOff).off('event', fn); };
       var incr = function(){ counter++; };
       var incrOn = function(){ obj.on('event all', incr); };
 
       obj.on('event', incr).on('event', incrOn).on('event', incr).trigger('event');
       equal(counter, 3, 'trigger with on does not skip callbacks');
 
-      obj.off().on('event', incr).on('event', fn).on('event', fnOff).on('event', incr).trigger('event');
+      obj.off().on('event', incr).on('event', fnOff).on('event', incr).trigger('event');
       equal(counter, 5, 'trigger with off does skip callbacks');
-      obj.off().on('event', incr).on('event', fnOff).on('event', fn).on('event', incr).trigger('event');
-      equal(counter, 7, 'trigger with off does skip callbacks');
+
+      obj.off().on('event', fnOff).on('event', fn).trigger('event');
   });
 
   test("#1282 - 'all' callback list is retrieved after each event.", 1, function() {
