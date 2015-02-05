@@ -1396,7 +1396,7 @@
         calls.add++;
         equal(model, this._byId[model.id]);
         equal(model, this._byId[model.cid]);
-        equal(model._events.all.length, 1);
+        ok(model._events.all.next);
       },
 
       _removeReference: function(model) {

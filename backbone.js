@@ -137,8 +137,10 @@
   // The reducing API that adds a callback to the `events` object.
   var onApi = function(events, name, callback, context, ctx) {
     if (callback) {
-      var handlers = events[name] || (events[name] = []);
-      handlers.push({callback: callback, context: context, ctx: context || ctx});
+      var list = events[name] || (events[name] = {});
+      var ev = {callback: callback, context: context, ctx: context || ctx, next: false};
+      var tail = list.tail || list;
+      list.tail = tail.next = ev;
     }
     return events;
   };
@@ -187,29 +189,33 @@
     var names = name ? [name] : _.keys(events);
     for (var i = 0; i < names.length; i++) {
       name = names[i];
-      var handlers = events[name];
+      var list = events[name];
 
       // Bail out if there are no events stored.
-      if (!handlers) break;
+      if (!list) break;
+
+      if (!callback && !context) {
+        delete events[name];
+        continue;
+      }
 
       // Find any remaining events.
-      var remaining = [];
-      if (callback || context) {
-        for (var j = 0, k = handlers.length; j < k; j++) {
-          var handler = handlers[j];
-          if (
-            callback && callback !== handler.callback &&
-              callback !== handler.callback._callback ||
-                context && context !== handler.context
-          ) {
-            remaining.push(handler);
-          }
+      var ev = list, tail = ev;
+      while ((ev = ev.next)) {
+        if (
+          callback && callback !== ev.callback &&
+            callback !== ev.callback._callback ||
+              context && context !== ev.context
+        ) {
+          tail = ev;
+        } else {
+          tail.next = ev.next;
         }
       }
 
       // Replace events if there are any remaining.  Otherwise, clean up.
-      if (remaining.length) {
-        events[name] = remaining;
+      if (list.next) {
+        list.tail = tail;
       } else {
         delete events[name];
       }
@@ -301,13 +307,13 @@
   // triggering events. Tries to keep the usual cases speedy (most internal
   // Backbone events have 3 arguments).
   var triggerEvents = function(events, args) {
-    var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
+    var ev = events, a1 = args[0], a2 = args[1], a3 = args[2];
     switch (args.length) {
-      case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
-      case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
-      case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
-      case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
-      default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args); return;
+      case 0: while ((ev = ev.next)) ev.callback.call(ev.ctx); return;
+      case 1: while ((ev = ev.next)) ev.callback.call(ev.ctx, a1); return;
+      case 2: while ((ev = ev.next)) ev.callback.call(ev.ctx, a1, a2); return;
+      case 3: while ((ev = ev.next)) ev.callback.call(ev.ctx, a1, a2, a3); return;
+      default: while ((ev = ev.next)) ev.callback.apply(ev.ctx, args); return;
     }
   };
 
