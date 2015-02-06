@@ -1396,7 +1396,7 @@
         calls.add++;
         equal(model, this._byId[model.id]);
         equal(model, this._byId[model.cid]);
-        ok(model._events.all.next);
+        equal(model._events.count, 1);
       },
 
       _removeReference: function(model) {
@@ -1405,7 +1405,7 @@
         equal(this._byId[model.id], void 0);
         equal(this._byId[model.cid], void 0);
         equal(model.collection, void 0);
-        equal(model._events, void 0);
+        equal(model._events.count, 0);
       }
 
     });

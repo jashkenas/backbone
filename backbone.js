@@ -107,7 +107,8 @@
   // Bind an event to a `callback` function. Passing `"all"` will bind
   // the callback to all events fired.
   Events.on = function(name, callback, context) {
-    this._events = eventsApi(onApi, this._events || {}, name, callback, context, this);
+    var events = this._events || {count: 0, lists: {}};
+    this._events = eventsApi(onApi, events, name, callback, context, this);
     return this;
   };
 
@@ -116,16 +117,18 @@
   Events.listenTo =  function(obj, name, callback) {
     if (!obj) return this;
     var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
-    var listeningTo = this._listeningTo || (this._listeningTo = {});
-    var listening = listeningTo[id];
+    var listeningTo = this._listeningTo || (this._listeningTo = {count: 0, listenees: {}});
+    var listening = listeningTo.listenees[id];
 
     // This object is not listening to any other events on `obj` yet.
     // Setup the necessary references to track the listening callbacks.
     if (!listening) {
-      listening = listeningTo[id] = {obj: obj, events: {}};
+      listening = listeningTo.listenees[id] = {obj: obj, events: {count: 0, lists: {}}};
       id = this._listenId || (this._listenId = _.uniqueId('l'));
-      var listeners = obj._listeners || (obj._listeners = {});
-      listeners[id] = this;
+      var listeners = obj._listeners || (obj._listeners = {count: 0, listeners: {}});
+      listeners.listeners[id] = this;
+      listeningTo.count++;
+      listeners.count++;
     }
 
     // Bind callbacks on obj, and keep track of them on listening.
@@ -137,7 +140,9 @@
   // The reducing API that adds a callback to the `events` object.
   var onApi = function(events, name, callback, context, ctx) {
     if (callback) {
-      var list = events[name] || (events[name] = {tail: void 0, next: void 0});
+      var list = events.lists[name] || (events.lists[name] = {name: name, tail: void 0, next: void 0});
+      if (!list.next) events.count++;
+
       var tail = list.tail || list;
       list.tail = tail.next = {
         callback: callback,
@@ -159,8 +164,8 @@
     if (!this._events) return this;
     this._events = eventsApi(offApi, this._events, name, callback, context);
 
-    var listeners = this._listeners;
-    if (listeners) {
+    if (this._listeners && this._listeners.count) {
+      var listeners = this._listeners.listeners;
       // Listeners always bind themselves as the context, so if `context`
       // is passed, narrow down the search to just that listener.
       var ids = context != null ? [context._listenId] : _.keys(listeners);
@@ -174,7 +179,6 @@
         // Tell each listener to stop, without infinitely calling `#off`.
         internalStopListening(listener, this, name, callback);
       }
-      if (_.isEmpty(listeners)) this._listeners = void 0;
     }
     return this;
   };
@@ -183,27 +187,24 @@
   // to every object it's currently listening to.
   Events.stopListening =  function(obj, name, callback) {
     // Use an internal stopListening, telling it to call off on `obj`.
-    if (this._listeningTo) internalStopListening(this, obj, name, callback, true);
+    var listeningTo = this._listeningTo;
+    if (listeningTo && listeningTo.count) internalStopListening(this, obj, name, callback, true);
     return this;
   };
 
   // The reducing API that removes a callback from the `events` object.
   var offApi = function(events, name, callback, context) {
     // Remove all callbacks for all events.
-    if (!events || !name && !context && !callback) return;
+    if (!events || !events.count) return events;
 
-    var names = name ? [name] : _.keys(events);
+    var lists = events.lists;
+    var names = name ? [name] : _.keys(lists);
     for (var i = 0; i < names.length; i++) {
       name = names[i];
-      var list = events[name];
+      var list = lists[name];
 
       // Bail out if there are no events stored.
-      if (!list) break;
-
-      if (!callback && !context) {
-        delete events[name];
-        continue;
-      }
+      if (!list || !list.next) continue;
 
       // Find any remaining events.
       var ev = list, tail = list;
@@ -222,21 +223,20 @@
       }
 
       // Update tail event if the list has any events.  Otherwise, clean up.
-      if (tail !== list) {
-        list.tail = tail;
-      } else {
-        delete events[name];
-      }
+      list.tail = tail;
+      if (tail === list) events.count--;
     }
-    if (!_.isEmpty(events)) return events;
+    return events;
   };
 
   var internalStopListening = function(listener, obj, name, callback, offEvents) {
     var listeningTo = listener._listeningTo;
-    var ids = obj ? [obj._listenId] : _.keys(listeningTo);
+    var listenees = listeningTo.listenees;
+
+    var ids = obj ? [obj._listenId] : _.keys(listenees);
     for (var i = 0; i < ids.length; i++) {
       var id = ids[i];
-      var listening = listeningTo[id];
+      var listening = listenees[id];
 
       // If listening doesn't exist, this object is not currently
       // listening to obj. Break out early.
@@ -247,12 +247,14 @@
       // Events will only ever be falsey if all the event callbacks
       // are removed. If so, stop delete the listening.
       var events = eventsApi(offApi, listening.events, name, callback);
-      if (!events) {
-        delete listeningTo[id];
-        delete listening.obj._listeners[listener._listenId];
+      if (!events.count) {
+        var listeners = listening.obj._listeners;
+        delete listenees[id];
+        delete listeners.listeners[listener._listenId];
+        listeningTo.count--;
+        listeners.count--;
       }
     }
-    if (_.isEmpty(listeningTo)) listener._listeningTo = void 0;
   };
 
   // Bind an event to only be triggered a single time. After the first time
@@ -302,11 +304,13 @@
 
   // Handles triggering the appropriate event callbacks.
   var triggerApi = function(obj, name, cb, args) {
-    if (obj._events) {
-      var events = obj._events[name];
-      var allEvents = obj._events.all;
-      if (events) triggerEvents(events, args);
-      if (allEvents) triggerEvents(allEvents, [name].concat(args));
+    var events = obj._events;
+    if (events) {
+      var lists = events.lists;
+      var list = lists[name];
+      var allList = lists.all;
+      if (list) triggerEvents(list, args);
+      if (allList) triggerEvents(allList, [name].concat(args));
     }
     return obj;
   };
