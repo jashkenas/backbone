@@ -172,19 +172,19 @@
     b.on('event', fn);
     a.listenTo(b, 'event', fn).stopListening();
     equal(_.size(a._listeningTo), 0);
-    equal(b._events.count, 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn).stopListening(b);
     equal(_.size(a._listeningTo), 0);
-    equal(b._events.count, 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn).stopListening(b, 'event');
     equal(_.size(a._listeningTo), 0);
-    equal(b._events.count, 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn).stopListening(b, 'event', fn);
     equal(_.size(a._listeningTo), 0);
-    equal(b._events.count, 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
   });
 
@@ -195,19 +195,19 @@
     b.on('event', fn);
     a.listenToOnce(b, 'event', fn).stopListening();
     equal(_.size(a._listeningTo), 0);
-    equal(b._events.count, 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenToOnce(b, 'event', fn).stopListening(b);
     equal(_.size(a._listeningTo), 0);
-    equal(b._events.count, 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenToOnce(b, 'event', fn).stopListening(b, 'event');
     equal(_.size(a._listeningTo), 0);
-    equal(b._events.count, 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenToOnce(b, 'event', fn).stopListening(b, 'event', fn);
     equal(_.size(a._listeningTo), 0);
-    equal(b._events.count, 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
   });
 
