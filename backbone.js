@@ -134,8 +134,6 @@
     // Setup the necessary references to track the listening callbacks.
     if (!listening) {
       listening = listeningTo[id] = {obj: obj, id: _.uniqueId('l'), count: 0};
-    } else {
-      listening.obj = obj;
     }
 
     // Bind callbacks on obj, and keep track of them on listening.
