@@ -135,7 +135,8 @@
     // This object is not listening to any other events on `obj` yet.
     // Setup the necessary references to track the listening callbacks.
     if (!listening) {
-      listening = listeningTo[id] = {obj: obj, id: _.uniqueId('l'), count: 0};
+      var thisId = this._listenId || (this._listenId = _.uniqueId('l'));
+      listening = listeningTo[id] = {obj: obj, objId: id, id: thisId, listeningTo: listeningTo, count: 0};
     }
 
     // Bind callbacks on obj, and keep track of them on listening.
@@ -227,10 +228,8 @@
 
           var listening = ev.listening;
           if (listening && --listening.count === 0) {
-            var obj = listening.obj;
-            listening.obj = void 0;
+            delete listening.listeningTo[listening.objId];
             delete listeners[listening.id];
-            ev.context.stopListening(obj);
           }
         }
       }
