@@ -66,13 +66,14 @@
     equal(obj.counter, 5);
   });
 
-  test("listenTo and stopListening", 1, function() {
+  test("listenTo and stopListening", 2, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     a.listenTo(b, 'all', function(){ ok(true); });
     b.trigger('anything');
     a.listenTo(b, 'all', function(){ ok(false); });
     a.stopListening();
+    equal(b._events.lists.all, undefined, 'removes event list');
     b.trigger('anything');
   });
 
@@ -291,7 +292,7 @@
     equal(obj.counter, 2);
   });
 
-  test("on, then unbind all functions", 1, function() {
+  test("on, then unbind all functions", 2, function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
     var callback = function() { obj.counter += 1; };
@@ -299,6 +300,7 @@
     obj.trigger('event');
     obj.off('event');
     obj.trigger('event');
+    equal(obj._events.lists.all, undefined, 'removes event list');
     equal(obj.counter, 1, 'counter should have only been incremented once.');
   });
 
@@ -315,7 +317,7 @@
     equal(obj.counterB, 2, 'counterB should have been incremented twice.');
   });
 
-  test("unbind a callback in the midst of it firing", 1, function() {
+  test("unbind a callback in the midst of it firing", 2, function() {
     var obj = {counter: 0};
     _.extend(obj, Backbone.Events);
     var callback = function() {
@@ -326,6 +328,7 @@
     obj.trigger('event');
     obj.trigger('event');
     obj.trigger('event');
+    equal(obj._events.lists.event, undefined, 'removes event list after trigger');
     equal(obj.counter, 1, 'the callback should have been unbound.');
   });
 

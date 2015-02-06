@@ -147,7 +147,16 @@
   // The reducing API that adds a callback to the `events` object.
   var onApi = function(events, name, callback, context, ctx, listening) {
     if (callback) {
-      var list = events.lists[name] || (events.lists[name] = {count: 0, tail: void 0, next: void 0});
+      var list = events.lists[name];
+      if (!list) {
+        list = events.lists[name] = {
+          count: 0,
+          triggering: false,
+          shouldDelete: false,
+          tail: void 0,
+          next: void 0
+        };
+      }
       if (!list.next) events.count++;
       if (listening) listening.count++;
       list.count++;
@@ -238,7 +247,14 @@
 
       // Update tail event if the list has any events.  Otherwise, clean up.
       list.tail = tail;
-      if (tail === list) events.count--;
+      if (tail === list) {
+        events.count--;
+        if (list.triggering) {
+          list.shouldDelete = true;
+        } else {
+          delete lists[name];
+        }
+      }
     }
     return events;
   };
@@ -293,8 +309,14 @@
       var lists = events.lists;
       var list = lists[name];
       var allList = lists.all;
-      if (list) triggerEvents(list, args);
-      if (allList) triggerEvents(allList, [name].concat(args));
+      if (list) {
+        triggerEvents(list, args);
+        if (list.shouldDelete) delete lists[name];
+      }
+      if (allList) {
+        triggerEvents(allList, [name].concat(args));
+        if (allList.shouldDelete) delete lists.all;
+      }
     }
     return obj;
   };
@@ -304,33 +326,36 @@
   // Backbone events have 3 arguments).
   var triggerEvents = function(list, args) {
     var ev = list, a1 = args[0], a2 = args[1], a3 = args[2];
+    var alreadyTriggering = list.triggering;
+    list.triggering = true;
     switch (args.length) {
       case 0: while ((ev = ev.next)) {
         ev.callback.call(ev.ctx);
         while (ev.offed) { ev = ev.prev; }
       }
-      return;
+      break;
       case 1: while ((ev = ev.next)) {
         ev.callback.call(ev.ctx, a1);
         while (ev.offed) { ev = ev.prev; }
       }
-      return;
+      break;
       case 2: while ((ev = ev.next)) {
         ev.callback.call(ev.ctx, a1, a2);
         while (ev.offed) { ev = ev.prev; }
       }
-      return;
+      break;
       case 3: while ((ev = ev.next)) {
         ev.callback.call(ev.ctx, a1, a2, a3);
         while (ev.offed) { ev = ev.prev; }
       }
-      return;
+      break;
       default: while ((ev = ev.next)) {
         ev.callback.apply(ev.ctx, args);
         while (ev.offed) { ev = ev.prev; }
       }
-      return;
+      break;
     }
+    if (!alreadyTriggering) list.triggering = false;
   };
 
   // Proxy Underscore methods to a Backbone class' prototype using a
