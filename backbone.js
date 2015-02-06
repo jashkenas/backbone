@@ -146,7 +146,7 @@
   // The reducing API that adds a callback to the `events` object.
   var onApi = function(events, name, callback, context, ctx, listening) {
     if (callback) {
-      var list = events.lists[name] || (events.lists[name] = {name: name, tail: void 0, next: void 0});
+      var list = events.lists[name] || (events.lists[name] = {tail: void 0, next: void 0});
       if (!list.next) events.count++;
       if (listening) listening.count++;
 
