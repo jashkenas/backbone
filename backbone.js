@@ -291,7 +291,7 @@
   // receive the true name of the event as the first argument).
   Events.trigger =  function(name) {
     if (!this._events) return this;
-    
+
     var length = Math.max(0, arguments.length - 1);
     var args = Array(length);
     for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
