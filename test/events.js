@@ -212,11 +212,15 @@
     equal(_.size(b._listeners), 0);
   });
 
-  test("listenTo and off cleaning up references", 6, function() {
+  test("listenTo and off cleaning up references", 8, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     var fn = function() {};
     var getObj = _.property('obj');
+    a.listenTo(b, 'event', fn);
+    b.off();
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn);
     b.off('event');
     equal(_.size(a._listeningTo), 0);

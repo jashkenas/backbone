@@ -152,7 +152,6 @@
         list = events.lists[name] = {
           count: 0,
           triggering: false,
-          shouldDelete: false,
           tail: void 0,
           next: void 0
         };
@@ -249,11 +248,7 @@
       list.tail = tail;
       if (tail === list) {
         events.count--;
-        if (list.triggering) {
-          list.shouldDelete = true;
-        } else {
-          delete lists[name];
-        }
+        if (!list.triggering) delete lists[name];
       }
     }
     return events;
@@ -311,11 +306,11 @@
       var allList = lists.all;
       if (list) {
         triggerEvents(list, args);
-        if (list.shouldDelete) delete lists[name];
+        if (!list.next) delete lists[name];
       }
       if (allList) {
         triggerEvents(allList, [name].concat(args));
-        if (allList.shouldDelete) delete lists.all;
+        if (!allList.next) delete lists.all;
       }
     }
     return obj;
