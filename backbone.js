@@ -191,7 +191,7 @@
       // listening to obj. Break out early.
       if (!listening) break;
 
-      if (listening.obj) listening.obj.off(name, callback, this);
+      listening.obj.off(name, callback, this);
       if (!listening.count) delete listeningTo[id];
     }
 
