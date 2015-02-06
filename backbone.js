@@ -287,33 +287,35 @@
   // (unless you're listening on `"all"`, which will cause your callback to
   // receive the true name of the event as the first argument).
   Events.trigger =  function(name) {
-    if (!this._events) return this;
+    var events = this._events;
+    if (!events || !events.count) return this;
 
     var length = Math.max(0, arguments.length - 1);
     var args = Array(length);
     for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
 
-    eventsApi(triggerApi, this, name, void 0, args);
+    var alreadyTriggering = events.alreadyTriggering;
+    events.triggering = true;
+
+    eventsApi(triggerApi, events.lists, name, void 0, args);
+
+    if (!alreadyTriggering) events.triggering = false;
     return this;
   };
 
   // Handles triggering the appropriate event callbacks.
-  var triggerApi = function(obj, name, cb, args) {
-    var events = obj._events;
-    if (events) {
-      var lists = events.lists;
-      var list = lists[name];
-      var allList = lists.all;
-      if (list) {
-        triggerEvents(list, args);
-        if (!list.next) delete lists[name];
-      }
-      if (allList) {
-        triggerEvents(allList, [name].concat(args));
-        if (!allList.next) delete lists.all;
-      }
+  var triggerApi = function(lists, name, cb, args) {
+    var list = lists[name];
+    var allList = lists.all;
+    if (list) {
+      triggerEvents(list, args);
+      if (!list.next) delete lists[name];
     }
-    return obj;
+    if (allList) {
+      triggerEvents(allList, [name].concat(args));
+      if (!allList.next) delete lists.all;
+    }
+    return lists;
   };
 
   // A difficult-to-believe, but optimized internal dispatch function for
