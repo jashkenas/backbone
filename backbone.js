@@ -246,30 +246,28 @@
   // the callback is invoked, it will be removed.
   Events.once =  function(name, callback, context) {
     // Map the event into a `{event: once}` object.
-    var events = onceMap(name, callback, _.bind(this.off, this));
+    var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
     return this.on(events, void 0, context);
   };
 
   // Inversion-of-control versions of `once`.
   Events.listenToOnce =  function(obj, name, callback) {
     // Map the event into a `{event: once}` object.
-    var events = onceMap(name, callback, _.bind(this.stopListening, this, obj));
+    var events = eventsApi(onceMap, {}, name, callback, _.bind(this.stopListening, this, obj));
     return this.listenTo(obj, events);
   };
 
   // Reduces the event callbacks into a map of `{event: onceWrapper}`.
   // `offer` unbinds the `onceWrapper` after it as been called.
-  var onceMap = function(name, callback, offer) {
-    return eventsApi(function(map, name, callback, offer) {
-      if (callback) {
-        var once = map[name] = _.once(function() {
-          offer(name, once);
-          callback.apply(this, arguments);
-        });
-        once._callback = callback;
-      }
-      return map;
-    }, {}, name, callback, offer);
+  var onceMap = function(map, name, callback, offer) {
+    if (callback) {
+      var once = map[name] = _.once(function() {
+        offer(name, once);
+        callback.apply(this, arguments);
+      });
+      once._callback = callback;
+    }
+    return map;
   };
 
   // Trigger one or many events, firing all bound callbacks. Callbacks are
