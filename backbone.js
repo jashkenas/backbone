@@ -214,8 +214,6 @@
       // Find any remaining events.
       var ev = list, tail = list;
       while ((ev = ev.next)) {
-        var listening = ev.listening;
-
         if (
           callback && callback !== ev.callback &&
             callback !== ev.callback._callback ||
@@ -227,9 +225,12 @@
           if (next) next.prev = tail;
           ev.offed = true;
 
-          if (listening && !--listening.count) {
+          var listening = ev.listening;
+          if (listening && --listening.count === 0) {
+            var obj = listening.obj;
             listening.obj = void 0;
             delete listeners[listening.id];
+            ev.context.stopListening(obj);
           }
         }
       }

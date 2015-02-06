@@ -218,15 +218,15 @@
     var getObj = _.property('obj');
     a.listenTo(b, 'event', fn);
     b.off('event');
-    ok(!_.any(a._listeningTo, getObj));
+    equal(_.size(a._listeningTo), 0);
     equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn);
     b.off(null, fn);
-    ok(!_.any(a._listeningTo, getObj));
+    equal(_.size(a._listeningTo), 0);
     equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn);
     b.off(null, null, a);
-    ok(!_.any(a._listeningTo, getObj));
+    equal(_.size(a._listeningTo), 0);
     equal(_.size(b._listeners), 0);
   });
 
