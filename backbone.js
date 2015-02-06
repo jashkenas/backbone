@@ -83,9 +83,9 @@
 
   // Iterates over the standard `event, callback` (as well as the fancy multiple
   // space-separated events `"change blur", callback` and jQuery-style event
-  // maps `{event: callback}`), reducing them by manipulating `events`.
-  // Passes a normalized (single event name and callback), as well as the `context`
-  // and `ctx` arguments to `iteratee`.
+  // maps `{event: callback}`), reducing them by manipulating `memo`.
+  // Passes a normalized single event name and callback, as well as the `context`,
+  // `ctx`, and `listening` arguments to `iteratee`.
   var eventsApi = function(iteratee, memo, name, callback, context, ctx, listening) {
     var i = 0, names, length;
     if (name && typeof name === 'object') {
@@ -110,6 +110,8 @@
     return internalOn(this, name, callback, context);
   };
 
+  // An internal use `on` function, used to guard the `listening` argument from
+  // the public API.
   var internalOn = function(obj, name, callback, context, listening) {
     var events = obj._events || {count: 0, lists: {}};
     obj._events = eventsApi(onApi, events, name, callback, context, obj, listening);
