@@ -138,9 +138,15 @@
   var onApi = function(events, name, callback, context, ctx) {
     if (callback) {
       var list = events[name] || (events[name] = {tail: void 0, next: void 0});
-      var ev = {callback: callback, context: context, ctx: context || ctx, next: void 0, skip: false};
       var tail = list.tail || list;
-      list.tail = tail.next = ev;
+      list.tail = tail.next = {
+        callback: callback,
+        context: context,
+        ctx: context || ctx,
+        prev: tail,
+        next: void 0,
+        offed: false
+      };
     }
     return events;
   };
@@ -209,8 +215,9 @@
         ) {
           tail = ev;
         } else {
-          tail.next = ev.next;
-          ev.skip = true;
+          var next = tail.next = ev.next;
+          if (next) next.prev = tail;
+          ev.offed = true;
         }
       }
 
@@ -307,14 +314,34 @@
   // A difficult-to-believe, but optimized internal dispatch function for
   // triggering events. Tries to keep the usual cases speedy (most internal
   // Backbone events have 3 arguments).
-  var triggerEvents = function(events, args) {
-    var ev = events, a1 = args[0], a2 = args[1], a3 = args[2];
+  var triggerEvents = function(list, args) {
+    var ev = list, a1 = args[0], a2 = args[1], a3 = args[2];
     switch (args.length) {
-      case 0: while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx); return;
-      case 1: while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx, a1); return;
-      case 2: while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx, a1, a2); return;
-      case 3: while ((ev = ev.next)) if (!ev.skip) ev.callback.call(ev.ctx, a1, a2, a3); return;
-      default: while ((ev = ev.next)) if (!ev.skip) ev.callback.apply(ev.ctx, args); return;
+      case 0: while ((ev = ev.next)) {
+        ev.callback.call(ev.ctx);
+        while (ev.offed) { ev = ev.prev; }
+      }
+      return;
+      case 1: while ((ev = ev.next)) {
+        ev.callback.call(ev.ctx, a1);
+        while (ev.offed) { ev = ev.prev; }
+      }
+      return;
+      case 2: while ((ev = ev.next)) {
+        ev.callback.call(ev.ctx, a1, a2);
+        while (ev.offed) { ev = ev.prev; }
+      }
+      return;
+      case 3: while ((ev = ev.next)) {
+        ev.callback.call(ev.ctx, a1, a2, a3);
+        while (ev.offed) { ev = ev.prev; }
+      }
+      return;
+      default: while ((ev = ev.next)) {
+        ev.callback.apply(ev.ctx, args);
+        while (ev.offed) { ev = ev.prev; }
+      }
+      return;
     }
   };
 
