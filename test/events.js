@@ -80,7 +80,7 @@
   test("listenTo and stopListening with event maps", 4, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
-    var cb = function(){ console.log('ok'); ok(true); };
+    var cb = function(){ ok(true); };
     a.listenTo(b, {event: cb});
     b.trigger('event');
     a.listenTo(b, {event2: cb});
@@ -94,7 +94,7 @@
   test("stopListening with omitted args", 2, function () {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
-    var cb = function () { console.log('ok'); ok(true); };
+    var cb = function () { ok(true); };
     a.listenTo(b, 'event', cb);
     b.on('event', cb);
     a.listenTo(b, 'event2', cb);
