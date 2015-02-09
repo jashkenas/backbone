@@ -1219,13 +1219,13 @@ alert(JSON.stringify(artist));
     <p id="Model-fetch">
       <b class="header">fetch</b><code>model.fetch([options])</code>
       <br />
-      Merges the model's state with one fetched from the server by delegating to
-      <a href="#Sync">Backbone.sync</a>. Returns a
+      Merges the model's state with attributes fetched from the server by
+      delegating to <a href="#Sync">Backbone.sync</a>. Returns a
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
       Useful if the model has never
       been populated with data, or if you'd like to ensure that you have the
-      latest server state. A <tt>"change"</tt> event will be triggered if the
-      server's state differs from the current attributes. Accepts
+      latest server state. Triggers a <tt>"change"</tt> event if the
+      server's state differs from the current attributes. <tt>fetch</tt> accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
       are both passed <tt>(model, response, options)</tt> as arguments.
     </p>
@@ -2605,7 +2605,7 @@ new DocumentRow({
       <tt>this.el</tt> can be resolved from a DOM selector string or an Element;
       otherwise it will be created from the view's <tt>tagName</tt>, <tt>className</tt>,
       <tt>id</tt> and <a href="#View-attributes"><tt>attributes</tt></a> properties.
-      If none are set, <tt>this.el</tt> is an empty <tt>div</tt>, which is often just 
+      If none are set, <tt>this.el</tt> is an empty <tt>div</tt>, which is often just
       fine. An <b>el</b> reference may also be passed in to the view's constructor.
     </p>
 

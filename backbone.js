@@ -518,7 +518,8 @@
       return _.clone(this._previousAttributes);
     },
 
-    // Fetch the model from the server. If the models differ the two are merged.
+    // Fetch the model from the server, merging the response with the model's
+    // local attributes. Any changed attributes will trigger a "change" event.
     fetch: function(options) {
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
