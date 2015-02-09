@@ -152,17 +152,13 @@
         list = events.lists[name] = {
           count: 0,
           triggering: false,
-          listeners: {},
           tail: void 0,
           next: void 0
         };
       }
       if (!list.next) events.count++;
       list.count++;
-      if (listening) {
-        listening.count++;
-        list.listeners[listening.id] = listening;
-      }
+      if (listening) listening.count++;
 
       var tail = list.tail || list;
       list.tail = tail.next = {
@@ -216,27 +212,28 @@
     // Remove all callbacks for all events.
     if (!events || !events.count) return events;
 
+    var i = 0, length, listening;
+
     // Delete all event listeners and "drop" events.
     if (!name && !callback && !context && !events.triggering) {
-      listenerDeleter(listeners, listeners);
+      var ids = _.keys(listeners);
+      for (length = ids.length; i < length; i++) {
+        var id = ids[i];
+        listening = listeners[id];
+        delete listeners[id];
+        delete listening.listeningTo[listening.objId];
+      }
       return;
     }
 
     var lists = events.lists;
     var names = name ? [name] : _.keys(lists);
-    for (var i = 0; i < names.length; i++) {
+    for (; i < names.length; i++) {
       name = names[i];
       var list = lists[name];
 
       // Bail out if there are no events stored.
       if (!list || !list.next) continue;
-
-      // Delete all events in this list.
-      if (!callback && !context && !list.triggering) {
-        listenerDeleter(list.listeners, listeners);
-        delete lists[name];
-        continue;
-      }
 
       // Find any remaining events.
       var ev = list, tail = list;
@@ -253,11 +250,10 @@
           if (next) next.prev = tail;
           ev.offed = true;
 
-          var listening = ev.listening;
+          listening = ev.listening;
           if (listening && --listening.count === 0) {
             delete listening.listeningTo[listening.objId];
             delete listeners[listening.id];
-            delete list.listeners[listening.id];
           }
         }
       }
@@ -270,17 +266,6 @@
       }
     }
     return events;
-  };
-
-  // Deletes all listeners in `listeners` from `deleteFrom`.
-  var listenerDeleter = function(listeners, deleteFrom) {
-    var ids = _.keys(listeners);
-    for (var i = 0, length = ids.length; i < length; i++) {
-      var id = ids[i];
-      var listening = listeners[id];
-      delete deleteFrom[id];
-      delete listening.listeningTo[listening.objId];
-    }
   };
 
   // Bind an event to only be triggered a single time. After the first time
