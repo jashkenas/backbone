@@ -83,7 +83,7 @@
     doc.collection.url = '/collection/';
     equal(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;
-    raises(function() { doc.url(); });
+    throws(function() { doc.url(); });
     doc.collection = collection;
   });
 
