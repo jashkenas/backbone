@@ -351,6 +351,15 @@
     equal(model.get('name'), undefined);
   });
 
+  test("equal", 5, function() {
+    var model = new Backbone.Model({id: 1, name : "Model"});
+      equal(model.equal({}), true);
+      equal(model.equal({id: 1, name: 'Model'}), true);
+      equal(model.equal({id: 1, name: 'model'}), false);
+      equal(model.equal({id: true, name: 'Model'}), false);
+      equal(model.equal({id: 2}), false);
+  });
+
   test("defaults", 4, function() {
     var Defaulted = Backbone.Model.extend({
       defaults: {

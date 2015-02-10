@@ -440,6 +440,14 @@
       return _.clone(this._previousAttributes);
     },
 
+    // Returns `true` if all attributes is equal to model attributes
+    equal: function (attrs) {
+      for (var key in attrs) {
+        if (attrs[key] !== this.get(key)) return false;
+      }
+      return true;
+    },
+
     // Fetch the model from the server. If the server's representation of the
     // model differs from its current attributes, they will be overridden,
     // triggering a `"change"` event.
@@ -835,10 +843,7 @@
     where: function(attrs, first) {
       if (_.isEmpty(attrs)) return first ? void 0 : [];
       return this[first ? 'find' : 'filter'](function(model) {
-        for (var key in attrs) {
-          if (attrs[key] !== model.get(key)) return false;
-        }
-        return true;
+        return model.equal(attrs);
       });
     },
 
