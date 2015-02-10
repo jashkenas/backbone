@@ -547,7 +547,7 @@
     equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
   });
 
-  test("where and findWhere", 8, function() {
+  test("where, findWhere and count", 14, function() {
     var model = new Backbone.Model({a: 1});
     var coll = new Backbone.Collection([
       model,
@@ -562,6 +562,12 @@
     equal(coll.where({b: 1}).length, 0);
     equal(coll.where({b: 2}).length, 2);
     equal(coll.where({a: 1, b: 2}).length, 1);
+    equal(coll.count({a: 1}), 3);
+    equal(coll.count({a: 2}), 1);
+    equal(coll.count({a: 3}), 1);
+    equal(coll.count({b: 1}), 0);
+    equal(coll.count({b: 2}), 2);
+    equal(coll.count({a: 1, b: 2}), 1);
     equal(coll.findWhere({a: 1}), model);
     equal(coll.findWhere({a: 4}), void 0);
   });
