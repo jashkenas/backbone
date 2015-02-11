@@ -1221,6 +1221,25 @@
     Backbone.ajax = ajax;
   });
 
+  test("fetch will pass extra options to success callback", 1, function () {
+    var SpecialSyncCollection = Backbone.Collection.extend({
+      url: '/test',
+      sync: function (method, collection, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Collection.prototype.sync.call(this, method, collection, options);
+      }
+    });
+
+    var collection = new SpecialSyncCollection();
+
+    collection.fetch({ success: onSuccess });
+    this.ajaxSettings.success();
+
+    function onSuccess(collection, resp, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    }
+  });
+
   test("`add` only `sort`s when necessary", 2, function () {
     var collection = new (Backbone.Collection.extend({
       comparator: 'a'
