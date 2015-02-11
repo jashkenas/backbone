@@ -545,6 +545,46 @@
     equal(col.length, 1);
   });
 
+  test("create includes options added in sync when calling success", 1, function() {
+    var SpecialSyncModel = Backbone.Model.extend({
+      sync: function (method, collection, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Model.prototype.sync.apply(this, arguments);
+      }
+    });
+    var SpecialSyncCollection = Backbone.Collection.extend({
+      model: SpecialSyncModel
+    });
+    var col = new SpecialSyncCollection();
+    col.url = '/test';
+    var options = { success: onSuccess };
+    var m = col.create({ foo: "bar" }, options);
+    this.ajaxSettings.success(m, {}, options);
+    function onSuccess(collection, resp, actualOptions) {
+      ok(actualOptions.specialSync);
+    }
+  });
+
+  test("create includes options added in sync when adding model (wait: true)", 1, function() {
+    var SpecialSyncModel = Backbone.Model.extend({
+      sync: function (method, collection, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Model.prototype.sync.apply(this, arguments);
+      }
+    });
+    var SpecialSyncCollection = Backbone.Collection.extend({
+      model: SpecialSyncModel
+    });
+    var col = new SpecialSyncCollection();
+    col.url = '/test';
+    col.on('add', function (model, collection, actualOptions) {
+      ok(actualOptions.specialSync);
+    });
+    var options = { wait: true };
+    var m = col.create({ foo: "bar" }, options);
+    this.ajaxSettings.success(m, {}, options);
+  });
+
   test("initialize", 1, function() {
     var Collection = Backbone.Collection.extend({
       initialize: function() {
