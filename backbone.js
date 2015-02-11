@@ -978,13 +978,14 @@
     // wait for the server to agree.
     create: function(model, options) {
       options = options ? _.clone(options) : {};
+      var wait = options.wait;
       if (!(model = this._prepareModel(model, options))) return false;
-      if (!options.wait) this.add(model, options);
+      if (!wait) this.add(model, options);
       var collection = this;
       var success = options.success;
-      options.success = function(model, resp) {
-        if (options.wait) collection.add(model, options);
-        if (success) success.call(options.context, model, resp, options);
+      options.success = function(model, resp, callbackOptions) {
+        if (options.wait) collection.add(model, callbackOptions);
+        if (success) success.call(callbackOptions.context, model, resp, callbackOptions);
       };
       model.save(null, options);
       return model;
