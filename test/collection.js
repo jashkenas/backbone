@@ -1414,6 +1414,13 @@
     equal(StoogeCollection.prototype.modelId({_id: 1}), 1);
   });
 
+  test("modelId with no model in the collection", function() {
+    var StoogeCollection = Backbone.Collection.extend({model: undefined});
+
+    // Default to using `Collection::model::idAttribute`.
+    equal(StoogeCollection.prototype.modelId({id: 1}), 1);
+  });
+
   test('Polymorphic models work with "simple" constructors', function () {
     var A = Backbone.Model.extend();
     var B = Backbone.Model.extend();
