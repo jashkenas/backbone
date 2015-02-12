@@ -338,7 +338,7 @@
   var Model = Backbone.Model = function(attributes, options) {
     var attrs = attributes || {};
     options || (options = {});
-    this.cid = _.uniqueId('c');
+    this.cid = _.uniqueId(this.cidPrefix);
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
     if (options.parse) attrs = this.parse(attrs, options) || {};
@@ -360,6 +360,10 @@
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
     idAttribute: 'id',
+
+    // The prefix is used to create the client id which is used to identify models locally.
+    // You may want to override this if you're experiencing name clashes with model ids.
+    cidPrefix: 'c',
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.

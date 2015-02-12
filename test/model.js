@@ -330,6 +330,31 @@
     equal(model.isNew(), true);
   });
 
+  test("setting an alternative cid prefix", 4, function() {
+    var Model = Backbone.Model.extend({
+      cidPrefix: 'm'
+    });
+    var model = new Model();
+
+    equal(model.cid.charAt(0), 'm');
+
+    model = new Backbone.Model();
+    equal(model.cid.charAt(0), 'c');
+
+    var Collection = Backbone.Collection.extend({
+      model: Model
+    });
+    var collection = new Collection([{id: 'c5'}, {id: 'c6'}, {id: 'c7'}]);
+
+    equal(collection.get('c6').cid.charAt(0), 'm');
+    collection.set([{id: 'c6', value: 'test'}], {
+      merge: true,
+      add: true,
+      remove: false
+    });
+    ok(collection.get('c6').has('value'));
+  });
+
   test("set an empty string", 1, function() {
     var model = new Backbone.Model({name : "Model"});
     model.set({name : ''});
