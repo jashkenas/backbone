@@ -1221,4 +1221,66 @@
     model.set({a: true});
   });
 
+  test("#3493 - request:create request:read request:update request:delete request:patch events triggered before request event", 6, function() {
+    var model = new Backbone.Model();
+    model.urlRoot = '/test';
+    Backbone.ajax = function(settings) { settings.success(); }
+    var reqEventCount = 0;
+    var subEventCount = 0;
+
+    model.on("request", function() {
+      reqEventCount++;
+    });
+
+    model.once("request:create", function(obj, xhr, options) {
+      subEventCount++;
+      ok(obj === model, "request:create triggered after .save({id:null})");
+    });
+    model.save({id:null});
+
+    model.once("request:read", function(obj, xhr, options) {
+      subEventCount++;
+      ok(obj === model, "request:read triggered after .fetch()");
+    });
+    model.fetch();
+
+    model.once("request:update", function(obj, xhr, options) {
+      subEventCount++;
+      ok(obj === model, "request:update triggered after .save({id:1})");
+    });
+    model.save({id:1});
+
+    model.once("request:delete", function(obj, xhr, options) {
+      subEventCount++;
+      ok(obj === model, "request:delete triggered after .destroy()");
+    });
+    model.destroy();
+
+    model.once("request:patch", function(obj, xhr, options) {
+      subEventCount++;
+      ok(obj === model, "request:patch triggered after .save({id:1}, { patch: true })");
+    });
+    model.save({id:1}, {patch: true});
+
+    ok(reqEventCount === subEventCount, "request event triggered for each request:<method> event")
+
+  });
+
+  test("#3493 - request:<method> events are triggered before request events", 1, function() {
+    var model = new Backbone.Model();
+    model.urlRoot = '/test';
+    Backbone.ajax = function(settings) { settings.success(); }
+    var request_read = 0;
+    var request = 0;
+    var count = 0;
+
+    model.on("request", function() { request = ++count; });
+    model.on("request:read", function() { request_read = ++count; });
+    model.fetch();
+
+    ok(request_read < request);
+
+    Backbone.ajax = function(settings) { settings.success(); }
+  });
+
 })();

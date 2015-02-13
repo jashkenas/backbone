@@ -863,6 +863,7 @@ view.stopListening(model);
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
       <li><b>"request"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a request to the server. </li>
+      <li><b>"request:[method]"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a specific request to the server; triggered before the request event. (see <a href="#Sync">Backbone.Sync</a> for methods) </li>
       <li><b>"sync"</b> (model_or_collection, resp, options) &mdash; when a model or collection has been successfully synced with the server.</li>
       <li><b>"error"</b> (model_or_collection, resp, options) &mdash; when a model's or collection's request to the server has failed. </li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client. </li>
@@ -2421,7 +2422,7 @@ $(function(){
     </p>
 
     <ul>
-      <li><b>method</b> – the CRUD method (<tt>"create"</tt>, <tt>"read"</tt>, <tt>"update"</tt>, or <tt>"delete"</tt>)</li>
+      <li><b>method</b> – the CRUD method (<tt>"create"</tt>, <tt>"read"</tt>, <tt>"update"</tt>, <tt>"patch"</tt> or <tt>"delete"</tt>)</li>
       <li><b>model</b> – the model to be saved (or collection to be read)</li>
       <li><b>options</b> – success and error callbacks, and all other jQuery request options</li>
     </ul>
