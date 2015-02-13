@@ -298,9 +298,10 @@
     deepEqual(col.pluck('id'), [1, 2, 3]);
   });
 
-  test("remove", 5, function() {
+  test("remove", 7, function() {
     var removed = null;
     var otherRemoved = null;
+    var result = null;
     col.on('remove', function(model, col, options) {
       removed = model.get('label');
       equal(options.index, 3);
@@ -308,8 +309,12 @@
     otherCol.on('remove', function(model, col, options) {
       otherRemoved = true;
     });
-    col.remove(d);
+    result = col.remove(d);
     equal(removed, 'd');
+    strictEqual(result, d);
+    //if we try to remove d again, it's not going to actually get removed
+    result = col.remove(d);
+    strictEqual(result, undefined);
     equal(col.length, 3);
     equal(col.first(), a);
     equal(otherRemoved, null);
@@ -995,6 +1000,9 @@
     c.on('remove', function(model) {
       strictEqual(model, m1);
     });
+    c.on('removes', function(coll, models) {
+      strictEqual(models[0], m1);
+    });
 
     // remove: false doesn't remove any models
     c.set([], {remove: false});
@@ -1021,6 +1029,10 @@
     // Test removing models not passing an argument
     c.off('remove').on('remove', function(model) {
       ok(model === m2 || model === m3);
+    });
+    c.off('removes').on('removes', function(coll, models) {
+      strictEqual(models[0], m2);
+      strictEqual(models[1], m3);
     });
     c.set([]);
     strictEqual(c.length, 0);
@@ -1466,19 +1478,24 @@
     equal(collection.at(1), collection.get('b-1'));
   });
 
-  test("#3039: adding at index fires with correct at", 3, function() {
+  test("#3039: adding at index fires with correct at", 4, function() {
     var col = new Backbone.Collection([{at: 0}, {at: 4}]);
     col.on('add', function(model, col, options) {
       equal(model.get('at'), options.index);
     });
+    col.on('adds', function(col, models, options) {
+      equal(options.index, 1);
+    });
     col.add([{at: 1}, {at: 2}, {at: 3}], {at: 1});
   });
 
-  test("#3039: index is not sent when at is not specified", 2, function() {
+  test("#3039: index is not sent when at is not specified", 3, function() {
     var col = new Backbone.Collection([{at: 0}]);
-    col.on('add', function(model, col, options) {
+    function cb(model, col, options) {
       equal(undefined, options.index);
-    });
+    }
+    col.on('add', cb);
+    col.on('adds', cb);
     col.add([{at: 1}, {at: 2}]);
   });
 
@@ -1526,6 +1543,61 @@
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
     collection.add([{id: 3}], {at: '1'});
     deepEqual(collection.pluck('id'), [1, 3, 2]);
+  });
+
+  test("adds event doesn't fire if nothing was added", 0, function() {
+    var collection = new Backbone.Collection([{id: 1}]);
+    collection.on('add', function() {
+      ok(false);
+    });
+    collection.add([{id: 1}]);
+  });
+
+  test("adds", 6, function() {
+    var a = new Backbone.Model({id: 1}),
+        b = new Backbone.Model({id: 2}),
+        c = new Backbone.Model({id: 3}),
+        collection = new Backbone.Collection();
+    collection.on('adds', function(coll, models) {
+      strictEqual(coll, collection);
+      strictEqual(models[0], a);
+      strictEqual(models[1], b);
+      equal(models.length, 2);
+    });
+    collection.add([a, b]);
+
+    //adds shouldn't include models that weren't added
+    collection.off('adds').on('adds', function(coll, models) {
+      strictEqual(models[0], c);
+      equal(models.length, 1);
+    });
+    collection.add([a, b, c]);
+  });
+
+  test("removes event doesn't fire if nothing was removed", 0, function() {
+    var collection = new Backbone.Collection([{id: 1}]);
+    collection.on('removes', function() {
+      ok(false);
+    });
+    collection.remove([{id: 2}]);
+  });
+
+  test("removes", 8, function() {
+    var a = new Backbone.Model({id: 1}),
+        b = new Backbone.Model({id: 2}),
+        c = new Backbone.Model({id: 3}),
+        collection = new Backbone.Collection([a, b]);
+    collection.on('removes', function(coll, models) {
+      strictEqual(coll, collection);
+      strictEqual(models[0], a);
+      strictEqual(models[1], b);
+      equal(models.length, 2);
+    });
+    collection.remove([a, b]);
+
+    //removes shouldn't include models that weren't removed
+    collection.add([a, b]);
+    collection.remove([a, b, c]);
   });
 
 })();
