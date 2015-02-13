@@ -863,7 +863,7 @@ view.stopListening(model);
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
       <li><b>"request"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a request to the server. </li>
       <li><b>"sync"</b> (model_or_collection, resp, options) &mdash; when a model or collection has been successfully synced with the server.</li>
-      <li><b>"error"</b> (model_or_collection, resp, options) &mdash; when model's or collection's request to remote server has failed. </li>
+      <li><b>"error"</b> (model_or_collection, resp, options) &mdash; when a model's or collection's request to the server has failed. </li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client. </li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
@@ -1218,13 +1218,13 @@ alert(JSON.stringify(artist));
     <p id="Model-fetch">
       <b class="header">fetch</b><code>model.fetch([options])</code>
       <br />
-      Resets the model's state from the server by delegating to
-      <a href="#Sync">Backbone.sync</a>. Returns a
+      Merges the model's state with attributes fetched from the server by
+      delegating to <a href="#Sync">Backbone.sync</a>. Returns a
       <a href="http://api.jquery.com/jQuery.ajax/#jqXHR">jqXHR</a>.
       Useful if the model has never
       been populated with data, or if you'd like to ensure that you have the
-      latest server state. A <tt>"change"</tt> event will be triggered if the
-      server's state differs from the current attributes. Accepts
+      latest server state. Triggers a <tt>"change"</tt> event if the
+      server's state differs from the current attributes. <tt>fetch</tt> accepts
       <tt>success</tt> and <tt>error</tt> callbacks in the options hash, which
       are both passed <tt>(model, response, options)</tt> as arguments.
     </p>
@@ -2604,9 +2604,15 @@ new DocumentRow({
       whether they've already been inserted into the page or not. In this
       fashion, views can be rendered at any time, and inserted into the DOM all
       at once, in order to get high-performance UI rendering with as few
-      reflows and repaints as possible. <tt>this.el</tt> is created from the
-      view's <tt>tagName</tt>, <tt>className</tt>, <tt>id</tt> and <tt>attributes</tt> properties,
-      if specified. If not, <b>el</b> is an empty <tt>div</tt>.
+      reflows and repaints as possible.
+    </p>
+
+    <p>
+      <tt>this.el</tt> can be resolved from a DOM selector string or an Element;
+      otherwise it will be created from the view's <tt>tagName</tt>, <tt>className</tt>,
+      <tt>id</tt> and <a href="#View-attributes"><tt>attributes</tt></a> properties.
+      If none are set, <tt>this.el</tt> is an empty <tt>div</tt>, which is often just
+      fine. An <b>el</b> reference may also be passed in to the view's constructor.
     </p>
 
 <pre class="runnable">
