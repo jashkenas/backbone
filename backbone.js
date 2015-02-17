@@ -90,12 +90,12 @@
     var i = 0, names, length;
     if (name && typeof name === 'object') {
       // Handle event maps.
-      for (names = _.keys(name), length = names.length; i < length; i++) {
+      for (names = _.keys(name); i < names.length; i++) {
         memo = iteratee(memo, names[i], name[names[i]], context, ctx);
       }
     } else if (name && eventSplitter.test(name)) {
       // Handle space separated event names.
-      for (names = name.split(eventSplitter), length = names.length; i < length; i++) {
+      for (names = name.split(eventSplitter); i < names.length; i++) {
         memo = iteratee(memo, names[i], callback, context, ctx);
       }
     } else {
@@ -157,7 +157,7 @@
       // is passed, narrow down the search to just that listener.
       var ids = context != null ? [context._listenId] : _.keys(listeners);
 
-      for (var i = 0, length = ids.length; i < length; i++) {
+      for (var i = 0; i < ids.length; i++) {
         var listener = listeners[ids[i]];
 
         // Bail out if listener isn't listening.
@@ -185,7 +185,7 @@
     if (!events || !name && !context && !callback) return;
 
     var names = name ? [name] : _.keys(events);
-    for (var i = 0, length = names.length; i < length; i++) {
+    for (var i = 0; i < names.length; i++) {
       name = names[i];
       var handlers = events[name];
 
@@ -220,7 +220,7 @@
   var internalStopListening = function(listener, obj, name, callback, offEvents) {
     var listeningTo = listener._listeningTo;
     var ids = obj ? [obj._listenId] : _.keys(listeningTo);
-    for (var i = 0, length = ids.length; i < length; i++) {
+    for (var i = 0; i < ids.length; i++) {
       var id = ids[i];
       var listening = listeningTo[id];
 
@@ -452,7 +452,7 @@
       // Trigger all relevant attribute changes.
       if (!silent) {
         if (changes.length) this._pending = options;
-        for (var i = 0, length = changes.length; i < length; i++) {
+        for (var i = 0; i < changes.length; i++) {
           this.trigger('change:' + changes[i], this, current[changes[i]], options);
         }
       }
@@ -744,7 +744,7 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       options || (options = {});
-      for (var i = 0, length = models.length; i < length; i++) {
+      for (var i = 0; i < models.length; i++) {
         var model = models[i] = this.get(models[i]);
         if (!model) continue;
         var id = this.modelId(model.attributes);
@@ -784,7 +784,7 @@
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
-      for (var i = 0, length = models.length; i < length; i++) {
+      for (var i = 0; i < models.length; i++) {
         attrs = models[i];
 
         // If a duplicate is found, prevent it from being added and
@@ -823,7 +823,7 @@
 
       // Remove nonexistent models if appropriate.
       if (remove) {
-        for (var i = 0, length = this.length; i < length; i++) {
+        for (var i = 0; i < this.length; i++) {
           if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
         }
         if (toRemove.length) this.remove(toRemove, options);
@@ -834,13 +834,13 @@
         if (sortable) sort = true;
         this.length += toAdd.length;
         if (at != null) {
-          for (var i = 0, length = toAdd.length; i < length; i++) {
+          for (var i = 0; i < toAdd.length; i++) {
             this.models.splice(at + i, 0, toAdd[i]);
           }
         } else {
           if (order) this.models.length = 0;
           var orderedModels = order || toAdd;
-          for (var i = 0, length = orderedModels.length; i < length; i++) {
+          for (var i = 0; i < orderedModels.length; i++) {
             this.models.push(orderedModels[i]);
           }
         }
@@ -852,7 +852,7 @@
       // Unless silenced, it's time to fire all appropriate add/sort events.
       if (!options.silent) {
         var addOpts = at != null ? _.clone(options) : options;
-        for (var i = 0, length = toAdd.length; i < length; i++) {
+        for (var i = 0; i < toAdd.length; i++) {
           if (at != null) addOpts.index = at + i;
           (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
@@ -869,7 +869,7 @@
     // Useful for bulk operations and optimizations.
     reset: function(models, options) {
       options = options ? _.clone(options) : {};
-      for (var i = 0, length = this.models.length; i < length; i++) {
+      for (var i = 0; i < this.models.length; i++) {
         this._removeReference(this.models[i], options);
       }
       options.previousModels = this.models;
