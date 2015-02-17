@@ -279,22 +279,13 @@
     if (!this._events) return this;
     var args = slice.call(arguments, 1);
 
-    // Pass `triggerSentinel` as "callback" param. If `name` is an object,
-    // it `triggerApi` will be passed the property's value instead.
-    eventsApi(triggerApi, this, name, triggerSentinel, args);
+    eventsApi(triggerApi, this, name, void 0, args);
     return this;
   };
 
-  // A known sentinel to detect triggering with a `{event: value}` object.
-  var triggerSentinel = {};
-
   // Handles triggering the appropriate event callbacks.
-  var triggerApi = function(obj, name, sentinel, args) {
+  var triggerApi = function(obj, name, cb, args) {
     if (obj._events) {
-      // If `sentinel` is not the trigger sentinel, trigger was called
-      // with a `{event: value}` object, and it is `value`.
-      if (sentinel !== triggerSentinel) args = [sentinel].concat(args);
-
       var events = obj._events[name];
       var allEvents = obj._events.all;
       if (events) triggerEvents(events, args);
