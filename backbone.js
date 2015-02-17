@@ -1478,9 +1478,6 @@
   // Cached regex for stripping a leading hash/slash and trailing space.
   var routeStripper = /^[#\/]|\s+$/g;
 
-  // Cached regex for stripping leading and trailing slashes.
-  var rootStripper = /^\/+|\/+$/g;
-
   // Cached regex for stripping urls of hash.
   var pathStripper = /#.*$/;
 
@@ -1496,7 +1493,8 @@
 
     // Are we at the app root?
     atRoot: function() {
-      var path = this.location.pathname.replace(/[^\/]$/, '$&/');
+      var path = this.location.pathname;
+      if (this.root.charAt(this.root.length - 1) === '/') path = path.replace(/[^\/]$/, '$&/');
       return path === this.root && !this.getSearch();
     },
 
@@ -1517,7 +1515,7 @@
     // Get the pathname and search params, without the root.
     getPath: function() {
       var path = decodeURI(this.location.pathname + this.getSearch());
-      var root = this.root.slice(0, -1);
+      var root = this.root;
       if (!path.indexOf(root)) path = path.slice(root.length);
       return path.charAt(0) === '/' ? path.slice(1) : path;
     },
@@ -1525,7 +1523,7 @@
     // Get the cross-browser normalized URL fragment from the path or hash.
     getFragment: function(fragment) {
       if (fragment == null) {
-        if (this._hasPushState || !this._wantsHashChange) {
+        if (this._usePushState || !this._wantsHashChange) {
           fragment = this.getPath();
         } else {
           fragment = this.getHash();
@@ -1547,11 +1545,12 @@
       this._wantsHashChange = this.options.hashChange !== false;
       this._hasHashChange   = 'onhashchange' in window;
       this._wantsPushState  = !!this.options.pushState;
-      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
+      this._hasPushState    = !!(this.history && this.history.pushState);
+      this._usePushState    = this._wantsPushState && this._hasPushState;
       this.fragment         = this.getFragment();
 
-      // Normalize root to always include a leading and trailing slash.
-      this.root = ('/' + this.root + '/').replace(rootStripper, '/');
+      // Normalize root to always include a leading slash.
+      if (this.root.charAt(0) !== '/') this.root = '/' + this.root;
 
       // Transition from hashChange to pushState or vice versa if both are
       // requested.
@@ -1560,8 +1559,7 @@
         // If we've started off with a route from a `pushState`-enabled
         // browser, but we're currently in a browser that doesn't support it...
         if (!this._hasPushState && !this.atRoot()) {
-          var root = this.root.slice(0, -1) || '/';
-          this.location.replace(root + '#' + this.getPath());
+          this.location.replace(this.root + '#' + this.getPath());
           // Return immediately as browser will do redirect to new url
           return true;
 
@@ -1576,7 +1574,7 @@
       // Proxy an iframe to handle location events if the browser doesn't
       // support the `hashchange` event, HTML5 history, or the user wants
       // `hashChange` but not `pushState`.
-      if (!this._hasHashChange && this._wantsHashChange && (!this._wantsPushState || !this._hasPushState)) {
+      if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
         var iframe = document.createElement('iframe');
         iframe.src = 'javascript:0';
         iframe.style.display = 'none';
@@ -1595,7 +1593,7 @@
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState) {
+      if (this._usePushState) {
         addEventListener('popstate', this.checkUrl, false);
       } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
         addEventListener('hashchange', this.checkUrl, false);
@@ -1615,7 +1613,7 @@
       };
 
       // Remove window listeners.
-      if (this._hasPushState) {
+      if (this._usePushState) {
         removeEventListener('popstate', this.checkUrl, false);
       } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
         removeEventListener('hashchange', this.checkUrl, false);
@@ -1681,11 +1679,12 @@
       // Normalize the fragment.
       fragment = this.getFragment(fragment || '');
 
-      // Don't include a trailing slash on the root.
+      // Append a trailing slash if needed.
       var root = this.root;
-      if (fragment === '' || fragment.charAt(0) === '?') {
-        root = root.slice(0, -1) || '/';
+      if (fragment && this._usePushState) {
+        if (root.charAt(root.length - 1) !== '/' && fragment.charAt(0) !== '?') root += '/';
       }
+
       var url = root + fragment;
 
       // Strip the hash and decode for matching.
@@ -1695,7 +1694,7 @@
       this.fragment = fragment;
 
       // If pushState is available, we use it to set the fragment as a real URL.
-      if (this._hasPushState) {
+      if (this._usePushState) {
         this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
 
       // If hash changes haven't been explicitly disabled, update the hash

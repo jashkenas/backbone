@@ -424,7 +424,7 @@
     Backbone.history.stop();
     location.replace('http://example.com/root');
     Backbone.history = _.extend(new Backbone.History, {location: location});
-    Backbone.history.start({hashChange: false, root: '/root/', silent: true});
+    Backbone.history.start({hashChange: false, root: '/root', silent: true});
     strictEqual(Backbone.history.getFragment(), '');
   });
 
@@ -507,7 +507,7 @@
       }
     });
     Backbone.history.start({root: 'root'});
-    strictEqual(Backbone.history.root, '/root/');
+    strictEqual(Backbone.history.root, '/root');
   });
 
   test("Transition from hashChange to pushState.", 1, function() {
@@ -576,6 +576,23 @@
     });
     Backbone.history.start({
       root: 'root',
+      pushState: true
+    });
+  });
+
+  test("Transition from pushState to hashChange with trailing slash.", 0, function() {
+    Backbone.history.stop();
+    location.replace('http://example.com/root');
+    location.replace = function() { ok(false); };
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: null,
+        replaceState: null
+      }
+    });
+    Backbone.history.start({
+      root: '/root/',
       pushState: true
     });
   });
@@ -746,6 +763,21 @@
     location.replace('http://example.com/root/path');
     Backbone.history.start({pushState: true, hashChange: false, root: 'root'});
     Backbone.history.navigate('?x=1');
+  });
+
+  test('Trailing slash on root.', 1, function() {
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url){
+          strictEqual(url, '/root/');
+        }
+      }
+    });
+    location.replace('http://example.com/root/path');
+    Backbone.history.start({pushState: true, root: '/root/'});
+    Backbone.history.navigate('');
   });
 
   test('#2765 - Fragment matching sans query/hash.', 2, function() {
