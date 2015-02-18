@@ -1555,6 +1555,7 @@
       this.root             = this.options.root;
       this._wantsHashChange = this.options.hashChange !== false;
       this._hasHashChange   = 'onhashchange' in window;
+      this._useHashChange   = this._wantsHashChange && this._hasHashChange;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.history && this.history.pushState);
       this._usePushState    = this._wantsPushState && this._hasPushState;
@@ -1607,7 +1608,7 @@
       // 'onhashchange' is supported, determine how we check the URL state.
       if (this._usePushState) {
         addEventListener('popstate', this.checkUrl, false);
-      } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
+      } else if (this._useHashChange && !this.iframe) {
         addEventListener('hashchange', this.checkUrl, false);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
@@ -1627,7 +1628,7 @@
       // Remove window listeners.
       if (this._usePushState) {
         removeEventListener('popstate', this.checkUrl, false);
-      } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
+      } else if (this._useHashChange && !this.iframe) {
         removeEventListener('hashchange', this.checkUrl, false);
       }
 
