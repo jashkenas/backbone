@@ -980,9 +980,9 @@
       if (!wait) this.add(model, options);
       var collection = this;
       var success = options.success;
-      options.success = function(model, resp, callbackOptions) {
-        if (wait) collection.add(model, callbackOptions);
-        if (success) success.call(callbackOptions.context, model, resp, callbackOptions);
+      options.success = function(model, resp, callbackOpts) {
+        if (wait) collection.add(model, callbackOpts);
+        if (success) success.call(callbackOpts.context, model, resp, callbackOpts);
       };
       model.save(null, options);
       return model;

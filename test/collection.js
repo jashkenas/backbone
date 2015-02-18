@@ -531,24 +531,25 @@
   });
 
   test("create will pass extra options to success callback", 1, function () {
-    var SpecialSyncModel = Backbone.Model.extend({
+    var Model = Backbone.Model.extend({
       sync: function (method, model, options) {
-        _.extend(options, { specialSync: true });
+        _.extend(options, {specialSync: true});
         return Backbone.Model.prototype.sync.call(this, method, model, options);
       }
     });
-    var SpecialSyncCollection = Backbone.Collection.extend({
-      model: SpecialSyncModel,
+
+    var Collection = Backbone.Collection.extend({
+      model: Model,
       url: '/test'
     });
 
-    var collection = new SpecialSyncCollection();
+    var collection = new Collection;
 
-    var onSuccess = function (model, response, options) {
+    var success = function (model, response, options) {
       ok(options.specialSync, "Options were passed correctly to callback");
     };
 
-    collection.create({}, { success: onSuccess });
+    collection.create({}, {success: success});
     this.ajaxSettings.success();
 
   });
