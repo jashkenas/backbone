@@ -1534,7 +1534,7 @@
     // Get the cross-browser normalized URL fragment from the path or hash.
     getFragment: function(fragment) {
       if (fragment == null) {
-        if (this._hasPushState || !this._wantsHashChange) {
+        if (this._usePushState || !this._wantsHashChange) {
           fragment = this.getPath();
         } else {
           fragment = this.getHash();
@@ -1556,7 +1556,8 @@
       this._wantsHashChange = this.options.hashChange !== false;
       this._hasHashChange   = 'onhashchange' in window;
       this._wantsPushState  = !!this.options.pushState;
-      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
+      this._hasPushState    = !!(this.history && this.history.pushState);
+      this._usePushState    = this._wantsPushState && this._hasPushState;
       this.fragment         = this.getFragment();
 
       // Normalize root to always include a leading and trailing slash.
@@ -1585,7 +1586,7 @@
       // Proxy an iframe to handle location events if the browser doesn't
       // support the `hashchange` event, HTML5 history, or the user wants
       // `hashChange` but not `pushState`.
-      if (!this._hasHashChange && this._wantsHashChange && (!this._wantsPushState || !this._hasPushState)) {
+      if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
         var iframe = document.createElement('iframe');
         iframe.src = 'javascript:0';
         iframe.style.display = 'none';
@@ -1604,7 +1605,7 @@
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState) {
+      if (this._usePushState) {
         addEventListener('popstate', this.checkUrl, false);
       } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
         addEventListener('hashchange', this.checkUrl, false);
@@ -1624,7 +1625,7 @@
       };
 
       // Remove window listeners.
-      if (this._hasPushState) {
+      if (this._usePushState) {
         removeEventListener('popstate', this.checkUrl, false);
       } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
         removeEventListener('hashchange', this.checkUrl, false);
@@ -1704,7 +1705,7 @@
       this.fragment = fragment;
 
       // If pushState is available, we use it to set the fragment as a real URL.
-      if (this._hasPushState) {
+      if (this._usePushState) {
         this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
 
       // If hash changes haven't been explicitly disabled, update the hash
