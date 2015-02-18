@@ -530,6 +530,29 @@
     equal(col.create({"foo":"bar"}, {validate:true}), false);
   });
 
+  test("create will pass extra options to success callback", 1, function () {
+    var SpecialSyncModel = Backbone.Model.extend({
+      sync: function (method, model, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Model.prototype.sync.call(this, method, model, options);
+      }
+    });
+    var SpecialSyncCollection = Backbone.Collection.extend({
+      model: SpecialSyncModel,
+      url: '/test'
+    });
+
+    var collection = new SpecialSyncCollection();
+
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
+    collection.create({}, { success: onSuccess });
+    this.ajaxSettings.success();
+
+  });
+
   test("a failing create returns model with errors", function() {
     var ValidatingModel = Backbone.Model.extend({
       validate: function(attrs) {
@@ -1197,6 +1220,25 @@
       success: function () { start(); }
     });
     Backbone.ajax = ajax;
+  });
+
+  test("fetch will pass extra options to success callback", 1, function () {
+    var SpecialSyncCollection = Backbone.Collection.extend({
+      url: '/test',
+      sync: function (method, collection, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Collection.prototype.sync.call(this, method, collection, options);
+      }
+    });
+
+    var collection = new SpecialSyncCollection();
+
+    var onSuccess = function (collection, resp, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
+    collection.fetch({ success: onSuccess });
+    this.ajaxSettings.success();
   });
 
   test("`add` only `sort`s when necessary", 2, function () {
