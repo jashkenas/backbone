@@ -544,12 +544,13 @@
 
     var collection = new SpecialSyncCollection();
 
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
     collection.create({}, { success: onSuccess });
     this.ajaxSettings.success();
 
-    function onSuccess(model, response, options) {
-      ok(options.specialSync, "Options were passed correctly to callback");
-    }
   });
 
   test("a failing create returns model with errors", function() {
@@ -1232,12 +1233,12 @@
 
     var collection = new SpecialSyncCollection();
 
+    var onSuccess = function (collection, resp, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
     collection.fetch({ success: onSuccess });
     this.ajaxSettings.success();
-
-    function onSuccess(collection, resp, options) {
-      ok(options.specialSync, "Options were passed correctly to callback");
-    }
   });
 
   test("`add` only `sort`s when necessary", 2, function () {

@@ -576,12 +576,12 @@
 
     var model = new SpecialSyncModel();
 
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
     model.save(null, { success: onSuccess });
     this.ajaxSettings.success();
-
-    function onSuccess(model, response, options) {
-      ok(options.specialSync, "Options were passed correctly to callback");
-    }
   });
 
   test("fetch", 2, function() {
@@ -601,12 +601,12 @@
 
     var model = new SpecialSyncModel();
 
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
     model.fetch({ success: onSuccess });
     this.ajaxSettings.success();
-
-    function onSuccess(model, response, options) {
-      ok(options.specialSync, "Options were passed correctly to callback");
-    }
   });
 
   test("destroy", 3, function() {
@@ -629,12 +629,12 @@
 
     var model = new SpecialSyncModel({ id: 'id' });
 
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
     model.destroy({ success: onSuccess });
     this.ajaxSettings.success();
-
-    function onSuccess(model, response, options) {
-      ok(options.specialSync, "Options were passed correctly to callback");
-    }
   });
 
   test("non-persisted destroy", 1, function() {
