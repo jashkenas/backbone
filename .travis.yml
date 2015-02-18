@@ -3,3 +3,16 @@ node_js:
   - '0.10'
 notifications:
   email: false
+addons:
+  firefox: '31.0'
+install:
+  - sudo apt-get install chromium-browser
+  - npm install -g karma-cli
+  - npm install
+  - npm install karma-firefox-launcher karma-chrome-launcher
+before_install:
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+script:
+  - karma start --browsers Firefox,PhantomJS,Chrome_sandbox
