@@ -1777,9 +1777,9 @@ ships.add([
     <p id="Collection-remove">
       <b class="header">remove</b><code>collection.remove(models, [options])</code>
       <br />
-      Remove a model (or an array of models) from the collection, and returns
-      them. <tt>models</tt> (or each of its elements if an array) can be any
-      value acceptable as the <tt>id</tt> argument of
+      Remove a model (or an array of models) from the collection, and return
+      them. Each model can be a Model instance, an <tt>id</tt> string or a JS
+      object, any value acceptable as the <tt>id</tt> argument of
       <a href="#Collection-get"><tt>collection.get</tt></a>.
       Fires a <tt>"remove"</tt> event, which you can use <tt>silent</tt> to suppress.
       The model's index before removal is available to listeners as
