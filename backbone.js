@@ -1538,8 +1538,8 @@
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
     getHash: function(window) {
-      var match = (window || this).location.href.match(/#(.*)$/);
-      return match ? encodeFragment(match[1]) : '';
+      var match = (window || this).location.href.match(/#.*$/);
+      return match ? encodeFragment(match[0]) : '';
     },
 
     // Get the pathname and search params, without the root.
