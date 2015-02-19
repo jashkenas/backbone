@@ -1544,7 +1544,7 @@
 
     // Get the pathname and search params, without the root.
     getPath: function() {
-      var path = encodeFragment(this.location.pathname + this.getSearch());
+      var path = encodeFragment(this.location.pathname) + this.getSearch();
       var root = this.root.slice(0, -1);
       if (!path.indexOf(root)) path = path.slice(root.length);
       return path.charAt(0) === '/' ? path.slice(1) : path;
