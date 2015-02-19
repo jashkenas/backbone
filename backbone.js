@@ -1499,7 +1499,7 @@
 
   // Cached regex for detecting invalid percent-encoded octets. Will match any
   // "%" that is not followed by a hexadecimal number.
-  var invalidPercentOctets = /%(?![a-f0-9]{2}|[A-F0-9]{2})/;
+  var invalidPercentOctets = /%(?![a-fA-F0-9]{2})/;
 
   // Detect if fragment needs to be URI encoded.
   var shouldEncode = function(fragment) {
