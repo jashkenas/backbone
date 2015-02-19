@@ -830,7 +830,8 @@
   });
 
   test('unicode pathname with % in a parameter', 1, function() {
-    location.replace('http://example.com/myyj%C3%A4/foo%20%25%3F%2f%40%25%20bar');
+    // Work around a bug in IE6's anchor pathname parsing
+    location.pathname = '/myyj%C3%A4/foo%20%25%3F%2f%40%25%20bar';
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {location: location});
     var Router = Backbone.Router.extend({
