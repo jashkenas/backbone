@@ -829,6 +829,21 @@
     Backbone.history.start({pushState: true});
   });
 
+  test('unicode pathname with % in a parameter', 1, function() {
+    location.replace('http://example.com/myyjä/foo%20%25%3F%2f%40%25%20bar');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {
+        'myyjä/:query': function(query) {
+          strictEqual(query, 'foo %?/@% bar');
+        }
+      }
+    });
+    new Router;
+    Backbone.history.start({pushState: true});
+  });
+
   test('newline in route', 1, function() {
     location.replace('http://example.com/stuff%0Anonsense?param=foo%0Abar');
     Backbone.history.stop();
@@ -886,7 +901,7 @@
     });
     Backbone.history.start({pushState: true});
     Backbone.history.navigate('shop/search?keyword=short%20dress', true);
-    strictEqual(Backbone.history.fragment, 'shop/search?keyword=short dress');
+    strictEqual(Backbone.history.fragment, 'shop/search?keyword=short%20dress');
   });
 
   test('#3175 - Urls in the params', 1, function() {
