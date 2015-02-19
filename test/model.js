@@ -216,6 +216,19 @@
     strictEqual(model.matches({'name': 'Jonas', 'cool': false}), false);
   });
 
+  test("matches with predicate", function() {
+    var model = new Backbone.Model({a: 0});
+
+    strictEqual(model.matches(function(attr) {
+      return attr.a > 1 && attr.b != null;
+    }), false);
+
+    model.set({a: 3, b: true});
+
+    strictEqual(model.matches(function(attr) {
+      return attr.a > 1 && attr.b != null;
+    }), true);
+  })
 
   test("set and unset", 8, function() {
     var a = new Backbone.Model({id: 'id', foo: 1, bar: 2, baz: 3});
