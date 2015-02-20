@@ -1436,7 +1436,7 @@
     // Convert a route string into a regular expression, suitable for matching
     // against the current location hash.
     _routeToRegExp: function(route) {
-      route = route.replace(escapeRegExp, '\\$&')
+      route = encodeFragment(route).replace(escapeRegExp, '\\$&')
                    .replace(optionalParam, '(?:$1)?')
                    .replace(namedParam, function(match, optional) {
                      return optional ? match : '([^/?]+)';
@@ -1487,6 +1487,25 @@
   // Cached regex for stripping urls of hash.
   var pathStripper = /#.*$/;
 
+  // Cached regex for detecting any character that is invalid in an encoded URI.
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
+  var invalidURIEncoded = /[^;,/?:@&=+$a-zA-Z0-9-_.!~*'()#%]/;
+
+  // Cached regex for detecting invalid percent-encoded octets. Will match any
+  // "%" that is not followed by a hexadecimal number.
+  var invalidPercentOctets = /%(?![a-fA-F0-9]{2})/;
+
+  // Detect if fragment needs to be URI encoded.
+  var shouldEncode = function(fragment) {
+      return invalidURIEncoded.test(fragment) || invalidPercentOctets.test(fragment);
+  };
+
+  // Normalize a URL fragment into percent-encoding, only if it is not already
+  // percent-encoded.
+  var encodeFragment = function(fragment) {
+      return shouldEncode(fragment) ? encodeURI(fragment) : fragment;
+  };
+
   // Has the history handling already been started?
   History.started = false;
 
@@ -1507,19 +1526,19 @@
     // fragment contains `?`.
     getSearch: function() {
       var match = this.location.href.replace(/#.*/, '').match(/\?.+/);
-      return match ? match[0] : '';
+      return match ? encodeFragment(match[0]) : '';
     },
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
     getHash: function(window) {
-      var match = (window || this).location.href.match(/#(.*)$/);
-      return match ? match[1] : '';
+      var match = (window || this).location.href.match(/#.*$/);
+      return match ? encodeFragment(match[0]) : '';
     },
 
     // Get the pathname and search params, without the root.
     getPath: function() {
-      var path = decodeURI(this.location.pathname + this.getSearch());
+      var path = encodeFragment(this.location.pathname) + this.getSearch();
       var root = this.root.slice(0, -1);
       if (!path.indexOf(root)) path = path.slice(root.length);
       return path.charAt(0) === '/' ? path.slice(1) : path;
@@ -1684,7 +1703,7 @@
       if (!options || options === true) options = {trigger: !!options};
 
       // Normalize the fragment.
-      fragment = this.getFragment(fragment || '');
+      fragment = encodeFragment(this.getFragment(fragment || ''));
 
       // Don't include a trailing slash on the root.
       var root = this.root;
@@ -1694,7 +1713,7 @@
       var url = root + fragment;
 
       // Strip the hash and decode for matching.
-      fragment = decodeURI(fragment.replace(pathStripper, ''));
+      fragment = fragment.replace(pathStripper, '');
 
       if (this.fragment === fragment) return;
       this.fragment = fragment;
