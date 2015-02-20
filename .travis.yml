@@ -1,18 +1,22 @@
 language: node_js
 node_js:
-  - '0.10'
-notifications:
-  email: false
-addons:
-  firefox: '31.0'
-install:
-  - sudo apt-get install chromium-browser
-  - npm install -g karma-cli
-  - npm install
-  - npm install karma-firefox-launcher karma-chrome-launcher
+  - "0.10"
 before_install:
-  - export CHROME_BIN=chromium-browser
+  - npm install -g npm
+  - npm install -g karma-cli
+before_script:
+  - npm install karma-sauce-launcher
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 script:
-  - karma start --browsers Firefox,PhantomJS,Chrome_sandbox
+  - npm test
+  # Karma sauce is limited to running about 5-7 browsers (or it will tiemout) at a time so we just run vendor by vendor here
+  - "karma start karma.conf-sauce.js --browsers FIREFOX_V4,FIREFOX_V11,FIREFOX_V20,FIREFOX_V30,FIREFOX_V35"
+  - "karma start karma.conf-sauce.js --browsers CHROME_V28,CHROME_V35,CHROME_V40,ANDROID_V4.0,ANDROID_V4.3"
+  - "karma start karma.conf-sauce.js --browsers INTERNET_EXPLORER_V9,INTERNET_EXPLORER_V10,INTERNET_EXPLORER_V11"
+  - "karma start karma.conf-sauce.js --browsers SAFARI_V5,SAFARI_V6,SAFARI_V7"
+  - "karma start karma.conf-sauce.js --browsers OPERA_V11,OPERA_V12"
+notifications:
+  email: false
+env:
+  matrix: SAUCE_USERNAME=backbonejs SAUCE_ACCESS_KEY=23af9fb4-f413-42a1-aaec-d22bcaff7ad4
