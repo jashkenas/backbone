@@ -13,7 +13,7 @@ script:
   # Karma sauce is limited to running about 5-7 browsers (or it will tiemout) at a time so we just run vendor by vendor here
   - "karma start karma.conf-sauce.js --browsers FIREFOX_V4,FIREFOX_V11,FIREFOX_V20,FIREFOX_V30,FIREFOX_V35"
   - "karma start karma.conf-sauce.js --browsers CHROME_V28,CHROME_V35,CHROME_V40,ANDROID_V4.0,ANDROID_V4.3"
-  - "karma start karma.conf-sauce.js --browsers INTERNET_EXPLORER_V9,INTERNET_EXPLORER_V10,INTERNET_EXPLORER_V11"
+  - "karma start karma.conf-sauce.js --browsers INTERNET_EXPLORER_V7,INTERNET_EXPLORER_V8,INTERNET_EXPLORER_V9,INTERNET_EXPLORER_V10,INTERNET_EXPLORER_V11"
   - "karma start karma.conf-sauce.js --browsers SAFARI_V5,SAFARI_V6,SAFARI_V7"
   - "karma start karma.conf-sauce.js --browsers OPERA_V11,OPERA_V12"
 notifications:

@@ -15,9 +15,8 @@ var sauceBrowsers = _.reduce([
   ['internet explorer', '11', 'Windows 8.1'],
   ['internet explorer', '10', 'Windows 8'],
   ['internet explorer', '9', 'Windows 7'],
-  // Currently do not work with Karma.
-  // ['internet explorer', '8', 'Windows 7'],
-  // ['internet explorer', '7', 'Windows XP'],
+  ['internet explorer', '8'],
+  ['internet explorer', '7', 'Windows XP'],
   // ['internet explorer', '6', 'Windows XP'],
 
   ['opera', '12'],
@@ -27,8 +26,8 @@ var sauceBrowsers = _.reduce([
   ['android', '4.0'],
 
   ['safari', '8'],
-  ['safari', '6'],
   ['safari', '7'],
+  ['safari', '6'],
   ['safari', '5']
 ], function(memo, platform) {
   var label = (platform[0] + '_v' + platform[1]).replace(' ', '_').toUpperCase();
@@ -53,7 +52,7 @@ module.exports = function(config) {
     singleRun: true,
 
     // list of files / patterns to load in the browser
-        files: [
+    files: [
         'test/vendor/jquery.js',
         'test/vendor/json2.js',
         'test/vendor/underscore.js',
@@ -61,7 +60,7 @@ module.exports = function(config) {
         'test/setup/*.js',
         'test/*.js'
     ],
-    
+
     // test results reporter to use
     reporters: ['dots', 'saucelabs'],
     port: 9876,
