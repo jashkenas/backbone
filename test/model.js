@@ -690,7 +690,7 @@
     equal(model.get('a'), 100);
   });
 
-  test("validate on unset and clear", 6, function() {
+  test("validate on unset and clear", 5, function() {
     var error;
     var model = new Backbone.Model({name: "One"});
     model.validate = function(attrs) {
@@ -704,8 +704,6 @@
     equal(error, undefined);
     model.unset('name', {validate: true});
     equal(error, true);
-    equal(model.get('name'), 'Two');
-    model.clear({validate:true});
     equal(model.get('name'), 'Two');
     delete model.validate;
     model.clear();
@@ -1092,6 +1090,16 @@
     var options = {};
     model.unset('x', options);
     ok(!options.unset);
+  });
+
+  test("clear should reset to defaults value", 3, function() {
+    var Model = Backbone.Model.extend({ defaults: { foo: 'bar' } });
+    var model = new Model();
+    equal(model.get('foo'), 'bar');
+    model.set('foo', 'foobar');
+    equal(model.get('foo'), 'foobar');
+    model.clear();
+    equal(model.get('foo'), 'bar');
   });
 
   test("#1355 - `options` is passed to success callbacks", 3, function() {

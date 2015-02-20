@@ -396,7 +396,7 @@
     // the core primitive operation of a model, updating the data and notifying
     // anyone who needs to know about the change in state. The heart of the beast.
     set: function(key, val, options) {
-      var attr, attrs, unset, changes, silent, changing, prev, current;
+      var attr, attrs, unset, clear, changes, silent, changing, prev, current;
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
@@ -408,9 +408,10 @@
       }
 
       options || (options = {});
+      clear = options.clear;
 
       // Run validation.
-      if (!this._validate(attrs, options)) return false;
+      if (!clear && !this._validate(attrs, options)) return false;
 
       // Extract attributes and options.
       unset           = options.unset;
@@ -428,15 +429,27 @@
       // Check for changes of `id`.
       if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
 
+      var _change = function(_attr, _val) {
+        if (!_.isEqual(current[_attr], _val)) changes.push(_attr);
+        if (!_.isEqual(prev[_attr], _val)) {
+          this.changed[_attr] = _val;
+        } else {
+          delete this.changed[_attr];
+        }
+      };
+
+      if (clear) {
+        // For each none default attributes delete the current value.
+        for (attr in _.omit(current, _.keys(attrs))) {
+          _change.call(this, attr, undefined);
+          delete current[attr];
+        }
+      }
+
       // For each `set` attribute, update or delete the current value.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
-          this.changed[attr] = val;
-        } else {
-          delete this.changed[attr];
-        }
+        _change.call(this, attr, val);
         unset ? delete current[attr] : current[attr] = val;
       }
 
@@ -471,9 +484,8 @@
 
     // Clear all attributes on the model, firing `"change"`.
     clear: function(options) {
-      var attrs = {};
-      for (var key in this.attributes) attrs[key] = void 0;
-      return this.set(attrs, _.extend({}, options, {unset: true}));
+      var attrs = _.defaults({}, _.result(this, 'defaults'));
+      return this.set(attrs, _.extend({}, options, {clear: true}));
     },
 
     // Determine if the model has changed since the last `"change"` event.
