@@ -80,11 +80,11 @@ $(function(){
 
     // The DOM events specific to an item.
     events: {
-      "click .toggle"   : "toggleDone",
-      "dblclick .view"  : "edit",
-      "click a.destroy" : "clear",
-      "keypress .edit"  : "updateOnEnter",
-      "blur .edit"      : "close"
+      "click .toggle"     : "toggleDone",
+      "click a.edit-link" : "edit",
+      "click a.destroy"   : "clear",
+      "keypress .edit"    : "updateOnEnter",
+      "blur .edit"        : "close"
     },
 
     // The TodoView listens for changes to its model, re-rendering. Since there's
