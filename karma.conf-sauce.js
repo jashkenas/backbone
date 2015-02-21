@@ -72,9 +72,6 @@ module.exports = function(config) {
       tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
     },
 
-    // TODO(vojta): remove once SauceLabs supports websockets.
-    // This speeds up the capturing a bit, as browsers don't even try to use websocket.
-    transports: ['xhr-polling'],
     captureTimeout: 120000,
     customLaunchers: sauceBrowsers
 
