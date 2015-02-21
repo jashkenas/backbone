@@ -763,7 +763,10 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       options || (options = {});
-      for (var i = 0; i < models.length; i++) {
+      // We're going to rewrite models as we go and j is going to keep our
+      // position. If a model is invalid and not actually removed, it won't
+      // be rewritten.
+      for (var i = 0, j = 0; i < models.length; i++) {
         var model = models[i] = this.get(models[i]);
         if (!model) continue;
         var id = this.modelId(model.attributes);
@@ -776,8 +779,12 @@
           options.index = index;
           model.trigger('remove', model, this, options);
         }
+        models[j++] = model;
         this._removeReference(model, options);
       }
+      // We only need to slice if models array should be smaller, which is
+      // caused by some models not actually getting removed.
+      if (models.length !== j) models = models.slice(0, j);
       return singular ? models[0] : models;
     },
 
