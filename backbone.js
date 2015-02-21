@@ -737,7 +737,10 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       options || (options = {});
-      for (var i = 0, length = models.length; i < length; i++) {
+      // In order to fire removes we're going to rewrite models
+      // as we go and j is going to keep our position. If a model
+      // is invalid and not actually removed, it won't be written.
+      for (var i = 0, length = models.length, j = 0; i < length; i++) {
         var model = models[i] = this.get(models[i]);
         if (!model) continue;
         var id = this.modelId(model.attributes);
@@ -750,7 +753,14 @@
           options.index = index;
           model.trigger('remove', model, this, options);
         }
+        models[j++] = model;
         this._removeReference(model, options);
+      }
+      // We only need to slice if models array should be smaller, which is
+      // caused by some models not actually getting removed.
+      if (models.length !== j) models = models.slice(0, j);
+      if (!options.silent && j > 0) {
+        this.trigger('removes', this, models, options);
       }
       return singular ? models[0] : models;
     },
@@ -845,9 +855,14 @@
       // Unless silenced, it's time to fire all appropriate add/sort events.
       if (!options.silent) {
         var addOpts = at != null ? _.clone(options) : options;
-        for (var i = 0, length = toAdd.length; i < length; i++) {
+        var numToAdd = toAdd.length;
+        for (var i = 0; i < numToAdd; i++) {
           if (at != null) addOpts.index = at + i;
           (model = toAdd[i]).trigger('add', model, this, addOpts);
+        }
+        if (numToAdd > 0) {
+          if (at != null) addOpts.index = at;
+          this.trigger('adds', this, toAdd, addOpts);
         }
         if (sort || orderChanged) this.trigger('sort', this, options);
       }
