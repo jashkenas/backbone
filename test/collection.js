@@ -98,7 +98,7 @@
   test('get with "undefined" id', function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 'undefined'}]);
     equal(collection.get(1).id, 1);
-  }),
+  });
 
   test("update index when id changes", 4, function() {
     var col = new Backbone.Collection();
