@@ -14,51 +14,6 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 
-.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		margin: -1px;
-		padding: 0;
-		overflow: hidden;
-		clip: rect(0,0,0,0);
-		border: 0;
-}
-
-.button {
-	line-height: 20px;
-	text-decoration: none;
-	background: rgba(0, 0, 0, 0.1);
-	color: #555555;
-	font-size: 11px;
-	padding: 0 10px 1px;
-	cursor: pointer;
-	-webkit-border-radius: 12px;
-	-moz-border-radius: 12px;
-	-ms-border-radius: 12px;
-	-o-border-radius: 12px;
-	border-radius: 12px;
-	-webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
-	-moz-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
-	-ms-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
-	-o-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
-	box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
-}
-
-.button:hover {
-	background: rgba(0, 0, 0, 0.15);
-	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
-	-moz-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
-	-ms-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
-	-o-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
-	box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
-}
-
-.button:active {
-	position: relative;
-	top: 1px;
-}
-
 #todoapp {
 	background: #fff;
 	padding: 20px;
@@ -113,7 +68,7 @@ body {
 }
 
 #todo-list li {
-	padding: 18px 70px 18px 0;
+	padding: 18px 20px 18px 0;
 	position: relative;
 	font-size: 24px;
 	border-bottom: 1px solid #cccccc;
@@ -132,20 +87,19 @@ body {
 	position: absolute;
 	right: 5px;
 	top: 20px;
+	display: none;
 	cursor: pointer;
 	width: 20px;
 	height: 20px;
 	background: url(destroy.png) no-repeat;
 }
 
-#todo-list .edit-link {
-	position: absolute;
-	right: 35px;
-	top: 20px;
+#todo-list li:hover .destroy {
+  	display: block;
 }
 
-#todo-list .destroy:hover, #todo-list .destroy:focus {
-		background-position: 0 -20px;
+#todo-list .destroy:hover {
+  	background-position: 0 -20px;
 }
 
 #todo-list li.editing {
@@ -195,12 +149,54 @@ body {
 
 #clear-completed {
 	float: right;
+	line-height: 20px;
+	text-decoration: none;
+	background: rgba(0, 0, 0, 0.1);
+	color: #555555;
+	font-size: 11px;
 	margin-top: 8px;
 	margin-bottom: 8px;
+	padding: 0 10px 1px;
+	cursor: pointer;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
+	-ms-border-radius: 12px;
+	-o-border-radius: 12px;
+	border-radius: 12px;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
+	-moz-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
+	-ms-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
+	-o-box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0 0;
+}
+
+#clear-completed:hover {
+	background: rgba(0, 0, 0, 0.15);
+	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+	-moz-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+	-ms-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+	-o-box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 -1px 0 0;
+}
+
+#clear-completed:active {
+	position: relative;
+	top: 1px;
 }
 
 #todo-count span {
 	font-weight: bold;
+}
+
+#instructions {
+	margin: 10px auto;
+	color: #777777;
+	text-shadow: rgba(255, 255, 255, 0.8) 0 1px 0;
+	text-align: center;
+}
+
+#instructions a {
+	color: #336699;
 }
 
 #credits {

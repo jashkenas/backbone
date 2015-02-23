@@ -13,7 +13,6 @@
 
     <header>
       <h1>Todos</h1>
-      <label class="sr-only" for="new-todo">What needs to be done?</label>
       <input id="new-todo" type="text" placeholder="What needs to be done?">
     </header>
 
@@ -24,10 +23,14 @@
     </section>
 
     <footer>
-      <a href="#" id="clear-completed" role="button">Clear completed</a>
+      <a id="clear-completed">Clear completed</a>
       <div id="todo-count"></div>
     </footer>
 
+  </div>
+
+  <div id="instructions">
+    Double-click to edit a todo.
   </div>
 
   <div id="credits">
@@ -48,18 +51,16 @@
 
   <script type="text/template" id="item-template">
     <div class="view">
-      <label>
-        <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> /><%- title %>
-      </label>
-      <a href="#" class="edit-link button" role="button">Edit</a>
-      <a href="#" class="destroy" role="button"><span class="sr-only">Delete</span></a>
+      <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %> />
+      <label><%- title %></label>
+      <a class="destroy"></a>
     </div>
     <input class="edit" type="text" value="<%- title %>" />
   </script>
 
   <script type="text/template" id="stats-template">
     <% if (done) { %>
-      <a href="#" id="clear-completed" class="button" role="button">Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %></a>
+      <a id="clear-completed">Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %></a>
     <% } %>
     <div class="todo-count"><b><%= remaining %></b> <%= remaining == 1 ? 'item' : 'items' %> left</div>
   </script>
