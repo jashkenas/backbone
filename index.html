@@ -319,10 +319,6 @@
       <li>– <a href="#Routing">Routing</a></li>
     </ul>
 
-    <a class="toc_title" href="#upgrading">
-      Upgrading
-    </a>
-
     <a class="toc_title" href="#Events">
       Events
     </a>
@@ -827,55 +823,6 @@ var Books = Backbone.Collection.extend({
       state. Conversely, an application may call upon the Router to set 
       the URL at key locations as a user navigates through the app.
     </p>
-
-    <h2 id="upgrading">Upgrading to 1.1</h2>
-
-    <p>
-      Backbone <b>1.1</b> should be a fairly painless upgrade from the <b>0.9.X</b>
-      series. If you're upgrading from an older version, be sure to check out the
-      <a href="#changelog">change log</a>. In brief, a few of the larger breaking
-      changes are:
-    </p>
-
-    <ul>
-      <li>
-        If you want to smartly update the contents of a Collection,
-        adding new models, removing missing ones, and merging those already present,
-        you now call <a href="#Collection-set">set</a> (previously named "update"),
-        a similar operation to calling <tt>set</tt> on a Model. This is now the
-        default when you call <a href="#Collection-fetch">fetch</a> on a collection.
-        To get the old behavior, pass <tt>{reset: true}</tt>.
-      </li>
-      <li>
-        If you have characters in your URL segments that require URL encoding,
-        Backbone will now decode them for you (normalizing the behavior
-        cross-browser) before your route handlers receive them as arguments.
-      </li>
-      <li>
-        In <b>0.9.x</b>, Backbone events gained two new methods:
-        <a href="#Events-listenTo">listenTo</a> and
-        <a href="#Events-stopListening">stopListening</a>, which make it easier
-        to create Views that have all of their observers unbound when you
-        want to <a href="#View-remove">remove</a> the view.
-      </li>
-      <li>
-        Model validation is now only enforced by default in
-        <a href="#Model-save">save</a> &mdash; not in
-        <a href="#Model-set">set</a> unless the <tt>{validate:true}</tt>
-        option is passed. Model validation now fires an <tt>"invalid"</tt> event instead of
-        <tt>"error"</tt>.
-      </li>
-      <li>
-        In 1.1, Backbone Views no longer have the <tt>options</tt> argument
-        attached as <tt>this.options</tt> automatically. Feel free to continue
-        attaching it if you like.
-      </li>
-      <li>
-        In 1.1, The <b>Collection</b> methods <tt>add</tt>, <tt>remove</tt>,
-        <tt>set</tt>, <tt>push</tt>, and <tt>shift</tt> now return the model
-        (or models) added or removed from the collection.
-      </li>
-    </ul>
 
     <h2 id="Events">Backbone.Events</h2>
 
