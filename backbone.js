@@ -463,8 +463,8 @@
       // For each `set` attribute, update or delete the current value.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
+        if (!this.attributesAreEqual(current[attr], val)) changes.push(attr);
+        if (!this.attributesAreEqual(prev[attr], val)) {
           this.changed[attr] = val;
         } else {
           delete this.changed[attr];
@@ -493,6 +493,12 @@
       this._pending = false;
       this._changing = false;
       return this;
+    },
+    
+    // Compare two attributes, return true if they are found to be equal.
+    // (3345)
+    attributesAreEqual: function( attrA, attrB ) {
+        return _.isEqual( attrA, attrB );
     },
 
     // Remove an attribute from the model, firing `"change"`. `unset` is a noop
@@ -526,7 +532,7 @@
       var val, changed = false;
       var old = this._changing ? this._previousAttributes : this.attributes;
       for (var attr in diff) {
-        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
+        if (this.attributesAreEqual(old[attr], (val = diff[attr]))) continue;
         (changed || (changed = {}))[attr] = val;
       }
       return changed;

@@ -1277,5 +1277,17 @@
     });
     model.set({a: true});
   });
+    
+  test("3345 - attributesAreEqual", 3, function() {
+      var model = new Backbone.Model(),
+        a = 1,
+        b = 2,
+        c = 1,
+        d = {};
+      
+      ok( !model.attributesAreEqual( a, b ) );
+      ok( model.attributesAreEqual( a, c ) );
+      ok( model.attributesAreEqual( d, d ) );
+  });
 
 })();
