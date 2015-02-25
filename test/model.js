@@ -1278,16 +1278,164 @@
     model.set({a: true});
   });
     
-  test("3345 - attributesAreEqual", 3, function() {
+  test("#3345 - attributesAreEqual", 3, function() {
       var model = new Backbone.Model(),
         a = 1,
         b = 2,
         c = 1,
         d = {};
       
-      ok( !model.attributesAreEqual( a, b ) );
-      ok( model.attributesAreEqual( a, c ) );
-      ok( model.attributesAreEqual( d, d ) );
+      ok( !model.attributesEqual( a, b ) );
+      ok( model.attributesEqual( a, c ) );
+      ok( model.attributesEqual( d, d ) );
   });
+    
+  test("#3345 - changedAttributes with default attributesEqual", 1, function() {
+      var date1 = new Date( 2015, 2, 23, 12, 13 ),
+          date2 = new Date( 2015, 2, 23, 12, 23 ),
+          model = new Backbone.Model( { date: date1 } ),
+          changedAttributes;
+      
+      model.set( { date: date2 } );
+      changedAttributes = model.changedAttributes();
+      ok( changedAttributes.date === date2 );
+  } );
+    
+  test("#3345 - changedAttributes with default attributesEqual", 2, function() {
+      var date1 = new Date( 2015, 2, 23, 12, 13 ),
+          date2 = new Date( 2015, 2, 23, 12, 23 ),
+          TestModel, 
+          model,
+          changedAttributes;
+      
+      TestModel = Backbone.Model.extend( {
+          // custom attribute logic that only weighs the year of the date object
+          attributesEqual: function( attrA, attrB ) {
+              var rv;
+              if( ( attrA instanceof Date ) &&  ( attrB instanceof Date ) ) {
+                   rv = date1.getFullYear() === date2.getFullYear();
+              }
+              else {
+                  rv = Backbone.Model.prototype.attributesEqual.call( this, attrA, attrB );
+              }
+              return rv;
+        }
+       });
+      model = new TestModel( { date: date1 } )
+      model.set( { date: date2 } );
+      model.set( { shouldBeChanged: 'test' } );
+      changedAttributes = model.changedAttributes();
+      ok( _.isUndefined( changedAttributes.date ) );
+      ok( changedAttributes.shouldBeChanged );
+  } );
+    
+  test("#3345 - changedAttributes with custom", 3, function() {
+      var date1 = new Date( 2015, 2, 23, 12, 13 ),
+          date2 = new Date( 2015, 2, 23, 12, 23 ),
+          TestModel, 
+          model,
+          changedAttributes;
+      
+      TestModel = Backbone.Model.extend( {
+          // custom attribute logic that only weighs the year of date objects
+          attributesEqual: function( attrA, attrB ) {
+              var rv;
+              if( ( attrA instanceof Date ) &&  ( attrB instanceof Date ) ) {
+                   rv = date1.getFullYear() === date2.getFullYear();
+              }
+              else {
+                  // use the default attributesEqual for all other types
+                  rv = Backbone.Model.prototype.attributesEqual.call( this, attrA, attrB );
+              }
+              return rv;
+        }
+       });
+      model = new TestModel( { date: date1 } )
+      model.set( { date: date2 } );
+      
+      // In this case the date attribute was updated but it doesn't register as a
+      // changed attribute.
+      ok( _.isEmpty( model.changedAttributes() ) );
+      ok( model.get( 'date' ) === date2 );
 
+      // otherwise setting a non Date object results in the regular behavior
+      model.set( { shouldBeChanged: 'test' } );
+      changedAttributes = model.changedAttributes();
+      ok( changedAttributes.shouldBeChanged );
+      
+  } );
+    
+  test("#3345 - leverge the attribute name in attributeEquals to skip type checks", 6, function() {
+      var date1 = new Date( 2015, 2, 23, 12, 13 ),
+          date2 = new Date( 2015, 2, 23, 12, 23 ),
+          specialModelA = new Backbone.Model( { id: 1, name: 'test' } ),
+          specialModelB = new Backbone.Model( { id: 1, name: 'test' } ),
+          TestModel, 
+          model,
+          changedAttributes;
+      
+      TestModel = Backbone.Model.extend( {
+          
+          // custom attribute logic that only weighs the year of date objects
+          compareDates: function( dateA, dateB ) {
+            var rv = false;
+            if( dateA && dateB ) {
+                rv = dateA.getFullYear() === dateB.getFullYear();
+            }
+            return rv;
+          },
+          
+          compareSpecialModel: function( modelA, modelB ) {
+              var rv = false;
+              if( modelA && modelB ) {
+                rv = ( modelA.id === modelB.id ) 
+                    && ( modelA.get( 'name' ) === modelB.get( 'name' ) );
+              }
+              return rv;
+          },
+          
+          attributesEqual: function( attrA, attrB, attr ) {
+              var comparisons = {
+                      date: this.compareDates,
+                      specialModel: this.compareSpecialModel
+                  },
+                  comparison = comparisons[ attr ];
+              if( comparison ) {
+                  rv = comparison( attrA, attrB );
+              }
+              else {
+                  // use the default attributesEqual for all other types
+                  rv = Backbone.Model.prototype.attributesEqual.call( this, attrA, attrB );
+              }
+              return rv;
+        }
+       });
+      model = new TestModel( { 
+          date: date1, 
+          specialModel: specialModelA, 
+          regularModel: specialModelA 
+      } );
+      
+      model.set( { date: date2 } );
+      // In this case the date attribute was updated but it doesn't register as a
+      // changed attribute.
+      ok( _.isEmpty( model.changedAttributes() ) );
+      equal( model.get( 'date' ), date2 );
+      
+      model.set( { specialModel: specialModelB } );
+      ok( _.isEmpty( model.changedAttributes() ) );
+      equal( model.get( 'specialModel' ), specialModelB );
+      
+      model.set( { 
+          shouldBeChanged: 'test',
+          regularModel: specialModelB
+      } );
+      changedAttributes = model.changedAttributes();
+
+      ok( changedAttributes.shouldBeChanged );
+      ok( changedAttributes.regularModel );
+      
+  } );
+    
+    
 })();
