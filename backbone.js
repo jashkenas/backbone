@@ -1725,7 +1725,7 @@
       // Strip the hash and decode for matching.
       fragment = this.decodeFragment(fragment.replace(pathStripper, ''));
 
-      if (this.fragment === fragment) return;
+      if (this.fragment === fragment && !options.force) return;
       this.fragment = fragment;
 
       // If pushState is available, we use it to set the fragment as a real URL.
