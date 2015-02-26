@@ -287,10 +287,10 @@
   // `offer` unbinds the `onceWrapper` after it as been called.
   var onceMap = function(map, name, callback, offer) {
     if (callback) {
-      var once = map[name] = _.once(function() {
+      var once = map[name] = function() {
         offer(name, once);
         callback.apply(this, arguments);
-      });
+      };
       once._callback = callback;
     }
     return map;
