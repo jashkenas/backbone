@@ -1571,4 +1571,23 @@
     deepEqual(collection.pluck('id'), [1, 3, 2]);
   });
 
+  asyncTest("silence override", function() {
+    var C = Backbone.Collection.extend({
+      initialize: function(models, options) {
+        options.silent = false;
+
+        this.on("add", this.onAdd, this);
+
+        Backbone.Collection.prototype.initialize.call(this, models, options);
+      },
+
+      onAdd: function() {
+        equal(this.length, 1);
+
+        start();
+      }
+    });
+
+    var c = new C(["a"]);
+  });
 })();
