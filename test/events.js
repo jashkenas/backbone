@@ -368,16 +368,16 @@
 
   test("callback list is not altered during trigger", 2, function () {
     var counter = 0, obj = _.extend({}, Backbone.Events);
+    var fn = function(){};
+    var fnOff = function(){ obj.off('event', fn); };
     var incr = function(){ counter++; };
-    obj.on('event', function(){ obj.on('event', incr).on('all', incr); })
-    .trigger('event');
-    equal(counter, 0, 'bind does not alter callback list');
-    obj.off()
-    .on('event', function(){ obj.off('event', incr).off('all', incr); })
-    .on('event', incr)
-    .on('all', incr)
-    .trigger('event');
-    equal(counter, 2, 'unbind does not alter callback list');
+    var incrOn = function(){ obj.on('event all', incr); };
+
+    obj.on('event', incrOn).trigger('event');
+    equal(counter, 0, 'on does not alter callback list');
+
+    obj.off().on('event', fn).on('event', fnOff).on('event', incr).trigger('event');
+    equal(counter, 1, 'off does not alter callback list');
   });
 
   test("#1282 - 'all' callback list is retrieved after each event.", 1, function() {
