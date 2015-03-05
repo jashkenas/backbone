@@ -87,7 +87,7 @@
   // Passes a normalized single event name and callback, as well as the `context`,
   // `ctx`, and `listening` arguments to `iteratee`.
   var eventsApi = function(iteratee, memo, name, callback, context, ctx, listening) {
-    var i = 0, names, length;
+    var i = 0, names;
     if (name && typeof name === 'object') {
       // Handle event maps.
       for (names = _.keys(name); i < names.length; i++) {
@@ -149,14 +149,9 @@
     if (callback) {
       var list = events.lists[name];
       if (!list) {
-        list = events.lists[name] = {
-          count: 0,
-          triggering: false,
-          tail: void 0,
-          next: void 0
-        };
+        list = events.lists[name] = { count: 0, triggering: false, tail: void 0, next: void 0 };
+        events.count++;
       }
-      if (!list.next) events.count++;
       list.count++;
       if (listening) listening.count++;
 
@@ -192,7 +187,7 @@
 
     var ids = obj ? [obj._listenId] : _.keys(listeningTo);
 
-    for (var i = 0, length = ids.length; i < length; i++) {
+    for (var i = 0; i < ids.length; i++) {
       var id = ids[i];
       var listening = listeningTo[id];
 
@@ -212,12 +207,12 @@
     // Remove all callbacks for all events.
     if (!events || !events.count) return events;
 
-    var i = 0, length, listening;
+    var i = 0, listening;
 
     // Delete all event listeners and "drop" events.
     if (!name && !callback && !context && !events.triggering) {
       var ids = _.keys(listeners);
-      for (length = ids.length; i < length; i++) {
+      for (; i < ids.length; i++) {
         var id = ids[i];
         listening = listeners[id];
         delete listeners[id];
