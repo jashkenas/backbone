@@ -303,7 +303,7 @@
     var args = Array(length);
     for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
 
-    var alreadyTriggering = events.alreadyTriggering;
+    var alreadyTriggering = events.triggering;
     events.triggering = true;
 
     eventsApi(triggerApi, events.lists, name, void 0, args);
