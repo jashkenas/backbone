@@ -382,14 +382,14 @@
       var incrOn = function(){ obj.on('event all', incr); };
 
       obj.on('event', incr).on('event', incrOn).on('event', incr).trigger('event');
-      equal(counter, 3, 'trigger with on does not skip callbacks');
+      equal(counter, 4, 'trigger with on does not skip callbacks');
 
       obj.off().on('event', incr).on('event', fnOff).on('event', incr).trigger('event');
-      equal(counter, 5, 'trigger with off does skip callbacks');
+      equal(counter, 6, 'trigger with off does skip callbacks');
 
       fnOff = function() { obj.off('event', fnOff).off('event').on('event', incr); };
       obj.off().on('event', function() {}).on('event', fnOff).on('event', fn).trigger('event');
-      equal(counter, 6, 'offing does not orphan current trigger list');
+      equal(counter, 7, 'offing does not orphan current trigger list');
   });
 
   test("#1282 - 'all' callback list is retrieved after each event.", 1, function() {
@@ -400,7 +400,7 @@
       obj.on('y', incr).on('all', incr);
     })
     .trigger('x y');
-    strictEqual(counter, 2);
+    strictEqual(counter, 3);
   });
 
   test("if no callback is provided, `on` is a noop", 0, function() {

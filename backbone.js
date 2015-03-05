@@ -315,11 +315,11 @@
   // Handles triggering the appropriate event callbacks.
   var triggerApi = function(lists, name, cb, args) {
     var list = lists[name];
-    var allList = lists.all;
     if (list) {
       triggerEvents(list, args);
       if (!list.next) delete lists[name];
     }
+    var allList = lists.all;
     if (allList) {
       triggerEvents(allList, [name].concat(args));
       if (!allList.next) delete lists.all;
