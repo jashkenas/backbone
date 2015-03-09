@@ -1431,6 +1431,25 @@
     equal(c.models.length, 1);
   });
 
+  test('Do not allow duplicate models (with parsed id) to be `add`ed or `set`', function() {
+    var Stooge = Backbone.Model.extend({
+      idAttribute: '_id',
+      parse: function(a) {
+        var attrs = {};
+        attrs._id = a.__id;
+        return attrs;
+      }
+    });
+    var StoogeCollection = Backbone.Collection.extend({model: Stooge});
+    var c = new StoogeCollection();
+    c.add([{__id: 1}, {__id: 1}], {parse: true});
+    equal(c.length, 1);
+    equal(c.models.length, 1);
+    c.set([{__id: 1}, {__id: 1}], {parse: true});
+    equal(c.length, 1);
+    equal(c.models.length, 1);
+  });
+
   test('#3020: #set with {add: false} should not throw.', 2, function() {
     var collection = new Backbone.Collection;
     collection.set([{id: 1}], {add: false});
