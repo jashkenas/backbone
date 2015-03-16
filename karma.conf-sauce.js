@@ -4,13 +4,14 @@ var _ = require('underscore');
 var sauceBrowsers = _.reduce([
   ['firefox', '35'],
   ['firefox', '30'],
-  ['firefox', '20'],
+  ['firefox', '21'],
   ['firefox', '11'],
   ['firefox', '4'],
 
   ['chrome', '40'],
-  ['chrome', '35'],
-  ['chrome', '28'],
+  ['chrome', '39'],
+  ['chrome', '31'],
+  ['chrome', '26'],
 
   ['internet explorer', '11', 'Windows 8.1'],
   ['internet explorer', '10', 'Windows 8'],
@@ -22,15 +23,22 @@ var sauceBrowsers = _.reduce([
   ['opera', '12'],
   ['opera', '11'],
 
+  ['android', '5'],
+  ['android', '4.4'],
   ['android', '4.3'],
   ['android', '4.0'],
 
-  ['safari', '8'],
+  ['safari', '8.0', 'OS X 10.10'],
   ['safari', '7'],
   ['safari', '6'],
   ['safari', '5']
 ], function(memo, platform) {
-  var label = (platform[0] + '_v' + platform[1]).replace(' ', '_').toUpperCase();
+  // internet explorer -> ie
+  var label = platform[0].split(' ');
+  if (label.length > 1) {
+    label = _.invoke(label, 'charAt', 0)
+  }
+  label = (label.join("") + '_v' + platform[1]).replace(' ', '_').toUpperCase();
   memo[label] = _.pick({
     'base': 'SauceLabs',
     'browserName': platform[0],
@@ -72,14 +80,11 @@ module.exports = function(config) {
       tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
     },
 
-    // TODO(vojta): remove once SauceLabs supports websockets.
-    // This speeds up the capturing a bit, as browsers don't even try to use websocket.
-    transports: ['xhr-polling'],
     captureTimeout: 120000,
-    customLaunchers: sauceBrowsers
+    customLaunchers: sauceBrowsers,
 
     // Browsers to launch, commented out to prevent karma from starting
     // too many concurrent browsers and timing sauce out.
-    // browsers: _.keys(sauceBrowsers)
+    browsers: _.keys(sauceBrowsers)
   });
 };
