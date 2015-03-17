@@ -1803,7 +1803,7 @@
 
     // Set a convenience property in case the parent's prototype is needed
     // later.
-    child.__super__ = parent.prototype;
+    child.super_ = parent.prototype;
 
     return child;
   };
