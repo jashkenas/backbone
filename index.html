@@ -278,6 +278,21 @@
         overflow: scroll;
       }
     }
+    img.figure {
+      width: 100%;
+    }
+    div.columns {
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+    }
+      div.columns ul {
+        margin: 10px 0;
+      }
+    div.col-50 {
+      display: table-cell;
+      width: 50%;
+    }
   </style>
 </head>
 <body>
@@ -292,13 +307,17 @@
       <li>&raquo; <a href="docs/backbone.html">Annotated Source</a></li>
     </ul>
 
-    <a class="toc_title" href="#introduction">
-      Introduction
+    <a class="toc_title" href="#Getting-started">
+      Getting Started
     </a>
-
-    <a class="toc_title" href="#upgrading">
-      Upgrading
-    </a>
+    <ul class="toc_section">
+      <li>- <a href="#Getting-Started">Introduction</a></li>
+      <li>– <a href="#Model-View-separation">Models and Views</a></li>
+      <li>– <a href="#Model-Collections">Collections</a></li>
+      <li>– <a href="#API-integration">API Integration</a></li>
+      <li>– <a href="#View-rendering">Rendering</a></li>
+      <li>– <a href="#Routing">Routing</a></li>
+    </ul>
 
     <a class="toc_title" href="#Events">
       Events
@@ -591,8 +610,7 @@
       <a href="http://zeptojs.com">Zepto</a>, will
       also tend to work, with varying degrees of compatibility.)</i>
     </p>
-
-    <h2 id="introduction">Introduction</h2>
+    <h2 id="Getting-started">Getting Started</h2>
 
     <p>
       When working on a web application that involves a lot of JavaScript, one
@@ -634,58 +652,181 @@
     </p>
 
     <p>
-      Many of the examples that follow are runnable. Click the <i>play</i> button
-      to execute them.
+      Many of the code examples in this documentation are runnable, because
+      Backbone is included on this page. 
+      Click the <i>play</i> button to execute them.
     </p>
 
-    <h2 id="upgrading">Upgrading to 1.2</h2>
+    <h2 id="Model-View-separation">Models and Views</h2>
+
+    <img class="figure" src="docs/images/intro-model-view.svg" alt="Model-View Separation.">
 
     <p>
-      Backbone <b>1.2</b> should be a fairly painless upgrade from the <b>0.9.X</b>
-      series. If you're upgrading from an older version, be sure to check out the
-      <a href="#changelog">change log</a>. In brief, a few of the larger breaking
-      changes are:
+      The single most important thing that Backbone can help you with is keeping
+      your business logic separate from your user interface. When the two are 
+      entangled, change is hard; when logic doesn't depend on UI, your
+      interface becomes easier to work with.
     </p>
 
-    <ul>
-      <li>
-        If you want to smartly update the contents of a Collection,
-        adding new models, removing missing ones, and merging those already present,
-        you now call <a href="#Collection-set">set</a> (previously named "update"),
-        a similar operation to calling <tt>set</tt> on a Model. This is now the
-        default when you call <a href="#Collection-fetch">fetch</a> on a collection.
-        To get the old behavior, pass <tt>{reset: true}</tt>.
-      </li>
-      <li>
-        If you have characters in your URL segments that require URL encoding,
-        Backbone will now decode them for you (normalizing the behavior
-        cross-browser) before your route handlers receive them as arguments.
-      </li>
-      <li>
-        In <b>0.9.x</b>, Backbone events gained two new methods:
-        <a href="#Events-listenTo">listenTo</a> and
-        <a href="#Events-stopListening">stopListening</a>, which make it easier
-        to create Views that have all of their observers unbound when you
-        want to <a href="#View-remove">remove</a> the view.
-      </li>
-      <li>
-        Model validation is now only enforced by default in
-        <a href="#Model-save">save</a> &mdash; not in
-        <a href="#Model-set">set</a> unless the <tt>{validate:true}</tt>
-        option is passed. Model validation now fires an <tt>"invalid"</tt> event instead of
-        <tt>"error"</tt>.
-      </li>
-      <li>
-        In 1.1, Backbone Views no longer have the <tt>options</tt> argument
-        attached as <tt>this.options</tt> automatically. Feel free to continue
-        attaching it if you like.
-      </li>
-      <li>
-        In 1.1, The <b>Collection</b> methods <tt>add</tt>, <tt>remove</tt>,
-        <tt>set</tt>, <tt>push</tt>, and <tt>shift</tt> now return the model
-        (or models) added or removed from the collection.
-      </li>
-    </ul>
+    <div class="columns">
+      <div class="col-50">
+        <b>Model</b>
+        <ul>
+          <li>Orchestrates data and business logic.</li>
+          <li>Loads and saves from the server.</li>
+          <li>Emits events when data changes.</li>
+        </ul>
+      </div>
+      <div class="col-50">
+        <b>View</b>
+        <ul>
+          <li>Listens for changes and renders UI.</li>
+          <li>Handles user input and interactivity.</li>
+          <li>Sends captured input to the model.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>
+      A <b>Model</b> manages an internal table of data attributes, and 
+      triggers <tt>"change"</tt> events when any of its data is modified. 
+      Models handle syncing data with a persistence layer — usually a REST API 
+      with a backing database. Design your models as the atomic reusable objects
+      containing all of the helpful functions for manipulating their particular
+      bit of data. Models should be able to be passed around throughout your app,
+      and used anywhere that bit of data is needed.
+    </p>
+
+    <p>
+      A <b>View</b> is an atomic chunk of user interface. It often renders the
+      data from a specific model, or number of models &mdash; but views can
+      also be data-less chunks of UI that stand alone. 
+      Models should be generally unaware of views. Instead, views listen to
+      the model <tt>"change"</tt> events, and react or re-render themselves 
+      appropriately.
+    </p>
+
+    <h2 id="Model-Collections">Collections</h2>
+
+    <img class="figure" src="docs/images/intro-collections.svg" alt="Model Collections.">
+
+    <p>
+      A <b>Collection</b> helps you deal with a group of related models, handling
+      the loading and saving of new models to the server and providing helper
+      functions for performing aggregations or computations against a list of models.
+      Aside from their own events, collections also proxy through all of the
+      events that occur to models within them, allowing you to listen in one place
+      for any change that might happen to any model in the collection.
+    </p>
+
+    <h2 id="API-integration">API Integration</h2>
+
+    <p>
+      Backbone is pre-configured to sync with a RESTful API. Simply create a 
+      new Collection with the <tt>url</tt> of your resource endpoint:
+    </p>
+
+<pre>
+var Books = Backbone.Collection.extend({
+  url: '/books'
+});
+</pre>
+
+    <p>
+      The <b>Collection</b> and <b>Model</b> components together form a direct 
+      mapping of REST resources using the following methods:
+    </p>
+
+<pre>
+GET  /books/ .... collection.fetch();
+POST /books/ .... collection.create();
+GET  /books/1 ... model.fetch();
+PUT  /books/1 ... model.save();
+DEL  /books/1 ... model.destroy();
+</pre>
+    
+    <p>
+      When fetching raw JSON data from an API, a <b>Collection</b> will 
+      automatically populate itself with data formatted as an array, while 
+      a <b>Model</b> will automatically populate itself with data formatted 
+      as an object:
+    </p>
+
+<pre>
+[{"id": 1}] ..... populates a Collection with one model.
+{"id": 1} ....... populates a Model with one attribute.
+</pre>
+
+    <p>
+      However, it's fairly common to encounter APIs that return data in a 
+      different format than what Backbone expects. For example, consider 
+      fetching a <b>Collection</b> from an API that returns the real data 
+      array wrapped in metadata:
+    </p>
+
+<pre>
+{
+  "page": 1,
+  "limit": 10,
+  "total": 2,
+  "books": [
+    {"id": 1, "title": "Pride and Prejudice"},
+    {"id": 4, "title": "The Great Gatsby"}
+  ] 
+}
+</pre>
+
+    <p>
+      In the above example data, a <b>Collection</b> should populate using the 
+      <tt>"books"</tt> array rather than the root object structure. This 
+      difference is easily reconciled using a <tt>parse</tt> method that 
+      returns (or transforms) the desired portion of API data:
+    </p>
+
+<pre>
+var Books = Backbone.Collection.extend({
+  url: '/books',
+  parse: function(data) {
+    return data.books;
+  }
+});
+</pre>
+
+    <h2 id="View-rendering">View Rendering</h2>
+
+    <img class="figure" src="docs/images/intro-views.svg" alt="View rendering.">
+
+    <p>
+      Each <b>View</b> manages the rendering and user interaction within its own 
+      DOM element. If you're strict about not allowing views to reach outside 
+      of themselves, it helps keep your interface flexible &mdash; allowing 
+      views to be rendered in isolation in any place where they might be needed.
+    </p>
+
+    <p>
+      Backbone remains unopinionated about the process used to render <b>View</b> 
+      objects and their subviews into UI: you define how your models get translated 
+      into HTML (or SVG, or Canvas, or something even more exotic). 
+      It could be as prosaic as a simple 
+      <a href="http://underscorejs.org/#template">Underscore template</a>, or as fancy as the
+      <a href="http://facebook.github.io/react/docs/tutorial.html">React virtual DOM</a>.
+      Some basic approaches to rendering views can be found 
+      in the <a href="https://github.com/jashkenas/backbone/wiki/Backbone%2C-The-Primer">Backbone primer</a>.
+    </p>
+
+    <h2 id="Routing">Routing with URLs</h2>
+
+    <img class="figure" src="docs/images/intro-routing.svg" alt="Routing">
+
+    <p>
+      In rich web applications, we still want to provide linkable, 
+      bookmarkable, and shareable URLs to meaningful locations within an app. 
+      Use the <b>Router</b> to update the browser URL whenever the user
+      reaches a new "place" in your app that they might want to bookmark or share.
+      Conversely, the <b>Router</b> detects changes to the URL &mdash; say, 
+      pressing the "Back" button &mdash; and can tell your application exactly where you 
+      are now.
+    </p>
 
     <h2 id="Events">Backbone.Events</h2>
 
@@ -1353,14 +1494,16 @@ chapters.keys().join(', ');
     <p id="Model-validate">
       <b class="header">validate</b><code>model.validate(attributes, options)</code>
       <br />
-      This method is left undefined, and you're encouraged to override it with
-      your custom validation logic, if you have any that can be performed
-      in JavaScript. By default <b>validate</b> is called before
-      <tt>save</tt>, but can also be called before <tt>set</tt> if
-      <tt>{validate:true}</tt> is passed. The <b>validate</b> method is passed
-      the model attributes, as well as the options from <tt>set</tt> or <tt>save</tt>.
+      This method is left undefined and you're encouraged to override it with
+      any custom validation logic you have that can be performed in JavaScript.
+      By default <tt>save</tt> checks <b>validate</b> before
+      setting any attributes but you may also tell <tt>set</tt> to validate
+      the new attributes by passing <tt>{validate: true}</tt> as an option.
+      <br />
+      The <b>validate</b> method receives the model attributes as well as any
+      options passed to <tt>set</tt> or <tt>save</tt>.
       If the attributes are valid, don't return anything from <b>validate</b>;
-      if they are invalid, return an error of your choosing. It
+      if they are invalid return an error of your choosing. It
       can be as simple as a string error message to be displayed, or a complete
       error object that describes the error programmatically. If <b>validate</b>
       returns an error, <tt>save</tt> will not continue, and the
@@ -1778,7 +1921,10 @@ ships.add([
     <p id="Collection-remove">
       <b class="header">remove</b><code>collection.remove(models, [options])</code>
       <br />
-      Remove a model (or an array of models) from the collection, and returns them.
+      Remove a model (or an array of models) from the collection, and return
+      them. Each model can be a Model instance, an <tt>id</tt> string or a JS
+      object, any value acceptable as the <tt>id</tt> argument of
+      <a href="#Collection-get"><tt>collection.get</tt></a>.
       Fires a <tt>"remove"</tt> event, which you can use <tt>silent</tt> to suppress.
       The model's index before removal is available to listeners as
       <tt>options.index</tt>.

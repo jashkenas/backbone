@@ -3,7 +3,7 @@
   "version"       : "1.2.0",
   "main"          : "backbone.js",
   "dependencies"  : {
-    "underscore"  : ">=1.6.0"
+    "underscore"  : ">=1.7.0"
   },
   "ignore"        : ["docs", "examples", "test", "*.yml", "*.html", "*.ico", "*.md", "CNAME"]
 }

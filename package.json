@@ -5,16 +5,18 @@
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
   "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
   "dependencies"  : {
-    "underscore"  : ">=1.6.0"
+    "underscore"  : ">=1.7.0"
   },
   "devDependencies": {
-    "phantomjs": "1.9.7-8",
+    "coffee-script": "1.7.1",
     "docco": "0.6.3",
-    "coffee-script": "1.7.1"
+    "karma": "^0.12.31",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-qunit": "^0.1.4"
   },
   "main": "backbone.js",
   "scripts": {
-    "test": "phantomjs test/vendor/runner.js test/index.html?noglobals=true && coffee test/model.coffee",
+    "test": "./node_modules/karma/bin/karma start && coffee test/model.coffee",
     "build": "uglifyjs backbone.js --mangle --source-map backbone-min.map -o backbone-min.js",
     "doc": "docco backbone.js && docco examples/todos/todos.js examples/backbone.localStorage.js",
     "lint": "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"

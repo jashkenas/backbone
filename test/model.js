@@ -216,6 +216,19 @@
     strictEqual(model.matches({'name': 'Jonas', 'cool': false}), false);
   });
 
+  test("matches with predicate", function() {
+    var model = new Backbone.Model({a: 0});
+
+    strictEqual(model.matches(function(attr) {
+      return attr.a > 1 && attr.b != null;
+    }), false);
+
+    model.set({a: 3, b: true});
+
+    strictEqual(model.matches(function(attr) {
+      return attr.a > 1 && attr.b != null;
+    }), true);
+  })
 
   test("set and unset", 8, function() {
     var a = new Backbone.Model({id: 'id', foo: 1, bar: 2, baz: 3});
@@ -590,10 +603,48 @@
     equal(this.ajaxSettings.url, '/collection/42');
   });
 
+  test("save will pass extra options to success callback", 1, function () {
+    var SpecialSyncModel = Backbone.Model.extend({
+      sync: function (method, model, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Model.prototype.sync.call(this, method, model, options);
+      },
+      urlRoot: '/test'
+    });
+
+    var model = new SpecialSyncModel();
+
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
+    model.save(null, { success: onSuccess });
+    this.ajaxSettings.success();
+  });
+
   test("fetch", 2, function() {
     doc.fetch();
     equal(this.syncArgs.method, 'read');
     ok(_.isEqual(this.syncArgs.model, doc));
+  });
+
+  test("fetch will pass extra options to success callback", 1, function () {
+    var SpecialSyncModel = Backbone.Model.extend({
+      sync: function (method, model, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Model.prototype.sync.call(this, method, model, options);
+      },
+      urlRoot: '/test'
+    });
+
+    var model = new SpecialSyncModel();
+
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
+    model.fetch({ success: onSuccess });
+    this.ajaxSettings.success();
   });
 
   test("destroy", 3, function() {
@@ -603,6 +654,25 @@
 
     var newModel = new Backbone.Model;
     equal(newModel.destroy(), false);
+  });
+
+  test("destroy will pass extra options to success callback", 1, function () {
+    var SpecialSyncModel = Backbone.Model.extend({
+      sync: function (method, model, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Model.prototype.sync.call(this, method, model, options);
+      },
+      urlRoot: '/test'
+    });
+
+    var model = new SpecialSyncModel({ id: 'id' });
+
+    var onSuccess = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
+    model.destroy({ success: onSuccess });
+    this.ajaxSettings.success();
   });
 
   test("non-persisted destroy", 1, function() {

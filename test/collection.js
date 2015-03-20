@@ -98,7 +98,7 @@
   test('get with "undefined" id', function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 'undefined'}]);
     equal(collection.get(1).id, 1);
-  }),
+  });
 
   test("update index when id changes", 4, function() {
     var col = new Backbone.Collection();
@@ -528,6 +528,30 @@
       equal(options.validationError, 'fail');
     });
     equal(col.create({"foo":"bar"}, {validate:true}), false);
+  });
+
+  test("create will pass extra options to success callback", 1, function () {
+    var Model = Backbone.Model.extend({
+      sync: function (method, model, options) {
+        _.extend(options, {specialSync: true});
+        return Backbone.Model.prototype.sync.call(this, method, model, options);
+      }
+    });
+
+    var Collection = Backbone.Collection.extend({
+      model: Model,
+      url: '/test'
+    });
+
+    var collection = new Collection;
+
+    var success = function (model, response, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
+    collection.create({}, {success: success});
+    this.ajaxSettings.success();
+
   });
 
   test("a failing create returns model with errors", function() {
@@ -1197,6 +1221,25 @@
       success: function () { start(); }
     });
     Backbone.ajax = ajax;
+  });
+
+  test("fetch will pass extra options to success callback", 1, function () {
+    var SpecialSyncCollection = Backbone.Collection.extend({
+      url: '/test',
+      sync: function (method, collection, options) {
+        _.extend(options, { specialSync: true });
+        return Backbone.Collection.prototype.sync.call(this, method, collection, options);
+      }
+    });
+
+    var collection = new SpecialSyncCollection();
+
+    var onSuccess = function (collection, resp, options) {
+      ok(options.specialSync, "Options were passed correctly to callback");
+    };
+
+    collection.fetch({ success: onSuccess });
+    this.ajaxSettings.success();
   });
 
   test("`add` only `sort`s when necessary", 2, function () {

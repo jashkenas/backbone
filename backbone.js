@@ -90,12 +90,12 @@
     var i = 0, names, length;
     if (name && typeof name === 'object') {
       // Handle event maps.
-      for (names = _.keys(name), length = names.length; i < length; i++) {
+      for (names = _.keys(name); i < names.length; i++) {
         memo = iteratee(memo, names[i], name[names[i]], context, ctx);
       }
     } else if (name && eventSplitter.test(name)) {
       // Handle space separated event names.
-      for (names = name.split(eventSplitter), length = names.length; i < length; i++) {
+      for (names = name.split(eventSplitter); i < names.length; i++) {
         memo = iteratee(memo, names[i], callback, context, ctx);
       }
     } else {
@@ -157,7 +157,7 @@
       // is passed, narrow down the search to just that listener.
       var ids = context != null ? [context._listenId] : _.keys(listeners);
 
-      for (var i = 0, length = ids.length; i < length; i++) {
+      for (var i = 0; i < ids.length; i++) {
         var listener = listeners[ids[i]];
 
         // Bail out if listener isn't listening.
@@ -185,7 +185,7 @@
     if (!events || !name && !context && !callback) return;
 
     var names = name ? [name] : _.keys(events);
-    for (var i = 0, length = names.length; i < length; i++) {
+    for (var i = 0; i < names.length; i++) {
       name = names[i];
       var handlers = events[name];
 
@@ -220,7 +220,7 @@
   var internalStopListening = function(listener, obj, name, callback, offEvents) {
     var listeningTo = listener._listeningTo;
     var ids = obj ? [obj._listenId] : _.keys(listeningTo);
-    for (var i = 0, length = ids.length; i < length; i++) {
+    for (var i = 0; i < ids.length; i++) {
       var id = ids[i];
       var listening = listeningTo[id];
 
@@ -277,24 +277,18 @@
   // receive the true name of the event as the first argument).
   Events.trigger =  function(name) {
     if (!this._events) return this;
-    var args = slice.call(arguments, 1);
+    
+    var length = Math.max(0, arguments.length - 1);
+    var args = Array(length);
+    for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
 
-    // Pass `triggerSentinel` as "callback" param. If `name` is an object,
-    // it `triggerApi` will be passed the property's value instead.
-    eventsApi(triggerApi, this, name, triggerSentinel, args);
+    eventsApi(triggerApi, this, name, void 0, args);
     return this;
   };
 
-  // A known sentinel to detect triggering with a `{event: value}` object.
-  var triggerSentinel = {};
-
   // Handles triggering the appropriate event callbacks.
-  var triggerApi = function(obj, name, sentinel, args) {
+  var triggerApi = function(obj, name, cb, args) {
     if (obj._events) {
-      // If `sentinel` is not the trigger sentinel, trigger was called
-      // with a `{event: value}` object, and it is `value`.
-      if (sentinel !== triggerSentinel) args = [sentinel].concat(args);
-
       var events = obj._events[name];
       var allEvents = obj._events.all;
       if (events) triggerEvents(events, args);
@@ -315,6 +309,35 @@
       case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
       default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args); return;
     }
+  };
+
+  // Proxy Underscore methods to a Backbone class' prototype using a
+  // particular attribute as the data argument
+  var addMethod = function(length, method, attribute) {
+    switch (length) {
+      case 1: return function() {
+        return _[method](this[attribute]);
+      };
+      case 2: return function(value) {
+        return _[method](this[attribute], value);
+      };
+      case 3: return function(iteratee, context) {
+        return _[method](this[attribute], iteratee, context);
+      };
+      case 4: return function(iteratee, defaultVal, context) {
+        return _[method](this[attribute], iteratee, defaultVal, context);
+      };
+      default: return function() {
+        var args = slice.call(arguments);
+        args.unshift(this[attribute]);
+        return _[method].apply(_, args);
+      };
+    }
+  };
+  var addUnderscoreMethods = function(Class, methods, attribute) {
+    _.each(methods, function(length, method) {
+      if (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
+    });
   };
 
   // Aliases for backwards compatibility.
@@ -398,7 +421,7 @@
 
     // Special-cased proxy to underscore's `_.matches` method.
     matches: function(attrs) {
-      return _.matches(attrs)(this.attributes);
+      return !!_.iteratee(attrs, this)(this.attributes);
     },
 
     // Set a hash of model attributes on the object, firing `"change"`. This is
@@ -452,7 +475,7 @@
       // Trigger all relevant attribute changes.
       if (!silent) {
         if (changes.length) this._pending = options;
-        for (var i = 0, length = changes.length; i < length; i++) {
+        for (var i = 0; i < changes.length; i++) {
           this.trigger('change:' + changes[i], this, current[changes[i]], options);
         }
       }
@@ -542,7 +565,7 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, val, options) {
-      var attrs, method, xhr, attributes = this.attributes;
+      var attrs, method, xhr, attributes = this.attributes, wait;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
       if (key == null || typeof key === 'object') {
@@ -553,18 +576,19 @@
       }
 
       options = _.extend({validate: true}, options);
+      wait = options.wait;
 
       // If we're not waiting and attributes exist, save acts as
       // `set(attr).save(null, opts)` with validation. Otherwise, check if
       // the model will be valid when the attributes, if any, are set.
-      if (attrs && !options.wait) {
+      if (attrs && !wait) {
         if (!this.set(attrs, options)) return false;
       } else {
         if (!this._validate(attrs, options)) return false;
       }
 
       // Set temporary attributes if `{wait: true}`.
-      if (attrs && options.wait) {
+      if (attrs && wait) {
         this.attributes = _.extend({}, attributes, attrs);
       }
 
@@ -576,8 +600,8 @@
       options.success = function(resp) {
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
-        var serverAttrs = model.parse(resp, options);
-        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
+        var serverAttrs = options.parse ? model.parse(resp, options) : resp;
+        if (wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
           return false;
         }
@@ -591,7 +615,7 @@
       xhr = this.sync(method, this, options);
 
       // Restore attributes.
-      if (attrs && options.wait) this.attributes = attributes;
+      if (attrs && wait) this.attributes = attributes;
 
       return xhr;
     },
@@ -603,6 +627,7 @@
       options = options ? _.clone(options) : {};
       var model = this;
       var success = options.success;
+      var wait = options.wait;
 
       var destroy = function() {
         model.stopListening();
@@ -610,7 +635,7 @@
       };
 
       options.success = function(resp) {
-        if (options.wait || model.isNew()) destroy();
+        if (wait || model.isNew()) destroy();
         if (success) success.call(options.context, model, resp, options);
         if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
@@ -622,7 +647,7 @@
       wrapError(this, options);
 
       var xhr = this.sync('delete', this, options);
-      if (!options.wait) destroy();
+      if (!wait) destroy();
       return xhr;
     },
 
@@ -674,17 +699,11 @@
   });
 
   // Underscore methods that we want to implement on the Model.
-  var modelMethods = ['keys', 'values', 'pairs', 'invert', 'pick', 'omit', 'chain', 'isEmpty'];
+  var modelMethods = { keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
+      omit: 0, chain: 1, isEmpty: 1 };
 
   // Mix in each Underscore method as a proxy to `Model#attributes`.
-  _.each(modelMethods, function(method) {
-    if (!_[method]) return;
-    Model.prototype[method] = function() {
-      var args = slice.call(arguments);
-      args.unshift(this.attributes);
-      return _[method].apply(_, args);
-    };
-  });
+  addUnderscoreMethods(Model, modelMethods, 'attributes');
 
   // Backbone.Collection
   // -------------------
@@ -744,7 +763,7 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       options || (options = {});
-      for (var i = 0, length = models.length; i < length; i++) {
+      for (var i = 0; i < models.length; i++) {
         var model = models[i] = this.get(models[i]);
         if (!model) continue;
         var id = this.modelId(model.attributes);
@@ -784,7 +803,7 @@
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
-      for (var i = 0, length = models.length; i < length; i++) {
+      for (var i = 0; i < models.length; i++) {
         attrs = models[i];
 
         // If a duplicate is found, prevent it from being added and
@@ -823,7 +842,7 @@
 
       // Remove nonexistent models if appropriate.
       if (remove) {
-        for (var i = 0, length = this.length; i < length; i++) {
+        for (var i = 0; i < this.length; i++) {
           if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
         }
         if (toRemove.length) this.remove(toRemove, options);
@@ -834,13 +853,13 @@
         if (sortable) sort = true;
         this.length += toAdd.length;
         if (at != null) {
-          for (var i = 0, length = toAdd.length; i < length; i++) {
+          for (var i = 0; i < toAdd.length; i++) {
             this.models.splice(at + i, 0, toAdd[i]);
           }
         } else {
           if (order) this.models.length = 0;
           var orderedModels = order || toAdd;
-          for (var i = 0, length = orderedModels.length; i < length; i++) {
+          for (var i = 0; i < orderedModels.length; i++) {
             this.models.push(orderedModels[i]);
           }
         }
@@ -852,7 +871,7 @@
       // Unless silenced, it's time to fire all appropriate add/sort events.
       if (!options.silent) {
         var addOpts = at != null ? _.clone(options) : options;
-        for (var i = 0, length = toAdd.length; i < length; i++) {
+        for (var i = 0; i < toAdd.length; i++) {
           if (at != null) addOpts.index = at + i;
           (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
@@ -869,7 +888,7 @@
     // Useful for bulk operations and optimizations.
     reset: function(models, options) {
       options = options ? _.clone(options) : {};
-      for (var i = 0, length = this.models.length; i < length; i++) {
+      for (var i = 0; i < this.models.length; i++) {
         this._removeReference(this.models[i], options);
       }
       options.previousModels = this.models;
@@ -982,13 +1001,14 @@
     // wait for the server to agree.
     create: function(model, options) {
       options = options ? _.clone(options) : {};
+      var wait = options.wait;
       if (!(model = this._prepareModel(model, options))) return false;
-      if (!options.wait) this.add(model, options);
+      if (!wait) this.add(model, options);
       var collection = this;
       var success = options.success;
-      options.success = function(model, resp) {
-        if (options.wait) collection.add(model, options);
-        if (success) success.call(options.context, model, resp, options);
+      options.success = function(model, resp, callbackOpts) {
+        if (wait) collection.add(model, callbackOpts);
+        if (success) success.call(callbackOpts.context, model, resp, callbackOpts);
       };
       model.save(null, options);
       return model;
@@ -1079,22 +1099,16 @@
   // Underscore methods that we want to implement on the Collection.
   // 90% of the core usefulness of Backbone Collections is actually implemented
   // right here:
-  var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
-    'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
-    'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
-    'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
-    'tail', 'drop', 'last', 'without', 'difference', 'indexOf', 'shuffle',
-    'lastIndexOf', 'isEmpty', 'chain', 'sample', 'partition'];
+  var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 4,
+      foldl: 4, inject: 4, reduceRight: 4, foldr: 4, find: 3, detect: 3, filter: 3,
+      select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 2,
+      contains: 2, invoke: 2, max: 3, min: 3, toArray: 1, size: 1, first: 3,
+      head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
+      without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
+      isEmpty: 1, chain: 1, sample: 3, partition: 3 };
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
-  _.each(methods, function(method) {
-    if (!_[method]) return;
-    Collection.prototype[method] = function() {
-      var args = slice.call(arguments);
-      args.unshift(this.models);
-      return _[method].apply(_, args);
-    };
-  });
+  addUnderscoreMethods(Collection, collectionMethods, 'models');
 
   // Underscore methods that take a property name as an argument.
   var attributeMethods = ['groupBy', 'countBy', 'sortBy', 'indexBy'];
@@ -1509,6 +1523,13 @@
       return path === this.root && !this.getSearch();
     },
 
+    // Unicode characters in `location.pathname` are percent encoded so they're
+    // decoded for comparison. `%25` should not be decoded since it may be part
+    // of an encoded parameter.
+    decodeFragment: function(fragment) {
+      return decodeURI(fragment.replace(/%25/g, '%2525'));
+    },
+
     // In IE6, the hash fragment and search params are incorrect if the
     // fragment contains `?`.
     getSearch: function() {
@@ -1525,7 +1546,9 @@
 
     // Get the pathname and search params, without the root.
     getPath: function() {
-      var path = decodeURI(this.location.pathname + this.getSearch());
+      var path = this.decodeFragment(
+        this.location.pathname + this.getSearch()
+      );
       var root = this.root.slice(0, -1);
       if (!path.indexOf(root)) path = path.slice(root.length);
       return path.charAt(0) === '/' ? path.slice(1) : path;
@@ -1534,7 +1557,7 @@
     // Get the cross-browser normalized URL fragment from the path or hash.
     getFragment: function(fragment) {
       if (fragment == null) {
-        if (this._hasPushState || !this._wantsHashChange) {
+        if (this._usePushState || !this._wantsHashChange) {
           fragment = this.getPath();
         } else {
           fragment = this.getHash();
@@ -1555,8 +1578,10 @@
       this.root             = this.options.root;
       this._wantsHashChange = this.options.hashChange !== false;
       this._hasHashChange   = 'onhashchange' in window;
+      this._useHashChange   = this._wantsHashChange && this._hasHashChange;
       this._wantsPushState  = !!this.options.pushState;
-      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
+      this._hasPushState    = !!(this.history && this.history.pushState);
+      this._usePushState    = this._wantsPushState && this._hasPushState;
       this.fragment         = this.getFragment();
 
       // Normalize root to always include a leading and trailing slash.
@@ -1585,7 +1610,7 @@
       // Proxy an iframe to handle location events if the browser doesn't
       // support the `hashchange` event, HTML5 history, or the user wants
       // `hashChange` but not `pushState`.
-      if (!this._hasHashChange && this._wantsHashChange && (!this._wantsPushState || !this._hasPushState)) {
+      if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
         var iframe = document.createElement('iframe');
         iframe.src = 'javascript:0';
         iframe.style.display = 'none';
@@ -1604,9 +1629,9 @@
 
       // Depending on whether we're using pushState or hashes, and whether
       // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState) {
+      if (this._usePushState) {
         addEventListener('popstate', this.checkUrl, false);
-      } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
+      } else if (this._useHashChange && !this.iframe) {
         addEventListener('hashchange', this.checkUrl, false);
       } else if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
@@ -1624,9 +1649,9 @@
       };
 
       // Remove window listeners.
-      if (this._hasPushState) {
+      if (this._usePushState) {
         removeEventListener('popstate', this.checkUrl, false);
-      } else if (this._wantsHashChange && this._hasHashChange && !this.iframe) {
+      } else if (this._useHashChange && !this.iframe) {
         removeEventListener('hashchange', this.checkUrl, false);
       }
 
@@ -1698,13 +1723,13 @@
       var url = root + fragment;
 
       // Strip the hash and decode for matching.
-      fragment = decodeURI(fragment.replace(pathStripper, ''));
+      fragment = this.decodeFragment(fragment.replace(pathStripper, ''));
 
       if (this.fragment === fragment) return;
       this.fragment = fragment;
 
       // If pushState is available, we use it to set the fragment as a real URL.
-      if (this._hasPushState) {
+      if (this._usePushState) {
         this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
 
       // If hash changes haven't been explicitly disabled, update the hash

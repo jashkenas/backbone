@@ -15,40 +15,33 @@
     equal(obj.counter, 5, 'counter should be incremented five times.');
   });
 
-  test("binding and triggering multiple events", 9, function() {
+  test("binding and triggering multiple events", 4, function() {
     var obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
-    var arg = {};
 
-    obj.on('a b c', function(x) {
-      obj.counter += 1;
-      strictEqual(x, arg);
-    });
+    obj.on('a b c', function() { obj.counter += 1; });
 
-    obj.trigger('a', arg);
+    obj.trigger('a');
     equal(obj.counter, 1);
 
-    obj.trigger('a b', arg);
+    obj.trigger('a b');
     equal(obj.counter, 3);
 
-    obj.trigger('c', arg);
+    obj.trigger('c');
     equal(obj.counter, 4);
 
     obj.off('a c');
-    obj.trigger('a b c', arg);
+    obj.trigger('a b c');
     equal(obj.counter, 5);
   });
 
-  test("binding and triggering with event maps", 14, function() {
+  test("binding and triggering with event maps", function() {
     var obj = { counter: 0 };
     _.extend(obj, Backbone.Events);
 
-    var increment = function(x, y) {
+    var increment = function() {
       this.counter += 1;
-      strictEqual(x, arg);
-      strictEqual(y, arg2);
     };
-    var arg = {}, arg2 = {};
 
     obj.on({
       a: increment,
@@ -56,20 +49,20 @@
       c: increment
     }, obj);
 
-    obj.trigger({ a: arg }, arg2);
+    obj.trigger('a');
     equal(obj.counter, 1);
 
-    obj.trigger({ a: arg, b: arg }, arg2);
+    obj.trigger('a b');
     equal(obj.counter, 3);
 
-    obj.trigger({ c: arg }, arg2);
+    obj.trigger('c');
     equal(obj.counter, 4);
 
     obj.off({
       a: increment,
       c: increment
     }, obj);
-    obj.trigger({ a: arg, b: arg, c: arg }, arg2);
+    obj.trigger('a b c');
     equal(obj.counter, 5);
   });
 
@@ -375,16 +368,16 @@
 
   test("callback list is not altered during trigger", 2, function () {
     var counter = 0, obj = _.extend({}, Backbone.Events);
+    var fn = function(){};
+    var fnOff = function(){ obj.off('event', fn); };
     var incr = function(){ counter++; };
-    obj.on('event', function(){ obj.on('event', incr).on('all', incr); })
-    .trigger('event');
-    equal(counter, 0, 'bind does not alter callback list');
-    obj.off()
-    .on('event', function(){ obj.off('event', incr).off('all', incr); })
-    .on('event', incr)
-    .on('all', incr)
-    .trigger('event');
-    equal(counter, 2, 'unbind does not alter callback list');
+    var incrOn = function(){ obj.on('event all', incr); };
+
+    obj.on('event', incrOn).trigger('event');
+    equal(counter, 0, 'on does not alter callback list');
+
+    obj.off().on('event', fn).on('event', fnOff).on('event', incr).trigger('event');
+    equal(counter, 1, 'off does not alter callback list');
   });
 
   test("#1282 - 'all' callback list is retrieved after each event.", 1, function() {
