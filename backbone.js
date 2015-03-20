@@ -955,6 +955,18 @@
       return this.where(attrs, true);
     },
 
+    // Return count of models with matching attributes.
+    count: function (attrs) {
+      var count = 0;
+      this.forEach(function (model) {
+        for (var key in attrs) {
+          if (attrs[key] !== model.get(key)) return;
+        }
+        count++;
+      });
+      return count;
+    },
+
     // Force the collection to re-sort itself. You don't need to call this under
     // normal circumstances, as the set will maintain sort order as each item
     // is added.
