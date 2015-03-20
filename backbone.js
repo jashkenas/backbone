@@ -421,7 +421,7 @@
 
     // Special-cased proxy to underscore's `_.matches` method.
     matches: function(attrs) {
-      return _.matches(attrs)(this.attributes);
+      return !!_.iteratee(attrs, this)(this.attributes);
     },
 
     // Set a hash of model attributes on the object, firing `"change"`. This is
