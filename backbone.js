@@ -15,10 +15,10 @@
       root.Backbone = factory(root, exports, _, $);
     });
 
-  // Next for Node.js or CommonJS. jQuery may not be needed as a module.
+  // Next for Node.js, CommonJS
   } else if (typeof exports !== 'undefined') {
     var _ = require('underscore');
-    factory(root, exports, _);
+    factory(root, exports, _, (root.jQuery || root.Zepto || root.ender || root.$));
 
   // Finally, as a browser global.
   } else {
