@@ -1571,4 +1571,14 @@
     deepEqual(collection.pluck('id'), [1, 3, 2]);
   });
 
+  test("#3543 - reset removes at option", 1, function() {
+    var collection = new Backbone.Collection();
+    var collection2 = new Backbone.Collection(null, {comparator: 'id'});
+    collection.on('add remove reset sort', function(coll, opts) {
+      collection2.reset(coll.models, opts);
+    });
+    collection.add([{id: 2}, {id: 3}, {id: 1}], {at: 0});
+    equal(collection2.pluck('id').join(','), "1,2,3");
+  });
+
 })();

@@ -893,6 +893,8 @@
       }
       options.previousModels = this.models;
       this._reset();
+      // at is not supported for reset and causes sort not to fire in add
+      if (options.at !== undefined) delete options.at;
       models = this.add(models, _.extend({silent: true}, options));
       if (!options.silent) this.trigger('reset', this, options);
       return models;
