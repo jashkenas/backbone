@@ -66,13 +66,14 @@
     equal(obj.counter, 5);
   });
 
-  test("listenTo and stopListening", 1, function() {
+  test("listenTo and stopListening", 2, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     a.listenTo(b, 'all', function(){ ok(true); });
     b.trigger('anything');
     a.listenTo(b, 'all', function(){ ok(false); });
     a.stopListening();
+    equal(b._events.lists.all, undefined, 'removes event list');
     b.trigger('anything');
   });
 
@@ -172,19 +173,19 @@
     b.on('event', fn);
     a.listenTo(b, 'event', fn).stopListening();
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn).stopListening(b);
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn).stopListening(b, 'event');
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn).stopListening(b, 'event', fn);
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
   });
 
@@ -195,38 +196,43 @@
     b.on('event', fn);
     a.listenToOnce(b, 'event', fn).stopListening();
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenToOnce(b, 'event', fn).stopListening(b);
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenToOnce(b, 'event', fn).stopListening(b, 'event');
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
     a.listenToOnce(b, 'event', fn).stopListening(b, 'event', fn);
     equal(_.size(a._listeningTo), 0);
-    equal(_.size(b._events), 1);
+    equal(b._events.lists.event.count, 1);
     equal(_.size(b._listeners), 0);
   });
 
-  test("listenTo and off cleaning up references", 6, function() {
+  test("listenTo and off cleaning up references", 8, function() {
     var a = _.extend({}, Backbone.Events);
     var b = _.extend({}, Backbone.Events);
     var fn = function() {};
+    var getObj = _.property('obj');
+    a.listenTo(b, 'event', fn);
+    b.off();
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn);
     b.off('event');
-    equal(_.keys(a._listeningTo).length, 0);
-    equal(_.keys(b._listeners).length, 0);
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn);
     b.off(null, fn);
-    equal(_.keys(a._listeningTo).length, 0);
-    equal(_.keys(b._listeners).length, 0);
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._listeners), 0);
     a.listenTo(b, 'event', fn);
     b.off(null, null, a);
-    equal(_.keys(a._listeningTo).length, 0);
-    equal(_.keys(b._listeners).length, 0);
+    equal(_.size(a._listeningTo), 0);
+    equal(_.size(b._listeners), 0);
   });
 
   test("listenTo and stopListening cleaning up references", 2, function() {
@@ -237,7 +243,7 @@
     a.listenTo(b, 'other', function(){ ok(false); });
     a.stopListening(b, 'other');
     a.stopListening(b, 'all');
-    equal(_.keys(a._listeningTo).length, 0);
+    equal(_.size(a._listeningTo), 0);
   });
 
   test("listenToOnce without context cleans up references after the event has fired", 2, function() {
@@ -245,7 +251,7 @@
     var b = _.extend({}, Backbone.Events);
     a.listenToOnce(b, 'all', function(){ ok(true); });
     b.trigger('anything');
-    equal(_.keys(a._listeningTo).length, 0);
+    equal(_.size(a._listeningTo), 0);
   });
 
   test("listenToOnce with event maps cleans up references", 2, function() {
@@ -256,7 +262,7 @@
       two: function() { ok(false); }
     });
     b.trigger('one');
-    equal(_.keys(a._listeningTo).length, 1);
+    equal(_.size(a._listeningTo), 1);
   });
 
   test("listenToOnce with event maps binds the correct `this`", 1, function() {
@@ -290,7 +296,7 @@
     equal(obj.counter, 2);
   });
 
-  test("on, then unbind all functions", 1, function() {
+  test("on, then unbind all functions", 2, function() {
     var obj = { counter: 0 };
     _.extend(obj,Backbone.Events);
     var callback = function() { obj.counter += 1; };
@@ -298,6 +304,7 @@
     obj.trigger('event');
     obj.off('event');
     obj.trigger('event');
+    equal(obj._events.lists.all, undefined, 'removes event list');
     equal(obj.counter, 1, 'counter should have only been incremented once.');
   });
 
@@ -314,7 +321,7 @@
     equal(obj.counterB, 2, 'counterB should have been incremented twice.');
   });
 
-  test("unbind a callback in the midst of it firing", 1, function() {
+  test("unbind a callback in the midst of it firing", 2, function() {
     var obj = {counter: 0};
     _.extend(obj, Backbone.Events);
     var callback = function() {
@@ -325,6 +332,7 @@
     obj.trigger('event');
     obj.trigger('event');
     obj.trigger('event');
+    equal(obj._events.lists.event, undefined, 'removes event list after trigger');
     equal(obj.counter, 1, 'the callback should have been unbound.');
   });
 
@@ -366,18 +374,22 @@
     equal(obj.counter, 3, 'counter should have been incremented three times');
   });
 
-  test("callback list is not altered during trigger", 2, function () {
-    var counter = 0, obj = _.extend({}, Backbone.Events);
-    var fn = function(){};
-    var fnOff = function(){ obj.off('event', fn); };
-    var incr = function(){ counter++; };
-    var incrOn = function(){ obj.on('event all', incr); };
+  test("callback list never skips a still bound callback", 3, function () {
+      var counter = 0, obj = _.extend({}, Backbone.Events);
+      var fn = function(){ ok(false, 'linked list should not orphan nodes'); };
+      var fnOff = function(){ obj.off('event', fnOff).off('event', fn); };
+      var incr = function(){ counter++; };
+      var incrOn = function(){ obj.on('event all', incr); };
 
-    obj.on('event', incrOn).trigger('event');
-    equal(counter, 0, 'on does not alter callback list');
+      obj.on('event', incr).on('event', incrOn).on('event', incr).trigger('event');
+      equal(counter, 4, 'trigger with on does not skip callbacks');
 
-    obj.off().on('event', fn).on('event', fnOff).on('event', incr).trigger('event');
-    equal(counter, 1, 'off does not alter callback list');
+      obj.off().on('event', incr).on('event', fnOff).on('event', incr).trigger('event');
+      equal(counter, 6, 'trigger with off does skip callbacks');
+
+      fnOff = function() { obj.off('event', fnOff).off('event').on('event', incr); };
+      obj.off().on('event', function() {}).on('event', fnOff).on('event', fn).trigger('event');
+      equal(counter, 7, 'offing does not orphan current trigger list');
   });
 
   test("#1282 - 'all' callback list is retrieved after each event.", 1, function() {
@@ -388,7 +400,7 @@
       obj.on('y', incr).on('all', incr);
     })
     .trigger('x y');
-    strictEqual(counter, 2);
+    strictEqual(counter, 3);
   });
 
   test("if no callback is provided, `on` is a noop", 0, function() {
