@@ -2954,6 +2954,36 @@ var DocumentView = Backbone.View.extend({
 });
 </pre>
 
+    <p>
+      Using <b>delegateEvents</b> can additionally be useful when rendering child views
+      into a parent view (e.g., appending <tt>&lt;li&gt;</tt> elements rendered by one view
+      into to a parent <tt>&lt;ul&gt;</tt>, itself rendered by another view). If your parent
+      view responds to changes in the the child <tt>&lt;li&gt;</tt> by calling <tt>render()</tt>,
+      and that render call contains a call to jQuery’s <tt>html()</tt> method (e.g.,
+      <tt>this.$el.html(&hellip;)</tt>, as in the example above), note that this will
+      call jQuery’s <tt>empty()</tt> method, which will remove all inner nodes in the
+      <tt>$el</tt>. Consequently, this will effectively unbind the events bound to the
+      selectors originally found in your child template when it is first rendered.
+      In order to maintain your events in the child view after multiple calls to
+      <tt>render()</tt> in the parent view, you will need to call <b>delegateEvents</b>
+       on the child view from within the parent view’s <tt>render()</tt> call in
+       order to maintain the events bound to selectors in the child template:
+    </p>
+
+<pre>
+var Library = Backbone.View.extend({
+
+  render: function() {
+    this.$el.html(this.template(this.model.attributes));
+    this.innerView.delegateEvents();
+    this.$('#content').append(this.innerView.render().el);
+    return this;
+  }
+
+});
+</pre>
+
+
     <p id="View-undelegateEvents">
       <b class="header">undelegateEvents</b><code>undelegateEvents()</code>
       <br />
