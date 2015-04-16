@@ -111,6 +111,50 @@
     this._events = eventsApi(onApi, this._events || {}, name, callback, context, this);
     return this;
   };
+  // Alias of Events.on that wraps the callback in try/catch and
+  // in the case of exception triggers error in the context and call a given error method
+  // then it's available
+  // That's useful for handling errors of asynchronous calls
+  Events.onTry = function(name, callback, errorHandler, context){
+    var that = this,
+        extCb = function(){
+          var ev;
+          try {
+            ev = callback.apply(context || this, arguments);
+          } catch(err) {
+            // Keep consitent to model emmiter
+            that.trigger('error', that, err, {});
+            errorHandler && errorHandler.call(context || this, err);
+          }
+          return ev;
+        };
+    return Events.on.call(this, name, extCb, context);
+  };
+  
+  // The method resolves when all of the events of the supplied array have
+  // resolved similar to Promise.all()
+  Events.all = function( events, done ) {
+    var aggregative = events.join("_"),
+        that = this,
+        tasks = {};
+    // Check if all of the queue already emmited then invoke the callback
+    this.on(aggregative, function(ev, args){
+      tasks[ev] = args;
+      // only when all the tasks resolved
+      if (events.every(function(ev){
+        return tasks.hasOwnProperty(ev);
+      })) {
+        done(tasks);
+      }
+    });
+    // trigger aggregative event every time any of enlisted event emmited
+    events.forEach(function(ev){
+      that.on(ev, function(){
+        that.trigger(aggregative, ev, arguments);
+      });
+    });
+		return this;
+  };
 
   // Inversion-of-control versions of `on`. Tell *this* object to listen to
   // an event in another object... keeping track of what it's listening to.
