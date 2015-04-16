@@ -111,6 +111,25 @@
     this._events = eventsApi(onApi, this._events || {}, name, callback, context, this);
     return this;
   };
+  // Alias of Events.on that wraps the callback in try/catch and
+  // in the case of exception triggers error in the context and call a given error method
+  // then it's available
+  // That's useful for handling errors of asynchronous calls
+  Events.onTry = function(name, callback, errorHandler, context){
+    var that = this,
+        extCb = function(){
+          var ev;
+          try {
+            ev = callback.apply(context || this, arguments);
+          } catch(err) {
+            // Keep consitent to model emmiter
+            that.trigger('error', that, err, {});
+            errorHandler && errorHandler.call(context || this, err);
+          }
+          return ev;
+        };
+    return Events.on.call(this, name, extCb, context);
+  };
 
   // Inversion-of-control versions of `on`. Tell *this* object to listen to
   // an event in another object... keeping track of what it's listening to.
