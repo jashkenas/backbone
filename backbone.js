@@ -809,7 +809,12 @@
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        if (existing = this.get(attrs)) {
+        existing = this.get(attrs);
+        if (!existing) {
+          model = this._prepareModel(attrs, options);
+          if (model) existing = this.get(model);
+        }
+        if (existing) {
           if (remove) modelMap[existing.cid] = true;
           if (merge && attrs !== existing) {
             attrs = this._isModel(attrs) ? attrs.attributes : attrs;
@@ -821,7 +826,7 @@
 
         // If this is a new, valid model, push it to the `toAdd` list.
         } else if (add) {
-          model = models[i] = this._prepareModel(attrs, options);
+          models[i] = model;
           if (!model) continue;
           toAdd.push(model);
           this._addReference(model, options);
