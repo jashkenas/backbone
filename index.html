@@ -654,7 +654,7 @@
 
     <p>
       Many of the code examples in this documentation are runnable, because
-      Backbone is included on this page. 
+      Backbone is included on this page.
       Click the <i>play</i> button to execute them.
     </p>
 
@@ -664,7 +664,7 @@
 
     <p>
       The single most important thing that Backbone can help you with is keeping
-      your business logic separate from your user interface. When the two are 
+      your business logic separate from your user interface. When the two are
       entangled, change is hard; when logic doesn't depend on UI, your
       interface becomes easier to work with.
     </p>
@@ -689,9 +689,9 @@
     </div>
 
     <p>
-      A <b>Model</b> manages an internal table of data attributes, and 
-      triggers <tt>"change"</tt> events when any of its data is modified. 
-      Models handle syncing data with a persistence layer — usually a REST API 
+      A <b>Model</b> manages an internal table of data attributes, and
+      triggers <tt>"change"</tt> events when any of its data is modified.
+      Models handle syncing data with a persistence layer — usually a REST API
       with a backing database. Design your models as the atomic reusable objects
       containing all of the helpful functions for manipulating their particular
       bit of data. Models should be able to be passed around throughout your app,
@@ -701,9 +701,9 @@
     <p>
       A <b>View</b> is an atomic chunk of user interface. It often renders the
       data from a specific model, or number of models &mdash; but views can
-      also be data-less chunks of UI that stand alone. 
+      also be data-less chunks of UI that stand alone.
       Models should be generally unaware of views. Instead, views listen to
-      the model <tt>"change"</tt> events, and react or re-render themselves 
+      the model <tt>"change"</tt> events, and react or re-render themselves
       appropriately.
     </p>
 
@@ -723,7 +723,7 @@
     <h2 id="API-integration">API Integration</h2>
 
     <p>
-      Backbone is pre-configured to sync with a RESTful API. Simply create a 
+      Backbone is pre-configured to sync with a RESTful API. Simply create a
       new Collection with the <tt>url</tt> of your resource endpoint:
     </p>
 
@@ -734,7 +734,7 @@ var Books = Backbone.Collection.extend({
 </pre>
 
     <p>
-      The <b>Collection</b> and <b>Model</b> components together form a direct 
+      The <b>Collection</b> and <b>Model</b> components together form a direct
       mapping of REST resources using the following methods:
     </p>
 
@@ -745,11 +745,11 @@ GET  /books/1 ... model.fetch();
 PUT  /books/1 ... model.save();
 DEL  /books/1 ... model.destroy();
 </pre>
-    
+
     <p>
-      When fetching raw JSON data from an API, a <b>Collection</b> will 
-      automatically populate itself with data formatted as an array, while 
-      a <b>Model</b> will automatically populate itself with data formatted 
+      When fetching raw JSON data from an API, a <b>Collection</b> will
+      automatically populate itself with data formatted as an array, while
+      a <b>Model</b> will automatically populate itself with data formatted
       as an object:
     </p>
 
@@ -759,9 +759,9 @@ DEL  /books/1 ... model.destroy();
 </pre>
 
     <p>
-      However, it's fairly common to encounter APIs that return data in a 
-      different format than what Backbone expects. For example, consider 
-      fetching a <b>Collection</b> from an API that returns the real data 
+      However, it's fairly common to encounter APIs that return data in a
+      different format than what Backbone expects. For example, consider
+      fetching a <b>Collection</b> from an API that returns the real data
       array wrapped in metadata:
     </p>
 
@@ -773,14 +773,14 @@ DEL  /books/1 ... model.destroy();
   "books": [
     {"id": 1, "title": "Pride and Prejudice"},
     {"id": 4, "title": "The Great Gatsby"}
-  ] 
+  ]
 }
 </pre>
 
     <p>
-      In the above example data, a <b>Collection</b> should populate using the 
-      <tt>"books"</tt> array rather than the root object structure. This 
-      difference is easily reconciled using a <tt>parse</tt> method that 
+      In the above example data, a <b>Collection</b> should populate using the
+      <tt>"books"</tt> array rather than the root object structure. This
+      difference is easily reconciled using a <tt>parse</tt> method that
       returns (or transforms) the desired portion of API data:
     </p>
 
@@ -798,20 +798,20 @@ var Books = Backbone.Collection.extend({
     <img class="figure" src="docs/images/intro-views.svg" alt="View rendering.">
 
     <p>
-      Each <b>View</b> manages the rendering and user interaction within its own 
-      DOM element. If you're strict about not allowing views to reach outside 
-      of themselves, it helps keep your interface flexible &mdash; allowing 
+      Each <b>View</b> manages the rendering and user interaction within its own
+      DOM element. If you're strict about not allowing views to reach outside
+      of themselves, it helps keep your interface flexible &mdash; allowing
       views to be rendered in isolation in any place where they might be needed.
     </p>
 
     <p>
-      Backbone remains unopinionated about the process used to render <b>View</b> 
-      objects and their subviews into UI: you define how your models get translated 
-      into HTML (or SVG, or Canvas, or something even more exotic). 
-      It could be as prosaic as a simple 
+      Backbone remains unopinionated about the process used to render <b>View</b>
+      objects and their subviews into UI: you define how your models get translated
+      into HTML (or SVG, or Canvas, or something even more exotic).
+      It could be as prosaic as a simple
       <a href="http://underscorejs.org/#template">Underscore template</a>, or as fancy as the
       <a href="http://facebook.github.io/react/docs/tutorial.html">React virtual DOM</a>.
-      Some basic approaches to rendering views can be found 
+      Some basic approaches to rendering views can be found
       in the <a href="https://github.com/jashkenas/backbone/wiki/Backbone%2C-The-Primer">Backbone primer</a>.
     </p>
 
@@ -820,12 +820,12 @@ var Books = Backbone.Collection.extend({
     <img class="figure" src="docs/images/intro-routing.svg" alt="Routing">
 
     <p>
-      In rich web applications, we still want to provide linkable, 
-      bookmarkable, and shareable URLs to meaningful locations within an app. 
+      In rich web applications, we still want to provide linkable,
+      bookmarkable, and shareable URLs to meaningful locations within an app.
       Use the <b>Router</b> to update the browser URL whenever the user
       reaches a new "place" in your app that they might want to bookmark or share.
-      Conversely, the <b>Router</b> detects changes to the URL &mdash; say, 
-      pressing the "Back" button &mdash; and can tell your application exactly where you 
+      Conversely, the <b>Router</b> detects changes to the URL &mdash; say,
+      pressing the "Back" button &mdash; and can tell your application exactly where you
       are now.
     </p>
 
@@ -946,6 +946,8 @@ object.off();
       <br />
       Just like <a href="#Events-on">on</a>, but causes the bound callback to fire
       only once before being removed. Handy for saying "the next time that X happens, do this".
+      When multiple events are passed in using the space separated syntax, the event will fire once
+      for every event you passed in, not once for a combination of all events
     </p>
 
     <p id="Events-listenTo">

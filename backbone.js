@@ -243,7 +243,10 @@
   };
 
   // Bind an event to only be triggered a single time. After the first time
-  // the callback is invoked, it will be removed.
+  // the callback is invoked, it will be removed. When multiple events are
+  // passed in using the space-separated syntax, the event will fire once for every
+  // event you passed in, not once for a combination of all events
+
   Events.once =  function(name, callback, context) {
     // Map the event into a `{event: once}` object.
     var events = onceMap(name, callback, _.bind(this.off, this));
