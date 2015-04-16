@@ -130,6 +130,31 @@
         };
     return Events.on.call(this, name, extCb, context);
   };
+  
+  // The method resolves when all of the events of the supplied array have
+  // resolved similar to Promise.all()
+  Events.all = function( events, done ) {
+    var aggregative = events.join("_"),
+        that = this,
+        tasks = {};
+    // Check if all of the queue already emmited then invoke the callback
+    this.on(aggregative, function(ev, args){
+      tasks[ev] = args;
+      // only when all the tasks resolved
+      if (events.every(function(ev){
+        return tasks.hasOwnProperty(ev);
+      })) {
+        done(tasks);
+      }
+    });
+    // trigger aggregative event every time any of enlisted event emmited
+    events.forEach(function(ev){
+      that.on(ev, function(){
+        that.trigger(aggregative, ev, arguments);
+      });
+    });
+		return this;
+  };
 
   // Inversion-of-control versions of `on`. Tell *this* object to listen to
   // an event in another object... keeping track of what it's listening to.
