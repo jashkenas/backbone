@@ -629,6 +629,18 @@
   var setOptions = {add: true, remove: true, merge: true};
   var addOptions = {add: true, remove: false};
 
+  // Compare two values, in a `sort`-consistent way
+  var compareVals = function(a, b) {
+    if (a === b) return 0;
+    var isAComparable = a >= a, isBComparable = b >= b;
+    if (isAComparable || isBComparable) {
+      if (isAComparable && !isBComparable) return -1;
+      if (isBComparable && !isAComparable) return 1;
+    }
+    return a > b ? 1 : (b > a) ? -1 : 0;
+  };
+
+
   // Define the Collection's inheritable methods.
   _.extend(Collection.prototype, Events, {
 
@@ -843,14 +855,14 @@
           compare = _.bind(this.comparator, this, toFind);
         } else {
           compare = _.bind(function (valResult, model) {
-            return _.comparator(valResult, this.comparator(model));
+            return compareVals(valResult, this.comparator(model));
           }, this, this.comparator(toFind));
         }
       } else {
         // `comparator` is a string indicating the model property used to sort
         // `toFind` is the value sought.
         compare = _.bind(function (model) {
-          return _.comparator(toFind, model.get(this.comparator));
+          return compareVals(toFind, model.get(this.comparator));
         }, this);
       }
 
