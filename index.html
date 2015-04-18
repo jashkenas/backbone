@@ -2988,8 +2988,7 @@ var model = localBackbone.Model.extend(...);
       <br />
       If you have multiple copies of <tt>jQuery</tt> on the page, or simply want
       to tell Backbone to use a particular object as its DOM / Ajax library,
-      this is the property for you. If you're loading Backbone with CommonJS
-      (e.g. node, component, or browserify) you must set this property manually.
+      this is the property for you.
     </p>
 
 <pre>
@@ -4216,6 +4215,10 @@ ActiveRecord::Base.include_root_in_json = false
         As a neat side effect, Backbone.History no longer uses jQuery's
         event methods for <tt>pushState</tt> and <tt>hashChange</tt> listeners.
         We're native all the way.
+      </li>
+      <li>
+        Also on the subject of jQuery, if you're using Backbone with CommonJS (node, browserify, webpack)
+        Backbone will automatically try to load jQuery for you.
       </li>
       <li>
         Added <tt>modelId</tt> to Collection for generating unique ids on
