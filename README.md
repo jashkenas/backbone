@@ -10,6 +10,7 @@
     (_'_______________________________________________________________________________'_)
     (_.———————————————————————————————————————————————————————————————————————————————._)
 
+[![NPM version][npm-image]][npm-url] [![Build status][travis-image]][travis-url]
 
 Backbone supplies structure to JavaScript-heavy applications by providing models with key-value binding and custom events, collections with a rich API of enumerable functions, views with declarative event handling, and connects it all to your existing application over a RESTful JSON interface.
 
@@ -27,3 +28,8 @@ https://github.com/jashkenas/backbone/graphs/contributors
 
 Special thanks to Robert Kieffer for the original philosophy behind Backbone.
 https://github.com/broofa
+
+[travis-url]: http://travis-ci.org/jashkenas/backbone
+[travis-image]: https://img.shields.io/travis/jashkenas/backbone.png
+[npm-url]: https://npmjs.org/package/backbone
+[npm-image]: https://img.shields.io/npm/v/backbone.svg
