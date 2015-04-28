@@ -968,4 +968,28 @@
     Backbone.history.start({root: 'x+y.z', pushState: true});
   });
 
+  test("roots with unicode characters", 1, function() {
+    location.replace('http://example.com/®ooτ/foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {'foo': 'foo'},
+      foo: function(){ ok(true); }
+    });
+    var router = new Router;
+    Backbone.history.start({root: '®ooτ', pushState: true});
+  });
+
+  test("roots without slash", 1, function() {
+    location.replace('http://example.com/®ooτ');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {'': 'index'},
+      index: function(){ ok(true); }
+    });
+    var router = new Router;
+    Backbone.history.start({root: '®ooτ', pushState: true});
+  });
+
 })();

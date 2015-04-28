@@ -1529,7 +1529,9 @@
 
     // Does the pathname match the root?
     matchRoot: function() {
-      return this.rootMatcher.test(this.location.pathname);
+      var path = this.decodeFragment(this.location.pathname);
+      var root = path.slice(0, this.root.length - 1) + '/';
+      return root === this.root;
     },
 
     // Unicode characters in `location.pathname` are percent encoded so they're
@@ -1593,11 +1595,6 @@
 
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
-
-      // A regular expression for testing the pathname against the root.
-      this.rootMatcher = new RegExp(
-        '^' + this.root.slice(0, -1).replace(escapeRegExp, '\\$&') + '(/|$)'
-      );
 
       // Transition from hashChange to pushState or vice versa if both are
       // requested.
