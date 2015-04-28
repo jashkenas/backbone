@@ -956,4 +956,16 @@
     Backbone.history.start({root: 'root', pushState: true});
   });
 
+  test("roots with regex characters", 1, function() {
+    location.replace('http://example.com/x+y.z/foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {'foo': 'foo'},
+      foo: function(){ ok(true); }
+    });
+    var router = new Router;
+    Backbone.history.start({root: 'x+y.z', pushState: true});
+  });
+
 })();

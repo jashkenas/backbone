@@ -1595,7 +1595,9 @@
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
 
       // A regular expression for testing the pathname against the root.
-      this.rootMatcher = new RegExp('^' + this.root.slice(0, -1) + '(/|$)');
+      this.rootMatcher = new RegExp(
+        '^' + this.root.slice(0, -1).replace(escapeRegExp, '\\$&') + '(/|$)'
+      );
 
       // Transition from hashChange to pushState or vice versa if both are
       // requested.
