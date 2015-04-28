@@ -937,8 +937,11 @@
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {location: location});
     var Router = Backbone.Router.extend({
-      routes: {'foo': 'foo'},
-      foo: function(){ ok(false, 'should not match unless root matches'); }
+      routes: {
+        foo: function(){
+          ok(false, 'should not match unless root matches');
+        }
+      }
     });
     var router = new Router;
     Backbone.history.start({root: 'root', pushState: true});
@@ -949,8 +952,11 @@
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {location: location});
     var Router = Backbone.Router.extend({
-      routes: {'foo': 'foo'},
-      foo: function(){ ok(false, 'should not match unless root matches'); }
+      routes: {
+        foo: function(){
+          ok(false, 'should not match unless root matches');
+        }
+      }
     });
     var router = new Router;
     Backbone.history.start({root: 'root', pushState: true});
@@ -961,8 +967,7 @@
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {location: location});
     var Router = Backbone.Router.extend({
-      routes: {'foo': 'foo'},
-      foo: function(){ ok(true); }
+      routes: {foo: function(){ ok(true); }}
     });
     var router = new Router;
     Backbone.history.start({root: 'x+y.z', pushState: true});
@@ -973,8 +978,7 @@
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {location: location});
     var Router = Backbone.Router.extend({
-      routes: {'foo': 'foo'},
-      foo: function(){ ok(true); }
+      routes: {foo: function(){ ok(true); }}
     });
     var router = new Router;
     Backbone.history.start({root: '®ooτ', pushState: true});
@@ -985,8 +989,7 @@
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {location: location});
     var Router = Backbone.Router.extend({
-      routes: {'': 'index'},
-      index: function(){ ok(true); }
+      routes: {'': function(){ ok(true); }}
     });
     var router = new Router;
     Backbone.history.start({root: '®ooτ', pushState: true});
