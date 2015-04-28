@@ -1527,6 +1527,11 @@
       return path === this.root && !this.getSearch();
     },
 
+    // Does the pathname match the root?
+    matchRoot: function() {
+      return this.rootMatcher.test(this.location.pathname);
+    },
+
     // Unicode characters in `location.pathname` are percent encoded so they're
     // decoded for comparison. `%25` should not be decoded since it may be part
     // of an encoded parameter.
@@ -1552,9 +1557,7 @@
     getPath: function() {
       var path = this.decodeFragment(
         this.location.pathname + this.getSearch()
-      );
-      var root = this.root.slice(0, -1);
-      if (!path.indexOf(root)) path = path.slice(root.length);
+      ).slice(this.root.length - 1);
       return path.charAt(0) === '/' ? path.slice(1) : path;
     },
 
@@ -1590,6 +1593,9 @@
 
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
+
+      // A regular expression for testing the pathname against the root.
+      this.rootMatcher = new RegExp('^' + this.root.slice(0, -1) + '(/|$)');
 
       // Transition from hashChange to pushState or vice versa if both are
       // requested.
@@ -1696,6 +1702,8 @@
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
     loadUrl: function(fragment) {
+      // If the root doesn't match, no routes can match either.
+      if (!this.matchRoot()) return false;
       fragment = this.fragment = this.getFragment(fragment);
       return _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {

@@ -932,4 +932,28 @@
     Backbone.history.start({root: '/root', pushState: true});
   });
 
+  test("Paths that don't match the root should not match", 0, function() {
+    location.replace('http://example.com/foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {'foo': 'foo'},
+      foo: function(){ ok(false, 'should not match unless root matches'); }
+    });
+    var router = new Router;
+    Backbone.history.start({root: 'root', pushState: true});
+  });
+
+  test("Paths that don't match the root should not match", 0, function() {
+    location.replace('http://example.com/xxxx/foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    var Router = Backbone.Router.extend({
+      routes: {'foo': 'foo'},
+      foo: function(){ ok(false, 'should not match unless root matches'); }
+    });
+    var router = new Router;
+    Backbone.history.start({root: 'root', pushState: true});
+  });
+
 })();
