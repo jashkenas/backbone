@@ -586,9 +586,9 @@
       // `set(attr).save(null, opts)` with validation. Otherwise, check if
       // the model will be valid when the attributes, if any, are set.
       if (attrs && !wait) {
-        if (!this.set(attrs, options)) return false;
+        if (!this.set(attrs, options)) return Backbone.notValidated(this);
       } else {
-        if (!this._validate(attrs, options)) return false;
+        if (!this._validate(attrs, options)) return Backbone.notValidated(this);
       }
 
       // Set temporary attributes if `{wait: true}`.
@@ -646,7 +646,7 @@
 
       if (this.isNew()) {
         options.success();
-        return false;
+        return Backbone.newDestroyed(this);
       }
       wrapError(this, options);
 
@@ -1366,7 +1366,19 @@
     model.trigger('request', model, xhr, options);
     return xhr;
   };
+  
+  // Override Backbone.newDestroyed to match with Backbone.sync
+  // for example to return Promise.resolve(model)
+  Backbone.newDestroyed = function(model) {
+    return false;
+  }
 
+  // Override Backbone.notValidated to match with Backbone.sync
+  // for example to return Promise.reject(model.validationError)
+  Backbone.notValidated = function(model) {
+    return false;
+  }  
+  
   // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
   var methodMap = {
     'create': 'POST',
