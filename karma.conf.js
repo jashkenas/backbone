@@ -1,5 +1,5 @@
-// Note some browser launchers should be installed before using karma start.
-// For example:
+// note some browser launchers should be installed before using karma start
+// for example:
 // npm install karma-firefox-launcher
 // karma start --browsers=Firefox
 module.exports = function(config) {
@@ -39,11 +39,11 @@ module.exports = function(config) {
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: ['PhantomJS'],
 
-    // Continuous Integration mode
+    // continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: true,
 
-    // See http://stackoverflow.com/a/27873086/1517919
+    // see http://stackoverflow.com/a/27873086/1517919
     customLaunchers: {
         Chrome_sandbox: {
             base: 'Chrome',
