@@ -1291,4 +1291,34 @@
     model.set({a: true});
   });
 
+  test("#3592 - Error in `change` event does not prevent future `change` events", 1, function() {
+      var model = new Backbone.Model();
+      model.on('change', function() {
+          throw new Error();
+      });
+
+      try {
+          model.set({a: true});
+      } catch (e) {}
+      model.off().on('change', function() {
+          ok(true);
+      });
+      model.set({b: true});
+  });
+
+  test("#3592 - Error in `change:attr` event does not prevent future `change` events", 1, function() {
+      var model = new Backbone.Model();
+      model.on('change:a', function() {
+          throw new Error();
+      });
+
+      try {
+          model.set({a: true});
+      } catch (e) {}
+      model.off().on('change', function() {
+          ok(true);
+      });
+      model.set({b: true});
+  });
+
 })();
