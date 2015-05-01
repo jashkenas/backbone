@@ -344,6 +344,14 @@
     });
   };
 
+  var tryCatch = function(func) {
+      try {
+          func();
+      } catch (e) {
+          return { error: e };
+      }
+  };
+
   // Aliases for backwards compatibility.
   Events.bind   = Events.on;
   Events.unbind = Events.off;
@@ -432,7 +440,7 @@
     // the core primitive operation of a model, updating the data and notifying
     // anyone who needs to know about the change in state. The heart of the beast.
     set: function(key, val, options) {
-      var attr, attrs, unset, changes, silent, changing, prev, current;
+      var attr, attrs, unset, changes, silent, changing, prev, current, caught;
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
@@ -477,25 +485,33 @@
       }
 
       // Trigger all relevant attribute changes.
+      var model = this;
       if (!silent) {
         if (changes.length) this._pending = options;
-        for (var i = 0; i < changes.length; i++) {
-          this.trigger('change:' + changes[i], this, current[changes[i]], options);
-        }
+        caught = tryCatch(function() {
+          for (var i = 0; i < changes.length; i++) {
+            model.trigger('change:' + changes[i], model, current[changes[i]], options);
+          }
+        });
       }
 
       // You might be wondering why there's a `while` loop here. Changes can
       // be recursively nested within `"change"` events.
       if (changing) return this;
       if (!silent) {
-        while (this._pending) {
-          options = this._pending;
-          this._pending = false;
-          this.trigger('change', this, options);
-        }
+        caught = caught || tryCatch(function() {
+          while (model._pending) {
+            options = model._pending;
+            model._pending = false;
+            model.trigger('change', model, options);
+          }
+        });
       }
       this._pending = false;
       this._changing = false;
+
+      if (caught) throw caught.error;
+
       return this;
     },
 
