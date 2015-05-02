@@ -292,6 +292,7 @@
     if (objEvents) {
       var events = objEvents[name];
       var allEvents = objEvents.all;
+      if (events && allEvents) allEvents = allEvents.slice();
       if (events) triggerEvents(events, args);
       if (allEvents) triggerEvents(allEvents, [name].concat(args));
     }
