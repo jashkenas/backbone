@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "phantomjs": "1.9.0-1",
-    "docco": "0.6.1",
+    "docco": "0.7.0",
     "coffee-script": "1.6.1"
   },
   "scripts": {
