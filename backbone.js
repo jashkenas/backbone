@@ -85,22 +85,22 @@
   // Iterates over the standard `event, callback` (as well as the fancy multiple
   // space-separated events `"change blur", callback` and jQuery-style event
   // maps `{event: callback}`), reducing them by manipulating `memo`.
-  // Passes a normalized single event name and callback, as well as the `context`,
-  // `ctx`, and `listening` arguments to `iteratee`.
-  var eventsApi = function(iteratee, memo, name, callback, context, ctx, listening) {
+  // Passes a normalized single event name and callback, as well as any
+  // optional `opts`.
+  var eventsApi = function(iteratee, memo, name, callback, opts) {
     var i = 0, names;
     if (name && typeof name === 'object') {
       // Handle event maps.
       for (names = _.keys(name); i < names.length ; i++) {
-        memo = iteratee(memo, names[i], name[names[i]], context, ctx, listening);
+        memo = iteratee(memo, names[i], name[names[i]], opts);
       }
     } else if (name && eventSplitter.test(name)) {
       // Handle space separated event names.
       for (names = name.split(eventSplitter); i < names.length; i++) {
-        memo = iteratee(memo, names[i], callback, context, ctx, listening);
+        memo = iteratee(memo, names[i], callback, opts);
       }
     } else {
-      memo = iteratee(memo, name, callback, context, ctx, listening);
+      memo = iteratee(memo, name, callback, opts);
     }
     return memo;
   };
@@ -114,7 +114,11 @@
   // An internal use `on` function, used to guard the `listening` argument from
   // the public API.
   var internalOn = function(obj, name, callback, context, listening) {
-    obj._events = eventsApi(onApi, obj._events || {}, name, callback, context, obj, listening);
+    obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
+        context: context,
+        ctx: obj,
+        listening: listening
+    });
 
     if (listening) {
       var listeners = obj._listeners || (obj._listeners = {});
@@ -145,9 +149,10 @@
   };
 
   // The reducing API that adds a callback to the `events` object.
-  var onApi = function(events, name, callback, context, ctx, listening) {
+  var onApi = function(events, name, callback, options) {
     if (callback) {
       var handlers = events[name] || (events[name] = []);
+      var context = options.context, ctx = options.ctx, listening = options.listening;
       if (listening) listening.count++;
 
       handlers.push({ callback: callback, context: context, ctx: context || ctx, listening: listening });
@@ -161,7 +166,10 @@
   // callbacks for all events.
   Events.off =  function(name, callback, context) {
     if (!this._events) return this;
-    this._events = eventsApi(offApi, this._events, name, callback, context, this._listeners);
+    this._events = eventsApi(offApi, this._events, name, callback, {
+        context: context,
+        listeners: this._listeners
+    });
     return this;
   };
 
@@ -188,11 +196,12 @@
   };
 
   // The reducing API that removes a callback from the `events` object.
-  var offApi = function(events, name, callback, context, listeners) {
+  var offApi = function(events, name, callback, options) {
     // No events to consider.
     if (!events) return;
 
     var i = 0, length, listening;
+    var context = options.context, listeners = options.listeners;
 
     // Delete all events listeners and "drop" events.
     if (!name && !callback && !context) {
