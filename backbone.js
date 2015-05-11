@@ -1261,8 +1261,10 @@
 
     // Produces a DOM element to be assigned to your view. Exposed for
     // subclasses using an alternative DOM manipulation API.
-    _createElement: function(tagName) {
-      return document.createElement(tagName);
+    _createElement: function(tagName, namespace) {
+        return namespace ?
+            document.createElementNS(namespace, tagName) :
+            document.createElement(tagName);
     },
 
     // Ensure that the View has a DOM element to render into.
@@ -1274,7 +1276,8 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        this.setElement(this._createElement(_.result(this, 'tagName')));
+        this.setElement(this._createElement(_.result(this, 'tagName'),
+                                            _.result(this, 'namespace')));
         this._setAttributes(attrs);
       } else {
         this.setElement(_.result(this, 'el'));
