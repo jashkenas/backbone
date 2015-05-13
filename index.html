@@ -300,7 +300,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(1.1.2)</span>
+      Backbone.js <span class="version">(1.2.0)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/jashkenas/backbone">GitHub Repository</a></li>
@@ -356,7 +356,7 @@
       <li>– <a href="#Model-fetch">fetch</a></li>
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
-      <li>– <a href="#Model-Underscore-Methods"><b>Underscore Methods (6)</b></a></li>
+      <li>– <a href="#Model-Underscore-Methods"><b>Underscore Methods (8)</b></a></li>
       <li>– <a href="#Model-validate">validate</a></li>
       <li>– <a href="#Model-validationError">validationError</a></li>
       <li>– <a href="#Model-isValid">isValid</a></li>
@@ -381,7 +381,7 @@
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-toJSON">toJSON</a></li>
       <li>– <a href="#Collection-sync">sync</a></li>
-      <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (32)</b></a></li>
+      <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (46)</b></a></li>
       <li>– <a href="#Collection-add">add</a></li>
       <li>– <a href="#Collection-remove">remove</a></li>
       <li>– <a href="#Collection-reset">reset</a></li>
@@ -577,11 +577,11 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (1.1.2)</a></td>
+        <td><a class="punch" href="backbone.js">Development Version (1.2.0)</a></td>
         <td class="text"><i>60kb, Full source, tons of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (1.1.2)</a></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (1.2.0)</a></td>
         <td class="text" style="line-height: 16px;">
           <i>6.5kb, Packed and gzipped</i><br />
           <small>(<a href="backbone-min.map">Source Map</a>)</small>
@@ -601,9 +601,8 @@
     <p>
       Backbone's only hard dependency is
       <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.5.0)</small>.
-      For RESTful persistence, history support via <a href="#Router">Backbone.Router</a>
-      and DOM manipulation with <a href="#View">Backbone.View</a>, include
-      <b><a href="http://jquery.com">jQuery</a></b> ( >= 1.11.0), and
+      For RESTful persistence and DOM manipulation with <a href="#View">Backbone.View</a>,
+      include <b><a href="http://jquery.com">jQuery</a></b> ( >= 1.11.0), and
       <b><a href="https://github.com/douglascrockford/JSON-js">json2.js</a></b> for older
       Internet Explorer support.
       <i>(Mimics of the Underscore and jQuery APIs, such as
@@ -1470,9 +1469,9 @@ book.destroy({success: function(model, response) {
 </pre>
 
     <p id="Model-Underscore-Methods">
-      <b class="header">Underscore Methods (6)</b>
+      <b class="header">Underscore Methods (8)</b>
       <br />
-      Backbone proxies to <b>Underscore.js</b> to provide 6 object functions
+      Backbone proxies to <b>Underscore.js</b> to provide 8 object functions
       on <b>Backbone.Model</b>. They aren't all documented here, but
       you can take a look at the Underscore documentation for the full details&hellip;
     </p>
@@ -1484,6 +1483,8 @@ book.destroy({success: function(model, response) {
       <li><a href="http://underscorejs.org/#invert">invert</a></li>
       <li><a href="http://underscorejs.org/#pick">pick</a></li>
       <li><a href="http://underscorejs.org/#omit">omit</a></li>
+      <li><a href="http://underscorejs.org/#chain">chain</a></li>
+      <li><a href="http://underscorejs.org/#isEmpty">isEmpty</a></li>
     </ul>
 
 <pre>
@@ -1827,9 +1828,9 @@ alert(JSON.stringify(collection));
     </p>
 
     <p id="Collection-Underscore-Methods">
-      <b class="header">Underscore Methods (32)</b>
+      <b class="header">Underscore Methods (46)</b>
       <br />
-      Backbone proxies to <b>Underscore.js</b> to provide 32 iteration functions
+      Backbone proxies to <b>Underscore.js</b> to provide 46 iteration functions
       on <b>Backbone.Collection</b>. They aren't all documented here, but
       you can take a look at the Underscore documentation for the full details&hellip;
     </p>
@@ -2461,10 +2462,11 @@ app.navigate("help/troubleshooting", {trigger: true, replace: true});
 </pre>
 
     <p id="Router-execute">
-      <b class="header">execute</b><code>router.execute(callback, args)</code>
+      <b class="header">execute</b><code>router.execute(callback, args, name)</code>
       <br />
       This method is called internally within the router, whenever a route
       matches and its corresponding <b>callback</b> is about to be executed.
+      Return <b>false</b> from execute to cancel the current transition.
       Override it to perform custom parsing or wrapping of your routes, for
       example, to parse query strings before handing them to your route
       callback, like so:
@@ -2472,7 +2474,11 @@ app.navigate("help/troubleshooting", {trigger: true, replace: true});
 
 <pre>
 var Router = Backbone.Router.extend({
-  execute: function(callback, args) {
+  execute: function(callback, args, name) {
+    if (!loggedIn) {
+      goToLogin();
+      return false;
+    }
     args.push(parseQueryString(args.pop()));
     if (callback) callback.apply(this, args);
   }
@@ -2984,8 +2990,7 @@ var model = localBackbone.Model.extend(...);
       <br />
       If you have multiple copies of <tt>jQuery</tt> on the page, or simply want
       to tell Backbone to use a particular object as its DOM / Ajax library,
-      this is the property for you. If you're loading Backbone with CommonJS
-      (e.g. node, component, or browserify) you must set this property manually.
+      this is the property for you.
     </p>
 
 <pre>
@@ -4197,6 +4202,74 @@ ActiveRecord::Base.include_root_in_json = false
     </div>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header">1.2.0</b> &mdash; <small><i>Aug. 29, 2014</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.2...1.2.0">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.0/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Added new hooks to Views to allow them to work without jQuery. See the
+        <a href="https://github.com/jashkenas/backbone/wiki/Using-Backbone-without-jQuery">wiki page</a>
+        for more info.
+      </li>
+      <li>
+        As a neat side effect, Backbone.History no longer uses jQuery's
+        event methods for <tt>pushState</tt> and <tt>hashChange</tt> listeners.
+        We're native all the way.
+      </li>
+      <li>
+        Also on the subject of jQuery, if you're using Backbone with CommonJS (node, browserify, webpack)
+        Backbone will automatically try to load jQuery for you.
+      </li>
+      <li>
+        Added <tt>modelId</tt> to Collection for generating unique ids on
+        polymorphic collections. Handy for cases when your model ids would
+        otherwise collide.
+      </li>
+      <li>
+        Added an overridable <tt>_isModel</tt> for more advanced
+        control of what's considered a model by your Collection.
+      </li>
+      <li>
+        The <tt>success</tt> callback passed to <tt>Model#destroy</tt> is always
+        called asynchronously now.
+      </li>
+      <li>
+        <tt>Router#execute</tt> passes back the route name as its third argument.
+      </li>
+      <li>
+        Cancel the current Router transition by returning <tt>false</tt> in
+        <tt>Router#execute</tt>. Great for checking logged-in status or other
+        prerequisites.
+      </li>
+      <li>
+        Added <tt>getSearch</tt> and <tt>getPath</tt> methods to Backbone.History as
+        cross-browser and overridable ways of slicing up the URL.
+      </li>
+      <li>
+        Added <tt>delegate</tt> and <tt>undelegate</tt> as finer-grained versions
+        of <tt>delegateEvents</tt> and <tt>undelegateEvents</tt>. Useful for plugin
+        authors to use a consistent events interface in Backbone.
+      </li>
+      <li>
+        A collection will only fire a "sort" event if its order was actually
+        updated, not on every <tt>set</tt>.
+      </li>
+      <li>
+        Any passed <tt>options.attrs</tt> are now respected when saving a model with
+        <tt>patch: true</tt>.
+      </li>
+      <li>
+        <tt>Collection#clone</tt> now sets the <tt>model</tt> and <tt>comparator</tt>
+        functions of the cloned collection to the new one.
+      </li>
+      <li>
+        Adding models to your Collection when specifying an <tt>at</tt> position
+        now sends the actual position of your model in the <tt>add</tt>
+        event, not just the one you've passed in.
+      </li>
+    </ul>
 
     <b class="header">1.1.2</b> &mdash; <small><i>Feb. 20, 2014</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.1...1.1.2">Diff</a>

@@ -27,7 +27,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>Backbone.js <span class="hljs-number">1.1</span><span class="hljs-number">.2</span>
+              <pre><code>Backbone.js <span class="hljs-number">1.2</span><span class="hljs-number">.0</span>
 </code></pre>
             </div>
             
@@ -97,8 +97,9 @@ others that may still expect a global Backbone.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports !== <span class="hljs-string">'undefined'</span>) {
-    <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
-    factory(root, exports, _);</pre></div></div>
+    <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), $;
+    <span class="hljs-keyword">try</span> { $ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'jquery'</span>); } <span class="hljs-keyword">catch</span>(e) {}
+    factory(root, exports, _, $);</pre></div></div>
             
         </li>
         
@@ -189,7 +190,7 @@ restored later on, if <code>noConflict</code> is used.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  Backbone.VERSION = <span class="hljs-string">'1.1.2'</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Backbone.VERSION = <span class="hljs-string">'1.2.0'</span>;</pre></div></div>
             
         </li>
         
@@ -306,7 +307,7 @@ object.trigger(<span class="hljs-string">'expand'</span>);
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> Events = Backbone.Events = {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> Events = Backbone.Events = {};</pre></div></div>
             
         </li>
         
@@ -317,18 +318,11 @@ object.trigger(<span class="hljs-string">'expand'</span>);
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>Bind an event to a <code>callback</code> function. Passing <code>&quot;all&quot;</code> will bind
-the callback to all events fired.</p>
+              <p>Regular expression used to split event strings.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    on: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, callback, context)</span> </span>{
-      <span class="hljs-keyword">if</span> (!eventsApi(<span class="hljs-keyword">this</span>, <span class="hljs-string">'on'</span>, name, [callback, context]) || !callback) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">this</span>._events || (<span class="hljs-keyword">this</span>._events = {});
-      <span class="hljs-keyword">var</span> events = <span class="hljs-keyword">this</span>._events[name] || (<span class="hljs-keyword">this</span>._events[name] = []);
-      events.push({callback: callback, context: context, ctx: context || <span class="hljs-keyword">this</span>});
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> eventSplitter = <span class="hljs-regexp">/\s+/</span>;</pre></div></div>
             
         </li>
         
@@ -339,21 +333,17 @@ the callback to all events fired.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>Bind an event to only be triggered a single time. After the first time
-the callback is invoked, it will be removed.</p>
+              <p>Iterates over the standard <code>event, callback</code> (as well as the fancy multiple
+space-separated events <code>&quot;change blur&quot;, callback</code> and jQuery-style event
+maps <code>{event: callback}</code>), reducing them by manipulating <code>events</code>.
+Passes a normalized (single event name and callback), as well as the <code>context</code>
+and <code>ctx</code> arguments to <code>iteratee</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    once: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, callback, context)</span> </span>{
-      <span class="hljs-keyword">if</span> (!eventsApi(<span class="hljs-keyword">this</span>, <span class="hljs-string">'once'</span>, name, [callback, context]) || !callback) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">var</span> once = _.once(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-        self.off(name, once);
-        callback.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
-      });
-      once._callback = callback;
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.on(name, once, context);
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> eventsApi = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(iteratee, memo, name, callback, context, ctx)</span> </span>{
+    <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, names, length;
+    <span class="hljs-keyword">if</span> (name &amp;&amp; <span class="hljs-keyword">typeof</span> name === <span class="hljs-string">'object'</span>) {</pre></div></div>
             
         </li>
         
@@ -364,15 +354,14 @@ the callback is invoked, it will be removed.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>Remove one or many callbacks. If <code>context</code> is null, removes all
-callbacks with that function. If <code>callback</code> is null, removes all
-callbacks for the event. If <code>name</code> is null, removes all bound
-callbacks for all events.</p>
+              <p>Handle event maps.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    off: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, callback, context)</span> </span>{
-      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._events || !eventsApi(<span class="hljs-keyword">this</span>, <span class="hljs-string">'off'</span>, name, [callback, context])) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">for</span> (names = _.keys(name); i &lt; names.length; i++) {
+        memo = iteratee(memo, names[i], name[names[i]], context, ctx);
+      }
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (name &amp;&amp; eventSplitter.test(name)) {</pre></div></div>
             
         </li>
         
@@ -383,18 +372,18 @@ callbacks for all events.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Remove all callbacks for all events.</p>
+              <p>Handle space separated event names.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!name &amp;&amp; !callback &amp;&amp; !context) {
-        <span class="hljs-keyword">this</span>._events = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">for</span> (names = name.split(eventSplitter); i &lt; names.length; i++) {
+        memo = iteratee(memo, names[i], callback, context, ctx);
       }
-
-      <span class="hljs-keyword">var</span> names = name ? [name] : _.keys(<span class="hljs-keyword">this</span>._events);
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, length = names.length; i &lt; length; i++) {
-        name = names[i];</pre></div></div>
+    } <span class="hljs-keyword">else</span> {
+      memo = iteratee(memo, name, callback, context, ctx);
+    }
+    <span class="hljs-keyword">return</span> memo;
+  };</pre></div></div>
             
         </li>
         
@@ -405,12 +394,15 @@ callbacks for all events.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>Bail out if there are no events stored.</p>
+              <p>Bind an event to a <code>callback</code> function. Passing <code>&quot;all&quot;</code> will bind
+the callback to all events fired.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> events = <span class="hljs-keyword">this</span>._events[name];
-        <span class="hljs-keyword">if</span> (!events) <span class="hljs-keyword">continue</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Events.on = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, callback, context)</span> </span>{
+    <span class="hljs-keyword">this</span>._events = eventsApi(onApi, <span class="hljs-keyword">this</span>._events || {}, name, callback, context, <span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  };</pre></div></div>
             
         </li>
         
@@ -421,14 +413,16 @@ callbacks for all events.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <p>Remove all callbacks for this event.</p>
+              <p>Inversion-of-control versions of <code>on</code>. Tell <em>this</em> object to listen to
+an event in another object… keeping track of what it’s listening to.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!callback &amp;&amp; !context) {
-          <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>._events[name];
-          <span class="hljs-keyword">continue</span>;
-        }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Events.listenTo =  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, name, callback)</span> </span>{
+    <span class="hljs-keyword">if</span> (!obj) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">var</span> id = obj._listenId || (obj._listenId = _.uniqueId(<span class="hljs-string">'l'</span>));
+    <span class="hljs-keyword">var</span> listeningTo = <span class="hljs-keyword">this</span>._listeningTo || (<span class="hljs-keyword">this</span>._listeningTo = {});
+    <span class="hljs-keyword">var</span> listening = listeningTo[id];</pre></div></div>
             
         </li>
         
@@ -439,21 +433,17 @@ callbacks for all events.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <p>Find any remaining events.</p>
+              <p>This object is not listening to any other events on <code>obj</code> yet.
+Setup the necessary references to track the listening callbacks.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> remaining = [];
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>, k = events.length; j &lt; k; j++) {
-          <span class="hljs-keyword">var</span> event = events[j];
-          <span class="hljs-keyword">if</span> (
-            callback &amp;&amp; callback !== event.callback &amp;&amp;
-            callback !== event.callback._callback ||
-            context &amp;&amp; context !== event.context
-          ) {
-            remaining.push(event);
-          }
-        }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!listening) {
+      listening = listeningTo[id] = {obj: obj, events: {}};
+      id = <span class="hljs-keyword">this</span>._listenId || (<span class="hljs-keyword">this</span>._listenId = _.uniqueId(<span class="hljs-string">'l'</span>));
+      <span class="hljs-keyword">var</span> listeners = obj._listeners || (obj._listeners = {});
+      listeners[id] = <span class="hljs-keyword">this</span>;
+    }</pre></div></div>
             
         </li>
         
@@ -464,19 +454,14 @@ callbacks for all events.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p>Replace events if there are any remaining.  Otherwise, clean up.</p>
+              <p>Bind callbacks on obj, and keep track of them on listening.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (remaining.length) {
-          <span class="hljs-keyword">this</span>._events[name] = remaining;
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>._events[name];
-        }
-      }
-
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    obj.on(name, callback, <span class="hljs-keyword">this</span>);
+    listening.events = eventsApi(onApi, listening.events, name, callback);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  };</pre></div></div>
             
         </li>
         
@@ -487,23 +472,17 @@ callbacks for all events.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              <p>Trigger one or many events, firing all bound callbacks. Callbacks are
-passed the same arguments as <code>trigger</code> is, apart from the event name
-(unless you’re listening on <code>&quot;all&quot;</code>, which will cause your callback to
-receive the true name of the event as the first argument).</p>
+              <p>The reducing API that adds a callback to the <code>events</code> object.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    trigger: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> </span>{
-      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._events) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">var</span> args = slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">1</span>);
-      <span class="hljs-keyword">if</span> (!eventsApi(<span class="hljs-keyword">this</span>, <span class="hljs-string">'trigger'</span>, name, args)) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">var</span> events = <span class="hljs-keyword">this</span>._events[name];
-      <span class="hljs-keyword">var</span> allEvents = <span class="hljs-keyword">this</span>._events.all;
-      <span class="hljs-keyword">if</span> (events) triggerEvents(events, args);
-      <span class="hljs-keyword">if</span> (allEvents) triggerEvents(allEvents, <span class="hljs-built_in">arguments</span>);
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    },</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> onApi = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(events, name, callback, context, ctx)</span> </span>{
+    <span class="hljs-keyword">if</span> (callback) {
+      <span class="hljs-keyword">var</span> handlers = events[name] || (events[name] = []);
+      handlers.push({callback: callback, context: context, ctx: context || ctx});
+    }
+    <span class="hljs-keyword">return</span> events;
+  };</pre></div></div>
             
         </li>
         
@@ -514,33 +493,19 @@ receive the true name of the event as the first argument).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <p>Inversion-of-control versions of <code>on</code> and <code>once</code>. Tell <em>this</em> object to
-listen to an event in another object … keeping track of what it’s
-listening to.</p>
+              <p>Remove one or many callbacks. If <code>context</code> is null, removes all
+callbacks with that function. If <code>callback</code> is null, removes all
+callbacks for the event. If <code>name</code> is null, removes all bound
+callbacks for all events.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    listenTo: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, name, callback)</span> </span>{
-      <span class="hljs-keyword">var</span> listeningTo = <span class="hljs-keyword">this</span>._listeningTo || (<span class="hljs-keyword">this</span>._listeningTo = {});
-      <span class="hljs-keyword">var</span> id = obj._listenId || (obj._listenId = _.uniqueId(<span class="hljs-string">'l'</span>));
-      listeningTo[id] = obj;
-      <span class="hljs-keyword">if</span> (!callback &amp;&amp; <span class="hljs-keyword">typeof</span> name === <span class="hljs-string">'object'</span>) callback = <span class="hljs-keyword">this</span>;
-      obj.on(name, callback, <span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    },
+            <div class="content"><div class='highlight'><pre>  Events.off =  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, callback, context)</span> </span>{
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._events) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+    <span class="hljs-keyword">this</span>._events = eventsApi(offApi, <span class="hljs-keyword">this</span>._events, name, callback, context);
 
-    listenToOnce: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, name, callback)</span> </span>{
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> name === <span class="hljs-string">'object'</span>) {
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> event <span class="hljs-keyword">in</span> name) <span class="hljs-keyword">this</span>.listenToOnce(obj, event, name[event]);
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-      }
-      <span class="hljs-keyword">var</span> cb = _.once(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-        <span class="hljs-keyword">this</span>.stopListening(obj, name, cb);
-        callback.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
-      });
-      cb._callback = callback;
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.listenTo(obj, name, cb);
-    },</pre></div></div>
+    <span class="hljs-keyword">var</span> listeners = <span class="hljs-keyword">this</span>._listeners;
+    <span class="hljs-keyword">if</span> (listeners) {</pre></div></div>
             
         </li>
         
@@ -551,26 +516,15 @@ listening to.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
-              <p>Tell this object to stop listening to either specific events … or
-to every object it’s currently listening to.</p>
+              <p>Listeners always bind themselves as the context, so if <code>context</code>
+is passed, narrow down the search to just that listener.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    stopListening: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, name, callback)</span> </span>{
-      <span class="hljs-keyword">var</span> listeningTo = <span class="hljs-keyword">this</span>._listeningTo;
-      <span class="hljs-keyword">if</span> (!listeningTo) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">var</span> remove = !name &amp;&amp; !callback;
-      <span class="hljs-keyword">if</span> (!callback &amp;&amp; <span class="hljs-keyword">typeof</span> name === <span class="hljs-string">'object'</span>) callback = <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">if</span> (obj) (listeningTo = {})[obj._listenId] = obj;
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> id <span class="hljs-keyword">in</span> listeningTo) {
-        obj = listeningTo[id];
-        obj.off(name, callback, <span class="hljs-keyword">this</span>);
-        <span class="hljs-keyword">if</span> (remove || _.isEmpty(obj._events)) <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>._listeningTo[id];
-      }
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    }
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> ids = context != <span class="hljs-literal">null</span> ? [context._listenId] : _.keys(listeners);
 
-  };</pre></div></div>
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; ids.length; i++) {
+        <span class="hljs-keyword">var</span> listener = listeners[ids[i]];</pre></div></div>
             
         </li>
         
@@ -581,11 +535,11 @@ to every object it’s currently listening to.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <p>Regular expression used to split event strings.</p>
+              <p>Bail out if listener isn’t listening.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> eventSplitter = <span class="hljs-regexp">/\s+/</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!listener) <span class="hljs-keyword">break</span>;</pre></div></div>
             
         </li>
         
@@ -596,14 +550,16 @@ to every object it’s currently listening to.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
-              <p>Implement fancy features of the Events API such as multiple event
-names <code>&quot;change blur&quot;</code> and jQuery-style event maps <code>{change: action}</code>
-in terms of the existing API.</p>
+              <p>Tell each listener to stop, without infinitely calling <code>#off</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> eventsApi = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, action, name, rest)</span> </span>{
-    <span class="hljs-keyword">if</span> (!name) <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        internalStopListening(listener, <span class="hljs-keyword">this</span>, name, callback);
+      }
+      <span class="hljs-keyword">if</span> (_.isEmpty(listeners)) <span class="hljs-keyword">this</span>._listeners = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  };</pre></div></div>
             
         </li>
         
@@ -614,16 +570,12 @@ in terms of the existing API.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
-              <p>Handle event maps.</p>
+              <p>Tell this object to stop listening to either specific events … or
+to every object it’s currently listening to.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> name === <span class="hljs-string">'object'</span>) {
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> key <span class="hljs-keyword">in</span> name) {
-        obj[action].apply(obj, [key, name[key]].concat(rest));
-      }
-      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-    }</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Events.stopListening =  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, name, callback)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -634,19 +586,12 @@ in terms of the existing API.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
-              <p>Handle space separated event names.</p>
+              <p>Use an internal stopListening, telling it to call off on <code>obj</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (eventSplitter.test(name)) {
-      <span class="hljs-keyword">var</span> names = name.split(eventSplitter);
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, length = names.length; i &lt; length; i++) {
-        obj[action].apply(obj, [names[i]].concat(rest));
-      }
-      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-    }
-
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._listeningTo) internalStopListening(<span class="hljs-keyword">this</span>, obj, name, callback, <span class="hljs-literal">true</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
   };</pre></div></div>
             
         </li>
@@ -657,6 +602,298 @@ in terms of the existing API.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>The reducing API that removes a callback from the <code>events</code> object.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> offApi = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(events, name, callback, context)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Remove all callbacks for all events.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (!events || !name &amp;&amp; !context &amp;&amp; !callback) <span class="hljs-keyword">return</span>;
+
+    <span class="hljs-keyword">var</span> names = name ? [name] : _.keys(events);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; names.length; i++) {
+      name = names[i];
+      <span class="hljs-keyword">var</span> handlers = events[name];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>Bail out if there are no events stored.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!handlers) <span class="hljs-keyword">break</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>Find any remaining events.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> remaining = [];
+      <span class="hljs-keyword">if</span> (callback || context) {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>, k = handlers.length; j &lt; k; j++) {
+          <span class="hljs-keyword">var</span> handler = handlers[j];
+          <span class="hljs-keyword">if</span> (
+            callback &amp;&amp; callback !== handler.callback &amp;&amp;
+              callback !== handler.callback._callback ||
+                context &amp;&amp; context !== handler.context
+          ) {
+            remaining.push(handler);
+          }
+        }
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>Replace events if there are any remaining.  Otherwise, clean up.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (remaining.length) {
+        events[name] = remaining;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">delete</span> events[name];
+      }
+    }
+    <span class="hljs-keyword">if</span> (!_.isEmpty(events)) <span class="hljs-keyword">return</span> events;
+  };
+
+  <span class="hljs-keyword">var</span> internalStopListening = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(listener, obj, name, callback, offEvents)</span> </span>{
+    <span class="hljs-keyword">var</span> listeningTo = listener._listeningTo;
+    <span class="hljs-keyword">var</span> ids = obj ? [obj._listenId] : _.keys(listeningTo);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; ids.length; i++) {
+      <span class="hljs-keyword">var</span> id = ids[i];
+      <span class="hljs-keyword">var</span> listening = listeningTo[id];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>If listening doesn’t exist, this object is not currently
+listening to obj. Break out early.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!listening) <span class="hljs-keyword">break</span>;
+      obj = listening.obj;
+      <span class="hljs-keyword">if</span> (offEvents) obj._events = eventsApi(offApi, obj._events, name, callback, listener);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>Events will only ever be falsey if all the event callbacks
+are removed. If so, stop delete the listening.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> events = eventsApi(offApi, listening.events, name, callback);
+      <span class="hljs-keyword">if</span> (!events) {
+        <span class="hljs-keyword">delete</span> listeningTo[id];
+        <span class="hljs-keyword">delete</span> listening.obj._listeners[listener._listenId];
+      }
+    }
+    <span class="hljs-keyword">if</span> (_.isEmpty(listeningTo)) listener._listeningTo = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>Bind an event to only be triggered a single time. After the first time
+the callback is invoked, it will be removed. When multiple events are
+passed in using the space-separated syntax, the event will fire once for every
+event you passed in, not once for a combination of all events</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  Events.once =  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, callback, context)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>Map the event into a <code>{event: once}</code> object.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> events = onceMap(name, callback, _.bind(<span class="hljs-keyword">this</span>.off, <span class="hljs-keyword">this</span>));
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.on(events, <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>, context);
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>Inversion-of-control versions of <code>once</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Events.listenToOnce =  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, name, callback)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>Map the event into a <code>{event: once}</code> object.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> events = onceMap(name, callback, _.bind(<span class="hljs-keyword">this</span>.stopListening, <span class="hljs-keyword">this</span>, obj));
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.listenTo(obj, events);
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>Reduces the event callbacks into a map of <code>{event: onceWrapper}</code>.
+<code>offer</code> unbinds the <code>onceWrapper</code> after it as been called.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> onceMap = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, callback, offer)</span> </span>{
+    <span class="hljs-keyword">return</span> eventsApi(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(map, name, callback, offer)</span> </span>{
+      <span class="hljs-keyword">if</span> (callback) {
+        <span class="hljs-keyword">var</span> once = map[name] = _.once(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+          offer(name, once);
+          callback.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+        });
+        once._callback = callback;
+      }
+      <span class="hljs-keyword">return</span> map;
+    }, {}, name, callback, offer);
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p>Trigger one or many events, firing all bound callbacks. Callbacks are
+passed the same arguments as <code>trigger</code> is, apart from the event name
+(unless you’re listening on <code>&quot;all&quot;</code>, which will cause your callback to
+receive the true name of the event as the first argument).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  Events.trigger =  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> </span>{
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._events) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+
+    <span class="hljs-keyword">var</span> length = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, <span class="hljs-built_in">arguments</span>.length - <span class="hljs-number">1</span>);
+    <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>(length);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; length; i++) args[i] = <span class="hljs-built_in">arguments</span>[i + <span class="hljs-number">1</span>];
+
+    eventsApi(triggerApi, <span class="hljs-keyword">this</span>, name, <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>, args);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p>Handles triggering the appropriate event callbacks.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> triggerApi = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, name, cb, args)</span> </span>{
+    <span class="hljs-keyword">if</span> (obj._events) {
+      <span class="hljs-keyword">var</span> events = obj._events[name];
+      <span class="hljs-keyword">var</span> allEvents = obj._events.all;
+      <span class="hljs-keyword">if</span> (events) triggerEvents(events, args);
+      <span class="hljs-keyword">if</span> (allEvents) triggerEvents(allEvents, [name].concat(args));
+    }
+    <span class="hljs-keyword">return</span> obj;
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p>A difficult-to-believe, but optimized internal dispatch function for
 triggering events. Tries to keep the usual cases speedy (most internal
@@ -678,11 +915,52 @@ Backbone events have 3 arguments).</p>
         </li>
         
         
-        <li id="section-35">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <p>Proxy Underscore methods to a Backbone class’ prototype using a
+particular attribute as the data argument</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> addMethod = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(length, method, attribute)</span> </span>{
+    <span class="hljs-keyword">switch</span> (length) {
+      <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>: <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">return</span> _[method](<span class="hljs-keyword">this</span>[attribute]);
+      };
+      <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>: <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
+        <span class="hljs-keyword">return</span> _[method](<span class="hljs-keyword">this</span>[attribute], value);
+      };
+      <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>: <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(iteratee, context)</span> </span>{
+        <span class="hljs-keyword">return</span> _[method](<span class="hljs-keyword">this</span>[attribute], iteratee, context);
+      };
+      <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>: <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(iteratee, defaultVal, context)</span> </span>{
+        <span class="hljs-keyword">return</span> _[method](<span class="hljs-keyword">this</span>[attribute], iteratee, defaultVal, context);
+      };
+      <span class="hljs-keyword">default</span>: <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">var</span> args = slice.call(<span class="hljs-built_in">arguments</span>);
+        args.unshift(<span class="hljs-keyword">this</span>[attribute]);
+        <span class="hljs-keyword">return</span> _[method].apply(_, args);
+      };
+    }
+  };
+  <span class="hljs-keyword">var</span> addUnderscoreMethods = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Class, methods, attribute)</span> </span>{
+    _.each(methods, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(length, method)</span> </span>{
+      <span class="hljs-keyword">if</span> (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
+    });
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>Aliases for backwards compatibility.</p>
 
@@ -694,11 +972,11 @@ Backbone events have 3 arguments).</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>Allow the <code>Backbone</code> object to serve as a global event bus, for folks who
 want global “pubsub” in a convenient place.</p>
@@ -710,11 +988,11 @@ want global “pubsub” in a convenient place.</p>
         </li>
         
         
-        <li id="section-37">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <h2 id="backbone-model">Backbone.Model</h2>
 
@@ -723,11 +1001,11 @@ want global “pubsub” in a convenient place.</p>
         </li>
         
         
-        <li id="section-38">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               
             </div>
@@ -735,11 +1013,11 @@ want global “pubsub” in a convenient place.</p>
         </li>
         
         
-        <li id="section-39">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>Backbone <strong>Models</strong> are the basic data object in the framework —
 frequently representing a row in a table in a database on your server.
@@ -751,11 +1029,11 @@ performing computations and transformations on that data.</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>Create a new model with the specified attributes. A client id (<code>cid</code>)
 is automatically generated and assigned for you.</p>
@@ -765,7 +1043,7 @@ is automatically generated and assigned for you.</p>
             <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> Model = Backbone.Model = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attributes, options)</span> </span>{
     <span class="hljs-keyword">var</span> attrs = attributes || {};
     options || (options = {});
-    <span class="hljs-keyword">this</span>.cid = _.uniqueId(<span class="hljs-string">'c'</span>);
+    <span class="hljs-keyword">this</span>.cid = _.uniqueId(<span class="hljs-keyword">this</span>.cidPrefix);
     <span class="hljs-keyword">this</span>.attributes = {};
     <span class="hljs-keyword">if</span> (options.collection) <span class="hljs-keyword">this</span>.collection = options.collection;
     <span class="hljs-keyword">if</span> (options.parse) attrs = <span class="hljs-keyword">this</span>.parse(attrs, options) || {};
@@ -778,11 +1056,11 @@ is automatically generated and assigned for you.</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p>Attach all inheritable methods to the Model prototype.</p>
 
@@ -793,11 +1071,11 @@ is automatically generated and assigned for you.</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <p>A hash of attributes whose current and previous value differ.</p>
 
@@ -808,11 +1086,11 @@ is automatically generated and assigned for you.</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-58">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p>The value returned during the last failed validation.</p>
 
@@ -823,11 +1101,11 @@ is automatically generated and assigned for you.</p>
         </li>
         
         
-        <li id="section-44">
+        <li id="section-59">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p>The default name for the JSON <code>id</code> attribute is <code>&quot;id&quot;</code>. MongoDB and
 CouchDB users may want to set this to <code>&quot;_id&quot;</code>.</p>
@@ -839,11 +1117,27 @@ CouchDB users may want to set this to <code>&quot;_id&quot;</code>.</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-60">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <p>The prefix is used to create the client id which is used to identify models locally.
+You may want to override this if you’re experiencing name clashes with model ids.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    cidPrefix: <span class="hljs-string">'c'</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-61">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
               <p>Initialize is an empty function by default. Override it with your own
 initialization logic.</p>
@@ -855,11 +1149,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-46">
+        <li id="section-62">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
               <p>Return a copy of the model’s <code>attributes</code> object.</p>
 
@@ -872,11 +1166,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-47">
+        <li id="section-63">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p>Proxy <code>Backbone.sync</code> by default — but override this if you need
 custom syncing semantics for <em>this</em> particular model.</p>
@@ -890,11 +1184,11 @@ custom syncing semantics for <em>this</em> particular model.</p>
         </li>
         
         
-        <li id="section-48">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p>Get the value of an attribute.</p>
 
@@ -907,11 +1201,11 @@ custom syncing semantics for <em>this</em> particular model.</p>
         </li>
         
         
-        <li id="section-49">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>Get the HTML-escaped value of an attribute.</p>
 
@@ -924,11 +1218,11 @@ custom syncing semantics for <em>this</em> particular model.</p>
         </li>
         
         
-        <li id="section-50">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <p>Returns <code>true</code> if the attribute contains a value that is not null
 or undefined.</p>
@@ -942,11 +1236,28 @@ or undefined.</p>
         </li>
         
         
-        <li id="section-51">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <p>Special-cased proxy to underscore’s <code>_.matches</code> method.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    matches: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attrs)</span> </span>{
+      <span class="hljs-keyword">return</span> !!_.iteratee(attrs, <span class="hljs-keyword">this</span>)(<span class="hljs-keyword">this</span>.attributes);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-68">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p>Set a hash of model attributes on the object, firing <code>&quot;change&quot;</code>. This is
 the core primitive operation of a model, updating the data and notifying
@@ -961,11 +1272,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-52">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p>Handle both <code>&quot;key&quot;, value</code> and <code>{key: value}</code> -style arguments.</p>
 
@@ -983,11 +1294,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-53">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p>Run validation.</p>
 
@@ -998,11 +1309,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-54">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p>Extract attributes and options.</p>
 
@@ -1023,11 +1334,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-55">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <p>Check for changes of <code>id</code>.</p>
 
@@ -1038,11 +1349,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-56">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <p>For each <code>set</code> attribute, update or delete the current value.</p>
 
@@ -1062,11 +1373,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-57">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <p>Trigger all relevant attribute changes.</p>
 
@@ -1074,7 +1385,7 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!silent) {
         <span class="hljs-keyword">if</span> (changes.length) <span class="hljs-keyword">this</span>._pending = options;
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, length = changes.length; i &lt; length; i++) {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; changes.length; i++) {
           <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'change:'</span> + changes[i], <span class="hljs-keyword">this</span>, current[changes[i]], options);
         }
       }</pre></div></div>
@@ -1082,11 +1393,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-58">
+        <li id="section-75">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <p>You might be wondering why there’s a <code>while</code> loop here. Changes can
 be recursively nested within <code>&quot;change&quot;</code> events.</p>
@@ -1109,11 +1420,11 @@ be recursively nested within <code>&quot;change&quot;</code> events.</p>
         </li>
         
         
-        <li id="section-59">
+        <li id="section-76">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
               <p>Remove an attribute from the model, firing <code>&quot;change&quot;</code>. <code>unset</code> is a noop
 if the attribute doesn’t exist.</p>
@@ -1127,11 +1438,11 @@ if the attribute doesn’t exist.</p>
         </li>
         
         
-        <li id="section-60">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p>Clear all attributes on the model, firing <code>&quot;change&quot;</code>.</p>
 
@@ -1146,11 +1457,11 @@ if the attribute doesn’t exist.</p>
         </li>
         
         
-        <li id="section-61">
+        <li id="section-78">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-61">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <p>Determine if the model has changed since the last <code>&quot;change&quot;</code> event.
 If you specify an attribute name, determine if that attribute has changed.</p>
@@ -1165,11 +1476,11 @@ If you specify an attribute name, determine if that attribute has changed.</p>
         </li>
         
         
-        <li id="section-62">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-62">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <p>Return an object containing all the attributes that have changed, or
 false if there are no changed attributes. Useful for determining what
@@ -1194,11 +1505,11 @@ determining if there <em>would be</em> a change.</p>
         </li>
         
         
-        <li id="section-63">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p>Get the previous value of an attribute, recorded at the time the last
 <code>&quot;change&quot;</code> event was fired.</p>
@@ -1213,11 +1524,11 @@ determining if there <em>would be</em> a change.</p>
         </li>
         
         
-        <li id="section-64">
+        <li id="section-81">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <p>Get all of the attributes of the model at the time of the previous
 <code>&quot;change&quot;</code> event.</p>
@@ -1231,15 +1542,14 @@ determining if there <em>would be</em> a change.</p>
         </li>
         
         
-        <li id="section-65">
+        <li id="section-82">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
-              <p>Fetch the model from the server. If the server’s representation of the
-model differs from its current attributes, they will be overridden,
-triggering a <code>&quot;change&quot;</code> event.</p>
+              <p>Fetch the model from the server, merging the response with the model’s
+local attributes. Any changed attributes will trigger a “change” event.</p>
 
             </div>
             
@@ -1250,7 +1560,7 @@ triggering a <code>&quot;change&quot;</code> event.</p>
       <span class="hljs-keyword">var</span> success = options.success;
       options.success = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resp)</span> </span>{
         <span class="hljs-keyword">if</span> (!model.set(model.parse(resp, options), options)) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-        <span class="hljs-keyword">if</span> (success) success(model, resp, options);
+        <span class="hljs-keyword">if</span> (success) success.call(options.context, model, resp, options);
         model.trigger(<span class="hljs-string">'sync'</span>, model, resp, options);
       };
       wrapError(<span class="hljs-keyword">this</span>, options);
@@ -1260,11 +1570,11 @@ triggering a <code>&quot;change&quot;</code> event.</p>
         </li>
         
         
-        <li id="section-66">
+        <li id="section-83">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <p>Set a hash of model attributes, and sync the model to the server.
 If the server returns an attributes hash that differs, the model’s
@@ -1273,16 +1583,16 @@ state will be <code>set</code> again.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    save: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key, val, options)</span> </span>{
-      <span class="hljs-keyword">var</span> attrs, method, xhr, attributes = <span class="hljs-keyword">this</span>.attributes;</pre></div></div>
+      <span class="hljs-keyword">var</span> attrs, method, xhr, attributes = <span class="hljs-keyword">this</span>.attributes, wait;</pre></div></div>
             
         </li>
         
         
-        <li id="section-67">
+        <li id="section-84">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-84">&#182;</a>
               </div>
               <p>Handle both <code>&quot;key&quot;, value</code> and <code>{key: value}</code> -style arguments.</p>
 
@@ -1295,16 +1605,17 @@ state will be <code>set</code> again.</p>
         (attrs = {})[key] = val;
       }
 
-      options = _.extend({validate: <span class="hljs-literal">true</span>}, options);</pre></div></div>
+      options = _.extend({validate: <span class="hljs-literal">true</span>}, options);
+      wait = options.wait;</pre></div></div>
             
         </li>
         
         
-        <li id="section-68">
+        <li id="section-85">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-85">&#182;</a>
               </div>
               <p>If we’re not waiting and attributes exist, save acts as
 <code>set(attr).save(null, opts)</code> with validation. Otherwise, check if
@@ -1312,7 +1623,7 @@ the model will be valid when the attributes, if any, are set.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (attrs &amp;&amp; !options.wait) {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (attrs &amp;&amp; !wait) {
         <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.set(attrs, options)) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
       } <span class="hljs-keyword">else</span> {
         <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._validate(attrs, options)) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
@@ -1321,28 +1632,28 @@ the model will be valid when the attributes, if any, are set.</p>
         </li>
         
         
-        <li id="section-69">
+        <li id="section-86">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-86">&#182;</a>
               </div>
               <p>Set temporary attributes if <code>{wait: true}</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (attrs &amp;&amp; options.wait) {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (attrs &amp;&amp; wait) {
         <span class="hljs-keyword">this</span>.attributes = _.extend({}, attributes, attrs);
       }</pre></div></div>
             
         </li>
         
         
-        <li id="section-70">
+        <li id="section-87">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-87">&#182;</a>
               </div>
               <p>After a successful server-side save, the client is (optionally)
 updated with the server-side state.</p>
@@ -1357,23 +1668,23 @@ updated with the server-side state.</p>
         </li>
         
         
-        <li id="section-71">
+        <li id="section-88">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-88">&#182;</a>
               </div>
               <p>Ensure attributes are restored during synchronous saves.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        model.attributes = attributes;
-        <span class="hljs-keyword">var</span> serverAttrs = model.parse(resp, options);
-        <span class="hljs-keyword">if</span> (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
+        <span class="hljs-keyword">var</span> serverAttrs = options.parse ? model.parse(resp, options) : resp;
+        <span class="hljs-keyword">if</span> (wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
         <span class="hljs-keyword">if</span> (_.isObject(serverAttrs) &amp;&amp; !model.set(serverAttrs, options)) {
           <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
         }
-        <span class="hljs-keyword">if</span> (success) success(model, resp, options);
+        <span class="hljs-keyword">if</span> (success) success.call(options.context, model, resp, options);
         model.trigger(<span class="hljs-string">'sync'</span>, model, resp, options);
       };
       wrapError(<span class="hljs-keyword">this</span>, options);
@@ -1385,17 +1696,17 @@ updated with the server-side state.</p>
         </li>
         
         
-        <li id="section-72">
+        <li id="section-89">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-89">&#182;</a>
               </div>
               <p>Restore attributes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (attrs &amp;&amp; options.wait) <span class="hljs-keyword">this</span>.attributes = attributes;
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (attrs &amp;&amp; wait) <span class="hljs-keyword">this</span>.attributes = attributes;
 
       <span class="hljs-keyword">return</span> xhr;
     },</pre></div></div>
@@ -1403,11 +1714,11 @@ updated with the server-side state.</p>
         </li>
         
         
-        <li id="section-73">
+        <li id="section-90">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-90">&#182;</a>
               </div>
               <p>Destroy this model on the server if it was already persisted.
 Optimistically removes the model from its collection, if it has one.
@@ -1419,6 +1730,7 @@ If <code>wait: true</code> is passed, waits for the server to respond before rem
       options = options ? _.clone(options) : {};
       <span class="hljs-keyword">var</span> model = <span class="hljs-keyword">this</span>;
       <span class="hljs-keyword">var</span> success = options.success;
+      <span class="hljs-keyword">var</span> wait = options.wait;
 
       <span class="hljs-keyword">var</span> destroy = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
         model.stopListening();
@@ -1426,8 +1738,8 @@ If <code>wait: true</code> is passed, waits for the server to respond before rem
       };
 
       options.success = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resp)</span> </span>{
-        <span class="hljs-keyword">if</span> (options.wait || model.isNew()) destroy();
-        <span class="hljs-keyword">if</span> (success) success(model, resp, options);
+        <span class="hljs-keyword">if</span> (wait || model.isNew()) destroy();
+        <span class="hljs-keyword">if</span> (success) success.call(options.context, model, resp, options);
         <span class="hljs-keyword">if</span> (!model.isNew()) model.trigger(<span class="hljs-string">'sync'</span>, model, resp, options);
       };
 
@@ -1438,18 +1750,18 @@ If <code>wait: true</code> is passed, waits for the server to respond before rem
       wrapError(<span class="hljs-keyword">this</span>, options);
 
       <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">this</span>.sync(<span class="hljs-string">'delete'</span>, <span class="hljs-keyword">this</span>, options);
-      <span class="hljs-keyword">if</span> (!options.wait) destroy();
+      <span class="hljs-keyword">if</span> (!wait) destroy();
       <span class="hljs-keyword">return</span> xhr;
     },</pre></div></div>
             
         </li>
         
         
-        <li id="section-74">
+        <li id="section-91">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-91">&#182;</a>
               </div>
               <p>Default URL for the model’s representation on the server — if you’re
 using Backbone’s restful methods, override this to change the endpoint
@@ -1463,17 +1775,18 @@ that will be called.</p>
         _.result(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">'url'</span>) ||
         urlError();
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isNew()) <span class="hljs-keyword">return</span> base;
-      <span class="hljs-keyword">return</span> base.replace(<span class="hljs-regexp">/([^\/])$/</span>, <span class="hljs-string">'$1/'</span>) + <span class="hljs-built_in">encodeURIComponent</span>(<span class="hljs-keyword">this</span>.id);
+      <span class="hljs-keyword">var</span> id = <span class="hljs-keyword">this</span>.id || <span class="hljs-keyword">this</span>.attributes[<span class="hljs-keyword">this</span>.idAttribute];
+      <span class="hljs-keyword">return</span> base.replace(<span class="hljs-regexp">/([^\/])$/</span>, <span class="hljs-string">'$1/'</span>) + <span class="hljs-built_in">encodeURIComponent</span>(id);
     },</pre></div></div>
             
         </li>
         
         
-        <li id="section-75">
+        <li id="section-92">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-92">&#182;</a>
               </div>
               <p><strong>parse</strong> converts a response into the hash of attributes to be <code>set</code> on
 the model. The default implementation is just to pass the response along.</p>
@@ -1487,11 +1800,11 @@ the model. The default implementation is just to pass the response along.</p>
         </li>
         
         
-        <li id="section-76">
+        <li id="section-93">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
               <p>Create a new model with identical attributes to this one.</p>
 
@@ -1504,11 +1817,11 @@ the model. The default implementation is just to pass the response along.</p>
         </li>
         
         
-        <li id="section-77">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-94">&#182;</a>
               </div>
               <p>A model is new if it has never been saved to the server, and lacks an id.</p>
 
@@ -1521,11 +1834,11 @@ the model. The default implementation is just to pass the response along.</p>
         </li>
         
         
-        <li id="section-78">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <p>Check if the model is currently in a valid state.</p>
 
@@ -1538,11 +1851,11 @@ the model. The default implementation is just to pass the response along.</p>
         </li>
         
         
-        <li id="section-79">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <p>Run validation against the next complete set of model attributes,
 returning <code>true</code> if all is well. Otherwise, fire an <code>&quot;invalid&quot;</code> event.</p>
@@ -1563,48 +1876,42 @@ returning <code>true</code> if all is well. Otherwise, fire an <code>&quot;inval
         </li>
         
         
-        <li id="section-80">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <p>Underscore methods that we want to implement on the Model.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> modelMethods = [<span class="hljs-string">'keys'</span>, <span class="hljs-string">'values'</span>, <span class="hljs-string">'pairs'</span>, <span class="hljs-string">'invert'</span>, <span class="hljs-string">'pick'</span>, <span class="hljs-string">'omit'</span>, <span class="hljs-string">'chain'</span>, <span class="hljs-string">'isEmpty'</span>];</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> modelMethods = { keys: <span class="hljs-number">1</span>, values: <span class="hljs-number">1</span>, pairs: <span class="hljs-number">1</span>, invert: <span class="hljs-number">1</span>, pick: <span class="hljs-number">0</span>,
+      omit: <span class="hljs-number">0</span>, chain: <span class="hljs-number">1</span>, isEmpty: <span class="hljs-number">1</span> };</pre></div></div>
             
         </li>
         
         
-        <li id="section-81">
+        <li id="section-98">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
               <p>Mix in each Underscore method as a proxy to <code>Model#attributes</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _.each(modelMethods, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method)</span> </span>{
-    <span class="hljs-keyword">if</span> (!_[method]) <span class="hljs-keyword">return</span>;
-    Model.prototype[method] = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-keyword">var</span> args = slice.call(<span class="hljs-built_in">arguments</span>);
-      args.unshift(<span class="hljs-keyword">this</span>.attributes);
-      <span class="hljs-keyword">return</span> _[method].apply(_, args);
-    };
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  addUnderscoreMethods(Model, modelMethods, <span class="hljs-string">'attributes'</span>);</pre></div></div>
             
         </li>
         
         
-        <li id="section-82">
+        <li id="section-99">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <h2 id="backbone-collection">Backbone.Collection</h2>
 
@@ -1613,11 +1920,11 @@ returning <code>true</code> if all is well. Otherwise, fire an <code>&quot;inval
         </li>
         
         
-        <li id="section-83">
+        <li id="section-100">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-83">&#182;</a>
+                <a class="pilcrow" href="#section-100">&#182;</a>
               </div>
               
             </div>
@@ -1625,11 +1932,11 @@ returning <code>true</code> if all is well. Otherwise, fire an <code>&quot;inval
         </li>
         
         
-        <li id="section-84">
+        <li id="section-101">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-84">&#182;</a>
+                <a class="pilcrow" href="#section-101">&#182;</a>
               </div>
               <p>If models tend to represent a single row of data, a Backbone Collection is
 more analogous to a table full of data … or a small slice or page of that
@@ -1643,11 +1950,11 @@ indexes of their models, both in order, and for lookup by <code>id</code>.</p>
         </li>
         
         
-        <li id="section-85">
+        <li id="section-102">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-85">&#182;</a>
+                <a class="pilcrow" href="#section-102">&#182;</a>
               </div>
               <p>Create a new <strong>Collection</strong>, perhaps to contain a specific type of <code>model</code>.
 If a <code>comparator</code> is specified, the Collection will maintain
@@ -1667,11 +1974,11 @@ its models in sort order, as they’re added and removed.</p>
         </li>
         
         
-        <li id="section-86">
+        <li id="section-103">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-86">&#182;</a>
+                <a class="pilcrow" href="#section-103">&#182;</a>
               </div>
               <p>Default options for <code>Collection#set</code>.</p>
 
@@ -1683,11 +1990,11 @@ its models in sort order, as they’re added and removed.</p>
         </li>
         
         
-        <li id="section-87">
+        <li id="section-104">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-87">&#182;</a>
+                <a class="pilcrow" href="#section-104">&#182;</a>
               </div>
               <p>Define the Collection’s inheritable methods.</p>
 
@@ -1698,11 +2005,11 @@ its models in sort order, as they’re added and removed.</p>
         </li>
         
         
-        <li id="section-88">
+        <li id="section-105">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-88">&#182;</a>
+                <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
               <p>The default model for a collection is just a <strong>Backbone.Model</strong>.
 This should be overridden in most cases.</p>
@@ -1714,11 +2021,11 @@ This should be overridden in most cases.</p>
         </li>
         
         
-        <li id="section-89">
+        <li id="section-106">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-89">&#182;</a>
+                <a class="pilcrow" href="#section-106">&#182;</a>
               </div>
               <p>Initialize is an empty function by default. Override it with your own
 initialization logic.</p>
@@ -1730,11 +2037,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-90">
+        <li id="section-107">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-90">&#182;</a>
+                <a class="pilcrow" href="#section-107">&#182;</a>
               </div>
               <p>The JSON representation of a Collection is an array of the
 models’ attributes.</p>
@@ -1748,11 +2055,11 @@ models’ attributes.</p>
         </li>
         
         
-        <li id="section-91">
+        <li id="section-108">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-91">&#182;</a>
+                <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
               <p>Proxy <code>Backbone.sync</code> by default.</p>
 
@@ -1765,11 +2072,11 @@ models’ attributes.</p>
         </li>
         
         
-        <li id="section-92">
+        <li id="section-109">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-92">&#182;</a>
+                <a class="pilcrow" href="#section-109">&#182;</a>
               </div>
               <p>Add a model, or list of models to the set.</p>
 
@@ -1782,11 +2089,11 @@ models’ attributes.</p>
         </li>
         
         
-        <li id="section-93">
+        <li id="section-110">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-93">&#182;</a>
+                <a class="pilcrow" href="#section-110">&#182;</a>
               </div>
               <p>Remove a model, or a list of models from the set.</p>
 
@@ -1796,7 +2103,7 @@ models’ attributes.</p>
       <span class="hljs-keyword">var</span> singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       options || (options = {});
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, length = models.length; i &lt; length; i++) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; models.length; i++) {
         <span class="hljs-keyword">var</span> model = models[i] = <span class="hljs-keyword">this</span>.get(models[i]);
         <span class="hljs-keyword">if</span> (!model) <span class="hljs-keyword">continue</span>;
         <span class="hljs-keyword">var</span> id = <span class="hljs-keyword">this</span>.modelId(model.attributes);
@@ -1817,11 +2124,11 @@ models’ attributes.</p>
         </li>
         
         
-        <li id="section-94">
+        <li id="section-111">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
+                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
               <p>Update a collection by <code>set</code>-ing a new list of models, adding new ones,
 removing models that are no longer present, and merging models that
@@ -1837,6 +2144,7 @@ the core operation for updating the data contained by the collection.</p>
       models = singular ? (models ? [models] : []) : models.slice();
       <span class="hljs-keyword">var</span> id, model, attrs, existing, sort;
       <span class="hljs-keyword">var</span> at = options.at;
+      <span class="hljs-keyword">if</span> (at != <span class="hljs-literal">null</span>) at = +at;
       <span class="hljs-keyword">if</span> (at &lt; <span class="hljs-number">0</span>) at += <span class="hljs-keyword">this</span>.length + <span class="hljs-number">1</span>;
       <span class="hljs-keyword">var</span> sortable = <span class="hljs-keyword">this</span>.comparator &amp;&amp; (at == <span class="hljs-literal">null</span>) &amp;&amp; options.sort !== <span class="hljs-literal">false</span>;
       <span class="hljs-keyword">var</span> sortAttr = _.isString(<span class="hljs-keyword">this</span>.comparator) ? <span class="hljs-keyword">this</span>.comparator : <span class="hljs-literal">null</span>;
@@ -1848,28 +2156,28 @@ the core operation for updating the data contained by the collection.</p>
         </li>
         
         
-        <li id="section-95">
+        <li id="section-112">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-95">&#182;</a>
+                <a class="pilcrow" href="#section-112">&#182;</a>
               </div>
               <p>Turn bare objects into model references, and prevent invalid models
 from being added.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, length = models.length; i &lt; length; i++) {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; models.length; i++) {
         attrs = models[i];</pre></div></div>
             
         </li>
         
         
-        <li id="section-96">
+        <li id="section-113">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-96">&#182;</a>
+                <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
               <p>If a duplicate is found, prevent it from being added and
 optionally merge it into the existing model.</p>
@@ -1889,11 +2197,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-97">
+        <li id="section-114">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-97">&#182;</a>
+                <a class="pilcrow" href="#section-114">&#182;</a>
               </div>
               <p>If this is a new, valid model, push it to the <code>toAdd</code> list.</p>
 
@@ -1909,11 +2217,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-98">
+        <li id="section-115">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-98">&#182;</a>
+                <a class="pilcrow" href="#section-115">&#182;</a>
               </div>
               <p>Do not add multiple models with the same <code>id</code>.</p>
 
@@ -1928,11 +2236,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-99">
+        <li id="section-116">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-99">&#182;</a>
+                <a class="pilcrow" href="#section-116">&#182;</a>
               </div>
               <p>Check to see if this is actually a new model at this index.</p>
 
@@ -1947,18 +2255,18 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-100">
+        <li id="section-117">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-100">&#182;</a>
+                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <p>Remove nonexistent models if appropriate.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (remove) {
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, length = <span class="hljs-keyword">this</span>.length; i &lt; length; i++) {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.length; i++) {
           <span class="hljs-keyword">if</span> (!modelMap[(model = <span class="hljs-keyword">this</span>.models[i]).cid]) toRemove.push(model);
         }
         <span class="hljs-keyword">if</span> (toRemove.length) <span class="hljs-keyword">this</span>.remove(toRemove, options);
@@ -1967,11 +2275,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-101">
+        <li id="section-118">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-101">&#182;</a>
+                <a class="pilcrow" href="#section-118">&#182;</a>
               </div>
               <p>See if sorting is needed, update <code>length</code> and splice in new models.</p>
 
@@ -1981,13 +2289,13 @@ optionally merge it into the existing model.</p>
         <span class="hljs-keyword">if</span> (sortable) sort = <span class="hljs-literal">true</span>;
         <span class="hljs-keyword">this</span>.length += toAdd.length;
         <span class="hljs-keyword">if</span> (at != <span class="hljs-literal">null</span>) {
-          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, length = toAdd.length; i &lt; length; i++) {
+          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; toAdd.length; i++) {
             <span class="hljs-keyword">this</span>.models.splice(at + i, <span class="hljs-number">0</span>, toAdd[i]);
           }
         } <span class="hljs-keyword">else</span> {
           <span class="hljs-keyword">if</span> (order) <span class="hljs-keyword">this</span>.models.length = <span class="hljs-number">0</span>;
           <span class="hljs-keyword">var</span> orderedModels = order || toAdd;
-          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, length = orderedModels.length; i &lt; length; i++) {
+          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; orderedModels.length; i++) {
             <span class="hljs-keyword">this</span>.models.push(orderedModels[i]);
           }
         }
@@ -1996,11 +2304,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-102">
+        <li id="section-119">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-102">&#182;</a>
+                <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <p>Silently sort the collection if appropriate.</p>
 
@@ -2011,11 +2319,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-103">
+        <li id="section-120">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-103">&#182;</a>
+                <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
               <p>Unless silenced, it’s time to fire all appropriate add/sort events.</p>
 
@@ -2023,7 +2331,7 @@ optionally merge it into the existing model.</p>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!options.silent) {
         <span class="hljs-keyword">var</span> addOpts = at != <span class="hljs-literal">null</span> ? _.clone(options) : options;
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, length = toAdd.length; i &lt; length; i++) {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; toAdd.length; i++) {
           <span class="hljs-keyword">if</span> (at != <span class="hljs-literal">null</span>) addOpts.index = at + i;
           (model = toAdd[i]).trigger(<span class="hljs-string">'add'</span>, model, <span class="hljs-keyword">this</span>, addOpts);
         }
@@ -2033,11 +2341,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-104">
+        <li id="section-121">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-104">&#182;</a>
+                <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
               <p>Return the added (or merged) model (or models).</p>
 
@@ -2049,11 +2357,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-105">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-105">&#182;</a>
+                <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <p>When you have more items than you want to add or remove individually,
 you can reset the entire set with a new list of models, without firing
@@ -2064,7 +2372,7 @@ Useful for bulk operations and optimizations.</p>
             
             <div class="content"><div class='highlight'><pre>    reset: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(models, options)</span> </span>{
       options = options ? _.clone(options) : {};
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, length = <span class="hljs-keyword">this</span>.models.length; i &lt; length; i++) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.models.length; i++) {
         <span class="hljs-keyword">this</span>._removeReference(<span class="hljs-keyword">this</span>.models[i], options);
       }
       options.previousModels = <span class="hljs-keyword">this</span>.models;
@@ -2077,11 +2385,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-106">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-106">&#182;</a>
+                <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
               <p>Add a model to the end of the collection.</p>
 
@@ -2094,11 +2402,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-107">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-107">&#182;</a>
+                <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <p>Remove a model from the end of the collection.</p>
 
@@ -2113,11 +2421,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-108">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-108">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <p>Add a model to the beginning of the collection.</p>
 
@@ -2130,11 +2438,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-109">
+        <li id="section-126">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-109">&#182;</a>
+                <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
               <p>Remove a model from the beginning of the collection.</p>
 
@@ -2149,11 +2457,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-110">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-110">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <p>Slice out a sub-array of models from the collection.</p>
 
@@ -2166,11 +2474,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-111">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-111">&#182;</a>
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <p>Get a model from the set by id.</p>
 
@@ -2185,11 +2493,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-112">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-112">&#182;</a>
+                <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <p>Get the model at the given index.</p>
 
@@ -2203,11 +2511,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-113">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-113">&#182;</a>
+                <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
               <p>Return models with matching attributes. Useful for simple cases of
 <code>filter</code>.</p>
@@ -2224,11 +2532,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-114">
+        <li id="section-131">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-114">&#182;</a>
+                <a class="pilcrow" href="#section-131">&#182;</a>
               </div>
               <p>Return the first model with matching attributes. Useful for simple cases
 of <code>find</code>.</p>
@@ -2242,11 +2550,11 @@ of <code>find</code>.</p>
         </li>
         
         
-        <li id="section-115">
+        <li id="section-132">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-115">&#182;</a>
+                <a class="pilcrow" href="#section-132">&#182;</a>
               </div>
               <p>Force the collection to re-sort itself. You don’t need to call this under
 normal circumstances, as the set will maintain sort order as each item
@@ -2261,11 +2569,11 @@ is added.</p>
         </li>
         
         
-        <li id="section-116">
+        <li id="section-133">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-116">&#182;</a>
+                <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
               <p>Run sort based on type of <code>comparator</code>.</p>
 
@@ -2284,11 +2592,11 @@ is added.</p>
         </li>
         
         
-        <li id="section-117">
+        <li id="section-134">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-117">&#182;</a>
+                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
               <p>Pluck an attribute from each model in the collection.</p>
 
@@ -2301,11 +2609,11 @@ is added.</p>
         </li>
         
         
-        <li id="section-118">
+        <li id="section-135">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-118">&#182;</a>
+                <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
               <p>Fetch the default set of models for this collection, resetting the
 collection when they arrive. If <code>reset: true</code> is passed, the response
@@ -2321,7 +2629,7 @@ data will be passed through the <code>reset</code> method instead of <code>set</
       options.success = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resp)</span> </span>{
         <span class="hljs-keyword">var</span> method = options.reset ? <span class="hljs-string">'reset'</span> : <span class="hljs-string">'set'</span>;
         collection[method](resp, options);
-        <span class="hljs-keyword">if</span> (success) success(collection, resp, options);
+        <span class="hljs-keyword">if</span> (success) success.call(options.context, collection, resp, options);
         collection.trigger(<span class="hljs-string">'sync'</span>, collection, resp, options);
       };
       wrapError(<span class="hljs-keyword">this</span>, options);
@@ -2331,11 +2639,11 @@ data will be passed through the <code>reset</code> method instead of <code>set</
         </li>
         
         
-        <li id="section-119">
+        <li id="section-136">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-119">&#182;</a>
+                <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
               <p>Create a new instance of a model in this collection. Add the model to the
 collection immediately, unless <code>wait: true</code> is passed, in which case we
@@ -2345,13 +2653,14 @@ wait for the server to agree.</p>
             
             <div class="content"><div class='highlight'><pre>    create: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(model, options)</span> </span>{
       options = options ? _.clone(options) : {};
+      <span class="hljs-keyword">var</span> wait = options.wait;
       <span class="hljs-keyword">if</span> (!(model = <span class="hljs-keyword">this</span>._prepareModel(model, options))) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-      <span class="hljs-keyword">if</span> (!options.wait) <span class="hljs-keyword">this</span>.add(model, options);
+      <span class="hljs-keyword">if</span> (!wait) <span class="hljs-keyword">this</span>.add(model, options);
       <span class="hljs-keyword">var</span> collection = <span class="hljs-keyword">this</span>;
       <span class="hljs-keyword">var</span> success = options.success;
-      options.success = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(model, resp)</span> </span>{
-        <span class="hljs-keyword">if</span> (options.wait) collection.add(model, options);
-        <span class="hljs-keyword">if</span> (success) success(model, resp, options);
+      options.success = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(model, resp, callbackOpts)</span> </span>{
+        <span class="hljs-keyword">if</span> (wait) collection.add(model, callbackOpts);
+        <span class="hljs-keyword">if</span> (success) success.call(callbackOpts.context, model, resp, callbackOpts);
       };
       model.save(<span class="hljs-literal">null</span>, options);
       <span class="hljs-keyword">return</span> model;
@@ -2360,11 +2669,11 @@ wait for the server to agree.</p>
         </li>
         
         
-        <li id="section-120">
+        <li id="section-137">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-120">&#182;</a>
+                <a class="pilcrow" href="#section-137">&#182;</a>
               </div>
               <p><strong>parse</strong> converts a response into a list of models to be added to the
 collection. The default implementation is just to pass it through.</p>
@@ -2378,11 +2687,11 @@ collection. The default implementation is just to pass it through.</p>
         </li>
         
         
-        <li id="section-121">
+        <li id="section-138">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-121">&#182;</a>
+                <a class="pilcrow" href="#section-138">&#182;</a>
               </div>
               <p>Create a new collection with an identical list of models as this one.</p>
 
@@ -2398,11 +2707,11 @@ collection. The default implementation is just to pass it through.</p>
         </li>
         
         
-        <li id="section-122">
+        <li id="section-139">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-122">&#182;</a>
+                <a class="pilcrow" href="#section-139">&#182;</a>
               </div>
               <p>Define how to uniquely identify models in the collection.</p>
 
@@ -2415,11 +2724,11 @@ collection. The default implementation is just to pass it through.</p>
         </li>
         
         
-        <li id="section-123">
+        <li id="section-140">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-123">&#182;</a>
+                <a class="pilcrow" href="#section-140">&#182;</a>
               </div>
               <p>Private method to reset all internal state. Called when the collection
 is first initialized or reset.</p>
@@ -2435,11 +2744,11 @@ is first initialized or reset.</p>
         </li>
         
         
-        <li id="section-124">
+        <li id="section-141">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-124">&#182;</a>
+                <a class="pilcrow" href="#section-141">&#182;</a>
               </div>
               <p>Prepare a hash of attributes (or other model) to be added to this
 collection.</p>
@@ -2462,11 +2771,11 @@ collection.</p>
         </li>
         
         
-        <li id="section-125">
+        <li id="section-142">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-125">&#182;</a>
+                <a class="pilcrow" href="#section-142">&#182;</a>
               </div>
               <p>Method for checking whether an object should be considered a model for
 the purposes of adding to the collection.</p>
@@ -2480,11 +2789,11 @@ the purposes of adding to the collection.</p>
         </li>
         
         
-        <li id="section-126">
+        <li id="section-143">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-126">&#182;</a>
+                <a class="pilcrow" href="#section-143">&#182;</a>
               </div>
               <p>Internal method to create a model’s ties to a collection.</p>
 
@@ -2500,11 +2809,11 @@ the purposes of adding to the collection.</p>
         </li>
         
         
-        <li id="section-127">
+        <li id="section-144">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-127">&#182;</a>
+                <a class="pilcrow" href="#section-144">&#182;</a>
               </div>
               <p>Internal method to sever a model’s ties to a collection.</p>
 
@@ -2518,11 +2827,11 @@ the purposes of adding to the collection.</p>
         </li>
         
         
-        <li id="section-128">
+        <li id="section-145">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-128">&#182;</a>
+                <a class="pilcrow" href="#section-145">&#182;</a>
               </div>
               <p>Internal method called every time a model in the set fires an event.
 Sets need to update their indexes when models change ids. All other
@@ -2550,11 +2859,11 @@ in other collections are ignored.</p>
         </li>
         
         
-        <li id="section-129">
+        <li id="section-146">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-129">&#182;</a>
+                <a class="pilcrow" href="#section-146">&#182;</a>
               </div>
               <p>Underscore methods that we want to implement on the Collection.
 90% of the core usefulness of Backbone Collections is actually implemented
@@ -2562,43 +2871,37 @@ right here:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> methods = [<span class="hljs-string">'forEach'</span>, <span class="hljs-string">'each'</span>, <span class="hljs-string">'map'</span>, <span class="hljs-string">'collect'</span>, <span class="hljs-string">'reduce'</span>, <span class="hljs-string">'foldl'</span>,
-    <span class="hljs-string">'inject'</span>, <span class="hljs-string">'reduceRight'</span>, <span class="hljs-string">'foldr'</span>, <span class="hljs-string">'find'</span>, <span class="hljs-string">'detect'</span>, <span class="hljs-string">'filter'</span>, <span class="hljs-string">'select'</span>,
-    <span class="hljs-string">'reject'</span>, <span class="hljs-string">'every'</span>, <span class="hljs-string">'all'</span>, <span class="hljs-string">'some'</span>, <span class="hljs-string">'any'</span>, <span class="hljs-string">'include'</span>, <span class="hljs-string">'contains'</span>, <span class="hljs-string">'invoke'</span>,
-    <span class="hljs-string">'max'</span>, <span class="hljs-string">'min'</span>, <span class="hljs-string">'toArray'</span>, <span class="hljs-string">'size'</span>, <span class="hljs-string">'first'</span>, <span class="hljs-string">'head'</span>, <span class="hljs-string">'take'</span>, <span class="hljs-string">'initial'</span>, <span class="hljs-string">'rest'</span>,
-    <span class="hljs-string">'tail'</span>, <span class="hljs-string">'drop'</span>, <span class="hljs-string">'last'</span>, <span class="hljs-string">'without'</span>, <span class="hljs-string">'difference'</span>, <span class="hljs-string">'indexOf'</span>, <span class="hljs-string">'shuffle'</span>,
-    <span class="hljs-string">'lastIndexOf'</span>, <span class="hljs-string">'isEmpty'</span>, <span class="hljs-string">'chain'</span>, <span class="hljs-string">'sample'</span>, <span class="hljs-string">'partition'</span>];</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> collectionMethods = { forEach: <span class="hljs-number">3</span>, each: <span class="hljs-number">3</span>, map: <span class="hljs-number">3</span>, collect: <span class="hljs-number">3</span>, reduce: <span class="hljs-number">4</span>,
+      foldl: <span class="hljs-number">4</span>, inject: <span class="hljs-number">4</span>, reduceRight: <span class="hljs-number">4</span>, foldr: <span class="hljs-number">4</span>, find: <span class="hljs-number">3</span>, detect: <span class="hljs-number">3</span>, filter: <span class="hljs-number">3</span>,
+      select: <span class="hljs-number">3</span>, reject: <span class="hljs-number">3</span>, every: <span class="hljs-number">3</span>, all: <span class="hljs-number">3</span>, some: <span class="hljs-number">3</span>, any: <span class="hljs-number">3</span>, include: <span class="hljs-number">2</span>,
+      contains: <span class="hljs-number">2</span>, invoke: <span class="hljs-number">2</span>, max: <span class="hljs-number">3</span>, min: <span class="hljs-number">3</span>, toArray: <span class="hljs-number">1</span>, size: <span class="hljs-number">1</span>, first: <span class="hljs-number">3</span>,
+      head: <span class="hljs-number">3</span>, take: <span class="hljs-number">3</span>, initial: <span class="hljs-number">3</span>, rest: <span class="hljs-number">3</span>, tail: <span class="hljs-number">3</span>, drop: <span class="hljs-number">3</span>, last: <span class="hljs-number">3</span>,
+      without: <span class="hljs-number">0</span>, difference: <span class="hljs-number">0</span>, indexOf: <span class="hljs-number">3</span>, shuffle: <span class="hljs-number">1</span>, lastIndexOf: <span class="hljs-number">3</span>,
+      isEmpty: <span class="hljs-number">1</span>, chain: <span class="hljs-number">1</span>, sample: <span class="hljs-number">3</span>, partition: <span class="hljs-number">3</span> };</pre></div></div>
             
         </li>
         
         
-        <li id="section-130">
+        <li id="section-147">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-130">&#182;</a>
+                <a class="pilcrow" href="#section-147">&#182;</a>
               </div>
               <p>Mix in each Underscore method as a proxy to <code>Collection#models</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _.each(methods, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method)</span> </span>{
-    <span class="hljs-keyword">if</span> (!_[method]) <span class="hljs-keyword">return</span>;
-    Collection.prototype[method] = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-keyword">var</span> args = slice.call(<span class="hljs-built_in">arguments</span>);
-      args.unshift(<span class="hljs-keyword">this</span>.models);
-      <span class="hljs-keyword">return</span> _[method].apply(_, args);
-    };
-  });</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  addUnderscoreMethods(Collection, collectionMethods, <span class="hljs-string">'models'</span>);</pre></div></div>
             
         </li>
         
         
-        <li id="section-131">
+        <li id="section-148">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-131">&#182;</a>
+                <a class="pilcrow" href="#section-148">&#182;</a>
               </div>
               <p>Underscore methods that take a property name as an argument.</p>
 
@@ -2609,11 +2912,11 @@ right here:</p>
         </li>
         
         
-        <li id="section-132">
+        <li id="section-149">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-132">&#182;</a>
+                <a class="pilcrow" href="#section-149">&#182;</a>
               </div>
               <p>Use attributes instead of properties.</p>
 
@@ -2632,11 +2935,11 @@ right here:</p>
         </li>
         
         
-        <li id="section-133">
+        <li id="section-150">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-133">&#182;</a>
+                <a class="pilcrow" href="#section-150">&#182;</a>
               </div>
               <h2 id="backbone-view">Backbone.View</h2>
 
@@ -2645,11 +2948,11 @@ right here:</p>
         </li>
         
         
-        <li id="section-134">
+        <li id="section-151">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-134">&#182;</a>
+                <a class="pilcrow" href="#section-151">&#182;</a>
               </div>
               
             </div>
@@ -2657,11 +2960,11 @@ right here:</p>
         </li>
         
         
-        <li id="section-135">
+        <li id="section-152">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-135">&#182;</a>
+                <a class="pilcrow" href="#section-152">&#182;</a>
               </div>
               <p>Backbone Views are almost more convention than they are actual code. A View
 is simply a JavaScript object that represents a logical chunk of UI in the
@@ -2676,11 +2979,11 @@ react to specific changes in the state of your models.</p>
         </li>
         
         
-        <li id="section-136">
+        <li id="section-153">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-136">&#182;</a>
+                <a class="pilcrow" href="#section-153">&#182;</a>
               </div>
               <p>Creating a Backbone.View creates its initial element outside of the DOM,
 if an existing element is not provided…</p>
@@ -2698,11 +3001,11 @@ if an existing element is not provided…</p>
         </li>
         
         
-        <li id="section-137">
+        <li id="section-154">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-137">&#182;</a>
+                <a class="pilcrow" href="#section-154">&#182;</a>
               </div>
               <p>Cached regex to split keys for <code>delegate</code>.</p>
 
@@ -2713,11 +3016,11 @@ if an existing element is not provided…</p>
         </li>
         
         
-        <li id="section-138">
+        <li id="section-155">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-138">&#182;</a>
+                <a class="pilcrow" href="#section-155">&#182;</a>
               </div>
               <p>List of view options to be merged as properties.</p>
 
@@ -2728,11 +3031,11 @@ if an existing element is not provided…</p>
         </li>
         
         
-        <li id="section-139">
+        <li id="section-156">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-139">&#182;</a>
+                <a class="pilcrow" href="#section-156">&#182;</a>
               </div>
               <p>Set up all inheritable <strong>Backbone.View</strong> properties and methods.</p>
 
@@ -2743,11 +3046,11 @@ if an existing element is not provided…</p>
         </li>
         
         
-        <li id="section-140">
+        <li id="section-157">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-140">&#182;</a>
+                <a class="pilcrow" href="#section-157">&#182;</a>
               </div>
               <p>The default <code>tagName</code> of a View’s element is <code>&quot;div&quot;</code>.</p>
 
@@ -2758,11 +3061,11 @@ if an existing element is not provided…</p>
         </li>
         
         
-        <li id="section-141">
+        <li id="section-158">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-141">&#182;</a>
+                <a class="pilcrow" href="#section-158">&#182;</a>
               </div>
               <p>jQuery delegate for element lookup, scoped to DOM elements within the
 current view. This should be preferred to global lookups where possible.</p>
@@ -2776,11 +3079,11 @@ current view. This should be preferred to global lookups where possible.</p>
         </li>
         
         
-        <li id="section-142">
+        <li id="section-159">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-142">&#182;</a>
+                <a class="pilcrow" href="#section-159">&#182;</a>
               </div>
               <p>Initialize is an empty function by default. Override it with your own
 initialization logic.</p>
@@ -2792,11 +3095,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-143">
+        <li id="section-160">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-143">&#182;</a>
+                <a class="pilcrow" href="#section-160">&#182;</a>
               </div>
               <p><strong>render</strong> is the core function that your view should override, in order
 to populate its element (<code>this.el</code>), with the appropriate HTML. The
@@ -2811,11 +3114,11 @@ convention is for <strong>render</strong> to always return <code>this</code>.</p
         </li>
         
         
-        <li id="section-144">
+        <li id="section-161">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-144">&#182;</a>
+                <a class="pilcrow" href="#section-161">&#182;</a>
               </div>
               <p>Remove this view by taking the element out of the DOM, and removing any
 applicable Backbone.Events listeners.</p>
@@ -2831,11 +3134,11 @@ applicable Backbone.Events listeners.</p>
         </li>
         
         
-        <li id="section-145">
+        <li id="section-162">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-145">&#182;</a>
+                <a class="pilcrow" href="#section-162">&#182;</a>
               </div>
               <p>Remove this view’s element from the document and all event listeners
 attached to it. Exposed for subclasses using an alternative DOM
@@ -2850,11 +3153,11 @@ manipulation API.</p>
         </li>
         
         
-        <li id="section-146">
+        <li id="section-163">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-146">&#182;</a>
+                <a class="pilcrow" href="#section-163">&#182;</a>
               </div>
               <p>Change the view’s element (<code>this.el</code> property) and re-delegate the
 view’s events on the new element.</p>
@@ -2871,11 +3174,11 @@ view’s events on the new element.</p>
         </li>
         
         
-        <li id="section-147">
+        <li id="section-164">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-147">&#182;</a>
+                <a class="pilcrow" href="#section-164">&#182;</a>
               </div>
               <p>Creates the <code>this.el</code> and <code>this.$el</code> references for this view using the
 given <code>el</code>. <code>el</code> can be a CSS selector or an HTML string, a jQuery
@@ -2893,11 +3196,11 @@ alternative DOM manipulation API and are only required to set the
         </li>
         
         
-        <li id="section-148">
+        <li id="section-165">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-148">&#182;</a>
+                <a class="pilcrow" href="#section-165">&#182;</a>
               </div>
               <p>Set callbacks, where <code>this.events</code> is a hash of</p>
 <p><em>{“event selector”: “callback”}</em></p>
@@ -2928,11 +3231,11 @@ Omitting the selector binds the event to <code>this.el</code>.</p>
         </li>
         
         
-        <li id="section-149">
+        <li id="section-166">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-149">&#182;</a>
+                <a class="pilcrow" href="#section-166">&#182;</a>
               </div>
               <p>Add a single event listener to the view’s element (or a child element
 using <code>selector</code>). This only works for delegate-able events: not <code>focus</code>,
@@ -2947,11 +3250,11 @@ using <code>selector</code>). This only works for delegate-able events: not <cod
         </li>
         
         
-        <li id="section-150">
+        <li id="section-167">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-150">&#182;</a>
+                <a class="pilcrow" href="#section-167">&#182;</a>
               </div>
               <p>Clears all callbacks previously bound to the view by <code>delegateEvents</code>.
 You usually don’t need to use this, but may wish to if you have multiple
@@ -2967,11 +3270,11 @@ Backbone views attached to the same DOM element.</p>
         </li>
         
         
-        <li id="section-151">
+        <li id="section-168">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-151">&#182;</a>
+                <a class="pilcrow" href="#section-168">&#182;</a>
               </div>
               <p>A finer-grained <code>undelegateEvents</code> for removing a single delegated event.
 <code>selector</code> and <code>listener</code> are both optional.</p>
@@ -2985,11 +3288,11 @@ Backbone views attached to the same DOM element.</p>
         </li>
         
         
-        <li id="section-152">
+        <li id="section-169">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-152">&#182;</a>
+                <a class="pilcrow" href="#section-169">&#182;</a>
               </div>
               <p>Produces a DOM element to be assigned to your view. Exposed for
 subclasses using an alternative DOM manipulation API.</p>
@@ -3003,11 +3306,11 @@ subclasses using an alternative DOM manipulation API.</p>
         </li>
         
         
-        <li id="section-153">
+        <li id="section-170">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-153">&#182;</a>
+                <a class="pilcrow" href="#section-170">&#182;</a>
               </div>
               <p>Ensure that the View has a DOM element to render into.
 If <code>this.el</code> is a string, pass it through <code>$()</code>, take the first
@@ -3031,11 +3334,11 @@ an element from the <code>id</code>, <code>className</code> and <code>tagName</c
         </li>
         
         
-        <li id="section-154">
+        <li id="section-171">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-154">&#182;</a>
+                <a class="pilcrow" href="#section-171">&#182;</a>
               </div>
               <p>Set attributes from a hash on this view’s element.  Exposed for
 subclasses using an alternative DOM manipulation API.</p>
@@ -3051,11 +3354,11 @@ subclasses using an alternative DOM manipulation API.</p>
         </li>
         
         
-        <li id="section-155">
+        <li id="section-172">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-155">&#182;</a>
+                <a class="pilcrow" href="#section-172">&#182;</a>
               </div>
               <h2 id="backbone-sync">Backbone.sync</h2>
 
@@ -3064,11 +3367,11 @@ subclasses using an alternative DOM manipulation API.</p>
         </li>
         
         
-        <li id="section-156">
+        <li id="section-173">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-156">&#182;</a>
+                <a class="pilcrow" href="#section-173">&#182;</a>
               </div>
               
             </div>
@@ -3076,11 +3379,11 @@ subclasses using an alternative DOM manipulation API.</p>
         </li>
         
         
-        <li id="section-157">
+        <li id="section-174">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-157">&#182;</a>
+                <a class="pilcrow" href="#section-174">&#182;</a>
               </div>
               <p>Override this function to change the manner in which Backbone persists
 models to the server. You will be passed the type of request, and the
@@ -3106,11 +3409,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-158">
+        <li id="section-175">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-158">&#182;</a>
+                <a class="pilcrow" href="#section-175">&#182;</a>
               </div>
               <p>Default options, unless specified.</p>
 
@@ -3124,11 +3427,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-159">
+        <li id="section-176">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-159">&#182;</a>
+                <a class="pilcrow" href="#section-176">&#182;</a>
               </div>
               <p>Default JSON-request options.</p>
 
@@ -3139,11 +3442,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-160">
+        <li id="section-177">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-160">&#182;</a>
+                <a class="pilcrow" href="#section-177">&#182;</a>
               </div>
               <p>Ensure that we have a URL.</p>
 
@@ -3156,11 +3459,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-161">
+        <li id="section-178">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-161">&#182;</a>
+                <a class="pilcrow" href="#section-178">&#182;</a>
               </div>
               <p>Ensure that we have the appropriate request data.</p>
 
@@ -3174,11 +3477,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-162">
+        <li id="section-179">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-162">&#182;</a>
+                <a class="pilcrow" href="#section-179">&#182;</a>
               </div>
               <p>For older servers, emulate JSON by encoding the request into an HTML-form.</p>
 
@@ -3192,11 +3495,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-163">
+        <li id="section-180">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-163">&#182;</a>
+                <a class="pilcrow" href="#section-180">&#182;</a>
               </div>
               <p>For older servers, emulate HTTP by mimicking the HTTP method with <code>_method</code>
 And an <code>X-HTTP-Method-Override</code> header.</p>
@@ -3216,11 +3519,11 @@ And an <code>X-HTTP-Method-Override</code> header.</p>
         </li>
         
         
-        <li id="section-164">
+        <li id="section-181">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-164">&#182;</a>
+                <a class="pilcrow" href="#section-181">&#182;</a>
               </div>
               <p>Don’t process data on a non-GET request.</p>
 
@@ -3233,11 +3536,11 @@ And an <code>X-HTTP-Method-Override</code> header.</p>
         </li>
         
         
-        <li id="section-165">
+        <li id="section-182">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-165">&#182;</a>
+                <a class="pilcrow" href="#section-182">&#182;</a>
               </div>
               <p>Pass along <code>textStatus</code> and <code>errorThrown</code> from jQuery.</p>
 
@@ -3247,17 +3550,17 @@ And an <code>X-HTTP-Method-Override</code> header.</p>
     options.error = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(xhr, textStatus, errorThrown)</span> </span>{
       options.textStatus = textStatus;
       options.errorThrown = errorThrown;
-      <span class="hljs-keyword">if</span> (error) error.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+      <span class="hljs-keyword">if</span> (error) error.call(options.context, xhr, textStatus, errorThrown);
     };</pre></div></div>
             
         </li>
         
         
-        <li id="section-166">
+        <li id="section-183">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-166">&#182;</a>
+                <a class="pilcrow" href="#section-183">&#182;</a>
               </div>
               <p>Make the request, allowing the user to override any Ajax options.</p>
 
@@ -3271,11 +3574,11 @@ And an <code>X-HTTP-Method-Override</code> header.</p>
         </li>
         
         
-        <li id="section-167">
+        <li id="section-184">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-167">&#182;</a>
+                <a class="pilcrow" href="#section-184">&#182;</a>
               </div>
               <p>Map from CRUD to HTTP for our default <code>Backbone.sync</code> implementation.</p>
 
@@ -3292,11 +3595,11 @@ And an <code>X-HTTP-Method-Override</code> header.</p>
         </li>
         
         
-        <li id="section-168">
+        <li id="section-185">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-168">&#182;</a>
+                <a class="pilcrow" href="#section-185">&#182;</a>
               </div>
               <p>Set the default implementation of <code>Backbone.ajax</code> to proxy through to <code>$</code>.
 Override this if you’d like to use a different library.</p>
@@ -3310,11 +3613,11 @@ Override this if you’d like to use a different library.</p>
         </li>
         
         
-        <li id="section-169">
+        <li id="section-186">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-169">&#182;</a>
+                <a class="pilcrow" href="#section-186">&#182;</a>
               </div>
               <h2 id="backbone-router">Backbone.Router</h2>
 
@@ -3323,11 +3626,11 @@ Override this if you’d like to use a different library.</p>
         </li>
         
         
-        <li id="section-170">
+        <li id="section-187">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-170">&#182;</a>
+                <a class="pilcrow" href="#section-187">&#182;</a>
               </div>
               
             </div>
@@ -3335,11 +3638,11 @@ Override this if you’d like to use a different library.</p>
         </li>
         
         
-        <li id="section-171">
+        <li id="section-188">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-171">&#182;</a>
+                <a class="pilcrow" href="#section-188">&#182;</a>
               </div>
               <p>Routers map faux-URLs to actions, and fire events when routes are
 matched. Creating a new one sets its <code>routes</code> hash, if not set statically.</p>
@@ -3356,11 +3659,11 @@ matched. Creating a new one sets its <code>routes</code> hash, if not set static
         </li>
         
         
-        <li id="section-172">
+        <li id="section-189">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-172">&#182;</a>
+                <a class="pilcrow" href="#section-189">&#182;</a>
               </div>
               <p>Cached regular expressions for matching named param parts and splatted
 parts of route strings.</p>
@@ -3375,11 +3678,11 @@ parts of route strings.</p>
         </li>
         
         
-        <li id="section-173">
+        <li id="section-190">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-173">&#182;</a>
+                <a class="pilcrow" href="#section-190">&#182;</a>
               </div>
               <p>Set up all inheritable <strong>Backbone.Router</strong> properties and methods.</p>
 
@@ -3390,11 +3693,11 @@ parts of route strings.</p>
         </li>
         
         
-        <li id="section-174">
+        <li id="section-191">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-174">&#182;</a>
+                <a class="pilcrow" href="#section-191">&#182;</a>
               </div>
               <p>Initialize is an empty function by default. Override it with your own
 initialization logic.</p>
@@ -3406,11 +3709,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-175">
+        <li id="section-192">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-175">&#182;</a>
+                <a class="pilcrow" href="#section-192">&#182;</a>
               </div>
               <p>Manually bind a single named route to a callback. For example:</p>
 <pre><code><span class="hljs-keyword">this</span>.route(<span class="hljs-string">'search/:query/p:num'</span>, <span class="hljs-string">'search'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(query, num)</span> </span>{
@@ -3441,11 +3744,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-176">
+        <li id="section-193">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-176">&#182;</a>
+                <a class="pilcrow" href="#section-193">&#182;</a>
               </div>
               <p>Execute a route handler with the provided parameters.  This is an
 excellent place to do pre-route setup or post-route cleanup.</p>
@@ -3459,11 +3762,11 @@ excellent place to do pre-route setup or post-route cleanup.</p>
         </li>
         
         
-        <li id="section-177">
+        <li id="section-194">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-177">&#182;</a>
+                <a class="pilcrow" href="#section-194">&#182;</a>
               </div>
               <p>Simple proxy to <code>Backbone.history</code> to save a fragment into the history.</p>
 
@@ -3477,11 +3780,11 @@ excellent place to do pre-route setup or post-route cleanup.</p>
         </li>
         
         
-        <li id="section-178">
+        <li id="section-195">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-178">&#182;</a>
+                <a class="pilcrow" href="#section-195">&#182;</a>
               </div>
               <p>Bind all defined routes to <code>Backbone.history</code>. We have to reverse the
 order of the routes here to support behavior where the most general
@@ -3501,11 +3804,11 @@ routes can be defined at the bottom of the route map.</p>
         </li>
         
         
-        <li id="section-179">
+        <li id="section-196">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-179">&#182;</a>
+                <a class="pilcrow" href="#section-196">&#182;</a>
               </div>
               <p>Convert a route string into a regular expression, suitable for matching
 against the current location hash.</p>
@@ -3525,11 +3828,11 @@ against the current location hash.</p>
         </li>
         
         
-        <li id="section-180">
+        <li id="section-197">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-180">&#182;</a>
+                <a class="pilcrow" href="#section-197">&#182;</a>
               </div>
               <p>Given a route, and a URL fragment that it matches, return the array of
 extracted decoded parameters. Empty or unmatched parameters will be
@@ -3544,11 +3847,11 @@ treated as <code>null</code> to normalize cross-browser behavior.</p>
         </li>
         
         
-        <li id="section-181">
+        <li id="section-198">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-181">&#182;</a>
+                <a class="pilcrow" href="#section-198">&#182;</a>
               </div>
               <p>Don’t decode the search params.</p>
 
@@ -3564,11 +3867,11 @@ treated as <code>null</code> to normalize cross-browser behavior.</p>
         </li>
         
         
-        <li id="section-182">
+        <li id="section-199">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-182">&#182;</a>
+                <a class="pilcrow" href="#section-199">&#182;</a>
               </div>
               <h2 id="backbone-history">Backbone.History</h2>
 
@@ -3577,11 +3880,11 @@ treated as <code>null</code> to normalize cross-browser behavior.</p>
         </li>
         
         
-        <li id="section-183">
+        <li id="section-200">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-183">&#182;</a>
+                <a class="pilcrow" href="#section-200">&#182;</a>
               </div>
               
             </div>
@@ -3589,11 +3892,11 @@ treated as <code>null</code> to normalize cross-browser behavior.</p>
         </li>
         
         
-        <li id="section-184">
+        <li id="section-201">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-184">&#182;</a>
+                <a class="pilcrow" href="#section-201">&#182;</a>
               </div>
               <p>Handles cross-browser history management, based on either
 <a href="http://diveintohtml5.info/history.html">pushState</a> and real URLs, or
@@ -3610,11 +3913,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-185">
+        <li id="section-202">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-185">&#182;</a>
+                <a class="pilcrow" href="#section-202">&#182;</a>
               </div>
               <p>Ensure that <code>History</code> can be used outside of the browser.</p>
 
@@ -3629,11 +3932,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-186">
+        <li id="section-203">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-186">&#182;</a>
+                <a class="pilcrow" href="#section-203">&#182;</a>
               </div>
               <p>Cached regex for stripping a leading hash/slash and trailing space.</p>
 
@@ -3644,11 +3947,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-187">
+        <li id="section-204">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-187">&#182;</a>
+                <a class="pilcrow" href="#section-204">&#182;</a>
               </div>
               <p>Cached regex for stripping leading and trailing slashes.</p>
 
@@ -3659,11 +3962,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-188">
+        <li id="section-205">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-188">&#182;</a>
+                <a class="pilcrow" href="#section-205">&#182;</a>
               </div>
               <p>Cached regex for stripping urls of hash.</p>
 
@@ -3674,11 +3977,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-189">
+        <li id="section-206">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-189">&#182;</a>
+                <a class="pilcrow" href="#section-206">&#182;</a>
               </div>
               <p>Has the history handling already been started?</p>
 
@@ -3689,11 +3992,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-190">
+        <li id="section-207">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-190">&#182;</a>
+                <a class="pilcrow" href="#section-207">&#182;</a>
               </div>
               <p>Set up all inheritable <strong>Backbone.History</strong> properties and methods.</p>
 
@@ -3704,11 +4007,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-191">
+        <li id="section-208">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-191">&#182;</a>
+                <a class="pilcrow" href="#section-208">&#182;</a>
               </div>
               <p>The default interval to poll for hash changes, if necessary, is
 twenty times a second.</p>
@@ -3720,11 +4023,11 @@ twenty times a second.</p>
         </li>
         
         
-        <li id="section-192">
+        <li id="section-209">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-192">&#182;</a>
+                <a class="pilcrow" href="#section-209">&#182;</a>
               </div>
               <p>Are we at the app root?</p>
 
@@ -3738,11 +4041,49 @@ twenty times a second.</p>
         </li>
         
         
-        <li id="section-193">
+        <li id="section-210">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-193">&#182;</a>
+                <a class="pilcrow" href="#section-210">&#182;</a>
+              </div>
+              <p>Does the pathname match the root?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    matchRoot: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">var</span> path = <span class="hljs-keyword">this</span>.decodeFragment(<span class="hljs-keyword">this</span>.location.pathname);
+      <span class="hljs-keyword">var</span> root = path.slice(<span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.root.length - <span class="hljs-number">1</span>) + <span class="hljs-string">'/'</span>;
+      <span class="hljs-keyword">return</span> root === <span class="hljs-keyword">this</span>.root;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-211">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-211">&#182;</a>
+              </div>
+              <p>Unicode characters in <code>location.pathname</code> are percent encoded so they’re
+decoded for comparison. <code>%25</code> should not be decoded since it may be part
+of an encoded parameter.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    decodeFragment: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(fragment)</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">decodeURI</span>(fragment.replace(<span class="hljs-regexp">/%25/g</span>, <span class="hljs-string">'%2525'</span>));
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-212">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-212">&#182;</a>
               </div>
               <p>In IE6, the hash fragment and search params are incorrect if the
 fragment contains <code>?</code>.</p>
@@ -3757,11 +4098,11 @@ fragment contains <code>?</code>.</p>
         </li>
         
         
-        <li id="section-194">
+        <li id="section-213">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-194">&#182;</a>
+                <a class="pilcrow" href="#section-213">&#182;</a>
               </div>
               <p>Gets the true hash value. Cannot use location.hash directly due to bug
 in Firefox where location.hash will always be decoded.</p>
@@ -3776,31 +4117,31 @@ in Firefox where location.hash will always be decoded.</p>
         </li>
         
         
-        <li id="section-195">
+        <li id="section-214">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-195">&#182;</a>
+                <a class="pilcrow" href="#section-214">&#182;</a>
               </div>
               <p>Get the pathname and search params, without the root.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    getPath: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-      <span class="hljs-keyword">var</span> path = <span class="hljs-built_in">decodeURI</span>(<span class="hljs-keyword">this</span>.location.pathname + <span class="hljs-keyword">this</span>.getSearch());
-      <span class="hljs-keyword">var</span> root = <span class="hljs-keyword">this</span>.root.slice(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>);
-      <span class="hljs-keyword">if</span> (!path.indexOf(root)) path = path.slice(root.length);
+      <span class="hljs-keyword">var</span> path = <span class="hljs-keyword">this</span>.decodeFragment(
+        <span class="hljs-keyword">this</span>.location.pathname + <span class="hljs-keyword">this</span>.getSearch()
+      ).slice(<span class="hljs-keyword">this</span>.root.length - <span class="hljs-number">1</span>);
       <span class="hljs-keyword">return</span> path.charAt(<span class="hljs-number">0</span>) === <span class="hljs-string">'/'</span> ? path.slice(<span class="hljs-number">1</span>) : path;
     },</pre></div></div>
             
         </li>
         
         
-        <li id="section-196">
+        <li id="section-215">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-196">&#182;</a>
+                <a class="pilcrow" href="#section-215">&#182;</a>
               </div>
               <p>Get the cross-browser normalized URL fragment from the path or hash.</p>
 
@@ -3808,7 +4149,7 @@ in Firefox where location.hash will always be decoded.</p>
             
             <div class="content"><div class='highlight'><pre>    getFragment: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(fragment)</span> </span>{
       <span class="hljs-keyword">if</span> (fragment == <span class="hljs-literal">null</span>) {
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._hasPushState || !<span class="hljs-keyword">this</span>._wantsHashChange) {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._usePushState || !<span class="hljs-keyword">this</span>._wantsHashChange) {
           fragment = <span class="hljs-keyword">this</span>.getPath();
         } <span class="hljs-keyword">else</span> {
           fragment = <span class="hljs-keyword">this</span>.getHash();
@@ -3820,11 +4161,11 @@ in Firefox where location.hash will always be decoded.</p>
         </li>
         
         
-        <li id="section-197">
+        <li id="section-216">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-197">&#182;</a>
+                <a class="pilcrow" href="#section-216">&#182;</a>
               </div>
               <p>Start the hash change handling, returning <code>true</code> if the current URL matches
 an existing route, and <code>false</code> otherwise.</p>
@@ -3838,11 +4179,11 @@ an existing route, and <code>false</code> otherwise.</p>
         </li>
         
         
-        <li id="section-198">
+        <li id="section-217">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-198">&#182;</a>
+                <a class="pilcrow" href="#section-217">&#182;</a>
               </div>
               <p>Figure out the initial configuration. Do we need an iframe?
 Is pushState desired … is it available?</p>
@@ -3853,18 +4194,20 @@ Is pushState desired … is it available?</p>
       <span class="hljs-keyword">this</span>.root             = <span class="hljs-keyword">this</span>.options.root;
       <span class="hljs-keyword">this</span>._wantsHashChange = <span class="hljs-keyword">this</span>.options.hashChange !== <span class="hljs-literal">false</span>;
       <span class="hljs-keyword">this</span>._hasHashChange   = <span class="hljs-string">'onhashchange'</span> <span class="hljs-keyword">in</span> <span class="hljs-built_in">window</span>;
+      <span class="hljs-keyword">this</span>._useHashChange   = <span class="hljs-keyword">this</span>._wantsHashChange &amp;&amp; <span class="hljs-keyword">this</span>._hasHashChange;
       <span class="hljs-keyword">this</span>._wantsPushState  = !!<span class="hljs-keyword">this</span>.options.pushState;
-      <span class="hljs-keyword">this</span>._hasPushState    = !!(<span class="hljs-keyword">this</span>.options.pushState &amp;&amp; <span class="hljs-keyword">this</span>.history &amp;&amp; <span class="hljs-keyword">this</span>.history.pushState);
+      <span class="hljs-keyword">this</span>._hasPushState    = !!(<span class="hljs-keyword">this</span>.history &amp;&amp; <span class="hljs-keyword">this</span>.history.pushState);
+      <span class="hljs-keyword">this</span>._usePushState    = <span class="hljs-keyword">this</span>._wantsPushState &amp;&amp; <span class="hljs-keyword">this</span>._hasPushState;
       <span class="hljs-keyword">this</span>.fragment         = <span class="hljs-keyword">this</span>.getFragment();</pre></div></div>
             
         </li>
         
         
-        <li id="section-199">
+        <li id="section-218">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-199">&#182;</a>
+                <a class="pilcrow" href="#section-218">&#182;</a>
               </div>
               <p>Normalize root to always include a leading and trailing slash.</p>
 
@@ -3875,11 +4218,11 @@ Is pushState desired … is it available?</p>
         </li>
         
         
-        <li id="section-200">
+        <li id="section-219">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-200">&#182;</a>
+                <a class="pilcrow" href="#section-219">&#182;</a>
               </div>
               <p>Transition from hashChange to pushState or vice versa if both are
 requested.</p>
@@ -3891,11 +4234,11 @@ requested.</p>
         </li>
         
         
-        <li id="section-201">
+        <li id="section-220">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-201">&#182;</a>
+                <a class="pilcrow" href="#section-220">&#182;</a>
               </div>
               <p>If we’ve started off with a route from a <code>pushState</code>-enabled
 browser, but we’re currently in a browser that doesn’t support it…</p>
@@ -3909,11 +4252,11 @@ browser, but we’re currently in a browser that doesn’t support it…</p>
         </li>
         
         
-        <li id="section-202">
+        <li id="section-221">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-202">&#182;</a>
+                <a class="pilcrow" href="#section-221">&#182;</a>
               </div>
               <p>Return immediately as browser will do redirect to new url</p>
 
@@ -3924,11 +4267,11 @@ browser, but we’re currently in a browser that doesn’t support it…</p>
         </li>
         
         
-        <li id="section-203">
+        <li id="section-222">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-203">&#182;</a>
+                <a class="pilcrow" href="#section-222">&#182;</a>
               </div>
               <p>Or if we’ve started out with a hash-based route, but we’re currently
 in a browser where it could be <code>pushState</code>-based instead…</p>
@@ -3944,11 +4287,11 @@ in a browser where it could be <code>pushState</code>-based instead…</p>
         </li>
         
         
-        <li id="section-204">
+        <li id="section-223">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-204">&#182;</a>
+                <a class="pilcrow" href="#section-223">&#182;</a>
               </div>
               <p>Proxy an iframe to handle location events if the browser doesn’t
 support the <code>hashchange</code> event, HTML5 history, or the user wants
@@ -3956,7 +4299,7 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._hasHashChange &amp;&amp; <span class="hljs-keyword">this</span>._wantsHashChange &amp;&amp; (!<span class="hljs-keyword">this</span>._wantsPushState || !<span class="hljs-keyword">this</span>._hasPushState)) {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._hasHashChange &amp;&amp; <span class="hljs-keyword">this</span>._wantsHashChange &amp;&amp; !<span class="hljs-keyword">this</span>._usePushState) {
         <span class="hljs-keyword">var</span> iframe = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'iframe'</span>);
         iframe.src = <span class="hljs-string">'javascript:0'</span>;
         iframe.style.display = <span class="hljs-string">'none'</span>;
@@ -3966,11 +4309,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-205">
+        <li id="section-224">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-205">&#182;</a>
+                <a class="pilcrow" href="#section-224">&#182;</a>
               </div>
               <p>Using <code>appendChild</code> will throw on IE &lt; 9 if the document is not ready.</p>
 
@@ -3984,11 +4327,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-206">
+        <li id="section-225">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-206">&#182;</a>
+                <a class="pilcrow" href="#section-225">&#182;</a>
               </div>
               <p>Add a cross-platform <code>addEventListener</code> shim for older browsers.</p>
 
@@ -4001,20 +4344,20 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-207">
+        <li id="section-226">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-207">&#182;</a>
+                <a class="pilcrow" href="#section-226">&#182;</a>
               </div>
               <p>Depending on whether we’re using pushState or hashes, and whether
 ‘onhashchange’ is supported, determine how we check the URL state.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._hasPushState) {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._usePushState) {
         addEventListener(<span class="hljs-string">'popstate'</span>, <span class="hljs-keyword">this</span>.checkUrl, <span class="hljs-literal">false</span>);
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._wantsHashChange &amp;&amp; <span class="hljs-keyword">this</span>._hasHashChange &amp;&amp; !<span class="hljs-keyword">this</span>.iframe) {
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._useHashChange &amp;&amp; !<span class="hljs-keyword">this</span>.iframe) {
         addEventListener(<span class="hljs-string">'hashchange'</span>, <span class="hljs-keyword">this</span>.checkUrl, <span class="hljs-literal">false</span>);
       } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._wantsHashChange) {
         <span class="hljs-keyword">this</span>._checkUrlInterval = setInterval(<span class="hljs-keyword">this</span>.checkUrl, <span class="hljs-keyword">this</span>.interval);
@@ -4026,11 +4369,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-208">
+        <li id="section-227">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-208">&#182;</a>
+                <a class="pilcrow" href="#section-227">&#182;</a>
               </div>
               <p>Disable Backbone.history, perhaps temporarily. Not useful in a real app,
 but possibly useful for unit testing Routers.</p>
@@ -4042,11 +4385,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-209">
+        <li id="section-228">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-209">&#182;</a>
+                <a class="pilcrow" href="#section-228">&#182;</a>
               </div>
               <p>Add a cross-platform <code>removeEventListener</code> shim for older browsers.</p>
 
@@ -4059,30 +4402,30 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-210">
+        <li id="section-229">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-210">&#182;</a>
+                <a class="pilcrow" href="#section-229">&#182;</a>
               </div>
               <p>Remove window listeners.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._hasPushState) {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._usePushState) {
         removeEventListener(<span class="hljs-string">'popstate'</span>, <span class="hljs-keyword">this</span>.checkUrl, <span class="hljs-literal">false</span>);
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._wantsHashChange &amp;&amp; <span class="hljs-keyword">this</span>._hasHashChange &amp;&amp; !<span class="hljs-keyword">this</span>.iframe) {
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._useHashChange &amp;&amp; !<span class="hljs-keyword">this</span>.iframe) {
         removeEventListener(<span class="hljs-string">'hashchange'</span>, <span class="hljs-keyword">this</span>.checkUrl, <span class="hljs-literal">false</span>);
       }</pre></div></div>
             
         </li>
         
         
-        <li id="section-211">
+        <li id="section-230">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-211">&#182;</a>
+                <a class="pilcrow" href="#section-230">&#182;</a>
               </div>
               <p>Clean up the iframe if necessary.</p>
 
@@ -4096,11 +4439,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-212">
+        <li id="section-231">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-212">&#182;</a>
+                <a class="pilcrow" href="#section-231">&#182;</a>
               </div>
               <p>Some environments will throw when clearing an undefined interval.</p>
 
@@ -4113,11 +4456,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-213">
+        <li id="section-232">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-213">&#182;</a>
+                <a class="pilcrow" href="#section-232">&#182;</a>
               </div>
               <p>Add a route to be tested when the fragment changes. Routes added later
 may override previous routes.</p>
@@ -4131,11 +4474,11 @@ may override previous routes.</p>
         </li>
         
         
-        <li id="section-214">
+        <li id="section-233">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-214">&#182;</a>
+                <a class="pilcrow" href="#section-233">&#182;</a>
               </div>
               <p>Checks the current URL to see if it has changed, and if it has,
 calls <code>loadUrl</code>, normalizing across the hidden iframe.</p>
@@ -4148,11 +4491,11 @@ calls <code>loadUrl</code>, normalizing across the hidden iframe.</p>
         </li>
         
         
-        <li id="section-215">
+        <li id="section-234">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-215">&#182;</a>
+                <a class="pilcrow" href="#section-234">&#182;</a>
               </div>
               <p>If the user pressed the back button, the iframe’s hash will have
 changed and we should use that for comparison.</p>
@@ -4171,11 +4514,11 @@ changed and we should use that for comparison.</p>
         </li>
         
         
-        <li id="section-216">
+        <li id="section-235">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-216">&#182;</a>
+                <a class="pilcrow" href="#section-235">&#182;</a>
               </div>
               <p>Attempt to load the current URL fragment. If a route succeeds with a
 match, returns <code>true</code>. If no defined routes matches the fragment,
@@ -4183,7 +4526,22 @@ returns <code>false</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    loadUrl: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(fragment)</span> </span>{
+            <div class="content"><div class='highlight'><pre>    loadUrl: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(fragment)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-236">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-236">&#182;</a>
+              </div>
+              <p>If the root doesn’t match, no routes can match either.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.matchRoot()) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
       fragment = <span class="hljs-keyword">this</span>.fragment = <span class="hljs-keyword">this</span>.getFragment(fragment);
       <span class="hljs-keyword">return</span> _.any(<span class="hljs-keyword">this</span>.handlers, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(handler)</span> </span>{
         <span class="hljs-keyword">if</span> (handler.route.test(fragment)) {
@@ -4196,11 +4554,11 @@ returns <code>false</code>.</p>
         </li>
         
         
-        <li id="section-217">
+        <li id="section-237">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-217">&#182;</a>
+                <a class="pilcrow" href="#section-237">&#182;</a>
               </div>
               <p>Save a fragment into the hash history, or replace the URL state if the
 ‘replace’ option is passed. You are responsible for properly URL-encoding
@@ -4218,11 +4576,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-218">
+        <li id="section-238">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-218">&#182;</a>
+                <a class="pilcrow" href="#section-238">&#182;</a>
               </div>
               <p>Normalize the fragment.</p>
 
@@ -4233,11 +4591,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-219">
+        <li id="section-239">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-219">&#182;</a>
+                <a class="pilcrow" href="#section-239">&#182;</a>
               </div>
               <p>Don’t include a trailing slash on the root.</p>
 
@@ -4252,17 +4610,17 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-220">
+        <li id="section-240">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-220">&#182;</a>
+                <a class="pilcrow" href="#section-240">&#182;</a>
               </div>
               <p>Strip the hash and decode for matching.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      fragment = <span class="hljs-built_in">decodeURI</span>(fragment.replace(pathStripper, <span class="hljs-string">''</span>));
+            <div class="content"><div class='highlight'><pre>      fragment = <span class="hljs-keyword">this</span>.decodeFragment(fragment.replace(pathStripper, <span class="hljs-string">''</span>));
 
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.fragment === fragment) <span class="hljs-keyword">return</span>;
       <span class="hljs-keyword">this</span>.fragment = fragment;</pre></div></div>
@@ -4270,27 +4628,27 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-221">
+        <li id="section-241">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-221">&#182;</a>
+                <a class="pilcrow" href="#section-241">&#182;</a>
               </div>
               <p>If pushState is available, we use it to set the fragment as a real URL.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._hasPushState) {
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._usePushState) {
         <span class="hljs-keyword">this</span>.history[options.replace ? <span class="hljs-string">'replaceState'</span> : <span class="hljs-string">'pushState'</span>]({}, <span class="hljs-built_in">document</span>.title, url);</pre></div></div>
             
         </li>
         
         
-        <li id="section-222">
+        <li id="section-242">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-222">&#182;</a>
+                <a class="pilcrow" href="#section-242">&#182;</a>
               </div>
               <p>If hash changes haven’t been explicitly disabled, update the hash
 fragment to store history.</p>
@@ -4304,11 +4662,11 @@ fragment to store history.</p>
         </li>
         
         
-        <li id="section-223">
+        <li id="section-243">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-223">&#182;</a>
+                <a class="pilcrow" href="#section-243">&#182;</a>
               </div>
               <p>Opening and closing the iframe tricks IE7 and earlier to push a
 history entry on hash-tag change.  When replace is true, we don’t
@@ -4323,11 +4681,11 @@ want this.</p>
         </li>
         
         
-        <li id="section-224">
+        <li id="section-244">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-224">&#182;</a>
+                <a class="pilcrow" href="#section-244">&#182;</a>
               </div>
               <p>If you’ve told us that you explicitly don’t want fallback hashchange-
 based history, then <code>navigate</code> becomes a page refresh.</p>
@@ -4343,11 +4701,11 @@ based history, then <code>navigate</code> becomes a page refresh.</p>
         </li>
         
         
-        <li id="section-225">
+        <li id="section-245">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-225">&#182;</a>
+                <a class="pilcrow" href="#section-245">&#182;</a>
               </div>
               <p>Update the hash location, either replacing the current entry, or adding
 a new one to the browser history.</p>
@@ -4363,11 +4721,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-226">
+        <li id="section-246">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-226">&#182;</a>
+                <a class="pilcrow" href="#section-246">&#182;</a>
               </div>
               <p>Some browsers require that <code>hash</code> contains a leading #.</p>
 
@@ -4382,11 +4740,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-227">
+        <li id="section-247">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-227">&#182;</a>
+                <a class="pilcrow" href="#section-247">&#182;</a>
               </div>
               <p>Create the default Backbone.history.</p>
 
@@ -4397,11 +4755,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-228">
+        <li id="section-248">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-228">&#182;</a>
+                <a class="pilcrow" href="#section-248">&#182;</a>
               </div>
               <h2 id="helpers">Helpers</h2>
 
@@ -4410,11 +4768,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-229">
+        <li id="section-249">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-229">&#182;</a>
+                <a class="pilcrow" href="#section-249">&#182;</a>
               </div>
               
             </div>
@@ -4422,13 +4780,13 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-230">
+        <li id="section-250">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-230">&#182;</a>
+                <a class="pilcrow" href="#section-250">&#182;</a>
               </div>
-              <p>Helper function to correctly set up the prototype chain, for subclasses.
+              <p>Helper function to correctly set up the prototype chain for subclasses.
 Similar to <code>goog.inherits</code>, but uses a hash of prototype properties and
 class properties to be extended.</p>
 
@@ -4441,15 +4799,15 @@ class properties to be extended.</p>
         </li>
         
         
-        <li id="section-231">
+        <li id="section-251">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-231">&#182;</a>
+                <a class="pilcrow" href="#section-251">&#182;</a>
               </div>
               <p>The constructor function for the new subclass is either defined by you
 (the “constructor” property in your <code>extend</code> definition), or defaulted
-by us to simply call the parent’s constructor.</p>
+by us to simply call the parent constructor.</p>
 
             </div>
             
@@ -4462,11 +4820,11 @@ by us to simply call the parent’s constructor.</p>
         </li>
         
         
-        <li id="section-232">
+        <li id="section-252">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-232">&#182;</a>
+                <a class="pilcrow" href="#section-252">&#182;</a>
               </div>
               <p>Add static properties to the constructor function, if supplied.</p>
 
@@ -4477,14 +4835,14 @@ by us to simply call the parent’s constructor.</p>
         </li>
         
         
-        <li id="section-233">
+        <li id="section-253">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-233">&#182;</a>
+                <a class="pilcrow" href="#section-253">&#182;</a>
               </div>
               <p>Set the prototype chain to inherit from <code>parent</code>, without calling
-<code>parent</code>‘s constructor function.</p>
+<code>parent</code> constructor function.</p>
 
             </div>
             
@@ -4495,11 +4853,11 @@ by us to simply call the parent’s constructor.</p>
         </li>
         
         
-        <li id="section-234">
+        <li id="section-254">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-234">&#182;</a>
+                <a class="pilcrow" href="#section-254">&#182;</a>
               </div>
               <p>Add prototype properties (instance properties) to the subclass,
 if supplied.</p>
@@ -4511,11 +4869,11 @@ if supplied.</p>
         </li>
         
         
-        <li id="section-235">
+        <li id="section-255">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-235">&#182;</a>
+                <a class="pilcrow" href="#section-255">&#182;</a>
               </div>
               <p>Set a convenience property in case the parent’s prototype is needed
 later.</p>
@@ -4530,11 +4888,11 @@ later.</p>
         </li>
         
         
-        <li id="section-236">
+        <li id="section-256">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-236">&#182;</a>
+                <a class="pilcrow" href="#section-256">&#182;</a>
               </div>
               <p>Set up inheritance for the model, collection, router, view and history.</p>
 
@@ -4545,11 +4903,11 @@ later.</p>
         </li>
         
         
-        <li id="section-237">
+        <li id="section-257">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-237">&#182;</a>
+                <a class="pilcrow" href="#section-257">&#182;</a>
               </div>
               <p>Throw an error when a URL is needed, and none is supplied.</p>
 
@@ -4562,11 +4920,11 @@ later.</p>
         </li>
         
         
-        <li id="section-238">
+        <li id="section-258">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-238">&#182;</a>
+                <a class="pilcrow" href="#section-258">&#182;</a>
               </div>
               <p>Wrap an optional error callback with a fallback error event.</p>
 
@@ -4575,7 +4933,7 @@ later.</p>
             <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> wrapError = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(model, options)</span> </span>{
     <span class="hljs-keyword">var</span> error = options.error;
     options.error = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resp)</span> </span>{
-      <span class="hljs-keyword">if</span> (error) error(model, resp, options);
+      <span class="hljs-keyword">if</span> (error) error.call(options.context, model, resp, options);
       model.trigger(<span class="hljs-string">'error'</span>, model, resp, options);
     };
   };

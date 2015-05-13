@@ -1570,5 +1570,4 @@
     collection.add([{id: 3}], {at: '1'});
     deepEqual(collection.pluck('id'), [1, 3, 2]);
   });
-
 })();

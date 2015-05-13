@@ -23,7 +23,7 @@
     "lint": "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
   },
   "main"          : "backbone.js",
-  "version"       : "1.1.2",
+  "version"       : "1.2.0",
   "license"       : "MIT",
   "repository": {
     "type": "git",
