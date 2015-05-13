@@ -7,6 +7,10 @@
 
 (function(root, factory) {
 
+  // Handle ES6 loaders with no access to global "this".
+  if (!root && typeof window == 'object') root = window;
+  if (!root && typeof global == 'object') root = global;
+
   // Set up Backbone appropriately for the environment. Start with AMD.
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery', 'exports'], function(_, $, exports) {
