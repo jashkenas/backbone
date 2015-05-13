@@ -4276,6 +4276,10 @@ ActiveRecord::Base.include_root_in_json = false
         event, not just the one you've passed in.
       </li>
       <li>
+        <tt>Collection#remove</tt> will now only return a list of models that
+        have actually been removed from the collection.
+      </li>
+      <li>
         Fixed loading Backbone.js in strict ES6 module loaders.
       </li>
     </ul>
