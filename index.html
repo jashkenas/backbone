@@ -1893,7 +1893,7 @@ var alphabetical = books.sortBy(function(book) {
       <b class="header">add</b><code>collection.add(models, [options])</code>
       <br />
       Add a model (or an array of models) to the collection, firing an <tt>"add"</tt>
-      event. If a <a href="#Collection-model">model</a> property is defined, you may also pass
+      event for each model, and an <tt>"updated"</tt> event afterwards. If a <a href="#Collection-model">model</a> property is defined, you may also pass
       raw attributes objects, and have them be vivified as instances of the model.
       Returns the added (or preexisting, if duplicate) models.
       Pass <tt>{at: index}</tt> to splice the model into the collection at the
@@ -1928,7 +1928,8 @@ ships.add([
       them. Each model can be a Model instance, an <tt>id</tt> string or a JS
       object, any value acceptable as the <tt>id</tt> argument of
       <a href="#Collection-get"><tt>collection.get</tt></a>.
-      Fires a <tt>"remove"</tt> event, which you can use <tt>silent</tt> to suppress.
+      Fires a <tt>"remove"</tt> event for each model, and a single 
+      <tt>"update"</tt> event afterwards.
       The model's index before removal is available to listeners as
       <tt>options.index</tt>.
     </p>
