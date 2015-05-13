@@ -639,18 +639,18 @@
       };
 
       options.success = function(resp) {
-        if (wait || model.isNew()) destroy();
+        if (wait) destroy();
         if (success) success.call(options.context, model, resp, options);
         if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
+      var xhr = false;
       if (this.isNew()) {
-        options.success();
-        return false;
+        _.defer(options.success);
+      } else {
+        wrapError(this, options);
+        xhr = this.sync('delete', this, options);
       }
-      wrapError(this, options);
-
-      var xhr = this.sync('delete', this, options);
       if (!wait) destroy();
       return xhr;
     },

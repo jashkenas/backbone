@@ -1131,11 +1131,14 @@
     model.destroy();
   });
 
-  test("#1365 - Destroy: New models execute success callback.", 2, function() {
+  asyncTest("#1365 - Destroy: New models execute success callback.", 2, function() {
     new Backbone.Model()
     .on('sync', function() { ok(false); })
     .on('destroy', function(){ ok(true); })
-    .destroy({ success: function(){ ok(true); }});
+    .destroy({ success: function(){
+        ok(true);
+        start();
+    }});
   });
 
   test("#1433 - Save: An invalid model cannot be persisted.", 1, function() {
