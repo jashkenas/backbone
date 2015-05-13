@@ -4232,6 +4232,10 @@ ActiveRecord::Base.include_root_in_json = false
         control of what's considered a model by your Collection.
       </li>
       <li>
+        The <tt>success</tt> callback passed to <tt>Model#destroy</tt> is always
+        called asynchronously now.
+      </li>
+      <li>
         <tt>Router#execute</tt> passes back the route name as its third argument.
       </li>
       <li>
