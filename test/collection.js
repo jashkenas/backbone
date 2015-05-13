@@ -1570,4 +1570,34 @@
     collection.add([{id: 3}], {at: '1'});
     deepEqual(collection.pluck('id'), [1, 3, 2]);
   });
+  test("adding multiple models triggers `set` event once", 1, function() {
+    var collection = new Backbone.Collection;
+    collection.on('updated', function() { ok(true); });
+    collection.add([{id: 1}, {id: 2}, {id: 3}]);
+  });
+
+  test("removing models triggers `set` event once", 1, function() {
+    var collection = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}]);
+    collection.on('updated', function() { ok(true); });
+    collection.remove([{id: 1}, {id: 2}]);
+  });
+
+  test("remove does not trigger `set` when nothing removed", 0, function() {
+    var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
+    collection.on('updated', function() { ok(false); });
+    collection.remove([{id: 3}]);
+  });
+
+  test("set triggers `set` event once", 1, function() {
+    var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
+    collection.on('updated', function() { ok(true); });
+    collection.set([{id: 1}, {id: 3}]);
+  });
+
+  test("set does not trigger `set` event when nothing added nor removed", 0, function() {
+    var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
+    collection.on('updated', function() { ok(false); });
+    collection.set([{id: 1}, {id: 2}]);
+  });
+
 })();
