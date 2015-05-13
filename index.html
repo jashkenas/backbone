@@ -999,6 +999,7 @@ view.stopListening(model);
     <ul class="small">
       <li><b>"add"</b> (model, collection, options) &mdash; when a model is added to a collection. </li>
       <li><b>"remove"</b> (model, collection, options) &mdash; when a model is removed from a collection. </li>
+      <li><b>"update"</b> (collection, options) &mdash; single event triggered after any number of movels have been added or removed from a collection. </li>
       <li><b>"reset"</b> (collection, options) &mdash; when the collection's entire contents have been replaced. </li>
       <li><b>"sort"</b> (collection, options) &mdash; when the collection has been re-sorted. </li>
       <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
@@ -4223,6 +4224,11 @@ ActiveRecord::Base.include_root_in_json = false
         Backbone will automatically try to load jQuery for you.
       </li>
       <li>
+        Added an <tt>"updated"</tt> event that triggers after any amount of 
+        models are added or removed from a collection. Handy to re-render lists 
+        of things without debouncing.
+      </li>
+      <li>
         Added <tt>modelId</tt> to Collection for generating unique ids on
         polymorphic collections. Handy for cases when your model ids would
         otherwise collide.
@@ -4268,6 +4274,9 @@ ActiveRecord::Base.include_root_in_json = false
         Adding models to your Collection when specifying an <tt>at</tt> position
         now sends the actual position of your model in the <tt>add</tt>
         event, not just the one you've passed in.
+      </li>
+      <li>
+        Fixed loading Backbone.js in strict ES6 module loaders.
       </li>
     </ul>
 
