@@ -9,10 +9,11 @@
   },
   "devDependencies": {
     "coffee-script": "1.7.1",
-    "docco": "0.6.3",
+    "docco": "0.7.0",
     "karma": "^0.12.31",
     "karma-phantomjs-launcher": "^0.1.4",
-    "karma-qunit": "^0.1.4"
+    "karma-qunit": "^0.1.4",
+    "uglify-js": "^2.4.17"
   },
   "main": "backbone.js",
   "scripts": {
@@ -32,3 +33,4 @@
     "backbone.js", "backbone-min.js", "backbone-min.map", "LICENSE"
   ]
 }
+

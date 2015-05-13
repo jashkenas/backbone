@@ -5,5 +5,5 @@
   "dependencies"  : {
     "underscore"  : ">=1.7.0"
   },
-  "ignore"        : ["docs", "examples", "test", "*.yml", "*.html", "*.ico", "*.md", "CNAME"]
+  "ignore"        : ["docs", "examples", "test", "*.yml", "*.html", "*.ico", "*.md", "CNAME", ".*", "karma.*", "component.json", "package.json"]
 }

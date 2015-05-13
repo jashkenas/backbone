@@ -97,8 +97,9 @@ others that may still expect a global Backbone.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports !== <span class="hljs-string">'undefined'</span>) {
-    <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
-    factory(root, exports, _);</pre></div></div>
+    <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), $;
+    <span class="hljs-keyword">try</span> { $ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'jquery'</span>); } <span class="hljs-keyword">catch</span>(e) {}
+    factory(root, exports, _, $);</pre></div></div>
             
         </li>
         
@@ -750,11 +751,14 @@ are removed. If so, stop delete the listening.</p>
                 <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Bind an event to only be triggered a single time. After the first time
-the callback is invoked, it will be removed.</p>
+the callback is invoked, it will be removed. When multiple events are
+passed in using the space-separated syntax, the event will fire once for every
+event you passed in, not once for a combination of all events</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  Events.once =  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, callback, context)</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>
+  Events.once =  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name, callback, context)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -850,7 +854,7 @@ receive the true name of the event as the first argument).</p>
             
             <div class="content"><div class='highlight'><pre>  Events.trigger =  <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> </span>{
     <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._events) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
-    
+
     <span class="hljs-keyword">var</span> length = <span class="hljs-built_in">Math</span>.max(<span class="hljs-number">0</span>, <span class="hljs-built_in">arguments</span>.length - <span class="hljs-number">1</span>);
     <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>(length);
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; length; i++) args[i] = <span class="hljs-built_in">arguments</span>[i + <span class="hljs-number">1</span>];
@@ -4043,6 +4047,25 @@ twenty times a second.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-210">&#182;</a>
               </div>
+              <p>Does the pathname match the root?</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    matchRoot: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+      <span class="hljs-keyword">var</span> path = <span class="hljs-keyword">this</span>.decodeFragment(<span class="hljs-keyword">this</span>.location.pathname);
+      <span class="hljs-keyword">var</span> root = path.slice(<span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.root.length - <span class="hljs-number">1</span>) + <span class="hljs-string">'/'</span>;
+      <span class="hljs-keyword">return</span> root === <span class="hljs-keyword">this</span>.root;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-211">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-211">&#182;</a>
+              </div>
               <p>Unicode characters in <code>location.pathname</code> are percent encoded so they’re
 decoded for comparison. <code>%25</code> should not be decoded since it may be part
 of an encoded parameter.</p>
@@ -4056,11 +4079,11 @@ of an encoded parameter.</p>
         </li>
         
         
-        <li id="section-211">
+        <li id="section-212">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-211">&#182;</a>
+                <a class="pilcrow" href="#section-212">&#182;</a>
               </div>
               <p>In IE6, the hash fragment and search params are incorrect if the
 fragment contains <code>?</code>.</p>
@@ -4075,11 +4098,11 @@ fragment contains <code>?</code>.</p>
         </li>
         
         
-        <li id="section-212">
+        <li id="section-213">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-212">&#182;</a>
+                <a class="pilcrow" href="#section-213">&#182;</a>
               </div>
               <p>Gets the true hash value. Cannot use location.hash directly due to bug
 in Firefox where location.hash will always be decoded.</p>
@@ -4094,11 +4117,11 @@ in Firefox where location.hash will always be decoded.</p>
         </li>
         
         
-        <li id="section-213">
+        <li id="section-214">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-213">&#182;</a>
+                <a class="pilcrow" href="#section-214">&#182;</a>
               </div>
               <p>Get the pathname and search params, without the root.</p>
 
@@ -4107,20 +4130,18 @@ in Firefox where location.hash will always be decoded.</p>
             <div class="content"><div class='highlight'><pre>    getPath: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
       <span class="hljs-keyword">var</span> path = <span class="hljs-keyword">this</span>.decodeFragment(
         <span class="hljs-keyword">this</span>.location.pathname + <span class="hljs-keyword">this</span>.getSearch()
-      );
-      <span class="hljs-keyword">var</span> root = <span class="hljs-keyword">this</span>.root.slice(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>);
-      <span class="hljs-keyword">if</span> (!path.indexOf(root)) path = path.slice(root.length);
+      ).slice(<span class="hljs-keyword">this</span>.root.length - <span class="hljs-number">1</span>);
       <span class="hljs-keyword">return</span> path.charAt(<span class="hljs-number">0</span>) === <span class="hljs-string">'/'</span> ? path.slice(<span class="hljs-number">1</span>) : path;
     },</pre></div></div>
             
         </li>
         
         
-        <li id="section-214">
+        <li id="section-215">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-214">&#182;</a>
+                <a class="pilcrow" href="#section-215">&#182;</a>
               </div>
               <p>Get the cross-browser normalized URL fragment from the path or hash.</p>
 
@@ -4140,11 +4161,11 @@ in Firefox where location.hash will always be decoded.</p>
         </li>
         
         
-        <li id="section-215">
+        <li id="section-216">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-215">&#182;</a>
+                <a class="pilcrow" href="#section-216">&#182;</a>
               </div>
               <p>Start the hash change handling, returning <code>true</code> if the current URL matches
 an existing route, and <code>false</code> otherwise.</p>
@@ -4158,11 +4179,11 @@ an existing route, and <code>false</code> otherwise.</p>
         </li>
         
         
-        <li id="section-216">
+        <li id="section-217">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-216">&#182;</a>
+                <a class="pilcrow" href="#section-217">&#182;</a>
               </div>
               <p>Figure out the initial configuration. Do we need an iframe?
 Is pushState desired … is it available?</p>
@@ -4182,11 +4203,11 @@ Is pushState desired … is it available?</p>
         </li>
         
         
-        <li id="section-217">
+        <li id="section-218">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-217">&#182;</a>
+                <a class="pilcrow" href="#section-218">&#182;</a>
               </div>
               <p>Normalize root to always include a leading and trailing slash.</p>
 
@@ -4197,11 +4218,11 @@ Is pushState desired … is it available?</p>
         </li>
         
         
-        <li id="section-218">
+        <li id="section-219">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-218">&#182;</a>
+                <a class="pilcrow" href="#section-219">&#182;</a>
               </div>
               <p>Transition from hashChange to pushState or vice versa if both are
 requested.</p>
@@ -4213,11 +4234,11 @@ requested.</p>
         </li>
         
         
-        <li id="section-219">
+        <li id="section-220">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-219">&#182;</a>
+                <a class="pilcrow" href="#section-220">&#182;</a>
               </div>
               <p>If we’ve started off with a route from a <code>pushState</code>-enabled
 browser, but we’re currently in a browser that doesn’t support it…</p>
@@ -4231,11 +4252,11 @@ browser, but we’re currently in a browser that doesn’t support it…</p>
         </li>
         
         
-        <li id="section-220">
+        <li id="section-221">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-220">&#182;</a>
+                <a class="pilcrow" href="#section-221">&#182;</a>
               </div>
               <p>Return immediately as browser will do redirect to new url</p>
 
@@ -4246,11 +4267,11 @@ browser, but we’re currently in a browser that doesn’t support it…</p>
         </li>
         
         
-        <li id="section-221">
+        <li id="section-222">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-221">&#182;</a>
+                <a class="pilcrow" href="#section-222">&#182;</a>
               </div>
               <p>Or if we’ve started out with a hash-based route, but we’re currently
 in a browser where it could be <code>pushState</code>-based instead…</p>
@@ -4266,11 +4287,11 @@ in a browser where it could be <code>pushState</code>-based instead…</p>
         </li>
         
         
-        <li id="section-222">
+        <li id="section-223">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-222">&#182;</a>
+                <a class="pilcrow" href="#section-223">&#182;</a>
               </div>
               <p>Proxy an iframe to handle location events if the browser doesn’t
 support the <code>hashchange</code> event, HTML5 history, or the user wants
@@ -4288,11 +4309,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-223">
+        <li id="section-224">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-223">&#182;</a>
+                <a class="pilcrow" href="#section-224">&#182;</a>
               </div>
               <p>Using <code>appendChild</code> will throw on IE &lt; 9 if the document is not ready.</p>
 
@@ -4306,11 +4327,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-224">
+        <li id="section-225">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-224">&#182;</a>
+                <a class="pilcrow" href="#section-225">&#182;</a>
               </div>
               <p>Add a cross-platform <code>addEventListener</code> shim for older browsers.</p>
 
@@ -4323,11 +4344,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-225">
+        <li id="section-226">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-225">&#182;</a>
+                <a class="pilcrow" href="#section-226">&#182;</a>
               </div>
               <p>Depending on whether we’re using pushState or hashes, and whether
 ‘onhashchange’ is supported, determine how we check the URL state.</p>
@@ -4348,11 +4369,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-226">
+        <li id="section-227">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-226">&#182;</a>
+                <a class="pilcrow" href="#section-227">&#182;</a>
               </div>
               <p>Disable Backbone.history, perhaps temporarily. Not useful in a real app,
 but possibly useful for unit testing Routers.</p>
@@ -4364,11 +4385,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-227">
+        <li id="section-228">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-227">&#182;</a>
+                <a class="pilcrow" href="#section-228">&#182;</a>
               </div>
               <p>Add a cross-platform <code>removeEventListener</code> shim for older browsers.</p>
 
@@ -4381,11 +4402,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-228">
+        <li id="section-229">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-228">&#182;</a>
+                <a class="pilcrow" href="#section-229">&#182;</a>
               </div>
               <p>Remove window listeners.</p>
 
@@ -4400,11 +4421,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-229">
+        <li id="section-230">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-229">&#182;</a>
+                <a class="pilcrow" href="#section-230">&#182;</a>
               </div>
               <p>Clean up the iframe if necessary.</p>
 
@@ -4418,11 +4439,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-230">
+        <li id="section-231">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-230">&#182;</a>
+                <a class="pilcrow" href="#section-231">&#182;</a>
               </div>
               <p>Some environments will throw when clearing an undefined interval.</p>
 
@@ -4435,11 +4456,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-231">
+        <li id="section-232">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-231">&#182;</a>
+                <a class="pilcrow" href="#section-232">&#182;</a>
               </div>
               <p>Add a route to be tested when the fragment changes. Routes added later
 may override previous routes.</p>
@@ -4453,11 +4474,11 @@ may override previous routes.</p>
         </li>
         
         
-        <li id="section-232">
+        <li id="section-233">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-232">&#182;</a>
+                <a class="pilcrow" href="#section-233">&#182;</a>
               </div>
               <p>Checks the current URL to see if it has changed, and if it has,
 calls <code>loadUrl</code>, normalizing across the hidden iframe.</p>
@@ -4470,11 +4491,11 @@ calls <code>loadUrl</code>, normalizing across the hidden iframe.</p>
         </li>
         
         
-        <li id="section-233">
+        <li id="section-234">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-233">&#182;</a>
+                <a class="pilcrow" href="#section-234">&#182;</a>
               </div>
               <p>If the user pressed the back button, the iframe’s hash will have
 changed and we should use that for comparison.</p>
@@ -4493,11 +4514,11 @@ changed and we should use that for comparison.</p>
         </li>
         
         
-        <li id="section-234">
+        <li id="section-235">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-234">&#182;</a>
+                <a class="pilcrow" href="#section-235">&#182;</a>
               </div>
               <p>Attempt to load the current URL fragment. If a route succeeds with a
 match, returns <code>true</code>. If no defined routes matches the fragment,
@@ -4505,7 +4526,22 @@ returns <code>false</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    loadUrl: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(fragment)</span> </span>{
+            <div class="content"><div class='highlight'><pre>    loadUrl: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(fragment)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-236">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-236">&#182;</a>
+              </div>
+              <p>If the root doesn’t match, no routes can match either.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.matchRoot()) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
       fragment = <span class="hljs-keyword">this</span>.fragment = <span class="hljs-keyword">this</span>.getFragment(fragment);
       <span class="hljs-keyword">return</span> _.any(<span class="hljs-keyword">this</span>.handlers, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(handler)</span> </span>{
         <span class="hljs-keyword">if</span> (handler.route.test(fragment)) {
@@ -4518,11 +4554,11 @@ returns <code>false</code>.</p>
         </li>
         
         
-        <li id="section-235">
+        <li id="section-237">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-235">&#182;</a>
+                <a class="pilcrow" href="#section-237">&#182;</a>
               </div>
               <p>Save a fragment into the hash history, or replace the URL state if the
 ‘replace’ option is passed. You are responsible for properly URL-encoding
@@ -4540,11 +4576,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-236">
+        <li id="section-238">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-236">&#182;</a>
+                <a class="pilcrow" href="#section-238">&#182;</a>
               </div>
               <p>Normalize the fragment.</p>
 
@@ -4555,11 +4591,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-237">
+        <li id="section-239">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-237">&#182;</a>
+                <a class="pilcrow" href="#section-239">&#182;</a>
               </div>
               <p>Don’t include a trailing slash on the root.</p>
 
@@ -4574,11 +4610,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-238">
+        <li id="section-240">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-238">&#182;</a>
+                <a class="pilcrow" href="#section-240">&#182;</a>
               </div>
               <p>Strip the hash and decode for matching.</p>
 
@@ -4592,11 +4628,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-239">
+        <li id="section-241">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-239">&#182;</a>
+                <a class="pilcrow" href="#section-241">&#182;</a>
               </div>
               <p>If pushState is available, we use it to set the fragment as a real URL.</p>
 
@@ -4608,11 +4644,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-240">
+        <li id="section-242">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-240">&#182;</a>
+                <a class="pilcrow" href="#section-242">&#182;</a>
               </div>
               <p>If hash changes haven’t been explicitly disabled, update the hash
 fragment to store history.</p>
@@ -4626,11 +4662,11 @@ fragment to store history.</p>
         </li>
         
         
-        <li id="section-241">
+        <li id="section-243">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-241">&#182;</a>
+                <a class="pilcrow" href="#section-243">&#182;</a>
               </div>
               <p>Opening and closing the iframe tricks IE7 and earlier to push a
 history entry on hash-tag change.  When replace is true, we don’t
@@ -4645,11 +4681,11 @@ want this.</p>
         </li>
         
         
-        <li id="section-242">
+        <li id="section-244">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-242">&#182;</a>
+                <a class="pilcrow" href="#section-244">&#182;</a>
               </div>
               <p>If you’ve told us that you explicitly don’t want fallback hashchange-
 based history, then <code>navigate</code> becomes a page refresh.</p>
@@ -4665,11 +4701,11 @@ based history, then <code>navigate</code> becomes a page refresh.</p>
         </li>
         
         
-        <li id="section-243">
+        <li id="section-245">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-243">&#182;</a>
+                <a class="pilcrow" href="#section-245">&#182;</a>
               </div>
               <p>Update the hash location, either replacing the current entry, or adding
 a new one to the browser history.</p>
@@ -4685,11 +4721,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-244">
+        <li id="section-246">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-244">&#182;</a>
+                <a class="pilcrow" href="#section-246">&#182;</a>
               </div>
               <p>Some browsers require that <code>hash</code> contains a leading #.</p>
 
@@ -4704,11 +4740,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-245">
+        <li id="section-247">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-245">&#182;</a>
+                <a class="pilcrow" href="#section-247">&#182;</a>
               </div>
               <p>Create the default Backbone.history.</p>
 
@@ -4719,11 +4755,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-246">
+        <li id="section-248">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-246">&#182;</a>
+                <a class="pilcrow" href="#section-248">&#182;</a>
               </div>
               <h2 id="helpers">Helpers</h2>
 
@@ -4732,11 +4768,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-247">
+        <li id="section-249">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-247">&#182;</a>
+                <a class="pilcrow" href="#section-249">&#182;</a>
               </div>
               
             </div>
@@ -4744,13 +4780,13 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-248">
+        <li id="section-250">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-248">&#182;</a>
+                <a class="pilcrow" href="#section-250">&#182;</a>
               </div>
-              <p>Helper function to correctly set up the prototype chain, for subclasses.
+              <p>Helper function to correctly set up the prototype chain for subclasses.
 Similar to <code>goog.inherits</code>, but uses a hash of prototype properties and
 class properties to be extended.</p>
 
@@ -4763,15 +4799,15 @@ class properties to be extended.</p>
         </li>
         
         
-        <li id="section-249">
+        <li id="section-251">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-249">&#182;</a>
+                <a class="pilcrow" href="#section-251">&#182;</a>
               </div>
               <p>The constructor function for the new subclass is either defined by you
 (the “constructor” property in your <code>extend</code> definition), or defaulted
-by us to simply call the parent’s constructor.</p>
+by us to simply call the parent constructor.</p>
 
             </div>
             
@@ -4784,11 +4820,11 @@ by us to simply call the parent’s constructor.</p>
         </li>
         
         
-        <li id="section-250">
+        <li id="section-252">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-250">&#182;</a>
+                <a class="pilcrow" href="#section-252">&#182;</a>
               </div>
               <p>Add static properties to the constructor function, if supplied.</p>
 
@@ -4799,14 +4835,14 @@ by us to simply call the parent’s constructor.</p>
         </li>
         
         
-        <li id="section-251">
+        <li id="section-253">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-251">&#182;</a>
+                <a class="pilcrow" href="#section-253">&#182;</a>
               </div>
               <p>Set the prototype chain to inherit from <code>parent</code>, without calling
-<code>parent</code>‘s constructor function.</p>
+<code>parent</code> constructor function.</p>
 
             </div>
             
@@ -4817,11 +4853,11 @@ by us to simply call the parent’s constructor.</p>
         </li>
         
         
-        <li id="section-252">
+        <li id="section-254">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-252">&#182;</a>
+                <a class="pilcrow" href="#section-254">&#182;</a>
               </div>
               <p>Add prototype properties (instance properties) to the subclass,
 if supplied.</p>
@@ -4833,11 +4869,11 @@ if supplied.</p>
         </li>
         
         
-        <li id="section-253">
+        <li id="section-255">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-253">&#182;</a>
+                <a class="pilcrow" href="#section-255">&#182;</a>
               </div>
               <p>Set a convenience property in case the parent’s prototype is needed
 later.</p>
@@ -4852,11 +4888,11 @@ later.</p>
         </li>
         
         
-        <li id="section-254">
+        <li id="section-256">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-254">&#182;</a>
+                <a class="pilcrow" href="#section-256">&#182;</a>
               </div>
               <p>Set up inheritance for the model, collection, router, view and history.</p>
 
@@ -4867,11 +4903,11 @@ later.</p>
         </li>
         
         
-        <li id="section-255">
+        <li id="section-257">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-255">&#182;</a>
+                <a class="pilcrow" href="#section-257">&#182;</a>
               </div>
               <p>Throw an error when a URL is needed, and none is supplied.</p>
 
@@ -4884,11 +4920,11 @@ later.</p>
         </li>
         
         
-        <li id="section-256">
+        <li id="section-258">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-256">&#182;</a>
+                <a class="pilcrow" href="#section-258">&#182;</a>
               </div>
               <p>Wrap an optional error callback with a fallback error event.</p>
 

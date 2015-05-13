@@ -17,8 +17,9 @@
 
   // Next for Node.js or CommonJS. jQuery may not be needed as a module.
   } else if (typeof exports !== 'undefined') {
-    var _ = require('underscore');
-    factory(root, exports, _);
+    var _ = require('underscore'), $;
+    try { $ = require('jquery'); } catch(e) {}
+    factory(root, exports, _, $);
 
   // Finally, as a browser global.
   } else {
@@ -242,7 +243,10 @@
   };
 
   // Bind an event to only be triggered a single time. After the first time
-  // the callback is invoked, it will be removed.
+  // the callback is invoked, it will be removed. When multiple events are
+  // passed in using the space-separated syntax, the event will fire once for every
+  // event you passed in, not once for a combination of all events
+
   Events.once =  function(name, callback, context) {
     // Map the event into a `{event: once}` object.
     var events = onceMap(name, callback, _.bind(this.off, this));
@@ -277,7 +281,7 @@
   // receive the true name of the event as the first argument).
   Events.trigger =  function(name) {
     if (!this._events) return this;
-    
+
     var length = Math.max(0, arguments.length - 1);
     var args = Array(length);
     for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
@@ -1523,6 +1527,13 @@
       return path === this.root && !this.getSearch();
     },
 
+    // Does the pathname match the root?
+    matchRoot: function() {
+      var path = this.decodeFragment(this.location.pathname);
+      var root = path.slice(0, this.root.length - 1) + '/';
+      return root === this.root;
+    },
+
     // Unicode characters in `location.pathname` are percent encoded so they're
     // decoded for comparison. `%25` should not be decoded since it may be part
     // of an encoded parameter.
@@ -1548,9 +1559,7 @@
     getPath: function() {
       var path = this.decodeFragment(
         this.location.pathname + this.getSearch()
-      );
-      var root = this.root.slice(0, -1);
-      if (!path.indexOf(root)) path = path.slice(root.length);
+      ).slice(this.root.length - 1);
       return path.charAt(0) === '/' ? path.slice(1) : path;
     },
 
@@ -1692,6 +1701,8 @@
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
     loadUrl: function(fragment) {
+      // If the root doesn't match, no routes can match either.
+      if (!this.matchRoot()) return false;
       fragment = this.fragment = this.getFragment(fragment);
       return _.any(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
@@ -1772,7 +1783,7 @@
   // Helpers
   // -------
 
-  // Helper function to correctly set up the prototype chain, for subclasses.
+  // Helper function to correctly set up the prototype chain for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
   var extend = function(protoProps, staticProps) {
@@ -1781,7 +1792,7 @@
 
     // The constructor function for the new subclass is either defined by you
     // (the "constructor" property in your `extend` definition), or defaulted
-    // by us to simply call the parent's constructor.
+    // by us to simply call the parent constructor.
     if (protoProps && _.has(protoProps, 'constructor')) {
       child = protoProps.constructor;
     } else {
@@ -1792,7 +1803,7 @@
     _.extend(child, parent, staticProps);
 
     // Set the prototype chain to inherit from `parent`, without calling
-    // `parent`'s constructor function.
+    // `parent` constructor function.
     var Surrogate = function(){ this.constructor = child; };
     Surrogate.prototype = parent.prototype;
     child.prototype = new Surrogate;
