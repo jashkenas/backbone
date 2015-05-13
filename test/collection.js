@@ -298,9 +298,10 @@
     deepEqual(col.pluck('id'), [1, 2, 3]);
   });
 
-  test("remove", 5, function() {
+  test("remove", 7, function() {
     var removed = null;
     var otherRemoved = null;
+    var result = null;
     col.on('remove', function(model, col, options) {
       removed = model.get('label');
       equal(options.index, 3);
@@ -308,8 +309,12 @@
     otherCol.on('remove', function(model, col, options) {
       otherRemoved = true;
     });
-    col.remove(d);
+    result = col.remove(d);
     equal(removed, 'd');
+    strictEqual(result, d);
+    //if we try to remove d again, it's not going to actually get removed
+    result = col.remove(d);
+    strictEqual(result, undefined);
     equal(col.length, 3);
     equal(col.first(), a);
     equal(otherRemoved, null);
