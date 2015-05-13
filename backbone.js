@@ -780,7 +780,7 @@
       models = singular ? [models] : _.clone(models);
       options || (options = {});
       removed = this._removeModels(models, options);
-      if (!options.silent && removed) this.trigger('updated', this, options);
+      if (!options.silent && removed) this.trigger('update', this, options);
       return singular ? models[0] : models;
     },
 
@@ -879,7 +879,7 @@
           (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
         if (sort || orderChanged) this.trigger('sort', this, options);
-        if (toAdd.length || toRemove.length) this.trigger('updated', this, options);
+        if (toAdd.length || toRemove.length) this.trigger('update', this, options);
       }
 
       // Return the added (or merged) model (or models).
