@@ -1738,18 +1738,18 @@ If <code>wait: true</code> is passed, waits for the server to respond before rem
       };
 
       options.success = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resp)</span> </span>{
-        <span class="hljs-keyword">if</span> (wait || model.isNew()) destroy();
+        <span class="hljs-keyword">if</span> (wait) destroy();
         <span class="hljs-keyword">if</span> (success) success.call(options.context, model, resp, options);
         <span class="hljs-keyword">if</span> (!model.isNew()) model.trigger(<span class="hljs-string">'sync'</span>, model, resp, options);
       };
 
+      <span class="hljs-keyword">var</span> xhr = <span class="hljs-literal">false</span>;
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isNew()) {
-        options.success();
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        _.defer(options.success);
+      } <span class="hljs-keyword">else</span> {
+        wrapError(<span class="hljs-keyword">this</span>, options);
+        xhr = <span class="hljs-keyword">this</span>.sync(<span class="hljs-string">'delete'</span>, <span class="hljs-keyword">this</span>, options);
       }
-      wrapError(<span class="hljs-keyword">this</span>, options);
-
-      <span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">this</span>.sync(<span class="hljs-string">'delete'</span>, <span class="hljs-keyword">this</span>, options);
       <span class="hljs-keyword">if</span> (!wait) destroy();
       <span class="hljs-keyword">return</span> xhr;
     },</pre></div></div>

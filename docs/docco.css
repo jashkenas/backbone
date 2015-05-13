@@ -21,11 +21,11 @@
 }
 
 @font-face {
-    font-family: 'novecento-bold';
-    src: url('public/fonts/novecento-bold.eot');
-    src: url('public/fonts/novecento-bold.eot?#iefix') format('embedded-opentype'),
-         url('public/fonts/novecento-bold.woff') format('woff'),
-         url('public/fonts/novecento-bold.ttf') format('truetype');
+    font-family: 'roboto-black';
+    src: url('public/fonts/roboto-black.eot');
+    src: url('public/fonts/roboto-black.eot?#iefix') format('embedded-opentype'),
+         url('public/fonts/roboto-black.woff') format('woff'),
+         url('public/fonts/roboto-black.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -67,13 +67,16 @@ h1, h2, h3, h4, h5, h6 {
   color: #112233;
   line-height: 1em;
   font-weight: normal;
-  font-family: "novecento-bold";
+  font-family: "roboto-black";
   text-transform: uppercase;
   margin: 30px 0 15px 0;
 }
 
 h1 {
   margin-top: 40px;
+}
+h2 {
+  font-size: 1.26em;
 }
 
 hr {
@@ -180,9 +183,18 @@ ul.sections > li > div {
   display: block;
 }
 
+#jump_page_wrapper{
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
 #jump_page {
   padding: 5px 0 3px;
   margin: 0 0 25px 25px;
+  max-height: 100%;
+  overflow: auto;
 }
 
 #jump_page .source {
