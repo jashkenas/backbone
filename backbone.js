@@ -36,8 +36,7 @@
   var previousBackbone = root.Backbone;
 
   // Create local references to array methods we'll want to use later.
-  var array = [];
-  var slice = array.slice;
+  var slice = Array.prototype.slice;
 
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '1.2.0';
@@ -279,16 +278,11 @@
   // passed the same arguments as `trigger` is, apart from the event name
   // (unless you're listening on `"all"`, which will cause your callback to
   // receive the true name of the event as the first argument).
-  Events.trigger =  function(name) {
+  Events.trigger =  _.restArgs(function(name, args) {
     if (!this._events) return this;
-
-    var length = Math.max(0, arguments.length - 1);
-    var args = Array(length);
-    for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
-
     eventsApi(triggerApi, this, name, void 0, args);
     return this;
-  };
+  });
 
   // Handles triggering the appropriate event callbacks.
   var triggerApi = function(obj, name, cb, args) {
@@ -331,11 +325,10 @@
       case 4: return function(iteratee, defaultVal, context) {
         return _[method](this[attribute], iteratee, defaultVal, context);
       };
-      default: return function() {
-        var args = slice.call(arguments);
+      default: return _.restArgs(function(args) {
         args.unshift(this[attribute]);
         return _[method].apply(_, args);
-      };
+      });
     }
   };
   var addUnderscoreMethods = function(Class, methods, attribute) {
