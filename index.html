@@ -356,7 +356,7 @@
       <li>– <a href="#Model-fetch">fetch</a></li>
       <li>– <a href="#Model-save">save</a></li>
       <li>– <a href="#Model-destroy">destroy</a></li>
-      <li>– <a href="#Model-Underscore-Methods"><b>Underscore Methods (8)</b></a></li>
+      <li>– <a href="#Model-Underscore-Methods"><b>Underscore Methods (9)</b></a></li>
       <li>– <a href="#Model-validate">validate</a></li>
       <li>– <a href="#Model-validationError">validationError</a></li>
       <li>– <a href="#Model-isValid">isValid</a></li>
@@ -1470,9 +1470,9 @@ book.destroy({success: function(model, response) {
 </pre>
 
     <p id="Model-Underscore-Methods">
-      <b class="header">Underscore Methods (8)</b>
+      <b class="header">Underscore Methods (9)</b>
       <br />
-      Backbone proxies to <b>Underscore.js</b> to provide 8 object functions
+      Backbone proxies to <b>Underscore.js</b> to provide 9 object functions
       on <b>Backbone.Model</b>. They aren't all documented here, but
       you can take a look at the Underscore documentation for the full details&hellip;
     </p>
@@ -1484,6 +1484,7 @@ book.destroy({success: function(model, response) {
       <li><a href="http://underscorejs.org/#invert">invert</a></li>
       <li><a href="http://underscorejs.org/#pick">pick</a></li>
       <li><a href="http://underscorejs.org/#omit">omit</a></li>
+      <li><a href="http://underscorejs.org/#matches">matches</a></li>
       <li><a href="http://underscorejs.org/#chain">chain</a></li>
       <li><a href="http://underscorejs.org/#isEmpty">isEmpty</a></li>
     </ul>
@@ -1928,7 +1929,7 @@ ships.add([
       them. Each model can be a Model instance, an <tt>id</tt> string or a JS
       object, any value acceptable as the <tt>id</tt> argument of
       <a href="#Collection-get"><tt>collection.get</tt></a>.
-      Fires a <tt>"remove"</tt> event for each model, and a single 
+      Fires a <tt>"remove"</tt> event for each model, and a single
       <tt>"update"</tt> event afterwards.
       The model's index before removal is available to listeners as
       <tt>options.index</tt>.
@@ -4225,8 +4226,8 @@ ActiveRecord::Base.include_root_in_json = false
         Backbone will automatically try to load jQuery for you.
       </li>
       <li>
-        Added an <tt>"update"</tt> event that triggers after any amount of 
-        models are added or removed from a collection. Handy to re-render lists 
+        Added an <tt>"update"</tt> event that triggers after any amount of
+        models are added or removed from a collection. Handy to re-render lists
         of things without debouncing.
       </li>
       <li>
