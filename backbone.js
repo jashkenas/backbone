@@ -42,9 +42,7 @@
   var _isEqual = _.isEqual;
 
   function isEqual( a, b ){
-      var typea = typeof a;
-      if( typea !== typeof b ) return false;
-      return typea !== 'object' || !a || !b ? a === b : _isEqual( a, b );
+      return a && b && typeof a === 'object' && typeof b === 'object' ? _isEqual( a, b ) : a === b;
   }
 
   // Current version of the library. Keep in sync with `package.json`.
