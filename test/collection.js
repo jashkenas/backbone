@@ -1605,4 +1605,19 @@
     collection.set([{id: 1}, {id: 2}]);
   });
 
+  test("#3610 - invoke collects arguments", 3, function() {
+    var Model = Backbone.Model.extend({
+        method: function(a, b, c) {
+            equal(a, 1);
+            equal(b, 2);
+            equal(c, 3);
+        }
+    });
+    var Collection = Backbone.Collection.extend({
+        model: Model
+    });
+    var collection = new Collection([{id: 1}]);
+    collection.invoke('method', 1, 2, 3);
+  });
+
 })();
