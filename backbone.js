@@ -1647,14 +1647,15 @@
       // support the `hashchange` event, HTML5 history, or the user wants
       // `hashChange` but not `pushState`.
       if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
-        var iframe = document.createElement('iframe');
-        iframe.src = 'javascript:0';
-        iframe.style.display = 'none';
-        iframe.tabIndex = -1;
+        this.iframeElement = document.createElement('iframe');
+        this.iframeElement.src = 'javascript:0';
+        this.iframeElement.style.display = 'none';
+        this.iframeElement.tabIndex = -1;
         var body = document.body;
         // Using `appendChild` will throw on IE < 9 if the document is not ready.
-        this.iframe = body.insertBefore(iframe, body.firstChild).contentWindow;
-        this.iframe.document.open().close();
+        this.iframe = body.insertBefore(this.iframeElement, body.firstChild).contentWindow;
+        this.iframe.document.open();
+        this.iframe.document.close();
         this.iframe.location.hash = '#' + this.fragment;
       }
 
@@ -1693,8 +1694,9 @@
 
       // Clean up the iframe if necessary.
       if (this.iframe) {
-        document.body.removeChild(this.iframe.frameElement);
+        document.body.removeChild(this.iframeElement);
         this.iframe = null;
+        this.iframeElement = null;
       }
 
       // Some environments will throw when clearing an undefined interval.
@@ -1778,7 +1780,11 @@
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
-          if (!options.replace) this.iframe.document.open().close();
+          if (!options.replace) {
+            this.iframe.document.open();
+            this.iframe.document.close();
+          }
+          
           this._updateHash(this.iframe.location, fragment, options.replace);
         }
 
