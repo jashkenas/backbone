@@ -367,23 +367,30 @@
   // Backbone.Model
   // --------------
 
+  // A storehouse to retrieve models explicitly stored via a custom cid.
+  var modelStore = {};
+
   // Backbone **Models** are the basic data object in the framework --
   // frequently representing a row in a table in a database on your server.
   // A discrete chunk of data and a bunch of useful, related methods for
   // performing computations and transformations on that data.
 
-  // Create a new model with the specified attributes. A client id (`cid`)
-  // is automatically generated and assigned for you.
+  // Create a new model with the specified attributes, or retrieve an existing
+  // model by passing its client id (`cid`). If a new model is created, and no
+  // cid is passed in, one is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
     var attrs = attributes || {};
     options || (options = {});
-    this.cid = _.uniqueId(this.cidPrefix);
-    this.attributes = {};
-    if (options.collection) this.collection = options.collection;
-    if (options.parse) attrs = this.parse(attrs, options) || {};
+    var obj = modelStore.hasOwnProperty(options.cid) ? modelStore[options.cid] : this;
+    obj.cid = options.cid || _.uniqueId(obj.cidPrefix);
+    obj.attributes = obj.attributes || {};
+    if (options.collection) obj.collection = options.collection;
+    if (options.parse) attrs = obj.parse(attrs, options) || {};
+    if (modelStore.hasOwnProperty(options.cid)) return obj.set(attrs, options);
     attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
     this.set(attrs, options);
     this.changed = {};
+    options.cid && (modelStore[options.cid] = this);
     this.initialize.apply(this, arguments);
   };
 
