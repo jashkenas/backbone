@@ -66,6 +66,66 @@
     equal(model.get('last_name'), 'Unknown');
   });
 
+  test("initialize and retrieve same model", 6, function() {
+    var Model = Backbone.Model.extend({
+      initialize: function() {
+        this.one = 1;
+        equal(this.collection, collection);
+      }
+    });
+    var model = new Model({}, {cid: 'test', collection: collection});
+    equal(model.one, 1);
+    equal(model.collection, collection);
+    var modelSame = new Model({}, {cid: 'test'});
+    equal(modelSame.one, 1);
+    equal(modelSame.collection, collection);
+    equal(model, modelSame);
+  });
+
+  test("initialize and retrieve same model with options", 3, function() {
+    var Model = Backbone.Model.extend({
+      initialize: function(attributes, options) {
+        this.one = options.one;
+      }
+    });
+    var model = new Model({}, {cid: 'test', one: 1});
+    equal(model.one, 1);
+    var modelSame = new Model({}, {cid: 'test'});
+    equal(modelSame.one, 1);
+    equal(model, modelSame);
+  });
+
+  test("initialize and retrieve same model with parsed attributes", 3, function() {
+    var Model = Backbone.Model.extend({
+      parse: function(attrs) {
+        attrs.value += 1;
+        return attrs;
+      }
+    });
+    var model = new Model({value: 1}, {cid: 'test1', parse: true});
+    equal(model.get('value'), 2);
+    var modelSame = new Model({value: 1}, {cid: 'test1', parse: true});
+    equal(modelSame.get('value'), 2);
+    equal(model, modelSame);
+  });
+
+  test("initialize and and retrieve same model with defaults", 5, function() {
+    var Model = Backbone.Model.extend({
+      defaults: {
+        first_name: 'Unknown',
+        last_name: 'Unknown'
+      }
+    });
+    var model = new Model({first_name: 'John'}, {cid: 'test2'});
+    equal(model.get('first_name'), 'John');
+    equal(model.get('last_name'), 'Unknown');
+    var modelSame = new Model({last_name: 'Chapman'}, {cid: 'test2'});
+    equal(model.get('first_name'), 'John');
+    equal(model.get('last_name'), 'Chapman');
+    equal(model, modelSame);
+  });
+
+
   test("parse can return null", 1, function() {
     var Model = Backbone.Model.extend({
       parse: function(attrs) {
