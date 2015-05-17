@@ -38,13 +38,6 @@
   var array = [];
   var slice = array.slice;
 
-  // Optimized deep comparison function.
-  var _isEqual = _.isEqual;
-
-  function isEqual( a, b ){
-      return a && b && typeof a === 'object' && typeof b === 'object' ? _isEqual( a, b ) : a === b;
-  }
-
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '1.1.2';
 
@@ -367,8 +360,8 @@
       // For each `set` attribute, update or delete the current value.
       for (attr in attrs) {
         val = attrs[attr];
-        if (!isEqual(current[attr], val)) changes.push(attr);
-        if (!isEqual(prev[attr], val)) {
+        if (!_.isEqual(current[attr], val)) changes.push(attr);
+        if (!_.isEqual(prev[attr], val)) {
           this.changed[attr] = val;
         } else {
           delete this.changed[attr];
@@ -430,7 +423,7 @@
       var val, changed = false;
       var old = this._changing ? this._previousAttributes : this.attributes;
       for (var attr in diff) {
-        if (isEqual(old[attr], (val = diff[attr]))) continue;
+        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
         (changed || (changed = {}))[attr] = val;
       }
       return changed;
