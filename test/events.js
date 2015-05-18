@@ -703,4 +703,41 @@
     two.trigger('y', 2);
   });
 
+  test("#3611 - listenTo is compatible with non-Backbone event libraries", 1, function() {
+    var obj = _.extend({}, Backbone.Events);
+    var other = {
+      events: {},
+      on: function(name, callback) {
+        this.events[name] = callback;
+      },
+      trigger: function(name) {
+        this.events[name]();
+      }
+    };
+
+    obj.listenTo(other, 'test', function() { ok(true); });
+    other.trigger('test');
+  });
+
+  test("#3611 - stopListening is compatible with non-Backbone event libraries", 1, function() {
+    var obj = _.extend({}, Backbone.Events);
+    var other = {
+      events: {},
+      on: function(name, callback) {
+        this.events[name] = callback;
+      },
+      off: function() {
+        this.events = {};
+      },
+      trigger: function(name) {
+        var fn = this.events[name];
+        if (fn) fn();
+      }
+    };
+
+    obj.listenTo(other, 'test', function() { ok(false); });
+    obj.stopListening(other);
+    other.trigger('test');
+    equal(_.size(obj._listeningTo), 0);
+  });
 })();
