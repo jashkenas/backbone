@@ -5,16 +5,17 @@
 module.exports = function(config) {
   config.set({
     basePath: '',
-    frameworks: ['mocha', 'commonjs'],
+    frameworks: ['browserify', 'mocha'],
 
     // list of files / patterns to load in the browser
     files: [
-        'src/pubsub.js',
-        'test/*.js'
+      'index.js',
+      'test/*.js'
     ],
 
     preprocessors: {
-      '**/*.js': ['commonjs']
+      'index.js': ['browserify'],
+      'test/**/*.js': ['browserify']
     },
 
     // test results reporter to use

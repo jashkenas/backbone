@@ -2,7 +2,7 @@ var assert = require("assert");
 
 describe('IsoldaJS PubSub', function() {
 
-  var PubSub = require('../src/pubsub');
+  var PubSub = require('..');
   var _ = require('lodash');
 
   var noopFn = function () {};
