@@ -5,17 +5,17 @@
 module.exports = function(config) {
   config.set({
     basePath: '',
-    frameworks: ['qunit'],
+    frameworks: ['mocha', 'commonjs'],
 
     // list of files / patterns to load in the browser
     files: [
-        'test/vendor/jquery.js',
-        'test/vendor/json2.js',
-        'test/vendor/underscore.js',
-        'backbone.js',
-        'test/setup/*.js',
+        'src/pubsub.js',
         'test/*.js'
     ],
+
+    preprocessors: {
+      '**/*.js': ['commonjs']
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
