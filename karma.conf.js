@@ -5,17 +5,18 @@
 module.exports = function(config) {
   config.set({
     basePath: '',
-    frameworks: ['qunit'],
+    frameworks: ['browserify', 'mocha'],
 
     // list of files / patterns to load in the browser
     files: [
-        'test/vendor/jquery.js',
-        'test/vendor/json2.js',
-        'test/vendor/underscore.js',
-        'backbone.js',
-        'test/setup/*.js',
-        'test/*.js'
+      'index.js',
+      'test/*.js'
     ],
+
+    preprocessors: {
+      'index.js': ['browserify'],
+      'test/**/*.js': ['browserify']
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
