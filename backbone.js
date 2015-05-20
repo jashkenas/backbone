@@ -172,14 +172,15 @@
       listeners[_listening.id] = _listening;
       // Allow the listening to use a counter, instead of tracking
       // callbacks for library interop
-      _listening.backbone = true;
+      _listening.interop = false;
     }
 
     return this;
   };
 
   // Inversion-of-control versions of `on`. Tell *this* object to listen to
-  // an event in another object... keeping track of what it's listening to.
+  // an event in another object... keeping track of what it's listening to
+  // for easier unbinding later.
   Events.listenTo = function(obj, name, callback) {
     if (!obj) return this;
     var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
@@ -199,7 +200,7 @@
 
     if (error) throw error;
     // If the target obj is not Backbone.Events, track events manually.
-    if (!listening.backbone) listening.on(name, callback);
+    if (listening.interop) listening.on(name, callback);
 
     return this;
   };
@@ -236,7 +237,6 @@
         context: context,
         listeners: this._listeners
     });
-
     return this;
   };
 
@@ -247,6 +247,7 @@
     if (!listeningTo) return this;
 
     var ids = obj ? [obj._listenId] : _.keys(listeningTo);
+
     for (var i = 0; i < ids.length; i++) {
       var listening = listeningTo[ids[i]];
 
@@ -255,7 +256,7 @@
       if (!listening) break;
 
       listening.obj.off(name, callback, this);
-      if (!listening.backbone) listening.off(name, callback);
+      if (listening.interop) listening.off(name, callback);
     }
     return this;
   };
@@ -283,7 +284,7 @@
       // Bail out if there are no events stored.
       if (!handlers) break;
 
-      // Find any remaining events.
+      // Replace events if there are any remaining.  Otherwise, clean up.
       var remaining = [];
       for (var j = 0; j < handlers.length; j++) {
         var handler = handlers[j];
@@ -299,7 +300,7 @@
         }
       }
 
-      // Replace events if there are any remaining.  Otherwise, clean up.
+      // Update tail event if the list has any events.  Otherwise, clean up.
       if (remaining.length) {
         events[name] = remaining;
       } else {
@@ -328,7 +329,7 @@
   };
 
   // Reduces the event callbacks into a map of `{event: onceWrapper}`.
-  // `offer` unbinds the `onceWrapper` after it as been called.
+  // `offer` unbinds the `onceWrapper` after it has been called.
   var onceMap = function(map, name, callback, offer) {
     if (callback) {
       var once = map[name] = _.once(function() {
@@ -387,7 +388,7 @@
     this.id = listener._listenId;
     this.listener = listener;
     this.obj = obj;
-    this.backbone = false;
+    this.interop = true;
     this.count = 0;
     this._events = void 0;
   };
@@ -400,15 +401,15 @@
   // library interop.
   Listening.prototype.off = function(name, callback) {
     var cleanup;
-    if (this.backbone) {
-      this.count--;
-      cleanup = this.count === 0;
-    } else {
+    if (this.interop) {
       this._events = eventsApi(offApi, this._events, name, callback, {
         context: void 0,
         listeners: void 0
       });
       cleanup = !this._events;
+    } else {
+      this.count--;
+      cleanup = this.count === 0;
     }
     if (cleanup) this.cleanup();
   };
@@ -416,36 +417,7 @@
   // Cleans up memory bindings between the listener and the listenee.
   Listening.prototype.cleanup = function() {
     delete this.listener._listeningTo[this.obj._listenId];
-    if (this.backbone) delete this.obj._listeners[this.id];
-  };
-
-  // Proxy Underscore methods to a Backbone class' prototype using a
-  // particular attribute as the data argument
-  var addMethod = function(length, method, attribute) {
-    switch (length) {
-      case 1: return function() {
-        return _[method](this[attribute]);
-      };
-      case 2: return function(value) {
-        return _[method](this[attribute], value);
-      };
-      case 3: return function(iteratee, context) {
-        return _[method](this[attribute], iteratee, context);
-      };
-      case 4: return function(iteratee, defaultVal, context) {
-        return _[method](this[attribute], iteratee, defaultVal, context);
-      };
-      default: return function() {
-        var args = slice.call(arguments);
-        args.unshift(this[attribute]);
-        return _[method].apply(_, args);
-      };
-    }
-  };
-  var addUnderscoreMethods = function(Class, methods, attribute) {
-    _.each(methods, function(length, method) {
-      if (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
-    });
+    if (!this.interop) delete this.obj._listeners[this.id];
   };
 
   // Aliases for backwards compatibility.
