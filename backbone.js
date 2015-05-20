@@ -127,7 +127,7 @@
       listeners[_listening.id] = _listening;
       // Allow the listening to use a counter, instead of tracking
       // callbacks for library interop
-      _listening.backbone = true;
+      _listening.interop = false;
     }
 
     return this;
@@ -154,7 +154,7 @@
 
     if (error) throw error;
     // If the target obj is not Backbone.Events, track events manually.
-    if (!listening.backbone) listening.on(name, callback);
+    if (listening.interop) listening.on(name, callback);
 
     return this;
   };
@@ -210,7 +210,7 @@
       if (!listening) break;
 
       listening.obj.off(name, callback, this);
-      if (!listening.backbone) listening.off(name, callback);
+      if (listening.interop) listening.off(name, callback);
     }
     return this;
   };
@@ -343,7 +343,7 @@
     this.id = listener._listenId;
     this.listener = listener;
     this.obj = obj;
-    this.backbone = false;
+    this.interop = true;
     this.count = 0;
     this._events = void 0;
   };
@@ -356,15 +356,15 @@
   // library interop.
   Listening.prototype.off = function(name, callback) {
     var cleanup;
-    if (this.backbone) {
-      this.count--;
-      cleanup = this.count === 0;
-    } else {
+    if (this.interop) {
       this._events = eventsApi(offApi, this._events, name, callback, {
         context: void 0,
         listeners: void 0
       });
       cleanup = !this._events;
+    } else {
+      this.count--;
+      cleanup = this.count === 0;
     }
     if (cleanup) this.cleanup();
   };
@@ -372,7 +372,7 @@
   // Cleans up memory bindings between the listener and the listenee.
   Listening.prototype.cleanup = function() {
     delete this.listener._listeningTo[this.obj._listenId];
-    if (this.backbone) delete this.obj._listeners[this.id];
+    if (!this.interop) delete this.obj._listeners[this.id];
   };
 
   // Proxy Underscore methods to a Backbone class' prototype using a
