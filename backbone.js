@@ -581,9 +581,8 @@
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, val, options) {
-      var attrs, method, xhr, attributes = this.attributes, wait;
-
       // Handle both `"key", value` and `{key: value}` -style arguments.
+      var attrs;
       if (key == null || typeof key === 'object') {
         attrs = key;
         options = val;
@@ -592,7 +591,7 @@
       }
 
       options = _.extend({validate: true}, options);
-      wait = options.wait;
+      var wait = options.wait;
 
       // If we're not waiting and attributes exist, save acts as
       // `set(attr).save(null, opts)` with validation. Otherwise, check if
@@ -613,6 +612,7 @@
       if (options.parse === void 0) options.parse = true;
       var model = this;
       var success = options.success;
+      var attributes = this.attributes;
       options.success = function(resp) {
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
@@ -626,9 +626,9 @@
       };
       wrapError(this, options);
 
-      method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
+      var method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
       if (method === 'patch' && !options.attrs) options.attrs = attrs;
-      xhr = this.sync(method, this, options);
+      var xhr = this.sync(method, this, options);
 
       // Restore attributes.
       if (attrs && wait) this.attributes = attributes;
