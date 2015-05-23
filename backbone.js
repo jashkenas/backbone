@@ -590,7 +590,7 @@
         (attrs = {})[key] = val;
       }
 
-      options = _.extend({validate: true}, options);
+      options = _.extend({validate: true, parse: true}, options);
       var wait = options.wait;
 
       // If we're not waiting and attributes exist, save acts as
@@ -604,7 +604,6 @@
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
-      if (options.parse === void 0) options.parse = true;
       var model = this;
       var success = options.success;
       var attributes = this.attributes;
