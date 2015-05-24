@@ -657,7 +657,7 @@
     });
 
     var router = new RouterExtended();
-    deepEqual({home: "root", index: "index.html", show: "show", search: "search"}, router.routes);
+    deepEqual({home: "root", index: "index.html", show: "show", search: "search"}, router.routes());
   });
 
   test("#2538 - hashChange to pushState only if both requested.", 0, function() {
