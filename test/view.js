@@ -398,14 +398,14 @@
     equal(counter, 2);
   });
 
-  test("remove", 1, function() {
+  test("remove", 2, function() {
     var view = new Backbone.View;
     document.body.appendChild(view.el);
 
     view.delegate('click', function() { ok(false); });
     view.listenTo(view, 'all x', function() { ok(false); });
 
-    view.remove();
+    equal(view.remove(), view, '#remove returns the view instance');
     view.$el.trigger('click');
     view.trigger('x');
 
