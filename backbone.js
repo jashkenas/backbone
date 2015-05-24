@@ -1170,7 +1170,6 @@
   // if an existing element is not provided...
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
-    options || (options = {});
     _.extend(this, _.pick(options, viewOptions));
     this._ensureElement();
     this.initialize.apply(this, arguments);
@@ -1253,11 +1252,12 @@
     // Uses event delegation for efficiency.
     // Omitting the selector binds the event to `this.el`.
     delegateEvents: function(events) {
-      if (!(events || (events = _.result(this, 'events')))) return this;
+      events || (events = _.result(this, 'events'));
+      if (!events) return this;
       this.undelegateEvents();
       for (var key in events) {
         var method = events[key];
-        if (!_.isFunction(method)) method = this[events[key]];
+        if (!_.isFunction(method)) method = this[method];
         if (!method) continue;
         var match = key.match(delegateEventSplitter);
         this.delegate(match[1], match[2], _.bind(method, this));
