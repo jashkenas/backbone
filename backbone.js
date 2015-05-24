@@ -676,8 +676,8 @@
         _.result(this.collection, 'url') ||
         urlError();
       if (this.isNew()) return base;
-      var id = this.id || this.attributes[this.idAttribute];
-      return base.replace(/([^\/])$/, '$1/') + encodeURIComponent(id);
+      var id = this.get(this.idAttribute);
+      return base.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
     },
 
     // **parse** converts a response into the hash of attributes to be `set` on
