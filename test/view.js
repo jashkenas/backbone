@@ -413,4 +413,25 @@
     notEqual(view.el.parentNode, document.body);
   });
 
+  test("setElement", 3, function() {
+    var view = new Backbone.View({
+      events: {
+        click: function() { ok(false); }
+      }
+    });
+    view.events = {
+      click: function() { ok(true); }
+    };
+    var oldEl = view.el;
+    var $oldEl = view.$el;
+
+    view.setElement(document.createElement('div'));
+
+    $oldEl.click();
+    view.$el.click();
+
+    notEqual(oldEl, view.el);
+    notEqual($oldEl, view.$el);
+  });
+
 })();
