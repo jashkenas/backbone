@@ -77,7 +77,7 @@
     equal(counter2, 3);
   });
 
-  test("delegate", 2, function() {
+  test("delegate", 3, function() {
     var view = new Backbone.View({el: '#testElement'});
     view.delegate('click', 'h1', function() {
       ok(true);
@@ -86,6 +86,8 @@
       ok(true);
     });
     view.$('h1').trigger('click');
+
+    equal(view.delegate(), view, '#delegate returns the view instance');
   });
 
   test("delegateEvents allows functions for callbacks", 3, function() {
