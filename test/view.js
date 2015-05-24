@@ -48,6 +48,11 @@
     strictEqual(new View().one, 1);
   });
 
+  test("render", 1, function() {
+    var view = new Backbone.View;
+    equal(view.render(), view, '#render returns the view instance');
+  });
+
   test("delegateEvents", 6, function() {
     var counter1 = 0, counter2 = 0;
 
