@@ -119,7 +119,7 @@
     view.$el.trigger('click');
   });
 
-  test("undelegateEvents", 6, function() {
+  test("undelegateEvents", 7, function() {
     var counter1 = 0, counter2 = 0;
 
     var view = new Backbone.View({el: '#testElement'});
@@ -142,6 +142,8 @@
     view.$('h1').trigger('click');
     equal(counter1, 2);
     equal(counter2, 3);
+
+    equal(view.undelegateEvents(), view, '#undelegateEvents returns the view instance');
   });
 
   test("undelegate", 1, function() {
