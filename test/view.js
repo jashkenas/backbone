@@ -144,7 +144,7 @@
     equal(counter2, 3);
   });
 
-  test("undelegate", 0, function() {
+  test("undelegate", 1, function() {
     view = new Backbone.View({el: '#testElement'});
     view.delegate('click', function() { ok(false); });
     view.delegate('click', 'h1', function() { ok(false); });
@@ -153,6 +153,8 @@
 
     view.$('h1').trigger('click');
     view.$el.trigger('click');
+
+    equal(view.undelegate(), view, '#undelegate returns the view instance');
   });
 
   test("undelegate with passed handler", 1, function() {
