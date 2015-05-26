@@ -1794,12 +1794,12 @@
     // Update the hash location, either replacing the current entry, or adding
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
+      var href = location.href.replace(/(javascript:|#).*$/, '');
+      var url = href + "#" + fragment;
       if (replace) {
-        var href = location.href.replace(/(javascript:|#).*$/, '');
-        location.replace(href + '#' + fragment);
+        location.replace(url);
       } else {
-        // Some browsers require that `hash` contains a leading #.
-        location.hash = '#' + fragment;
+        location.href = url;
       }
     }
 
