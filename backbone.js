@@ -614,7 +614,10 @@
 
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
-      if (options.parse === void 0) options.parse = true;
+      if (options.parse === void 0) {
+        options.parse = true;
+        options.enabledParseForModel = true;
+      }
       var model = this;
       var success = options.success;
       options.success = function(resp) {
@@ -794,7 +797,7 @@
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
       options = _.defaults({}, options, setOptions);
-      if (options.parse) models = this.parse(models, options);
+      if (options.parse && !options.enabledParseForModel) models = this.parse(models, options);
       var singular = !_.isArray(models);
       models = singular ? (models ? [models] : []) : models.slice();
       var id, model, attrs, existing, sort;
