@@ -377,6 +377,7 @@
     <ul class="toc_section">
       <li>– <a href="#Collection-extend">extend</a></li>
       <li>– <a href="#Collection-model">model</a></li>
+      <li>– <a href="#Collection-modelId">modelId</a></li>
       <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-toJSON">toJSON</a></li>
@@ -1767,6 +1768,36 @@ var Library = Backbone.Collection.extend({
     } else {
       return new PrivateDocument(attrs, options);
     }
+  }
+
+});
+</pre>
+
+    <p id="Collection-modelId">
+      <b class="header">modelId</b><code>collection.modelId</code>
+      <br />
+      Override this method to specify the attribute the collection will use to
+      refer to its models in <a href="#Collection-get">collection.get</a>.
+      <br />
+      By default returns the <tt>idAttribute</tt> of the collection's model
+      class or failing that, <tt>'id'</tt>. If your collection uses pollymorphic
+      models and those models have an <tt>idAttribute</tt> other than <tt>id</tt>
+      you must override this method with your own custom logic.
+    </p>
+
+<pre>
+var Library = Backbone.Collection.extend({
+
+  model: function(attrs, options) {
+    if (condition) {
+      return new PublicDocument(attrs, options);
+    } else {
+      return new PrivateDocument(attrs, options);
+    }
+  },
+
+  modelId: function(attrs) {
+    return attrs.private ? 'private_id' : 'public_id';
   }
 
 });
