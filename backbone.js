@@ -1098,6 +1098,9 @@
 
     // Internal method to sever a model's ties to a collection.
     _removeReference: function(model, options) {
+      delete this._byId[model.cid];
+      var id = this.modelId(model.attributes);
+      if (id != null) delete this._byId[id] = model;
       if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
     },
