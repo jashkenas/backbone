@@ -1100,7 +1100,7 @@
     _removeReference: function(model, options) {
       delete this._byId[model.cid];
       var id = this.modelId(model.attributes);
-      if (id != null) delete this._byId[id] = model;
+      if (id != null) delete this._byId[id];
       if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
     },
