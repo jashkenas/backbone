@@ -4257,6 +4257,11 @@ ActiveRecord::Base.include_root_in_json = false
         Backbone will automatically try to load jQuery for you.
       </li>
       <li>
+        Views now always delegate their events in <a href="#View-setElement">setElement</a>.
+        You can no longer modify the elements hash or your view's <tt>el</tt> property in
+        <tt>initialize</tt>. 
+      </li>
+      <li>
         Added an <tt>"update"</tt> event that triggers after any amount of
         models are added or removed from a collection. Handy to re-render lists
         of things without debouncing.
