@@ -377,6 +377,7 @@
     <ul class="toc_section">
       <li>– <a href="#Collection-extend">extend</a></li>
       <li>– <a href="#Collection-model">model</a></li>
+      <li>– <a href="#Collection-modelId">modelId</a></li>
       <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-toJSON">toJSON</a></li>
@@ -997,22 +998,22 @@ view.stopListening(model);
     </p>
 
     <ul class="small">
-      <li><b>"add"</b> (model, collection, options) &mdash; when a model is added to a collection. </li>
-      <li><b>"remove"</b> (model, collection, options) &mdash; when a model is removed from a collection. </li>
-      <li><b>"update"</b> (collection, options) &mdash; single event triggered after any number of models have been added or removed from a collection. </li>
-      <li><b>"reset"</b> (collection, options) &mdash; when the collection's entire contents have been replaced. </li>
-      <li><b>"sort"</b> (collection, options) &mdash; when the collection has been re-sorted. </li>
-      <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed. </li>
-      <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated. </li>
-      <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>. </li>
-      <li><b>"request"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a request to the server. </li>
+      <li><b>"add"</b> (model, collection, options) &mdash; when a model is added to a collection.</li>
+      <li><b>"remove"</b> (model, collection, options) &mdash; when a model is removed from a collection.</li>
+      <li><b>"update"</b> (collection, options) &mdash; single event triggered after any number of models have been added or removed from a collection.</li>
+      <li><b>"reset"</b> (collection, options) &mdash; when the collection's entire contents have been replaced.</li>
+      <li><b>"sort"</b> (collection, options) &mdash; when the collection has been re-sorted.</li>
+      <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed.</li>
+      <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated.</li>
+      <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>.</li>
+      <li><b>"request"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a request to the server.</li>
       <li><b>"sync"</b> (model_or_collection, resp, options) &mdash; when a model or collection has been successfully synced with the server.</li>
-      <li><b>"error"</b> (model_or_collection, resp, options) &mdash; when a model's or collection's request to the server has failed. </li>
-      <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client. </li>
+      <li><b>"error"</b> (model_or_collection, resp, options) &mdash; when a model's or collection's request to the server has failed.</li>
+      <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client.</li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
       <li><b>"route"</b> (router, route, params) &mdash; Fired by history when <i>any</i> route has been matched.</li>
-      <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument. </li>
+      <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument.</li>
     </ul>
 
     <p>
@@ -1772,6 +1773,36 @@ var Library = Backbone.Collection.extend({
 });
 </pre>
 
+    <p id="Collection-modelId">
+      <b class="header">modelId</b><code>collection.modelId</code>
+      <br />
+      Override this method to specify the attribute the collection will use to
+      refer to its models in <a href="#Collection-get">collection.get</a>.
+      <br />
+      By default returns the <tt>idAttribute</tt> of the collection's model
+      class or failing that, <tt>'id'</tt>. If your collection uses polymorphic
+      models and those models have an <tt>idAttribute</tt> other than <tt>id</tt>
+      you must override this method with your own custom logic.
+    </p>
+
+<pre>
+var Library = Backbone.Collection.extend({
+
+  model: function(attrs, options) {
+    if (condition) {
+      return new PublicDocument(attrs, options);
+    } else {
+      return new PrivateDocument(attrs, options);
+    }
+  },
+
+  modelId: function(attrs) {
+    return attrs.private ? 'private_id' : 'public_id';
+  }
+
+});
+</pre>
+
     <p id="Collection-constructor">
       <b class="header">constructor / initialize</b><code>new Backbone.Collection([models], [options])</code>
       <br />
@@ -1894,7 +1925,7 @@ var alphabetical = books.sortBy(function(book) {
       <b class="header">add</b><code>collection.add(models, [options])</code>
       <br />
       Add a model (or an array of models) to the collection, firing an <tt>"add"</tt>
-      event for each model, and an <tt>"updated"</tt> event afterwards. If a <a href="#Collection-model">model</a> property is defined, you may also pass
+      event for each model, and an <tt>"update"</tt> event afterwards. If a <a href="#Collection-model">model</a> property is defined, you may also pass
       raw attributes objects, and have them be vivified as instances of the model.
       Returns the added (or preexisting, if duplicate) models.
       Pass <tt>{at: index}</tt> to splice the model into the collection at the
