@@ -298,16 +298,12 @@
     deepEqual(col.pluck('id'), [1, 2, 3]);
   });
 
-  test("remove", 7, function() {
+  test("remove", 10, function() {
     var removed = null;
-    var otherRemoved = null;
     var result = null;
     col.on('remove', function(model, col, options) {
       removed = model.get('label');
       equal(options.index, 3);
-    });
-    otherCol.on('remove', function(model, col, options) {
-      otherRemoved = true;
     });
     result = col.remove(d);
     equal(removed, 'd');
@@ -317,7 +313,13 @@
     strictEqual(result, undefined);
     equal(col.length, 3);
     equal(col.first(), a);
-    equal(otherRemoved, null);
+    col.off();
+    result = col.remove([c, d]);
+    equal(result.length, 1, 'only returns removed models');
+    equal(result[0], c, 'only returns removed models');
+    result = col.remove([c, b]);
+    equal(result.length, 1, 'only returns removed models');
+    equal(result[0], b, 'only returns removed models');
   });
 
   test("add and remove return values", 13, function() {
