@@ -1611,4 +1611,28 @@
     equal(c.get(1).get('attr'), 'test');
   });
 
+  test("fetch data is only parsed once", 3, function() {
+    var modelParse = 0;
+    var collectionParse = 0;
+    var Collection = Backbone.Collection.extend({
+      url: '/test',
+      model: Backbone.Model.extend({
+        parse: function(model) {
+          modelParse++;
+          return model.model;
+        }
+      }),
+      parse: function(models) {
+        collectionParse++;
+        return models.models;
+      }
+    });
+    var c = new Collection();
+    c.fetch();
+    this.ajaxSettings.success({models: [{model: {id: 1, attr: 'test'} }] });
+    equal(modelParse, 1);
+    equal(collectionParse, 1);
+    equal(c.get(1).get('attr'), 'test');
+  });
+
 })();
