@@ -1671,4 +1671,14 @@
     collection.invoke('method', 1, 2, 3);
   });
 
+  test("#3534 - destroy models in each loop", 4, function() {
+    var collection = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}, {id: 4}]);
+    collection.each(function(model) {
+      notStrictEqual(model, undefined);
+      if (model !== undefined) {
+        model.destroy({url: function() {}});
+      }
+    });
+  });
+
 })();

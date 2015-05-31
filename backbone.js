@@ -797,7 +797,7 @@
     remove: function(models, options) {
       options = _.extend({}, options);
       var singular = !_.isArray(models);
-      models = singular ? [models] : _.clone(models);
+      models = singular ? [models] : models;
       var removed = this._removeModels(models, options);
       if (!options.silent && removed) this.trigger('update', this, options);
       return singular ? removed[0] : removed;
@@ -1080,23 +1080,39 @@
     // Internal method called by both remove and set.
     _removeModels: function(models, options) {
       var removed = [];
+      var removedMap = {};
+      var model;
       for (var i = 0; i < models.length; i++) {
-        var model = this.get(models[i]);
-        if (!model) continue;
+        model = this.get(models[i]);
+        if (model && !removedMap[model.cid]) {
+          removedMap[model.cid] = 1;
+          removed.push(model);
+        }
+      }
 
-        var index = this.indexOf(model);
-        this.models.splice(index, 1);
-        this.length--;
+      if (removed.length) {
+        models = [];
+        for (i = 0; i < this.length; i++) {
+          model = this.models[i];
+          if (removedMap[model.cid]) {
+            removedMap[model.cid] = i;
+          } else {
+            models.push(model);
+          }
+        }
+        this.models = models;
+        this.length = models.length;
 
-        if (!options.silent) {
-          options.index = index;
-          model.trigger('remove', model, this, options);
+        for (i = 0; i < removed.length; i++) {
+          model = removed[i];
+          options.index = removedMap[model.cid];
+          if (!options.silent) model.trigger('remove', model, this, options);
+          this._removeReference(model, options);
         }
 
-        removed.push(model);
-        this._removeReference(model, options);
+        return removed;
       }
-      return removed.length ? removed : false;
+      return false;
     },
 
     // Method for checking whether an object should be considered a model for
