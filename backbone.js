@@ -1415,21 +1415,22 @@
     throw new Error('Backbone does not provide a spec compliant Promise by default.');
   };
 
-  // A helper method that forces jQuery's first `then` callback to be
-  // executed asynchronously.
-  // This is used so we can guarantee our async return values execute
-  // callbacks async, not async sometimes and sync other times.
-  var asyncDeferred = function(method) {
-    return function(value) {
-      var deferred = Backbone.$.Deferred();
-      _.defer(deferred[method], value);
-      return deferred.promise();
-    };
-  };
-
   _.extend(Backbone.Promise, {
-    resolve: asyncDeferred('resolve'),
-    reject: asyncDeferred('reject')
+    // A wrapper around jQuery's normal resolve to force it to adopt a
+    // thenable's state, and execute then callbacks asynchronously.
+    resolve: function(value) {
+      var deferred = Backbone.$.Deferred();
+      _.defer(deferred.resolve);
+      return deferred.promise().then(_.constant(value));
+    },
+
+    // A wrapper around jQuery's normal reject to force it to execute
+    // then callbacks asynchronously.
+    reject: function(reason) {
+      var deferred = Backbone.$.Deferred();
+      _.defer(deferred.reject, reason);
+      return deferred.promise();
+    }
   });
 
   // Backbone.Router
