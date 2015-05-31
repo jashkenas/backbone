@@ -869,15 +869,15 @@
       if (toAdd.length || orderChanged) {
         if (sortable) sort = true;
         this.length += toAdd.length;
-        if (at != null) {
-          for (i = 0; i < toAdd.length; i++) {
-            this.models.splice(at + i, 0, toAdd[i]);
-          }
-        } else {
+        if (at == null) {
           if (order) this.models.length = 0;
           var orderedModels = order || toAdd;
           for (i = 0; i < orderedModels.length; i++) {
             this.models.push(orderedModels[i]);
+          }
+        } else {
+          for (i = 0; i < toAdd.length; i++) {
+            this.models.splice(at + i, 0, toAdd[i]);
           }
         }
       }
