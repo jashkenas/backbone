@@ -865,16 +865,13 @@
         this.length = set.length;
       } else if (toAdd.length) {
         if (sortable) sort = true;
-        this.length += toAdd.length;
+        models = this.models;
         if (at == null) {
-          for (i = 0; i < toAdd.length; i++) {
-            this.models.push(toAdd[i]);
-          }
+          this.models = models.concat(toAdd);
         } else {
-          for (i = 0; i < toAdd.length; i++) {
-            this.models.splice(at + i, 0, toAdd[i]);
-          }
+          this.models = models.slice(0, at).concat(toAdd).concat(models.slice(at, this.length));
         }
+        this.length += toAdd.length;
       }
 
       // Silently sort the collection if appropriate.
