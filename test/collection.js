@@ -506,7 +506,7 @@
     };
     collection.url = '/test';
     collection.fetch();
-    this.syncArgs.options.success();
+    this.syncArgs.options.success([]);
     equal(counter, 1);
   });
 
@@ -1221,7 +1221,7 @@
     }));
     var ajax = Backbone.ajax;
     Backbone.ajax = function (params) {
-      _.defer(params.success);
+      _.defer(params.success, []);
       return {someHeader: 'headerValue'};
     };
     collection.fetch({
