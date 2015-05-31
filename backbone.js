@@ -792,30 +792,42 @@
 
       options = _.defaults({}, options, setOptions);
       if (options.parse) models = this.parse(models, options);
+
       var singular = !_.isArray(models);
       models = singular ? (models ? [models] : []) : models.slice();
-      var id, model, attrs, existing, sort;
+
       var at = options.at;
       if (at != null) at = +at;
       if (at < 0) at += this.length + 1;
+
+      var toAdd = [];
+      var toRemove = [];
+      var modelMap = {};
+
+      var add = options.add;
+      var merge = options.merge;
+      var remove = options.remove;
+
+      var sort = false;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var toAdd = [], toRemove = [], modelMap = {};
-      var add = options.add, merge = options.merge, remove = options.remove;
+
       var order = !sortable && add && remove ? [] : false;
       var orderChanged = false;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
+      var model;
       for (var i = 0; i < models.length; i++) {
-        attrs = models[i];
+        model = models[i];
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        if (existing = this.get(attrs)) {
+        var existing;
+        if (existing = this.get(model)) {
           if (remove) modelMap[existing.cid] = true;
-          if (merge && attrs !== existing) {
-            attrs = this._isModel(attrs) ? attrs.attributes : attrs;
+          if (merge && model !== existing) {
+            var attrs = this._isModel(model) ? model.attributes : model;
             if (options.parse) attrs = existing.parse(attrs, options);
             existing.set(attrs, options);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
@@ -824,7 +836,7 @@
 
         // If this is a new, valid model, push it to the `toAdd` list.
         } else if (add) {
-          model = models[i] = this._prepareModel(attrs, options);
+          model = models[i] = this._prepareModel(model, options);
           if (!model) continue;
           toAdd.push(model);
           this._addReference(model, options);
@@ -833,7 +845,7 @@
         // Do not add multiple models with the same `id`.
         model = existing || model;
         if (!model) continue;
-        id = this.modelId(model.attributes);
+        var id = this.modelId(model.attributes);
         if (order && (model.isNew() || !modelMap[id])) {
           order.push(model);
 
@@ -846,7 +858,7 @@
 
       // Remove nonexistent models if appropriate.
       if (remove) {
-        for (var i = 0; i < this.length; i++) {
+        for (i = 0; i < this.length; i++) {
           if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
         }
         if (toRemove.length) this._removeModels(toRemove, options);
@@ -857,13 +869,13 @@
         if (sortable) sort = true;
         this.length += toAdd.length;
         if (at != null) {
-          for (var i = 0; i < toAdd.length; i++) {
+          for (i = 0; i < toAdd.length; i++) {
             this.models.splice(at + i, 0, toAdd[i]);
           }
         } else {
           if (order) this.models.length = 0;
           var orderedModels = order || toAdd;
-          for (var i = 0; i < orderedModels.length; i++) {
+          for (i = 0; i < orderedModels.length; i++) {
             this.models.push(orderedModels[i]);
           }
         }
@@ -875,7 +887,7 @@
       // Unless silenced, it's time to fire all appropriate add/sort events.
       if (!options.silent) {
         var addOpts = at != null ? _.clone(options) : options;
-        for (var i = 0; i < toAdd.length; i++) {
+        for (i = 0; i < toAdd.length; i++) {
           if (at != null) addOpts.index = at + i;
           (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
