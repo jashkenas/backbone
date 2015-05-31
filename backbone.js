@@ -879,11 +879,10 @@
 
       // Unless silenced, it's time to fire all appropriate add/sort events.
       if (!options.silent) {
-        var addOpts = at == null ? options : _.clone(options);
         for (i = 0; i < toAdd.length; i++) {
+          if (at != null) options.index = at + i;
           model = toAdd[i];
-          if (at != null) addOpts.index = at + i;
-          model.trigger('add', model, this, addOpts);
+          model.trigger('add', model, this, options);
         }
         if (sort || orderChanged) this.trigger('sort', this, options);
         if (toAdd.length || toRemove.length) this.trigger('update', this, options);
