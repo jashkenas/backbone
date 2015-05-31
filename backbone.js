@@ -41,7 +41,15 @@
   var previousBackbone = root.Backbone;
 
   // Create a local reference to a common array method we'll want to use later.
-  var slice = [].slice;
+  var slice = Array.prototype.slice;
+  var splice = function(array, insert, at) {
+    var length = insert.length;
+    var result = Array(array.length + length);
+    for (var i = 0; i < at; i++) result[i] = array[i];
+    for (i = 0; i < length; i++) result[i + at] = insert[i];
+    for (i = at; i < array.length; i++) result[i + length] = array[i];
+    return result;
+  };
 
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '1.2.0';
@@ -865,12 +873,7 @@
         this.length = set.length;
       } else if (toAdd.length) {
         if (sortable) sort = true;
-        models = this.models;
-        if (at == null) {
-          this.models = models.concat(toAdd);
-        } else {
-          this.models = models.slice(0, at).concat(toAdd).concat(models.slice(at, this.length));
-        }
+        this.models = splice(this.models, toAdd, at == null ? this.length : at);
         this.length += toAdd.length;
       }
 
