@@ -887,7 +887,7 @@
 
       // Unless silenced, it's time to fire all appropriate add/sort events.
       if (!options.silent) {
-        var addOpts = at != null ? _.clone(options) : options;
+        var addOpts = at == null ? options : _.clone(options);
         for (i = 0; i < toAdd.length; i++) {
           model = toAdd[i];
           if (at != null) addOpts.index = at + i;
