@@ -857,7 +857,7 @@
 
       // See if sorting is needed, update `length` and splice in new models.
       var orderChanged = false;
-      if (!sortable && add && remove) {
+      if (set.length && !sortable && add && remove) {
         orderChanged = set.length != this.length || _.any(this.models, function(model, index) {
           return model !== set[index];
         });
