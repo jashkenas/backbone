@@ -823,8 +823,8 @@
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        var existing;
-        if (existing = this.get(model)) {
+        var existing = this.get(model);
+        if (existing) {
           if (remove) modelMap[existing.cid] = true;
           if (merge && model !== existing) {
             var attrs = this._isModel(model) ? model.attributes : model;
@@ -859,7 +859,8 @@
       // Remove nonexistent models if appropriate.
       if (remove) {
         for (i = 0; i < this.length; i++) {
-          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
+          model = this.models[i];
+          if (!modelMap[model.cid]) toRemove.push(model);
         }
         if (toRemove.length) this._removeModels(toRemove, options);
       }
@@ -888,8 +889,9 @@
       if (!options.silent) {
         var addOpts = at != null ? _.clone(options) : options;
         for (i = 0; i < toAdd.length; i++) {
+          model = toAdd[i];
           if (at != null) addOpts.index = at + i;
-          (model = toAdd[i]).trigger('add', model, this, addOpts);
+          model.trigger('add', model, this, addOpts);
         }
         if (sort || orderChanged) this.trigger('sort', this, options);
         if (toAdd.length || toRemove.length) this.trigger('update', this, options);
