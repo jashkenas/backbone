@@ -1064,7 +1064,7 @@
       options = _.extend({}, options);
       var removed = [];
       for (var i = 0; i < models.length; i++) {
-        var model = models[i] = this.get(models[i]);
+        var model = this.get(models[i]);
         if (!model) continue;
 
         var index = this.indexOf(model);
