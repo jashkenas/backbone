@@ -15,7 +15,6 @@
     "karma-qunit": "^0.1.4",
     "uglify-js": "^2.4.17"
   },
-  "main": "backbone.js",
   "scripts": {
     "test": "./node_modules/karma/bin/karma start && coffee test/model.coffee",
     "build": "uglifyjs backbone.js --mangle --source-map backbone-min.map -o backbone-min.js",
