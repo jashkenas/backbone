@@ -339,11 +339,11 @@
 
     list = col.add([{id: 3}, {id: 6}], {validate: true});
     equal(col.length, 3);
-    equal(list[0], false);
-    equal(list[1].get('id'), 6);
+    equal(list.length, 1);
+    equal(list[0].get('id'), 6);
 
     var result = col.add({id: 6});
-    equal(result.cid, list[1].cid);
+    equal(result.cid, list[0].cid);
 
     result = col.remove({id: 6});
     equal(col.length, 2);
@@ -506,7 +506,7 @@
     };
     collection.url = '/test';
     collection.fetch();
-    this.syncArgs.options.success();
+    this.syncArgs.options.success([]);
     equal(counter, 1);
   });
 
@@ -1221,7 +1221,7 @@
     }));
     var ajax = Backbone.ajax;
     Backbone.ajax = function (params) {
-      _.defer(params.success);
+      _.defer(params.success, []);
       return {someHeader: 'headerValue'};
     };
     collection.fetch({
