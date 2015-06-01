@@ -40,9 +40,8 @@
   // restored later on, if `noConflict` is used.
   var previousBackbone = root.Backbone;
 
-  // Create local references to array methods we'll want to use later.
-  var array = [];
-  var slice = array.slice;
+  // Create a local reference to a common array method we'll want to use later.
+  var slice = [].slice;
 
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '1.2.0';
@@ -68,6 +67,35 @@
   // `application/x-www-form-urlencoded` instead and will send the model in a
   // form param named `model`.
   Backbone.emulateJSON = false;
+
+  // Proxy Underscore methods to a Backbone class' prototype using a
+  // particular attribute as the data argument
+  var addMethod = function(length, method, attribute) {
+    switch (length) {
+      case 1: return function() {
+        return _[method](this[attribute]);
+      };
+      case 2: return function(value) {
+        return _[method](this[attribute], value);
+      };
+      case 3: return function(iteratee, context) {
+        return _[method](this[attribute], iteratee, context);
+      };
+      case 4: return function(iteratee, defaultVal, context) {
+        return _[method](this[attribute], iteratee, defaultVal, context);
+      };
+      default: return function() {
+        var args = slice.call(arguments);
+        args.unshift(this[attribute]);
+        return _[method].apply(_, args);
+      };
+    }
+  };
+  var addUnderscoreMethods = function(Class, methods, attribute) {
+    _.each(methods, function(length, method) {
+      if (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
+    });
+  };
 
   // Backbone.Events
   // ---------------
@@ -326,35 +354,6 @@
       case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
       default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args); return;
     }
-  };
-
-  // Proxy Underscore methods to a Backbone class' prototype using a
-  // particular attribute as the data argument
-  var addMethod = function(length, method, attribute) {
-    switch (length) {
-      case 1: return function() {
-        return _[method](this[attribute]);
-      };
-      case 2: return function(value) {
-        return _[method](this[attribute], value);
-      };
-      case 3: return function(iteratee, context) {
-        return _[method](this[attribute], iteratee, context);
-      };
-      case 4: return function(iteratee, defaultVal, context) {
-        return _[method](this[attribute], iteratee, defaultVal, context);
-      };
-      default: return function() {
-        var args = slice.call(arguments);
-        args.unshift(this[attribute]);
-        return _[method].apply(_, args);
-      };
-    }
-  };
-  var addUnderscoreMethods = function(Class, methods, attribute) {
-    _.each(methods, function(length, method) {
-      if (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
-    });
   };
 
   // Aliases for backwards compatibility.
