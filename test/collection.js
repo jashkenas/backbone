@@ -561,31 +561,17 @@
 
   });
 
-  test("create with wait:true should not call collection.parse", 1, function() {
-    var collectionParseCalled = false;
-
-    var Model = Backbone.Model.extend({
-      sync: function (method, model, options) {
-        _.extend(options, {specialSync: true});
-        return Backbone.Model.prototype.sync.call(this, method, model, options);
-      }
-    });
-
+  test("create with wait:true should not call collection.parse", 0, function() {
     var Collection = Backbone.Collection.extend({
-      model: Model,
       url: '/test',
       parse: function () {
-        collectionParseCalled = true;
+        ok(false);
       }
     });
 
     var collection = new Collection;
 
-    var success = function (model, response, options) {
-      equal(collectionParseCalled, false);
-    };
-
-    collection.create({}, {wait: true, success: success});
+    collection.create({}, {wait: true});
     this.ajaxSettings.success();
   });
 

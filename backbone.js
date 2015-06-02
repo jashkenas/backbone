@@ -789,7 +789,7 @@
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
       options = _.defaults({}, options, setOptions);
-      if (options.parse) models = this.parse(models, options);
+      if (options.parse && !this._isModel(models)) models = this.parse(models, options);
       var singular = !_.isArray(models);
       models = singular ? (models ? [models] : []) : models.slice();
       var id, model, attrs, existing, sort;
@@ -1776,7 +1776,7 @@
         this._updateHash(this.location, fragment, options.replace);
         if (this.iframe && (fragment !== this.getHash(this.iframe.contentWindow))) {
           var iWindow = this.iframe.contentWindow;
-          
+
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
@@ -1784,7 +1784,7 @@
             iWindow.document.open();
             iWindow.document.close();
           }
-          
+
           this._updateHash(iWindow.location, fragment, options.replace);
         }
 
