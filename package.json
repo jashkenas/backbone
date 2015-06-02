@@ -5,6 +5,7 @@
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
   "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
   "dependencies"  : {
+    "jquery"      : "^2.1.4",
     "underscore"  : ">=1.7.0"
   },
   "devDependencies": {
