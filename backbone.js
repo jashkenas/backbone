@@ -1416,7 +1416,6 @@
   var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
-    this.handlers = [];
     this.bindNavigationListener();
     this._bindRoutes();
     this.initialize.apply(this, arguments);
@@ -1428,6 +1427,9 @@
   var namedParam    = /(\(\?)?:\w+/g;
   var splatParam    = /\*\w+/g;
   var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
+
+  // Route handlers registered through Router instances are stored here.
+  Router.handlers = [];
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
@@ -1456,7 +1458,7 @@
     //
     route: function(route, name, callback) {
       var handler = this.getHandler(route, name, callback);
-      this.handlers.push(handler);
+      Router.handlers.push(handler);
     },
 
     // Return a handler object from a route, name, and callback
@@ -1493,7 +1495,7 @@
 
     // Match a fragment with a registered handler
     matchFragment: function(fragment) {
-      return _.find(this.handlers, function(handler) {
+      return _.find(Router.handlers, function(handler) {
         return handler.route.test(fragment);
       });
     },
