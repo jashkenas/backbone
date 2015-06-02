@@ -594,7 +594,11 @@
         (attrs = {})[key] = val;
       }
 
-      options = _.extend({validate: true, parse: true}, options);
+      options = _.extend({
+        validate: true,
+        parse: true,
+        enabledParseForModel: !options || options.parse === void 0
+      }, options);
       var wait = options.wait;
 
       // If we're not waiting and attributes exist, save acts as
@@ -789,7 +793,7 @@
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
       options = _.defaults({}, options, setOptions);
-      if (options.parse) models = this.parse(models, options);
+      if (options.parse && !options.enabledParseForModel) models = this.parse(models, options);
       var singular = !_.isArray(models);
       models = singular ? (models ? [models] : []) : models.slice();
       var id, model, attrs, existing, sort;
