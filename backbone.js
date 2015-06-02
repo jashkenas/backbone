@@ -1646,15 +1646,16 @@
       // support the `hashchange` event, HTML5 history, or the user wants
       // `hashChange` but not `pushState`.
       if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
-        var iframe = document.createElement('iframe');
-        iframe.src = 'javascript:0';
-        iframe.style.display = 'none';
-        iframe.tabIndex = -1;
+        this.iframe = document.createElement('iframe');
+        this.iframe.src = 'javascript:0';
+        this.iframe.style.display = 'none';
+        this.iframe.tabIndex = -1;
         var body = document.body;
         // Using `appendChild` will throw on IE < 9 if the document is not ready.
-        this.iframe = body.insertBefore(iframe, body.firstChild).contentWindow;
-        this.iframe.document.open().close();
-        this.iframe.location.hash = '#' + this.fragment;
+        var iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
+        iWindow.document.open();
+        iWindow.document.close();
+        iWindow.location.hash = '#' + this.fragment;
       }
 
       // Add a cross-platform `addEventListener` shim for older browsers.
@@ -1692,7 +1693,7 @@
 
       // Clean up the iframe if necessary.
       if (this.iframe) {
-        document.body.removeChild(this.iframe.frameElement);
+        document.body.removeChild(this.iframe);
         this.iframe = null;
       }
 
@@ -1715,7 +1716,7 @@
       // If the user pressed the back button, the iframe's hash will have
       // changed and we should use that for comparison.
       if (current === this.fragment && this.iframe) {
-        current = this.getHash(this.iframe);
+        current = this.getHash(this.iframe.contentWindow);
       }
 
       if (current === this.fragment) return false;
@@ -1773,12 +1774,18 @@
       // fragment to store history.
       } else if (this._wantsHashChange) {
         this._updateHash(this.location, fragment, options.replace);
-        if (this.iframe && (fragment !== this.getHash(this.iframe))) {
+        if (this.iframe && (fragment !== this.getHash(this.iframe.contentWindow))) {
+          var iWindow = this.iframe.contentWindow;
+          
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
-          if (!options.replace) this.iframe.document.open().close();
-          this._updateHash(this.iframe.location, fragment, options.replace);
+          if (!options.replace) {
+            iWindow.document.open();
+            iWindow.document.close();
+          }
+          
+          this._updateHash(iWindow.location, fragment, options.replace);
         }
 
       // If you've told us that you explicitly don't want fallback hashchange-
