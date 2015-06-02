@@ -1438,12 +1438,6 @@
     // initialization logic.
     initialize: function(){},
 
-    // Simple proxy to `Backbone.history` to save a fragment into the history.
-    navigate: function(fragment, options) {
-      Backbone.history.navigate(fragment, options);
-      return this;
-    },
-
     // Listen to when a modular History interface, like Backbone.history,
     // updates the URL.
     bindNavigationListener: function() {
@@ -1475,6 +1469,12 @@
     // excellent place to do pre-route setup or post-route cleanup.
     execute: function(callback, args, name) {
       if (callback) callback.apply(this, args);
+    },
+
+    // Simple proxy to `Backbone.history` to save a fragment into the history.
+    navigate: function(fragment, options) {
+      Backbone.history.navigate(fragment, options);
+      return this;
     },
 
     // Determine if a registered handler matches the fragment when
