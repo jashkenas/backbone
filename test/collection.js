@@ -252,6 +252,19 @@
     equal(col.at(0).get('value'), 2);
   });
 
+  test("add with parse and merge", function() {
+    var collection = new Backbone.Collection();
+    collection.parse = function(attrs) {
+      return _.map(attrs, function(model) {
+        if (model.model) return model.model;
+        return model;
+      });
+    };
+    collection.add({id: 1});
+    collection.add({model: {id: 1, name: 'Alf'}}, {parse: true, merge: true});
+    equal(collection.first().get('name'), 'Alf');
+  });
+
   test("add model to collection with sort()-style comparator", 3, function() {
     var col = new Backbone.Collection;
     col.comparator = function(a, b) {
@@ -546,6 +559,20 @@
     collection.create({}, {success: success});
     this.ajaxSettings.success();
 
+  });
+
+  test("create with wait:true should not call collection.parse", 0, function() {
+    var Collection = Backbone.Collection.extend({
+      url: '/test',
+      parse: function () {
+        ok(false);
+      }
+    });
+
+    var collection = new Collection;
+
+    collection.create({}, {wait: true});
+    this.ajaxSettings.success();
   });
 
   test("a failing create returns model with errors", function() {
@@ -965,6 +992,29 @@
     equal(c.at(0).get('name'), 'test');
   });
 
+  test("#1407 parse option on reset parses collection and models", 2, function() {
+    var model = {
+      namespace : [{id: 1}, {id:2}]
+    };
+    var Collection = Backbone.Collection.extend({
+      model: Backbone.Model.extend({
+        parse: function(model) {
+          model.name = 'test';
+          return model;
+        }
+      }),
+      parse: function(model) {
+        return model.namespace;
+      }
+    });
+    var c = new Collection();
+        c.reset(model, {parse:true});
+
+    equal(c.length, 2);
+    equal(c.at(0).get('name'), 'test');
+  });
+
+
   test("Reset includes previous models in triggered event.", 1, function() {
     var model = new Backbone.Model();
     var collection = new Backbone.Collection([model])
@@ -1087,21 +1137,18 @@
   });
 
   test("`set` and model level `parse`", function() {
-    var Model = Backbone.Model.extend({
-      parse: function(model) {
-        return model.model;
-      }
-    });
+    var Model = Backbone.Model.extend({});
     var Collection = Backbone.Collection.extend({
-      model: Model
+      model: Model,
+      parse: function (res) { return _.pluck(res.models, 'model'); }
     });
     var model = new Model({id: 1});
     var collection = new Collection(model);
-    collection.set([
-      {model: {id: 1, attr: 'test'}},
-      {model: {id: 2, attr: 'test'}}
-    ], {parse: true});
-    deepEqual(collection.pluck('attr'), ['test', 'test']);
+    collection.set({models: [
+      {model: {id: 1}},
+      {model: {id: 2}}
+    ]}, {parse: true});
+    equal(collection.first(), model);
   });
 
   test("`set` data is only parsed once", function() {
@@ -1165,6 +1212,17 @@
       sort: function() { ok(false); }
     });
     new Collection().add({id: 1}, {sort: false});
+  });
+
+  test("#1915 - `parse` data in the right order in `set`", function() {
+    var collection = new (Backbone.Collection.extend({
+      parse: function (data) {
+        strictEqual(data.status, 'ok');
+        return data.data;
+      }
+    }));
+    var res = {status: 'ok', data:[{id: 1}]};
+    collection.set(res, {parse: true});
   });
 
   asyncTest("#1939 - `parse` is passed `options`", 1, function () {
@@ -1576,63 +1634,6 @@
     });
     var collection = new Collection([{id: 1}]);
     collection.invoke('method', 1, 2, 3);
-  });
-
-  test("set, add, and reset do not parse at collection level", 0, function() {
-    var Collection = Backbone.Collection.extend({
-      parse: function(models) {
-        ok(false);
-      }
-    });
-    var c = new Collection();
-    c.set({id: 1}, {parse: true});
-    c.add([{id: 2}, {id: 3}], {parse: true});
-    c.reset([{id: 4}, {id: 5}], {parse: true});
-  });
-
-  test("#3636 - create does not parse at collection level", 4, function() {
-    var Collection = Backbone.Collection.extend({
-      url: '/test',
-      model: Backbone.Model.extend({
-        parse: function(model) {
-          ok(true);
-          return model.model;
-        }
-      }),
-      parse: function(models) {
-        ok(false);
-      }
-    });
-    var c = new Collection();
-    c.create({}, {parse: true});
-    this.ajaxSettings.success({model: {id: 1}});
-    c.create(c.first(), {parse: true});
-    this.ajaxSettings.success({model: {attr: 'test'}});
-    equal(c.get(1).get('attr'), 'test');
-  });
-
-  test("fetch data is only parsed once", 3, function() {
-    var modelParse = 0;
-    var collectionParse = 0;
-    var Collection = Backbone.Collection.extend({
-      url: '/test',
-      model: Backbone.Model.extend({
-        parse: function(model) {
-          modelParse++;
-          return model.model;
-        }
-      }),
-      parse: function(models) {
-        collectionParse++;
-        return models.models;
-      }
-    });
-    var c = new Collection();
-    c.fetch();
-    this.ajaxSettings.success({models: [{model: {id: 1, attr: 'test'} }] });
-    equal(modelParse, 1);
-    equal(collectionParse, 1);
-    equal(c.get(1).get('attr'), 'test');
   });
 
 })();
