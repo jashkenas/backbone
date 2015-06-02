@@ -1417,8 +1417,8 @@
     options || (options = {});
     if (options.routes) this.routes = options.routes;
     this.handlers = [];
-    this._bindRoutes();
     this.bindNavigationListener();
+    this._bindRoutes();
     this.initialize.apply(this, arguments);
   };
 
@@ -1459,7 +1459,7 @@
       this.handlers.push(handler);
     },
 
-     // Return a handler object from a route, name, and callback
+    // Return a handler object from a route, name, and callback
     getHandler: function(route, name, callback) {
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (_.isFunction(name)) {
@@ -1467,12 +1467,17 @@
         name = '';
       }
       if (!callback) callback = this[name];
-
       return {
         route: route,
         callback: callback,
         name: name
       };
+    },
+
+    // Execute a route handler with the provided parameters.  This is an
+    // excellent place to do pre-route setup or post-route cleanup.
+    execute: function(callback, args, name) {
+      if (callback) callback.apply(this, args);
     },
 
     onNavigate: function(fragment) {
@@ -1484,12 +1489,6 @@
         this.trigger('route', matchedRoute.name, args);
       }
       return this;
-    },
-
-    // Execute a route handler with the provided parameters.  This is an
-    // excellent place to do pre-route setup or post-route cleanup.
-    execute: function(callback, args, name) {
-      if (callback) callback.apply(this, args);
     },
 
     // Match a fragment with a registered handler
@@ -1673,15 +1672,16 @@
       // support the `hashchange` event, HTML5 history, or the user wants
       // `hashChange` but not `pushState`.
       if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
-        var iframe = document.createElement('iframe');
-        iframe.src = 'javascript:0';
-        iframe.style.display = 'none';
-        iframe.tabIndex = -1;
+        this.iframe = document.createElement('iframe');
+        this.iframe.src = 'javascript:0';
+        this.iframe.style.display = 'none';
+        this.iframe.tabIndex = -1;
         var body = document.body;
         // Using `appendChild` will throw on IE < 9 if the document is not ready.
-        this.iframe = body.insertBefore(iframe, body.firstChild).contentWindow;
-        this.iframe.document.open().close();
-        this.iframe.location.hash = '#' + this.fragment;
+        var iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
+        iWindow.document.open();
+        iWindow.document.close();
+        iWindow.location.hash = '#' + this.fragment;
       }
 
       // Add a cross-platform `addEventListener` shim for older browsers.
@@ -1700,8 +1700,8 @@
       }
 
       if (!this.options.silent) {
-      return this.trigger('navigate', this.getFragment());
-    }
+        return this.trigger('navigate', this.getFragment());
+      }
     },
 
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
@@ -1721,7 +1721,7 @@
 
       // Clean up the iframe if necessary.
       if (this.iframe) {
-        document.body.removeChild(this.iframe.frameElement);
+        document.body.removeChild(this.iframe);
         this.iframe = null;
       }
 
@@ -1738,7 +1738,7 @@
       // If the user pressed the back button, the iframe's hash will have
       // changed and we should use that for comparison.
       if (current === this.fragment && this.iframe) {
-        current = this.getHash(this.iframe);
+        current = this.getHash(this.iframe.contentWindow);
       }
 
       if (current === this.fragment) return false;
@@ -1782,12 +1782,18 @@
       // fragment to store history.
       } else if (this._wantsHashChange) {
         this._updateHash(this.location, fragment, options.replace);
-        if (this.iframe && (fragment !== this.getHash(this.iframe))) {
+        if (this.iframe && (fragment !== this.getHash(this.iframe.contentWindow))) {
+          var iWindow = this.iframe.contentWindow;
+
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
-          if (!options.replace) this.iframe.document.open().close();
-          this._updateHash(this.iframe.location, fragment, options.replace);
+          if (!options.replace) {
+            iWindow.document.open();
+            iWindow.document.close();
+          }
+
+          this._updateHash(iWindow.location, fragment, options.replace);
         }
 
       // If you've told us that you explicitly don't want fallback hashchange-
@@ -1795,7 +1801,6 @@
       } else {
         return this.location.assign(url);
       }
-
       if (!options.silent) {
         this.trigger('navigate', fragment);
       }
