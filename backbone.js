@@ -1416,7 +1416,9 @@
   var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
+    this.handlers = [];
     this._bindRoutes();
+    this.bindNavigationListener();
     this.initialize.apply(this, arguments);
   };
 
@@ -1434,6 +1436,18 @@
     // initialization logic.
     initialize: function(){},
 
+    // Simple proxy to `Backbone.history` to save a fragment into the history.
+    navigate: function(fragment, options) {
+      Backbone.history.navigate(fragment, options);
+      return this;
+    },
+
+    // Listen to when a modular History interface, like Backbone.history,
+    // updates the URL.
+    bindNavigationListener: function() {
+      this.listenTo(Backbone.history, 'navigate', this.onNavigate);
+    },
+
     // Manually bind a single named route to a callback. For example:
     //
     //     this.route('search/:query/p:num', 'search', function(query, num) {
@@ -1441,21 +1455,34 @@
     //     });
     //
     route: function(route, name, callback) {
+      var handler = this.getHandler(route, name, callback);
+      this.handlers.push(handler);
+    },
+
+     // Return a handler object from a route, name, and callback
+    getHandler: function(route, name, callback) {
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (_.isFunction(name)) {
         callback = name;
         name = '';
       }
       if (!callback) callback = this[name];
-      var router = this;
-      Backbone.history.route(route, function(fragment) {
-        var args = router._extractParameters(route, fragment);
-        if (router.execute(callback, args, name) !== false) {
-          router.trigger.apply(router, ['route:' + name].concat(args));
-          router.trigger('route', name, args);
-          Backbone.history.trigger('route', router, name, args);
-        }
-      });
+
+      return {
+        route: route,
+        callback: callback,
+        name: name
+      };
+    },
+
+    onNavigate: function(fragment) {
+      var matchedRoute = this.matchFragment(fragment);
+      if (!matchedRoute) return this;
+      var args = this._extractParameters(matchedRoute.route, fragment);
+      if (this.execute(matchedRoute.callback, args, matchedRoute.name) !== false) {
+        this.trigger.apply(this, ['route:' + matchedRoute.name].concat(args));
+        this.trigger('route', matchedRoute.name, args);
+      }
       return this;
     },
 
@@ -1465,10 +1492,11 @@
       if (callback) callback.apply(this, args);
     },
 
-    // Simple proxy to `Backbone.history` to save a fragment into the history.
-    navigate: function(fragment, options) {
-      Backbone.history.navigate(fragment, options);
-      return this;
+    // Match a fragment with a registered handler
+    matchFragment: function(fragment) {
+      return _.find(this.handlers, function(handler) {
+        return handler.route.test(fragment);
+      });
     },
 
     // Bind all defined routes to `Backbone.history`. We have to reverse the
@@ -1518,7 +1546,6 @@
   // and URL fragments. If the browser supports neither (old IE, natch),
   // falls back to polling.
   var History = Backbone.History = function() {
-    this.handlers = [];
     _.bindAll(this, 'checkUrl');
 
     // Ensure that `History` can be used outside of the browser.
@@ -1646,16 +1673,15 @@
       // support the `hashchange` event, HTML5 history, or the user wants
       // `hashChange` but not `pushState`.
       if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
-        this.iframe = document.createElement('iframe');
-        this.iframe.src = 'javascript:0';
-        this.iframe.style.display = 'none';
-        this.iframe.tabIndex = -1;
+        var iframe = document.createElement('iframe');
+        iframe.src = 'javascript:0';
+        iframe.style.display = 'none';
+        iframe.tabIndex = -1;
         var body = document.body;
         // Using `appendChild` will throw on IE < 9 if the document is not ready.
-        var iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
-        iWindow.document.open();
-        iWindow.document.close();
-        iWindow.location.hash = '#' + this.fragment;
+        this.iframe = body.insertBefore(iframe, body.firstChild).contentWindow;
+        this.iframe.document.open().close();
+        this.iframe.location.hash = '#' + this.fragment;
       }
 
       // Add a cross-platform `addEventListener` shim for older browsers.
@@ -1673,7 +1699,9 @@
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
 
-      if (!this.options.silent) return this.loadUrl();
+      if (!this.options.silent) {
+      return this.trigger('navigate', this.getFragment());
+    }
     },
 
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
@@ -1693,19 +1721,13 @@
 
       // Clean up the iframe if necessary.
       if (this.iframe) {
-        document.body.removeChild(this.iframe);
+        document.body.removeChild(this.iframe.frameElement);
         this.iframe = null;
       }
 
       // Some environments will throw when clearing an undefined interval.
       if (this._checkUrlInterval) clearInterval(this._checkUrlInterval);
       History.started = false;
-    },
-
-    // Add a route to be tested when the fragment changes. Routes added later
-    // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -1716,27 +1738,13 @@
       // If the user pressed the back button, the iframe's hash will have
       // changed and we should use that for comparison.
       if (current === this.fragment && this.iframe) {
-        current = this.getHash(this.iframe.contentWindow);
+        current = this.getHash(this.iframe);
       }
 
       if (current === this.fragment) return false;
       if (this.iframe) this.navigate(current);
-      this.loadUrl();
-    },
-
-    // Attempt to load the current URL fragment. If a route succeeds with a
-    // match, returns `true`. If no defined routes matches the fragment,
-    // returns `false`.
-    loadUrl: function(fragment) {
-      // If the root doesn't match, no routes can match either.
-      if (!this.matchRoot()) return false;
-      fragment = this.fragment = this.getFragment(fragment);
-      return _.any(this.handlers, function(handler) {
-        if (handler.route.test(fragment)) {
-          handler.callback(fragment);
-          return true;
-        }
-      });
+      this.fragment = this.getFragment();
+      this.trigger('navigate', this.fragment);
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
@@ -1774,18 +1782,12 @@
       // fragment to store history.
       } else if (this._wantsHashChange) {
         this._updateHash(this.location, fragment, options.replace);
-        if (this.iframe && (fragment !== this.getHash(this.iframe.contentWindow))) {
-          var iWindow = this.iframe.contentWindow;
-
+        if (this.iframe && (fragment !== this.getHash(this.iframe))) {
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
-          if (!options.replace) {
-            iWindow.document.open();
-            iWindow.document.close();
-          }
-
-          this._updateHash(iWindow.location, fragment, options.replace);
+          if (!options.replace) this.iframe.document.open().close();
+          this._updateHash(this.iframe.location, fragment, options.replace);
         }
 
       // If you've told us that you explicitly don't want fallback hashchange-
@@ -1793,7 +1795,10 @@
       } else {
         return this.location.assign(url);
       }
-      if (options.trigger) return this.loadUrl(fragment);
+
+      if (!options.silent) {
+        this.trigger('navigate', fragment);
+      }
     },
 
     // Update the hash location, either replacing the current entry, or adding
