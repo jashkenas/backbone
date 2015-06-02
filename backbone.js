@@ -42,14 +42,6 @@
 
   // Create a local reference to a common array method we'll want to use later.
   var slice = Array.prototype.slice;
-  var splice = function(array, insert, at) {
-    var length = insert.length;
-    var result = Array(array.length + length);
-    for (var i = 0; i < at; i++) result[i] = array[i];
-    for (i = 0; i < length; i++) result[i + at] = insert[i];
-    for (i = at; i < array.length; i++) result[i + length] = array[i];
-    return result;
-  };
 
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '1.2.0';
@@ -754,6 +746,15 @@
   var setOptions = {add: true, remove: true, merge: true};
   var addOptions = {add: true, remove: false};
 
+  // Splices `insert` into `array` at index `at`.
+  var splice = function(array, insert, at) {
+    var tail = Array(array.length - at);
+    var length = insert.length;
+    for (var i = 0; i < tail.length; i++) tail[i] = array[i + at];
+    for (i = 0; i < length; i++) array[i + at] = insert[i];
+    for (i = 0; i < tail.length; i++) array[i + length + at] = tail[i];
+  };
+
   // Define the Collection's inheritable methods.
   _.extend(Collection.prototype, Events, {
 
@@ -802,7 +803,7 @@
       if (options.parse && !this._isModel(models)) models = this.parse(models, options);
 
       var singular = !_.isArray(models);
-      models = singular ? [models] : models;
+      models = singular ? [models] : _.clone(models);
 
       var at = options.at;
       if (at != null) at = +at;
@@ -841,10 +842,11 @@
             modelMap[existing.cid] = true;
             set.push(existing);
           }
+          models[i] = existing;
 
         // If this is a new, valid model, push it to the `toAdd` list.
         } else if (add) {
-          model = this._prepareModel(model, options);
+          model = models[i] = this._prepareModel(model, options);
           if (model) {
             toAdd.push(model);
             this._addReference(model, options);
@@ -865,16 +867,18 @@
 
       // See if sorting is needed, update `length` and splice in new models.
       var orderChanged = false;
-      if (set.length && !sortable && add && remove) {
-        orderChanged = set.length != this.length || _.any(this.models, function(model, index) {
+      var replace = !sortable && add && remove;
+      if (set.length && replace) {
+        orderChanged = this.length != set.length || _.any(this.models, function(model, index) {
           return model !== set[index];
         });
-        this.models = set.slice();
-        this.length = set.length;
+        this.models.length = 0;
+        splice(this.models, set, 0);
+        this.length = this.models.length;
       } else if (toAdd.length) {
         if (sortable) sort = true;
-        this.models = splice(this.models, toAdd, at == null ? this.length : at);
-        this.length += toAdd.length;
+        splice(this.models, toAdd, at == null ? this.length : at);
+        this.length = this.models.length;
       }
 
       // Silently sort the collection if appropriate.
@@ -892,7 +896,7 @@
       }
 
       // Return the added (or merged) model (or models).
-      return singular ? set[0] : set;
+      return singular ? models[0] : models;
     },
 
     // When you have more items than you want to add or remove individually,
