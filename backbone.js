@@ -1492,6 +1492,8 @@
 
     // Match a fragment with a registered handler
     matchFragment: function(fragment) {
+      // If the root doesn't match, no routes can match either.
+      if (!Backbone.history.matchRoot()) return false;
       return _.find(Router.handlers, function(handler) {
         return handler.route.test(fragment);
       });
