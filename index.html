@@ -4237,6 +4237,37 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header">1.2.1</b> &mdash; <small><i>Jun. 3, 2015</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.0...1.2.1">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.1/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        <tt>Collection#add</tt> now avoids trying to parse a model instance when passing <tt>parse: true</tt>.
+      </li>
+      <li>
+        Bug fix in <tt>Collection#remove</tt>.
+      </li>
+      <li>
+        <tt>Model#save</tt> no longer mutates the passed in attribute hash with the server's
+        response when passing <tt>wait: true</tt>.
+      </li>
+      <li>
+        <tt>Model#fetch</tt> no longer parses the response when passing <tt>patch: false</tt>.
+      </li>
+      <li>
+        Bug fix for iframe-based History when used with jsdom.
+      </li>
+      <li>
+        Bug fix where <tt>Collection#invoke</tt> was not taking additional arguments.
+      </li>
+      <li>
+        When using <tt>on</tt> with an event map, you can now pass the context as the
+        second argument.  This was previously an undocumented behavior from 1.1.2 removed
+        in 1.2.0.
+      </li>
+    </ul>
+  
     <b class="header">1.2.0</b> &mdash; <small><i>May 13, 2015</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.2...1.2.0">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.0/index.html">Docs</a>
