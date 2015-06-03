@@ -1473,8 +1473,6 @@
 
     // Simple proxy to `Backbone.history` to save a fragment into the history.
     navigate: function(fragment, options) {
-      if (options === void 0) options = {silent: true};
-      if (options === false) options = {silent: false};
       Backbone.history.navigate(fragment, options);
       return this;
     },
@@ -1759,7 +1757,8 @@
     // you wish to modify the current URL without adding an entry to the history.
     navigate: function(fragment, options) {
       if (!History.started) return false;
-      if (!options || options === true) options = {trigger: !!options};
+      if (options === void 0) options = {silent: true};
+      if (options === false) options = {silent: false};
 
       // Normalize the fragment.
       fragment = this.getFragment(fragment || '');
