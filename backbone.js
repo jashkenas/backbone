@@ -983,8 +983,7 @@
     // collection when they arrive. If `reset: true` is passed, the response
     // data will be passed through the `reset` method instead of `set`.
     fetch: function(options) {
-      options = options ? _.clone(options) : {};
-      if (options.parse === void 0) options.parse = true;
+      options = _.extend({parse: true}, options);
       var success = options.success;
       var collection = this;
       options.success = function(resp) {
@@ -1003,7 +1002,8 @@
     create: function(model, options) {
       options = options ? _.clone(options) : {};
       var wait = options.wait;
-      if (!(model = this._prepareModel(model, options))) return false;
+      model = this._prepareModel(model, options);
+      if (!model) return false;
       if (!wait) this.add(model, options);
       var collection = this;
       var success = options.success;
@@ -1060,7 +1060,6 @@
     // Internal method called by both remove and set.
     // Returns removed models, or false if nothing is removed.
     _removeModels: function(models, options) {
-      options = _.extend({}, options);
       var removed = [];
       for (var i = 0; i < models.length; i++) {
         var model = this.get(models[i]);
