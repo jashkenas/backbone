@@ -757,6 +757,7 @@
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
+    if (models && options.parse) models = this.parse(models, options);
     if (models) this.reset(models, _.extend({silent: true}, options));
   };
 
@@ -809,7 +810,6 @@
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
       options = _.defaults({}, options, setOptions);
-      if (options.parse && !this._isModel(models)) models = this.parse(models, options);
       var singular = !_.isArray(models);
       models = singular ? (models ? [models] : []) : models.slice();
       var id, model, attrs, existing, sort;
@@ -1004,11 +1004,12 @@
     // data will be passed through the `reset` method instead of `set`.
     fetch: function(options) {
       options = _.extend({parse: true}, options);
-      var success = options.success;
       var collection = this;
+      var success = options.success;
       options.success = function(resp) {
         var method = options.reset ? 'reset' : 'set';
-        collection[method](resp, options);
+        var models = options.parse ? collection.parse(resp, options) : resp;
+        collection[method](models, options);
         if (success) success.call(options.context, collection, resp, options);
         collection.trigger('sync', collection, resp, options);
       };
