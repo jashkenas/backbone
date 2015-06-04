@@ -1,6 +1,6 @@
 {
   "name"          : "backbone",
-  "version"       : "1.2.0",
+  "version"       : "1.2.1",
   "main"          : "backbone.js",
   "dependencies"  : {
     "underscore"  : ">=1.7.0"

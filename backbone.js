@@ -1,4 +1,4 @@
-//     Backbone.js 1.2.0
+//     Backbone.js 1.2.1
 
 //     (c) 2010-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 //     Backbone may be freely distributed under the MIT license.
@@ -44,7 +44,7 @@
   var slice = [].slice;
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '1.2.0';
+  Backbone.VERSION = '1.2.1';
 
   // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
   // the `$` variable.
