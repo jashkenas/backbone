@@ -4243,10 +4243,10 @@ ActiveRecord::Base.include_root_in_json = false
     <br />
     <ul style="margin-top: 5px;">
       <li>
-        <tt>Collection#add</tt> now avoids trying to parse a model instance when passing <tt>parse: true</tt>.
+        <tt>Collection#add</tt> now avoids trying to parse a model instance when passed <tt>parse: true</tt>.
       </li>
       <li>
-        Bug fix in <tt>Collection#remove</tt>.
+        Bug fix in <tt>Collection#remove</tt>. The removed models are now actually returned.
       </li>
       <li>
         <tt>Model#fetch</tt> no longer parses the response when passing <tt>patch: false</tt>.
@@ -4259,7 +4259,7 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
       <li>
         When using <tt>on</tt> with an event map, you can now pass the context as the
-        second argument.  This was previously an undocumented behavior from 1.1.2 removed
+        second argument. This was previously an undocumented behavior from 1.1.2 removed
         in 1.2.0.
       </li>
     </ul>
@@ -4292,6 +4292,9 @@ ActiveRecord::Base.include_root_in_json = false
         Added an <tt>"update"</tt> event that triggers after any amount of
         models are added or removed from a collection. Handy to re-render lists
         of things without debouncing.
+      </li>
+      <li>
+        <tt>Collection#at</tt> can take a negative index.
       </li>
       <li>
         Added <tt>modelId</tt> to Collection for generating unique ids on
