@@ -48,6 +48,12 @@
     strictEqual(new View().one, 1);
   });
 
+  test("initialize works with undefined arguments", 1, function() {
+    var view = new Backbone.View();
+
+    ok(view);
+  });
+
   test("render", 1, function() {
     var view = new Backbone.View;
     equal(view.render(), view, '#render returns the view instance');
