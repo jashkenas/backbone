@@ -869,7 +869,7 @@
       var orderChanged = false;
       var replace = !sortable && add && remove;
       if (set.length && replace) {
-        orderChanged = this.length != set.length || _.any(this.models, function(model, index) {
+        orderChanged = this.length != set.length || _.some(this.models, function(model, index) {
           return model !== set[index];
         });
         this.models.length = 0;
