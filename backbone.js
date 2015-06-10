@@ -68,8 +68,10 @@
   // form param named `model`.
   Backbone.emulateJSON = false;
 
-  // Proxy Underscore methods to a Backbone class' prototype using a
-  // particular attribute as the data argument
+  // Proxy Backbone class methods to Underscore functions, wrapping the model's
+  // `attributes` object or collection's `models` array behind the scenes.
+  // `Function#apply` can be slow so we pass the method's arg count, if we know
+  // it.
   var addMethod = function(length, method, attribute) {
     switch (length) {
       case 1: return function() {
@@ -101,8 +103,8 @@
   // ---------------
 
   // A module that can be mixed in to *any object* in order to provide it with
-  // custom events. You may bind with `on` or remove with `off` callback
-  // functions to an event; `trigger`-ing an event fires all callbacks in
+  // a custom event channel. You may bind a callback to an event with `on` or
+  // remove with `off`; `trigger`-ing an event fires all callbacks in
   // succession.
   //
   //     var object = {};
@@ -117,26 +119,25 @@
 
   // Iterates over the standard `event, callback` (as well as the fancy multiple
   // space-separated events `"change blur", callback` and jQuery-style event
-  // maps `{event: callback}`), reducing them by manipulating `memo`.
-  // Passes a normalized single event name and callback, as well as any
-  // optional `opts`.
-  var eventsApi = function(iteratee, memo, name, callback, opts) {
+  // maps `{event: callback}`).
+  var eventsApi = function(iteratee, events, name, callback, opts) {
     var i = 0, names;
     if (name && typeof name === 'object') {
       // Handle event maps.
       if (callback !== void 0 && 'context' in opts && opts.context === void 0) opts.context = callback;
       for (names = _.keys(name); i < names.length ; i++) {
-        memo = iteratee(memo, names[i], name[names[i]], opts);
+        events = iteratee(events, names[i], name[names[i]], opts);
       }
     } else if (name && eventSplitter.test(name)) {
       // Handle space separated event names.
       for (names = name.split(eventSplitter); i < names.length; i++) {
-        memo = iteratee(memo, names[i], callback, opts);
+        events = iteratee(events, names[i], callback, opts);
       }
     } else {
-      memo = iteratee(memo, name, callback, opts);
+      // Finally, standard events.
+      events = iteratee(events, name, callback, opts);
     }
-    return memo;
+    return events;
   };
 
   // Bind an event to a `callback` function. Passing `"all"` will bind
@@ -145,8 +146,7 @@
     return internalOn(this, name, callback, context);
   };
 
-  // An internal use `on` function, used to guard the `listening` argument from
-  // the public API.
+  // Guard the `listening` argument from the public API.
   var internalOn = function(obj, name, callback, context, listening) {
     obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
         context: context,
@@ -163,7 +163,8 @@
   };
 
   // Inversion-of-control versions of `on`. Tell *this* object to listen to
-  // an event in another object... keeping track of what it's listening to.
+  // an event in another object... keeping track of what it's listening to
+  // for easier unbinding later.
   Events.listenTo =  function(obj, name, callback) {
     if (!obj) return this;
     var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
@@ -231,7 +232,6 @@
 
   // The reducing API that removes a callback from the `events` object.
   var offApi = function(events, name, callback, options) {
-    // No events to consider.
     if (!events) return;
 
     var i = 0, listening;
@@ -286,9 +286,9 @@
   };
 
   // Bind an event to only be triggered a single time. After the first time
-  // the callback is invoked, it will be removed. When multiple events are
-  // passed in using the space-separated syntax, the event will fire once for every
-  // event you passed in, not once for a combination of all events
+  // the callback is invoked, its listener will be removed. If multiple events
+  // are passed in using the space-separated syntax, the handler will fire
+  // once for each event, not once for a combination of all events.
   Events.once =  function(name, callback, context) {
     // Map the event into a `{event: once}` object.
     var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
@@ -713,7 +713,8 @@
 
   });
 
-  // Underscore methods that we want to implement on the Model.
+  // Underscore methods that we want to implement on the Model, mapped to the
+  // number of arguments they take.
   var modelMethods = { keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
       omit: 0, chain: 1, isEmpty: 1 };
 
@@ -768,7 +769,9 @@
       return Backbone.sync.apply(this, arguments);
     },
 
-    // Add a model, or list of models to the set.
+    // Add a model, or list of models to the set. `models` may be Backbone
+    // Models or raw JavaScript objects to be converted to Models, or any
+    // combination of the two.
     add: function(models, options) {
       return this.set(models, _.extend({merge: false}, options, addOptions));
     },
@@ -842,7 +845,7 @@
         modelMap[id] = true;
       }
 
-      // Remove nonexistent models if appropriate.
+      // Remove stale models.
       if (remove) {
         for (var i = 0; i < this.length; i++) {
           if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
@@ -1058,7 +1061,6 @@
     },
 
     // Internal method called by both remove and set.
-    // Returns removed models, or false if nothing is removed.
     _removeModels: function(models, options) {
       var removed = [];
       for (var i = 0; i < models.length; i++) {
@@ -1137,10 +1139,10 @@
   // Mix in each Underscore method as a proxy to `Collection#models`.
   addUnderscoreMethods(Collection, collectionMethods, 'models');
 
-  // Underscore methods that take a property name as an argument.
+  // Underscore methods that take a property name as an argument. Proxy to
+  // the model's attributes.
   var attributeMethods = ['groupBy', 'countBy', 'sortBy', 'indexBy'];
 
-  // Use attributes instead of properties.
   _.each(attributeMethods, function(method) {
     if (!_[method]) return;
     Collection.prototype[method] = function(value, context) {
@@ -1174,7 +1176,7 @@
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
-  // List of view options to be merged as properties.
+  // List of view options to be set as properties.
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
