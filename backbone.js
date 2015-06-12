@@ -80,7 +80,7 @@
   };
   var modelProperty = function(key) {
     return function(model) {
-      return model == null ? void 0 : model.get(key);
+      return model.get(key);
     };
   };
   var cb = function(iteratee, instance) {
