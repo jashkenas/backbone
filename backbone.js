@@ -71,8 +71,8 @@
   // Proxy Backbone class methods to Underscore functions, wrapping the model's
   // `attributes` object or collection's `models` array behind the scenes.
   //
-  // collection.filter(function(model) { return model.get('age') > 10 })
-  // collection.pluck('title')
+  // collection.filter(function(model) { return model.get('age') > 10 });
+  // collection.each(this.addView);
   //
   // `Function#apply` can be slow so we use the method's arg count, if we know it.
   var addMethod = function(length, method, attribute) {
