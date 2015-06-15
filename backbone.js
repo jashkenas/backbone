@@ -394,15 +394,18 @@
   var Model = Backbone.Model = function(attributes, options) {
     var attrs = attributes || {};
     options || (options = {});
-    this.cid = _.uniqueId(this.cidPrefix);
     this.attributes = {};
-    if (options.collection) this.collection = options.collection;
+    _.extend(this, _.pick(options, modelOptions));
+    this.cid = _.uniqueId(this.cidPrefix);
     if (options.parse) attrs = this.parse(attrs, options) || {};
     attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
     this.set(attrs, options);
     this.changed = {};
     this.initialize.apply(this, arguments);
   };
+
+  // List of models options to be set as properties
+  var modelOptions = ['cidPrefix', 'idAttribute', 'collection'];
 
   // Attach all inheritable methods to the Model prototype.
   _.extend(Model.prototype, Events, {
@@ -704,7 +707,10 @@
 
     // Create a new model with identical attributes to this one.
     clone: function() {
-      return new this.constructor(this.attributes);
+      return new this.constructor(this.attributes, {
+        idAttribute: this.idAttribute,
+        cidPrefix: this.cidPrefix
+      });
     },
 
     // A model is new if it has never been saved to the server, and lacks an id.
