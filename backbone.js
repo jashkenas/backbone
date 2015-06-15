@@ -404,7 +404,7 @@
     this.initialize.apply(this, arguments);
   };
 
-  // List of models options to be set as properties
+  // List of model options to be set as properties
   var modelOptions = ['cidPrefix', 'idAttribute', 'collection'];
 
   // Attach all inheritable methods to the Model prototype.
@@ -707,10 +707,7 @@
 
     // Create a new model with identical attributes to this one.
     clone: function() {
-      return new this.constructor(this.attributes, {
-        idAttribute: this.idAttribute,
-        cidPrefix: this.cidPrefix
-      });
+      return new this.constructor(this.attributes, _.pick(this, modelOptions));
     },
 
     // A model is new if it has never been saved to the server, and lacks an id.
@@ -758,9 +755,7 @@
   // If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
-    options || (options = {});
-    if (options.model) this.model = options.model;
-    if (options.comparator !== void 0) this.comparator = options.comparator;
+    _.extend(this, _.pick(options, collectionOptions));
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, _.extend({silent: true}, options));
@@ -769,6 +764,9 @@
   // Default options for `Collection#set`.
   var setOptions = {add: true, remove: true, merge: true};
   var addOptions = {add: true, remove: false};
+
+  // List of collection options to be set as properties
+  var collectionOptions = ['model', 'comparator'];
 
   // Define the Collection's inheritable methods.
   _.extend(Collection.prototype, Events, {
@@ -1046,10 +1044,7 @@
 
     // Create a new collection with an identical list of models as this one.
     clone: function() {
-      return new this.constructor(this.models, {
-        model: this.model,
-        comparator: this.comparator
-      });
+      return new this.constructor(this.models, _.pick(this, collectionOptions));
     },
 
     // Define how to uniquely identify models in the collection.
