@@ -396,7 +396,7 @@
     options || (options = {});
     this.attributes = {};
     _.extend(this, _.pick(options, modelOptions));
-    this.cid = _.uniqueId(this.cidPrefix);
+    this.cid = _.uniqueId(_.result(this, 'cidPrefix'));
     if (options.parse) attrs = this.parse(attrs, options) || {};
     attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
     this.set(attrs, options);
@@ -509,7 +509,7 @@
       }
 
       // Update the `id`.
-      this.id = this.get(this.idAttribute);
+      this.id = this.get(_.result(this, 'idAttribute'));
 
       // Trigger all relevant attribute changes.
       if (!silent) {
@@ -695,7 +695,7 @@
         _.result(this.collection, 'url') ||
         urlError();
       if (this.isNew()) return base;
-      var id = this.get(this.idAttribute);
+      var id = this.get(_.result(this, 'idAttribute'));
       return base.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
     },
 
@@ -715,7 +715,7 @@
 
     // A model is new if it has never been saved to the server, and lacks an id.
     isNew: function() {
-      return !this.has(this.idAttribute);
+      return !this.has(_.result(this, 'idAttribute'));
     },
 
     // Check if the model is currently in a valid state.
@@ -1054,7 +1054,8 @@
 
     // Define how to uniquely identify models in the collection.
     modelId: function (attrs) {
-      return attrs[this.model.prototype.idAttribute || 'id'];
+      var proto = this.model.prototype;
+      return attrs[_.result(proto, 'idAttribute') || 'id'];
     },
 
     // Private method to reset all internal state. Called when the collection
