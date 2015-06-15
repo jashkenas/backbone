@@ -865,7 +865,7 @@
     ok(col.comparator);
     ok(!colFalse.comparator);
     ok(!colNull.comparator);
-    ok(colUndefined.comparator);
+    ok(!colUndefined.comparator);
   });
 
   test("#1355 - `options` is passed to success callbacks", 2, function(){
