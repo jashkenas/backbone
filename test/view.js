@@ -205,6 +205,22 @@
     ok(new View().$el.is('p'));
   });
 
+  test("tagName can be provided as a function and can use parameters passed to the constructor", 1, function() {
+    var View = Backbone.View.extend({
+      initialize: function(opts) {
+        this.myVar = opts.myVar;
+      },
+      tagName: function() {
+        if (this.myVar === '123')
+          return 'p';
+        else
+          return 'div';
+      }
+    });
+
+    ok(new View({myVar: '123'}).$el.is('p'));
+  });
+
   test("_ensureElement with DOM node el", 1, function() {
     var View = Backbone.View.extend({
       el: document.body
