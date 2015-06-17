@@ -1170,8 +1170,8 @@
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
     _.extend(this, _.pick(options, viewOptions));
-    this._ensureElement();
     this.initialize.apply(this, arguments);
+    this._ensureElement();
   };
 
   // Cached regex to split keys for `delegate`.
