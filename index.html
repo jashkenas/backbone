@@ -1739,7 +1739,7 @@ bill.set({name : "Bill Jones"});
     </p>
 
     <p id="Collection-model">
-      <b class="header">model</b><code>collection.model</code>
+      <b class="header">model</b><code>collection.model([attrs], [options])</code>
       <br />
       Override this property to specify the model class that the collection
       contains. If defined, you can pass raw attributes objects (and arrays) to
@@ -1774,33 +1774,41 @@ var Library = Backbone.Collection.extend({
 </pre>
 
     <p id="Collection-modelId">
-      <b class="header">modelId</b><code>collection.modelId</code>
+      <b class="header">modelId</b><code>collection.modelId(attrs)</code>
       <br />
-      Override this method to specify the attribute the collection will use to
-      refer to its models in <a href="#Collection-get">collection.get</a>.
-      <br />
-      By default returns the <tt>idAttribute</tt> of the collection's model
-      class or failing that, <tt>'id'</tt>. If your collection uses polymorphic
-      models and those models have an <tt>idAttribute</tt> other than <tt>id</tt>
-      you must override this method with your own custom logic.
+      Override this method to return the value the collection will use to
+      identify a model given its attributes. Useful for combining models from
+      multiple tables with different <a href="Model-idAttribute"><tt>idAttribute</tt></a>
+      values into a single collection.
     </p>
 
-<pre>
+    <p>
+      By default returns the value of the attributes'
+      <a href="Model-idAttribute"><tt>idAttribute</tt></a>
+      from the collection's model class or failing that, <tt>id</tt>. If
+      your collection uses a <a href="#Collection-model">model factory</a> and
+      those models have an <tt>idAttribute</tt> other than <tt>id</tt> you must
+      override this method.
+    </p>
+
+<pre class="runnable">
 var Library = Backbone.Collection.extend({
-
-  model: function(attrs, options) {
-    if (condition) {
-      return new PublicDocument(attrs, options);
-    } else {
-      return new PrivateDocument(attrs, options);
-    }
-  },
-
   modelId: function(attrs) {
-    return attrs.private ? 'private_id' : 'public_id';
+    if (attrs.type === 'dvd') {
+      return 'dvd-' + attrs.dvd_id;
+    } else {
+      return 'vhs-' attrs.vhs_id;
+    }
   }
-
 });
+
+var library = new Library([
+  {type: 'dvd', dvd_id: 1},
+  {type: 'vhs', vhs_id: 1}
+]);
+
+alert(library.get('dvd-1').id + ' ' + library.get('vhs-1').id);
+
 </pre>
 
     <p id="Collection-constructor">
@@ -4263,7 +4271,7 @@ ActiveRecord::Base.include_root_in_json = false
         in 1.2.0.
       </li>
     </ul>
-  
+
     <b class="header">1.2.0</b> &mdash; <small><i>May 13, 2015</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.2...1.2.0">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.0/index.html">Docs</a>
@@ -4286,7 +4294,7 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Views now always delegate their events in <a href="#View-setElement">setElement</a>.
         You can no longer modify the events hash or your view's <tt>el</tt> property in
-        <tt>initialize</tt>. 
+        <tt>initialize</tt>.
       </li>
       <li>
         Added an <tt>"update"</tt> event that triggers after any amount of
