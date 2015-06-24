@@ -678,8 +678,8 @@
     deepEqual(coll.map('a'), [1, 2, 3, 4]);
     deepEqual(coll.max('a'), model);
     deepEqual(coll.min('e'), model);
-    deepEqual(coll.countBy({a: 4}), {false: 3, true: 1});
-    deepEqual(coll.countBy('d'), {undefined: 4});
+    deepEqual(coll.countBy({a: 4}), {'false': 3, 'true': 1});
+    deepEqual(coll.countBy('d'), {'undefined': 4});
   });
 
   test("reset", 16, function() {
