@@ -1126,7 +1126,7 @@
     _onModelEvent: function(event, model, collection, options) {
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
-      if (event === 'change') {
+      if (model && event === 'change') {
         var prevId = this.modelId(model.previousAttributes());
         var id = this.modelId(model.attributes);
         if (prevId !== id) {

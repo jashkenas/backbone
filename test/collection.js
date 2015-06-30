@@ -757,6 +757,13 @@
     equal(fired, true);
   });
 
+  test("trigger 'change' events on models", 1, function() {
+    var fired = null;
+    a.on("change", function() { fired = true; });
+    a.trigger("change");
+    equal(fired, true);
+  });
+
   test("add does not alter arguments", 2, function(){
     var attrs = {};
     var models = [attrs];
