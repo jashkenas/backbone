@@ -2656,7 +2656,8 @@ $(function(){
 <pre>
 def update
   account = Account.find params[:id]
-  account.update_attributes params.require(:account).permit(:name, :otherparam)
+  permitted = params.require(:account).permit(:name, :otherparam)
+  account.update_attributes permitted
   render :json => account
 end
 </pre>
