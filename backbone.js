@@ -1206,7 +1206,7 @@
     // Remove this view by taking the element out of the DOM, and removing any
     // applicable Backbone.Events listeners.
     remove: function() {
-      this._removeElement();
+      this.$removeElement();
       this.stopListening();
       return this;
     },
@@ -1214,7 +1214,7 @@
     // Remove this view's element from the document and all event listeners
     // attached to it. Exposed for subclasses using an alternative DOM
     // manipulation API.
-    _removeElement: function() {
+    $removeElement: function() {
       this.$el.remove();
     },
 
@@ -1222,7 +1222,7 @@
     // view's events on the new element.
     setElement: function(element) {
       this.undelegateEvents();
-      this._setElement(element);
+      this.$setElement(element);
       this.delegateEvents();
       return this;
     },
@@ -1232,7 +1232,7 @@
     // context or an element. Subclasses can override this to utilize an
     // alternative DOM manipulation API and are only required to set the
     // `this.el` property.
-    _setElement: function(el) {
+    $setElement: function(el) {
       this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
       this.el = this.$el[0];
     },
@@ -1289,7 +1289,7 @@
 
     // Produces a DOM element to be assigned to your view. Exposed for
     // subclasses using an alternative DOM manipulation API.
-    _createElement: function(tagName) {
+    $createElement: function(tagName) {
       return document.createElement(tagName);
     },
 
@@ -1302,8 +1302,8 @@
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        this.setElement(this._createElement(_.result(this, 'tagName')));
-        this._setAttributes(attrs);
+        this.setElement(this.$createElement(_.result(this, 'tagName')));
+        this.$setAttributes(attrs);
       } else {
         this.setElement(_.result(this, 'el'));
       }
@@ -1311,7 +1311,7 @@
 
     // Set attributes from a hash on this view's element.  Exposed for
     // subclasses using an alternative DOM manipulation API.
-    _setAttributes: function(attributes) {
+    $setAttributes: function(attributes) {
       this.$el.attr(attributes);
     }
 
