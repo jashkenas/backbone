@@ -818,7 +818,7 @@
       if (at < 0) at += this.length + 1;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var toAdd = [], toRemove = [], modelMap = {};
+      var toAdd = [], toRemove = [], modelMap = {}, previousModels = [];
       var add = options.add, merge = options.merge, remove = options.remove;
       var order = !sortable && add && remove ? [] : false;
       var orderChanged = false;
@@ -867,7 +867,7 @@
         for (var i = 0; i < this.length; i++) {
           if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
         }
-        if (toRemove.length) this._removeModels(toRemove, options);
+        if (toRemove.length) previousModels = this._removeModels(toRemove, options);
       }
 
       // See if sorting is needed, update `length` and splice in new models.
@@ -890,15 +890,19 @@
       // Silently sort the collection if appropriate.
       if (sort) this.sort({silent: true});
 
-      // Unless silenced, it's time to fire all appropriate add/sort events.
+      // Unless silenced, it's time to fire all appropriate add/update/sort events.
       if (!options.silent) {
         var addOpts = at != null ? _.clone(options) : options;
         for (var i = 0; i < toAdd.length; i++) {
           if (at != null) addOpts.index = at + i;
           (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
+        if (toAdd.length || previousModels.length) {
+          if (toAdd.length) options.addedModels = toAdd;
+          if (previousModels.length) options.previousModels = previousModels;
+          this.trigger('update', this, options);
+        }
         if (sort || orderChanged) this.trigger('sort', this, options);
-        if (toAdd.length || toRemove.length) this.trigger('update', this, options);
       }
 
       // Return the added (or merged) model (or models).
