@@ -799,6 +799,7 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       var removed = this._removeModels(models, options);
+      if (removed.length) options.removedModels = removed;
       if (!options.silent && removed) this.trigger('update', this, options);
       return singular ? removed[0] : removed;
     },
@@ -818,7 +819,7 @@
       if (at < 0) at += this.length + 1;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var toAdd = [], toRemove = [], modelMap = {}, previousModels = [];
+      var toAdd = [], toRemove = [], modelMap = {};
       var add = options.add, merge = options.merge, remove = options.remove;
       var order = !sortable && add && remove ? [] : false;
       var orderChanged = false;
@@ -867,7 +868,7 @@
         for (var i = 0; i < this.length; i++) {
           if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
         }
-        if (toRemove.length) previousModels = this._removeModels(toRemove, options);
+        if (toRemove.length) this._removeModels(toRemove, options);
       }
 
       // See if sorting is needed, update `length` and splice in new models.
@@ -897,9 +898,9 @@
           if (at != null) addOpts.index = at + i;
           (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
-        if (toAdd.length || previousModels.length) {
+        if (toAdd.length || toRemove.length) {
           if (toAdd.length) options.addedModels = toAdd;
-          if (previousModels.length) options.previousModels = previousModels;
+          if (toRemove.length) options.previousModels = toRemove;
           this.trigger('update', this, options);
         }
         if (sort || orderChanged) this.trigger('sort', this, options);
