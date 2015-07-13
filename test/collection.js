@@ -1626,13 +1626,13 @@
     collection.add([{id: 3}], {at: '1'});
     deepEqual(collection.pluck('id'), [1, 3, 2]);
   });
-  test("adding multiple models triggers `set` event once", 1, function() {
+  test("adding multiple models triggers `update` event once", 1, function() {
     var collection = new Backbone.Collection;
     collection.on('update', function() { ok(true); });
     collection.add([{id: 1}, {id: 2}, {id: 3}]);
   });
 
-  test("removing models triggers `set` event once", 1, function() {
+  test("removing models triggers `update` event once", 1, function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('update', function() { ok(true); });
     collection.remove([{id: 1}, {id: 2}]);
