@@ -1638,19 +1638,19 @@
     collection.remove([{id: 1}, {id: 2}]);
   });
 
-  test("remove does not trigger `set` when nothing removed", 0, function() {
+  test("remove does not trigger `update` when nothing removed", 0, function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
     collection.on('update', function() { ok(false); });
     collection.remove([{id: 3}]);
   });
 
-  test("set triggers `set` event once", 1, function() {
+  test("set triggers `update` event once", 1, function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
     collection.on('update', function() { ok(true); });
     collection.set([{id: 1}, {id: 3}]);
   });
 
-  test("set does not trigger `set` event when nothing added nor removed", 0, function() {
+  test("set does not trigger `update` event when nothing added nor removed", 0, function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
     collection.on('update', function() { ok(false); });
     collection.set([{id: 1}, {id: 2}]);
