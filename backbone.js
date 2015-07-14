@@ -818,7 +818,7 @@
       if (at < 0) at += this.length + 1;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var toAdd = [], toRemove = [], modelMap = {};
+      var toAdd = [], toRemove = [], modelMap = {}, cidMap = {};
       var add = options.add, merge = options.merge, remove = options.remove;
       var order = !sortable && add && remove ? [] : false;
       var orderChanged = false;
@@ -831,7 +831,7 @@
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         if (existing = this.get(attrs)) {
-          if (remove) modelMap[existing.cid] = true;
+          if (remove) cidMap[existing.cid] = true;
           if (merge && attrs !== existing) {
             attrs = this._isModel(attrs) ? attrs.attributes : attrs;
             if (options.parse) attrs = existing.parse(attrs, options);
@@ -865,7 +865,7 @@
       // Remove stale models.
       if (remove) {
         for (var i = 0; i < this.length; i++) {
-          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
+          if (!cidMap[(model = this.models[i]).cid]) toRemove.push(model);
         }
         if (toRemove.length) this._removeModels(toRemove, options);
       }
@@ -951,8 +951,13 @@
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
-      var id = this.modelId(this._isModel(obj) ? obj.attributes : obj);
-      return this._byId[obj] || this._byId[id] || this._byId[obj.cid];
+      if (_.isObject(obj)) {
+        var id = this.modelId(this._isModel(obj) ? obj.attributes : obj);
+	return this._byId[id] || this._byCid[obj.cid];
+      }
+      else {
+        return this._byId[obj] || this._byCid[obj];
+      }
     },
 
     // Get the model at the given index.
@@ -1057,6 +1062,7 @@
       this.length = 0;
       this.models = [];
       this._byId  = {};
+      this._byCid = {};
     },
 
     // Prepare a hash of attributes (or other model) to be added to this
@@ -1104,7 +1110,7 @@
 
     // Internal method to create a model's ties to a collection.
     _addReference: function(model, options) {
-      this._byId[model.cid] = model;
+      this._byCid[model.cid] = model;
       var id = this.modelId(model.attributes);
       if (id != null) this._byId[id] = model;
       model.on('all', this._onModelEvent, this);
@@ -1112,7 +1118,7 @@
 
     // Internal method to sever a model's ties to a collection.
     _removeReference: function(model, options) {
-      delete this._byId[model.cid];
+      delete this._byCid[model.cid];
       var id = this.modelId(model.attributes);
       if (id != null) delete this._byId[id];
       if (this === model.collection) delete model.collection;

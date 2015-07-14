@@ -1451,7 +1451,7 @@
         Backbone.Collection.prototype._addReference.apply(this, arguments);
         calls.add++;
         equal(model, this._byId[model.id]);
-        equal(model, this._byId[model.cid]);
+        equal(model, this._byCid[model.cid]);
         equal(model._events.all.length, 1);
       },
 
@@ -1459,7 +1459,7 @@
         Backbone.Collection.prototype._removeReference.apply(this, arguments);
         calls.remove++;
         equal(this._byId[model.id], void 0);
-        equal(this._byId[model.cid], void 0);
+        equal(this._byCid[model.cid], void 0);
         equal(model.collection, void 0);
         equal(model._events, void 0);
       }
@@ -1671,4 +1671,18 @@
     collection.invoke('method', 1, 2, 3);
   });
 
+  test("#3712 - Collection set: when one model's cid == another model's id", 3, function() {
+    var model1 = new Backbone.Model({
+      id: 'foo'
+    });
+    var model2 = new Backbone.Model({
+      id: model1.cid
+    });
+  
+    var collection = new Backbone.Collection([model1]);
+    collection.set([model1, model2]);
+    deepEqual(collection.models, [model1, model2]); 
+    equal(model1.id, 'foo');
+    equal(model2.id, model1.cid);
+  });
 })();
