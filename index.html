@@ -2938,11 +2938,13 @@ var Bookmark = Backbone.View.extend({
       through <a href="#View-delegateEvents">delegateEvents</a>.
     </p>
 
-    <p>Backbone will automatically attach the event listeners at instantiation
-    time, right before invoking <a href="#View-constructor">initialize</a>.
+    <p>
+      Backbone will automatically attach the event listeners at instantiation
+      time, right before invoking <a href="#View-constructor">initialize</a>.
     </p>
 
 <pre>
+var ENTER_KEY = 13;
 var InputView = Backbone.View.extend({
 
   tagName: 'input',
@@ -2951,11 +2953,10 @@ var InputView = Backbone.View.extend({
     "keydown" : "keyAction",
   },
 
-  render: function(){ ... },
+  render: function() { ... },
 
   keyAction: function(e) {
-    var isEnterKey = e.which === 13;
-    if(isEnterKey){ this.collection.addEntry(this.$el.val()); }
+    if (e.which === ENTER_KEY) this.collection.add({text: this.$el.val()});
   }
 });
 </pre>
