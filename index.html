@@ -2957,7 +2957,9 @@ var InputView = Backbone.View.extend({
   render: function() { ... },
 
   keyAction: function(e) {
-    if (e.which === ENTER_KEY) this.collection.add({text: this.$el.val()});
+    if (e.which === ENTER_KEY) {
+      this.collection.add({text: this.$el.val()});
+    }
   }
 });
 </pre>
