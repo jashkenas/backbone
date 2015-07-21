@@ -587,11 +587,19 @@
     fetch: function(options) {
       options = _.extend({parse: true}, options);
       var model = this;
-      return wrapError(this.sync('read', this, options), this, options)
+      var success = options.success || _.identity;
+      var error = options.error;
+      delete options.success;
+      delete options.error;
+      return wrapError(this.sync('read', this, options), this, options, error)
         .then(function(resp) {
           var serverAttrs = options.parse ? model.parse(resp, options) : resp;
           if (model.set(serverAttrs, options))
-            model.trigger('sync', model, resp, options);
+            return Promise.resolve(success.call(options.context, model, resp, options))
+              .then(function(delivered) {
+                model.trigger('sync', model, resp, options);
+                return delivered;
+              });
           return model;
         });
     },
@@ -611,6 +619,10 @@
 
       options = _.extend({validate: true, parse: true}, options);
       var wait = options.wait;
+      var success = options.success || _.identity;
+      var error = options.error;
+      delete options.success;
+      delete options.error;
 
       // If we're not waiting and attributes exist, save acts as
       // `set(attr).save(null, opts)` with validation. Otherwise, check if
@@ -631,7 +643,7 @@
 
       var method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
       if (method === 'patch' && !options.attrs) options.attrs = attrs;
-      var promise = wrapError(this.sync(method, this, options), this, options);
+      var promise = wrapError(this.sync(method, this, options), this, options, error);
 
       // Restore attributes.
       this.attributes = attributes;
@@ -642,7 +654,11 @@
         var serverAttrs = options.parse ? model.parse(resp, options) : resp;
         if (wait) serverAttrs = _.extend({}, attrs, serverAttrs);
         if (!serverAttrs || model.set(serverAttrs, options))
-          model.trigger('sync', model, resp, options);
+          return Promise.resolve(success.call(options.context, model, resp, options))
+            .then(function(delivered) {
+              model.trigger('sync', model, resp, options);
+              return delivered;
+            });
         return model;
       });
     },
@@ -654,6 +670,10 @@
       options = options ? _.clone(options) : {};
       var model = this;
       var wait = options.wait;
+      var success = options.success;
+      var error = options.error;
+      delete options.success;
+      delete options.error;
 
       var destroy = function() {
         model.stopListening();
@@ -662,12 +682,19 @@
 
       var isNew = model.isNew();
       var promise = isNew ? Promise.resolve(model.attributes) :
-        wrapError(this.sync('delete', this, options), this, options);
+        wrapError(this.sync('delete', this, options), this, options, error);
       if (!wait) destroy();
       return promise.then(function(resp) {
+        var promise = Promise.resolve(model);
         if (wait) destroy();
-        if (!isNew) model.trigger('sync', model, resp, options);
-        return model;
+        if (success)
+          promise = Promise.resolve(success.call(options.context, model, resp, options));
+        if (!isNew)
+          promise = promise.then(function(delivered) {
+            model.trigger('sync', model, resp, options);
+            return delivered;
+          });
+        return promise;
       });
     },
 
@@ -990,12 +1017,19 @@
     fetch: function(options) {
       options = _.extend({parse: true}, options);
       var collection = this;
-      return wrapError(this.sync('read', this, options), this, options)
+      var success = options.success || _.identity;
+      var error = options.error;
+      delete options.success;
+      delete options.error;
+      return wrapError(this.sync('read', this, options), this, options, error)
         .then(function(resp) {
           var method = options.reset ? 'reset' : 'set';
           collection[method](resp, options);
-          collection.trigger('sync', collection, resp, options);
-          return collection;
+          return Promise.resolve(success.call(options.context, collection, resp, options))
+            .then(function(delivered) {
+              collection.trigger('sync', collection, resp, options);
+              return delivered;
+            });
         });
     },
 
@@ -1009,10 +1043,17 @@
       if (!model) return false;
       if (!wait) this.add(model, options);
       var collection = this;
+      var success = options.success || _.identity;
+      var error = options.error;
+      delete options.error;
+      options.success = function(_, resp, opts) {
+        options = opts;
+        return resp;
+      };
       return model.save(null, options)
-        .then(function(model) {
+        .then(function(resp) {
           if (wait) collection.add(model, options);
-          return model;
+          return Promise.resolve(success.call(options.context, model, resp, options));
         });
     },
 
@@ -1365,8 +1406,14 @@
       params.processData = false;
     }
 
+    // Pass along `textStatus` and `errorThrown` from jQuery.
+    options.error = function(xhr, textStatus, errorThrown) {
+      options.textStatus = textStatus;
+      options.errorThrown = errorThrown;
+    };
+
     // Make the request, allowing the user to override any Ajax options.
-    var promise = options.promise = Promise.resolve(Backbone.ajax(_.extend(params, options)));
+    var promise = Promise.resolve(options.xhr = Backbone.ajax(_.extend(params, options)));
     model.trigger('request', model, promise, options);
     return promise;
   };
@@ -1383,11 +1430,6 @@
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
   // Override this if you'd like to use a different library.
   Backbone.ajax = function() {
-    var settings = arguments.length && arguments[arguments.length - 1];
-    if (console && (_.has(settings, 'success') || _.has(settings, 'error'))) {
-      var warn = console.warn || console.log || _.noop;
-      warn.call(console, "Backbone.sync returns a Promise object; prefer promise.then over the success callback and promise.catch over the error callback.");
-    }
     return Backbone.$.ajax.apply(Backbone.$, arguments);
   };
 
@@ -1843,13 +1885,18 @@
     throw new Error('A "url" property or function must be specified');
   };
 
-  // Register the error event trigger on a delivered promise object
-  var wrapError = function(promise, model, options) {
-    promise = Promise.resolve(promise)
-    promise.catch(function(resp) {
-      model.trigger('error', model, resp, options);
-    });
-    return promise;
+  // Allow a callback to resolve a rejected promise, otherwise promise
+  // will remain rejected and an `error` event will be triggered on model.
+  var wrapError = function(promise, model, options, callback) {
+    return Promise.resolve(promise)
+      .catch(function(resp) {
+        if (callback)
+          return callback.call(options.context, model, resp, options);
+        throw resp;
+      }).catch(function(resp) {
+        model.trigger('error', model, resp, options);
+        throw resp;
+      });
   };
 
   return Backbone;

@@ -516,7 +516,8 @@
     model.destroy();
   });
 
-  test("#3283 - save, fetch, destroy calls success with context", 3, function () {
+  test("#3283 - save, fetch, destroy calls success with context", 3, function (assert) {
+    var done = _.after(3, assert.async());
     var model = new Backbone.Model();
     var obj = {};
     var options = {
@@ -525,15 +526,14 @@
         equal(this, obj);
       }
     };
-    model.sync = function (method, model, options) {
-      options.success.call(options.context);
-    };
-    model.save({data: 2, id: 1}, options);
-    model.fetch(options);
-    model.destroy(options);
+    model.sync = _.noop;
+    model.save({data: 2, id: 1}, options).then(done, done);
+    model.fetch(options).then(done, done);
+    model.destroy(options).then(done, done);
   });
 
-  test("#3283 - save, fetch, destroy calls error with context", 3, function () {
+  test("#3283 - save, fetch, destroy calls error with context", 3, function (assert) {
+    var done = _.after(3, assert.async());
     var model = new Backbone.Model();
     var obj = {};
     var options = {
@@ -542,12 +542,10 @@
         equal(this, obj);
       }
     };
-    model.sync = function (method, model, options) {
-      options.error.call(options.context);
-    };
-    model.save({data: 2, id: 1}, options);
-    model.fetch(options);
-    model.destroy(options);
+    model.sync = _.constant(Promise.reject());
+    model.save({data: 2, id: 1}, options).then(done, done);
+    model.fetch(options).then(done, done);
+    model.destroy(options).then(done, done);
   });
 
   test("#3470 - save and fetch with parse false", 2, function(assert) {
@@ -566,7 +564,7 @@
           equal(model.get('i'), 1);
         })
         .then(function() {
-          model.save(null, {parse: false})
+          return model.save(null, {parse: false});
         })
         .then(function() {
           equal(model.get('i'), 2);
@@ -657,11 +655,11 @@
     ok(_.isEqual(this.syncArgs.model, doc));
   });
 
-  test("fetch will pass extra options to success callback", 1, function () {
+  test("fetch will pass extra options to success callback", 1, function (assert) {
+    var done = assert.async();
     var SpecialSyncModel = Backbone.Model.extend({
       sync: function (method, model, options) {
         _.extend(options, { specialSync: true });
-        return Backbone.Model.prototype.sync.call(this, method, model, options);
       },
       urlRoot: '/test'
     });
@@ -672,8 +670,7 @@
       ok(options.specialSync, "Options were passed correctly to callback");
     };
 
-    model.fetch({ success: onSuccess });
-    this.ajaxSettings.success();
+    model.fetch({ success: onSuccess }).then(done, done);
   });
 
   test("destroy", 2, function(assert) {
@@ -687,11 +684,11 @@
       .then(done, done);
   });
 
-  test("destroy will pass extra options to success callback", 1, function () {
+  test("destroy will pass extra options to success callback", 1, function (assert) {
+    var done = assert.async();
     var SpecialSyncModel = Backbone.Model.extend({
       sync: function (method, model, options) {
         _.extend(options, { specialSync: true });
-        return Backbone.Model.prototype.sync.call(this, method, model, options);
       },
       urlRoot: '/test'
     });
@@ -702,8 +699,7 @@
       ok(options.specialSync, "Options were passed correctly to callback");
     };
 
-    model.destroy({ success: onSuccess });
-    this.ajaxSettings.success();
+    model.destroy({ success: onSuccess }).then(done, done);
   });
 
   test("non-persisted destroy", 1, function() {
@@ -1148,7 +1144,8 @@
     ok(!options.unset);
   });
 
-  test("#1355 - `options` is passed to success callbacks", 3, function() {
+  test("#1355 - `options` is passed to success callback, save", function(assert) {
+    var done = assert.async();
     var model = new Backbone.Model();
     var opts = {
       success: function( model, resp, options ) {
@@ -1156,9 +1153,31 @@
       }
     };
     model.sync = _.noop;
-    model.save({id: 1}, opts);
-    model.fetch(opts);
-    model.destroy(opts);
+    model.save({id: 1}, opts).then(done, done);
+  });
+
+  test("#1355 - `options` is passed to success callback, fetch", function(assert) {
+    var done = assert.async();
+    var model = new Backbone.Model();
+    var opts = {
+      success: function( model, resp, options ) {
+        ok(options);
+      }
+    };
+    model.sync = _.noop;
+    model.fetch(opts).then(done, done);
+  });
+
+  test("#1355 - `options` is passed to success callback, destroy", function(assert) {
+    var done = assert.async();
+    var model = new Backbone.Model();
+    var opts = {
+      success: function( model, resp, options ) {
+        ok(options);
+      }
+    };
+    model.sync = _.noop;
+    model.destroy(opts).then(done, done);
   });
 
   test("#1412 - Trigger 'sync' event.", 3, function(assert) {
@@ -1183,12 +1202,13 @@
       .then(done, done);
   });
 
-  test("#1433 - Save: An invalid model cannot be persisted.", 1, function(assert) {
+  test("#1433 - Save: An invalid model cannot be persisted.", function(assert) {
     var done = assert.async();
     var model = new Backbone.Model;
     model.validate = _.constant(1);
     model.sync = function(){ ok(false); };
     model.save().then(done, done);
+    expect(0);
   });
 
   test("#1377 - Save without attrs triggers 'error'.", 1, function(assert) {

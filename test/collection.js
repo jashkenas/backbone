@@ -493,7 +493,8 @@
       .then(done, done);
   });
 
-  test("#3283 - fetch with an error response calls error with context", 1, function () {
+  test("#3283 - fetch with an error response calls error with context", 1, function (assert) {
+    var done = assert.async();
     var collection = new Backbone.Collection();
     var obj = {};
     var options = {
@@ -502,10 +503,8 @@
         equal(this, obj);
       }
     };
-    collection.sync = function (method, model, options) {
-      options.error.call(options.context);
-    };
-    collection.fetch(options);
+    collection.sync = _.constant(Promise.reject());
+    collection.fetch(options).then(done, done);
   });
 
   test("ensure fetch only parses once", 1, function(assert) {
@@ -556,11 +555,11 @@
     equal(col.create({"foo":"bar"}, {validate:true}), false);
   });
 
-  test("create will pass extra options to success callback", 1, function () {
+  test("create will pass extra options to success callback", 1, function (assert) {
+    var done = assert.async();
     var Model = Backbone.Model.extend({
       sync: function (method, model, options) {
         _.extend(options, {specialSync: true});
-        return Backbone.Model.prototype.sync.call(this, method, model, options);
       }
     });
 
@@ -575,9 +574,7 @@
       ok(options.specialSync, "Options were passed correctly to callback");
     };
 
-    collection.create({}, {success: success});
-    this.ajaxSettings.success();
-
+    collection.create({}, {success: success}).then(done, done);
   });
 
   test("create with wait:true should not call collection.parse", 0, function(assert) {
@@ -890,20 +887,19 @@
     ok(colUndefined.comparator);
   });
 
-  test("#1355 - `options` is passed to success callbacks", 2, function(){
+  test("#1355 - `options` is passed to success callbacks", 2, function(assert){
+    var done = _.after(2, assert.async());
     var m = new Backbone.Model({x:1});
     var col = new Backbone.Collection();
     var opts = {
-      opts: true,
+      custom: true,
       success: function(collection, resp, options) {
-        ok(options.opts);
+        ok(options.custom);
       }
     };
-    col.sync = m.sync = function( method, collection, options ){
-      options.success({});
-    };
-    col.fetch(opts);
-    col.create(m, opts);
+    col.sync = m.sync = _.constant({});
+    col.fetch(opts).then(done, done);
+    col.create(m, opts).then(done, done);
   });
 
   test("#1412 - Trigger 'request' and 'sync' events.", 4, function(assert) {
@@ -936,12 +932,10 @@
       .then(done, done);
   });
 
-  test("#3283 - fetch, create calls success with context", 2, function() {
+  test("#3283 - fetch, create calls success with context", 2, function(assert) {
+    var done = _.after(2, assert.async());
     var collection = new Backbone.Collection;
     collection.url = '/test';
-    Backbone.ajax = function(settings) {
-      settings.success.call(settings.context);
-    };
     var obj = {};
     var options = {
       context: obj,
@@ -950,8 +944,8 @@
       }
     };
 
-    collection.fetch(options);
-    collection.create({id: 1}, options);
+    collection.fetch(options).then(done, done);
+    collection.create({id: 1}, options).then(done, done);
   });
 
   test("#1447 - create with wait adds model.", 1, function(assert) {
@@ -1295,6 +1289,7 @@
 
   test("#1939 - `parse` is passed `options`", 1, function (assert) {
     var done = assert.async();
+    Backbone.ajax = _.constant({ someHeader: 'headerValue' });
     var collection = new (Backbone.Collection.extend({
       url: '/',
       parse: function (data, options) {
@@ -1302,20 +1297,15 @@
         return data;
       }
     }));
-    var ajax = Backbone.ajax;
-    Backbone.ajax = function (params) {
-      return {someHeader: 'headerValue'};
-    };
     collection.fetch().then(done, done);
-    Backbone.ajax = ajax;
   });
 
-  test("fetch will pass extra options to success callback", 1, function () {
+  test("fetch will pass extra options to success callback", 1, function (assert) {
+    var done = assert.async();
     var SpecialSyncCollection = Backbone.Collection.extend({
       url: '/test',
       sync: function (method, collection, options) {
         _.extend(options, { specialSync: true });
-        return Backbone.Collection.prototype.sync.call(this, method, collection, options);
       }
     });
 
@@ -1325,8 +1315,7 @@
       ok(options.specialSync, "Options were passed correctly to callback");
     };
 
-    collection.fetch({ success: onSuccess });
-    this.ajaxSettings.success();
+    collection.fetch({ success: onSuccess }).then(done, done);
   });
 
   test("`add` only `sort`s when necessary", 2, function () {
@@ -1379,17 +1368,19 @@
     equal(collection.length, 2);
   });
 
-  test("#2606 - Collection#create, success arguments", 1, function(assert) {
+  test("#2606 - Collection#create, success arguments", 2, function(assert) {
     var done = assert.async();
+    Backbone.ajax = _.constant('response');
     var collection = new Backbone.Collection;
     collection.url = 'test';
     collection.create({}, {
+      custom: true,
       success: function(model, resp, options) {
         strictEqual(resp, 'response');
+        ok(options.custom);
       }
     })
     .then(done, done);
-    this.ajaxSettings.success('response');
   });
 
   test("#2612 - nested `parse` works with `Collection#set`", function() {
