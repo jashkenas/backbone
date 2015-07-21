@@ -207,15 +207,17 @@
     strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
 
-  test('#2928 - Pass along `textStatus` and `errorThrown`.', 2, function() {
-    var model = new Backbone.Model;
+  test('#2928 - Pass along `textStatus` and `errorThrown`.', 2, function(assert) {
+    var done = assert.async();
+    var model = new Backbone.Model.extend({
+      sync: _.constant(Promise.reject())
+    });
     model.url = '/test';
     model.on('error', function(model, xhr, options) {
       strictEqual(options.textStatus, 'textStatus');
       strictEqual(options.errorThrown, 'errorThrown');
     });
-    model.fetch();
-    this.ajaxSettings.error({}, 'textStatus', 'errorThrown');
+    model.fetch().then(done, done);
   });
 
 })();
