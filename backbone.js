@@ -398,10 +398,20 @@
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
     if (options.parse) attrs = this.parse(attrs, options) || {};
-    attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
-    this.set(attrs, options);
-    this.changed = {};
-    this.initialize.apply(this, arguments);
+    var model = this, args = slice.call(arguments);
+    var defaults = _.result(this, 'defaults');
+    var consume = function(defaults) {
+      attrs = _.defaults({}, attrs, defaults);
+      model.set(attrs, options);
+      model.changed = {};
+      var init = model.initialize.apply(model, args);
+      if (init instanceof Promise)
+        return init.then(_.constant(model));
+      return model;
+    };
+    if (defaults instanceof Promise)
+      return defaults.then(consume);
+    return consume(defaults);
   };
 
   // Attach all inheritable methods to the Model prototype.
@@ -708,7 +718,12 @@
         urlError();
       if (this.isNew()) return base;
       var id = this.get(this.idAttribute);
-      return base.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
+      var consume = function(base) {
+        return base.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
+      };
+      if (base instanceof Promise)
+        return base.then(consume);
+      return consume(base);
     },
 
     // **parse** converts a response into the hash of attributes to be `set` on
@@ -767,12 +782,19 @@
   // If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
+    var collection = this;
     options || (options = {});
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
-    this.initialize.apply(this, arguments);
-    if (models) this.reset(models, _.extend({silent: true}, options));
+    var init = this.initialize.apply(this, arguments);
+    var consume = function() {
+      if (models) collection.reset(models, _.extend({silent: true}, options));
+      return collection;
+    };
+    if (init instanceof Promise)
+      return init.then(consume);
+    consume();
   };
 
   // Default options for `Collection#set`.
@@ -1195,8 +1217,17 @@
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
     _.extend(this, _.pick(options, viewOptions));
-    this._ensureElement();
-    this.initialize.apply(this, arguments);
+    var view = this, args = slice.call(arguments);
+    var init = this._ensureElement();
+    var consume = function() {
+      var init = view.initialize.apply(view, args);
+      if (init instanceof Promise)
+        return init.then(_.constant(view));
+      return view;
+    };
+    if (init instanceof Promise)
+      return init.then(consume);
+    return consume();
   };
 
   // Cached regex to split keys for `delegate`.
@@ -1248,8 +1279,7 @@
     setElement: function(element) {
       this.undelegateEvents();
       this._setElement(element);
-      this.delegateEvents();
-      return this;
+      return this.delegateEvents();
     },
 
     // Creates the `this.el` and `this.$el` references for this view using the
@@ -1278,15 +1308,21 @@
     delegateEvents: function(events) {
       events || (events = _.result(this, 'events'));
       if (!events) return this;
-      this.undelegateEvents();
-      for (var key in events) {
-        var method = events[key];
-        if (!_.isFunction(method)) method = this[method];
-        if (!method) continue;
-        var match = key.match(delegateEventSplitter);
-        this.delegate(match[1], match[2], _.bind(method, this));
-      }
-      return this;
+      var view = this;
+      var consume = function(events) {
+        view.undelegateEvents();
+        for (var key in events) {
+          var method = events[key];
+          if (!_.isFunction(method)) method = view[method];
+          if (!method) continue;
+          var match = key.match(delegateEventSplitter);
+          view.delegate(match[1], match[2], _.bind(method, view));
+        }
+        return view;
+      };
+      if (events instanceof Promise)
+        return events.then(consume);
+      return consume(events);
     },
 
     // Add a single event listener to the view's element (or a child element
@@ -1323,15 +1359,31 @@
     // matching element, and re-assign it to `el`. Otherwise, create
     // an element from the `id`, `className` and `tagName` properties.
     _ensureElement: function() {
+      var view = this;
+      var result, consume;
       if (!this.el) {
-        var attrs = _.extend({}, _.result(this, 'attributes'));
-        if (this.id) attrs.id = _.result(this, 'id');
-        if (this.className) attrs['class'] = _.result(this, 'className');
-        this.setElement(this._createElement(_.result(this, 'tagName')));
-        this._setAttributes(attrs);
+        result = _.result(this, 'attributes');
+        consume = function(result) {
+          var attrs = _.extend({}, result);
+          if (view.id) attrs.id = _.result(view, 'id');
+          if (view.className) attrs['class'] = _.result(view, 'className');
+          var result = view.setElement(view._createElement(_.result(view, 'tagName')));
+          var consume = function() {
+            view._setAttributes(attrs);
+          };
+          if (result instanceof Promise)
+            return result.then(consume);
+          consume();
+        };
       } else {
-        this.setElement(_.result(this, 'el'));
+        result = _.result(this, 'el');
+        consume = function(result) {
+          return view.setElement(result);
+        };
       }
+      if (result instanceof Promise)
+        return result.then(consume);
+      return consume(result);
     },
 
     // Set attributes from a hash on this view's element.  Exposed for
@@ -1373,9 +1425,7 @@
     var params = {type: type, dataType: 'json'};
 
     // Ensure that we have a URL.
-    if (!options.url) {
-      params.url = _.result(model, 'url') || urlError();
-    }
+    params.url = options.url || _.result(model, 'url') || urlError();
 
     // Ensure that we have the appropriate request data.
     if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
@@ -1413,9 +1463,15 @@
     };
 
     // Make the request, allowing the user to override any Ajax options.
-    var promise = Promise.resolve(options.xhr = Backbone.ajax(_.extend(params, options)));
-    model.trigger('request', model, promise, options);
-    return promise;
+    var consume = function(url) {
+      params.url = url || urlError();
+      var promise = Promise.resolve(options.xhr = Backbone.ajax(_.extend(params, _.omit(options, 'url'))));
+      model.trigger('request', model, promise, options);
+      return promise;
+    };
+    if (params.url instanceof Promise)
+      return params.url.then(consume);
+    return consume(params.url);
   };
 
   // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
@@ -1441,8 +1497,18 @@
   var Router = Backbone.Router = function(options) {
     options || (options = {});
     if (options.routes) this.routes = options.routes;
-    this._bindRoutes();
-    this.initialize.apply(this, arguments);
+    var router = this;
+    var args = slice.call(arguments);
+    var init = this._bindRoutes();
+    var consume = function() {
+      var init = router.initialize.apply(router, args);
+      if (init instanceof Promise)
+        return init.then(_.constant(router));
+      return router;
+    };
+    if (init instanceof Promise)
+      return init.then(consume);
+    return consume();
   };
 
   // Cached regular expressions for matching named param parts and splatted
@@ -1501,11 +1567,19 @@
     // routes can be defined at the bottom of the route map.
     _bindRoutes: function() {
       if (!this.routes) return;
-      this.routes = _.result(this, 'routes');
-      var route, routes = _.keys(this.routes);
-      while ((route = routes.pop()) != null) {
-        this.route(route, this.routes[route]);
-      }
+      var router = this;
+      var routes = _.result(this, 'routes');
+      var consume = function(routes) {
+        router.routes = routes;
+        routes = _.keys(routes);
+        var route;
+        while ((route = routes.pop()) != null) {
+          router.route(route, router.routes[route]);
+        }
+      };
+      if (routes instanceof Promise)
+        return routes.then(consume);
+      consume(routes);
     },
 
     // Convert a route string into a regular expression, suitable for matching
