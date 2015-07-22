@@ -450,6 +450,7 @@
       <li>– <a href="#View-template">template</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
+      <li>– <a href="#View-events">events</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
       <li>– <a href="#View-undelegateEvents">undelegateEvents</a></li>
     </ul>
@@ -2930,6 +2931,39 @@ var Bookmark = Backbone.View.extend({
       events that the view has <a href="#Events-listenTo">listenTo</a>'d.
     </p>
 
+    <p id="View-events">
+      <b class="header">events</b><code>view.events or view.events()</code>
+      <br />
+      The <b>events</b> hash (or method) can be used to specify a set of DOM
+      events that will be bound to methods on your View
+      through <a href="#View-delegateEvents">delegateEvents</a>.
+    </p>
+
+    <p>
+      Backbone will automatically attach the event listeners at instantiation
+      time, right before invoking <a href="#View-constructor">initialize</a>.
+    </p>
+
+<pre>
+var ENTER_KEY = 13;
+var InputView = Backbone.View.extend({
+
+  tagName: 'input',
+
+  events: {
+    "keydown" : "keyAction",
+  },
+
+  render: function() { ... },
+
+  keyAction: function(e) {
+    if (e.which === ENTER_KEY) {
+      this.collection.add({text: this.$el.val()});
+    }
+  }
+});
+</pre>
+
     <p id="View-delegateEvents">
       <b class="header">delegateEvents</b><code>delegateEvents([events])</code>
       <br />
@@ -4264,7 +4298,7 @@ ActiveRecord::Base.include_root_in_json = false
         in 1.2.0.
       </li>
     </ul>
-  
+
     <b class="header">1.2.0</b> &mdash; <small><i>May 13, 2015</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.2...1.2.0">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.0/index.html">Docs</a>
@@ -4287,7 +4321,7 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Views now always delegate their events in <a href="#View-setElement">setElement</a>.
         You can no longer modify the events hash or your view's <tt>el</tt> property in
-        <tt>initialize</tt>. 
+        <tt>initialize</tt>.
       </li>
       <li>
         Added an <tt>"update"</tt> event that triggers after any amount of
