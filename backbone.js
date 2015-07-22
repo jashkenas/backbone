@@ -1825,8 +1825,8 @@
 
     // Add a route to be tested when the fragment changes. Routes added later
     // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
+    route: function(route, callback, meta) {
+      this.handlers.unshift(_.defaults({route: route, callback: callback}, meta));
     },
 
     // Checks the current URL to see if it has changed, and if it has,
