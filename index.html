@@ -2926,7 +2926,7 @@ var Bookmark = Backbone.View.extend({
     <p id="View-remove">
       <b class="header">remove</b><code>view.remove()</code>
       <br />
-      Removes a view from the DOM, and calls
+      Removes a view and its <tt>el</tt> from the DOM, and calls
       <a href="#Events-stopListening">stopListening</a> to remove any bound
       events that the view has <a href="#Events-listenTo">listenTo</a>'d.
     </p>
