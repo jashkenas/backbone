@@ -602,8 +602,8 @@
     });
     var col = new ValidatingCollection();
     col.create({"foo":"bar"})
-      ['catch'](function(m) {
-        equal(m.validationError, 'fail');
+      ['catch'](function(validationError) {
+        equal(validationError, 'fail');
         equal(col.length, 1);
       })
       .then(done, done);

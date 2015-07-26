@@ -643,7 +643,7 @@
       if (attrs && !wait) {
         if (!this.set(attrs, options)) return Promise.reject(this);
       } else {
-        if (!this._validate(attrs, options)) return Promise.reject(this);
+        if (!this._validate(attrs, options)) return Promise.reject(this.validationError);
       }
 
       // After a successful server-side save, the client is (optionally)
