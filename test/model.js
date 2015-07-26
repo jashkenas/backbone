@@ -1362,17 +1362,17 @@
     });
     model.sync = _.constant(Promise.resolve());
     model.save({data: 2, id: 1})
-      ['catch'](function(err) {
+      ['catch'](function(error) {
         equal(error, "boom");
         done();
       });
     model.fetch()
-      ['catch'](function(err) {
+      ['catch'](function(error) {
         equal(error, "boom");
         done();
       });
     model.destroy()
-      ['catch'](function(err) {
+      ['catch'](function(error) {
         equal(error, "boom");
         done();
       });
