@@ -408,11 +408,11 @@
       model.set(attrs, options);
       model.changed = {};
       var init = model.initialize.apply(model, args);
-      if (init instanceof Promise)
+      if (isPromise(init))
         return init.then(_.constant(model));
       return model;
     };
-    if (defaults instanceof Promise)
+    if (isPromise(defaults))
       return defaults.then(consume);
     return consume(defaults);
   };
@@ -724,7 +724,7 @@
       var consume = function(base) {
         return base.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
       };
-      if (base instanceof Promise)
+      if (isPromise(base))
         return base.then(consume);
       return consume(base);
     },
@@ -795,7 +795,7 @@
       if (models) collection.reset(models, _.extend({silent: true}, options));
       return collection;
     };
-    if (init instanceof Promise)
+    if (isPromise(init))
       return init.then(consume);
     consume();
   };
@@ -1224,11 +1224,11 @@
     var init = this._ensureElement();
     var consume = function() {
       var init = view.initialize.apply(view, args);
-      if (init instanceof Promise)
+      if (isPromise(init))
         return init.then(_.constant(view));
       return view;
     };
-    if (init instanceof Promise)
+    if (isPromise(init))
       return init.then(consume);
     return consume();
   };
@@ -1323,7 +1323,7 @@
         }
         return view;
       };
-      if (events instanceof Promise)
+      if (isPromise(events))
         return events.then(consume);
       return consume(events);
     },
@@ -1374,7 +1374,7 @@
           var consume = function() {
             view._setAttributes(attrs);
           };
-          if (result instanceof Promise)
+          if (isPromise(result))
             return result.then(consume);
           consume();
         };
@@ -1384,7 +1384,7 @@
           return view.setElement(result);
         };
       }
-      if (result instanceof Promise)
+      if (isPromise(result))
         return result.then(consume);
       return consume(result);
     },
@@ -1472,7 +1472,7 @@
       model.trigger('request', model, promise, options);
       return promise;
     };
-    if (params.url instanceof Promise)
+    if (isPromise(params.url))
       return params.url.then(consume);
     return consume(params.url);
   };
@@ -1505,11 +1505,11 @@
     var init = this._bindRoutes();
     var consume = function() {
       var init = router.initialize.apply(router, args);
-      if (init instanceof Promise)
+      if (isPromise(init))
         return init.then(_.constant(router));
       return router;
     };
-    if (init instanceof Promise)
+    if (isPromise(init))
       return init.then(consume);
     return consume();
   };
@@ -1552,7 +1552,7 @@
             Backbone.history.trigger('route', router, name, args);
           }
         };
-        if (result instanceof Promise)
+        if (isPromise(result))
           result.then(consume);
         else
           consume(result);
@@ -1570,7 +1570,7 @@
       if (callback) {
         try {
           var route = callback.apply(this, args);
-          if (route instanceof Promise) {
+          if (isPromise(route)) {
             route['catch'](error);
           }
         } catch(e) {
@@ -1602,7 +1602,7 @@
           router.route(route, router.routes[route]);
         }
       };
-      if (routes instanceof Promise)
+      if (isPromise(routes))
         return routes.then(consume);
       consume(routes);
     },
@@ -1998,6 +1998,11 @@
         throw resp;
       });
   };
+
+  // Allow any `then`able (and `catch`able) to be considered a `Promise`
+  var isPromise = function(o) {
+    return o && (typeof o === 'object' || typeof o === 'function') && typeof o.then === 'function' && typeof o['catch'] === 'function';
+  }
 
   return Backbone;
 
