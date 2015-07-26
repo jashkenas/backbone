@@ -1354,4 +1354,28 @@
     model.set({a: true});
   });
 
+  test("save, fetch, destroy propagates errors from event listeners", 3, function (assert) {
+    var done = _.after(3, assert.async());
+    var model = new Backbone.Model();
+    model.on('sync', function () {
+      throw "boom";
+    });
+    model.sync = _.constant(Promise.resolve());
+    model.save({data: 2, id: 1})
+      ['catch'](function(err) {
+        equal(error, "boom");
+        done();
+      });
+    model.fetch()
+      ['catch'](function(err) {
+        equal(error, "boom");
+        done();
+      });
+    model.destroy()
+      ['catch'](function(err) {
+        equal(error, "boom");
+        done();
+      });
+  });
+
 })();
