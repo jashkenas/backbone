@@ -920,7 +920,7 @@
     var model = new Backbone.Model();
     model.validate = _.constant(1);
     model.save({a: 1})
-      .catch(function(model) {
+      ['catch'](function(model) {
         equal(model.get('a'), void 0);
       })
       .then(done, done);

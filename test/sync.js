@@ -159,7 +159,7 @@
     Backbone.ajax = _.constant(Promise.reject());
     model.url = '/test';
     Backbone.sync('read', model)
-      .catch(function() { ok(true); })
+      ['catch'](function() { ok(true); })
       .then(done, done);
   });
 

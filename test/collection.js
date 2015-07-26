@@ -489,7 +489,7 @@
     var collection = new Backbone.Collection();
     collection.sync = _.constant(Promise.reject());
     collection.fetch()
-      .catch(function() { ok(true); })
+      ['catch'](function() { ok(true); })
       .then(done, done);
   });
 
@@ -602,7 +602,7 @@
     });
     var col = new ValidatingCollection();
     col.create({"foo":"bar"})
-      .catch(function(m) {
+      ['catch'](function(m) {
         equal(m.validationError, 'fail');
         equal(col.length, 1);
       })

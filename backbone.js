@@ -1568,7 +1568,7 @@
         try {
           var route = callback.apply(this, args);
           if (route instanceof Promise) {
-            route.catch(error);
+            route['catch'](error);
           }
         } catch(e) {
           error(e);
@@ -1985,11 +1985,12 @@
   // will remain rejected and an `error` event will be triggered on model.
   var wrapError = function(promise, model, options, callback) {
     return Promise.resolve(promise)
-      .catch(function(resp) {
+      ['catch'](function(resp) {
         if (callback)
           return callback.call(options.context, model, resp, options);
         throw resp;
-      }).catch(function(resp) {
+      })
+      ['catch'](function(resp) {
         model.trigger('error', model, resp, options);
         throw resp;
       });
