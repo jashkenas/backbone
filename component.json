@@ -5,7 +5,8 @@
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
   "repo"          : "jashkenas/backbone",
   "dependencies"  : {
-    "jashkenas/underscore"  : "*"
+    "jashkenas/underscore"  : "*",
+    "then/promise"          : "*"
   },
   "main"          : "backbone.js",
   "scripts"       : ["backbone.js"],

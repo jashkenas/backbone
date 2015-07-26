@@ -5,7 +5,8 @@
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
   "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
   "dependencies"  : {
-    "underscore"  : ">=1.7.0"
+    "underscore"  : ">=1.7.0",
+    "promise"     : "*"
   },
   "devDependencies": {
     "coffee-script": "1.7.1",
