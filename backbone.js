@@ -631,7 +631,7 @@
       // `set(attr).save(null, opts)` with validation. Otherwise, check if
       // the model will be valid when the attributes, if any, are set.
       if (attrs && !wait) {
-        if (!this.set(attrs, options)) return Promise.reject(this);
+        if (!this.set(attrs, options)) return Promise.reject(this.validationError);
       } else {
         if (!this._validate(attrs, options)) return Promise.reject(this.validationError);
       }
