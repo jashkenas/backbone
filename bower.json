@@ -2,8 +2,7 @@
   "name"          : "backbone",
   "main"          : "backbone.js",
   "dependencies"  : {
-    "underscore"  : ">=1.7.0",
-    "promise"     : "*"
+    "underscore"  : ">=1.7.0"
   },
   "ignore"        : ["docs", "examples", "test", "*.yml", "*.html", "*.ico", "*.md", "CNAME", ".*", "karma.*", "component.json", "package.json"]
 }
