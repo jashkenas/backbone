@@ -1511,8 +1511,9 @@
         try {
           var route = callback.apply(this, args);
           if (isPromise(route)) {
-            route['catch'](error);
+            return route['catch'](error);
           }
+          return route;
         } catch(e) {
           error(e);
         }
