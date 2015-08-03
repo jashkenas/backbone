@@ -895,11 +895,16 @@ proxy.on("all", function(eventName) {
 
 <pre>
 book.on({
-  "change:title": titleView.update,
   "change:author": authorPane.update,
+  "change:title change:subtitle": titleView.update,  
   "destroy": bookView.remove
 });
 </pre>
+    
+    <p>
+      For event map syntax to supply a <b>context</b> value for <tt>this</tt> when a 
+      callback is invoked, pass the optional second argument: <tt>model.on({ 'change': this.render }, this)</tt>
+    </p>
 
     <p id="Events-off">
       <b class="header">off</b><code>object.off([event], [callback], [context])</code><span class="alias">Alias: unbind</span>
@@ -1879,7 +1884,7 @@ alert(JSON.stringify(collection));
       <li><a href="http://underscorejs.org/#reject">reject</a></li>
       <li><a href="http://underscorejs.org/#every">every (all)</a></li>
       <li><a href="http://underscorejs.org/#some">some (any)</a></li>
-      <li><a href="http://underscorejs.org/#contains">contains (include)</a></li>
+      <li><a href="http://underscorejs.org/#contains">contains (includes)</a></li>
       <li><a href="http://underscorejs.org/#invoke">invoke</a></li>
       <li><a href="http://underscorejs.org/#max">max</a></li>
       <li><a href="http://underscorejs.org/#min">min</a></li>
@@ -1920,6 +1925,16 @@ var publishedBooks = books.filter(function(book) {
 var alphabetical = books.sortBy(function(book) {
   return book.author.get("name").toLowerCase();
 });
+</pre>
+  
+    <p>
+      You may also pass an object or string instead of a function to those proxied Underscore.js methods that support model-attribute-style predicates.
+    </p>
+  
+<pre>
+var publishedBooks = books.filter({ published: true });
+
+var publishedBooks = books.filter('published');
 </pre>
 
     <p id="Collection-add">
@@ -4272,6 +4287,25 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header">1.2.2</b> &mdash; <small><i>Aug. 10, 2015</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.1...1.2.2">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.2/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Collection methods <tt>find</tt>, <tt>filter</tt>, <tt>reject</tt>, <tt>every</tt>, 
+        <tt>some</tt>, and <tt>partition</tt> now support a model-attributes-style predicate 
+        <tt>this.collection.reject({user: 'guybrush'})</tt>.
+      </li>
+      <li>
+        Backbone events now support multiple-event maps <tt>obj.on({'click focus': action})</tt>.
+        This was previously an undocumented behavior inadvertently removed in 1.2.0.
+      </li>
+      <li>
+        Added <tt>Collection#includes</tt> alias for Underscore.js >= 1.8 in favor of <tt>Collection#include</tt>.
+      </li>
+    </ul>
+	
     <b class="header">1.2.1</b> &mdash; <small><i>Jun. 4, 2015</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.0...1.2.1">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.1/index.html">Docs</a>
@@ -4294,8 +4328,8 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
       <li>
         When using <tt>on</tt> with an event map, you can now pass the context as the
-        second argument. This was previously an undocumented behavior from 1.1.2 removed
-        in 1.2.0.
+        second argument. This was previously an undocumented behavior inadvertently
+        removed in 1.2.0.
       </li>
     </ul>
 
