@@ -12,7 +12,7 @@
     "docco": "0.7.0",
     "karma": "^0.12.31",
     "karma-phantomjs-launcher": "^0.1.4",
-    "karma-qunit": "^0.1.4",
+    "karma-qunit": "0.1.4",
     "qunitjs": "^1.18.0",
     "uglify-js": "^2.4.17"
   },
