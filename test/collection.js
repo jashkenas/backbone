@@ -1069,6 +1069,12 @@
     });
     c.set([]);
     strictEqual(c.length, 0);
+
+    // Test null models on set doesn't clear collection
+    c.off();
+    c.set([{id: 1}]);
+    c.set();
+    strictEqual(c.length, 1);
   });
 
   test("set with only cids", 3, function() {
