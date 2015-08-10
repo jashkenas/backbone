@@ -1617,7 +1617,7 @@
       this.options          = _.extend({root: '/'}, this.options, options);
       this.root             = this.options.root;
       this._wantsHashChange = this.options.hashChange !== false;
-      this._hasHashChange   = 'onhashchange' in window;
+      this._hasHashChange   = 'onhashchange' in window && (document.documentMode === void 0 || document.documentMode > 7);
       this._useHashChange   = this._wantsHashChange && this._hasHashChange;
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.history && this.history.pushState);
