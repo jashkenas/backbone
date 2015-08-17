@@ -1737,7 +1737,7 @@
     var model3 = new Backbone.Model({id: 3, title: 'My Last Post'});
     var collection = new Backbone.Collection([model]);
     collection.on('update', function(context, options) {
-      var removedModels = options.previousModels;
+      var removedModels = options.removedModels;
       if (!removedModels || removedModels.length !== 1) ok(false);
       if (removedModels[0] === model) {
         ok(true);
@@ -1754,7 +1754,7 @@
     var model3 = new Backbone.Model({id: 3, title: 'My Last Post'});
     var collection = new Backbone.Collection([model, model2]);
     collection.on('update', function(context, options) {
-      var removedModels = options.previousModels;
+      var removedModels = options.removedModels;
       if (!removedModels || removedModels.length !== 2) ok(false);
       if (removedModels[0] === model && removedModels[1] === model2) {
         ok(true);
