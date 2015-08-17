@@ -1702,11 +1702,7 @@
     collection.on('update', function(context, options) {
       var addedModels = options.addedModels;
       if (!addedModels || addedModels.length !== 1) ok(false);
-      if (addedModels[0] === model) {
-        ok(true);
-      } else {
-        ok(false);
-      }
+      strictEqual(addedModels[0], model);
     });
     collection.set(model);
   });
@@ -1718,11 +1714,8 @@
     collection.on('update', function(context, options) {
       var addedModels = options.addedModels;
       if (!addedModels || addedModels.length !== 2) ok(false);
-      if (addedModels[0] === model && addedModels[1] === model2) {
-        ok(true);
-      } else {
-        ok(false);
-      }
+      strictEqual(addedModels[0], model);
+      strictEqual(addedModels[1], model2);
     });
     collection.set([model, model2]);
   });
@@ -1735,11 +1728,7 @@
     collection.on('update', function(context, options) {
       var removedModels = options.removedModels;
       if (!removedModels || removedModels.length !== 1) ok(false);
-      if (removedModels[0] === model) {
-        ok(true);
-      } else {
-        ok(false);
-      }
+      strictEqual(removedModels[0], model);
     });
     collection.set([model2, model3]);
   });
@@ -1752,11 +1741,8 @@
     collection.on('update', function(context, options) {
       var removedModels = options.removedModels;
       if (!removedModels || removedModels.length !== 2) ok(false);
-      if (removedModels[0] === model && removedModels[1] === model2) {
-        ok(true);
-      } else {
-        ok(false);
-      }
+      strictEqual(removedModels[0], model);
+      strictEqual(removedModels[1], model2);
     });
     collection.set([model3]);
   });
