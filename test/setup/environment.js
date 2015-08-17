@@ -26,7 +26,7 @@
         model: model,
         options: options
       };
-      sync.apply(this, arguments);
+      return sync.apply(this, arguments);
     };
 
   });

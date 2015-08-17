@@ -12,6 +12,7 @@ module.exports = function(config) {
         'test/vendor/jquery.js',
         'test/vendor/json2.js',
         'test/vendor/underscore.js',
+        'test/vendor/promise.js',
         'backbone.js',
         'test/setup/*.js',
         'test/*.js'

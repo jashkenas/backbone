@@ -153,13 +153,14 @@
     Backbone.sync('create', model);
   });
 
-  test("Call provided error callback on error.", 1, function() {
+  test("Call provided error callback on error.", 1, function(assert) {
+    var done = assert.async();
     var model = new Backbone.Model;
+    Backbone.ajax = _.constant(Promise.reject());
     model.url = '/test';
-    Backbone.sync('read', model, {
-      error: function() { ok(true); }
-    });
-    this.ajaxSettings.error();
+    Backbone.sync('read', model)
+      ['catch'](function() { ok(true); })
+      .then(done, done);
   });
 
   test('Use Backbone.emulateHTTP as default.', 2, function() {
@@ -207,15 +208,19 @@
     strictEqual(this.ajaxSettings.beforeSend(xhr), false);
   });
 
-  test('#2928 - Pass along `textStatus` and `errorThrown`.', 2, function() {
+  test('#2928 - Pass along `textStatus` and `errorThrown`.', 2, function(assert) {
+    var done = assert.async();
+    Backbone.ajax = function(settings) {
+      settings.error({}, 'textStatus', 'errorThrown');
+      return Promise.reject();
+    };
     var model = new Backbone.Model;
     model.url = '/test';
     model.on('error', function(model, xhr, options) {
       strictEqual(options.textStatus, 'textStatus');
       strictEqual(options.errorThrown, 'errorThrown');
     });
-    model.fetch();
-    this.ajaxSettings.error({}, 'textStatus', 'errorThrown');
+    model.fetch().then(done, done);
   });
 
 })();

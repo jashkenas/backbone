@@ -114,54 +114,43 @@ _.extend(Backbone.LocalStorage.prototype, {
 Backbone.LocalStorage.sync = window.Store.sync = Backbone.localSync = function(method, model, options) {
   var store = model.localStorage || model.collection.localStorage;
 
-  var resp, errorMessage, syncDfd = $.Deferred && $.Deferred(); //If $ is having Deferred - use it.
+  var resp, errorMessage;
 
-  try {
+  return new Promise(function(resolve, reject) {
+    try {
 
-    switch (method) {
-      case "read":
-        resp = model.id != undefined ? store.find(model) : store.findAll();
-        break;
-      case "create":
-        resp = store.create(model);
-        break;
-      case "update":
-        resp = store.update(model);
-        break;
-      case "delete":
-        resp = store.destroy(model);
-        break;
+      switch (method) {
+        case "read":
+          resp = model.id != undefined ? store.find(model) : store.findAll();
+          break;
+        case "create":
+          resp = store.create(model);
+          break;
+        case "update":
+          resp = store.update(model);
+          break;
+        case "delete":
+          resp = store.destroy(model);
+          break;
+      }
+
+    } catch(error) {
+      if (error.code === DOMException.QUOTA_EXCEEDED_ERR && window.localStorage.length === 0)
+        errorMessage = "Private browsing is unsupported";
+      else
+        errorMessage = error.message;
     }
 
-  } catch(error) {
-    if (error.code === DOMException.QUOTA_EXCEEDED_ERR && window.localStorage.length === 0)
-      errorMessage = "Private browsing is unsupported";
-    else
-      errorMessage = error.message;
-  }
+    if (resp) {
+      model.trigger("sync", model, resp, options);
+      resolve(resp);
+    } else {
+      errorMessage = errorMessage ? errorMessage
+                                  : "Record Not Found";
 
-  if (resp) {
-    model.trigger("sync", model, resp, options);
-    if (options && options.success)
-      options.success(resp);
-    if (syncDfd)
-      syncDfd.resolve(resp);
-
-  } else {
-    errorMessage = errorMessage ? errorMessage
-                                : "Record Not Found";
-
-    if (options && options.error)
-      options.error(errorMessage);
-    if (syncDfd)
-      syncDfd.reject(errorMessage);
-  }
-
-  // add compatibility with $.ajax
-  // always execute callback for success and error
-  if (options && options.complete) options.complete(resp);
-
-  return syncDfd && syncDfd.promise();
+      reject(errorMessage);
+    }
+  });
 };
 
 Backbone.ajaxSync = Backbone.sync;
@@ -177,7 +166,7 @@ Backbone.getSyncMethod = function(model) {
 // Override 'Backbone.sync' to default to localSync,
 // the original 'Backbone.sync' is still available in 'Backbone.ajaxSync'
 Backbone.sync = function(method, model, options) {
-  return Backbone.getSyncMethod(model).apply(this, [method, model, options]);
+  return Backbone.getSyncMethod(model).call(this, method, model, options);
 };
 
 return Backbone.LocalStorage;
