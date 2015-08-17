@@ -799,7 +799,7 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       var removed = this._removeModels(models, options);
-      if (removed.length) options.removedModels = removed;
+      options.removedModels = removed;
       if (!options.silent && removed) this.trigger('update', this, options);
       return singular ? removed[0] : removed;
     },
@@ -898,9 +898,13 @@
           if (at != null) addOpts.index = at + i;
           (model = toAdd[i]).trigger('add', model, this, addOpts);
         }
+
+        // Create arrays of the models which were added and removed.
+        options.addedModels = toAdd;
+        options.removedModels = toRemove;
+
+        // Only trigger if there were models added or removed.
         if (toAdd.length || toRemove.length) {
-          if (toAdd.length) options.addedModels = toAdd;
-          if (toRemove.length) options.previousModels = toRemove;
           this.trigger('update', this, options);
         }
         if (sort || orderChanged) this.trigger('sort', this, options);
