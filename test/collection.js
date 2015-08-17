@@ -1675,11 +1675,7 @@
     var model = new Backbone.Model({id: 1, title: 'First Post'});
     var collection = new Backbone.Collection([model]);
     collection.on('update', function(context, options) {
-      if (options.removedModels[0] !== model) {
-        ok(false);
-      } else {
-        ok(true);
-      }
+      strictEqual(options.removedModels[0], model);
     });
     collection.remove(model);
   });
