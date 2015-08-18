@@ -506,7 +506,7 @@
     };
     collection.url = '/test';
     collection.fetch();
-    this.syncArgs.options.success();
+    this.syncArgs.options.success([]);
     equal(counter, 1);
   });
 
@@ -1106,6 +1106,12 @@
     });
     c.set([]);
     strictEqual(c.length, 0);
+
+    // Test null models on set doesn't clear collection
+    c.off();
+    c.set([{id: 1}]);
+    c.set();
+    strictEqual(c.length, 1);
   });
 
   test("set with only cids", 3, function() {
@@ -1272,7 +1278,7 @@
     }));
     var ajax = Backbone.ajax;
     Backbone.ajax = function (params) {
-      _.defer(params.success);
+      _.defer(params.success, []);
       return {someHeader: 'headerValue'};
     };
     collection.fetch({
@@ -1602,7 +1608,7 @@
     collection.on('sort', function() {
       ok(true);
     });
-    collection.set([{id: 3}, {id: 2}, {id: 1}, {id: 0}]);
+    collection.set([{id: 1}, {id: 2}, {id: 3}, {id: 0}]);
   })
 
   test('#3199 - Order not changing should not trigger a sort', 0, function() {
