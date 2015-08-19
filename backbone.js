@@ -819,7 +819,7 @@
       if (at < 0) at += this.length + 1;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var toAdd = [], toRemove = [], modelMap = {};
+      var toAdd = [], toRemove = [], toMerge = [], modelMap = {};
       var add = options.add, merge = options.merge, remove = options.remove;
       var order = !sortable && add && remove ? [] : false;
       var orderChanged = false;
@@ -837,6 +837,7 @@
             attrs = this._isModel(attrs) ? attrs.attributes : attrs;
             if (options.parse) attrs = existing.parse(attrs, options);
             existing.set(attrs, options);
+            toMerge.push(existing);
             if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
           }
           models[i] = existing;
@@ -900,8 +901,10 @@
         }
 
         // Create arrays of the models which were added and removed.
-        options.addedModels = toAdd;
-        options.removedModels = toRemove;
+        options.changes = {};
+        options.changes.added = toAdd;
+        options.changes.removed = toRemove;
+        options.changes.merged = toMerge;
 
         // Only trigger if there were models added or removed.
         if (toAdd.length || toRemove.length) {

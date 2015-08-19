@@ -1700,7 +1700,7 @@
     var model = new Backbone.Model({ id: 1, title: 'First Post'});
     var collection = new Backbone.Collection();
     collection.on('update', function(context, options) {
-      var addedModels = options.addedModels;
+      var addedModels = options.changes.added;
       if (!addedModels || addedModels.length !== 1) ok(false);
       strictEqual(addedModels[0], model);
     });
@@ -1712,7 +1712,7 @@
     var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
     var collection = new Backbone.Collection();
     collection.on('update', function(context, options) {
-      var addedModels = options.addedModels;
+      var addedModels = options.changes.added;
       if (!addedModels || addedModels.length !== 2) ok(false);
       strictEqual(addedModels[0], model);
       strictEqual(addedModels[1], model2);
@@ -1726,7 +1726,7 @@
     var model3 = new Backbone.Model({id: 3, title: 'My Last Post'});
     var collection = new Backbone.Collection([model]);
     collection.on('update', function(context, options) {
-      var removedModels = options.removedModels;
+      var removedModels = options.changes.removed;
       if (!removedModels || removedModels.length !== 1) ok(false);
       strictEqual(removedModels[0], model);
     });
@@ -1739,7 +1739,7 @@
     var model3 = new Backbone.Model({id: 3, title: 'My Last Post'});
     var collection = new Backbone.Collection([model, model2]);
     collection.on('update', function(context, options) {
-      var removedModels = options.removedModels;
+      var removedModels = options.changes.removed;
       if (!removedModels || removedModels.length !== 2) ok(false);
       strictEqual(removedModels[0], model);
       strictEqual(removedModels[1], model2);
