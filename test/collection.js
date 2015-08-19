@@ -1783,4 +1783,15 @@
     collection.set([model2_v2, model_v2]);
   });
 
+  test("#3711 - set's `update` event should not be triggered adding a model which already exists exactly alike", function() {
+    var fired = false;
+    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var collection = new Backbone.Collection([model]);
+    collection.on('update', function(context, options) {
+      fired = true;
+    });
+    collection.set([model]);
+    equal(fired, false);
+  });
+
 })();
