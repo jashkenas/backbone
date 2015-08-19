@@ -907,7 +907,7 @@
         options.changes.merged = toMerge;
 
         // Only trigger if there were models added or removed.
-        if (toAdd.length || toRemove.length) {
+        if (toAdd.length || toRemove.length || toMerge.length) {
           this.trigger('update', this, options);
         }
         if (sort || orderChanged) this.trigger('sort', this, options);
