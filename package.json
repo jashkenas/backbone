@@ -3,7 +3,7 @@
   "description"   : "Give your JS App some Backbone with Models, Views, Collections, and Events.",
   "url"           : "http://backbonejs.org",
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
-  "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
+  "author"        : "Jeremy Ashkenas",
   "dependencies"  : {
     "underscore"  : ">=1.7.0"
   },
@@ -12,7 +12,8 @@
     "docco": "0.7.0",
     "karma": "^0.12.31",
     "karma-phantomjs-launcher": "^0.1.4",
-    "karma-qunit": "^0.1.4",
+    "karma-qunit": "^0.1.5",
+    "qunitjs": "^1.18.0",
     "uglify-js": "^2.4.17"
   },
   "scripts": {

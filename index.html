@@ -48,7 +48,7 @@
         margin: 5px 0 0 0;
         padding-left: 0px;
         list-style-type: none;
-        font-family: Lucida Grande;
+        font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
       }
         .toc_section li {
           cursor: pointer;
@@ -450,6 +450,7 @@
       <li>– <a href="#View-template">template</a></li>
       <li>– <a href="#View-render">render</a></li>
       <li>– <a href="#View-remove">remove</a></li>
+      <li>– <a href="#View-events">events</a></li>
       <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
       <li>– <a href="#View-undelegateEvents">undelegateEvents</a></li>
     </ul>
@@ -870,11 +871,6 @@ book.on("change:title change:author", ...);
 </pre>
 
     <p>
-      To supply a <b>context</b> value for <tt>this</tt> when the callback is invoked,
-      pass the optional third argument: <tt>model.on('change', this.render, this)</tt>
-    </p>
-
-    <p>
       Callbacks bound to the special
       <tt>"all"</tt> event will be triggered when any event occurs, and are passed
       the name of the event as the first argument. For example, to proxy all events
@@ -894,11 +890,17 @@ proxy.on("all", function(eventName) {
 
 <pre>
 book.on({
-  "change:title": titleView.update,
   "change:author": authorPane.update,
+  "change:title change:subtitle": titleView.update,
   "destroy": bookView.remove
 });
 </pre>
+
+    <p>
+      To supply a <b>context</b> value for <tt>this</tt> when the callback is invoked,
+      pass the optional last argument: <tt>model.on('change', this.render, this)</tt> or
+      <tt>model.on({change: this.render}, this)</tt>.
+    </p>
 
     <p id="Events-off">
       <b class="header">off</b><code>object.off([event], [callback], [context])</code><span class="alias">Alias: unbind</span>
@@ -1868,6 +1870,11 @@ alert(JSON.stringify(collection));
       you can take a look at the Underscore documentation for the full details&hellip;
     </p>
 
+    <p>
+      Most methods can take an object or string to support model-attribute-style
+      predicates or a function that receives the model instance as an argument.
+    </p>
+
     <ul class="small">
       <li><a href="http://underscorejs.org/#each">forEach (each)</a></li>
       <li><a href="http://underscorejs.org/#map">map (collect)</a></li>
@@ -1878,7 +1885,7 @@ alert(JSON.stringify(collection));
       <li><a href="http://underscorejs.org/#reject">reject</a></li>
       <li><a href="http://underscorejs.org/#every">every (all)</a></li>
       <li><a href="http://underscorejs.org/#some">some (any)</a></li>
-      <li><a href="http://underscorejs.org/#contains">contains (include)</a></li>
+      <li><a href="http://underscorejs.org/#contains">contains (includes)</a></li>
       <li><a href="http://underscorejs.org/#invoke">invoke</a></li>
       <li><a href="http://underscorejs.org/#max">max</a></li>
       <li><a href="http://underscorejs.org/#min">min</a></li>
@@ -1908,17 +1915,15 @@ books.each(function(book) {
   book.publish();
 });
 
-var titles = books.map(function(book) {
-  return book.get("title");
-});
+var titles = books.map("title");
 
-var publishedBooks = books.filter(function(book) {
-  return book.get("published") === true;
-});
+var publishedBooks = books.filter({published: true});
 
 var alphabetical = books.sortBy(function(book) {
   return book.author.get("name").toLowerCase();
 });
+
+var randomThree = books.sample(3);
 </pre>
 
     <p id="Collection-add">
@@ -2925,10 +2930,43 @@ var Bookmark = Backbone.View.extend({
     <p id="View-remove">
       <b class="header">remove</b><code>view.remove()</code>
       <br />
-      Removes a view from the DOM, and calls
+      Removes a view and its <tt>el</tt> from the DOM, and calls
       <a href="#Events-stopListening">stopListening</a> to remove any bound
       events that the view has <a href="#Events-listenTo">listenTo</a>'d.
     </p>
+
+    <p id="View-events">
+      <b class="header">events</b><code>view.events or view.events()</code>
+      <br />
+      The <b>events</b> hash (or method) can be used to specify a set of DOM
+      events that will be bound to methods on your View
+      through <a href="#View-delegateEvents">delegateEvents</a>.
+    </p>
+
+    <p>
+      Backbone will automatically attach the event listeners at instantiation
+      time, right before invoking <a href="#View-constructor">initialize</a>.
+    </p>
+
+<pre>
+var ENTER_KEY = 13;
+var InputView = Backbone.View.extend({
+
+  tagName: 'input',
+
+  events: {
+    "keydown" : "keyAction",
+  },
+
+  render: function() { ... },
+
+  keyAction: function(e) {
+    if (e.which === ENTER_KEY) {
+      this.collection.add({text: this.$el.val()});
+    }
+  }
+});
+</pre>
 
     <p id="View-delegateEvents">
       <b class="header">delegateEvents</b><code>delegateEvents([events])</code>
@@ -4238,6 +4276,27 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header">1.2.2</b> &mdash; <small><i>Aug. 10, 2015</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.1...1.2.2">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.2/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Collection methods <tt>find</tt>, <tt>filter</tt>, <tt>reject</tt>, <tt>every</tt>,
+        <tt>some</tt>, and <tt>partition</tt> can now take a model-attributes-style predicate:
+        <tt>this.collection.reject({user: 'guybrush'})</tt>.
+      </li>
+      <li>
+        Backbone Events once again supports multiple-event maps
+        (<tt>obj.on({'error change': action})</tt>). This was a previously
+        undocumented feature inadvertently removed in 1.2.0.
+      </li>
+      <li>
+        Added <tt>Collection#includes</tt> as an alias of <tt>Collection#contains</tt>
+        and as a replacement for <tt>Collection#include</tt> in Underscore.js >= 1.8.
+      </li>
+    </ul>
+
     <b class="header">1.2.1</b> &mdash; <small><i>Jun. 4, 2015</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.0...1.2.1">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.1/index.html">Docs</a>
@@ -4260,11 +4319,11 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
       <li>
         When using <tt>on</tt> with an event map, you can now pass the context as the
-        second argument. This was previously an undocumented behavior from 1.1.2 removed
-        in 1.2.0.
+        second argument. This was a previously undocumented feature inadvertently
+        removed in 1.2.0.
       </li>
     </ul>
-  
+
     <b class="header">1.2.0</b> &mdash; <small><i>May 13, 2015</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.2...1.2.0">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.0/index.html">Docs</a>
@@ -4287,7 +4346,7 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Views now always delegate their events in <a href="#View-setElement">setElement</a>.
         You can no longer modify the events hash or your view's <tt>el</tt> property in
-        <tt>initialize</tt>. 
+        <tt>initialize</tt>.
       </li>
       <li>
         Added an <tt>"update"</tt> event that triggers after any amount of
