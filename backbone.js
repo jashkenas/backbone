@@ -808,6 +808,7 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       var removed = this._removeModels(models, options);
+      options.removedModels = removed;
       if (!options.silent && removed) this.trigger('update', this, options);
       return singular ? removed[0] : removed;
     },
@@ -832,6 +833,7 @@
       var set = [];
       var toAdd = [];
       var toRemove = [];
+      var toMerge = [];
       var modelMap = {};
 
       var add = options.add;
@@ -856,6 +858,7 @@
             var attrs = this._isModel(model) ? model.attributes : model;
             if (options.parse) attrs = existing.parse(attrs, options);
             existing.set(attrs, options);
+            toMerge.push(existing);
             if (sortable && !sort) sort = existing.hasChanged(sortAttr);
           }
           if (!modelMap[existing.cid]) {
@@ -904,7 +907,7 @@
       // Silently sort the collection if appropriate.
       if (sort) this.sort({silent: true});
 
-      // Unless silenced, it's time to fire all appropriate add/sort events.
+      // Unless silenced, it's time to fire all appropriate sort/update events.
       if (!options.silent) {
         for (i = 0; i < toAdd.length; i++) {
           if (at != null) options.index = at + i;
@@ -912,7 +915,13 @@
           model.trigger('add', model, this, options);
         }
         if (sort || orderChanged) this.trigger('sort', this, options);
-        if (toAdd.length || toRemove.length) this.trigger('update', this, options);
+        if (toAdd.length || toRemove.length || toMerge.length) {
+          options.changes = {};
+          options.changes.added = toAdd;
+          options.changes.removed = toRemove;
+          options.changes.merged = toMerge;
+          this.trigger('update', this, options);
+        }
       }
 
       // Return the added (or merged) model (or models).

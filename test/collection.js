@@ -1658,9 +1658,9 @@
     collection.set([{id: 1}, {id: 3}]);
   });
 
-  test("set does not trigger `update` event when nothing added nor removed", 0, function() {
+  test("set triggers `update` event when models get merged", 1, function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
-    collection.on('update', function() { ok(false); });
+    collection.on('update', function() { ok(true); });
     collection.set([{id: 1}, {id: 2}]);
   });
 
