@@ -808,8 +808,10 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       var removed = this._removeModels(models, options);
-      options.removedModels = removed;
-      if (!options.silent && removed) this.trigger('update', this, options);
+      if (!options.silent && removed) {
+        options.removedModels = removed;
+        this.trigger('update', this, options);
+      }
       return singular ? removed[0] : removed;
     },
 
