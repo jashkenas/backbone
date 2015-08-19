@@ -1755,4 +1755,32 @@
     collection.set([model3]);
   });
 
+  test("#3711 - set's `update` event returns one merged model", function() {
+    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model2 = new Backbone.Model({ id: 2, title: 'Second Post' });
+    var model2_v2 = new Backbone.Model({ id: 2, title: 'Second Post V2'});
+    var collection = new Backbone.Collection([model, model2]);
+    collection.on('update', function(context, options) {
+      var mergedModels = options.changes.merged;
+      if (!mergedModels || mergedModels.length !== 1) ok(false);
+      strictEqual(mergedModels[0].get('title'), model2_v2.get('title'));
+    });
+    collection.set([model2_v2]);
+  });
+
+  test("#3711 - set's `update` event returns multiple merged models", function() {
+    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model_v2 = new Backbone.Model({ id: 1, title: 'First Post V2'});
+    var model2 = new Backbone.Model({ id: 2, title: 'Second Post' });
+    var model2_v2 = new Backbone.Model({ id: 2, title: 'Second Post V2'});
+    var collection = new Backbone.Collection([model, model2]);
+    collection.on('update', function(context, options) {
+      var mergedModels = options.changes.merged;
+      if (!mergedModels || mergedModels.length !== 2) ok(false);
+      strictEqual(mergedModels[0].get('title'), model2_v2.get('title'));
+      strictEqual(mergedModels[1].get('title'), model_v2.get('title'));
+    });
+    collection.set([model2_v2, model_v2]);
+  });
+
 })();
