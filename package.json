@@ -3,7 +3,7 @@
   "description"   : "Give your JS App some Backbone with Models, Views, Collections, and Events.",
   "url"           : "http://backbonejs.org",
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
-  "author"        : "Jeremy Ashkenas <jeremy@documentcloud.org>",
+  "author"        : "Jeremy Ashkenas",
   "dependencies"  : {
     "underscore"  : ">=1.7.0"
   },
