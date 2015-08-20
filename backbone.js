@@ -844,13 +844,17 @@
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
-      var model;
+      var model, parsedModel;
       for (var i = 0; i < models.length; i++) {
         model = models[i];
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         var existing = this.get(model);
+        if (!existing && !this._isModel(attrs) && options.parse) {
+          parsedModel = new this.model(model, options);
+          existing = existing || this.get(parsedModel.attributes);
+        }
         if (existing) {
           if (merge && model !== existing) {
             var attrs = this._isModel(model) ? model.attributes : model;
@@ -866,7 +870,7 @@
 
         // If this is a new, valid model, push it to the `toAdd` list.
         } else if (add) {
-          model = models[i] = this._prepareModel(model, options);
+          model = models[i] = this._prepareModel(parsedModel || model, options);
           if (model) {
             toAdd.push(model);
             this._addReference(model, options);
@@ -1078,14 +1082,14 @@
 
     // Prepare a hash of attributes (or other model) to be added to this
     // collection.
-    _prepareModel: function(attrs, options) {
-      if (this._isModel(attrs)) {
-        if (!attrs.collection) attrs.collection = this;
-        return attrs;
+    _prepareModel: function(model, options) {
+      if (this._isModel(model)) {
+        model.collection = model.collection || this;
+      } else {
+        options = options ? _.clone(options) : {};
+        options.collection = this;
+        model = new this.model(model, options);
       }
-      options = options ? _.clone(options) : {};
-      options.collection = this;
-      var model = new this.model(attrs, options);
       if (!model.validationError) return model;
       this.trigger('invalid', this, model.validationError, options);
       return false;
