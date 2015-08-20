@@ -199,15 +199,36 @@
     equal(col.length, 1);
   });
 
-  test("merge in duplicate models with {merge: true}", 3, function() {
+  test("merge in duplicate models with {merge: true}", 4, function() {
     var col = new Backbone.Collection;
     col.add([{id: 1, name: 'Moe'}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
     col.add({id: 1, name: 'Moses'});
     equal(col.first().get('name'), 'Moe');
     col.add({id: 1, name: 'Moses'}, {merge: true});
     equal(col.first().get('name'), 'Moses');
+    var firstModel = col.first();
+
     col.add({id: 1, name: 'Tim'}, {merge: true, silent: true});
+    var secondModel = col.first();
     equal(col.first().get('name'), 'Tim');
+
+    strictEqual(firstModel, secondModel);
+  });
+
+  test("collection should merge in duplicate raw objects with {merge: true}", 1, function() {
+    var Model = Backbone.Model.extend({
+      parse: function(data) { return data.wrapper; }
+    });
+
+    var Col = Backbone.Collection.extend({model: Model});
+    var col = new Col;
+    col.set([{wrapper: {id: 1, name: 'Foo'}}], {parse: true, merge: true});
+    var firstModel = col.first();
+
+    col.set([{wrapper: {id: 1, name: 'Bar'}}], {parse: true, merge: true});
+    var secondModel = col.first();
+
+    strictEqual(firstModel, secondModel);
   });
 
   test("add model to multiple collections", 10, function() {
