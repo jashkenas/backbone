@@ -187,6 +187,13 @@
     equal(col.pluck('id').join(' '), '3 1 2');
   });
 
+  test("add; at should add to the end if the index is out of bounds", 1, function() {
+    var col = new Backbone.Collection([{id: 2}, {id: 3}]);
+    col.add(new Backbone.Model({id: 1}), {at:   5});
+
+    equal(col.pluck('id').join(' '), '2 3 1');
+  });
+
   test("can't add model to collection twice", function() {
     var col = new Backbone.Collection([{id: 1}, {id: 2}, {id: 1}, {id: 2}, {id: 3}]);
     equal(col.pluck('id').join(' '), '1 2 3');
@@ -1626,7 +1633,8 @@
     var collection = new Backbone.Collection([{id: 1}]);
     collection.add([{id: 2}, {id: 3}], {at: -1});
     collection.add([{id: 2.5}], {at: -2});
-    equal(collection.pluck('id').join(','), "1,2,2.5,3");
+    collection.add([{id: 0.5}], {at: -6});
+    equal(collection.pluck('id').join(','), "0.5,1,2,2.5,3");
   });
 
   test("#set accepts options.at as a string", 1, function() {

@@ -766,6 +766,7 @@
 
   // Splices `insert` into `array` at index `at`.
   var splice = function(array, insert, at) {
+    at = Math.min(Math.max(at, 0), array.length);
     var tail = Array(array.length - at);
     var length = insert.length;
     for (var i = 0; i < tail.length; i++) tail[i] = array[i + at];
