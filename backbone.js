@@ -595,8 +595,8 @@
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
-      return this.sync('read', this, options).then(function(response) {
-        return model.parse(response);
+      return this.sync('read', this, options).then(function(resp) {
+        return options.parse ? model.parse(resp, options) : resp;
       });
     },
 
