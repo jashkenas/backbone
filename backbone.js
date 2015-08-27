@@ -595,7 +595,9 @@
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
-      return this.sync('read', this, options);
+      return this.sync('read', this, options).then(function(response) {
+        return model.parse(response);
+      });
     },
 
     // Set a hash of model attributes, and sync the model to the server.
