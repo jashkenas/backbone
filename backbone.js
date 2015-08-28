@@ -972,6 +972,7 @@
 
     // Get the model at the given index.
     at: function(index) {
+      if (index > this.length) index = this.length - 1;
       if (index < 0) index += this.length;
       return this.models[index];
     },
