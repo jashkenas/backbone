@@ -114,9 +114,10 @@
     equal(col.get(101).get('name'), 'dalmatians');
   });
 
-  test("at", 2, function() {
+  test("at", 3, function() {
     equal(col.at(2), c);
     equal(col.at(-2), c);
+    equal(col.at(6), d);
   });
 
   test("pluck", 1, function() {
