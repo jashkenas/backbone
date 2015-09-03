@@ -27,7 +27,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>Backbone.js <span class="hljs-number">1.2</span><span class="hljs-number">.2</span>
+              <pre><code>Backbone.js <span class="hljs-number">1.2</span><span class="hljs-number">.3</span>
 </code></pre>
             </div>
             
@@ -206,7 +206,7 @@ restored later on, if <code>noConflict</code> is used.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  Backbone.VERSION = <span class="hljs-string">'1.2.2'</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Backbone.VERSION = <span class="hljs-string">'1.2.3'</span>;</pre></div></div>
             
         </li>
         
@@ -2015,6 +2015,7 @@ its models in sort order, as they’re added and removed.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> splice = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array, insert, at</span>) </span>{
+    at = <span class="hljs-built_in">Math</span>.min(<span class="hljs-built_in">Math</span>.max(at, <span class="hljs-number">0</span>), array.length);
     <span class="hljs-keyword">var</span> tail = <span class="hljs-built_in">Array</span>(array.length - at);
     <span class="hljs-keyword">var</span> length = insert.length;
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; tail.length; i++) tail[i] = array[i + at];
