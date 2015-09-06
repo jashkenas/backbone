@@ -1178,20 +1178,45 @@ var Library = Backbone.Model.extend({
     </p>
 
     <p id="Model-set">
-      <b class="header">set</b><code>model.set(attributes, [options])</code>
+      <b class="header">set</b><code>model.set(key, value, [options])</code>
       <br />
-      Set a hash of attributes (one or many) on the model. If any of the attributes
-      change the model's state, a <tt>"change"</tt> event will be triggered on the model.
-      Change events for specific attributes are also triggered, and you can bind
-      to those as well, for example: <tt>change:title</tt>, and <tt>change:content</tt>.
-      You may also pass individual keys and values.
+      Set an attribute on the model. Before setting, attribute is validated
+      using <a href="#Model-validate">validate</a> with <b>options</b>.
+      If the attribute changes the model's state, a <tt>"change"</tt> event 
+      will be triggered on the model. Change events for specific attributes
+      are also triggered, and you can bind to those as well, for example:
+      <tt>change:title</tt>. <b>Options</b> map, if presented, will be passed 
+      as the last parameter to any of the <tt>"change"</tt> event handlers.
+    </p>
+
+<pre>
+book.set("title", "A Scandal in Bohemia");
+</pre>
+
+    <p>
+      Both <a href="#Model-set">set</a> and <a href="#Model-unset">unset</a> also
+      support an attribute map syntax:
     </p>
 
 <pre>
 note.set({title: "March 20", content: "In his eyes she eclipses..."});
-
-book.set("title", "A Scandal in Bohemia");
 </pre>
+
+    <p>
+      If <tt>{silent: true}</tt> is passed as an <b>option</b>, none of the 
+      <tt>"change"</tt> or <tt>change:...</tt> events will be triggered.
+    </p>
+
+<pre>
+movie.set("title", "The Birth of a Nation", { silent: true });
+</pre>    
+
+    <p>
+      If <tt>{unset: true}</tt> is passed as an <b>option</b>, every key from the 
+      attributes map will be removed from the model. This option is used in 
+      <a href="#Model-unset">unset</a>, so you might want to use that instead.
+    </p>
+
 
     <p id="Model-escape">
       <b class="header">escape</b><code>model.escape(attribute)</code>
