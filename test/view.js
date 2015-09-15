@@ -270,6 +270,23 @@
     strictEqual(new View().el.className, 'dynamic');
   });
 
+  test("should default to className/id properties", 4, function() {
+    var View = Backbone.View.extend({
+      className: 'backboneClass',
+      id: 'backboneId',
+      attributes: {
+        'class': 'attributeClass',
+        'id': 'attributeId'
+      }
+    });
+
+    var view = new View;
+    strictEqual(view.el.className, 'backboneClass');
+    strictEqual(view.el.id, 'backboneId');
+    strictEqual(view.$el.attr('class'), 'backboneClass');
+    strictEqual(view.$el.attr('id'), 'backboneId');
+  });
+
   test("multiple views per element", 3, function() {
     var count = 0;
     var $el = $('<p></p>');
