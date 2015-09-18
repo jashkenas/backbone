@@ -12,7 +12,7 @@ script:
   - npm test
   # Karma sauce is limited to running about 5-7 browsers (or it will timeout) at a time so we just run vendor by vendor here
   - karma start karma.conf-sauce.js --browsers FIREFOX_V4,FIREFOX_V11,FIREFOX_V21,FIREFOX_V30,FIREFOX_V35,CHROME_V26,CHROME_V31,CHROME_V39,CHROME_V40,ANDROID_V4.0,ANDROID_V4.3
-  - karma start karma.conf-sauce.js --browsers IE_V7,IE_V8,IE_V9,IE_V10,IE_V11
+  - karma start karma.conf-sauce.js --browsers IE_V7,IE_V8,IE_V9,IE_V10,IE_V11,MICROSOFTEDGE_V20.10240
   - karma start karma.conf-sauce.js --browsers SAFARI_V5,SAFARI_V6,SAFARI_V7,SAFARI_V8.0,OPERA_V11,OPERA_V12
 notifications:
   email: false
