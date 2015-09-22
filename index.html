@@ -2048,7 +2048,8 @@ var book = library.get(110);
       <br />
       Get a model from a collection, specified by index. Useful if your collection
       is sorted, and if your collection isn't sorted, <b>at</b> will still
-      retrieve models in insertion order.
+      retrieve models in insertion order. When passed a negative index, it
+      will retrieve the model from the back of the collection.
     </p>
 
     <p id="Collection-push">
