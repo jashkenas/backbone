@@ -298,12 +298,13 @@
     deepEqual(col.pluck('id'), [1, 2, 3]);
   });
 
-  test("remove", 10, function() {
+  test("remove", 11, function() {
     var removed = null;
     var result = null;
     col.on('remove', function(model, col, options) {
       removed = model.get('label');
       equal(options.index, 3);
+      equal(col.get(model), undefined, '#3693: model cannot be fetched from collection');
     });
     result = col.remove(d);
     equal(removed, 'd');
