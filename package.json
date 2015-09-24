@@ -5,7 +5,7 @@
   "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
   "author"        : "Jeremy Ashkenas",
   "dependencies"  : {
-    "underscore"  : ">=1.7.0"
+    "underscore"  : ">=1.8.3"
   },
   "devDependencies": {
     "coffee-script": "1.7.1",
