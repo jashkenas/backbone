@@ -310,8 +310,12 @@
     var result = null;
     col.on('remove', function(model, col, options) {
       removed = model.get('label');
+      model.trigger('other');
       equal(options.index, 3);
       equal(col.get(model), undefined, '#3693: model cannot be fetched from collection');
+    });
+    col.on('other', function() {
+      ok(false, 'Events triggered on model during "remove" listener should not be triggered on collection');
     });
     result = col.remove(d);
     equal(removed, 'd');
