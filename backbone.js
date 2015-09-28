@@ -87,6 +87,9 @@
         return _[method](this[attribute], cb(iteratee, this), context);
       };
       case 4: return function(iteratee, defaultVal, context) {
+        if(arguments.length < 2) {
+          return _[method](this[attribute], cb(iteratee, this));
+        }
         return _[method](this[attribute], cb(iteratee, this), defaultVal, context);
       };
       default: return function() {
