@@ -660,7 +660,7 @@
     ok(col.indexBy('id')[first.id] === first);
   });
 
-  test("Underscore methods with object-style and property-style iteratee", 22, function () {
+  test("Underscore methods with object-style and property-style iteratee", 26, function () {
     var model = new Backbone.Model({a: 4, b: 1, e: 3});
     var coll = new Backbone.Collection([
       {a: 1, b: 1},
@@ -690,6 +690,10 @@
     deepEqual(coll.sortBy('e')[0], model);
     deepEqual(coll.countBy({a: 4}), {'false': 3, 'true': 1});
     deepEqual(coll.countBy('d'), {'undefined': 4});
+    equal(coll.findIndex({b: 1}), 0);
+    equal(coll.findIndex({b: 9}), -1);
+    equal(coll.findLastIndex({b: 1}), 3);
+    equal(coll.findLastIndex({b: 9}), -1);
   });
 
   test("reset", 16, function() {
