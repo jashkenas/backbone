@@ -70,6 +70,7 @@
   ExternalObject.routingFunction = _.bind(ExternalObject.routingFunction, ExternalObject);
 
   var Router = Backbone.Router.extend({
+    useParamsObject: true,
 
     count: 0,
 
@@ -100,78 +101,79 @@
       this.route('implicit', 'implicit');
     },
 
-    counter: function() {
+    counter: function(routeData) {
+      this.routeData = routeData;
       this.count++;
     },
 
-    implicit: function() {
+    implicit: function(routeData) {
+      this.routeData = routeData;
       this.count++;
     },
 
-    search: function(query, page) {
-      this.query = query;
-      this.page = page;
+    search: function(routeData) {
+      this.routeData = routeData;
     },
 
-    charUTF: function() {
+    charUTF: function(routeData) {
+      this.routeData = routeData;
       this.charType = 'UTF';
     },
 
-    charEscaped: function() {
+    charEscaped: function(routeData) {
+      this.routeData = routeData;
       this.charType = 'escaped';
     },
 
-    contacts: function(){
+    contacts: function(routeData) {
+      this.routeData = routeData;
       this.contact = 'index';
     },
 
-    newContact: function(){
+    newContact: function(routeData) {
+      this.routeData = routeData;
       this.contact = 'new';
     },
 
-    loadContact: function(){
+    loadContact: function(routeData) {
+      this.routeData = routeData;
       this.contact = 'load';
     },
 
-    optionalItem: function(arg){
-      this.arg = arg != void 0 ? arg : null;
+    optionalItem: function(routeData) {
+      this.routeData = routeData;
     },
 
-    splat: function(args) {
-      this.args = args;
+    splat: function(routeData) {
+      this.routeData = routeData;
     },
 
-    github: function(repo, from, to) {
-      this.repo = repo;
-      this.from = from;
-      this.to = to;
+    github: function(routeData) {
+      this.routeData = routeData;
     },
 
-    complex: function(first, part, rest) {
-      this.first = first;
-      this.part = part;
-      this.rest = rest;
+    complex: function(routeData) {
+      this.routeData = routeData;
     },
 
-    query: function(entity, args) {
-      this.entity    = entity;
-      this.queryArgs = args;
+    query: function(routeData) {
+      this.routeData = routeData;
     },
 
-    anything: function(whatever) {
-      this.anything = whatever;
+    anything: function(routeData) {
+      this.routeData = routeData;
     },
 
-    namedOptional: function(z) {
-      this.z = z;
+    namedOptional: function(routeData) {
+      this.routeData = routeData;
     },
 
-    decode: function(named, path) {
-      this.named = named;
-      this.path = path;
+    decode: function(routeData) {
+      this.routeData = routeData;
     },
 
-    routeEvent: function(arg) {
+    routeEvent: function(routeData) {
+      this.routeData = routeData;
     }
 
   });
@@ -180,46 +182,71 @@
     equal(router.testing, 101);
   });
 
-  test("routes (simple)", 4, function() {
+  test("routes (simple)", 1, function() {
     location.replace('http://example.com#search/news');
     Backbone.history.checkUrl();
-    equal(router.query, 'news');
-    equal(router.page, void 0);
-    equal(lastRoute, 'search');
-    equal(lastArgs[0], 'news');
+    deepEqual(router.routeData, {
+      name: "search",
+      params: {
+        query: "news"
+      }
+    });
   });
 
-  test("routes (simple, but unicode)", 4, function() {
+  test("routes (simple, but unicode)", 1, function() {
     location.replace('http://example.com#search/тест');
     Backbone.history.checkUrl();
-    equal(router.query, "тест");
-    equal(router.page, void 0);
-    equal(lastRoute, 'search');
-    equal(lastArgs[0], "тест");
+    deepEqual(router.routeData, {
+      name: "search",
+      params: {
+        query: "тест"
+      }
+    });
   });
 
-  test("routes (two part)", 2, function() {
+  test("routes (two part)", 1, function() {
     location.replace('http://example.com#search/nyc/p10');
     Backbone.history.checkUrl();
-    equal(router.query, 'nyc');
-    equal(router.page, '10');
+    deepEqual(router.routeData, {
+      name: "search",
+      params: {
+        query: "nyc",
+        page: "10"
+      }
+    });
   });
 
-  test("routes via navigate", 2, function() {
+  test("routes via navigate", 1, function() {
     Backbone.history.navigate('search/manhattan/p20', {trigger: true});
-    equal(router.query, 'manhattan');
-    equal(router.page, '20');
+    deepEqual(router.routeData, {
+      name: "search",
+      params: {
+        query: "manhattan",
+        page: "20"
+      }
+    });
   });
 
   test("routes via navigate with params", 1, function() {
     Backbone.history.navigate('query/test?a=b', {trigger: true});
-    equal(router.queryArgs, 'a=b');
+    deepEqual(router.routeData, {
+      name: "query",
+      params: {
+        entity: "test"
+      },
+      queryString: "a=b"
+    });
   });
 
-  test("routes via navigate for backwards-compatibility", 2, function() {
+  test("routes via navigate for backwards-compatibility", function() {
     Backbone.history.navigate('search/manhattan/p20', true);
-    equal(router.query, 'manhattan');
-    equal(router.page, '20');
+    deepEqual(router.routeData, {
+      name: "search",
+      params: {
+        query: "manhattan",
+        page: "20"
+      }
+    });
   });
 
   test("reports matched route via nagivate", 1, function() {
@@ -264,48 +291,81 @@
   test("routes (splats)", 1, function() {
     location.replace('http://example.com#splat/long-list/of/splatted_99args/end');
     Backbone.history.checkUrl();
-    equal(router.args, 'long-list/of/splatted_99args');
+    deepEqual(router.routeData, {
+      name: "splat",
+      params: {
+        args: "long-list/of/splatted_99args"
+      }
+    });
   });
 
-  test("routes (github)", 3, function() {
+  test("routes (github)", 1, function() {
     location.replace('http://example.com#backbone/compare/1.0...braddunbar:with/slash');
     Backbone.history.checkUrl();
-    equal(router.repo, 'backbone');
-    equal(router.from, '1.0');
-    equal(router.to, 'braddunbar:with/slash');
+    deepEqual(router.routeData, {
+      name: "github",
+      params: {
+        repo: "backbone",
+        from: "1.0",
+        to: "braddunbar:with/slash"
+      }
+    });
   });
 
   test("routes (optional)", 2, function() {
     location.replace('http://example.com#optional');
     Backbone.history.checkUrl();
-    ok(!router.arg);
+    deepEqual(router.routeData, {
+      name: "optionalItem",
+      params: {
+        item: null
+      }
+    });
     location.replace('http://example.com#optional/thing');
     Backbone.history.checkUrl();
-    equal(router.arg, 'thing');
+    deepEqual(router.routeData, {
+      name: "optionalItem",
+      params: {
+        item: "thing"
+      }
+    });
   });
 
-  test("routes (complex)", 3, function() {
+  test("routes (complex)", 1, function() {
     location.replace('http://example.com#one/two/three/complex-part/four/five/six/seven');
     Backbone.history.checkUrl();
-    equal(router.first, 'one/two/three');
-    equal(router.part, 'part');
-    equal(router.rest, 'four/five/six/seven');
+    deepEqual(router.routeData, {
+      name: 'complex',
+      params: {
+        first: "one/two/three",
+        part: "part",
+        rest: "four/five/six/seven"
+      }
+    });
+
   });
 
-  test("routes (query)", 5, function() {
+  test("routes (query)", 1, function() {
     location.replace('http://example.com#query/mandel?a=b&c=d');
     Backbone.history.checkUrl();
-    equal(router.entity, 'mandel');
-    equal(router.queryArgs, 'a=b&c=d');
-    equal(lastRoute, 'query');
-    equal(lastArgs[0], 'mandel');
-    equal(lastArgs[1], 'a=b&c=d');
+    deepEqual(router.routeData, {
+      name: "query",
+      params: {
+        entity: "mandel"
+      },
+      queryString: "a=b&c=d"
+    });
   });
 
   test("routes (anything)", 1, function() {
     location.replace('http://example.com#doesnt-match-a-route');
     Backbone.history.checkUrl();
-    equal(router.anything, 'doesnt-match-a-route');
+    deepEqual(router.routeData, {
+      name: "anything",
+      params: {
+        anything: "doesnt-match-a-route"
+      }
+    });
   });
 
   test("routes (function)", 3, function() {
@@ -315,14 +375,19 @@
     equal(ExternalObject.value, 'unset');
     location.replace('http://example.com#function/set');
     Backbone.history.checkUrl();
-    equal(ExternalObject.value, 'set');
+    equal(ExternalObject.value.params.value, 'set');
   });
 
-  test("Decode named parameters, not splats.", 2, function() {
+  test("Decode named parameters, not splats.", 1, function() {
     location.replace('http://example.com#decode/a%2Fb/c%2Fd/e');
     Backbone.history.checkUrl();
-    strictEqual(router.named, 'a/b');
-    strictEqual(router.path, 'c/d/e');
+    deepEqual(router.routeData, {
+      name: "decode",
+      params: {
+        named: 'a/b',
+        splat: 'c/d/e'
+      }
+    });
   });
 
   test("fires event when router doesn't have callback on it", 1, function() {
@@ -375,22 +440,30 @@
     strictEqual(Backbone.history.getFragment(), 'foo');
   });
 
-  test("#967 - Route callback gets passed encoded values.", 3, function() {
+  test("#967 - Route callback gets passed encoded values.", 1, function() {
     var route = 'has%2Fslash/complex-has%23hash/has%20space';
     Backbone.history.navigate(route, {trigger: true});
-    strictEqual(router.first, 'has/slash');
-    strictEqual(router.part, 'has#hash');
-    strictEqual(router.rest, 'has space');
+    deepEqual(router.routeData, {
+      name: "complex",
+      params: {
+        first: "has/slash",
+        part: "has#hash",
+        rest: "has space"
+      }
+    });
   });
 
-  test("correctly handles URLs with % (#868)", 3, function() {
+  test("correctly handles URLs with % (#868)", 1, function() {
     location.replace('http://example.com#search/fat%3A1.5%25');
     Backbone.history.checkUrl();
     location.replace('http://example.com#search/fat');
     Backbone.history.checkUrl();
-    equal(router.query, 'fat');
-    equal(router.page, void 0);
-    equal(lastRoute, 'search');
+    deepEqual(router.routeData, {
+      name: "search",
+      params: {
+        query: "fat"
+      }
+    });
   });
 
   test("#2666 - Hashes with UTF8 in them.", 2, function() {
@@ -622,16 +695,21 @@
   test("#1980 - Optional parameters.", 2, function() {
     location.replace('http://example.com#named/optional/y');
     Backbone.history.checkUrl();
-    strictEqual(router.z, undefined);
+    strictEqual(router.routeData.params.z, undefined);
     location.replace('http://example.com#named/optional/y123');
     Backbone.history.checkUrl();
-    strictEqual(router.z, '123');
+    strictEqual(router.routeData.params.z, '123');
   });
 
   test("#2062 - Trigger 'route' event on router instance.", 2, function() {
     router.on('route', function(name, args) {
       strictEqual(name, 'routeEvent');
-      deepEqual(args, ['x', null]);
+      deepEqual(args, [{
+        name: 'routeEvent',
+        params: {
+          arg: 'x'
+        }
+      }]);
     });
     location.replace('http://example.com#route-event/x');
     Backbone.history.checkUrl();
