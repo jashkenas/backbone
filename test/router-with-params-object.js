@@ -378,6 +378,17 @@
     equal(ExternalObject.value.params.value, 'set');
   });
 
+  test("routes (regexp)", 1, function() {
+    router.route(/^(.*?)\/open$/, function(routeData) {
+      deepEqual(routeData, {
+        name: "",
+        params: ["117-a/b/c"]
+      });
+    });
+    location.replace('http://example.com#117-a/b/c/open');
+    Backbone.history.checkUrl();
+  });
+
   test("Decode named parameters, not splats.", 1, function() {
     location.replace('http://example.com#decode/a%2Fb/c%2Fd/e');
     Backbone.history.checkUrl();
