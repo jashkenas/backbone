@@ -1455,6 +1455,16 @@
 
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
+    // If set to true, route handlers will be called with routeData object
+    //
+    //     this.route('search/:query/p:num', 'search', function(routeData) {
+    //       // for route 'search/backbone/p5?a=b'
+    //       // routeData.params.query === 'backbone'
+    //       // routeData.params.num === '5'
+    //       // routeData.queryString === 'a=b'
+    //     });
+    //
+    useParamsObject: false,
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -1467,12 +1477,26 @@
     //     });
     //
     route: function(route, name, callback) {
-      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      // Pass paramNames into _routeToRegExp and let that function populate it
+      var paramNames = [];
+      // Need to know this so we don't try to create params object when the route is matched
+      var isRegExpRoute = _.isRegExp(route);
+
+      if (!isRegExpRoute) route = this._routeToRegExp(route, paramNames);
+
       if (_.isFunction(name)) {
         callback = name;
         name = '';
       }
       if (!callback) callback = this[name];
+
+      this._routeInfos = this._routeInfos || {};
+      this._routeInfos[route.toString()] = {
+        name: name,
+        isRegExpRoute: isRegExpRoute,
+        paramNames: paramNames
+      };
+
       var router = this;
       Backbone.history.route(route, function(fragment) {
         var args = router._extractParameters(route, fragment);
@@ -1511,13 +1535,18 @@
 
     // Convert a route string into a regular expression, suitable for matching
     // against the current location hash.
-    _routeToRegExp: function(route) {
+    _routeToRegExp: function(route, paramNames) {
       route = route.replace(escapeRegExp, '\\$&')
                    .replace(optionalParam, '(?:$1)?')
                    .replace(namedParam, function(match, optional) {
-                     return optional ? match : '([^/?]+)';
+                     if (optional) return match;
+                     paramNames.push(match.slice(1));
+                     return '([^/?]+)';
                    })
-                   .replace(splatParam, '([^?]*?)');
+                   .replace(splatParam, function(match) {
+                     paramNames.push(match.slice(1));
+                     return '([^?]*?)';
+                   });
       return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
     },
 
@@ -1526,11 +1555,36 @@
     // treated as `null` to normalize cross-browser behavior.
     _extractParameters: function(route, fragment) {
       var params = route.exec(fragment).slice(1);
-      return _.map(params, function(param, i) {
+      var decodedParams = _.map(params, function(param, i) {
         // Don't decode the search params.
         if (i === params.length - 1) return param || null;
         return param ? decodeURIComponent(param) : null;
       });
+
+      if (this.useParamsObject) {
+        // get routeInfo, which has array of param names
+        var routeInfo = this._routeInfos[route.toString()];
+
+        var routeData = {
+          name: routeInfo.name
+        };
+
+        if (routeInfo.isRegExpRoute) {
+          // if original route is RegExp, everything goes into .params
+          routeData.params = decodedParams;
+        }
+        else {
+          routeData.params = _.object(routeInfo.paramNames, decodedParams);
+          var queryString = decodedParams[decodedParams.length - 1];
+          if (queryString) {
+            routeData.queryString = queryString;
+          }
+        }
+
+        return [routeData];
+      }
+
+      return decodedParams;
     }
 
   });
