@@ -662,13 +662,19 @@
     this.ajaxSettings.success();
   });
 
-  test("destroy", 3, function() {
+  asyncTest("destroy", 3, function() {
     doc.destroy();
     equal(this.syncArgs.method, 'delete');
     ok(_.isEqual(this.syncArgs.model, doc));
 
     var newModel = new Backbone.Model;
-    equal(newModel.destroy(), false);
+    var promise = newModel.destroy();
+    var async = false;
+    promise.then(function() {
+      ok(async, 'then chains asynchronously');
+      start();
+    });
+    async = true;
   });
 
   test("destroy will pass extra options to success callback", 1, function () {
@@ -1156,11 +1162,18 @@
     }});
   });
 
-  test("#1433 - Save: An invalid model cannot be persisted.", 1, function() {
+  asyncTest("#1433 - Save: An invalid model cannot be persisted.", 2, function() {
     var model = new Backbone.Model;
-    model.validate = function(){ return 'invalid'; };
+    model.validate = function(){ return { error: 'invalid' }; };
     model.sync = function(){ ok(false); };
-    strictEqual(model.save(), false);
+    var promise = model.save();
+    var async = false;
+    promise.then(null, function(reason) {
+      strictEqual(reason, model.validationError, 'passes error to onRejected');
+      ok(async, 'then chains asynchronously');
+      start();
+    })
+    async = true;
   });
 
   test("#1377 - Save without attrs triggers 'error'.", 1, function() {

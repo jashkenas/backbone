@@ -618,9 +618,9 @@
       // `set(attr).save(null, opts)` with validation. Otherwise, check if
       // the model will be valid when the attributes, if any, are set.
       if (attrs && !wait) {
-        if (!this.set(attrs, options)) return false;
+        if (!this.set(attrs, options)) return Backbone.Promise.reject(this.validationError);
       } else {
-        if (!this._validate(attrs, options)) return false;
+        if (!this._validate(attrs, options)) return Backbone.Promise.reject(this.validationError);
       }
 
       // After a successful server-side save, the client is (optionally)
@@ -656,7 +656,7 @@
     // Optimistically removes the model from its collection, if it has one.
     // If `wait: true` is passed, waits for the server to respond before removal.
     destroy: function(options) {
-      options = options ? _.clone(options) : {};
+      options = _.extend({}, options);
       var model = this;
       var success = options.success;
       var wait = options.wait;
@@ -672,9 +672,9 @@
         if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
-      var xhr = false;
+      var xhr;
       if (this.isNew()) {
-        _.defer(options.success);
+        xhr = Backbone.Promise.resolve().then(options.success);
       } else {
         wrapError(this, options);
         xhr = this.sync('delete', this, options);
@@ -1433,6 +1433,31 @@
   Backbone.ajax = function() {
     return Backbone.$.ajax.apply(Backbone.$, arguments);
   };
+
+  // A psuedo Promise implementation used to ensure asynchronous methods
+  // return thenables.
+  // Override this if you'd like to use a different ES6 library.
+  Backbone.Promise = function() {
+    throw new Error('Backbone does not provide a spec compliant Promise by default.');
+  };
+
+  _.extend(Backbone.Promise, {
+    // A wrapper around jQuery's normal resolve to force it to adopt a
+    // thenable's state, and execute then callbacks asynchronously.
+    resolve: function(value) {
+      var deferred = Backbone.$.Deferred();
+      _.defer(deferred.resolve);
+      return deferred.promise().then(_.constant(value));
+    },
+
+    // A wrapper around jQuery's normal reject to force it to execute
+    // then callbacks asynchronously.
+    reject: function(reason) {
+      var deferred = Backbone.$.Deferred();
+      _.defer(deferred.reject, reason);
+      return deferred.promise();
+    }
+  });
 
   // Backbone.Router
   // ---------------
