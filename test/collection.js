@@ -631,10 +631,11 @@
     equal(coll.findWhere({a: 4}), void 0);
   });
 
-  test("Underscore methods", 19, function() {
+  test("Underscore methods", 20, function() {
     equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     equal(col.some(function(model){ return model.id === 100; }), false);
     equal(col.some(function(model){ return model.id === 0; }), true);
+    equal(col.reduce(function(a, b) {return a.id > b.id ? a : b}).id, 3);
     equal(col.indexOf(b), 1);
     equal(col.size(), 4);
     equal(col.rest().length, 3);
