@@ -1102,20 +1102,14 @@
         var index = this.indexOf(model);
         this.models.splice(index, 1);
         this.length--;
-
-        // Remove references before triggering 'remove' event to prevent an
-        // infinite loop. #3693
-        delete this._byId[model.cid];
-        var id = this.modelId(model.attributes);
-        if (id != null) delete this._byId[id];
+        this._removeReference(model, options);
+        removed.push(model);
 
         if (!options.silent) {
           options.index = index;
           model.trigger('remove', model, this, options);
+          this._onModelEvent('remove', model, this, options);
         }
-
-        removed.push(model);
-        this._removeReference(model, options);
       }
       return removed.length ? removed : false;
     },
