@@ -1437,6 +1437,22 @@ QUnit.test("#1894 - `sort` can optionally be turned off", function(assert) {
     assert.ok(collection.comparator === comparator);
   });
 
+  QUnit.test("Pass falsey for `models` for empty Col with `options`", function(assert) {
+    assert.expect(9);
+    var opts = {a: 1, b: 2};
+    _.forEach([undefined, null, false], function(falsey) {
+      var Collection = Backbone.Collection.extend({
+        initialize: function(models, options) {
+          assert.strictEqual(models, falsey);
+          assert.strictEqual(options, opts);
+        }
+      });
+
+      var col = new Collection(falsey, opts);
+      assert.strictEqual(col.length, 0);
+    });
+  });
+
   QUnit.test("`add` overrides `set` flags", function(assert) {
     var collection = new Backbone.Collection();
     collection.once('add', function (model, collection, options) {
