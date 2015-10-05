@@ -30,7 +30,7 @@
     "url": "https://github.com/jashkenas/backbone.git"
   },
   "files": [
-    "backbone.js", "backbone-min.js", "backbone-min.map"
+    "backbone.js", "backbone-min.js", "backbone-min.map", "LICENSE"
   ]
 }
 
