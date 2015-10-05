@@ -1659,21 +1659,21 @@
     collection.remove([{id: 1}, {id: 2}]);
   });
 
-  test("remove does not trigger `set` when nothing removed", 0, function() {
+  test("remove does not trigger `update` when nothing removed", 0, function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
     collection.on('update', function() { ok(false); });
     collection.remove([{id: 3}]);
   });
 
-  test("set triggers `set` event once", 1, function() {
+  test("set triggers `update` event once", 1, function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
     collection.on('update', function() { ok(true); });
     collection.set([{id: 1}, {id: 3}]);
   });
 
-  test("set does not trigger `update` event when nothing added nor removed", 0, function() {
+  test("set triggers `update` event when models get merged", 1, function() {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
-    collection.on('update', function() { ok(false); });
+    collection.on('update', function() { ok(true); });
     collection.set([{id: 1}, {id: 2}]);
   });
 
@@ -1690,6 +1690,121 @@
     });
     var collection = new Collection([{id: 1}]);
     collection.invoke('method', 1, 2, 3);
+  });
+
+  test("#3711 - remove's `update` event returns one removed model", function() {
+    var model = new Backbone.Model({id: 1, title: 'First Post'});
+    var collection = new Backbone.Collection([model]);
+    collection.on('update', function(context, options) {
+      strictEqual(options.removedModels[0], model);
+    });
+    collection.remove(model);
+  });
+
+  test("#3711 - remove's `update` event returns multiple removed models", function() {
+    var model = new Backbone.Model({id: 1, title: 'First Post'});
+    var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
+    var collection = new Backbone.Collection([model, model2]);
+    collection.on('update', function(context, options) {
+      var removedModels = options.removedModels;
+      if (!removedModels || removedModels.length !== 2) ok(false);
+      if (removedModels.indexOf(model) > -1 && removedModels.indexOf(model2) > -1) {
+        ok(true);
+      } else {
+        ok(false);
+      }
+    });
+    collection.remove([model, model2]);
+  });
+
+  test("#3711 - set's `update` event returns one added model", function() {
+    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var collection = new Backbone.Collection();
+    collection.on('update', function(context, options) {
+      var addedModels = options.changes.added;
+      if (!addedModels || addedModels.length !== 1) ok(false);
+      strictEqual(addedModels[0], model);
+    });
+    collection.set(model);
+  });
+
+  test("#3711 - set's `update` event returns multiple added models", function() {
+    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
+    var collection = new Backbone.Collection();
+    collection.on('update', function(context, options) {
+      var addedModels = options.changes.added;
+      if (!addedModels || addedModels.length !== 2) ok(false);
+      strictEqual(addedModels[0], model);
+      strictEqual(addedModels[1], model2);
+    });
+    collection.set([model, model2]);
+  });
+
+  test("#3711 - set's `update` event returns one removed model", function() {
+    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
+    var model3 = new Backbone.Model({id: 3, title: 'My Last Post'});
+    var collection = new Backbone.Collection([model]);
+    collection.on('update', function(context, options) {
+      var removedModels = options.changes.removed;
+      if (!removedModels || removedModels.length !== 1) ok(false);
+      strictEqual(removedModels[0], model);
+    });
+    collection.set([model2, model3]);
+  });
+
+  test("#3711 - set's `update` event returns multiple removed models", function() {
+    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
+    var model3 = new Backbone.Model({id: 3, title: 'My Last Post'});
+    var collection = new Backbone.Collection([model, model2]);
+    collection.on('update', function(context, options) {
+      var removedModels = options.changes.removed;
+      if (!removedModels || removedModels.length !== 2) ok(false);
+      strictEqual(removedModels[0], model);
+      strictEqual(removedModels[1], model2);
+    });
+    collection.set([model3]);
+  });
+
+  test("#3711 - set's `update` event returns one merged model", function() {
+    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model2 = new Backbone.Model({ id: 2, title: 'Second Post' });
+    var model2_v2 = new Backbone.Model({ id: 2, title: 'Second Post V2'});
+    var collection = new Backbone.Collection([model, model2]);
+    collection.on('update', function(context, options) {
+      var mergedModels = options.changes.merged;
+      if (!mergedModels || mergedModels.length !== 1) ok(false);
+      strictEqual(mergedModels[0].get('title'), model2_v2.get('title'));
+    });
+    collection.set([model2_v2]);
+  });
+
+  test("#3711 - set's `update` event returns multiple merged models", function() {
+    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model_v2 = new Backbone.Model({ id: 1, title: 'First Post V2'});
+    var model2 = new Backbone.Model({ id: 2, title: 'Second Post' });
+    var model2_v2 = new Backbone.Model({ id: 2, title: 'Second Post V2'});
+    var collection = new Backbone.Collection([model, model2]);
+    collection.on('update', function(context, options) {
+      var mergedModels = options.changes.merged;
+      if (!mergedModels || mergedModels.length !== 2) ok(false);
+      strictEqual(mergedModels[0].get('title'), model2_v2.get('title'));
+      strictEqual(mergedModels[1].get('title'), model_v2.get('title'));
+    });
+    collection.set([model2_v2, model_v2]);
+  });
+
+  test("#3711 - set's `update` event should not be triggered adding a model which already exists exactly alike", function() {
+    var fired = false;
+    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var collection = new Backbone.Collection([model]);
+    collection.on('update', function(context, options) {
+      fired = true;
+    });
+    collection.set([model]);
+    equal(fired, false);
   });
 
 })();
