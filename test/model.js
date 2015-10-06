@@ -243,7 +243,7 @@
     assert.strictEqual(model.matches(function(attr) {
       return attr.a > 1 && attr.b != null;
     }), true);
-  })
+  });
 
   QUnit.test("set and unset", function(assert) {
     assert.expect(8);
@@ -965,7 +965,7 @@
 
   QUnit.test("save without `wait` doesn't set invalid attributes", function(assert) {
     var model = new Backbone.Model();
-    model.validate = function () { return 1; }
+    model.validate = function () { return 1; };
     model.save({a: 1});
     assert.equal(model.get('a'), void 0);
   });
@@ -974,7 +974,7 @@
     var model = new Backbone.Model();
     var times = 0;
     model.sync = function () {};
-    model.validate = function () { ++times; }
+    model.validate = function () { ++times; };
     model.save({});
     assert.equal(times, 1);
   });
