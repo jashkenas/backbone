@@ -281,11 +281,11 @@
       }
     });
     var model = new Model({x:0});
-      model.on('change:x', function () { attr++; });
-      model.on('change', function () { main++; });
-      model.set({x:2}, {validate:true});
-      model.set({x:1}, {validate:true});
-      assert.deepEqual([attr, main, error], [1, 1, 1]);
+    model.on('change:x', function () { attr++; });
+    model.on('change', function () { main++; });
+    model.set({x:2}, {validate:true});
+    model.set({x:1}, {validate:true});
+    assert.deepEqual([attr, main, error], [1, 1, 1]);
   });
 
   QUnit.test("set triggers changes in the correct order", function(assert) {
@@ -1231,8 +1231,8 @@
     .on('sync', function() { assert.ok(false); })
     .on('destroy', function(){ assert.ok(true); })
     .destroy({ success: function(){
-        assert.ok(true);
-        done();
+      assert.ok(true);
+      done();
     }});
   });
 
