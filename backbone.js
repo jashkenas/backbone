@@ -87,9 +87,6 @@
         return _[method](this[attribute], cb(iteratee, this), context);
       };
       case 4: return function(iteratee, defaultVal, context) {
-        if(arguments.length < 2) {
-          return _[method](this[attribute], cb(iteratee, this));
-        }
         return _[method](this[attribute], cb(iteratee, this), defaultVal, context);
       };
       default: return function() {
@@ -1169,8 +1166,8 @@
   // Underscore methods that we want to implement on the Collection.
   // 90% of the core usefulness of Backbone Collections is actually implemented
   // right here:
-  var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 4,
-      foldl: 4, inject: 4, reduceRight: 4, foldr: 4, find: 3, detect: 3, filter: 3,
+  var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 0,
+      foldl: 0, inject: 0, reduceRight: 0, foldr: 0, find: 3, detect: 3, filter: 3,
       select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
       contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
       head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
