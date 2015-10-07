@@ -1332,7 +1332,7 @@
     assert.equal(collection.first().get('a'), 1);
   });
 
-QUnit.test("#1894 - `sort` can optionally be turned off", function(assert) {
+  QUnit.test("#1894 - `sort` can optionally be turned off", function(assert) {
     assert.expect(0);
     var Collection = Backbone.Collection.extend({
       comparator: 'id',
