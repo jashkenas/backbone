@@ -661,6 +661,31 @@
     assert.equal(coll.one, 1);
   });
 
+  QUnit.test('preinitialize', function(assert) {
+    assert.expect(1);
+    var Collection = Backbone.Collection.extend({
+      preinitialize: function() {
+        this.one = 1;
+      }
+    });
+    var coll = new Collection;
+    assert.equal(coll.one, 1);
+  });
+
+  QUnit.test('preinitialize occurs before the collection is set up', function(assert) {
+    assert.expect(2);
+    var Collection = Backbone.Collection.extend({
+      preinitialize: function() {
+        assert.notEqual(this.model, FooModel);
+      }
+    });
+    var FooModel = Backbone.Model.extend({id: 'foo'});
+    var coll = new Collection({}, {
+      model: FooModel
+    });
+    assert.equal(coll.model, FooModel);
+  });
+
   QUnit.test('toJSON', function(assert) {
     assert.expect(1);
     assert.equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');

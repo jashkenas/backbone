@@ -61,6 +61,28 @@
     assert.strictEqual(new View().one, 1);
   });
 
+  QUnit.test('preinitialize', function(assert) {
+    assert.expect(1);
+    var View = Backbone.View.extend({
+      preinitialize: function() {
+        this.one = 1;
+      }
+    });
+
+    assert.strictEqual(new View().one, 1);
+  });
+
+  QUnit.test('preinitialize occurs before the view is set up', function(assert) {
+    assert.expect(2);
+    var View = Backbone.View.extend({
+      preinitialize: function() {
+        assert.equal(this.el, undefined);
+      }
+    });
+    var _view = new View({});
+    assert.notEqual(_view.el, undefined);
+  });
+
   QUnit.test('render', function(assert) {
     assert.expect(1);
     var myView = new Backbone.View;
