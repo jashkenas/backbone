@@ -13,7 +13,7 @@ var sauceBrowsers = _.reduce([
   ['chrome', '31'],
   ['chrome', '26'],
 
-  ['microsoftedge', '20.10240', 'Windows 10'],
+  ['microsoftedge', '20', 'Windows 10'],
   ['internet explorer', '11', 'Windows 10'],
   ['internet explorer', '10', 'Windows 8'],
   ['internet explorer', '9', 'Windows 7'],
@@ -26,7 +26,10 @@ var sauceBrowsers = _.reduce([
 
   ['android', '5'],
   ['android', '4.4'],
-  ['android', '4.3'],
+
+  // 4.3 currently erros with some router tests
+  // ['android', '4.3'],
+  
   ['android', '4.0'],
 
   ['safari', '8.0', 'OS X 10.10'],
@@ -71,7 +74,7 @@ module.exports = function(config) {
     ],
 
     // Number of sauce tests to start in parallel
-    concurrency: 5,
+    concurrency: 9,
 
     // test results reporter to use
     reporters: ['dots', 'saucelabs'],
