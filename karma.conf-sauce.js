@@ -13,13 +13,14 @@ var sauceBrowsers = _.reduce([
   ['chrome', '31'],
   ['chrome', '26'],
 
-  ['microsoftedge', '20', 'Windows 10'],
+  ['microsoftedge', '20.10240', 'Windows 10'],
   ['internet explorer', '11', 'Windows 10'],
   ['internet explorer', '10', 'Windows 8'],
   ['internet explorer', '9', 'Windows 7'],
   ['internet explorer', '8'],
-  ['internet explorer', '7', 'Windows XP'],
-  // ['internet explorer', '6', 'Windows XP'],
+  // Currently karma-sauce has issues with sockets and these browsers
+  // ['internet explorer', '7'],
+  // ['internet explorer', '6'],
 
   ['opera', '12'],
   ['opera', '11'],
