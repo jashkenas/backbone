@@ -70,6 +70,9 @@ module.exports = function(config) {
         'test/*.js'
     ],
 
+    // Number of sauce tests to start in parallel
+    concurrency: 5,
+
     // test results reporter to use
     reporters: ['dots', 'saucelabs'],
     port: 9876,
