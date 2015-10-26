@@ -809,7 +809,7 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
       var removed = this._removeModels(models, options);
-      if (!options.silent && removed) this.trigger('update', this, options);
+      if (!options.silent && removed.length) this.trigger('update', this, options);
       return singular ? removed[0] : removed;
     },
 
@@ -1117,7 +1117,7 @@
         removed.push(model);
         this._removeReference(model, options);
       }
-      return removed.length ? removed : false;
+      return removed;
     },
 
     // Method for checking whether an object should be considered a model for

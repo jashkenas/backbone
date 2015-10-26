@@ -325,7 +325,7 @@
   });
 
   QUnit.test("remove", function(assert) {
-    assert.expect(11);
+    assert.expect(12);
     var removed = null;
     var result = null;
     col.on('remove', function(model, col, options) {
@@ -348,6 +348,8 @@
     result = col.remove([c, b]);
     assert.equal(result.length, 1, 'only returns removed models');
     assert.equal(result[0], b, 'only returns removed models');
+    result = col.remove([]);
+    assert.deepEqual(result, [], 'returns empty array when nothing removed');
   });
 
   QUnit.test("add and remove return values", function(assert) {
