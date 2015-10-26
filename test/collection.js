@@ -1805,4 +1805,14 @@
     collection.invoke('method', 1, 2, 3);
   });
 
+  QUnit.test('#3662 - triggering change without model will not error', function(assert) {
+    assert.expect(1);
+    var collection = new Backbone.Collection([{id: 1}]);
+    var model = collection.first();
+    collection.on('change', function(model) {
+      assert.equal(model, undefined);
+    });
+    model.trigger('change');
+  });
+
 })();

@@ -1148,14 +1148,16 @@
     // events simply proxy through. "add" and "remove" events that originate
     // in other collections are ignored.
     _onModelEvent: function(event, model, collection, options) {
-      if ((event === 'add' || event === 'remove') && collection !== this) return;
-      if (event === 'destroy') this.remove(model, options);
-      if (event === 'change') {
-        var prevId = this.modelId(model.previousAttributes());
-        var id = this.modelId(model.attributes);
-        if (prevId !== id) {
-          if (prevId != null) delete this._byId[prevId];
-          if (id != null) this._byId[id] = model;
+      if (model) {
+        if ((event === 'add' || event === 'remove') && collection !== this) return;
+        if (event === 'destroy') this.remove(model, options);
+        if (event === 'change') {
+          var prevId = this.modelId(model.previousAttributes());
+          var id = this.modelId(model.attributes);
+          if (prevId !== id) {
+            if (prevId != null) delete this._byId[prevId];
+            if (id != null) this._byId[id] = model;
+          }
         }
       }
       this.trigger.apply(this, arguments);
