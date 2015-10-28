@@ -1457,10 +1457,10 @@
   _.extend(Router.prototype, Events, {
     // If set to true, route handlers will be called with routeData object
     //
-    //     this.route('search/:query/p:num', 'search', function(routeData) {
+    //     this.route('search/:query/p:num', 'search', function(params, routeData) {
     //       // for route 'search/backbone/p5?a=b'
-    //       // routeData.params.query === 'backbone'
-    //       // routeData.params.num === '5'
+    //       // params.query === 'backbone'
+    //       // params.num === '5'
     //       // routeData.queryString === 'a=b'
     //     });
     //
@@ -1491,7 +1491,7 @@
       if (!callback) callback = this[name];
 
       this._routeInfos = this._routeInfos || {};
-      this._routeInfos[route.toString()] = {
+      this._routeInfos[route] = {
         name: name,
         isRegExpRoute: isRegExpRoute,
         paramNames: paramNames
@@ -1563,25 +1563,26 @@
 
       if (this.useParamsObject) {
         // get routeInfo, which has array of param names
-        var routeInfo = this._routeInfos[route.toString()];
+        var routeInfo = this._routeInfos[route];
 
         var routeData = {
           name: routeInfo.name
         };
+        var routeParams;
 
         if (routeInfo.isRegExpRoute) {
           // if original route is RegExp, everything goes into .params
-          routeData.params = decodedParams;
+          routeParams = decodedParams;
         }
         else {
-          routeData.params = _.object(routeInfo.paramNames, decodedParams);
+          routeParams = _.object(routeInfo.paramNames, decodedParams);
           var queryString = decodedParams[decodedParams.length - 1];
           if (queryString) {
             routeData.queryString = queryString;
           }
         }
 
-        return [routeData];
+        return [routeParams, routeData];
       }
 
       return decodedParams;
