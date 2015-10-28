@@ -672,10 +672,12 @@
   });
 
   QUnit.test("Underscore methods", function(assert) {
-    assert.expect(19);
+    assert.expect(21);
     assert.equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
     assert.equal(col.some(function(model){ return model.id === 100; }), false);
     assert.equal(col.some(function(model){ return model.id === 0; }), true);
+    assert.equal(col.reduce(function(a, b) {return a.id > b.id ? a : b}).id, 3);
+    assert.equal(col.reduceRight(function(a, b) {return a.id > b.id ? a : b}).id, 3);
     assert.equal(col.indexOf(b), 1);
     assert.equal(col.size(), 4);
     assert.equal(col.rest().length, 3);
