@@ -726,6 +726,98 @@
       if (!error) return true;
       this.trigger('invalid', this, error, _.extend(options, {validationError: error}));
       return false;
+    },
+
+    // Listens for changes on the model such that:
+    //
+    //  * Multiple sequential model updates cause the callback
+    //    to execute only once
+    //  * The callback is only executed if all dependency property
+    //    values are defined
+    //
+    // `model.when(dependencies, callback [, thisArg])`
+    //
+    //  * `dependencies` specifies the names of model properties that are
+    //    dependencies of the callback function. `dependencies` can be
+    //    * a string (in the case of a single dependency) or
+    //    * an array of strings (in the case of many dependencies).
+    //  * `callback(values...)` the callback function that is invoked after dependency
+    //    properties change. The values of dependency properties are passed
+    //    as arguments to the callback, in the same order specified by `dependencies`.
+    //  * `thisArg` value to use as `this` when executing `callback`.
+    //  * returns a `whens` object containing
+    //    * a chainable `when` function
+    //    * `callbacks` an object containing the callbacks for all 
+    //      `when` calls in the chain, an array of objects with:
+    //      * `properties` an array of property names
+    //      * `fn` the callback function added to the properties
+    when: function (dependencies, fn, thisArg) {
+
+      // The list of callbacks added, exposed as `whens.callbacks`
+      var callbacks = [],
+          
+          // Grab `this` for later use.
+          model = this;
+    
+      // Create a function inside the closure with `callbacks`.
+      function _when(dependencies, fn, thisArg){
+
+        // Support passing a single string as `dependencies`
+        if(!(dependencies instanceof Array)) {
+          dependencies = [dependencies];
+        }
+
+        // `callFn()` will invoke `fn` with values of dependency properties
+        // on the next tick of the JavaScript event loop.
+        var callFn = _.debounce(function(){
+
+              // Extract the values for each dependency property.
+              var args = dependencies.map(model.get, model),
+                  allAreDefined = !args.some(function (d) {
+                    return typeof d === 'undefined' || d === null;
+                  });
+
+              // Only call the function if all values are defined.
+              if(allAreDefined) {
+
+                // Call `fn` with the dependency property values.
+                fn.apply(thisArg, args);
+              }
+            }, 0);
+
+        // Invoke `fn` once for initialization.
+        callFn();
+
+        // Invoke `fn` when dependency properties change.
+        dependencies.forEach(function(property){
+
+          // Listen for changes on the property.
+          model.on('change:' + property, callFn);
+
+          // Store the added callbacks for canceling later.
+          callbacks.push({
+            property: property,
+            fn: callFn
+          });
+        });
+        
+        return {
+          when: _when,
+          callbacks: callbacks
+        };
+      }
+
+      return _when(dependencies, fn, thisArg);
+    },
+    // Cancels previously added `when` callback functions.
+    //
+    // `model.cancel(whens)`
+    //
+    //  * `whens` the object returned from `when` or a chain of `when` calls
+    cancel: function(whens){
+      whens.callbacks.forEach(function (callback) {
+        this.off('change:' + callback.property, callback.fn);
+      }, this);
     }
 
   });

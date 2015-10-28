@@ -1400,4 +1400,252 @@
     model.set({a: true});
   });
 
+  asyncTest("when listens for changes to a single property", 1, function() {
+    var model = new Backbone.Model();
+    model.when("x", function (x) {
+      strictEqual(x, 30);
+      start();
+    });
+    model.set("x", 30);
+  });
+
+  asyncTest("when calls fn once to initialize", function() {
+    var model = new Backbone.Model();
+    model.set("x", 55);
+    model.when("x", function (x) {
+      strictEqual(x, 55);
+      start();
+    });
+  });
+
+  asyncTest("when calls fn with multiple dependency properties", function() {
+    var model = new Backbone.Model();
+    model.when(["x", "y", "z"], function (x, y, z) {
+      strictEqual(x, 5);
+      strictEqual(y, 6);
+      strictEqual(z, 7);
+      start();
+    });
+    model.set("x", 5);
+    model.set("y", 6);
+    model.set("z", 7);
+  });
+
+  asyncTest("when calls fn with dependency properties in the specified order", function() {
+    var model = new Backbone.Model();
+    model.when(["y", "z", "x"], function (y, z, x) {
+      strictEqual(x, 5);
+      strictEqual(y, 6);
+      strictEqual(z, 7);
+      start();
+    });
+    model.set("x", 5);
+    model.set("y", 6);
+    model.set("z", 7);
+  });
+
+  asyncTest("when calls fn only when all properties are defined", function() {
+    var model = new Backbone.Model();
+    model.when(["y", "x", "z"], function (y, x, z) {
+      strictEqual(x, 5);
+      strictEqual(y, 6);
+      strictEqual(z, 9);
+      start();
+    });
+    model.set({ x: 5, y: 6 });
+    setTimeout(function () {
+      model.set("z", 9);
+    }, 50);
+  });
+
+  asyncTest("when calls fn only once for multiple updates", function() {
+    var model = new Backbone.Model();
+    model.when("x", function (x) {
+      strictEqual(x, 30);
+      start();
+    });
+    model.set("x", 10);
+    model.set("x", 20);
+    model.set("x", 30);
+  });
+
+  asyncTest("when calls fn only once for multiple updates with many dependencies", function() {
+    var model = new Backbone.Model();
+    model.when(["y", "x", "z"], function (y, x, z) {
+      strictEqual(x, 5);
+      strictEqual(y, 6);
+      strictEqual(z, 9);
+      start();
+    });
+    model.set({ x: 5, y: 6 });
+    model.set("z", 5);
+    model.set("z", 6);
+    model.set("z", 7);
+    model.set("z", 8);
+    model.set("z", 9);
+  });
+
+  asyncTest("when can compute fullName from firstName and lastName", function() {
+    var model = new Backbone.Model();
+    model.when(["firstName", "lastName"], function (firstName, lastName) {
+      model.set("fullName", firstName + " " + lastName);
+    });
+    model.when("fullName", function (fullName) {
+      strictEqual(fullName, "John Doe");
+      start();
+    });
+    model.set("firstName", "John");
+    model.set("lastName", "Doe");
+  });
+
+  asyncTest("when should propagate changes through a data dependency graph", function() {
+    var model = new Backbone.Model();
+    model.when(["w"], function (w) {
+      strictEqual(w, 5);
+      model.set("x", w * 2);
+    });
+    model.when(["x"], function (x) {
+      strictEqual(x, 10);
+      model.set("y", x + 1);
+    });
+    model.when(["y"], function (y) {
+      strictEqual(y, 11);
+      model.set("z", y * 2);
+    });
+    model.when(["z"], function (z) {
+      strictEqual(z, 22);
+      start();
+    });
+    model.set("w", 5);
+  });
+
+  asyncTest("when should use thisArg", function() {
+    var model = new Backbone.Model(),
+        theThing = { foo: "bar" };
+    model.when("x", function (x) {
+      strictEqual(x, 5);
+      strictEqual(this, theThing);
+      strictEqual(this.foo, "bar");
+      start();
+    }, theThing);
+    model.set("x", 5);
+  });
+
+  asyncTest("when should propagate changes breadth first", function () {
+    var model = new Backbone.Model();
+
+    // Here is a data dependency graph that can test this
+    // (data flowing left to right):
+    //```
+    //   b  d
+    // a      f
+    //   c  e
+    //```
+    //
+    // When "a" changes, "f" should update once only, after the changes propagated
+    // through the following two paths simultaneously:
+    // 
+    //  * a -> b -> d -> f
+    //  * a -> c -> e -> f
+
+    // a -> (b, c)
+    model.when("a", function (a) {
+      model.set({
+        b: a + 1,
+        c: a + 2
+      });
+    }); 
+
+    // b -> d
+    model.when("b", function (b) {
+      model.set("d", b + 1);
+    });
+
+    // c -> e
+    model.when("c", function (c) {
+      model.set("e", c + 1);
+    });
+
+    // (d, e) -> f
+    model.when(["d", "e"], function (d, e) { 
+      model.set("f", d + e);
+    });
+
+    model.when("f", function (f) {
+      if(f == 15){
+        model.set("a", 10);
+      } else {
+        strictEqual(f, 25);
+        start();
+      }
+    });
+    model.set("a", 5);
+  });
+
+  asyncTest("cancel should work for a single callback", function () {
+    var model = new Backbone.Model(),
+        xValue,
+        whens = model.when("x", function (x) {
+          xValue = x;
+        });
+    model.set("x", 5);
+    setTimeout(function () {
+      strictEqual(xValue, 5);
+      model.cancel(whens);
+      model.set("x", 6);
+      setTimeout(function () {
+        strictEqual(xValue, 5);
+        start();
+      }, 0);
+    }, 0);
+  });
+
+  asyncTest("cancel should work for a multiple chained callback", function () {
+    var model = new Backbone.Model(),
+        xValue,
+        yValue,
+        whens = model.when("x", function (x) { xValue = x; })
+                     .when("y", function (y) { yValue = y; });
+    model.set("x", 5);
+    model.set("y", 10);
+    setTimeout(function () {
+      strictEqual(xValue, 5);
+      strictEqual(yValue, 10);
+      model.cancel(whens);
+      model.set("x", 6);
+      model.set("y", 11);
+      setTimeout(function () {
+        strictEqual(xValue, 5);
+        strictEqual(yValue, 10);
+        start();
+      }, 0);
+    }, 0);
+  });
+
+  asyncTest("cancel should work for independently tracked callbacks", function() {
+    var model = new Backbone.Model(),
+        xValue,
+        yValue,
+        whenX = model.when("x", function (x) { xValue = x; }),
+        whenY = model.when("y", function (y) { yValue = y; });
+    model.set("x", 5);
+    setTimeout(function () {
+      strictEqual(xValue, 5);
+      model.cancel(whenX);
+      model.set("x", 6);
+      model.set("y", 10);
+      setTimeout(function () {
+        strictEqual(xValue, 5);
+        strictEqual(yValue, 10);
+        model.cancel(whenY);
+        model.set("x", 7);
+        model.set("y", 11);
+        setTimeout(function () {
+          strictEqual(xValue, 5);
+          strictEqual(yValue, 10);
+          start();
+        }, 0);
+      }, 0);
+    }, 0);
+  });
 })();
