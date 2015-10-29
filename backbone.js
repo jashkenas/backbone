@@ -1470,13 +1470,46 @@
     //
     route: function(route, name, callback) {
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+
+      /*
+        add the next for route.
+        scene :
+        action 1
+        Router.route('*path',{next:true},function(){
+          require(['nav'],function(navView){
+            navView.render();
+          })
+        })
+        action 2
+        Router.route('app(/:id)(/*path)',{next:true},function(id){
+          require(['menu'],function(menuView){
+            menuView.model.set('eq',id);
+            menuView.render();
+          })
+        })
+        action 3
+        Router.route('app/over',function(){
+          require(['min'],function(minView){
+            minView.render();
+          })
+        })
+      
+        the url  "app/over" will trigger three actions;
+        2015/10/29 by hezedu
+      */
+      var next = false;
+
       if (_.isFunction(name)) {
         callback = name;
         name = '';
+      }else if(typeof name === 'object'){
+        next = name.next;
+        name = name.name || '';
       }
+
       if (!callback) callback = this[name];
       var router = this;
-      Backbone.history.route(route, function(fragment) {
+      Backbone.history.route(route, next, function(fragment) {
         var args = router._extractParameters(route, fragment);
         if (router.execute(callback, args, name) !== false) {
           router.trigger.apply(router, ['route:' + name].concat(args));
@@ -1732,8 +1765,8 @@
 
     // Add a route to be tested when the fragment changes. Routes added later
     // may override previous routes.
-    route: function(route, callback) {
-      this.handlers.unshift({route: route, callback: callback});
+    route: function(route,next,callback) { //unshift is a jok ?
+      this.handlers.push({route: route, next:next, callback: callback});
     },
 
     // Checks the current URL to see if it has changed, and if it has,
@@ -1759,12 +1792,20 @@
       // If the root doesn't match, no routes can match either.
       if (!this.matchRoot()) return false;
       fragment = this.fragment = this.getFragment(fragment);
-      return _.some(this.handlers, function(handler) {
+      
+      var _bool;
+      for(var i = 0,len = this.handlers.length; i < len; i++){
+        var handler = this.handlers[i];
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
-          return true;
+          _bool = true;
+          if(!handler.next){
+            return true;
+          }
         }
-      });
+      }
+      return _bool;
+      
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
