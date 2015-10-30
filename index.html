@@ -4328,7 +4328,7 @@ ActiveRecord::Base.include_root_in_json = false
     <br />
     <ul style="margin-top: 5px;">
       <li>
-        <tt>Collection#add</tt> now avoids trying to parse a model instance when passed <tt>parse: true</tt>.
+        <tt>Collection#add</tt> now avoids trying to parse a model instance when passed <tt>parse: false</tt>.
       </li>
       <li>
         Bug fix in <tt>Collection#remove</tt>. The removed models are now actually returned.
