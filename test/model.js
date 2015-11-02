@@ -1400,4 +1400,14 @@
     model.set({a: true});
   });
 
+  QUnit.test('#3778 - id will only be updated if it is set', function(assert) {
+    assert.expect(2);
+    var model = new Backbone.Model({id: 1});
+    model.id = 2;
+    model.set({foo: 'bar'});
+    assert.equal(model.id, 2);
+    model.set({id: 3});
+    assert.equal(model.id, 3);
+  });
+
 })();
