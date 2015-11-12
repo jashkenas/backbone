@@ -1779,13 +1779,13 @@ var Library = Backbone.Collection.extend({
       <br />
       Override this method to return the value the collection will use to
       identify a model given its attributes. Useful for combining models from
-      multiple tables with different <a href="Model-idAttribute"><tt>idAttribute</tt></a>
+      multiple tables with different <a href="#Model-idAttribute"><tt>idAttribute</tt></a>
       values into a single collection.
     </p>
 
     <p>
       By default returns the value of the attributes'
-      <a href="Model-idAttribute"><tt>idAttribute</tt></a>
+      <a href="#Model-idAttribute"><tt>idAttribute</tt></a>
       from the collection's model class or failing that, <tt>id</tt>. If
       your collection uses a <a href="#Collection-model">model factory</a> and
       those models have an <tt>idAttribute</tt> other than <tt>id</tt> you must
