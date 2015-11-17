@@ -807,7 +807,7 @@
     remove: function(models, options) {
       options = _.extend({}, options);
       var singular = !_.isArray(models);
-      models = singular ? [models] : _.clone(models);
+      models = singular ? [models] : models.slice();
       var removed = this._removeModels(models, options);
       if (!options.silent && removed.length) this.trigger('update', this, options);
       return singular ? removed[0] : removed;
