@@ -158,6 +158,27 @@
     b.trigger('event2');
   });
 
+  QUnit.test("stopListening performance", function (assert) {
+    assert.expect(1);
+
+    window.console.info("Creating models and listening to changes");
+    var a = _.extend({}, Backbone.Events);
+    var models = _.times(100000, function() {
+      var model = new Backbone.Model();
+      a.listenTo(model, 'change', _.noop);
+      return model;
+    });
+
+    window.console.info("Starting to stop listening to model changes");
+    var start = new Date();
+    models.forEach(function(model) {
+      a.stopListening(model);
+    });
+    var end = new Date();
+    window.console.info("time: " + (end - start));
+    assert.ok((end - start) <= 1500, "should remove listeners in under 1.5 seconds");
+  });
+
   QUnit.test("listenToOnce", function(assert) {
     assert.expect(2);
     // Same as the previous test, but we use once rather than having to explicitly unbind
