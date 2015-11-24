@@ -1011,7 +1011,9 @@
 
     // Pluck an attribute from each model in the collection.
     pluck: function(attr) {
-      return _.invoke(this.models, 'get', attr);
+      return _.map(this.models, function(model) {
+        return model.get(attr);
+      });
     },
 
     // Fetch the default set of models for this collection, resetting the
