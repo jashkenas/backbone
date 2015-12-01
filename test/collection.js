@@ -1817,4 +1817,12 @@
     model.trigger('change');
   });
 
+  QUnit.test('#3871 - falsy parse result creates empty collection', function(assert) {
+    var collection = new (Backbone.Collection.extend({
+      parse: function (data, options) {}
+    }));
+    collection.set('', { parse: true });
+    assert.equal(collection.length, 0);
+  });
+
 })();

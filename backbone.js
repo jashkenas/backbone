@@ -824,7 +824,7 @@
       if (options.parse && !this._isModel(models)) models = this.parse(models, options);
 
       var singular = !_.isArray(models);
-      models = singular ? [models] : models.slice();
+      models = singular ? (models ? [models] : []) : models.slice();
 
       var at = options.at;
       if (at != null) at = +at;
