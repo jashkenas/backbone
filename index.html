@@ -2406,8 +2406,8 @@ var Workspace = Backbone.Router.extend({
 
     <p>
       A route of <tt>"file/*path"</tt> will match
-      <tt>#file/nested/folder/file.txt</tt>, passing
-      <tt>"nested/folder/file.txt"</tt> to the action.
+      <tt>#file/folder/file.txt</tt>, passing
+      <tt>"folder/file.txt"</tt> to the action.
     </p>
 
     <p>
@@ -2415,6 +2415,13 @@ var Workspace = Backbone.Router.extend({
       <tt>#docs/faq</tt> and <tt>#docs/faq/installing</tt>, passing
       <tt>"faq"</tt> to the action in the first case, and passing <tt>"faq"</tt>
       and <tt>"installing"</tt> to the action in the second.
+    </p>
+
+    <p>
+      A nested optional route of <tt>"docs(/:section)(/:subsection)"</tt> will match
+      <tt>#docs</tt>, <tt>#docs/faq</tt>, and <tt>#docs/faq/installing</tt>,
+      passing <tt>"faq"</tt> to the action in the second case, and passing <tt>"faq"</tt>
+      and <tt>"installing"</tt> to the action in the third.
     </p>
 
     <p>
