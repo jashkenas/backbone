@@ -1578,7 +1578,7 @@
   });
 
   QUnit.test('_addReference binds all collection events & adds to the lookup hashes', function(assert) {
-    assert.expect(9);
+    assert.expect(8);
 
     var calls = {add: 0, remove: 0};
 
@@ -1598,7 +1598,6 @@
         assert.equal(this._byId[model.id], void 0);
         assert.equal(this._byId[model.cid], void 0);
         assert.equal(model.collection, void 0);
-        assert.equal(model._events, void 0);
       }
 
     });

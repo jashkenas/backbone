@@ -242,7 +242,6 @@
 
       listening.obj.off(name, callback, this);
     }
-    if (_.isEmpty(listeningTo)) this._listeningTo = void 0;
 
     return this;
   };
@@ -299,7 +298,7 @@
         delete events[name];
       }
     }
-    if (_.size(events)) return events;
+    return events;
   };
 
   // Bind an event to only be triggered a single time. After the first time
