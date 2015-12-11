@@ -17,7 +17,7 @@
     "uglify-js": "^2.4.17"
   },
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start && coffee test/model.coffee",
+    "test": "karma start && coffee test/model.coffee",
     "build": "uglifyjs backbone.js --mangle --source-map backbone-min.map -o backbone-min.js",
     "doc": "docco backbone.js && docco examples/todos/todos.js examples/backbone.localStorage.js",
     "lint": "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
