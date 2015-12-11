@@ -475,7 +475,7 @@
       options || (options = {});
 
       // Run validation.
-      if (!this._validate(attrs, options)) return false;
+      if (!this._validateAndTrigger(attrs, options)) return false;
 
       // Extract attributes and options.
       var unset      = options.unset;
@@ -619,7 +619,7 @@
       // the model will be valid when the attributes, if any, are set.
       if (attrs && !wait) {
         if (!this.set(attrs, options)) return false;
-      } else if (!this._validate(attrs, options)) {
+      } else if (!this._validateAndTrigger(attrs, options)) {
         return false;
       }
 
@@ -714,16 +714,25 @@
 
     // Check if the model is currently in a valid state.
     isValid: function(options) {
-      return this._validate({}, _.defaults({validate: true}, options));
+      var opts = _.defaults({validate: true}, options);
+      return opts.trigger ? this._validateAndTrigger({}, opts) : this._validate({}, opts);
     },
 
     // Run validation against the next complete set of model attributes,
-    // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
+    // returning the validity.
     _validate: function(attrs, options) {
       if (!options.validate || !this.validate) return true;
       attrs = _.extend({}, this.attributes, attrs);
-      var error = this.validationError = this.validate(attrs, options) || null;
-      if (!error) return true;
+      this.validationError = this.validate(attrs, options) || null;
+      if (!this.validationError) return true;
+      return false;
+    },
+
+    // Run validation against the next complete set of model attributes
+    // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
+    _validateAndTrigger: function(attrs, options) {
+      if (this._validate(attrs, options)) return true;
+      var error = this.validationError;
       this.trigger('invalid', this, error, _.extend(options, {validationError: error}));
       return false;
     }

@@ -1367,6 +1367,21 @@
     assert.ok(model.isValid());
   });
 
+  QUnit.test('#3896 - isValid returns validity without triggering `invalid` unless requested', function(assert) {
+    assert.expect(3);
+    var model = new Backbone.Model({valid: true});
+    model.validate = function(attrs) {
+      if (!attrs.valid) return 'invalid';
+    };
+    model.on('invalid', function() {
+      throw 'invalid';
+    });
+    assert.ok(model.isValid());
+    model.set({valid: false});
+    assert.ok(!model.isValid());
+    assert.raises(_.partial(model.isValid, {trigger: true}));
+  });
+
   QUnit.test('#1961 - Creating a model with {validate:true} will call validate and use the error callback', function(assert) {
     var Model = Backbone.Model.extend({
       validate: function(attrs) {
