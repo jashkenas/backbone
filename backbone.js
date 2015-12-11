@@ -718,13 +718,16 @@
     },
 
     // Run validation against the next complete set of model attributes,
-    // returning `true` if all is well. Otherwise, fire an `"invalid"` event.
+    // returning `true` if all is well. Otherwise, return false and
+    // fire an `"invalid"` event (if not silent).
     _validate: function(attrs, options) {
       if (!options.validate || !this.validate) return true;
       attrs = _.extend({}, this.attributes, attrs);
       var error = this.validationError = this.validate(attrs, options) || null;
       if (!error) return true;
-      this.trigger('invalid', this, error, _.extend(options, {validationError: error}));
+      if (!options.silent) {
+        this.trigger('invalid', this, error, _.extend(options, {validationError: error}));
+      }
       return false;
     }
 

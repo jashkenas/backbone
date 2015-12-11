@@ -1367,6 +1367,31 @@
     assert.ok(model.isValid());
   });
 
+  QUnit.test('#3884 - _validate respects silent option so isValid can return false without triggering invalid.', function(assert) {
+    assert.expect(2);
+    var model = new Backbone.Model();
+    model.validate = function() { return 'some problem'; };
+    model.on('invalid', function() {
+      throw 'invalid';
+    });
+    assert.ok(!model.isValid({silent: true}));
+    assert.throws(model.isValid);
+  });
+
+  QUnit.test('#3884 - _validate respects silent option so set can be silent even with validation.', function(assert) {
+    assert.expect(1);
+    var model = new Backbone.Model();
+    model.validate = function() { return 'some problem'; };
+    model.on('invalid', function() {
+      throw 'invalid';
+    });
+    model.on('change:foo', function() {
+      throw 'change';
+    });
+    model.set('foo', 'bar', {silent: true, validate: true});
+    assert.ok(true);
+  });
+
   QUnit.test('#1961 - Creating a model with {validate:true} will call validate and use the error callback', function(assert) {
     var Model = Backbone.Model.extend({
       validate: function(attrs) {
