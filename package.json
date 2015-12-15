@@ -10,6 +10,7 @@
   "devDependencies": {
     "coffee-script": "1.7.1",
     "docco": "0.7.0",
+    "eslint": "1.10.x",
     "karma": "^0.13.13",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-qunit": "^0.1.5",
@@ -17,10 +18,10 @@
     "uglify-js": "^2.4.17"
   },
   "scripts": {
-    "test": "karma start && coffee test/model.coffee",
+    "test": "karma start && coffee test/model.coffee && npm run lint",
     "build": "uglifyjs backbone.js --mangle --source-map backbone-min.map -o backbone-min.js",
     "doc": "docco backbone.js && docco examples/todos/todos.js examples/backbone.localStorage.js",
-    "lint": "jsl -nofilelisting -nologo -conf docs/jsl.conf -process backbone.js"
+    "lint": "eslint backbone.js test/*.js"
   },
   "main"          : "backbone.js",
   "version"       : "1.2.3",
