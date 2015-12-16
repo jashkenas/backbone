@@ -163,7 +163,7 @@
     assert.ok(!a.isNew(), "any defined ID is legal, negative or positive");
     a = new Backbone.Model({'foo': 1, 'bar': 2, 'baz': 3, 'id': 0});
     assert.ok(!a.isNew(), "any defined ID is legal, including zero");
-    assert.ok( new Backbone.Model({          }).isNew(), "is true when there is no id");
+    assert.ok( new Backbone.Model({}).isNew(), "is true when there is no id");
     assert.ok(!new Backbone.Model({'id': 2}).isNew(), "is false for a positive integer");
     assert.ok(!new Backbone.Model({'id': -5}).isNew(), "is false for a negative integer");
   });
@@ -833,7 +833,7 @@
     });
 
     var adult = new Parent;
-    var kid   = new Child;
+    var kid = new Child;
 
     assert.equal(Child.classProp, Parent.classProp);
     assert.notEqual(Child.classProp, undefined);
