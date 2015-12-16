@@ -9,17 +9,9 @@
     "$": true
   },
   "rules": {
-    "array-bracket-spacing": 0,
-    "brace-style": 0,
-    "camelcase": 0,
-    "comma-spacing": 0,
-    "no-extend-native": 0,
-    "no-new-wrappers": 0,
-    "no-spaced-func": 0,
-    "no-sparse-arrays": 0,
+    "camelCase": 0,
     "no-throw-literal": 0,
     "no-undefined": 0,
-    "quote-props": 0,
-    "space-before-function-paren": 0
+    "quote-props": 0
   }
 }
