@@ -2,7 +2,7 @@
 
   var proxy = Backbone.Model.extend();
   var klass = Backbone.Collection.extend({
-    url : function() { return '/collection'; }
+    url: function() { return '/collection'; }
   });
   var doc, collection;
 
@@ -10,10 +10,10 @@
 
     beforeEach: function(assert) {
       doc = new proxy({
-        id     : '1-the-tempest',
-        title  : "The Tempest",
-        author : "Bill Shakespeare",
-        length : 123
+        id: '1-the-tempest',
+        title: "The Tempest",
+        author: "Bill Shakespeare",
+        length: 123
       });
       collection = new klass();
       collection.add(doc);
@@ -144,7 +144,7 @@
     assert.equal(b.get('foo'), a.get('foo'), "Foo should be the same on the clone.");
     assert.equal(b.get('bar'), a.get('bar'), "Bar should be the same on the clone.");
     assert.equal(b.get('baz'), a.get('baz'), "Baz should be the same on the clone.");
-    a.set({foo : 100});
+    a.set({foo: 100});
     assert.equal(a.get('foo'), 100);
     assert.equal(b.get('foo'), 1, "Changing a parent attribute does not change the clone.");
 
@@ -280,11 +280,11 @@
         }
       }
     });
-    var model = new Model({x:0});
+    var model = new Model({x: 0});
     model.on('change:x', function() { attr++; });
     model.on('change', function() { main++; });
-    model.set({x:2}, {validate:true});
-    model.set({x:1}, {validate:true});
+    model.set({x: 2}, {validate: true});
+    model.set({x: 1}, {validate: true});
     assert.deepEqual([attr, main, error], [1, 1, 1]);
   });
 
@@ -354,7 +354,7 @@
 
   QUnit.test("using a non-default id attribute.", function(assert) {
     assert.expect(5);
-    var MongoModel = Backbone.Model.extend({idAttribute : '_id'});
+    var MongoModel = Backbone.Model.extend({idAttribute: '_id'});
     var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
     assert.equal(model.get('id'), 'eye-dee');
     assert.equal(model.id, 25);
@@ -392,8 +392,8 @@
 
   QUnit.test("set an empty string", function(assert) {
     assert.expect(1);
-    var model = new Backbone.Model({name : "Model"});
-    model.set({name : ''});
+    var model = new Backbone.Model({name: "Model"});
+    model.set({name: ''});
     assert.equal(model.get('name'), '');
   });
 
@@ -416,7 +416,7 @@
   QUnit.test("clear", function(assert) {
     assert.expect(3);
     var changed;
-    var model = new Backbone.Model({id: 1, name : "Model"});
+    var model = new Backbone.Model({id: 1, name: "Model"});
     model.on("change:name", function(){ changed = true; });
     model.on("change", function() {
       var changedAttrs = model.changedAttributes();
@@ -458,13 +458,13 @@
     model.on('change', function() {
       assert.ok(model.hasChanged('name'), 'name changed');
       assert.ok(!model.hasChanged('age'), 'age did not');
-      assert.ok(_.isEqual(model.changedAttributes(), {name : 'Rob'}), 'changedAttributes returns the changed attrs');
+      assert.ok(_.isEqual(model.changedAttributes(), {name: 'Rob'}), 'changedAttributes returns the changed attrs');
       assert.equal(model.previous('name'), 'Tim');
-      assert.ok(_.isEqual(model.previousAttributes(), {name : "Tim", age : 10}), 'previousAttributes is correct');
+      assert.ok(_.isEqual(model.previousAttributes(), {name: "Tim", age: 10}), 'previousAttributes is correct');
     });
     assert.equal(model.hasChanged(), false);
     assert.equal(model.hasChanged(undefined), false);
-    model.set({name : 'Rob'});
+    model.set({name: 'Rob'});
     assert.equal(model.get('name'), 'Rob');
   });
 
@@ -502,7 +502,7 @@
   QUnit.test("save within change event", function(assert) {
     assert.expect(1);
     var env = this;
-    var model = new Backbone.Model({firstName : "Taylor", lastName: "Swift"});
+    var model = new Backbone.Model({firstName: "Taylor", lastName: "Swift"});
     model.url = '/test';
     model.on('change', function() {
       model.save();
@@ -531,7 +531,7 @@
 
   QUnit.test("save", function(assert) {
     assert.expect(2);
-    doc.save({title : "Henry V"});
+    doc.save({title: "Henry V"});
     assert.equal(this.syncArgs.method, 'update');
     assert.ok(_.isEqual(this.syncArgs.model, doc));
   });
@@ -641,9 +641,9 @@
       options.success('', options);
       options.success(null, options);
     };
-    model.save({testing:'empty'}, {
+    model.save({testing: 'empty'}, {
       success: function(model) {
-        assert.deepEqual(model.attributes, {testing:'empty'});
+        assert.deepEqual(model.attributes, {testing: 'empty'});
       }
     });
   });
@@ -757,7 +757,7 @@
     assert.equal(lastError, undefined);
     result = model.set({admin: true});
     assert.equal(model.get('admin'), true);
-    result = model.set({a: 200, admin: false}, {validate:true});
+    result = model.set({a: 200, admin: false}, {validate: true});
     assert.equal(lastError, "Can't change admin status.");
     assert.equal(result, false);
     assert.equal(model.get('a'), 100);
@@ -779,7 +779,7 @@
     model.unset('name', {validate: true});
     assert.equal(error, true);
     assert.equal(model.get('name'), 'Two');
-    model.clear({validate:true});
+    model.clear({validate: true});
     assert.equal(model.get('name'), 'Two');
     delete model.validate;
     model.clear();
@@ -796,12 +796,12 @@
     model.on('invalid', function(model, error) {
       boundError = true;
     });
-    var result = model.set({a: 100}, {validate:true});
+    var result = model.set({a: 100}, {validate: true});
     assert.equal(result, model);
     assert.equal(model.get('a'), 100);
     assert.equal(model.validationError, null);
     assert.equal(boundError, undefined);
-    result = model.set({a: 200, admin: true}, {validate:true});
+    result = model.set({a: 200, admin: true}, {validate: true});
     assert.equal(result, false);
     assert.equal(model.get('a'), 100);
     assert.equal(model.validationError, "Can't change admin status.");
@@ -812,7 +812,7 @@
     assert.expect(2);
     var Defaulted = Backbone.Model.extend({
       defaults: {one: 1},
-      initialize : function(attrs, opts) {
+      initialize: function(attrs, opts) {
         assert.equal(this.attributes.one, 1);
       }
     });
@@ -1049,7 +1049,7 @@
     var model = new Backbone.Model();
     model.on('all', function(event) { events.push(event); });
     model.on('change', function() {
-      model.set({z: true}, {silent:true});
+      model.set({z: true}, {silent: true});
     });
     model.on('change:x', function() {
       model.set({y: true});
@@ -1259,7 +1259,7 @@
   QUnit.test("#1545 - `undefined` can be passed to a model constructor without coersion", function(assert) {
     var Model = Backbone.Model.extend({
       defaults: {one: 1},
-      initialize : function(attrs, opts) {
+      initialize: function(attrs, opts) {
         assert.equal(attrs, undefined);
       }
     });
@@ -1285,11 +1285,11 @@
 
   QUnit.test("#1664 - Changing from one value, silently to another, back to original triggers a change.", function(assert) {
     assert.expect(1);
-    var model = new Backbone.Model({x:1});
+    var model = new Backbone.Model({x: 1});
     model.on('change:x', function() { assert.ok(true); });
-    model.set({x:2}, {silent:true});
-    model.set({x:3}, {silent:true});
-    model.set({x:1});
+    model.set({x: 2}, {silent: true});
+    model.set({x: 3}, {silent: true});
+    model.set({x: 1});
   });
 
   QUnit.test("#1664 - multiple silent changes nested inside a change event", function(assert) {
@@ -1297,12 +1297,12 @@
     var changes = [];
     var model = new Backbone.Model();
     model.on('change', function() {
-      model.set({a:'c'}, {silent:true});
-      model.set({b:2}, {silent:true});
-      model.unset('c', {silent:true});
+      model.set({a: 'c'}, {silent: true});
+      model.set({b: 2}, {silent: true});
+      model.unset('c', {silent: true});
     });
     model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
-    model.set({a:'a', b:1, c:'item'});
+    model.set({a: 'a', b: 1, c: 'item'});
     assert.deepEqual(changes, ['a', 1, 'item']);
     assert.deepEqual(model.attributes, {a: 'c', b: 2});
   });
@@ -1321,17 +1321,17 @@
     var model = new Backbone.Model();
     model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
     model.on('change', function() {
-      model.set({a:'c'}, {silent:true});
+      model.set({a: 'c'}, {silent: true});
     });
-    model.set({a:'a'});
+    model.set({a: 'a'});
     assert.deepEqual(changes, ['a']);
-    model.set({a:'a'});
+    model.set({a: 'a'});
     assert.deepEqual(changes, ['a', 'a']);
   });
 
   QUnit.test("#1943 change calculations should use _.isEqual", function(assert) {
     var model = new Backbone.Model({a: {key: 'value'}});
-    model.set('a', {key:'value'}, {silent:true});
+    model.set('a', {key: 'value'}, {silent: true});
     assert.equal(model.changedAttributes(), false);
   });
 
@@ -1353,9 +1353,9 @@
       if (!attrs.valid) return "invalid";
     };
     assert.equal(model.isValid(), true);
-    assert.equal(model.set({valid: false}, {validate:true}), false);
+    assert.equal(model.set({valid: false}, {validate: true}), false);
     assert.equal(model.isValid(), true);
-    model.set({valid:false});
+    model.set({valid: false});
     assert.equal(model.isValid(), false);
     assert.ok(!model.set('valid', false, {validate: true}));
   });

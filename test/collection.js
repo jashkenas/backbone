@@ -47,7 +47,7 @@
   QUnit.test("new and parse", function(assert) {
     assert.expect(3);
     var Collection = Backbone.Collection.extend({
-      parse : function(data) {
+      parse: function(data) {
         return _.filter(data, function(datum) {
           return datum.a % 2 === 0;
         });
@@ -110,13 +110,13 @@
     assert.expect(4);
     var col = new Backbone.Collection();
     col.add([
-      {id : 0, name : 'one'},
-      {id : 1, name : 'two'}
+      {id: 0, name: 'one'},
+      {id: 1, name: 'two'}
     ]);
     var one = col.get(0);
     assert.equal(one.get('name'), 'one');
     col.on('change:name', function(model) { assert.ok(this.get(model)); });
-    one.set({name: 'dalmatians', id : 101});
+    one.set({name: 'dalmatians', id: 101});
     assert.equal(col.get(0), null);
     assert.equal(col.get(101).get('name'), 'dalmatians');
   });
@@ -136,7 +136,7 @@
     assert.expect(14);
     var added, opts, secondAdded;
     added = opts = secondAdded = null;
-    e = new Backbone.Model({id: 10, label : 'e'});
+    e = new Backbone.Model({id: 10, label: 'e'});
     otherCol.add(e);
     otherCol.on('add', function() {
       secondAdded = true;
@@ -153,9 +153,9 @@
     assert.equal(secondAdded, null);
     assert.ok(opts.amazing);
 
-    var f = new Backbone.Model({id: 20, label : 'f'});
-    var g = new Backbone.Model({id: 21, label : 'g'});
-    var h = new Backbone.Model({id: 22, label : 'h'});
+    var f = new Backbone.Model({id: 20, label: 'f'});
+    var g = new Backbone.Model({id: 21, label: 'g'});
+    var h = new Backbone.Model({id: 22, label: 'h'});
     var atCol = new Backbone.Collection([f, g, h]);
     assert.equal(atCol.length, 3);
     atCol.add(e, {at: 1});
@@ -194,7 +194,7 @@
     });
 
     var col = new Col([{id: 2}, {id: 3}]);
-    col.add(new Backbone.Model({id: 1}), {at:   1});
+    col.add(new Backbone.Model({id: 1}), {at: 1});
 
     assert.equal(col.pluck('id').join(' '), '3 1 2');
   });
@@ -202,7 +202,7 @@
   QUnit.test("add; at should add to the end if the index is out of bounds", function(assert) {
     assert.expect(1);
     var col = new Backbone.Collection([{id: 2}, {id: 3}]);
-    col.add(new Backbone.Model({id: 1}), {at:   5});
+    col.add(new Backbone.Model({id: 1}), {at: 5});
 
     assert.equal(col.pluck('id').join(' '), '2 3 1');
   });
@@ -235,7 +235,7 @@
   QUnit.test("add model to multiple collections", function(assert) {
     assert.expect(10);
     var counter = 0;
-    var e = new Backbone.Model({id: 10, label : 'e'});
+    var e = new Backbone.Model({id: 10, label: 'e'});
     e.on('add', function(model, collection) {
       counter++;
       assert.equal(e, model);
@@ -407,19 +407,19 @@
     var dj = new Backbone.Model();
     var emcees = new Backbone.Collection([dj]);
     emcees.on('change', function(){ counter++; });
-    dj.set({name : 'Kool'});
+    dj.set({name: 'Kool'});
     assert.equal(counter, 1);
     emcees.reset([]);
     assert.equal(dj.collection, undefined);
-    dj.set({name : 'Shadow'});
+    dj.set({name: 'Shadow'});
     assert.equal(counter, 1);
   });
 
   QUnit.test("remove in multiple collections", function(assert) {
     assert.expect(7);
     var modelData = {
-      id : 5,
-      title : 'Othello'
+      id: 5,
+      title: 'Othello'
     };
     var passed = false;
     var e = new Backbone.Model(modelData);
@@ -578,7 +578,7 @@
       assert.equal(error, "fail");
       assert.equal(options.validationError, 'fail');
     });
-    assert.equal(col.create({"foo":"bar"}, {validate:true}), false);
+    assert.equal(col.create({"foo": "bar"}, {validate: true}), false);
   });
 
   QUnit.test("create will pass extra options to success callback", function(assert) {
@@ -630,7 +630,7 @@
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
-    var m = col.create({"foo":"bar"});
+    var m = col.create({"foo": "bar"});
     assert.equal(m.validationError, 'fail');
     assert.equal(col.length, 1);
   });
@@ -762,7 +762,7 @@
     assert.equal(col.length, 0);
     assert.equal(resetCount, 4);
 
-    var f = new Backbone.Model({id: 20, label : 'f'});
+    var f = new Backbone.Model({id: 20, label: 'f'});
     col.reset([undefined, f]);
     assert.equal(col.length, 2);
     assert.equal(resetCount, 5);
@@ -802,7 +802,7 @@
 
   QUnit.test("reset does not alter options by reference", function(assert) {
     assert.expect(2);
-    var col = new Backbone.Collection([{id:1}]);
+    var col = new Backbone.Collection([{id: 1}]);
     var origOpts = {};
     col.on("reset", function(col, opts){
       assert.equal(origOpts.previousModels, undefined);
@@ -868,7 +868,7 @@
     var collection = new Collection;
     collection.on("invalid", function() { assert.ok(true); });
 
-    collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}], {validate:true});
+    collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}], {validate: true});
     assert.deepEqual(collection.pluck("id"), [1, 2, 4, 5, 6]);
   });
 
@@ -880,7 +880,7 @@
       validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
     });
     var model = new collection.model({id: 1, valid: true});
-    collection.add([model, {id: 2}], {validate:true});
+    collection.add([model, {id: 2}], {validate: true});
     model.trigger('test');
     assert.ok(collection.get(model.cid));
     assert.ok(collection.get(1));
@@ -942,7 +942,7 @@
 
   QUnit.test("#1355 - `options` is passed to success callbacks", function(assert) {
     assert.expect(2);
-    var m = new Backbone.Model({x:1});
+    var m = new Backbone.Model({x: 1});
     var col = new Backbone.Collection();
     var opts = {
       opts: true,
@@ -1091,7 +1091,7 @@
   QUnit.test("#1407 parse option on constructor parses collection and models", function(assert) {
     assert.expect(2);
     var model = {
-      namespace : [{id: 1}, {id:2}]
+      namespace: [{id: 1}, {id: 2}]
     };
     var Collection = Backbone.Collection.extend({
       model: Backbone.Model.extend({
@@ -1104,7 +1104,7 @@
         return model.namespace;
       }
     });
-    var c = new Collection(model, {parse:true});
+    var c = new Collection(model, {parse: true});
 
     assert.equal(c.length, 2);
     assert.equal(c.at(0).get('name'), 'test');
@@ -1113,7 +1113,7 @@
   QUnit.test("#1407 parse option on reset parses collection and models", function(assert) {
     assert.expect(2);
     var model = {
-      namespace : [{id: 1}, {id:2}]
+      namespace: [{id: 1}, {id: 2}]
     };
     var Collection = Backbone.Collection.extend({
       model: Backbone.Model.extend({
@@ -1127,7 +1127,7 @@
       }
     });
     var c = new Collection();
-    c.reset(model, {parse:true});
+    c.reset(model, {parse: true});
 
     assert.equal(c.length, 2);
     assert.equal(c.at(0).get('name'), 'test');
@@ -1352,7 +1352,7 @@
         return data.data;
       }
     }));
-    var res = {status: 'ok', data:[{id: 1}]};
+    var res = {status: 'ok', data: [{id: 1}]};
     collection.set(res, {parse: true});
   });
 
