@@ -1139,7 +1139,7 @@
     var model = new Backbone.Model();
     var collection = new Backbone.Collection([model])
     .on('reset', function(collection, options) {
-      deepEqual(options.previousModels, [model]);
+      assert.deepEqual(options.previousModels, [model]);
     });
     collection.reset([]);
   });
@@ -1402,7 +1402,7 @@
     var collection = new (Backbone.Collection.extend({
       comparator: 'a'
     }))([{id: 1}, {id: 2}, {id: 3}]);
-    collection.on('sort', function() { ok(true); });
+    collection.on('sort', function() { assert.ok(true); });
     collection.add({id: 4}); // do sort, new model
     collection.add({id: 1, a: 1}, {merge: true}); // do sort, comparator change
     collection.add({id: 1, b: 1}, {merge: true}); // don't sort, no comparator change
@@ -1418,7 +1418,7 @@
         return a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
       }
     }))([{id: 1}, {id: 2}, {id: 3}]);
-    collection.on('sort', function() { ok(true); });
+    collection.on('sort', function() { assert.ok(true); });
     collection.add({id: 4}); // do sort, new model
     collection.add({id: 1, a: 1}, {merge: true}); // do sort, model change
     collection.add({id: 1, b: 1}, {merge: true}); // do sort, model change

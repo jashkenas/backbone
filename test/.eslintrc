@@ -3,7 +3,10 @@
     "browser": true
   },
   "globals": {
-    "QUnit": false
+    "QUnit": false,
+    "Backbone": true,
+    "_": true,
+    "$": true
   },
   "rules": {
     "array-bracket-spacing": 0,

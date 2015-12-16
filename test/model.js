@@ -849,14 +849,14 @@
     assert.expect(4);
     new Backbone.Model()
     .on('change:state', function(model, newState) {
-      equal(model.previous('state'), undefined);
-      equal(newState, 'hello');
+      assert.equal(model.previous('state'), undefined);
+      assert.equal(newState, 'hello');
       // Fire a nested change event.
       model.set({other: 'whatever'});
     })
     .on('change:state', function(model, newState) {
-      equal(model.previous('state'), undefined);
-      equal(newState, 'hello');
+      assert.equal(model.previous('state'), undefined);
+      assert.equal(newState, 'hello');
     })
     .set({state: 'hello'});
   });

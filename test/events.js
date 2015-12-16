@@ -110,7 +110,7 @@
 
     obj.off().on({
       a: function() {
-        strictEqual(this, context, 'will not override explicit `context` param');
+        assert.strictEqual(this, context, 'will not override explicit `context` param');
       }
     }, this, context).trigger('a');
   });
