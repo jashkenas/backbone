@@ -67,6 +67,7 @@
     "no-unreachable": 2,
     "no-with": 2,
     "object-curly-spacing": [2, "never"],
+    "quote-props": [1, "consistent-as-needed"],
     "quotes": [2, "single", "avoid-escape"],
     "radix": 2,
     "semi": 2,
