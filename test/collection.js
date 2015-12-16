@@ -10,7 +10,7 @@
       c         = new Backbone.Model({id: 1, label: 'c'});
       d         = new Backbone.Model({id: 0, label: 'd'});
       e         = null;
-      col       = new Backbone.Collection([a,b,c,d]);
+      col       = new Backbone.Collection([a, b, c, d]);
       otherCol  = new Backbone.Collection();
     }
 
@@ -115,7 +115,7 @@
     ]);
     var one = col.get(0);
     assert.equal(one.get('name'), 'one');
-    col.on('change:name', function (model) { assert.ok(this.get(model)); });
+    col.on('change:name', function(model) { assert.ok(this.get(model)); });
     one.set({name: 'dalmatians', id : 101});
     assert.equal(col.get(0), null);
     assert.equal(col.get(101).get('name'), 'dalmatians');
@@ -188,7 +188,7 @@
   QUnit.test("add; at should have preference over comparator", function(assert) {
     assert.expect(1);
     var Col = Backbone.Collection.extend({
-      comparator: function(a,b) {
+      comparator: function(a, b) {
         return a.id > b.id ? -1 : 1;
       }
     });
@@ -515,10 +515,10 @@
   QUnit.test("fetch with an error response triggers an error event", function(assert) {
     assert.expect(1);
     var collection = new Backbone.Collection();
-    collection.on('error', function () {
+    collection.on('error', function() {
       assert.ok(true);
     });
-    collection.sync = function (method, model, options) { options.error(); };
+    collection.sync = function(method, model, options) { options.error(); };
     collection.fetch();
   });
 
@@ -532,7 +532,7 @@
         assert.equal(this, obj);
       }
     };
-    collection.sync = function (method, model, options) {
+    collection.sync = function(method, model, options) {
       options.error.call(options.context);
     };
     collection.fetch(options);
@@ -574,7 +574,7 @@
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
-    col.on('invalid', function (collection, error, options) {
+    col.on('invalid', function(collection, error, options) {
       assert.equal(error, "fail");
       assert.equal(options.validationError, 'fail');
     });
@@ -584,7 +584,7 @@
   QUnit.test("create will pass extra options to success callback", function(assert) {
     assert.expect(1);
     var Model = Backbone.Model.extend({
-      sync: function (method, model, options) {
+      sync: function(method, model, options) {
         _.extend(options, {specialSync: true});
         return Backbone.Model.prototype.sync.call(this, method, model, options);
       }
@@ -597,7 +597,7 @@
 
     var collection = new Collection;
 
-    var success = function (model, response, options) {
+    var success = function(model, response, options) {
       assert.ok(options.specialSync, "Options were passed correctly to callback");
     };
 
@@ -609,7 +609,7 @@
     assert.expect(0);
     var Collection = Backbone.Collection.extend({
       url: '/test',
-      parse: function () {
+      parse: function() {
         assert.ok(false);
       }
     });
@@ -772,7 +772,7 @@
     assert.equal(resetCount, 6);
   });
 
-  QUnit.test ("reset with different values", function(assert) {
+  QUnit.test("reset with different values", function(assert) {
     var col = new Backbone.Collection({id: 1});
     col.reset({id: 1, a: 1});
     assert.equal(col.get(1).get('a'), 1);
@@ -792,8 +792,8 @@
         this.model_parameter = options.model_parameter;
       }
     });
-    var col = new (Backbone.Collection.extend({ model: Model }))();
-    col.reset([{ astring: "green", anumber: 1 }, { astring: "blue", anumber: 2 }], { model_parameter: 'model parameter' });
+    var col = new (Backbone.Collection.extend({model: Model}))();
+    col.reset([{astring: "green", anumber: 1}, {astring: "blue", anumber: 2}], {model_parameter: 'model parameter'});
     assert.equal(col.length, 2);
     col.each(function(model) {
       assert.equal(model.model_parameter, 'model parameter');
@@ -1212,8 +1212,8 @@
 
   QUnit.test("set with only idAttribute", function(assert) {
     assert.expect(3);
-    var m1 = { _id: 1 };
-    var m2 = { _id: 2 };
+    var m1 = {_id: 1};
+    var m2 = {_id: 2};
     var col = Backbone.Collection.extend({
       model: Backbone.Model.extend({
         idAttribute: '_id'
@@ -1248,7 +1248,7 @@
 
   QUnit.test('merge without mutation', function(assert) {
     var Model = Backbone.Model.extend({
-      initialize: function (attrs, options) {
+      initialize: function(attrs, options) {
         if (attrs.child) {
           this.set('child', new Model(attrs.child, options), options);
         }
@@ -1268,7 +1268,7 @@
     var Model = Backbone.Model.extend({});
     var Collection = Backbone.Collection.extend({
       model: Model,
-      parse: function (res) { return _.map(res.models, 'model'); }
+      parse: function(res) { return _.map(res.models, 'model'); }
     });
     var model = new Model({id: 1});
     var collection = new Collection(model);
@@ -1282,7 +1282,7 @@
   QUnit.test("`set` data is only parsed once", function(assert) {
     var collection = new Backbone.Collection();
     collection.model = Backbone.Model.extend({
-      parse: function (data) {
+      parse: function(data) {
         assert.equal(data.parsed, void 0);
         data.parsed = true;
         return data;
@@ -1347,7 +1347,7 @@
 
   QUnit.test("#1915 - `parse` data in the right order in `set`", function(assert) {
     var collection = new (Backbone.Collection.extend({
-      parse: function (data) {
+      parse: function(data) {
         assert.strictEqual(data.status, 'ok');
         return data.data;
       }
@@ -1361,18 +1361,18 @@
     assert.expect(1);
     var collection = new (Backbone.Collection.extend({
       url: '/',
-      parse: function (data, options) {
+      parse: function(data, options) {
         assert.strictEqual(options.xhr.someHeader, 'headerValue');
         return data;
       }
     }));
     var ajax = Backbone.ajax;
-    Backbone.ajax = function (params) {
+    Backbone.ajax = function(params) {
       _.defer(params.success, []);
       return {someHeader: 'headerValue'};
     };
     collection.fetch({
-      success: function () { done(); }
+      success: function() { done(); }
     });
     Backbone.ajax = ajax;
   });
@@ -1381,19 +1381,19 @@
     assert.expect(1);
     var SpecialSyncCollection = Backbone.Collection.extend({
       url: '/test',
-      sync: function (method, collection, options) {
-        _.extend(options, { specialSync: true });
+      sync: function(method, collection, options) {
+        _.extend(options, {specialSync: true});
         return Backbone.Collection.prototype.sync.call(this, method, collection, options);
       }
     });
 
     var collection = new SpecialSyncCollection();
 
-    var onSuccess = function (collection, resp, options) {
+    var onSuccess = function(collection, resp, options) {
       assert.ok(options.specialSync, "Options were passed correctly to callback");
     };
 
-    collection.fetch({ success: onSuccess });
+    collection.fetch({success: onSuccess});
     this.ajaxSettings.success();
   });
 
@@ -1402,7 +1402,7 @@
     var collection = new (Backbone.Collection.extend({
       comparator: 'a'
     }))([{id: 1}, {id: 2}, {id: 3}]);
-    collection.on('sort', function () { ok(true); });
+    collection.on('sort', function() { ok(true); });
     collection.add({id: 4}); // do sort, new model
     collection.add({id: 1, a: 1}, {merge: true}); // do sort, comparator change
     collection.add({id: 1, b: 1}, {merge: true}); // don't sort, no comparator change
@@ -1418,7 +1418,7 @@
         return a.get('a') > b.get('a') ? 1 : (a.get('a') < b.get('a') ? -1 : 0);
       }
     }))([{id: 1}, {id: 2}, {id: 3}]);
-    collection.on('sort', function () { ok(true); });
+    collection.on('sort', function() { ok(true); });
     collection.add({id: 4}); // do sort, new model
     collection.add({id: 1, a: 1}, {merge: true}); // do sort, model change
     collection.add({id: 1, b: 1}, {merge: true}); // do sort, model change
@@ -1459,7 +1459,7 @@
 
   QUnit.test("`add` overrides `set` flags", function(assert) {
     var collection = new Backbone.Collection();
-    collection.once('add', function (model, collection, options) {
+    collection.once('add', function(model, collection, options) {
       collection.add({id: 2}, options);
     });
     collection.set({id: 1});
@@ -1533,15 +1533,15 @@
         id: 1,
         name: 'NewSub1',
         subItems: [
-          {id: 1,subName: 'NewOne'},
-          {id: 2,subName: 'NewTwo'}
+          {id: 1, subName: 'NewOne'},
+          {id: 2, subName: 'NewTwo'}
         ]
       }, {
         id: 2,
         name: 'NewSub2',
         subItems: [
-          {id: 3,subName: 'NewThree'},
-          {id: 4,subName: 'NewFour'}
+          {id: 3, subName: 'NewThree'},
+          {id: 4, subName: 'NewFour'}
         ]
       }]
     };
@@ -1638,7 +1638,7 @@
     var A = Backbone.Model.extend();
     var B = Backbone.Model.extend();
     var C = Backbone.Collection.extend({
-      model: function (attrs) {
+      model: function(attrs) {
         return attrs.type === 'a' ? new A(attrs) : new B(attrs);
       }
     });
@@ -1655,7 +1655,7 @@
     var B = Backbone.Model.extend({idAttribute: '_id'});
     var C = Backbone.Collection.extend({
       model: Backbone.Model.extend({
-        constructor: function (attrs) {
+        constructor: function(attrs) {
           return attrs.type === 'a' ? new A(attrs) : new B(attrs);
         },
 
@@ -1670,11 +1670,11 @@
     assert.equal(collection.at(1), collection.get(2));
 
     C = Backbone.Collection.extend({
-      model: function (attrs) {
+      model: function(attrs) {
         return attrs.type === 'a' ? new A(attrs) : new B(attrs);
       },
 
-      modelId: function (attrs) {
+      modelId: function(attrs) {
         return attrs.type + '-' + attrs.id;
       }
     });
@@ -1819,9 +1819,9 @@
 
   QUnit.test('#3871 - falsy parse result creates empty collection', function(assert) {
     var collection = new (Backbone.Collection.extend({
-      parse: function (data, options) {}
+      parse: function(data, options) {}
     }));
-    collection.set('', { parse: true });
+    collection.set('', {parse: true});
     assert.equal(collection.length, 0);
   });
 
