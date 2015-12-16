@@ -237,7 +237,7 @@
   QUnit.test("route precedence via navigate", function(assert){
     assert.expect(6);
     // check both 0.9.x and backwards-compatibility options
-    _.each([ { trigger: true }, true ], function( options ){
+    _.each([{trigger: true}, true], function( options ){
       Backbone.history.navigate('contacts', options);
       assert.equal(router.contact, 'index');
       Backbone.history.navigate('contacts/new', options);
@@ -694,9 +694,7 @@
     var RouterExtended = RouterBase.extend({
       routes: function() {
         var _super = RouterExtended.__super__.routes;
-        return _.extend(_super(),
-          { show:   "show",
-            search: "search" });
+        return _.extend(_super(), {show: "show", search: "search"});
       }
     });
 
