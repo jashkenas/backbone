@@ -61,13 +61,13 @@
     assert.expect(2);
     var Model = Backbone.Model.extend({
       defaults: {
-        first_name: 'Unknown',
-        last_name: 'Unknown'
+        firstName: 'Unknown',
+        lastName: 'Unknown'
       }
     });
-    var model = new Model({'first_name': 'John'});
-    assert.equal(model.get('first_name'), 'John');
-    assert.equal(model.get('last_name'), 'Unknown');
+    var model = new Model({'firstName': 'John'});
+    assert.equal(model.get('firstName'), 'John');
+    assert.equal(model.get('lastName'), 'Unknown');
   });
 
   QUnit.test('parse can return null', function(assert) {
@@ -108,11 +108,11 @@
     assert.expect(2);
     var Model = Backbone.Model.extend({
       urlRoot: function() {
-        return '/nested/' + this.get('parent_id') + '/collection';
+        return '/nested/' + this.get('parentId') + '/collection';
       }
     });
 
-    var model = new Model({parent_id: 1});
+    var model = new Model({parentId: 1});
     assert.equal(model.url(), '/nested/1/collection');
     model.set({id: 2});
     assert.equal(model.url(), '/nested/1/collection/2');

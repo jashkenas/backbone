@@ -9,7 +9,6 @@
     "$": true
   },
   "rules": {
-    "camelCase": 0,
     "no-throw-literal": 0,
     "no-undefined": 0,
     "quote-props": 0

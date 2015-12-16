@@ -789,14 +789,14 @@
     assert.expect(3);
     var Model = Backbone.Model.extend({
       initialize: function(attrs, options) {
-        this.model_parameter = options.model_parameter;
+        this.modelParameter = options.modelParameter;
       }
     });
     var col = new (Backbone.Collection.extend({model: Model}))();
-    col.reset([{astring: 'green', anumber: 1}, {astring: 'blue', anumber: 2}], {model_parameter: 'model parameter'});
+    col.reset([{astring: 'green', anumber: 1}, {astring: 'blue', anumber: 2}], {modelParameter: 'model parameter'});
     assert.equal(col.length, 2);
     col.each(function(model) {
-      assert.equal(model.model_parameter, 'model parameter');
+      assert.equal(model.modelParameter, 'model parameter');
     });
   });
 
