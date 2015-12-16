@@ -17,6 +17,7 @@
     "linebreak-style": 2,
     "max-depth": [1, 4],
     "max-params": [1, 5],
+    "new-cap": [2, {"newIsCapExceptions": ["model"]}],
     "no-alert": 2,
     "no-caller": 2,
     "no-catch-shadow": 2,

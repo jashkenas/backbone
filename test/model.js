@@ -1,7 +1,7 @@
 (function() {
 
-  var proxy = Backbone.Model.extend();
-  var klass = Backbone.Collection.extend({
+  var ProxyModel = Backbone.Model.extend();
+  var Klass = Backbone.Collection.extend({
     url: function() { return '/collection'; }
   });
   var doc, collection;
@@ -9,13 +9,13 @@
   QUnit.module("Backbone.Model", {
 
     beforeEach: function(assert) {
-      doc = new proxy({
+      doc = new ProxyModel({
         id: '1-the-tempest',
         title: "The Tempest",
         author: "Bill Shakespeare",
         length: 123
       });
-      collection = new klass();
+      collection = new Klass();
       collection.add(doc);
     }
 

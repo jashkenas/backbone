@@ -1214,12 +1214,12 @@
     assert.expect(3);
     var m1 = {_id: 1};
     var m2 = {_id: 2};
-    var col = Backbone.Collection.extend({
+    var Col = Backbone.Collection.extend({
       model: Backbone.Model.extend({
         idAttribute: '_id'
       })
     });
-    var c = new col;
+    var c = new Col;
     c.set([m1, m2]);
     assert.equal(c.length, 2);
     c.set([m1]);
