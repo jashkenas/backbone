@@ -487,4 +487,4 @@
     assert.notEqual($oldEl, view.$el);
   });
 
-})();
+}());

@@ -236,4 +236,4 @@
     this.ajaxSettings.error({}, 'textStatus', 'errorThrown');
   });
 
-})();
+}());

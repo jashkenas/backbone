@@ -1825,4 +1825,4 @@
     assert.equal(collection.length, 0);
   });
 
-})();
+}());
