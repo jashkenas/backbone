@@ -120,13 +120,13 @@
 
   QUnit.test('underscore methods', function(assert) {
     assert.expect(5);
-    var model = new Backbone.Model({'foo': 'a', 'bar': 'b', 'baz': 'c'});
+    var model = new Backbone.Model({foo: 'a', bar: 'b', baz: 'c'});
     var model2 = model.clone();
     assert.deepEqual(model.keys(), ['foo', 'bar', 'baz']);
     assert.deepEqual(model.values(), ['a', 'b', 'c']);
-    assert.deepEqual(model.invert(), {'a': 'foo', 'b': 'bar', 'c': 'baz'});
-    assert.deepEqual(model.pick('foo', 'baz'), {'foo': 'a', 'baz': 'c'});
-    assert.deepEqual(model.omit('foo', 'bar'), {'baz': 'c'});
+    assert.deepEqual(model.invert(), {a: 'foo', b: 'bar', c: 'baz'});
+    assert.deepEqual(model.pick('foo', 'baz'), {foo: 'a', baz: 'c'});
+    assert.deepEqual(model.omit('foo', 'bar'), {baz: 'c'});
   });
 
   QUnit.test('chain', function(assert) {
@@ -136,7 +136,7 @@
 
   QUnit.test('clone', function(assert) {
     assert.expect(10);
-    var a = new Backbone.Model({'foo': 1, 'bar': 2, 'baz': 3});
+    var a = new Backbone.Model({foo: 1, bar: 2, baz: 3});
     var b = a.clone();
     assert.equal(a.get('foo'), 1);
     assert.equal(a.get('bar'), 2);
@@ -157,15 +157,15 @@
 
   QUnit.test('isNew', function(assert) {
     assert.expect(6);
-    var a = new Backbone.Model({'foo': 1, 'bar': 2, 'baz': 3});
+    var a = new Backbone.Model({foo: 1, bar: 2, baz: 3});
     assert.ok(a.isNew(), 'it should be new');
-    a = new Backbone.Model({'foo': 1, 'bar': 2, 'baz': 3, 'id': -5});
+    a = new Backbone.Model({foo: 1, bar: 2, baz: 3, id: -5});
     assert.ok(!a.isNew(), 'any defined ID is legal, negative or positive');
-    a = new Backbone.Model({'foo': 1, 'bar': 2, 'baz': 3, 'id': 0});
+    a = new Backbone.Model({foo: 1, bar: 2, baz: 3, id: 0});
     assert.ok(!a.isNew(), 'any defined ID is legal, including zero');
     assert.ok(new Backbone.Model().isNew(), 'is true when there is no id');
-    assert.ok(!new Backbone.Model({'id': 2}).isNew(), 'is false for a positive integer');
-    assert.ok(!new Backbone.Model({'id': -5}).isNew(), 'is false for a negative integer');
+    assert.ok(!new Backbone.Model({id: 2}).isNew(), 'is false for a positive integer');
+    assert.ok(!new Backbone.Model({id: -5}).isNew(), 'is false for a negative integer');
   });
 
   QUnit.test('get', function(assert) {
@@ -222,13 +222,13 @@
     assert.expect(4);
     var model = new Backbone.Model();
 
-    assert.strictEqual(model.matches({'name': 'Jonas', 'cool': true}), false);
+    assert.strictEqual(model.matches({name: 'Jonas', cool: true}), false);
 
-    model.set({name: 'Jonas', 'cool': true});
+    model.set({name: 'Jonas', cool: true});
 
-    assert.strictEqual(model.matches({'name': 'Jonas'}), true);
-    assert.strictEqual(model.matches({'name': 'Jonas', 'cool': true}), true);
-    assert.strictEqual(model.matches({'name': 'Jonas', 'cool': false}), false);
+    assert.strictEqual(model.matches({name: 'Jonas'}), true);
+    assert.strictEqual(model.matches({name: 'Jonas', cool: true}), true);
+    assert.strictEqual(model.matches({name: 'Jonas', cool: false}), false);
   });
 
   QUnit.test('matches with predicate', function(assert) {
@@ -250,11 +250,11 @@
     var a = new Backbone.Model({id: 'id', foo: 1, bar: 2, baz: 3});
     var changeCount = 0;
     a.on('change:foo', function() { changeCount += 1; });
-    a.set({'foo': 2});
+    a.set({foo: 2});
     assert.ok(a.get('foo') == 2, 'Foo should have changed.');
     assert.ok(changeCount == 1, 'Change count should have incremented.');
     // set with value that is not new shouldn't fire change event
-    a.set({'foo': 2});
+    a.set({foo: 2});
     assert.ok(a.get('foo') == 2, 'Foo should NOT have changed, still 2');
     assert.ok(changeCount == 1, 'Change count should NOT have incremented.');
 
@@ -431,8 +431,8 @@
     assert.expect(4);
     var Defaulted = Backbone.Model.extend({
       defaults: {
-        'one': 1,
-        'two': 2
+        one: 1,
+        two: 2
       }
     });
     var model = new Defaulted({two: undefined});
@@ -441,8 +441,8 @@
     Defaulted = Backbone.Model.extend({
       defaults: function() {
         return {
-          'one': 3,
-          'two': 4
+          one: 3,
+          two: 4
         };
       }
     });
@@ -736,7 +736,7 @@
 
   QUnit.test('non-persisted destroy', function(assert) {
     assert.expect(1);
-    var a = new Backbone.Model({'foo': 1, 'bar': 2, 'baz': 3});
+    var a = new Backbone.Model({foo: 1, bar: 2, baz: 3});
     a.sync = function() { throw 'should not be called'; };
     a.destroy();
     assert.ok(true, 'non-persisted model should not call sync');

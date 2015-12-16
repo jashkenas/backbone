@@ -630,7 +630,7 @@
       model: ValidatingModel
     });
     var col = new ValidatingCollection();
-    var m = col.create({'foo': 'bar'});
+    var m = col.create({foo: 'bar'});
     assert.equal(m.validationError, 'fail');
     assert.equal(col.length, 1);
   });

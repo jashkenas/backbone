@@ -10,7 +10,6 @@
   },
   "rules": {
     "no-throw-literal": 0,
-    "no-undefined": 0,
-    "quote-props": 0
+    "no-undefined": 0
   }
 }

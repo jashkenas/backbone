@@ -271,7 +271,7 @@
     assert.expect(2);
     var View = Backbone.View.extend({
       attributes: {
-        id: 'id',
+        'id': 'id',
         'class': 'class'
       }
     });
@@ -341,7 +341,7 @@
     var View = Backbone.View.extend({
       el: $('body'),
       events: {
-        'fake$event': function() { assert.ok(true); }
+        fake$event: function() { assert.ok(true); }
       }
     });
 
