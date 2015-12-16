@@ -74,28 +74,28 @@
     count: 0,
 
     routes: {
-      "noCallback":                 "noCallback",
-      "counter":                    "counter",
-      "search/:query":              "search",
-      "search/:query/p:page":       "search",
-      "charñ":                      "charUTF",
-      "char%C3%B1":                 "charEscaped",
-      "contacts":                   "contacts",
-      "contacts/new":               "newContact",
-      "contacts/:id":               "loadContact",
-      "route-event/:arg":           "routeEvent",
-      "optional(/:item)":           "optionalItem",
-      "named/optional/(y:z)":       "namedOptional",
-      "splat/*args/end":            "splat",
-      ":repo/compare/*from...*to":  "github",
-      "decode/:named/*splat":       "decode",
+      "noCallback": "noCallback",
+      "counter": "counter",
+      "search/:query": "search",
+      "search/:query/p:page": "search",
+      "charñ": "charUTF",
+      "char%C3%B1": "charEscaped",
+      "contacts": "contacts",
+      "contacts/new": "newContact",
+      "contacts/:id": "loadContact",
+      "route-event/:arg": "routeEvent",
+      "optional(/:item)": "optionalItem",
+      "named/optional/(y:z)": "namedOptional",
+      "splat/*args/end": "splat",
+      ":repo/compare/*from...*to": "github",
+      "decode/:named/*splat": "decode",
       "*first/complex-*part/*rest": "complex",
-      "query/:entity":              "query",
-      "function/:value":            ExternalObject.routingFunction,
-      "*anything":                  "anything"
+      "query/:entity": "query",
+      "function/:value": ExternalObject.routingFunction,
+      "*anything": "anything"
     },
 
-    initialize : function(options) {
+    initialize: function(options) {
       this.testing = options.testing;
       this.route('implicit', 'implicit');
     },
@@ -685,7 +685,7 @@
     var RouterBase = Backbone.Router.extend({
       routes: function() {
         return {
-          home:  "root",
+          home: "root",
           index: "index.html"
         };
       }

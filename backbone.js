@@ -1425,9 +1425,9 @@
   var methodMap = {
     'create': 'POST',
     'update': 'PUT',
-    'patch':  'PATCH',
+    'patch': 'PATCH',
     'delete': 'DELETE',
-    'read':   'GET'
+    'read': 'GET'
   };
 
   // Set the default implementation of `Backbone.ajax` to proxy through to `$`.

@@ -13,6 +13,7 @@
     "computed-property-spacing": [2, "never"],
     "eol-last": 2,
     "indent": [2, 2, {"SwitchCase": 1, "VariableDeclarator": 2}],
+    "key-spacing": 1,
     "linebreak-style": 2,
     "max-depth": [1, 4],
     "max-params": [1, 5],

@@ -1,19 +1,19 @@
 (function() {
 
   var Library = Backbone.Collection.extend({
-    url : function() { return '/library'; }
+    url: function() { return '/library'; }
   });
   var library;
 
   var attrs = {
-    title  : "The Tempest",
-    author : "Bill Shakespeare",
-    length : 123
+    title: "The Tempest",
+    author: "Bill Shakespeare",
+    length: 123
   };
 
   QUnit.module("Backbone.sync", {
 
-    beforeEach : function(assert) {
+    beforeEach: function(assert) {
       library = new Library;
       library.create(attrs, {wait: false});
     },

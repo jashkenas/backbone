@@ -10,9 +10,9 @@
       );
 
       view = new Backbone.View({
-        id        : 'test-view',
-        className : 'test-view',
-        other     : 'non-special-option'
+        id: 'test-view',
+        className: 'test-view',
+        other: 'non-special-option'
       });
     }
 
