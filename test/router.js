@@ -1059,4 +1059,4 @@
     Backbone.history.start({root: '®ooτ', pushState: true});
   });
 
-})();
+}());

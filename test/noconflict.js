@@ -10,4 +10,4 @@
     assert.equal(window.Backbone, noconflictBackbone, 'Backbone is still pointing to the original Backbone');
   });
 
-})();
+}());

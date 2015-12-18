@@ -1410,4 +1410,4 @@
     assert.equal(model.id, 3);
   });
 
-})();
+}());
