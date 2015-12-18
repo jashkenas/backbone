@@ -4,7 +4,10 @@
     "node": true,
     "amd": true
   },
-
+  "globals": {
+    "attachEvent": true,
+    "detachEvent": true
+  },
   "rules": {
     "array-bracket-spacing": [2],
     "camelcase": 2,
@@ -44,6 +47,7 @@
     "no-irregular-whitespace": 2,
     "no-label-var": 2,
     "no-lone-blocks": 2,
+    "no-lonely-if": 2,
     "no-multi-str": 2,
     "no-native-reassign": 2,
     "no-negated-in-lhs": 1,
@@ -57,12 +61,14 @@
     "no-spaced-func": 2,
     "no-throw-literal": 2,
     "no-trailing-spaces": 2,
+    "no-undef": 2,
     "no-undef-init": 2,
     "no-undefined": 2,
     "no-unneeded-ternary": 2,
     "no-unreachable": 2,
     "no-with": 2,
     "object-curly-spacing": [2, "never"],
+    "quote-props": [1, "consistent-as-needed"],
     "quotes": [2, "single", "avoid-escape"],
     "radix": 2,
     "semi": 2,
