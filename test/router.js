@@ -154,7 +154,7 @@
     },
 
     query: function(entity, args) {
-      this.entity    = entity;
+      this.entity = entity;
       this.queryArgs = args;
     },
 

@@ -44,6 +44,7 @@
     "no-irregular-whitespace": 2,
     "no-label-var": 2,
     "no-lone-blocks": 2,
+    "no-multi-spaces": 1,
     "no-multi-str": 2,
     "no-native-reassign": 2,
     "no-negated-in-lhs": 1,
