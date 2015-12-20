@@ -393,7 +393,7 @@
   // is automatically generated and assigned for you.
   var Model = Backbone.Model = function(attributes, options) {
     var attrs = attributes || {};
-    options || (options = {});
+    options = options || {};
     this.cid = _.uniqueId(this.cidPrefix);
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
@@ -472,7 +472,7 @@
         (attrs = {})[key] = val;
       }
 
-      options || (options = {});
+      options = options || {};
 
       // Run validation.
       if (!this._validate(attrs, options)) return false;
@@ -752,7 +752,7 @@
   // If a `comparator` is specified, the Collection will maintain
   // its models in sort order, as they're added and removed.
   var Collection = Backbone.Collection = function(models, options) {
-    options || (options = {});
+    options = options || {};
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
@@ -994,7 +994,7 @@
     sort: function(options) {
       var comparator = this.comparator;
       if (!comparator) throw new Error('Cannot sort a set without a comparator');
-      options || (options = {});
+      options = options || {};
 
       var length = comparator.length;
       if (_.isFunction(comparator)) comparator = _.bind(comparator, this);
@@ -1277,7 +1277,7 @@
     // Uses event delegation for efficiency.
     // Omitting the selector binds the event to `this.el`.
     delegateEvents: function(events) {
-      events || (events = _.result(this, 'events'));
+      events = events || _.result(this, 'events');
       if (!events) return this;
       this.undelegateEvents();
       for (var key in events) {
@@ -1442,7 +1442,7 @@
   // Routers map faux-URLs to actions, and fire events when routes are
   // matched. Creating a new one sets its `routes` hash, if not set statically.
   var Router = Backbone.Router = function(options) {
-    options || (options = {});
+    options = options || {};
     if (options.routes) this.routes = options.routes;
     this._bindRoutes();
     this.initialize.apply(this, arguments);
