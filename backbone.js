@@ -840,7 +840,7 @@
       var remove = options.remove;
 
       var sort = false;
-      var sortable = this.comparator && (at == null) && options.sort !== false;
+      var sortable = this.comparator && at == null && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
 
       // Turn bare objects into model references, and prevent invalid models
@@ -1802,7 +1802,7 @@
       // fragment to store history.
       } else if (this._wantsHashChange) {
         this._updateHash(this.location, fragment, options.replace);
-        if (this.iframe && (fragment !== this.getHash(this.iframe.contentWindow))) {
+        if (this.iframe && fragment !== this.getHash(this.iframe.contentWindow)) {
           var iWindow = this.iframe.contentWindow;
 
           // Opening and closing the iframe tricks IE7 and earlier to push a
