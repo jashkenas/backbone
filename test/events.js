@@ -427,7 +427,7 @@
     };
 
     var obj = _.extend({}, Backbone.Events);
-    obj.on('event', function() { this.assertTrue(); }, (new TestClass));
+    obj.on('event', function() { this.assertTrue(); }, new TestClass);
     obj.trigger('event');
   });
 
