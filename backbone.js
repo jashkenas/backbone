@@ -479,7 +479,6 @@
 
       // Extract attributes and options.
       var unset      = options.unset;
-      var silent     = options.silent;
       var changes    = [];
       var changing   = this._changing;
       this._changing = true;
@@ -509,22 +508,18 @@
       if (this.idAttribute in attrs) this.id = this.get(this.idAttribute);
 
       // Trigger all relevant attribute changes.
-      if (!silent) {
-        if (changes.length) this._pending = options;
-        for (var i = 0; i < changes.length; i++) {
-          this.trigger('change:' + changes[i], this, current[changes[i]], options);
-        }
+      if (changes.length) this._pending = options;
+      for (var i = 0; i < changes.length; i++) {
+        this.trigger('change:' + changes[i], this, current[changes[i]], options);
       }
 
       // You might be wondering why there's a `while` loop here. Changes can
       // be recursively nested within `"change"` events.
       if (changing) return this;
-      if (!silent) {
-        while (this._pending) {
-          options = this._pending;
-          this._pending = false;
-          this.trigger('change', this, options);
-        }
+      while (this._pending) {
+        options = this._pending;
+        this._pending = false;
+        this.trigger('change', this, options);
       }
       this._pending = false;
       this._changing = false;
@@ -757,7 +752,7 @@
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
     this.initialize.apply(this, arguments);
-    if (models) this.reset(models, _.extend({silent: true}, options));
+    if (models) this.reset(models, _.extend({fromConstructor: true}, options));
   };
 
   // Default options for `Collection#set`.
@@ -809,7 +804,7 @@
       var singular = !_.isArray(models);
       models = singular ? [models] : models.slice();
       var removed = this._removeModels(models, options);
-      if (!options.silent && removed.length) this.trigger('update', this, options);
+      if (removed.length) this.trigger('update', this, options);
       return singular ? removed[0] : removed;
     },
 
@@ -902,19 +897,17 @@
         this.length = this.models.length;
       }
 
-      // Silently sort the collection if appropriate.
-      if (sort) this.sort({silent: true});
+      // Sort the collection if appropriate.
+      if (sort) this.sort({fromSet: true});
 
       // Unless silenced, it's time to fire all appropriate add/sort events.
-      if (!options.silent) {
-        for (i = 0; i < toAdd.length; i++) {
-          if (at != null) options.index = at + i;
-          model = toAdd[i];
-          model.trigger('add', model, this, options);
-        }
-        if (sort || orderChanged) this.trigger('sort', this, options);
-        if (toAdd.length || toRemove.length) this.trigger('update', this, options);
+      for (i = 0; i < toAdd.length; i++) {
+        if (at != null) options.index = at + i;
+        model = toAdd[i];
+        model.trigger('add', model, this, options);
       }
+      if (sort || orderChanged) this.trigger('sort', this, options);
+      if (toAdd.length || toRemove.length) this.trigger('update', this, options);
 
       // Return the added (or merged) model (or models).
       return singular ? models[0] : models;
@@ -931,8 +924,8 @@
       }
       options.previousModels = this.models;
       this._reset();
-      models = this.add(models, _.extend({silent: true}, options));
-      if (!options.silent) this.trigger('reset', this, options);
+      models = this.add(models, _.extend({fromReset: true}, options));
+      this.trigger('reset', this, options);
       return models;
     },
 
@@ -1005,7 +998,7 @@
       } else {
         this.models.sort(comparator);
       }
-      if (!options.silent) this.trigger('sort', this, options);
+      this.trigger('sort', this, options);
       return this;
     },
 
@@ -1109,10 +1102,8 @@
         var id = this.modelId(model.attributes);
         if (id != null) delete this._byId[id];
 
-        if (!options.silent) {
-          options.index = index;
-          model.trigger('remove', model, this, options);
-        }
+        options.index = index;
+        model.trigger('remove', model, this, options);
 
         removed.push(model);
         this._removeReference(model, options);
@@ -1701,7 +1692,7 @@
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
 
-      if (!this.options.silent) return this.loadUrl();
+      return this.loadUrl();
     },
 
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,

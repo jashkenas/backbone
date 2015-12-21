@@ -1019,13 +1019,15 @@ view.stopListening(model);
     </ul>
 
     <p>
-      Generally speaking, when calling a function that emits an event
-      (<tt>model.set</tt>, <tt>collection.add</tt>, and so on...),
-      if you'd like to prevent the event from being triggered, you may pass
-      <tt>{silent: true}</tt> as an option. Note that this is <i>rarely</i>,
-      perhaps even never, a good idea. Passing through a specific flag
-      in the options for your event callback to look at, and choose to ignore,
-      will usually work out better.
+      If there are cases where you want to avoid your event callback
+      executing it's usual logic, pass through a specific flag
+      in the options for your event callback to look at.
+    </p>
+    <p>
+      Backbone itself passes through a few helpful flags,
+      a <tt>fromConstructor</tt> flag for the <tt>reset</tt> fired in the collection constructor,
+      a <tt>fromReset</tt> for the <tt>add</tt> fired in collection reset,
+      and a <tt>fromSet</tt> for the <tt>sort</tt> fired in collection set.
     </p>
 
     <h2 id="Model">Backbone.Model</h2>
