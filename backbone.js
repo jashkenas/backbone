@@ -1801,7 +1801,7 @@
       // If hash changes haven't been explicitly disabled, update the hash
       // fragment to store history.
       } else if (this._wantsHashChange) {
-        this._updateHash(this.location, fragment, options.replace);
+        this._updateHash(this.location, fragment);
         if (this.iframe && fragment !== this.getHash(this.iframe.contentWindow)) {
           var iWindow = this.iframe.contentWindow;
 
@@ -1813,7 +1813,7 @@
             iWindow.document.close();
           }
 
-          this._updateHash(iWindow.location, fragment, options.replace);
+          this._updateHash(iWindow.location, fragment);
         }
 
       // If you've told us that you explicitly don't want fallback hashchange-
@@ -1826,14 +1826,10 @@
 
     // Update the hash location, either replacing the current entry, or adding
     // a new one to the browser history.
-    _updateHash: function(location, fragment, replace) {
-      if (replace) {
-        var href = location.href.replace(/(javascript:|#).*$/, '');
-        location.replace(href + '#' + fragment);
-      } else {
-        // Some browsers require that `hash` contains a leading #.
-        location.hash = '#' + fragment;
-      }
+    _updateHash: function(location, fragment) {
+      location.hash = '#' + fragment;
+      var href = location.href.replace(/(javascript:|#).*$/, '');
+      location.replace(href + '#' + fragment);
     }
 
   });
