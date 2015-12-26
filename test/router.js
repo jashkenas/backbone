@@ -431,7 +431,7 @@
     var route = '#北їñ';
     var isSafari = navigator.appVersion.indexOf('Version/') != -1;
     //PhantomJS changes location.hash to unicode as well
-    var isPhantomJs = navigator.appVersion.indexOf'PhantomJS/') != -1;
+    var isPhantomJs = navigator.appVersion.indexOf('PhantomJS/') != -1;
     var result = isSafari || isPhantomJs ? '#%E5%8C%97%D1%97%C3%B1' : route;
 
     location.replace('http://example.com' + route);
