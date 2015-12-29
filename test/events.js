@@ -352,8 +352,8 @@
     _.extend(obj, Backbone.Events);
     obj.on('all', function(event) {
       obj.counter++;
-      if (event == 'a') a = true;
-      if (event == 'b') b = true;
+      if (event === 'a') a = true;
+      if (event === 'b') b = true;
     })
     .trigger('a b');
     assert.ok(a);

@@ -18,6 +18,7 @@
     "computed-property-spacing": [2, "never"],
     "dot-notation": [2, { "allowKeywords": false }],
     "eol-last": 2,
+    "eqeqeq": [2, "smart"],
     "indent": [2, 2, {"SwitchCase": 1, "VariableDeclarator": 2}],
     "key-spacing": 1,
     "linebreak-style": 2,
