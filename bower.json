@@ -4,5 +4,5 @@
   "dependencies"  : {
     "underscore"  : ">=1.8.3"
   },
-  "ignore"        : ["docs", "examples", "test", "*.yml", "*.html", "*.ico", "*.md", "CNAME", ".*", "karma.*", "component.json", "package.json"]
+  "ignore"        : ["docs", "examples", "test", "*.yml", "*.html", "*.ico", "*.md", "CNAME", ".*", "karma.*", "component.json", "package.json", "backbone-min.map", "backbone-min.js"]
 }
