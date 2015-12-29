@@ -10,6 +10,7 @@
   },
   "rules": {
     "array-bracket-spacing": [2],
+    "block-scoped-var": 2,
     "brace-style": [1, "1tbs", {"allowSingleLine": true}],
     "camelcase": 2,
     "comma-dangle": [2, "never"],
