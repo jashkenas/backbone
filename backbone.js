@@ -9,8 +9,8 @@
 
   // Establish the root object, `window` (`self`) in the browser, or `global` on the server.
   // We use `self` instead of `window` for `WebWorker` support.
-  var root = (typeof self == 'object' && self.self == self && self) ||
-            (typeof global == 'object' && global.global == global && global);
+  var root = (typeof self == 'object' && self.self === self && self) ||
+            (typeof global == 'object' && global.global === global && global);
 
   // Set up Backbone appropriately for the environment. Start with AMD.
   if (typeof define === 'function' && define.amd) {
@@ -769,7 +769,8 @@
     at = Math.min(Math.max(at, 0), array.length);
     var tail = Array(array.length - at);
     var length = insert.length;
-    for (var i = 0; i < tail.length; i++) tail[i] = array[i + at];
+    var i;
+    for (i = 0; i < tail.length; i++) tail[i] = array[i + at];
     for (i = 0; i < length; i++) array[i + at] = insert[i];
     for (i = 0; i < tail.length; i++) array[i + length + at] = tail[i];
   };
@@ -845,8 +846,8 @@
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
-      var model;
-      for (var i = 0; i < models.length; i++) {
+      var model, i;
+      for (i = 0; i < models.length; i++) {
         model = models[i];
 
         // If a duplicate is found, prevent it from being added and
@@ -890,7 +891,7 @@
       var orderChanged = false;
       var replace = !sortable && add && remove;
       if (set.length && replace) {
-        orderChanged = this.length != set.length || _.some(this.models, function(model, index) {
+        orderChanged = this.length !== set.length || _.some(this.models, function(model, index) {
           return model !== set[index];
         });
         this.models.length = 0;
