@@ -89,7 +89,7 @@
     doc.collection.url = '/collection/';
     assert.equal(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;
-    assert.throws(function() { doc.url(); });
+    assert.raises(function() { doc.url(); });
     doc.collection = collection;
   });
 
