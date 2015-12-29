@@ -822,10 +822,12 @@
       if (models == null) return;
 
       options = _.defaults({}, options, setOptions);
-      if (options.parse && !this._isModel(models)) models = this.parse(models, options);
+      if (options.parse && !this._isModel(models)) {
+        models = this.parse(models, options) || [];
+      }
 
       var singular = !_.isArray(models);
-      models = singular ? (models ? [models] : []) : models.slice();
+      models = singular ? [models] : models.slice();
 
       var at = options.at;
       if (at != null) at = +at;
