@@ -852,6 +852,7 @@
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
+        model = models[i] = this._prepareModel(model, options);
         var existing = this.get(model);
         if (existing) {
           if (merge && model !== existing) {
@@ -868,7 +869,6 @@
 
         // If this is a new, valid model, push it to the `toAdd` list.
         } else if (add) {
-          model = models[i] = this._prepareModel(model, options);
           if (model) {
             toAdd.push(model);
             this._addReference(model, options);
