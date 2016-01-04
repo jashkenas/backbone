@@ -968,7 +968,10 @@
     get: function(obj) {
       if (obj == null) return void 0;
       var id = this.modelId(this._isModel(obj) ? obj.attributes : obj);
-      return this._byId[obj] || this._byId[id] || this._byId[obj.cid];
+      if (this._isModel(obj)) {
+        return this._byId[obj] || this._byId[id] || this._byId[obj.cid];
+      }
+      return this._byId[obj] || this._byId[id];
     },
 
     // Get the model at the given index.
