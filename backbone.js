@@ -1282,11 +1282,13 @@
       if (!events) return this;
       this.undelegateEvents();
       for (var key in events) {
-        var method = events[key];
+        var method = events[key], combinedEvents = key.split(',');
         if (!_.isFunction(method)) method = this[method];
         if (!method) continue;
-        var match = key.match(delegateEventSplitter);
-        this.delegate(match[1], match[2], _.bind(method, this));
+        for (var i = 0, match = null; i < combinedEvents.length; ++i) {
+          match = combinedEvents[i].trim().match(delegateEventSplitter);
+          this.delegate(match[1], match[2], _.bind(method, this));
+        }
       }
       return this;
     },
