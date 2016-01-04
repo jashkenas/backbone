@@ -969,7 +969,7 @@
       if (obj == null) return void 0;
       var id = this.modelId(this._isModel(obj) ? obj.attributes : obj);
       if (this._isModel(obj)) {
-        return this._byId[obj] || this._byId[id] || this._byId[obj.cid];
+        return this._byId[id] || this._byId[obj.cid];
       }
       return this._byId[obj] || this._byId[id];
     },
