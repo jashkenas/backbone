@@ -348,7 +348,7 @@
   };
 
   // Handles triggering the appropriate event callbacks.
-  var triggerApi = function(objEvents, name, cb, args) {
+  var triggerApi = function(objEvents, name, callback, args) {
     if (objEvents) {
       var events = objEvents[name];
       var allEvents = objEvents.all;
@@ -893,8 +893,8 @@
       var orderChanged = false;
       var replace = !sortable && add && remove;
       if (set.length && replace) {
-        orderChanged = this.length !== set.length || _.some(this.models, function(model, index) {
-          return model !== set[index];
+        orderChanged = this.length !== set.length || _.some(this.models, function(m, index) {
+          return m !== set[index];
         });
         this.models.length = 0;
         splice(this.models, set, 0);
@@ -1045,9 +1045,9 @@
       if (!wait) this.add(model, options);
       var collection = this;
       var success = options.success;
-      options.success = function(model, resp, callbackOpts) {
-        if (wait) collection.add(model, callbackOpts);
-        if (success) success.call(callbackOpts.context, model, resp, callbackOpts);
+      options.success = function(m, resp, callbackOpts) {
+        if (wait) collection.add(m, callbackOpts);
+        if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
       };
       model.save(null, options);
       return model;
@@ -1587,8 +1587,8 @@
     // Does the pathname match the root?
     matchRoot: function() {
       var path = this.decodeFragment(this.location.pathname);
-      var root = path.slice(0, this.root.length - 1) + '/';
-      return root === this.root;
+      var rootPath = path.slice(0, this.root.length - 1) + '/';
+      return rootPath === this.root;
     },
 
     // Unicode characters in `location.pathname` are percent encoded so they're
@@ -1660,8 +1660,8 @@
         // If we've started off with a route from a `pushState`-enabled
         // browser, but we're currently in a browser that doesn't support it...
         if (!this._hasPushState && !this.atRoot()) {
-          var root = this.root.slice(0, -1) || '/';
-          this.location.replace(root + '#' + this.getPath());
+          var rootPath = this.root.slice(0, -1) || '/';
+          this.location.replace(rootPath + '#' + this.getPath());
           // Return immediately as browser will do redirect to new url
           return true;
 
@@ -1785,11 +1785,11 @@
       fragment = this.getFragment(fragment || '');
 
       // Don't include a trailing slash on the root.
-      var root = this.root;
+      var rootPath = this.root;
       if (fragment === '' || fragment.charAt(0) === '?') {
-        root = root.slice(0, -1) || '/';
+        rootPath = rootPath.slice(0, -1) || '/';
       }
-      var url = root + fragment;
+      var url = rootPath + fragment;
 
       // Strip the hash and decode for matching.
       fragment = this.decodeFragment(fragment.replace(pathStripper, ''));
