@@ -106,6 +106,26 @@
     assert.equal(collection.get(1).id, 1);
   });
 
+  QUnit.test('has', function(assert) {
+    assert.expect(15);
+    assert.ok(col.has(a));
+    assert.ok(col.has(b));
+    assert.ok(col.has(c));
+    assert.ok(col.has(d));
+    assert.ok(col.has(a.id));
+    assert.ok(col.has(b.id));
+    assert.ok(col.has(c.id));
+    assert.ok(col.has(d.id));
+    assert.ok(col.has(a.cid));
+    assert.ok(col.has(b.cid));
+    assert.ok(col.has(c.cid));
+    assert.ok(col.has(d.cid));
+    var outsider = new Backbone.Model({id: 4});
+    assert.notOk(col.has(outsider));
+    assert.notOk(col.has(outsider.id));
+    assert.notOk(col.has(outsider.cid));
+  });
+
   QUnit.test('update index when id changes', function(assert) {
     assert.expect(4);
     var col = new Backbone.Collection();

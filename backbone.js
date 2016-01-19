@@ -973,6 +973,11 @@
       return this._byId[obj] || this._byId[id] || this._byId[obj.cid];
     },
 
+    // Returns `true` if the model is in the collection.
+    has: function(obj) {
+      return this.get(obj) != null;
+    },
+
     // Get the model at the given index.
     at: function(index) {
       if (index < 0) index += this.length;
