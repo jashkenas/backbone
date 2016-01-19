@@ -63,6 +63,7 @@
     "no-octal-escape": 2,
     "no-proto": 2,
     "no-redeclare": 2,
+    "no-shadow": 2,
     "no-spaced-func": 2,
     "no-throw-literal": 2,
     "no-trailing-spaces": 2,
