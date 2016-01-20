@@ -1719,6 +1719,7 @@
     assert.equal(c1.modelId({id: 1}), 1);
 
     // If the polymorphic models define their own idAttribute,
+    // either a modelIdAttribute should be provided or
     // the modelId method should be overridden, for the reason below.
     var M = Backbone.Model.extend({
       idAttribute: '_id'
@@ -1735,6 +1736,30 @@
     c2.add(m);
     assert.equal(c2.get(2), void 0);
     assert.equal(c2.modelId(m.attributes), void 0);
+  });
+
+  QUnit.test('Collection with polymorphic models using modelIdAttribute', function(assert) {
+    assert.expect(3);
+
+    var collection = new Backbone.Collection([], {modelIdAttribute: '_id'});
+    collection.add({'_id': 10});
+    assert.equal(collection.get(10), collection.at(0));
+
+    var M = Backbone.Model.extend({
+      idAttribute: '_id'
+    });
+    var Coll = Backbone.Collection.extend({
+      modelIdAttribute: '_id',
+      model: function(attrs) {
+        return new M(attrs);
+      }
+    });
+    var m = new M({'_id': 100});
+    var coll = new Coll(m);
+    assert.equal(coll.get(100), coll.at(0));
+
+    var collClone = coll.clone();
+    assert.equal(collClone.get(100), collClone.at(0));
   });
 
   QUnit.test('#3039: adding at index fires with correct at', function(assert) {

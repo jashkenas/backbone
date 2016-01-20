@@ -381,6 +381,8 @@
   // want global "pubsub" in a convenient place.
   _.extend(Backbone, Events);
 
+  var defaultIdAttribute = 'id';
+
   // Backbone.Model
   // --------------
 
@@ -415,7 +417,7 @@
 
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
-    idAttribute: 'id',
+    idAttribute: defaultIdAttribute,
 
     // The prefix is used to create the client id which is used to identify models locally.
     // You may want to override this if you're experiencing name clashes with model ids.
@@ -755,6 +757,7 @@
     options || (options = {});
     if (options.model) this.model = options.model;
     if (options.comparator !== void 0) this.comparator = options.comparator;
+    if (options.modelIdAttribute !== void 0) this.modelIdAttribute = options.modelIdAttribute;
     this._reset();
     this.initialize.apply(this, arguments);
     if (models) this.reset(models, _.extend({silent: true}, options));
@@ -1068,13 +1071,19 @@
     clone: function() {
       return new this.constructor(this.models, {
         model: this.model,
-        comparator: this.comparator
+        comparator: this.comparator,
+        modelIdAttribute: this.modelIdAttribute
       });
     },
 
-    // Define how to uniquely identify models in the collection.
+    // Returns the value by which the model is uniquely
+    // identified in the colleciton.
     modelId: function(attrs) {
-      return attrs[this.model.prototype.idAttribute || 'id'];
+      return attrs [
+        this.modelIdAttribute ||
+        this.model.prototype.idAttribute ||
+        defaultIdAttribute
+      ];
     },
 
     // Private method to reset all internal state. Called when the collection
