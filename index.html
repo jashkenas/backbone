@@ -378,6 +378,7 @@
       <li>– <a href="#Collection-extend">extend</a></li>
       <li>– <a href="#Collection-model">model</a></li>
       <li>– <a href="#Collection-modelId">modelId</a></li>
+      <li>– <a href="#Collection-modelIdAttribute">modelIdAttribute</a></li>
       <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
       <li>– <a href="#Collection-models">models</a></li>
       <li>– <a href="#Collection-toJSON">toJSON</a></li>
@@ -1784,12 +1785,16 @@ var Library = Backbone.Collection.extend({
     </p>
 
     <p>
-      By default returns the value of the attributes'
+      If a <a href="#Collection-modelIdAttribute"><tt>modelIdAttribute</tt></a>
+      is present, <tt>modelId</tt> returns the value of the attributes'
+      <tt>modelIdAttribute</tt>. Otherwise, returns the value of the attributes'
       <a href="#Model-idAttribute"><tt>idAttribute</tt></a>
-      from the collection's model class or failing that, <tt>id</tt>. If
+      from the collection's model class or failing that
+      (eg, in the case of a <a href="#Collection-model">model factory</a>, <tt>id</tt>. If
       your collection uses a <a href="#Collection-model">model factory</a> and
       those models have an <tt>idAttribute</tt> other than <tt>id</tt> you must
-      override this method.
+      either define a <a href="#Collection-modelIdAttribute"><tt>modelIdAttribute</tt></a>
+      or override this method.
     </p>
 
 <pre class="runnable">
@@ -1812,13 +1817,49 @@ alert('dvd: ' + library.get('dvd1').id + ', vhs: ' + library.get('vhs1').id);
 
 </pre>
 
+    <p id="Collection-modelIdAttribute">
+      <b class="header">modelIdAttribute</b><code>collection.modelIdAttribute</code>
+      <br />
+      Optionally you may define the key for <a href="#Collection-modelId"><tt>modelId</tt></a>
+      by which models in the collection are uniquely identified.
+    </p>
+
+    <p>
+      If your collection uses a
+      <a href="#Collection-model">model factory</a> and those models
+      have an <tt>idAttribute</tt> other than <tt>id</tt> you must
+      define this property or override
+      <a href="#Collection-modelId"><tt>modelId</tt></a>.
+    </p>
+
+<pre class="runnable">
+      var Book = Backbone.Model.extend({
+        idAttribute: '_id'
+      });
+      var Magazine = Backbone.Model.extend({
+        idAttribute: '_id'
+      });
+      var Library = Backbone.Collection.extend({
+        modelIdAttribute: '_id',
+        model: function(attrs) {
+          return attrs.type === 'book'
+            ? new Book(attrs)
+            : new Magazine(attrs);
+        }
+      });
+      var library = new Library({'type': 'book', '_id': 1});
+      alert('The first item is a ' + library.get(1).get('type'));
+</pre>
+
     <p id="Collection-constructor">
       <b class="header">constructor / initialize</b><code>new Backbone.Collection([models], [options])</code>
       <br />
       When creating a Collection, you may choose to pass in the initial array
       of <b>models</b>.  The collection's <a href="#Collection-comparator">comparator</a>
       may be included as an option. Passing <tt>false</tt> as the
-      comparator option will prevent sorting. If you define an
+      comparator option will prevent sorting. The collection's
+      <a href="#Collection-modelIdAttribute"><tt>modelIdAttribute</tt></a> may be included
+      as an option to define the models' uniquely identifying key in the collection.
       <b>initialize</b> function, it will be invoked when the collection is
       created. There are a couple of options that, if provided, are attached to
       the collection directly: <tt>model</tt> and <tt>comparator</tt>.<br />
