@@ -309,7 +309,7 @@
   Events.once = function(name, callback, context) {
     // Map the event into a `{event: once}` object.
     var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
-    return this.on(events, void 0, context);
+    return this.on(events, callback, context);
   };
 
   // Inversion-of-control versions of `once`.
