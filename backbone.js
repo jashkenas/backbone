@@ -1090,11 +1090,14 @@
     _prepareModel: function(attrs, options) {
       if (this._isModel(attrs)) {
         if (!attrs.collection) attrs.collection = this;
+        if (!attrs.urlRoot) attrs.urlRoot = this.url;
         return attrs;
       }
       options = options ? _.clone(options) : {};
       options.collection = this;
+      options.urlRoot = this.url;
       var model = new this.model(attrs, options);
+      if (!model.urlRoot) model.urlRoot = this.url;
       if (!model.validationError) return model;
       this.trigger('invalid', this, model.validationError, options);
       return false;
