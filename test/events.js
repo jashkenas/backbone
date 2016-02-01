@@ -587,6 +587,19 @@
     assert.equal(obj.counter, 3);
   });
 
+  QUnit.test('bind a callback with a supplied context using once with object notation', function(assert) {
+    assert.expect(1);
+    var obj = {counter: 0};
+    var context = {};
+    _.extend(obj, Backbone.Events);
+
+    obj.once({
+      a: function() {
+        assert.strictEqual(this, context, 'defaults `context` to `callback` param');
+      }
+    }, context).trigger('a');
+  });
+
   QUnit.test('once with off only by context', function(assert) {
     assert.expect(0);
     var context = {};
