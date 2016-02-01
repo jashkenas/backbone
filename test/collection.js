@@ -1839,7 +1839,7 @@
 
   QUnit.test('set does not trigger `update` event when nothing added nor removed', function(assert) {
     var collection = new Backbone.Collection([{id: 1}, {id: 2}]);
-    collection.on('update', function(col, options) {
+    collection.on('update', function(coll, options) {
       assert.equal(options.changes.added.length, 0);
       assert.equal(options.changes.removed.length, 0);
       assert.equal(options.changes.merged.length, 2);
@@ -1885,7 +1885,10 @@
     var model = new Backbone.Model({id: 1, title: 'First Post'});
     var collection = new Backbone.Collection([model]);
     collection.on('update', function(context, options) {
-      assert.strictEqual(options.removedModels[0], model);
+      var changed = options.changes;
+      assert.deepEqual(changed.added, []);
+      assert.deepEqual(changed.merged, []);
+      assert.strictEqual(changed.removed[0], model);
     });
     collection.remove(model);
   });
@@ -1895,32 +1898,34 @@
     var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
     var collection = new Backbone.Collection([model, model2]);
     collection.on('update', function(context, options) {
-      var removedModels = options.removedModels;
-      if (!removedModels || removedModels.length !== 2) assert.ok(false);
+      var changed = options.changes;
+      assert.deepEqual(changed.added, []);
+      assert.deepEqual(changed.merged, []);
+      assert.ok(changed.removed.length === 2);
 
-      assert.ok(removedModels.indexOf(model) > -1 && removedModels.indexOf(model2) > -1);
+      assert.ok(changed.removed.indexOf(model) > -1 && changed.removed.indexOf(model2) > -1);
     });
     collection.remove([model, model2]);
   });
 
   QUnit.test("#3711 - set's `update` event returns one added model", function(assert) {
-    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model = new Backbone.Model({id: 1, title: 'First Post'});
     var collection = new Backbone.Collection();
     collection.on('update', function(context, options) {
       var addedModels = options.changes.added;
-      if (!addedModels || addedModels.length !== 1) assert.ok(false);
+      assert.ok(addedModels.length === 1);
       assert.strictEqual(addedModels[0], model);
     });
     collection.set(model);
   });
 
   QUnit.test("#3711 - set's `update` event returns multiple added models", function(assert) {
-    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model = new Backbone.Model({id: 1, title: 'First Post'});
     var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
     var collection = new Backbone.Collection();
     collection.on('update', function(context, options) {
       var addedModels = options.changes.added;
-      if (!addedModels || addedModels.length !== 2) assert.ok(false);
+      assert.ok(addedModels.length === 2);
       assert.strictEqual(addedModels[0], model);
       assert.strictEqual(addedModels[1], model2);
     });
@@ -1928,26 +1933,28 @@
   });
 
   QUnit.test("#3711 - set's `update` event returns one removed model", function(assert) {
-    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model = new Backbone.Model({id: 1, title: 'First Post'});
     var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
     var model3 = new Backbone.Model({id: 3, title: 'My Last Post'});
     var collection = new Backbone.Collection([model]);
     collection.on('update', function(context, options) {
-      var removedModels = options.changes.removed;
-      if (!removedModels || removedModels.length !== 1) assert.ok(false);
-      assert.strictEqual(removedModels[0], model);
+      var changed = options.changes;
+      assert.equal(changed.added.length, 2);
+      assert.equal(changed.merged.length, 0);
+      assert.ok(changed.removed.length === 1);
+      assert.strictEqual(changed.removed[0], model);
     });
     collection.set([model2, model3]);
   });
 
   QUnit.test("#3711 - set's `update` event returns multiple removed models", function(assert) {
-    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model = new Backbone.Model({id: 1, title: 'First Post'});
     var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
     var model3 = new Backbone.Model({id: 3, title: 'My Last Post'});
     var collection = new Backbone.Collection([model, model2]);
     collection.on('update', function(context, options) {
       var removedModels = options.changes.removed;
-      if (!removedModels || removedModels.length !== 2) assert.ok(false);
+      assert.ok(removedModels.length === 2);
       assert.strictEqual(removedModels[0], model);
       assert.strictEqual(removedModels[1], model2);
     });
@@ -1955,36 +1962,36 @@
   });
 
   QUnit.test("#3711 - set's `update` event returns one merged model", function(assert) {
-    var model = new Backbone.Model({ id: 1, title: 'First Post'});
-    var model2 = new Backbone.Model({ id: 2, title: 'Second Post' });
-    var model2_v2 = new Backbone.Model({ id: 2, title: 'Second Post V2'});
+    var model = new Backbone.Model({id: 1, title: 'First Post'});
+    var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
+    var model2Update = new Backbone.Model({id: 2, title: 'Second Post V2'});
     var collection = new Backbone.Collection([model, model2]);
     collection.on('update', function(context, options) {
       var mergedModels = options.changes.merged;
-      if (!mergedModels || mergedModels.length !== 1) assert.ok(false);
-      assert.strictEqual(mergedModels[0].get('title'), model2_v2.get('title'));
+      assert.ok(mergedModels.length === 1);
+      assert.strictEqual(mergedModels[0].get('title'), model2Update.get('title'));
     });
-    collection.set([model2_v2]);
+    collection.set([model2Update]);
   });
 
   QUnit.test("#3711 - set's `update` event returns multiple merged models", function(assert) {
-    var model = new Backbone.Model({ id: 1, title: 'First Post'});
-    var model_v2 = new Backbone.Model({ id: 1, title: 'First Post V2'});
-    var model2 = new Backbone.Model({ id: 2, title: 'Second Post' });
-    var model2_v2 = new Backbone.Model({ id: 2, title: 'Second Post V2'});
+    var model = new Backbone.Model({id: 1, title: 'First Post'});
+    var modelUpdate = new Backbone.Model({id: 1, title: 'First Post V2'});
+    var model2 = new Backbone.Model({id: 2, title: 'Second Post'});
+    var model2Update = new Backbone.Model({id: 2, title: 'Second Post V2'});
     var collection = new Backbone.Collection([model, model2]);
     collection.on('update', function(context, options) {
       var mergedModels = options.changes.merged;
-      if (!mergedModels || mergedModels.length !== 2) assert.ok(false);
-      assert.strictEqual(mergedModels[0].get('title'), model2_v2.get('title'));
-      assert.strictEqual(mergedModels[1].get('title'), model_v2.get('title'));
+      assert.ok(mergedModels.length === 2);
+      assert.strictEqual(mergedModels[0].get('title'), model2Update.get('title'));
+      assert.strictEqual(mergedModels[1].get('title'), modelUpdate.get('title'));
     });
-    collection.set([model2_v2, model_v2]);
+    collection.set([model2Update, modelUpdate]);
   });
 
   QUnit.test("#3711 - set's `update` event should not be triggered adding a model which already exists exactly alike", function(assert) {
     var fired = false;
-    var model = new Backbone.Model({ id: 1, title: 'First Post'});
+    var model = new Backbone.Model({id: 1, title: 'First Post'});
     var collection = new Backbone.Collection([model]);
     collection.on('update', function(context, options) {
       fired = true;

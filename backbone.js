@@ -811,7 +811,7 @@
       models = singular ? [models] : models.slice();
       var removed = this._removeModels(models, options);
       if (!options.silent && removed.length) {
-        options.removedModels = removed;
+        options.changes = {added: [], merged: [], removed: removed};
         this.trigger('update', this, options);
       }
       return singular ? removed[0] : removed;
