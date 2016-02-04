@@ -1736,12 +1736,12 @@
 
   QUnit.test('#3039 #3951: adding at index fires with correct at', function(assert) {
     assert.expect(4);
-    var collection = new Backbone.Collection([{at: 0}, {at: 4}]);
+    var collection = new Backbone.Collection([{val: 0}, {val: 4}]);
     collection.on('add', function(model, coll, options) {
-      assert.equal(model.get('at'), options.index);
+      assert.equal(model.get('val'), options.index);
     });
-    collection.add([{at: 1}, {at: 2}, {at: 3}], {at: 1});
-    collection.add({at: 5}, {at: 10});
+    collection.add([{val: 1}, {val: 2}, {val: 3}], {at: 1});
+    collection.add({val: 5}, {at: 10});
   });
 
   QUnit.test('#3039: index is not sent when at is not specified', function(assert) {
