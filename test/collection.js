@@ -1739,13 +1739,14 @@
     assert.equal(c2.modelId(m.attributes), void 0);
   });
 
-  QUnit.test('#3039: adding at index fires with correct at', function(assert) {
-    assert.expect(3);
-    var collection = new Backbone.Collection([{at: 0}, {at: 4}]);
-    collection.on('add', function(model, coll, options) {
+  QUnit.test("#3039 #3951: adding at index fires with correct at", function(assert) {
+    assert.expect(4);
+    var col = new Backbone.Collection([{at: 0}, {at: 4}]);
+    col.on('add', function(model, col, options) {
       assert.equal(model.get('at'), options.index);
     });
-    collection.add([{at: 1}, {at: 2}, {at: 3}], {at: 1});
+    col.add([{at: 1}, {at: 2}, {at: 3}], {at: 1});
+    col.add({at: 5}, {at: 10});
   });
 
   QUnit.test('#3039: index is not sent when at is not specified', function(assert) {
