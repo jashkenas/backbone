@@ -34,4 +34,4 @@ Special thanks to Robert Kieffer for the original philosophy behind Backbone.
 https://github.com/broofa
 
 Nontechnical Description - *What to Use Backbone for and When to Use It*   
-Backbone.js is useful for building JavaScript client-side applications. In the midst of adding more functionality to an app and tying data to the DOM, code is at risk of becoming tangled and unmanageable, resulting with what is known as *spaghetti code*. Backbone makes code maintainable; it provides a solid structure guided by data-managing Models and Views that present data to users.
+Backbone.js is useful for building JavaScript client-side applications. In the midst of adding more functionality to an app and tying data to the DOM, code is at risk of becoming tangled and unmanageable, resulting in what is known as *spaghetti code*. Backbone makes code maintainable; it provides a solid structure guided by data-managing Models and Views that present data to users.
