@@ -111,6 +111,11 @@
     assert.equal(collection.get(1).id, 1);
   });
 
+  QUnit.test('get with "[object Object]" key', function(assert) {
+    var collection = new Backbone.Collection([{id: '[object Object]'}, {id: 1}]);
+    assert.equal(collection.get(1).id, 1);
+  });
+
   QUnit.test('has', function(assert) {
     assert.expect(15);
     assert.ok(col.has(a));
