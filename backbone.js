@@ -1917,5 +1917,4 @@
   };
 
   return Backbone;
-
 });
