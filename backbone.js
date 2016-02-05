@@ -1630,7 +1630,7 @@
     // in Firefox where location.hash will always be decoded.
     getHash: function(window) {
       var match = (window || this).location.href.match(/#(.*)$/);
-      return match ? match[1] : '';
+      return match ? this.decodeFragment(match[1]) : '';
     },
 
     // Get the pathname and search params, without the root.

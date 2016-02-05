@@ -407,6 +407,17 @@
     assert.strictEqual(router.rest, 'has space');
   });
 
+  QUnit.test('#3941 - should return the decoded hash in getFragment().', function(assert) {
+    assert.expect(2);
+
+    Backbone.history.navigate('#foo%20bar');
+    assert.strictEqual(Backbone.history.fragment, 'foo bar');
+
+    location.replace('http://example.com/#foo%20bar');
+    assert.strictEqual(Backbone.history.getFragment(), 'foo bar');
+  });
+
+
   QUnit.test('correctly handles URLs with % (#868)', function(assert) {
     assert.expect(3);
     location.replace('http://example.com#search/fat%3A1.5%25');
