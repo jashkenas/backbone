@@ -2001,12 +2001,9 @@
     var models = _.each(['a', 'b', 'c', 'd'], function(val) {
       return new Backbone.Model({id:val});
     });
-
     var collection = new Backbone.Collection(models);
-
     models.shift(); // remove first element;
     models.push(new Backbone.Model({id:'e'}));
-
     collection.on('add', function(model, coll, options){
       assert.equal(options.index, undefined);
     });
