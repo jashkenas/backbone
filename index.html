@@ -602,14 +602,14 @@
 
     <p>
       Backbone's only hard dependency is
-      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.7.0)</small>.
+      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.8.3)</small>.
       For RESTful persistence and DOM manipulation with <a href="#View">Backbone.View</a>,
-      include <b><a href="http://jquery.com">jQuery</a></b> ( >= 1.11.0), and
+      include <b><a href="https://jquery.com/">jQuery</a></b> ( >= 1.11.0), and
       <b><a href="https://github.com/douglascrockford/JSON-js">json2.js</a></b> for older
       Internet Explorer support.
       <i>(Mimics of the Underscore and jQuery APIs, such as
-      <a href="http://lodash.com">Lo-Dash</a> and
-      <a href="http://zeptojs.com">Zepto</a>, will
+      <a href="https://lodash.com/">Lodash</a> and
+      <a href="http://zeptojs.com/">Zepto</a>, will
       also tend to work, with varying degrees of compatibility.)</i>
     </p>
     <h2 id="Getting-started">Getting Started</h2>
@@ -1889,6 +1889,8 @@ alert(JSON.stringify(collection));
       <li><a href="http://underscorejs.org/#reduce">reduce (foldl, inject)</a></li>
       <li><a href="http://underscorejs.org/#reduceRight">reduceRight (foldr)</a></li>
       <li><a href="http://underscorejs.org/#find">find (detect)</a></li>
+      <li><a href="http://underscorejs.org/#findIndex">findIndex</a></li>
+      <li><a href="http://underscorejs.org/#findLastIndex">findLastIndex</a></li>
       <li><a href="http://underscorejs.org/#filter">filter (select)</a></li>
       <li><a href="http://underscorejs.org/#reject">reject</a></li>
       <li><a href="http://underscorejs.org/#every">every (all)</a></li>
@@ -4299,6 +4301,51 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header">1.3.0</b> &mdash; <small><i>Jan. 9, 2016</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.3...1.3.0">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.3.0/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Added <tt>findIndex</tt> and <tt>findLastIndex</tt> Underscore methods to
+        <tt>Collection</tt>.
+      </li>
+      <li>
+        Added <tt>options.changes</tt> to <tt>Collection</tt> "update" event which
+        includes added, merged, and removed models.
+      </li>
+      <li>
+        Ensured <tt>Collection#reduce</tt> and <tt>Collection#reduceRight</tt>
+        work without an initial <tt>accumulator</tt> value.
+      </li>
+      <li>
+        Ensured <tt>Collection#_removeModels</tt> always returns an array.
+      </li>
+      <li>
+        Fixed a bug where <tt>Events.once</tt> with object syntax failed to bind
+        context.
+      </li>
+      <li>
+        Fixed <tt>Collection#_onModelEvent</tt> regression where triggering a
+        <tt>change</tt> event without a <tt>model</tt> would error.
+      </li>
+      <li>
+        Fixed <tt>Collection#set</tt> regression when <tt>parse</tt> returns a
+        falsy value.
+      </li>
+      <li>
+        Fixed <tt>Model#id</tt> regression where <tt>id</tt> would be
+        unintentionally <tt>undefined</tt>.
+      </li>
+      <li>
+        Fixed <tt>_removeModels</tt> regression which could cause an infinite loop
+        under certain conditions.
+      </li>
+      <li>
+        Removed <tt>component</tt> package support.
+      </li>
+    </ul>
+
     <b class="header">1.2.3</b> &mdash; <small><i>Sept. 3, 2015</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.2...1.2.3">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.3/index.html">Docs</a>
@@ -4700,7 +4747,7 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
       <li>
         To improve the performance of <tt>add</tt>, <tt>options.index</tt>
-        will no longer be set in the `add` event callback.
+        will no longer be set in the <tt>add</tt> event callback.
         <tt>collection.indexOf(model)</tt> can be used to retrieve the index
         of a model as necessary.
       </li>
