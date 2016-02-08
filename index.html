@@ -1003,14 +1003,14 @@ view.stopListening(model);
       <li><b>"add"</b> (model, collection, options) &mdash; when a model is added to a collection.</li>
       <li><b>"remove"</b> (model, collection, options) &mdash; when a model is removed from a collection.</li>
       <li><b>"update"</b> (collection, options) &mdash; single event triggered after any number of models have been added or removed from a collection.</li>
-      <li><b>"reset"</b> (collection, options) &mdash; when the collection's entire contents have been replaced.</li>
+      <li><b>"reset"</b> (collection, options) &mdash; when the collection's entire contents have been <a href="#Collection-reset">reset</a>.</li>
       <li><b>"sort"</b> (collection, options) &mdash; when the collection has been re-sorted.</li>
       <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed.</li>
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated.</li>
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>.</li>
       <li><b>"request"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a request to the server.</li>
-      <li><b>"sync"</b> (model_or_collection, resp, options) &mdash; when a model or collection has been successfully synced with the server.</li>
-      <li><b>"error"</b> (model_or_collection, resp, options) &mdash; when a model's or collection's request to the server has failed.</li>
+      <li><b>"sync"</b> (model_or_collection, response, options) &mdash; when a model or collection has been successfully synced with the server.</li>
+      <li><b>"error"</b> (model_or_collection, response, options) &mdash; when a model's or collection's request to the server has failed.</li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client.</li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
@@ -1986,7 +1986,8 @@ ships.add([
       you have so many models to change that you'd rather just update the collection
       in bulk. Use <b>reset</b> to replace a collection with a new list
       of models (or attribute hashes), triggering a single <tt>"reset"</tt> event
-      at the end. Returns the newly-set models.
+      on completion, and <i>without</i> triggering any add or remove events on any models.
+      Returns the newly-set models.
       For convenience, within a <tt>"reset"</tt> event, the list of any
       previous models is available as <tt>options.previousModels</tt>.<br />
       Pass <tt>null</tt> for <tt>models</tt> to empty your Collection with <tt>options</tt>.
