@@ -1996,21 +1996,21 @@
   });
 
 
-  QUnit.test("#3961 - aadd events sends options.index that correspond to wrong index", function(assert) {
-  	var numModels = 4;
-  	var models = _.each(['a','b','c','d'], function(val) {
-  		return new Backbone.Model({id:val});
-  	});
+  QUnit.test('#3961 - add events sends options.index that correspond to wrong index', function(assert) {
+    var numModels = 4;
+    var models = _.each(['a', 'b', 'c', 'd'], function(val) {
+      return new Backbone.Model({id:val});
+    });
 
-	var collection = new Backbone.Collection(models);
+    var collection = new Backbone.Collection(models);
 
-	models.shift(); // remove first element;
-	models.push(new Backbone.Model({id:'e'}));
+    models.shift(); // remove first element;
+    models.push(new Backbone.Model({id:'e'}));
 
-	collection.on('add', function(model, coll, options){
-		assert.equal(options.index, undefined);
-	});
-	collection.set(models);
+    collection.on('add', function(model, coll, options){
+      assert.equal(options.index, undefined);
+    });
+    collection.set(models);
   });
 
 })();
