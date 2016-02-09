@@ -1642,12 +1642,20 @@
 
   QUnit.test('modelId', function(assert) {
     var Stooge = Backbone.Model.extend();
-    var StoogeCollection = Backbone.Collection.extend({model: Stooge});
+    var StoogeCollection = Backbone.Collection.extend();
 
-    // Default to using `Collection::model::idAttribute`.
+    // Default to using `id` if `model::idAttribute` and `Collection::model::idAttribute` not present.
     assert.equal(StoogeCollection.prototype.modelId({id: 1}), 1);
+
+    // Default to using `model::idAttribute` if present.
     Stooge.prototype.idAttribute = '_id';
+    var model = new Stooge({_id: 1});
+    assert.equal(StoogeCollection.prototype.modelId(model.attributes, model), 1);
+
+    // Default to using `Collection::model::idAttribute` if model::idAttribute not present.
+    StoogeCollection.prototype.model = Stooge;
     assert.equal(StoogeCollection.prototype.modelId({_id: 1}), 1);
+
   });
 
   QUnit.test('Polymorphic models work with "simple" constructors', function(assert) {
@@ -1702,7 +1710,7 @@
     assert.equal(collection.at(1), collection.get('b-1'));
   });
 
-  QUnit.test('Collection with polymorphic models receives default id from modelId', function(assert) {
+  QUnit.test('Collection with polymorphic models receives id from modelId using model instance idAttribute', function(assert) {
     assert.expect(6);
     // When the polymorphic models use 'id' for the idAttribute, all is fine.
     var C1 = Backbone.Collection.extend({
@@ -1715,7 +1723,8 @@
     assert.equal(c1.modelId({id: 1}), 1);
 
     // If the polymorphic models define their own idAttribute,
-    // the modelId method should be overridden, for the reason below.
+    // the modelId method will use the model's idAttribute property before the
+    // collection's model constructor's.
     var M = Backbone.Model.extend({
       idAttribute: '_id'
     });
@@ -1725,12 +1734,12 @@
       }
     });
     var c2 = new C2({'_id': 1});
-    assert.equal(c2.get(1), void 0);
-    assert.equal(c2.modelId(c2.at(0).attributes), void 0);
+    assert.equal(c2.get(1), c2.at(0));
+    assert.equal(c2.modelId(c2.at(0).attributes, c2.at(0)), 1);
     var m = new M({'_id': 2});
     c2.add(m);
-    assert.equal(c2.get(2), void 0);
-    assert.equal(c2.modelId(m.attributes), void 0);
+    assert.equal(c2.get(2), m);
+    assert.equal(c2.modelId(m.attributes, m), 2);
   });
 
   QUnit.test('#3039 #3951: adding at index fires with correct at', function(assert) {
