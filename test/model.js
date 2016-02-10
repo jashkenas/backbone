@@ -1395,6 +1395,56 @@
     model.save({x: 1}, {wait: true});
   });
 
+  QUnit.test('toJSON serialises computed properties', function(assert) {
+    assert.expect(1);
+    var expected = {
+      firstName: 'Tim',
+      lastName: 'Burton',
+      fullName: 'Tim Burton'
+    };
+    var Model = Backbone.Model.extend({
+      computed: {
+        fullName: function() {
+          return this.get('firstName') + ' ' + this.get('lastName');
+        }
+      }
+    });
+    var model = new Model({
+      firstName: 'Tim',
+      lastName: 'Burton'
+    });
+    assert.ok(_.isEqual(model.toJSON(), expected));
+  });
+
+  QUnit.test('computed property results can by accessed by get', function(assert) {
+    assert.expect(1);
+    var Model = Backbone.Model.extend({
+      computed: {
+        fullName: function() {
+          return this.get('firstName') + ' ' + this.get('lastName');
+        }
+      }
+    });
+    var model = new Model({
+      firstName: 'Tim',
+      lastName: 'Burton'
+    });
+    assert.equal(model.get('fullName'), 'Tim Burton');
+  });
+
+  QUnit.test('computed properties will not be serialised on save', function(assert) {
+    assert.expect(1);
+    var Model = Backbone.Model.extend({
+      url: '/test',
+      toJSON: function() {
+        assert.equal(this.attributes.fullName, undefined);
+        return _.clone(this.attributes);
+      }
+    });
+    var model = new Model;
+    model.save({firstName: 'Tim', lastName: 'Burton'});
+  });
+
   QUnit.test('#2034 - nested set with silent only triggers one change', function(assert) {
     assert.expect(1);
     var model = new Backbone.Model();
