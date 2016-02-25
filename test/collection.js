@@ -1650,7 +1650,7 @@
     // Default to using `model::idAttribute` if present.
     Stooge.prototype.idAttribute = '_id';
     var model = new Stooge({_id: 1});
-    assert.equal(StoogeCollection.prototype.modelId(model.attributes, model), 1);
+    assert.equal(StoogeCollection.prototype.modelId(model.attributes, model.idAttribute), 1);
 
     // Default to using `Collection::model::idAttribute` if model::idAttribute not present.
     StoogeCollection.prototype.model = Stooge;
@@ -1735,11 +1735,11 @@
     });
     var c2 = new C2({'_id': 1});
     assert.equal(c2.get(1), c2.at(0));
-    assert.equal(c2.modelId(c2.at(0).attributes, c2.at(0)), 1);
+    assert.equal(c2.modelId(c2.at(0).attributes, c2.at(0).idAttribute), 1);
     var m = new M({'_id': 2});
     c2.add(m);
     assert.equal(c2.get(2), m);
-    assert.equal(c2.modelId(m.attributes, m), 2);
+    assert.equal(c2.modelId(m.attributes, m.idAttribute), 2);
   });
 
   QUnit.test('#3039 #3951: adding at index fires with correct at', function(assert) {
