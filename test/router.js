@@ -1058,7 +1058,7 @@
     var myRouter = new MyRouter;
     Backbone.history.start({root: '®ooτ', pushState: true});
   });
-  
+
   QUnit.test('Router.prototype.execute function definition should have 3 parameters (callback, args, name)', function(assert) {
     // The name parameter isn't used in the default Router.prototype.execute function, but having the name parameter
     // in the Router.prototype.execute function is useful because it serves as documentation for people who want to
