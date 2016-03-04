@@ -1,11 +1,19 @@
 {
-  "name"          : "backbone",
-  "description"   : "Give your JS App some Backbone with Models, Views, Collections, and Events.",
-  "url"           : "http://backbonejs.org",
-  "keywords"      : ["model", "view", "controller", "router", "server", "client", "browser"],
-  "author"        : "Jeremy Ashkenas",
-  "dependencies"  : {
-    "underscore"  : ">=1.8.3"
+  "name": "backbone",
+  "description": "Give your JS App some Backbone with Models, Views, Collections, and Events.",
+  "url": "http://backbonejs.org",
+  "keywords": [
+    "model",
+    "view",
+    "controller",
+    "router",
+    "server",
+    "client",
+    "browser"
+  ],
+  "author": "Jeremy Ashkenas",
+  "dependencies": {
+    "underscore": ">=1.8.3"
   },
   "devDependencies": {
     "coffee-script": "1.7.1",
@@ -23,15 +31,17 @@
     "doc": "docco backbone.js && docco examples/todos/todos.js examples/backbone.localStorage.js",
     "lint": "eslint backbone.js test/*.js"
   },
-  "main"          : "backbone.js",
-  "version"       : "1.2.3",
-  "license"       : "MIT",
+  "main": "backbone.js",
+  "version": "1.3.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/jashkenas/backbone.git"
   },
   "files": [
-    "backbone.js", "backbone-min.js", "backbone-min.map", "LICENSE"
+    "backbone.js",
+    "backbone-min.js",
+    "backbone-min.map",
+    "LICENSE"
   ]
 }
-
