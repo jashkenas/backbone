@@ -308,6 +308,7 @@
   Events.once = function(name, callback, context) {
     // Map the event into a `{event: once}` object.
     var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
+    if (typeof name === 'string' && context == null) callback = void 0;
     return this.on(events, callback, context);
   };
 
