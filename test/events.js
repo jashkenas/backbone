@@ -417,6 +417,18 @@
     assert.equal(obj.counterB, 1, 'counterB should have only been incremented once.');
   });
 
+  QUnit.test('bind a callback with a default context when none supplied', function(assert) {
+    assert.expect(1);
+    var obj = _.extend({
+      assertTrue: function() {
+        assert.equal(this, obj, '`this` was bound to the callback');
+      }
+    }, Backbone.Events);
+
+    obj.once('event', obj.assertTrue);
+    obj.trigger('event');
+  });
+
   QUnit.test('bind a callback with a supplied context', function(assert) {
     assert.expect(1);
     var TestClass = function() {
