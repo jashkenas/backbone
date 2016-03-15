@@ -442,7 +442,7 @@
       if (attr.indexOf('.') !== -1) {
         var ref = this.attributes,
             chain = attr.split('.');
-        _.find(chain, function (link) {
+        _.find(chain, function(link) {
           if (typeof ref !== 'undefined' && ref && typeof ref === 'object') {
             ref = ref[link];
           } else {
@@ -508,13 +508,14 @@
       var current = this.attributes;
       var changed = this.changed;
       var prev    = this._previousAttributes;
+      var link;
 
       // For each `set` attribute, update or delete the current value.
       for (var attr in attrs) {
-        var link = attr;
+        link = attr;
         if (attr.indexOf('.') !== -1) {
           var chain = attr.split('.');
-          _.each(_.initial(chain), function (link) {
+          _.each(_.initial(chain), function(link) {
             if (typeof current !== 'object') current = {};
             if (!(link in current)) current[link] = {};
             current = current[link];
