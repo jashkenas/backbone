@@ -439,6 +439,21 @@
 
     // Get the value of an attribute.
     get: function(attr) {
+      if (attr.indexOf('.') !== -1) {
+        var ref = this.attributes,
+            chain = attr.split('.');
+        _.find(chain, function (link) {
+          if (typeof ref !== 'undefined' && ref && typeof ref === 'object') {
+            ref = ref[link];
+          } else {
+            ref = this.attributes;
+            return true;
+          }
+        }, this);
+        if (!_.isEqual(ref, this.attributes)) {
+          return ref;
+        }
+      }
       return this.attributes[attr];
     },
 
@@ -496,14 +511,28 @@
 
       // For each `set` attribute, update or delete the current value.
       for (var attr in attrs) {
+        var link = attr;
+        if (attr.indexOf('.') !== -1) {
+          var chain = attr.split('.');
+          _.each(_.initial(chain), function (link) {
+            if (typeof current !== 'object') current = {};
+            if (!(link in current)) current[link] = {};
+            current = current[link];
+            if (prev && typeof prev === 'object' && link in prev) {
+              prev = prev[link];
+            }
+          }, this);
+          link = _.last(chain);
+          if (!(link in current)) current[link] = {};
+        }
         val = attrs[attr];
-        if (!_.isEqual(current[attr], val)) changes.push(attr);
-        if (!_.isEqual(prev[attr], val)) {
+        if (!_.isEqual(current[link], val)) changes.push(attr);
+        if (!_.isEqual(prev[link], val)) {
           changed[attr] = val;
         } else {
           delete changed[attr];
         }
-        unset ? delete current[attr] : current[attr] = val;
+        unset ? delete current[link] : current[link] = val;
       }
 
       // Update the `id`.
