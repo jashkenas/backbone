@@ -515,12 +515,12 @@
         link = attr;
         if (attr.indexOf('.') !== -1) {
           var chain = attr.split('.');
-          _.each(_.initial(chain), function(link) {
+          _.each(_.initial(chain), function(chainLink) {
             if (typeof current !== 'object') current = {};
-            if (!(link in current)) current[link] = {};
-            current = current[link];
-            if (prev && typeof prev === 'object' && link in prev) {
-              prev = prev[link];
+            if (!(chainLink in current)) current[chainLink] = {};
+            current = current[chainLink];
+            if (prev && typeof prev === 'object' && chainLink in prev) {
+              prev = prev[chainLink];
             }
           }, this);
           link = _.last(chain);
