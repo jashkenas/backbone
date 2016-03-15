@@ -516,15 +516,13 @@
         if (attr.indexOf('.') !== -1) {
           var chain = attr.split('.');
           _.each(_.initial(chain), function(chainLink) {
-            if (typeof current !== 'object') current = {};
-            if (!(chainLink in current)) current[chainLink] = {};
+            if (!_.has(current, chainLink) || !current[chainLink]) current[chainLink] = {};
+            if (!_.has(prev, chainLink) || !prev[chainLink]) prev[chainLink] = {};
             current = current[chainLink];
-            if (prev && typeof prev === 'object' && chainLink in prev) {
-              prev = prev[chainLink];
-            }
+            prev = prev[chainLink];
           }, this);
           link = _.last(chain);
-          if (!(link in current)) current[link] = {};
+          if (!_.has(current, link)) current[link] = {};
         }
         val = attrs[attr];
         if (!_.isEqual(current[link], val)) changes.push(attr);
