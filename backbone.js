@@ -566,7 +566,7 @@
       for (var attr in diff) {
         var val = diff[attr];
         if (_.isEqual(old[attr], val)) continue;
-        changed[attr] = val || '';
+        changed[attr] = val;
         hasChanged = true;
       }
       return hasChanged ? changed : false;
