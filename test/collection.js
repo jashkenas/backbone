@@ -1733,6 +1733,25 @@
     assert.equal(c2.modelId(m.attributes), void 0);
   });
 
+  QUnit.test('Calculating model.id in initialize makes it available to Collection.get', function(assert) {
+    assert.expect(2);
+    function get_id_from_date(date) {
+      return '' + (date.getFullYear() * 10000 +
+                   (1 + date.getMonth()) * 100 +
+                   date.getDate());
+    }
+    var Day = Backbone.Model.extend({
+      initialize: function() {
+          // set id to something like '20160402'
+          this.id = get_id_from_date(this.get('date'));
+      },
+    });
+    var day = new Day({'date': new Date(2016, 3, 2)});
+    var days = new Backbone.Collection([day]);
+    assert.equal(days.at(0).id, '20160402');  // this succeeds
+    assert.equal(days.at(0), days.get('20160402'));  // this fails
+  });
+
   QUnit.test('#3039 #3951: adding at index fires with correct at', function(assert) {
     assert.expect(4);
     var collection = new Backbone.Collection([{val: 0}, {val: 4}]);
