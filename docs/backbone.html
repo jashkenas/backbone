@@ -27,7 +27,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>Backbone.js <span class="hljs-number">1.3</span><span class="hljs-number">.2</span>
+              <pre><code>Backbone.js <span class="hljs-number">1.3</span><span class="hljs-number">.3</span>
 </code></pre>
             </div>
             
@@ -40,7 +40,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <pre><code>(c) <span class="hljs-number">2010</span>-<span class="hljs-number">2016</span> Jeremy Ashkenas, DocumentCloud and Investigative Reporters &amp; Editors
+              <pre><code>(c) <span class="hljs-number">2010</span><span class="hljs-number">-2016</span> Jeremy Ashkenas, DocumentCloud and Investigative Reporters &amp; Editors
 Backbone may be freely distributed under the MIT license.
 For all details and documentation:
 http:<span class="hljs-comment">//backbonejs.org</span>
@@ -206,7 +206,7 @@ restored later on, if <code>noConflict</code> is used.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  Backbone.VERSION = <span class="hljs-string">'1.3.2'</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  Backbone.VERSION = <span class="hljs-string">'1.3.3'</span>;</pre></div></div>
             
         </li>
         
@@ -828,6 +828,7 @@ once for each event, not once for a combination of all events.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> events = eventsApi(onceMap, {}, name, callback, _.bind(<span class="hljs-keyword">this</span>.off, <span class="hljs-keyword">this</span>));
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> name === <span class="hljs-string">'string'</span> &amp;&amp; context == <span class="hljs-literal">null</span>) callback = <span class="hljs-keyword">void</span> <span class="hljs-number">0</span>;
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.on(events, callback, context);
   };</pre></div></div>
             
@@ -955,7 +956,7 @@ Backbone events have 3 arguments).</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> triggerEvents = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">events, args</span>) </span>{
-    <span class="hljs-keyword">var</span> ev, i = -<span class="hljs-number">1</span>, l = events.length, a1 = args[<span class="hljs-number">0</span>], a2 = args[<span class="hljs-number">1</span>], a3 = args[<span class="hljs-number">2</span>];
+    <span class="hljs-keyword">var</span> ev, i = <span class="hljs-number">-1</span>, l = events.length, a1 = args[<span class="hljs-number">0</span>], a2 = args[<span class="hljs-number">1</span>], a3 = args[<span class="hljs-number">2</span>];
     <span class="hljs-keyword">switch</span> (args.length) {
       <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>: <span class="hljs-keyword">while</span> (++i &lt; l) (ev = events[i]).callback.call(ev.ctx); <span class="hljs-keyword">return</span>;
       <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>: <span class="hljs-keyword">while</span> (++i &lt; l) (ev = events[i]).callback.call(ev.ctx, a1); <span class="hljs-keyword">return</span>;
@@ -4308,7 +4309,7 @@ browser, but we’re currently in a browser that doesn’t support it…</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>._hasPushState &amp;&amp; !<span class="hljs-keyword">this</span>.atRoot()) {
-          <span class="hljs-keyword">var</span> rootPath = <span class="hljs-keyword">this</span>.root.slice(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>) || <span class="hljs-string">'/'</span>;
+          <span class="hljs-keyword">var</span> rootPath = <span class="hljs-keyword">this</span>.root.slice(<span class="hljs-number">0</span>, <span class="hljs-number">-1</span>) || <span class="hljs-string">'/'</span>;
           <span class="hljs-keyword">this</span>.location.replace(rootPath + <span class="hljs-string">'#'</span> + <span class="hljs-keyword">this</span>.getPath());</pre></div></div>
             
         </li>
@@ -4365,7 +4366,7 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         <span class="hljs-keyword">this</span>.iframe = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'iframe'</span>);
         <span class="hljs-keyword">this</span>.iframe.src = <span class="hljs-string">'javascript:0'</span>;
         <span class="hljs-keyword">this</span>.iframe.style.display = <span class="hljs-string">'none'</span>;
-        <span class="hljs-keyword">this</span>.iframe.tabIndex = -<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">this</span>.iframe.tabIndex = <span class="hljs-number">-1</span>;
         <span class="hljs-keyword">var</span> body = <span class="hljs-built_in">document</span>.body;</pre></div></div>
             
         </li>
@@ -4666,7 +4667,7 @@ you wish to modify the current URL without adding an entry to the history.</p>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> rootPath = <span class="hljs-keyword">this</span>.root;
       <span class="hljs-keyword">if</span> (fragment === <span class="hljs-string">''</span> || fragment.charAt(<span class="hljs-number">0</span>) === <span class="hljs-string">'?'</span>) {
-        rootPath = rootPath.slice(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>) || <span class="hljs-string">'/'</span>;
+        rootPath = rootPath.slice(<span class="hljs-number">0</span>, <span class="hljs-number">-1</span>) || <span class="hljs-string">'/'</span>;
       }
       <span class="hljs-keyword">var</span> url = rootPath + fragment;</pre></div></div>
             
