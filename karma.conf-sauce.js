@@ -17,10 +17,6 @@ var sauceBrowsers = _.reduce([
   ['internet explorer', '11', 'Windows 10'],
   ['internet explorer', '10', 'Windows 8'],
   ['internet explorer', '9', 'Windows 7'],
-  ['internet explorer', '8'],
-  // Currently karma-sauce has issues with sockets and these browsers
-  // ['internet explorer', '7'],
-  // ['internet explorer', '6'],
 
   ['opera', '12'],
   ['opera', '11'],
@@ -30,7 +26,7 @@ var sauceBrowsers = _.reduce([
 
   // 4.3 currently erros with some router tests
   // ['android', '4.3'],
-  
+
   ['android', '4.0'],
 
   ['safari', '8.0', 'OS X 10.10'],
