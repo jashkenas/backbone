@@ -421,13 +421,14 @@
   });
 
   QUnit.test('defaults', function(assert) {
-    assert.expect(9);
+    assert.expect(11);
     var Defaulted = Backbone.Model.extend({
       defaults: {
         one: 1,
         two: 2
       }
     });
+	
     var model = new Defaulted({two: undefined});
     assert.equal(model.get('one'), 1);
     assert.equal(model.get('two'), 2);
@@ -454,6 +455,17 @@
     assert.equal(model.get('hasOwnProperty'), true);
     model = new Defaulted({hasOwnProperty: false});
     assert.equal(model.get('hasOwnProperty'), false);
+    // test array or [] defaults , dirty data
+    Defaulted = Backbone.Model.extend({
+      defaults: {
+          array: []
+      }
+    });
+    model = new Defaulted();
+    assert.equal(model.get('array').length, 0);
+    model.get('array').push("obj1");
+    model = new Defaulted();
+    assert.equal(model.get('array').length, 0);
   });
 
   QUnit.test('change, hasChanged, changedAttributes, previous, previousAttributes', function(assert) {
