@@ -398,8 +398,7 @@
     this.attributes = Object.create(null);
     if (options.collection) this.collection = options.collection;
     if (options.parse) attrs = this.parse(attrs, options) || Object.create(null);
-    var defaults = _.result(this, 'defaults');
-    attrs = _.defaults(_.extend(Object.create(null), defaults, attrs), defaults);
+    attrs = _.defaults(Object.create(null), attrs, _.result(this, 'defaults'));
     this.set(attrs, options);
     this.changed = Object.create(null);
     this.initialize.apply(this, arguments);
@@ -826,8 +825,7 @@
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
       if (models == null) return;
-
-      options = _.extend(Object.create(null), setOptions, options);
+      options = _.defaults(Object.create(null), options, setOptions);
       if (options.parse && !this._isModel(models)) {
         models = this.parse(models, options) || [];
       }
