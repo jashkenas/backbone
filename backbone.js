@@ -986,9 +986,13 @@
     // properties, or an attributes object that is transformed through modelId.
     get: function(obj) {
       if (obj == null) return void 0;
-      return this._byId[obj] ||
-        this._byId[this.modelId(obj.attributes || obj)] ||
+      if (typeof obj === "object") {
+        return this._byId[this.modelId(obj.attributes || obj)] ||
         obj.cid && this._byId[obj.cid];
+      }
+      else {
+        return this._byId[obj];
+      }
     },
 
     // Returns `true` if the model is in the collection.
