@@ -1,0 +1,84 @@
+* {
+	box-sizing: border-box;
+	font-family: sans-serif, Arial;
+}
+body {
+	margin: 0;
+	padding: 0;
+}
+.float-left {
+	float: left;
+}
+.float-right {
+	float: right;
+}
+.clear {
+	clear: both;
+}
+#container {
+	width: 450px;
+	margin: 30px auto;
+}
+#filter-posts {
+	width: 100%;
+	border-radius: 3px;
+	outline: none;
+	border: 1px solid #aaa;
+	padding: 5px;
+}
+.post-fields {
+	margin-top: 30px;
+}
+.post-fields .form-header {
+	font-size: 18px;
+	margin-bottom: 15px;
+}
+.post-fields form[name="post-form"] {
+	padding: 15px;
+	border: 1px solid rgb(40,42,56);
+	border-radius: 3px;
+}
+.post-fields form[name="post-form"] input, 
+.post-fields form[name="post-form"] textarea {
+	width: 100%;
+	outline: none;
+	margin-bottom: 20px;
+	border-radius: 3px;
+	padding: 5px;
+	border: 1px solid #aaa;
+	font-size: 15px;
+}
+.post-fields form[name="post-form"] button[type="submit"] {
+	outline: none;
+	border: none;
+	background: rgb(40,42,56);
+	padding: 5px 15px;
+	color: white;
+	cursor: pointer;
+}
+#posts-list .post {
+	margin-top: 20px;
+	color: #f5f5f5;
+	background: rgb(40,42,56);
+	padding: 10px;
+	border-radius: 3px;
+}
+#posts-list .post .post-header {
+	margin-bottom: 20px;
+}
+#posts-list .post .post-header span {
+	font-weight: 700;
+}
+#posts-list .post .post-header .remove-post{
+	border: none;
+    outline: none;
+    border-radius: 50%;
+    padding: 2px 6px;
+    cursor: pointer;
+}
+#posts-list .post .post-body {
+	margin-bottom: 50px;
+}
+#posts-list .post .post-footer {
+	font-size: 12px;
+}

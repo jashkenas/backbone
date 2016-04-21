@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<title>Microblog- BackboneJS</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+	<div id="container">
+		<input type="text" placeholder="Filter posts by username" id="filter-posts" />
+		<div class="post-fields">
+			<div class="form-header">
+				<span class="float-left">New Post</span>
+				<span class="float-right">Posts (<span id="posts-count">0</span>)</span>
+				<div class="clear"></div>
+			</div>
+			<form name="post-form">
+				<input type="text" placeholder="Title" id="title" />
+				<input type="text" placeholder="Your Name" id="name" />
+				<textarea rows="8" cols="20" placeholder="content..." id="content"></textarea>
+				<button type="submit" id="post-button">Post</button>
+			</form>
+		</div>
+		<div id="posts-list"></div>
+	</div>
+</body>
+
+<!-- post template -->
+<script type="text/html" id="post-template">
+	<div data-id="<%= id %>" class="post" style="display:<%= shouldShow ? 'block' : 'none' %>">
+		<div class="post-header">
+			<span class="float-left"><%= title %></span>
+			<button class="float-right remove-post">x</button>
+			<div class="clear"></div>
+		</div>
+		<div class="post-body"><%= content %></div>
+		<div class="post-footer">
+			<span class="float-left">Posted By: @<%= posted_by %></span>
+			<span class="float-right"><%= date %></span>
+			<div class="clear"></div>
+		</div>
+	</div>
+</script>	
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone-min.js"></script>
+<script type="text/javascript" src="microblog.js"></script>
+</html>
