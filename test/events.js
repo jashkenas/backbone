@@ -703,4 +703,18 @@
     two.trigger('y', 2);
   });
 
+  QUnit.test('#3999 - can name event as "constructor"', function(assert) {
+    assert.expect(2);
+    var obj = {counter: 0};
+    _.extend(obj, Backbone.Events);
+    obj.on('constructor', function() { obj.counter += 1; });
+    obj.trigger('constructor');
+    assert.equal(obj.counter, 1, 'counter should be incremented.');
+    obj.trigger('constructor');
+    obj.trigger('constructor');
+    obj.trigger('constructor');
+    obj.trigger('constructor');
+    assert.equal(obj.counter, 5, 'counter should be incremented five times.');
+  });
+
 })();
