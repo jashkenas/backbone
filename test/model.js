@@ -324,6 +324,18 @@
     model.set('a', 1, o1);
   });
 
+  QUnit.test('unset multiple attributes', function(assert) {
+    assert.expect(5);
+    var model = new Backbone.Model({id: 'id', foo: 1, bar: 2, baz: 3});
+    var unsetModel = model.unset(['foo', 'bar']);
+
+    assert.equal(unsetModel, model);
+    assert.equal(model.get('id'), 'id');
+    assert.equal(model.get('foo'), undefined);
+    assert.equal(model.get('bar'), undefined);
+    assert.equal(model.get('baz'), 3);
+  });
+
   QUnit.test('multiple unsets', function(assert) {
     assert.expect(1);
     var i = 0;
