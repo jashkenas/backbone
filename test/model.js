@@ -1395,6 +1395,28 @@
     assert.ok(!model.set('valid', false, {validate: true}));
   });
 
+  QUnit.test('mixin', function(assert) {
+    Backbone.Model.mixin({
+      isEqual: function(model1, model2) {
+        return _.isEqual(model1, model2.attributes);
+      }
+    });
+
+    var model1 = new Backbone.Model({
+      a: {b: 2}, c: 3
+    });
+    var model2 = new Backbone.Model({
+      a: {b: 2}, c: 3
+    });
+    var model3 = new Backbone.Model({
+      a: {b: 4}, c: 3
+    });
+
+    assert.equal(model1.isEqual(model2), true);
+    assert.equal(model1.isEqual(model3), false);
+  });
+
+
   QUnit.test('#1179 - isValid returns true in the absence of validate.', function(assert) {
     assert.expect(1);
     var model = new Backbone.Model();

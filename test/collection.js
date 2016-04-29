@@ -711,6 +711,27 @@
     assert.equal(coll.findWhere({a: 4}), void 0);
   });
 
+  QUnit.test('mixin', function(assert) {
+    Backbone.Collection.mixin({
+      sum: function(models, iteratee) {
+        return _.reduce(models, function(s, m) {
+          return s + iteratee(m);
+        }, 0);
+      }
+    });
+
+    var coll = new Backbone.Collection([
+      {a: 1},
+      {a: 1, b: 2},
+      {a: 2, b: 2},
+      {a: 3}
+    ]);
+
+    assert.equal(coll.sum(function(m) {
+      return m.get('a');
+    }), 7);
+  });
+
   QUnit.test('Underscore methods', function(assert) {
     assert.expect(21);
     assert.equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
