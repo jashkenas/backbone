@@ -1059,4 +1059,11 @@
     Backbone.history.start({root: '®ooτ', pushState: true});
   });
 
+  QUnit.test('#4025 - navigate updates URL hash as is', function(assert) {
+    assert.expect(1);
+    var route = 'search/has%20space';
+    Backbone.history.navigate(route);
+    assert.strictEqual(location.hash, '#' + route);
+  });
+
 })();
