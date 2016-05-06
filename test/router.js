@@ -95,6 +95,10 @@
       '*anything': 'anything'
     },
 
+    preinitialize: function(options) {
+      this.testpreinit = 'foo';
+    },
+
     initialize: function(options) {
       this.testing = options.testing;
       this.route('implicit', 'implicit');
@@ -179,6 +183,11 @@
   QUnit.test('initialize', function(assert) {
     assert.expect(1);
     assert.equal(router.testing, 101);
+  });
+
+  QUnit.test('preinitialize', function(assert) {
+    assert.expect(1);
+    assert.equal(router.testpreinit, 'foo');
   });
 
   QUnit.test('routes (simple)', function(assert) {
