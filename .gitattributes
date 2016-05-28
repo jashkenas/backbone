@@ -1,0 +1,6 @@
+# Ensure autocrlf happens for text files
+* text=auto
+
+
+# JavaScript files must use Unix line endings to comply with tooling
+*.js eol=lf
