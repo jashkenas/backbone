@@ -5,11 +5,11 @@
     "amd": true
   },
   "globals": {
-    "attachEvent": true,
-    "detachEvent": true
+    "attachEvent": false,
+    "detachEvent": false
   },
   "rules": {
-    "array-bracket-spacing": [2],
+    "array-bracket-spacing": 2,
     "block-scoped-var": 2,
     "brace-style": [1, "1tbs", {"allowSingleLine": true}],
     "camelcase": 2,
@@ -21,6 +21,7 @@
     "eqeqeq": [2, "smart"],
     "indent": [2, 2, {"SwitchCase": 1, "VariableDeclarator": 2}],
     "key-spacing": 1,
+    "keyword-spacing": [2, { "after": true }],
     "linebreak-style": 2,
     "max-depth": [1, 4],
     "max-params": [1, 5],
@@ -37,7 +38,6 @@
     "no-duplicate-case": 2,
     "no-else-return": 1,
     "no-empty-character-class": 2,
-    "no-empty-label": 2,
     "no-eval": 2,
     "no-ex-assign": 2,
     "no-extend-native": 2,
@@ -51,6 +51,7 @@
     "no-inner-declarations": 2,
     "no-irregular-whitespace": 2,
     "no-label-var": 2,
+    "no-labels": 2,
     "no-lone-blocks": 2,
     "no-lonely-if": 2,
     "no-multi-str": 2,
@@ -79,10 +80,8 @@
     "quotes": [2, "single", "avoid-escape"],
     "radix": 2,
     "semi": 2,
-    "space-after-keywords": [2, "always"],
     "space-before-function-paren": [2, {"anonymous": "never", "named": "never"}],
     "space-infix-ops": 2,
-    "space-return-throw-case": 2,
     "space-unary-ops": [2, { "words": true, "nonwords": false }],
     "use-isnan": 2,
     "valid-typeof": 2,
