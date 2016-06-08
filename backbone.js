@@ -157,6 +157,17 @@
     return events;
   };
 
+  // An overridable callback to allow event objects to know when something starts
+  // listening to it when previously it had no listeners. Useful for knowing this
+  // object needs to start listening to something else.
+  // (which might be expensive to run all the time)
+  Events.onFirstListener = function() {};
+
+  // An overridable callback to allow event objects to know when the last listener
+  // stops listening to it. Useful to know this object can stop listening to it's
+  // sources.
+  Events.onNoListeners = function() {};
+
   // Bind an event to a `callback` function. Passing `"all"` will bind
   // the callback to all events fired.
   Events.on = function(name, callback, context) {
@@ -165,6 +176,10 @@
 
   // Guard the `listening` argument from the public API.
   var internalOn = function(obj, name, callback, context, listening) {
+    if (!obj._events || _.isEmpty(obj._events)) {
+      obj.onFirstListener();
+    }
+
     obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
       context: context,
       ctx: obj,
@@ -222,6 +237,11 @@
       context: context,
       listeners: this._listeners
     });
+
+    if (!this._events || _.isEmpty(this._events)) {
+      this.onNoListeners();
+    }
+
     return this;
   };
 

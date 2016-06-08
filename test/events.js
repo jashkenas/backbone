@@ -703,4 +703,44 @@
     two.trigger('y', 2);
   });
 
+  QUnit.test('onFirstListener & onNoListeners are triggered', function(assert) {
+    assert.expect(6);
+    var first = 1;
+    var none = 1;
+
+    var expectedFirsts = 0;
+    var expectedNones = 0;
+
+    var obj = _.extend({}, Backbone.Events, {
+      onFirstListener: function() { assert.ok(first++ === expectedFirsts); },
+      onNoListeners: function() { assert.ok(none++ === expectedNones); }
+    });
+    var obj2 = _.extend({}, Backbone.Events, {
+      onFirstListener: function() { assert.ok(false, 'Should not have been called'); },
+      onNoListeners: function() { assert.ok(false, 'Should not have been called'); }
+    });
+    var fn = function() {};
+
+    expectedFirsts = 1;
+    obj.on('a', fn); // expects a call to onFirstListener
+    obj.on('b', fn);
+
+    obj.off('a', fn); // no call
+    expectedNones = 1;
+    obj.off('b', fn); // expects a call to onNoListeners
+
+    expectedFirsts = 2;
+    obj2.listenTo(obj, 'a', fn);
+    obj2.listenTo(obj, 'b', fn);
+
+    obj2.stopListening(obj, 'a', fn);
+    expectedNones = 2;
+    obj2.stopListening(obj, 'b', fn);
+
+    expectedFirsts = 3;
+    obj2.listenToOnce(obj, 'a', fn);
+    expectedNones = 3;
+    obj.trigger('a');
+  });
+
 })();
