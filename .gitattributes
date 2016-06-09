@@ -3,4 +3,5 @@
 
 
 # JavaScript files must use Unix line endings to comply with tooling
-*.js eol=lf
+*.js text eol=lf
+*.svg text
