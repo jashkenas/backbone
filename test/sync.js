@@ -236,4 +236,10 @@
     this.ajaxSettings.error({}, 'textStatus', 'errorThrown');
   });
 
+  QUnit.test('`model` is optional', function(assert) {
+    assert.expect(0);
+    Backbone.sync('read', null, {
+      url: '/library'
+    });
+  });
 })();
