@@ -144,38 +144,46 @@
     var i = 0, names;
     if (name && typeof name === 'object') {
       // Handle event maps.
-      for (names = _.keys(name); i < names.length; i++) {
-        memo = iteratee(memo, names[i], name[names[i]], opts);
+      if (callback !== void 0 && 'context' in opts && opts.context === void 0) opts.context = callback;
+      for (names = _.keys(name); i < names.length ; i++) {
+        events = eventsApi(iteratee, events, names[i], name[names[i]], opts);
       }
     } else if (name && eventSplitter.test(name)) {
-      // Handle space separated event names.
+      // Handle space-separated event names by delegating them individually.
       for (names = name.split(eventSplitter); i < names.length; i++) {
-        memo = iteratee(memo, names[i], callback, opts);
+        events = iteratee(events, names[i], callback, opts);
       }
     } else {
-      memo = iteratee(memo, name, callback, opts);
+      // Finally, standard events.
+      events = iteratee(events, name, callback, opts);
     }
-    return memo;
+    return events;
   };
 
   // Bind an event to a `callback` function. Passing `"all"` will bind
   // the callback to all events fired.
   Events.on = function(name, callback, context) {
-    this._events = eventsApi(onApi, this._events || {}, name, callback, {
+    return internalOn(this, name, callback, context);
+  };
+
+  // Guard the `listening` argument from the public API.
+  var internalOn = function(obj, name, callback, context, listening) {
+    obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
       context: context,
-      ctx: this,
-      listening: _listening
+      ctx: obj,
+      listening: listening
     });
 
-    if (_listening) {
-      var listeners = this._listeners || (this._listeners = {});
-      listeners[_listening.id] = _listening;
+    if (listening) {
+      var listeners = obj._listeners || (obj._listeners = {});
+      listeners[listening.id] = listening;
+
       // Allow the listening to use a counter, instead of tracking
       // callbacks for library interop
       _listening.interop = false;
     }
 
-    return this;
+    return obj;
   };
 
   // Inversion-of-control versions of `on`. Tell *this* object to listen to
@@ -190,7 +198,7 @@
     // This object is not listening to any other events on `obj` yet.
     // Setup the necessary references to track the listening callbacks.
     if (!listening) {
-      this._listenId || (this._listenId = _.uniqueId('l'));
+      var thisId = this._listenId || (this._listenId = _.uniqueId('l'));
       listening = _listening = listeningTo[id] = new Listening(this, obj);
     }
 
@@ -212,7 +220,7 @@
       var context = options.context, ctx = options.ctx, listening = options.listening;
       if (listening) listening.count++;
 
-      handlers.push({ callback: callback, context: context, ctx: context || ctx, listening: listening });
+      handlers.push({callback: callback, context: context, ctx: context || ctx, listening: listening});
     }
     return events;
   };
@@ -231,11 +239,11 @@
   // callbacks with that function. If `callback` is null, removes all
   // callbacks for the event. If `name` is null, removes all bound
   // callbacks for all events.
-  Events.off =  function(name, callback, context) {
+  Events.off = function(name, callback, context) {
     if (!this._events) return this;
     this._events = eventsApi(offApi, this._events, name, callback, {
-        context: context,
-        listeners: this._listeners
+      context: context,
+      listeners: this._listeners
     });
     return this;
   };
@@ -276,7 +284,7 @@
       return;
     }
 
-    var names = name ? [name] : _.keys(events);
+    names = name ? [name] : _.keys(events);
     for (; i < names.length; i++) {
       name = names[i];
       var handlers = events[name];
@@ -318,7 +326,8 @@
   Events.once = function(name, callback, context) {
     // Map the event into a `{event: once}` object.
     var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
-    return this.on(events, void 0, context);
+    if (typeof name === 'string' && context == null) callback = void 0;
+    return this.on(events, callback, context);
   };
 
   // Inversion-of-control versions of `once`.
@@ -345,7 +354,7 @@
   // passed the same arguments as `trigger` is, apart from the event name
   // (unless you're listening on `"all"`, which will cause your callback to
   // receive the true name of the event as the first argument).
-  Events.trigger =  function(name) {
+  Events.trigger = function(name) {
     if (!this._events) return this;
 
     var length = Math.max(0, arguments.length - 1);
