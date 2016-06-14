@@ -1730,7 +1730,7 @@
         var iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
         iWindow.document.open();
         iWindow.document.close();
-        this._changeHash(iWindow, this.fragment);
+        iWindow.location.hash = '#' + fragment
       }
 
       // Add a cross-platform `addEventListener` shim for older browsers.
@@ -1882,14 +1882,8 @@
         location.replace(href + '#' + fragment);
       } else {
         // Some browsers require that `hash` contains a leading #.
-        this._changeHash(window, fragment);
+        location.hash = '#' + fragment
       }
-    },
-    // `location.hash` broken chracter issue on Safari browser
-    _changeHash: function(context, fragment) {
-      var frameWindow = context || window;
-      // frameWindow.location.href = frameWindow.location.href.replace(/#.+/, '#' + fragment);
-      frameWindow.location.hash = '#' + fragment;
     }
   });
 
