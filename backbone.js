@@ -1888,7 +1888,8 @@
     // `location.hash` broken chracter issue on Safari browser
     _changeHash: function(context, fragment) {
       var frameWindow = context || window;
-      frameWindow.location.href = frameWindow.location.href.replace(/#.+/, '#' + fragment);
+      // frameWindow.location.href = frameWindow.location.href.replace(/#.+/, '#' + fragment);
+      frameWindow.location.hash = '#' + fragment;
     }
   });
 
