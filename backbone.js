@@ -1301,8 +1301,12 @@
     // alternative DOM manipulation API and are only required to set the
     // `this.el` property.
     _setElement: function(el) {
-      this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
-      this.el = this.$el[0];
+        if ($) {
+            this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
+            this.el = this.$el[0];
+        } else {
+            throw new Error('jQuery is not installed.')
+        }
     },
 
     // Set callbacks, where `this.events` is a hash of
