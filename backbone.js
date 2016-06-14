@@ -1730,7 +1730,7 @@
         var iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
         iWindow.document.open();
         iWindow.document.close();
-        iWindow.location.hash = '#' + this.fragment
+        iWindow.location.hash = '#' + this.fragment;
       }
 
       // Add a cross-platform `addEventListener` shim for older browsers.
@@ -1882,7 +1882,7 @@
         location.replace(href + '#' + fragment);
       } else {
         // Some browsers require that `hash` contains a leading #.
-        location.hash = '#' + fragment
+        location.hash = '#' + fragment;
       }
     }
   });
