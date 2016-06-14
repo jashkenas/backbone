@@ -1730,7 +1730,7 @@
         var iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
         iWindow.document.open();
         iWindow.document.close();
-        iWindow.location.hash = '#' + fragment
+        iWindow.location.hash = '#' + this.fragment
       }
 
       // Add a cross-platform `addEventListener` shim for older browsers.
