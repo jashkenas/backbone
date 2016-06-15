@@ -1075,4 +1075,11 @@
     assert.strictEqual(location.hash, '#' + route);
   });
 
+  QUnit.test('#4050 - navigate updates URL(contains Korean) hash on Safari browser as is', function(assert) {
+    assert.expect(1);
+    var route = '한글';
+    Backbone.history.navigate(route);
+    assert.strictEqual(location.hash, '#' + route);
+  });
+
 })();
