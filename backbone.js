@@ -1730,7 +1730,7 @@
         var iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
         iWindow.document.open();
         iWindow.document.close();
-        iWindow.location.hash = '#' + this.fragment;
+        this._changeHash(iWindow, this.fragment);
       }
 
       // Add a cross-platform `addEventListener` shim for older browsers.
@@ -1882,10 +1882,15 @@
         location.replace(href + '#' + fragment);
       } else {
         // Some browsers require that `hash` contains a leading #.
-        location.hash = '#' + fragment;
+        this._changeHash(window, fragment);
       }
+    },
+    // location.hash broken chracter(Kroean) issue on Safari browser.
+    _changeHash: function(context, fragment) {
+      var frameWindow = context || window;
+      var href = frameWindow.location.href.replace(/(javascript:|#).*$/, '');
+      frameWindow.location.href = href + '#' + fragment;
     }
-
   });
 
   // Create the default Backbone.history.
