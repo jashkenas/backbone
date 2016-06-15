@@ -1730,7 +1730,7 @@
         var iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
         iWindow.document.open();
         iWindow.document.close();
-        this._changeHash(iWindow, this.fragment);
+        iWindow.location.hash = '#' + this.fragment;
       }
 
       // Add a cross-platform `addEventListener` shim for older browsers.
@@ -1877,19 +1877,13 @@
     // Update the hash location, either replacing the current entry, or adding
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
-      if (replace) {
-        var href = location.href.replace(/(javascript:|#).*$/, '');
-        location.replace(href + '#' + fragment);
-      } else {
+      // if contains Korean not work on Safari browser
+      if (!replace) {
         // Some browsers require that `hash` contains a leading #.
-        this._changeHash(window, fragment);
+        location.hash = '#' + fragment;
       }
-    },
-    // location.hash broken chracter(Kroean) issue on Safari browser.
-    _changeHash: function(context, fragment) {
-      var frameWindow = context || window;
-      var href = frameWindow.location.href.replace(/(javascript:|#).*$/, '');
-      frameWindow.location.href = href + '#' + fragment;
+      var href = location.href.replace(/(javascript:|#).*$/, '');
+      location.replace(href + '#' + fragment);
     }
   });
 
