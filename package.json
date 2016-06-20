@@ -20,9 +20,9 @@
     "docco": "0.7.0",
     "eslint": "^2.11.0",
     "karma": "^0.13.13",
-    "karma-phantomjs-launcher": "^0.1.4",
-    "karma-qunit": "^0.1.5",
-    "qunitjs": "^1.18.0",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "karma-qunit": "^1.0.0",
+    "qunitjs": "^2.0.0",
     "uglify-js": "^2.4.17"
   },
   "scripts": {

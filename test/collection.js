@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   var a, b, c, d, e, col, otherCol;
 
@@ -1399,7 +1399,7 @@
   });
 
   QUnit.test('#1939 - `parse` is passed `options`', function(assert) {
-    var done = assert.async();
+    var QUnit.done = assert.async();
     assert.expect(1);
     var collection = new (Backbone.Collection.extend({
       url: '/',
@@ -1414,7 +1414,7 @@
       return {someHeader: 'headerValue'};
     };
     collection.fetch({
-      success: function() { done(); }
+      success: function() { QUnit.done(); }
     });
     Backbone.ajax = ajax;
   });
@@ -2020,4 +2020,4 @@
     assert.equal(fired, false);
   });
 
-})();
+})(QUnit);

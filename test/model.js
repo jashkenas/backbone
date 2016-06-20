@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   var ProxyModel = Backbone.Model.extend();
   var Klass = Backbone.Collection.extend({
@@ -1260,14 +1260,14 @@
   });
 
   QUnit.test('#1365 - Destroy: New models execute success callback.', function(assert) {
-    var done = assert.async();
+    var QUnit.done = assert.async();
     assert.expect(2);
     new Backbone.Model()
     .on('sync', function() { assert.ok(false); })
     .on('destroy', function(){ assert.ok(true); })
     .destroy({success: function(){
       assert.ok(true);
-      done();
+      QUnit.done();
     }});
   });
 
@@ -1303,13 +1303,13 @@
   });
 
   QUnit.test('#1478 - Model `save` does not trigger change on unchanged attributes', function(assert) {
-    var done = assert.async();
+    var QUnit.done = assert.async();
     assert.expect(0);
     var Model = Backbone.Model.extend({
       sync: function(method, m, options) {
         setTimeout(function(){
           options.success();
-          done();
+          QUnit.done();
         }, 0);
       }
     });
@@ -1445,4 +1445,4 @@
     assert.equal(model.id, 3);
   });
 
-})();
+})(QUnit);
