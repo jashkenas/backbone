@@ -666,7 +666,8 @@
     assert.strictEqual(history.getFragment('fragment   '), 'fragment');
   });
 
-  QUnit.test('#1820 - Leading slash and trailing space.', 1, function(assert) {
+  QUnit.test('#1820 - Leading slash and trailing space.', function(assert) {
+    assert.expect(1);
     var history = new Backbone.History;
     assert.strictEqual(history.getFragment('/fragment '), 'fragment');
   });
@@ -681,7 +682,7 @@
     assert.strictEqual(router.z, '123');
   });
 
-  QUnit.test('#2062 - Trigger 'route' event on router instance.', function(assert) {
+  QUnit.test('#2062 - Trigger "route" event on router instance.', function(assert) {
     assert.expect(2);
     router.on('route', function(name, args) {
       assert.strictEqual(name, 'routeEvent');
@@ -1064,7 +1065,7 @@
     Backbone.history.stop();
     Backbone.history = _.extend(new Backbone.History, {location: location});
     var MyRouter = Backbone.Router.extend({
-      routes: {'': function() { assert.ok(true); } }
+      routes: {'': function() { assert.ok(true); }}
     });
     var myRouter = new MyRouter;
     Backbone.history.start({root: '®ooτ', pushState: true});

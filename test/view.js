@@ -154,7 +154,7 @@
   QUnit.test('delegateEvents ignore undefined methods', function(assert) {
     assert.expect(0);
     var myView = new Backbone.View({el: '<p></p>'});
-    myView.delegateEvents({'click': 'undefinedMethod'});
+    myView.delegateEvents({click: 'undefinedMethod'});
     myView.$el.trigger('click');
   });
 

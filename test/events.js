@@ -626,9 +626,9 @@
   });
 
   QUnit.test('once with asynchronous events', function(assert) {
-    var QUnit.done = assert.async();
+    var done = assert.async();
     assert.expect(1);
-    var func = _.debounce(function() { assert.ok(true); QUnit.done(); }, 50);
+    var func = _.debounce(function() { assert.ok(true); done(); }, 50);
     var obj = _.extend({}, Backbone.Events).once('async', func);
 
     obj.trigger('async');
