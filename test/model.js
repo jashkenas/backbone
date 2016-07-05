@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   var ProxyModel = Backbone.Model.extend();
   var Klass = Backbone.Collection.extend({
@@ -1445,4 +1445,4 @@
     assert.equal(model.id, 3);
   });
 
-})();
+})(QUnit);
