@@ -1758,6 +1758,60 @@
     assert.equal(c2.modelId(m.attributes), void 0);
   });
 
+  QUnit.test('Collection implements Iterable, values is default iterator function', function(assert) {
+    /* global Symbol */
+    var $$iterator = typeof Symbol === 'function' && Symbol.iterator;
+    // This test only applies to environments which define Symbol.iterator.
+    if (!$$iterator) {
+      assert.expect(0);
+      return;
+    }
+    assert.expect(2);
+    var collection = new Backbone.Collection([]);
+    assert.strictEqual(collection[$$iterator], collection.values);
+    var iterator = collection[$$iterator]();
+    assert.deepEqual(iterator.next(), {value: void 0, done: true});
+  });
+
+  QUnit.test('Collection.values iterates models in sorted order', function(assert) {
+    assert.expect(4);
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    var iterator = collection.values();
+    assert.strictEqual(iterator.next().value, one);
+    assert.strictEqual(iterator.next().value, two);
+    assert.strictEqual(iterator.next().value, three);
+    assert.strictEqual(iterator.next().value, void 0);
+  });
+
+  QUnit.test('Collection.keys iterates ids in sorted order', function(assert) {
+    assert.expect(4);
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    var iterator = collection.keys();
+    assert.strictEqual(iterator.next().value, 1);
+    assert.strictEqual(iterator.next().value, 2);
+    assert.strictEqual(iterator.next().value, 3);
+    assert.strictEqual(iterator.next().value, void 0);
+  });
+
+  QUnit.test('Collection.entries iterates ids and models in sorted order', function(assert) {
+    assert.expect(4);
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    var iterator = collection.entries();
+    assert.deepEqual(iterator.next().value, [1, one]);
+    assert.deepEqual(iterator.next().value, [2, two]);
+    assert.deepEqual(iterator.next().value, [3, three]);
+    assert.strictEqual(iterator.next().value, void 0);
+  });
+
   QUnit.test('#3039 #3951: adding at index fires with correct at', function(assert) {
     assert.expect(4);
     var collection = new Backbone.Collection([{val: 0}, {val: 4}]);
