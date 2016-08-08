@@ -331,6 +331,7 @@
       <li>– <a href="#Events-stopListening">stopListening</a></li>
       <li>– <a href="#Events-listenToOnce">listenToOnce</a></li>
       <li>- <a href="#Events-catalog"><b>Catalog of Built-in Events</b></a></li>
+      <li>- <a href="#Events-aggregator">Events aggregator</a></li>
     </ul>
 
     <a class="toc_title" href="#Model">
@@ -1027,6 +1028,18 @@ view.stopListening(model);
       in the options for your event callback to look at, and choose to ignore,
       will usually work out better.
     </p>
+
+    <p id="Events-aggregator">
+      <b class="header">Aggregation of Events</b>
+      <br />
+      Event aggregation is an events object with <tt>event's name and list of selectors as keys</tt> and <tt>callback function as values</tt>
+    </p>
+
+    <pre>
+      events: {
+        'click #selector': 'callback'
+      }
+    </pre>
 
     <h2 id="Model">Backbone.Model</h2>
 
