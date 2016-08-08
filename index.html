@@ -431,6 +431,7 @@
     </a>
     <ul class="toc_section">
       <li>– <a href="#Sync">Backbone.sync</a></li>
+      <li>– <a href="#Sync-headers">Backbone.headers</a></li>
       <li>– <a href="#Sync-ajax">Backbone.ajax</a></li>
       <li>– <a href="#Sync-emulateHTTP">Backbone.emulateHTTP</a></li>
       <li>– <a href="#Sync-emulateJSON">Backbone.emulateJSON</a></li>
@@ -2689,6 +2690,14 @@ end
       One more tip for integrating Rails versions prior to 3.1 is to disable
       the default namespacing for <tt>to_json</tt> calls on models by setting
       <tt>ActiveRecord::Base.include_root_in_json = false</tt>
+    </p>
+
+
+    <p id="Sync-headers">
+      <b class="header">headers</b>
+      <br />
+      Backbone.headers are a customisable key-value dictionary of headers that are added to each and every request sent to the server. For example to add a CSRF token:
+      <tt>Backbone.headers["X-CSRF-Token"] = $("#token").val()</tt>
     </p>
 
     <p id="Sync-ajax">
