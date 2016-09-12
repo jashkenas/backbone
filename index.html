@@ -61,6 +61,9 @@
             .toc_section li a:hover {
               text-decoration: underline;
             }
+      input#function_filter {
+        width: 80%;
+      }
     div.container {
       position: relative;
       width: 550px;
@@ -307,228 +310,254 @@
       <li>&raquo; <a href="docs/backbone.html">Annotated Source</a></li>
     </ul>
 
-    <a class="toc_title" href="#Getting-started">
-      Getting Started
-    </a>
-    <ul class="toc_section">
-      <li>- <a href="#Getting-started">Introduction</a></li>
-      <li>– <a href="#Model-View-separation">Models and Views</a></li>
-      <li>– <a href="#Model-Collections">Collections</a></li>
-      <li>– <a href="#API-integration">API Integration</a></li>
-      <li>– <a href="#View-rendering">Rendering</a></li>
-      <li>– <a href="#Routing">Routing</a></li>
-    </ul>
+    <input id="function_filter" placeholder="Filter" type="text" autofocus />
 
-    <a class="toc_title" href="#Events">
-      Events
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Events-on">on</a></li>
-      <li>– <a href="#Events-off">off</a></li>
-      <li>– <a href="#Events-trigger">trigger</a></li>
-      <li>– <a href="#Events-once">once</a></li>
-      <li>– <a href="#Events-listenTo">listenTo</a></li>
-      <li>– <a href="#Events-stopListening">stopListening</a></li>
-      <li>– <a href="#Events-listenToOnce">listenToOnce</a></li>
-      <li>- <a href="#Events-catalog"><b>Catalog of Built-in Events</b></a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Getting-started">
+        Getting Started
+      </a>
+      <ul class="toc_section">
+        <li data-name="Introduction">- <a href="#Getting-started">Introduction</a></li>
+        <li data-name="Models and Views">– <a href="#Model-View-separation">Models and Views</a></li>
+        <li data-name="Collections">– <a href="#Model-Collections">Collections</a></li>
+        <li data-name="API Integration">– <a href="#API-integration">API Integration</a></li>
+        <li data-name="Rendering">– <a href="#View-rendering">Rendering</a></li>
+        <li data-name="Routing">– <a href="#Routing">Routing</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#Model">
-      Model
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Model-extend">extend</a></li>
-      <li>– <a href="#Model-constructor">constructor / initialize</a></li>
-      <li>– <a href="#Model-get">get</a></li>
-      <li>– <a href="#Model-set">set</a></li>
-      <li>– <a href="#Model-escape">escape</a></li>
-      <li>– <a href="#Model-has">has</a></li>
-      <li>– <a href="#Model-unset">unset</a></li>
-      <li>– <a href="#Model-clear">clear</a></li>
-      <li>– <a href="#Model-id">id</a></li>
-      <li>– <a href="#Model-idAttribute">idAttribute</a></li>
-      <li>– <a href="#Model-cid">cid</a></li>
-      <li>– <a href="#Model-attributes">attributes</a></li>
-      <li>– <a href="#Model-changed">changed</a></li>
-      <li>– <a href="#Model-defaults">defaults</a></li>
-      <li>– <a href="#Model-toJSON">toJSON</a></li>
-      <li>– <a href="#Model-sync">sync</a></li>
-      <li>– <a href="#Model-fetch">fetch</a></li>
-      <li>– <a href="#Model-save">save</a></li>
-      <li>– <a href="#Model-destroy">destroy</a></li>
-      <li>– <a href="#Model-Underscore-Methods"><b>Underscore Methods (9)</b></a></li>
-      <li>– <a href="#Model-validate">validate</a></li>
-      <li>– <a href="#Model-validationError">validationError</a></li>
-      <li>– <a href="#Model-isValid">isValid</a></li>
-      <li>– <a href="#Model-url">url</a></li>
-      <li>– <a href="#Model-urlRoot">urlRoot</a></li>
-      <li>– <a href="#Model-parse">parse</a></li>
-      <li>– <a href="#Model-clone">clone</a></li>
-      <li>– <a href="#Model-isNew">isNew</a></li>
-      <li>– <a href="#Model-hasChanged">hasChanged</a></li>
-      <li>– <a href="#Model-changedAttributes">changedAttributes</a></li>
-      <li>– <a href="#Model-previous">previous</a></li>
-      <li>– <a href="#Model-previousAttributes">previousAttributes</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Events">
+        Events
+      </a>
+      <ul class="toc_section">
+        <li data-name="on">– <a href="#Events-on">on</a></li>
+        <li data-name="off">– <a href="#Events-off">off</a></li>
+        <li data-name="trigger">– <a href="#Events-trigger">trigger</a></li>
+        <li data-name="once">– <a href="#Events-once">once</a></li>
+        <li data-name="listenTo">– <a href="#Events-listenTo">listenTo</a></li>
+        <li data-name="stopListening">– <a href="#Events-stopListening">stopListening</a></li>
+        <li data-name="listenToOnce">– <a href="#Events-listenToOnce">listenToOnce</a></li>
+        <li data-name="Catalog of Built-in Events">- <a href="#Events-catalog"><b>Catalog of Built-in Events</b></a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#Collection">
-      Collection
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Collection-extend">extend</a></li>
-      <li>– <a href="#Collection-model">model</a></li>
-      <li>– <a href="#Collection-modelId">modelId</a></li>
-      <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
-      <li>– <a href="#Collection-models">models</a></li>
-      <li>– <a href="#Collection-toJSON">toJSON</a></li>
-      <li>– <a href="#Collection-sync">sync</a></li>
-      <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (46)</b></a></li>
-      <li>– <a href="#Collection-add">add</a></li>
-      <li>– <a href="#Collection-remove">remove</a></li>
-      <li>– <a href="#Collection-reset">reset</a></li>
-      <li>– <a href="#Collection-set">set</a></li>
-      <li>– <a href="#Collection-get">get</a></li>
-      <li>– <a href="#Collection-at">at</a></li>
-      <li>– <a href="#Collection-push">push</a></li>
-      <li>– <a href="#Collection-pop">pop</a></li>
-      <li>– <a href="#Collection-unshift">unshift</a></li>
-      <li>– <a href="#Collection-shift">shift</a></li>
-      <li>– <a href="#Collection-slice">slice</a></li>
-      <li>– <a href="#Collection-length">length</a></li>
-      <li>– <a href="#Collection-comparator">comparator</a></li>
-      <li>– <a href="#Collection-sort">sort</a></li>
-      <li>– <a href="#Collection-pluck">pluck</a></li>
-      <li>– <a href="#Collection-where">where</a></li>
-      <li>– <a href="#Collection-findWhere">findWhere</a></li>
-      <li>– <a href="#Collection-url">url</a></li>
-      <li>– <a href="#Collection-parse">parse</a></li>
-      <li>– <a href="#Collection-clone">clone</a></li>
-      <li>– <a href="#Collection-fetch">fetch</a></li>
-      <li>– <a href="#Collection-create">create</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Model">
+        Model
+      </a>
+      <ul class="toc_section">
+        <li data-name="extend">– <a href="#Model-extend">extend</a></li>
+        <li data-name="constructor / initialize">– <a href="#Model-constructor">constructor / initialize</a></li>
+        <li data-name="get">– <a href="#Model-get">get</a></li>
+        <li data-name="set">– <a href="#Model-set">set</a></li>
+        <li data-name="escape">– <a href="#Model-escape">escape</a></li>
+        <li data-name="has">– <a href="#Model-has">has</a></li>
+        <li data-name="unset">– <a href="#Model-unset">unset</a></li>
+        <li data-name="clear">– <a href="#Model-clear">clear</a></li>
+        <li data-name="id">– <a href="#Model-id">id</a></li>
+        <li data-name="idAttribute">– <a href="#Model-idAttribute">idAttribute</a></li>
+        <li data-name="cid">– <a href="#Model-cid">cid</a></li>
+        <li data-name="attributes">– <a href="#Model-attributes">attributes</a></li>
+        <li data-name="changed">– <a href="#Model-changed">changed</a></li>
+        <li data-name="defaults">– <a href="#Model-defaults">defaults</a></li>
+        <li data-name="toJSON">– <a href="#Model-toJSON">toJSON</a></li>
+        <li data-name="sync">– <a href="#Model-sync">sync</a></li>
+        <li data-name="fetch">– <a href="#Model-fetch">fetch</a></li>
+        <li data-name="save">– <a href="#Model-save">save</a></li>
+        <li data-name="destroy">– <a href="#Model-destroy">destroy</a></li>
+        <li data-name="Underscore Methods">– <a href="#Model-Underscore-Methods"><b>Underscore Methods (9)</b></a></li>
+        <li data-name="validate">– <a href="#Model-validate">validate</a></li>
+        <li data-name="validationError">– <a href="#Model-validationError">validationError</a></li>
+        <li data-name="isValid">– <a href="#Model-isValid">isValid</a></li>
+        <li data-name="url">– <a href="#Model-url">url</a></li>
+        <li data-name="urlRoot">– <a href="#Model-urlRoot">urlRoot</a></li>
+        <li data-name="parse">– <a href="#Model-parse">parse</a></li>
+        <li data-name="clone">– <a href="#Model-clone">clone</a></li>
+        <li data-name="isNew">– <a href="#Model-isNew">isNew</a></li>
+        <li data-name="hasChanged">– <a href="#Model-hasChanged">hasChanged</a></li>
+        <li data-name="changedAttributes">– <a href="#Model-changedAttributes">changedAttributes</a></li>
+        <li data-name="previous">– <a href="#Model-previous">previous</a></li>
+        <li data-name="previousAttributes">– <a href="#Model-previousAttributes">previousAttributes</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#Router">
-      Router
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Router-extend">extend</a></li>
-      <li>– <a href="#Router-routes">routes</a></li>
-      <li>– <a href="#Router-constructor">constructor / initialize</a></li>
-      <li>– <a href="#Router-route">route</a></li>
-      <li>– <a href="#Router-navigate">navigate</a></li>
-      <li>– <a href="#Router-execute">execute</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Collection">
+        Collection
+      </a>
+      <ul class="toc_section">
+        <li data-name="extend">– <a href="#Collection-extend">extend</a></li>
+        <li data-name="model">– <a href="#Collection-model">model</a></li>
+        <li data-name="modelId">– <a href="#Collection-modelId">modelId</a></li>
+        <li data-name="constructor / initialize" data-name="constructor / initialize">– <a href="#Collection-constructor">constructor / initialize</a></li>
+        <li data-name="models">– <a href="#Collection-models">models</a></li>
+        <li data-name="toJSON">– <a href="#Collection-toJSON">toJSON</a></li>
+        <li data-name="sync">– <a href="#Collection-sync">sync</a></li>
+        <li data-name="Underscore Methods">– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (46)</b></a></li>
+        <li data-name="add">– <a href="#Collection-add">add</a></li>
+        <li data-name="remove">– <a href="#Collection-remove">remove</a></li>
+        <li data-name="reset">– <a href="#Collection-reset">reset</a></li>
+        <li data-name="set">– <a href="#Collection-set">set</a></li>
+        <li data-name="get">– <a href="#Collection-get">get</a></li>
+        <li data-name="at">– <a href="#Collection-at">at</a></li>
+        <li data-name="push">– <a href="#Collection-push">push</a></li>
+        <li data-name="pop">– <a href="#Collection-pop">pop</a></li>
+        <li data-name="unshift">– <a href="#Collection-unshift">unshift</a></li>
+        <li data-name="shift">– <a href="#Collection-shift">shift</a></li>
+        <li data-name="slice">– <a href="#Collection-slice">slice</a></li>
+        <li data-name="length">– <a href="#Collection-length">length</a></li>
+        <li data-name="comparator">– <a href="#Collection-comparator">comparator</a></li>
+        <li data-name="sort">– <a href="#Collection-sort">sort</a></li>
+        <li data-name="pluck">– <a href="#Collection-pluck">pluck</a></li>
+        <li data-name="where">– <a href="#Collection-where">where</a></li>
+        <li data-name="findWhere">– <a href="#Collection-findWhere">findWhere</a></li>
+        <li data-name="url">– <a href="#Collection-url">url</a></li>
+        <li data-name="parse">– <a href="#Collection-parse">parse</a></li>
+        <li data-name="clone">– <a href="#Collection-clone">clone</a></li>
+        <li data-name="fetch">– <a href="#Collection-fetch">fetch</a></li>
+        <li data-name="create">– <a href="#Collection-create">create</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#History">
-      History
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#History-start">start</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Router">
+        Router
+      </a>
+      <ul class="toc_section">
+        <li data-name="extend">– <a href="#Router-extend">extend</a></li>
+        <li data-name="routes">– <a href="#Router-routes">routes</a></li>
+        <li data-name="constructor / initialize">– <a href="#Router-constructor">constructor / initialize</a></li>
+        <li data-name="route">– <a href="#Router-route">route</a></li>
+        <li data-name="navigate">– <a href="#Router-navigate">navigate</a></li>
+        <li data-name="execute">– <a href="#Router-execute">execute</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#Sync">
-      Sync
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Sync">Backbone.sync</a></li>
-      <li>– <a href="#Sync-ajax">Backbone.ajax</a></li>
-      <li>– <a href="#Sync-emulateHTTP">Backbone.emulateHTTP</a></li>
-      <li>– <a href="#Sync-emulateJSON">Backbone.emulateJSON</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#History">
+        History
+      </a>
+      <ul class="toc_section">
+        <li data-name="start">– <a href="#History-start">start</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#View">
-      View
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#View-extend">extend</a></li>
-      <li>– <a href="#View-constructor">constructor / initialize</a></li>
-      <li>– <a href="#View-el">el</a></li>
-      <li>– <a href="#View-$el">$el</a></li>
-      <li>– <a href="#View-setElement">setElement</a></li>
-      <li>– <a href="#View-attributes">attributes</a></li>
-      <li>– <a href="#View-dollar">$ (jQuery)</a></li>
-      <li>– <a href="#View-template">template</a></li>
-      <li>– <a href="#View-render">render</a></li>
-      <li>– <a href="#View-remove">remove</a></li>
-      <li>– <a href="#View-events">events</a></li>
-      <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
-      <li>– <a href="#View-undelegateEvents">undelegateEvents</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Sync">
+        Sync
+      </a>
+      <ul class="toc_section">
+        <li data-name="Backbone.sync">– <a href="#Sync">Backbone.sync</a></li>
+        <li data-name="Backbone.ajax">– <a href="#Sync-ajax">Backbone.ajax</a></li>
+        <li data-name="Backbone.emulateHTTP">– <a href="#Sync-emulateHTTP">Backbone.emulateHTTP</a></li>
+        <li data-name="Backbone.emulateJSON">– <a href="#Sync-emulateJSON">Backbone.emulateJSON</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#Utility">
-      Utility
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Utility-Backbone-noConflict">Backbone.noConflict</a></li>
-      <li>– <a href="#Utility-Backbone-$">Backbone.$</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#View">
+        View
+      </a>
+      <ul class="toc_section">
+        <li data-name="extend">– <a href="#View-extend">extend</a></li>
+        <li data-name="constructor / initialize">– <a href="#View-constructor">constructor / initialize</a></li>
+        <li data-name="el">– <a href="#View-el">el</a></li>
+        <li data-name="$el">– <a href="#View-$el">$el</a></li>
+        <li data-name="setElement">– <a href="#View-setElement">setElement</a></li>
+        <li data-name="attributes">– <a href="#View-attributes">attributes</a></li>
+        <li data-name="$ (jQuery)">– <a href="#View-dollar">$ (jQuery)</a></li>
+        <li data-name="template">– <a href="#View-template">template</a></li>
+        <li data-name="render">– <a href="#View-render">render</a></li>
+        <li data-name="remove">– <a href="#View-remove">remove</a></li>
+        <li data-name="events">– <a href="#View-events">events</a></li>
+        <li data-name="delegateEvents">– <a href="#View-delegateEvents">delegateEvents</a></li>
+        <li data-name="undelegateEvents">– <a href="#View-undelegateEvents">undelegateEvents</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#faq">
-      F.A.Q.
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#FAQ-why-backbone">Why Backbone?</a></li>
-      <li>– <a href="#FAQ-tim-toady">More Than One Way To Do It</a></li>
-      <li>– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
-      <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
-      <li>– <a href="#FAQ-extending">Extending Backbone</a></li>
-      <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
-      <li>– <a href="#FAQ-this">Binding "this"</a></li>
-      <li>– <a href="#FAQ-rails">Working with Rails</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Utility">
+        Utility
+      </a>
+      <ul class="toc_section">
+        <li data-name="Backbone.noConflict">– <a href="#Utility-Backbone-noConflict">Backbone.noConflict</a></li>
+        <li data-name="Backbone.$">– <a href="#Utility-Backbone-$">Backbone.$</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#examples">
-      Examples
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#examples-todos">Todos</a></li>
-      <li>– <a href="#examples-documentcloud">DocumentCloud</a></li>
-      <li>– <a href="#examples-usa-today">USA Today</a></li>
-      <li>– <a href="#examples-rdio">Rdio</a></li>
-      <li>– <a href="#examples-hulu">Hulu</a></li>
-      <li>– <a href="#examples-quartz">Quartz</a></li>
-      <li>– <a href="#examples-earth">Earth</a></li>
-      <li>– <a href="#examples-vox">Vox</a></li>
-      <li>– <a href="#examples-gawker">Gawker Media</a></li>
-      <li>– <a href="#examples-flow">Flow</a></li>
-      <li>– <a href="#examples-gilt">Gilt Groupe</a></li>
-      <li>– <a href="#examples-enigma">Enigma</a></li>
-      <li>– <a href="#examples-newsblur">NewsBlur</a></li>
-      <li>– <a href="#examples-wordpress">WordPress.com</a></li>
-      <li>– <a href="#examples-foursquare">Foursquare</a></li>
-      <li>– <a href="#examples-bitbucket">Bitbucket</a></li>
-      <li>– <a href="#examples-disqus">Disqus</a></li>
-      <li>– <a href="#examples-delicious">Delicious</a></li>
-      <li>– <a href="#examples-khan-academy">Khan Academy</a></li>
-      <li>– <a href="#examples-irccloud">IRCCloud</a></li>
-      <li>– <a href="#examples-pitchfork">Pitchfork</a></li>
-      <li>– <a href="#examples-spin">Spin</a></li>
-      <li>– <a href="#examples-zocdoc">ZocDoc</a></li>
-      <li>– <a href="#examples-walmart">Walmart Mobile</a></li>
-      <li>– <a href="#examples-groupon">Groupon Now!</a></li>
-      <li>– <a href="#examples-basecamp">Basecamp</a></li>
-      <li>– <a href="#examples-slavery-footprint">Slavery Footprint</a></li>
-      <li>– <a href="#examples-stripe">Stripe</a></li>
-      <li>– <a href="#examples-airbnb">Airbnb</a></li>
-      <li>– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
-      <li>- <a href="#examples-artsy">Art.sy</a></li>
-      <li>– <a href="#examples-pandora">Pandora</a></li>
-      <li>– <a href="#examples-inkling">Inkling</a></li>
-      <li>– <a href="#examples-code-school">Code School</a></li>
-      <li>– <a href="#examples-cloudapp">CloudApp</a></li>
-      <li>– <a href="#examples-seatgeek">SeatGeek</a></li>
-      <li>– <a href="#examples-easel">Easel</a></li>
-      <li>- <a href="#examples-jolicloud">Jolicloud</a></li>
-      <li>– <a href="#examples-salon">Salon.io</a></li>
-      <li>– <a href="#examples-tilemill">TileMill</a></li>
-      <li>– <a href="#examples-blossom">Blossom</a></li>
-      <li>– <a href="#examples-trello">Trello</a></li>
-      <li>– <a href="#examples-tzigla">Tzigla</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#faq">
+        F.A.Q.
+      </a>
+      <ul class="toc_section">
+        <li data-name="Why Backbone?">– <a href="#FAQ-why-backbone">Why Backbone?</a></li>
+        <li data-name="More Than One Way To Do It">– <a href="#FAQ-tim-toady">More Than One Way To Do It</a></li>
+        <li data-name="Nested Models and Collections">– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
+        <li data-name="Loading Bootstrapped Models">– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
+        <li data-name="Extending Backbone">– <a href="#FAQ-extending">Extending Backbone</a></li>
+        <li data-name="Traditional MVC">– <a href="#FAQ-mvc">Traditional MVC</a></li>
+        <li data-name="Binding this">– <a href="#FAQ-this">Binding "this"</a></li>
+        <li data-name="Working with Rails">– <a href="#FAQ-rails">Working with Rails</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#changelog">
-      Change Log
-    </a>
+    <div class="searchable_section">
+      <a class="toc_title" href="#examples">
+        Examples
+      </a>
+      <ul class="toc_section">
+        <li data-name="Todos">– <a href="#examples-todos">Todos</a></li>
+        <li data-name="DocumentCloud">– <a href="#examples-documentcloud">DocumentCloud</a></li>
+        <li data-name="USA Today">– <a href="#examples-usa-today">USA Today</a></li>
+        <li data-name="Rdio">– <a href="#examples-rdio">Rdio</a></li>
+        <li data-name="Hulu">– <a href="#examples-hulu">Hulu</a></li>
+        <li data-name="Quartz">– <a href="#examples-quartz">Quartz</a></li>
+        <li data-name="Earth">– <a href="#examples-earth">Earth</a></li>
+        <li data-name="Vox">– <a href="#examples-vox">Vox</a></li>
+        <li data-name="Gawker Media">– <a href="#examples-gawker">Gawker Media</a></li>
+        <li data-name="Flow">– <a href="#examples-flow">Flow</a></li>
+        <li data-name="Gilt Groupe">– <a href="#examples-gilt">Gilt Groupe</a></li>
+        <li data-name="Enigma">– <a href="#examples-enigma">Enigma</a></li>
+        <li data-name="NewsBlur">– <a href="#examples-newsblur">NewsBlur</a></li>
+        <li data-name="WordPress.com">– <a href="#examples-wordpress">WordPress.com</a></li>
+        <li data-name="Foursquare">– <a href="#examples-foursquare">Foursquare</a></li>
+        <li data-name="Bitbucket">– <a href="#examples-bitbucket">Bitbucket</a></li>
+        <li data-name="Disqus">– <a href="#examples-disqus">Disqus</a></li>
+        <li data-name="Delicious">– <a href="#examples-delicious">Delicious</a></li>
+        <li data-name="Khan Academy">– <a href="#examples-khan-academy">Khan Academy</a></li>
+        <li data-name="IRCCloud">– <a href="#examples-irccloud">IRCCloud</a></li>
+        <li data-name="Pitchfork">– <a href="#examples-pitchfork">Pitchfork</a></li>
+        <li data-name="Spin">– <a href="#examples-spin">Spin</a></li>
+        <li data-name="ZocDoc">– <a href="#examples-zocdoc">ZocDoc</a></li>
+        <li data-name="Walmart Mobile">– <a href="#examples-walmart">Walmart Mobile</a></li>
+        <li data-name="Groupon Now!">– <a href="#examples-groupon">Groupon Now!</a></li>
+        <li data-name="Basecamp">– <a href="#examples-basecamp">Basecamp</a></li>
+        <li data-name="Slavery Footprint">– <a href="#examples-slavery-footprint">Slavery Footprint</a></li>
+        <li data-name="Stripe">– <a href="#examples-stripe">Stripe</a></li>
+        <li data-name="Airbnb">– <a href="#examples-airbnb">Airbnb</a></li>
+        <li data-name="SoundCloud Mobile">– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
+        <li data-name="Art.sy">- <a href="#examples-artsy">Art.sy</a></li>
+        <li data-name="Pandora">– <a href="#examples-pandora">Pandora</a></li>
+        <li data-name="Inkling">– <a href="#examples-inkling">Inkling</a></li>
+        <li data-name="Code School">– <a href="#examples-code-school">Code School</a></li>
+        <li data-name="CloudApp">– <a href="#examples-cloudapp">CloudApp</a></li>
+        <li data-name="SeatGeek">– <a href="#examples-seatgeek">SeatGeek</a></li>
+        <li data-name="Easel">– <a href="#examples-easel">Easel</a></li>
+        <li data-name="Jolicloud">- <a href="#examples-jolicloud">Jolicloud</a></li>
+        <li data-name="Salon.io">– <a href="#examples-salon">Salon.io</a></li>
+        <li data-name="TileMill">– <a href="#examples-tilemill">TileMill</a></li>
+        <li data-name="Blossom">– <a href="#examples-blossom">Blossom</a></li>
+        <li data-name="Trello">– <a href="#examples-trello">Trello</a></li>
+        <li data-name="Tzigla">– <a href="#examples-tzigla">Tzigla</a></li>
+      </ul>
+    </div>
+
+    <div class="searchable_section">
+      <a class="toc_title" href="#changelog">
+        Change Log
+      </a>
+    </div>
 
   </div>
 
@@ -5069,6 +5098,7 @@ ActiveRecord::Base.include_root_in_json = false
   <script src="docs/js/jquery.lazyload.js"></script>
   <script src="test/vendor/json2.js"></script>
   <script src="backbone.js"></script>
+  <script src="docs/search.js"></script>
 
   <script>
     // Set up the "play" buttons for each runnable code example.
