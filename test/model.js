@@ -1471,14 +1471,14 @@
 
   QUnit.test('#4034 - Model.prototype.update() passes its options to set()', function(assert) {
     var onChange = function() {
-      onChange.called = true;
+      assert.ok(false);
     };
     var model = new Backbone.Model({prop0: 'value0'});
     model.on('change', onChange);
     model.update('prop0', function(prop0) {
       return prop0 + '-changed';
     }, {silent: true});
-    assert.equal(onChange.called, undefined);
+    assert.equal(model.get('prop0'), 'value0-changed');
   });
 
 })(QUnit);
