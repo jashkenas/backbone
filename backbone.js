@@ -543,15 +543,17 @@
       return this.set(attr, void 0, _.extend({}, options, {unset: true}));
     },
 
-    update: function(attrs, mapper, setOptions) {
-      if (_.isArray(attrs)) {
-        var mapperArgs = _.map(attrs, function(attr) {
+    // accepts an attribute name (or array of attribute names) and a transformer
+    // function which maps the current attribute value(s) to new attribute value(s)
+    update: function(attrName, transformer, setOptions) {
+      if (_.isArray(attrName)) {
+        var mapperArgs = _.map(attrName, function(attr) {
           return this.get(attr);
         }, this);
-        this.set(mapper.apply(this, mapperArgs), setOptions);
+        this.set(transformer.apply(this, mapperArgs), setOptions);
       } else {
-        var newValue = mapper.call(this, this.get(attrs));
-        this.set(attrs, newValue, setOptions);
+        var newValue = transformer.call(this, this.get(attrName));
+        this.set(attrName, newValue, setOptions);
       }
       return this;
     },

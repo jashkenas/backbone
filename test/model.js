@@ -1463,7 +1463,7 @@
       return {
         prop0: prop0 + '-changed',
         prop1: prop1 + '-changed'
-      }
+      };
     });
     assert.equal(model.get('prop0'), 'value0-changed');
     assert.equal(model.get('prop1'), 'value1-changed');
@@ -1472,7 +1472,7 @@
   QUnit.test('#4034 - Model.prototype.update() passes its options to set()', function(assert) {
     var onChange = function() {
       onChange.called = true;
-    }
+    };
     var model = new Backbone.Model({prop0: 'value0'});
     model.on('change', onChange);
     model.update('prop0', function(prop0) {
