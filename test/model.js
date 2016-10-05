@@ -1445,4 +1445,40 @@
     assert.equal(model.id, 3);
   });
 
+  QUnit.test('#4034 - Model.prototype.update()', function(assert) {
+    var model = new Backbone.Model({prop1: 'value1'});
+    model.update('prop1', function(prop1) {
+      assert.equal(this, model);
+      return prop1 + '-changed';
+    });
+    assert.strictEqual(model.get('prop1'), 'value1-changed');
+  });
+
+  QUnit.test('#4034 - Model.prototype.update() with multiple attributes', function(assert) {
+    var model = new Backbone.Model({
+      prop0: 'value0',
+      prop1: 'value1'
+    });
+    model.update(['prop0', 'prop1'], function(prop0, prop1) {
+      return {
+        prop0: prop0 + '-changed',
+        prop1: prop1 + '-changed'
+      }
+    });
+    assert.equal(model.get('prop0'), 'value0-changed');
+    assert.equal(model.get('prop1'), 'value1-changed');
+  });
+
+  QUnit.test('#4034 - Model.prototype.update() passes its options to set()', function(assert) {
+    var onChange = function() {
+      onChange.called = true;
+    }
+    var model = new Backbone.Model({prop0: 'value0'});
+    model.on('change', onChange);
+    model.update('prop0', function(prop0) {
+      return prop0 + '-changed';
+    }, {silent: true});
+    assert.equal(onChange.called, undefined);
+  });
+
 })(QUnit);

@@ -543,6 +543,19 @@
       return this.set(attr, void 0, _.extend({}, options, {unset: true}));
     },
 
+    update: function(attrs, mapper, setOptions) {
+      if (_.isArray(attrs)) {
+        var mapperArgs = _.map(attrs, function(attr) {
+          return this.get(attr);
+        }, this);
+        this.set(mapper.apply(this, mapperArgs), setOptions);
+      } else {
+        var newValue = mapper.call(this, this.get(attrs));
+        this.set(attrs, newValue, setOptions);
+      }
+      return this;
+    },
+
     // Clear all attributes on the model, firing `"change"`.
     clear: function(options) {
       var attrs = {};
