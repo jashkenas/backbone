@@ -1457,16 +1457,15 @@
   QUnit.test('#4034 - Model.prototype.update() with multiple attributes', function(assert) {
     var model = new Backbone.Model({
       prop0: 'value0',
-      prop1: 'value1'
+      prop1: 'value1',
+      prop2: 'value2'
     });
-    model.update(['prop0', 'prop1'], function(prop0, prop1) {
-      return {
-        prop0: prop0 + '-changed',
-        prop1: prop1 + '-changed'
-      };
+    model.update(['prop0', 'prop1'], function(prop) {
+      return prop + '-changed';
     });
     assert.equal(model.get('prop0'), 'value0-changed');
     assert.equal(model.get('prop1'), 'value1-changed');
+    assert.equal(model.get('prop2'), 'value2');
   });
 
   QUnit.test('#4034 - Model.prototype.update() passes its options to set()', function(assert) {

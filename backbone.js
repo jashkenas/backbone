@@ -546,15 +546,12 @@
     // accepts an attribute name (or array of attribute names) and a transformer
     // function which maps the current attribute value(s) to new attribute value(s)
     update: function(attrName, transformer, setOptions) {
-      if (_.isArray(attrName)) {
-        var mapperArgs = _.map(attrName, function(attr) {
-          return this.get(attr);
-        }, this);
-        this.set(transformer.apply(this, mapperArgs), setOptions);
-      } else {
-        var newValue = transformer.call(this, this.get(attrName));
-        this.set(attrName, newValue, setOptions);
-      }
+      var attrNames = _.isArray(attrName) ? attrName : [attrName];
+      var newValues = _.reduce(attrNames, function(valueCollector, attr) {
+        valueCollector[attr] = transformer.call(this, this.get(attr));
+        return valueCollector;
+      }, {}, this);
+      this.set(newValues, setOptions);
       return this;
     },
 
