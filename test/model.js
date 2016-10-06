@@ -1447,8 +1447,9 @@
 
   QUnit.test('#4034 - Model.prototype.update()', function(assert) {
     var model = new Backbone.Model({prop1: 'value1'});
-    model.update('prop1', function(prop1) {
+    model.update('prop1', function(prop1, cbModel) {
       assert.equal(this, model);
+      assert.equal(cbModel, model);
       return prop1 + '-changed';
     });
     assert.strictEqual(model.get('prop1'), 'value1-changed');
