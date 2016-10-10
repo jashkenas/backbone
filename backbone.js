@@ -547,8 +547,9 @@
     // function which maps the current attribute value(s) to new attribute value(s)
     update: function(attrName, transformer, setOptions) {
       var attrNames = _.isArray(attrName) ? attrName : [attrName];
+      var model = this;
       var newValues = _.reduce(attrNames, function(valueCollector, attr) {
-        valueCollector[attr] = transformer.call(this, this.get(attr), this);
+        valueCollector[attr] = transformer.call(model, this.get(attr), model);
         return valueCollector;
       }, {}, this);
       this.set(newValues, setOptions);
