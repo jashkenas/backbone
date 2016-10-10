@@ -549,9 +549,9 @@
       var attrNames = _.isArray(attrName) ? attrName : [attrName];
       var model = this;
       var newValues = _.reduce(attrNames, function(valueCollector, attr) {
-        valueCollector[attr] = transformer.call(model, this.get(attr), model);
+        valueCollector[attr] = transformer.call(model, model.get(attr), model, attr);
         return valueCollector;
-      }, {}, this);
+      }, {});
       this.set(newValues, setOptions);
       return this;
     },
