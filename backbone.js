@@ -403,6 +403,7 @@
 
     // Additional `_.defaults()` wrap after `_.extend()` makes sense
     // when `attrs` has a property explicitly set to `undefined`.
+    // Discussion: https://github.com/jashkenas/backbone/issues/3842
     attrs = _.defaults(_.extend({}, defaults, attrs), defaults);
 
     this.set(attrs, options);
