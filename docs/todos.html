@@ -127,9 +127,9 @@ to persist Backbone models within your browser.</p>
             
             <div class="content"><div class='highlight'><pre>    defaults: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">return</span> {
-        <span class="hljs-attr">title</span>: <span class="hljs-string">"empty todo..."</span>,
-        <span class="hljs-attr">order</span>: Todos.nextOrder(),
-        <span class="hljs-attr">done</span>: <span class="hljs-literal">false</span>
+        title: <span class="hljs-string">"empty todo..."</span>,
+        order: Todos.nextOrder(),
+        done: <span class="hljs-literal">false</span>
       };
     },</pre></div></div>
             
@@ -147,7 +147,7 @@ to persist Backbone models within your browser.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    toggle: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.save({<span class="hljs-attr">done</span>: !<span class="hljs-keyword">this</span>.get(<span class="hljs-string">"done"</span>)});
+      <span class="hljs-keyword">this</span>.save({done: !<span class="hljs-keyword">this</span>.get(<span class="hljs-string">"done"</span>)});
     }
 
   });</pre></div></div>
@@ -237,7 +237,7 @@ server.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    done: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.where({<span class="hljs-attr">done</span>: <span class="hljs-literal">true</span>});
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.where({done: <span class="hljs-literal">true</span>});
     },</pre></div></div>
             
         </li>
@@ -254,7 +254,7 @@ server.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    remaining: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.where({<span class="hljs-attr">done</span>: <span class="hljs-literal">false</span>});
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.where({done: <span class="hljs-literal">false</span>});
     },</pre></div></div>
             
         </li>
@@ -492,7 +492,7 @@ app, we set a direct reference on the model for convenience.</p>
       <span class="hljs-keyword">if</span> (!value) {
         <span class="hljs-keyword">this</span>.clear();
       } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">this</span>.model.save({<span class="hljs-attr">title</span>: value});
+        <span class="hljs-keyword">this</span>.model.save({title: value});
         <span class="hljs-keyword">this</span>.$el.removeClass(<span class="hljs-string">"editing"</span>);
       }
     },</pre></div></div>
@@ -674,7 +674,7 @@ of the app doesn’t change.</p>
       <span class="hljs-keyword">if</span> (Todos.length) {
         <span class="hljs-keyword">this</span>.main.show();
         <span class="hljs-keyword">this</span>.footer.show();
-        <span class="hljs-keyword">this</span>.footer.html(<span class="hljs-keyword">this</span>.statsTemplate({<span class="hljs-attr">done</span>: done, <span class="hljs-attr">remaining</span>: remaining}));
+        <span class="hljs-keyword">this</span>.footer.html(<span class="hljs-keyword">this</span>.statsTemplate({done: done, remaining: remaining}));
       } <span class="hljs-keyword">else</span> {
         <span class="hljs-keyword">this</span>.main.hide();
         <span class="hljs-keyword">this</span>.footer.hide();
@@ -698,7 +698,7 @@ appending its element to the <code>&lt;ul&gt;</code>.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    addOne: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">todo</span>) </span>{
-      <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">new</span> TodoView({<span class="hljs-attr">model</span>: todo});
+      <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">new</span> TodoView({model: todo});
       <span class="hljs-keyword">this</span>.$(<span class="hljs-string">"#todo-list"</span>).append(view.render().el);
     },</pre></div></div>
             
@@ -737,7 +737,7 @@ persisting it to <em>localStorage</em>.</p>
       <span class="hljs-keyword">if</span> (e.keyCode != <span class="hljs-number">13</span>) <span class="hljs-keyword">return</span>;
       <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.input.val()) <span class="hljs-keyword">return</span>;
 
-      Todos.create({<span class="hljs-attr">title</span>: <span class="hljs-keyword">this</span>.input.val()});
+      Todos.create({title: <span class="hljs-keyword">this</span>.input.val()});
       <span class="hljs-keyword">this</span>.input.val(<span class="hljs-string">''</span>);
     },</pre></div></div>
             
@@ -759,7 +759,7 @@ persisting it to <em>localStorage</em>.</p>
       <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     },
 
-    <span class="hljs-attr">toggleAllComplete</span>: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    toggleAllComplete: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">var</span> done = <span class="hljs-keyword">this</span>.allCheckbox.checked;
       Todos.each(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">todo</span>) </span>{ todo.save({<span class="hljs-string">'done'</span>: done}); });
     }
