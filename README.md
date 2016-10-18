@@ -14,15 +14,13 @@
 
 Backbone supplies structure to JavaScript-heavy applications by providing models with key-value binding and custom events, collections with a rich API of enumerable functions, views with declarative event handling, and connects it all to your existing application over a RESTful JSON interface.
 
-With Backbone, you have the freedom to build your application with minimal constraints, while keeping your code organized and sustainable. It provides a robust API that lays the foundation for developing large scale web applications. And it encourages you to abstract your application data into models and your DOM manipulation into views, binding the two together using events. With only a handful of conventions to follow, Backbone makes it easy for your team to adapt to writing more standardized and readable code.
-
 # What's In The Box?
 
-* **Models** - Containers for your application data featuring built-in sync with REST services and change events
-* **Collections** - Containers for your models that make managing groups of related models dead simple
+* **Models** - Containers for application data featuring built-in sync with REST services and change events
+* **Collections** - Containers for models that handle loading and saving new models, and provide helper functions for working with lists of models
 * **Views** - Render your models and listen for events
 * **Events** - Give any object the ability to publish or subscribe to events
-* **Router** - Create the single page application you've always dreamed of
+* **Router** - Provides methods for routing client-side pages, and connecting them to actions and events
 
 And much more, all in under ~8kb packed and gzipped.
 
