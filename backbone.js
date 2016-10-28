@@ -1151,7 +1151,7 @@
         var model = this.get(models[i]);
         if (!model) continue;
 
-        var index = this.indexOf(model);
+        var index = this.models.indexOf(model);
         this.models.splice(index, 1);
         this.length--;
 
