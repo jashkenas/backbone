@@ -997,7 +997,7 @@
     // properties, or an attributes object that is transformed through modelId.
     get: function(obj) {
       if (obj == null) return void 0;
-      return this._byId[obj] ||
+      return (_.isString(obj) || _.isNumber(obj)) && this._byId[obj] ||
         this._byId[this.modelId(obj.attributes || obj)] ||
         obj.cid && this._byId[obj.cid];
     },

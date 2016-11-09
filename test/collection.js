@@ -101,6 +101,21 @@
     assert.equal(collection2.get(model.clone()), collection2.first());
   });
 
+  QUnit.test('get with "undefined" id', function(assert) {
+    var collection = new Backbone.Collection([{id: 1}, {id: 'undefined'}]);
+    assert.equal(collection.get(1).id, 1);
+  });
+
+  QUnit.test('get with "undefined" id first', function(assert) {
+    var collection = new Backbone.Collection([{id: 'undefined'}, {id: 1}]);
+    assert.equal(collection.get(1).id, 1);
+  });
+
+  QUnit.test('get with "[object Object]" key', function(assert) {
+    var collection = new Backbone.Collection([{id: '[object Object]'}, {id: 1}]);
+    assert.equal(collection.get(1).id, 1);
+  });
+
   QUnit.test('has', function(assert) {
     assert.expect(15);
     assert.ok(col.has(a));
