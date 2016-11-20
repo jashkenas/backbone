@@ -490,6 +490,7 @@
       // Extract attributes and options.
       var unset      = options.unset;
       var silent     = options.silent;
+      var reset      = options.reset;
       var changes    = [];
       var changing   = this._changing;
       this._changing = true;
@@ -513,6 +514,16 @@
           delete changed[attr];
         }
         unset ? delete current[attr] : current[attr] = val;
+      }
+
+      if (reset) {
+        for (var currAttr in current) {
+          if (!(currAttr in attrs)) {
+            delete current[currAttr];
+            changes.push(currAttr);
+            changed[currAttr] = void 0;
+          }
+        }
       }
 
       // Update the `id`.
