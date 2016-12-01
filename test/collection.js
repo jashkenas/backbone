@@ -2074,4 +2074,9 @@
     assert.equal(fired, false);
   });
 
+  QUnit.test('get models with `attributes` key', function(assert) {
+    var model = {id: 1, attributes: {}};
+    var collection = new Backbone.Collection([model]);
+    assert.ok(collection.get(model));
+  });
 })(QUnit);
