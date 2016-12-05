@@ -1720,7 +1720,10 @@
     // decoded for comparison. `%25` should not be decoded since it may be part
     // of an encoded parameter.
     decodeFragment: function(fragment) {
-      return decodeURI(fragment.replace(/%25/g, '%2525'));
+	    fragment = decodeURI(fragment.replace(/%25/g, '%2525'));
+	    // If contains Korean then encode hashString - Korean character crash bug on Safari Browser :(
+	    fragment = /[ㄱ-힣]/.test(fragment) ? encodeURIComponent(fragment) : fragment;
+	    return fragment;
     },
 
     // In IE6, the hash fragment and search params are incorrect if the
