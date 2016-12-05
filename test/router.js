@@ -1077,12 +1077,12 @@
     Backbone.history.navigate(route);
     assert.strictEqual(location.hash, '#' + route);
   });
-  
+
   QUnit.test('#4050 - navigate updates URL(contains Korean) hash as is', function(assert) {
     assert.expect(1);
     var route = '한글 테스트'; // 'Hangle Test'
     Backbone.history.navigate(route);
     assert.strictEqual(location.hash, '#' + route);
   });
-  
+
 })(QUnit);
