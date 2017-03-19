@@ -297,8 +297,8 @@
     assert.expect(2);
     var View = Backbone.View.extend({
       attributes: {
-        'id': 'id',
-        'class': 'class'
+        id: 'id',
+        class: 'class'
       }
     });
 
@@ -310,7 +310,7 @@
     assert.expect(1);
     var View = Backbone.View.extend({
       attributes: function() {
-        return {'class': 'dynamic'};
+        return {class: 'dynamic'};
       }
     });
 
@@ -323,8 +323,8 @@
       className: 'backboneClass',
       id: 'backboneId',
       attributes: {
-        'class': 'attributeClass',
-        'id': 'attributeId'
+        class: 'attributeClass',
+        id: 'attributeId'
       }
     });
 
@@ -511,6 +511,52 @@
 
     assert.notEqual(oldEl, myView.el);
     assert.notEqual($oldEl, myView.$el);
+  });
+
+  QUnit.test('setAttributes', function(assert) {
+    assert.expect(4);
+    var View = Backbone.View.extend({
+      className: function() {
+        return this.foo ? 'fooClass' : 'backboneClass';
+      },
+      attributes: function() {
+        return {
+          class: 'attributeClass',
+          id: this.foo ? 'fooId' : 'attributeId'
+        };
+      }
+    });
+
+    var myView = new View;
+    assert.strictEqual(myView.el.className, 'backboneClass');
+    assert.strictEqual(myView.el.id, 'attributeId');
+    myView.foo = true;
+    myView.setAttributes();
+    assert.strictEqual(myView.el.className, 'fooClass');
+    assert.strictEqual(myView.el.id, 'fooId');
+  });
+
+  QUnit.test('setAttributes with attrs argument', function(assert) {
+    assert.expect(4);
+    var View = Backbone.View.extend({
+      className: function() {
+        return 'backboneClass';
+      },
+      attributes: {
+        class: 'attributeClass',
+        id: 'attributeId'
+      }
+    });
+
+    var myView = new View;
+    assert.strictEqual(myView.el.className, 'backboneClass');
+    assert.strictEqual(myView.el.id, 'attributeId');
+    myView.setAttributes({
+      class: 'setAttributeClass',
+      id: 'setAttributeId'
+    });
+    assert.strictEqual(myView.el.className, 'setAttributeClass');
+    assert.strictEqual(myView.el.id, 'setAttributeId');
   });
 
 })(QUnit);
