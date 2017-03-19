@@ -1627,6 +1627,43 @@
       return this;
     },
 
+    triggerForCurrentUrl : function() {
+      var url              = window.location.pathname,
+          search           = window.location.search;
+
+      if(search) url += search;
+
+      this.triggerForUrl(url);
+
+    },
+
+    triggerForUrl : function(url){
+      var route = this.routeForUrl(url);
+      this.executeRoute(route);
+    },
+
+    executeRoute : function(route){
+      handler = this.routes[route.name];
+      this[handler].apply(this, route.args);
+    },
+
+    routeForUrl : function(url){
+
+      var routeNames = _.keys(this.routes),
+          route      = {};
+
+      _.detect(routeNames, function(routeName){
+        regex = this._routeToRegExp(routeName);
+        if(regex.test(url)){
+          route.name = routeName;
+          route.regExp = regex;
+          route.args = this._extractParameters(regex, url);
+          return true;
+        }
+      }, this);
+
+      return route;
+    },
     // Bind all defined routes to `Backbone.history`. We have to reverse the
     // order of the routes here to support behavior where the most general
     // routes can be defined at the bottom of the route map.
