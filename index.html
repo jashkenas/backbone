@@ -48,7 +48,7 @@
         margin: 5px 0 0 0;
         padding-left: 0px;
         list-style-type: none;
-        font-family: Lucida Grande;
+        font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif;
       }
         .toc_section li {
           cursor: pointer;
@@ -61,6 +61,9 @@
             .toc_section li a:hover {
               text-decoration: underline;
             }
+      input#function_filter {
+        width: 80%;
+      }
     div.container {
       position: relative;
       width: 550px;
@@ -300,233 +303,261 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(1.2.0)</span>
+      Backbone.js <span class="version">(1.3.3)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/jashkenas/backbone">GitHub Repository</a></li>
       <li>&raquo; <a href="docs/backbone.html">Annotated Source</a></li>
     </ul>
 
-    <a class="toc_title" href="#Getting-started">
-      Getting Started
-    </a>
-    <ul class="toc_section">
-      <li>- <a href="#Getting-Started">Introduction</a></li>
-      <li>– <a href="#Model-View-separation">Models and Views</a></li>
-      <li>– <a href="#Model-Collections">Collections</a></li>
-      <li>– <a href="#API-integration">API Integration</a></li>
-      <li>– <a href="#View-rendering">Rendering</a></li>
-      <li>– <a href="#Routing">Routing</a></li>
-    </ul>
+    <input id="function_filter" placeholder="Filter" type="text" autofocus />
 
-    <a class="toc_title" href="#Events">
-      Events
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Events-on">on</a></li>
-      <li>– <a href="#Events-off">off</a></li>
-      <li>– <a href="#Events-trigger">trigger</a></li>
-      <li>– <a href="#Events-once">once</a></li>
-      <li>– <a href="#Events-listenTo">listenTo</a></li>
-      <li>– <a href="#Events-stopListening">stopListening</a></li>
-      <li>– <a href="#Events-listenToOnce">listenToOnce</a></li>
-      <li>- <a href="#Events-catalog"><b>Catalog of Built-in Events</b></a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Getting-started">
+        Getting Started
+      </a>
+      <ul class="toc_section">
+        <li data-name="Introduction">- <a href="#Getting-started">Introduction</a></li>
+        <li data-name="Models and Views">– <a href="#Model-View-separation">Models and Views</a></li>
+        <li data-name="Collections">– <a href="#Model-Collections">Collections</a></li>
+        <li data-name="API Integration">– <a href="#API-integration">API Integration</a></li>
+        <li data-name="Rendering">– <a href="#View-rendering">Rendering</a></li>
+        <li data-name="Routing">– <a href="#Routing">Routing</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#Model">
-      Model
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Model-extend">extend</a></li>
-      <li>– <a href="#Model-constructor">constructor / initialize</a></li>
-      <li>– <a href="#Model-get">get</a></li>
-      <li>– <a href="#Model-set">set</a></li>
-      <li>– <a href="#Model-escape">escape</a></li>
-      <li>– <a href="#Model-has">has</a></li>
-      <li>– <a href="#Model-unset">unset</a></li>
-      <li>– <a href="#Model-clear">clear</a></li>
-      <li>– <a href="#Model-id">id</a></li>
-      <li>– <a href="#Model-idAttribute">idAttribute</a></li>
-      <li>– <a href="#Model-cid">cid</a></li>
-      <li>– <a href="#Model-attributes">attributes</a></li>
-      <li>– <a href="#Model-changed">changed</a></li>
-      <li>– <a href="#Model-defaults">defaults</a></li>
-      <li>– <a href="#Model-toJSON">toJSON</a></li>
-      <li>– <a href="#Model-sync">sync</a></li>
-      <li>– <a href="#Model-fetch">fetch</a></li>
-      <li>– <a href="#Model-save">save</a></li>
-      <li>– <a href="#Model-destroy">destroy</a></li>
-      <li>– <a href="#Model-Underscore-Methods"><b>Underscore Methods (9)</b></a></li>
-      <li>– <a href="#Model-validate">validate</a></li>
-      <li>– <a href="#Model-validationError">validationError</a></li>
-      <li>– <a href="#Model-isValid">isValid</a></li>
-      <li>– <a href="#Model-url">url</a></li>
-      <li>– <a href="#Model-urlRoot">urlRoot</a></li>
-      <li>– <a href="#Model-parse">parse</a></li>
-      <li>– <a href="#Model-clone">clone</a></li>
-      <li>– <a href="#Model-isNew">isNew</a></li>
-      <li>– <a href="#Model-hasChanged">hasChanged</a></li>
-      <li>– <a href="#Model-changedAttributes">changedAttributes</a></li>
-      <li>– <a href="#Model-previous">previous</a></li>
-      <li>– <a href="#Model-previousAttributes">previousAttributes</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Events">
+        Events
+      </a>
+      <ul class="toc_section">
+        <li data-name="on">– <a href="#Events-on">on</a></li>
+        <li data-name="off">– <a href="#Events-off">off</a></li>
+        <li data-name="trigger">– <a href="#Events-trigger">trigger</a></li>
+        <li data-name="once">– <a href="#Events-once">once</a></li>
+        <li data-name="listenTo">– <a href="#Events-listenTo">listenTo</a></li>
+        <li data-name="stopListening">– <a href="#Events-stopListening">stopListening</a></li>
+        <li data-name="listenToOnce">– <a href="#Events-listenToOnce">listenToOnce</a></li>
+        <li data-name="Catalog of Built-in Events">- <a href="#Events-catalog"><b>Catalog of Built-in Events</b></a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#Collection">
-      Collection
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Collection-extend">extend</a></li>
-      <li>– <a href="#Collection-model">model</a></li>
-      <li>– <a href="#Collection-constructor">constructor / initialize</a></li>
-      <li>– <a href="#Collection-models">models</a></li>
-      <li>– <a href="#Collection-toJSON">toJSON</a></li>
-      <li>– <a href="#Collection-sync">sync</a></li>
-      <li>– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (46)</b></a></li>
-      <li>– <a href="#Collection-add">add</a></li>
-      <li>– <a href="#Collection-remove">remove</a></li>
-      <li>– <a href="#Collection-reset">reset</a></li>
-      <li>– <a href="#Collection-set">set</a></li>
-      <li>– <a href="#Collection-get">get</a></li>
-      <li>– <a href="#Collection-at">at</a></li>
-      <li>– <a href="#Collection-push">push</a></li>
-      <li>– <a href="#Collection-pop">pop</a></li>
-      <li>– <a href="#Collection-unshift">unshift</a></li>
-      <li>– <a href="#Collection-shift">shift</a></li>
-      <li>– <a href="#Collection-slice">slice</a></li>
-      <li>– <a href="#Collection-length">length</a></li>
-      <li>– <a href="#Collection-comparator">comparator</a></li>
-      <li>– <a href="#Collection-sort">sort</a></li>
-      <li>– <a href="#Collection-pluck">pluck</a></li>
-      <li>– <a href="#Collection-where">where</a></li>
-      <li>– <a href="#Collection-findWhere">findWhere</a></li>
-      <li>– <a href="#Collection-url">url</a></li>
-      <li>– <a href="#Collection-parse">parse</a></li>
-      <li>– <a href="#Collection-clone">clone</a></li>
-      <li>– <a href="#Collection-fetch">fetch</a></li>
-      <li>– <a href="#Collection-create">create</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Model">
+        Model
+      </a>
+      <ul class="toc_section">
+        <li data-name="extend">– <a href="#Model-extend">extend</a></li>
+        <li data-name="constructor / initialize">– <a href="#Model-constructor">constructor / initialize</a></li>
+        <li data-name="get">– <a href="#Model-get">get</a></li>
+        <li data-name="set">– <a href="#Model-set">set</a></li>
+        <li data-name="escape">– <a href="#Model-escape">escape</a></li>
+        <li data-name="has">– <a href="#Model-has">has</a></li>
+        <li data-name="unset">– <a href="#Model-unset">unset</a></li>
+        <li data-name="clear">– <a href="#Model-clear">clear</a></li>
+        <li data-name="id">– <a href="#Model-id">id</a></li>
+        <li data-name="idAttribute">– <a href="#Model-idAttribute">idAttribute</a></li>
+        <li data-name="cid">– <a href="#Model-cid">cid</a></li>
+        <li data-name="attributes">– <a href="#Model-attributes">attributes</a></li>
+        <li data-name="changed">– <a href="#Model-changed">changed</a></li>
+        <li data-name="defaults">– <a href="#Model-defaults">defaults</a></li>
+        <li data-name="toJSON">– <a href="#Model-toJSON">toJSON</a></li>
+        <li data-name="sync">– <a href="#Model-sync">sync</a></li>
+        <li data-name="fetch">– <a href="#Model-fetch">fetch</a></li>
+        <li data-name="save">– <a href="#Model-save">save</a></li>
+        <li data-name="destroy">– <a href="#Model-destroy">destroy</a></li>
+        <li data-name="Underscore Methods">– <a href="#Model-Underscore-Methods"><b>Underscore Methods (9)</b></a></li>
+        <li data-name="validate">– <a href="#Model-validate">validate</a></li>
+        <li data-name="validationError">– <a href="#Model-validationError">validationError</a></li>
+        <li data-name="isValid">– <a href="#Model-isValid">isValid</a></li>
+        <li data-name="url">– <a href="#Model-url">url</a></li>
+        <li data-name="urlRoot">– <a href="#Model-urlRoot">urlRoot</a></li>
+        <li data-name="parse">– <a href="#Model-parse">parse</a></li>
+        <li data-name="clone">– <a href="#Model-clone">clone</a></li>
+        <li data-name="isNew">– <a href="#Model-isNew">isNew</a></li>
+        <li data-name="hasChanged">– <a href="#Model-hasChanged">hasChanged</a></li>
+        <li data-name="changedAttributes">– <a href="#Model-changedAttributes">changedAttributes</a></li>
+        <li data-name="previous">– <a href="#Model-previous">previous</a></li>
+        <li data-name="previousAttributes">– <a href="#Model-previousAttributes">previousAttributes</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#Router">
-      Router
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Router-extend">extend</a></li>
-      <li>– <a href="#Router-routes">routes</a></li>
-      <li>– <a href="#Router-constructor">constructor / initialize</a></li>
-      <li>– <a href="#Router-route">route</a></li>
-      <li>– <a href="#Router-navigate">navigate</a></li>
-      <li>– <a href="#Router-execute">execute</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Collection">
+        Collection
+      </a>
+      <ul class="toc_section">
+        <li data-name="extend">– <a href="#Collection-extend">extend</a></li>
+        <li data-name="model">– <a href="#Collection-model">model</a></li>
+        <li data-name="modelId">– <a href="#Collection-modelId">modelId</a></li>
+        <li data-name="constructor / initialize" data-name="constructor / initialize">– <a href="#Collection-constructor">constructor / initialize</a></li>
+        <li data-name="models">– <a href="#Collection-models">models</a></li>
+        <li data-name="toJSON">– <a href="#Collection-toJSON">toJSON</a></li>
+        <li data-name="sync">– <a href="#Collection-sync">sync</a></li>
+        <li data-name="Underscore Methods">– <a href="#Collection-Underscore-Methods"><b>Underscore Methods (46)</b></a></li>
+        <li data-name="add">– <a href="#Collection-add">add</a></li>
+        <li data-name="remove">– <a href="#Collection-remove">remove</a></li>
+        <li data-name="reset">– <a href="#Collection-reset">reset</a></li>
+        <li data-name="set">– <a href="#Collection-set">set</a></li>
+        <li data-name="get">– <a href="#Collection-get">get</a></li>
+        <li data-name="at">– <a href="#Collection-at">at</a></li>
+        <li data-name="push">– <a href="#Collection-push">push</a></li>
+        <li data-name="pop">– <a href="#Collection-pop">pop</a></li>
+        <li data-name="unshift">– <a href="#Collection-unshift">unshift</a></li>
+        <li data-name="shift">– <a href="#Collection-shift">shift</a></li>
+        <li data-name="slice">– <a href="#Collection-slice">slice</a></li>
+        <li data-name="length">– <a href="#Collection-length">length</a></li>
+        <li data-name="comparator">– <a href="#Collection-comparator">comparator</a></li>
+        <li data-name="sort">– <a href="#Collection-sort">sort</a></li>
+        <li data-name="pluck">– <a href="#Collection-pluck">pluck</a></li>
+        <li data-name="where">– <a href="#Collection-where">where</a></li>
+        <li data-name="findWhere">– <a href="#Collection-findWhere">findWhere</a></li>
+        <li data-name="url">– <a href="#Collection-url">url</a></li>
+        <li data-name="parse">– <a href="#Collection-parse">parse</a></li>
+        <li data-name="clone">– <a href="#Collection-clone">clone</a></li>
+        <li data-name="fetch">– <a href="#Collection-fetch">fetch</a></li>
+        <li data-name="create">– <a href="#Collection-create">create</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#History">
-      History
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#History-start">start</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Router">
+        Router
+      </a>
+      <ul class="toc_section">
+        <li data-name="extend">– <a href="#Router-extend">extend</a></li>
+        <li data-name="routes">– <a href="#Router-routes">routes</a></li>
+        <li data-name="constructor / initialize">– <a href="#Router-constructor">constructor / initialize</a></li>
+        <li data-name="route">– <a href="#Router-route">route</a></li>
+        <li data-name="navigate">– <a href="#Router-navigate">navigate</a></li>
+        <li data-name="execute">– <a href="#Router-execute">execute</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#Sync">
-      Sync
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Sync">Backbone.sync</a></li>
-      <li>– <a href="#Sync-ajax">Backbone.ajax</a></li>
-      <li>– <a href="#Sync-emulateHTTP">Backbone.emulateHTTP</a></li>
-      <li>– <a href="#Sync-emulateJSON">Backbone.emulateJSON</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#History">
+        History
+      </a>
+      <ul class="toc_section">
+        <li data-name="start">– <a href="#History-start">start</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#View">
-      View
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#View-extend">extend</a></li>
-      <li>– <a href="#View-constructor">constructor / initialize</a></li>
-      <li>– <a href="#View-el">el</a></li>
-      <li>– <a href="#View-$el">$el</a></li>
-      <li>– <a href="#View-setElement">setElement</a></li>
-      <li>– <a href="#View-attributes">attributes</a></li>
-      <li>– <a href="#View-dollar">$ (jQuery)</a></li>
-      <li>– <a href="#View-template">template</a></li>
-      <li>– <a href="#View-render">render</a></li>
-      <li>– <a href="#View-remove">remove</a></li>
-      <li>– <a href="#View-delegateEvents">delegateEvents</a></li>
-      <li>– <a href="#View-undelegateEvents">undelegateEvents</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Sync">
+        Sync
+      </a>
+      <ul class="toc_section">
+        <li data-name="Backbone.sync">– <a href="#Sync">Backbone.sync</a></li>
+        <li data-name="Backbone.ajax">– <a href="#Sync-ajax">Backbone.ajax</a></li>
+        <li data-name="Backbone.emulateHTTP">– <a href="#Sync-emulateHTTP">Backbone.emulateHTTP</a></li>
+        <li data-name="Backbone.emulateJSON">– <a href="#Sync-emulateJSON">Backbone.emulateJSON</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#Utility">
-      Utility
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#Utility-Backbone-noConflict">Backbone.noConflict</a></li>
-      <li>– <a href="#Utility-Backbone-$">Backbone.$</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#View">
+        View
+      </a>
+      <ul class="toc_section">
+        <li data-name="extend">– <a href="#View-extend">extend</a></li>
+        <li data-name="constructor / initialize">– <a href="#View-constructor">constructor / initialize</a></li>
+        <li data-name="el">– <a href="#View-el">el</a></li>
+        <li data-name="$el">– <a href="#View-$el">$el</a></li>
+        <li data-name="setElement">– <a href="#View-setElement">setElement</a></li>
+        <li data-name="attributes">– <a href="#View-attributes">attributes</a></li>
+        <li data-name="$ (jQuery)">– <a href="#View-dollar">$ (jQuery)</a></li>
+        <li data-name="template">– <a href="#View-template">template</a></li>
+        <li data-name="render">– <a href="#View-render">render</a></li>
+        <li data-name="remove">– <a href="#View-remove">remove</a></li>
+        <li data-name="events">– <a href="#View-events">events</a></li>
+        <li data-name="delegateEvents">– <a href="#View-delegateEvents">delegateEvents</a></li>
+        <li data-name="undelegateEvents">– <a href="#View-undelegateEvents">undelegateEvents</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#faq">
-      F.A.Q.
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#FAQ-why-backbone">Why Backbone?</a></li>
-      <li>– <a href="#FAQ-tim-toady">More Than One Way To Do It</a></li>
-      <li>– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
-      <li>– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
-      <li>– <a href="#FAQ-extending">Extending Backbone</a></li>
-      <li>– <a href="#FAQ-mvc">Traditional MVC</a></li>
-      <li>– <a href="#FAQ-this">Binding "this"</a></li>
-      <li>– <a href="#FAQ-rails">Working with Rails</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#Utility">
+        Utility
+      </a>
+      <ul class="toc_section">
+        <li data-name="Backbone.noConflict">– <a href="#Utility-Backbone-noConflict">Backbone.noConflict</a></li>
+        <li data-name="Backbone.$">– <a href="#Utility-Backbone-$">Backbone.$</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#examples">
-      Examples
-    </a>
-    <ul class="toc_section">
-      <li>– <a href="#examples-todos">Todos</a></li>
-      <li>– <a href="#examples-documentcloud">DocumentCloud</a></li>
-      <li>– <a href="#examples-usa-today">USA Today</a></li>
-      <li>– <a href="#examples-rdio">Rdio</a></li>
-      <li>– <a href="#examples-hulu">Hulu</a></li>
-      <li>– <a href="#examples-quartz">Quartz</a></li>
-      <li>– <a href="#examples-earth">Earth</a></li>
-      <li>– <a href="#examples-vox">Vox</a></li>
-      <li>– <a href="#examples-gawker">Gawker Media</a></li>
-      <li>– <a href="#examples-flow">Flow</a></li>
-      <li>– <a href="#examples-gilt">Gilt Groupe</a></li>
-      <li>– <a href="#examples-enigma">Enigma</a></li>
-      <li>– <a href="#examples-newsblur">NewsBlur</a></li>
-      <li>– <a href="#examples-wordpress">WordPress.com</a></li>
-      <li>– <a href="#examples-foursquare">Foursquare</a></li>
-      <li>– <a href="#examples-bitbucket">Bitbucket</a></li>
-      <li>– <a href="#examples-disqus">Disqus</a></li>
-      <li>– <a href="#examples-delicious">Delicious</a></li>
-      <li>– <a href="#examples-khan-academy">Khan Academy</a></li>
-      <li>– <a href="#examples-irccloud">IRCCloud</a></li>
-      <li>– <a href="#examples-pitchfork">Pitchfork</a></li>
-      <li>– <a href="#examples-spin">Spin</a></li>
-      <li>– <a href="#examples-zocdoc">ZocDoc</a></li>
-      <li>– <a href="#examples-walmart">Walmart Mobile</a></li>
-      <li>– <a href="#examples-groupon">Groupon Now!</a></li>
-      <li>– <a href="#examples-basecamp">Basecamp</a></li>
-      <li>– <a href="#examples-slavery-footprint">Slavery Footprint</a></li>
-      <li>– <a href="#examples-stripe">Stripe</a></li>
-      <li>– <a href="#examples-airbnb">Airbnb</a></li>
-      <li>– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
-      <li>- <a href="#examples-artsy">Art.sy</a></li>
-      <li>– <a href="#examples-pandora">Pandora</a></li>
-      <li>– <a href="#examples-inkling">Inkling</a></li>
-      <li>– <a href="#examples-code-school">Code School</a></li>
-      <li>– <a href="#examples-cloudapp">CloudApp</a></li>
-      <li>– <a href="#examples-seatgeek">SeatGeek</a></li>
-      <li>– <a href="#examples-easel">Easel</a></li>
-      <li>- <a href="#examples-jolicloud">Jolicloud</a></li>
-      <li>– <a href="#examples-salon">Salon.io</a></li>
-      <li>– <a href="#examples-tilemill">TileMill</a></li>
-      <li>– <a href="#examples-blossom">Blossom</a></li>
-      <li>– <a href="#examples-trello">Trello</a></li>
-      <li>– <a href="#examples-tzigla">Tzigla</a></li>
-    </ul>
+    <div class="searchable_section">
+      <a class="toc_title" href="#faq">
+        F.A.Q.
+      </a>
+      <ul class="toc_section">
+        <li data-name="Why Backbone?">– <a href="#FAQ-why-backbone">Why Backbone?</a></li>
+        <li data-name="More Than One Way To Do It">– <a href="#FAQ-tim-toady">More Than One Way To Do It</a></li>
+        <li data-name="Nested Models and Collections">– <a href="#FAQ-nested">Nested Models &amp; Collections</a></li>
+        <li data-name="Loading Bootstrapped Models">– <a href="#FAQ-bootstrap">Loading Bootstrapped Models</a></li>
+        <li data-name="Extending Backbone">– <a href="#FAQ-extending">Extending Backbone</a></li>
+        <li data-name="Traditional MVC">– <a href="#FAQ-mvc">Traditional MVC</a></li>
+        <li data-name="Binding this">– <a href="#FAQ-this">Binding "this"</a></li>
+        <li data-name="Working with Rails">– <a href="#FAQ-rails">Working with Rails</a></li>
+      </ul>
+    </div>
 
-    <a class="toc_title" href="#changelog">
-      Change Log
-    </a>
+    <div class="searchable_section">
+      <a class="toc_title" href="#examples">
+        Examples
+      </a>
+      <ul class="toc_section">
+        <li data-name="Todos">– <a href="#examples-todos">Todos</a></li>
+        <li data-name="DocumentCloud">– <a href="#examples-documentcloud">DocumentCloud</a></li>
+        <li data-name="USA Today">– <a href="#examples-usa-today">USA Today</a></li>
+        <li data-name="Rdio">– <a href="#examples-rdio">Rdio</a></li>
+        <li data-name="Hulu">– <a href="#examples-hulu">Hulu</a></li>
+        <li data-name="Quartz">– <a href="#examples-quartz">Quartz</a></li>
+        <li data-name="Earth">– <a href="#examples-earth">Earth</a></li>
+        <li data-name="Vox">– <a href="#examples-vox">Vox</a></li>
+        <li data-name="Gawker Media">– <a href="#examples-gawker">Gawker Media</a></li>
+        <li data-name="Flow">– <a href="#examples-flow">Flow</a></li>
+        <li data-name="Gilt Groupe">– <a href="#examples-gilt">Gilt Groupe</a></li>
+        <li data-name="Enigma">– <a href="#examples-enigma">Enigma</a></li>
+        <li data-name="NewsBlur">– <a href="#examples-newsblur">NewsBlur</a></li>
+        <li data-name="WordPress.com">– <a href="#examples-wordpress">WordPress.com</a></li>
+        <li data-name="Foursquare">– <a href="#examples-foursquare">Foursquare</a></li>
+        <li data-name="Bitbucket">– <a href="#examples-bitbucket">Bitbucket</a></li>
+        <li data-name="Disqus">– <a href="#examples-disqus">Disqus</a></li>
+        <li data-name="Delicious">– <a href="#examples-delicious">Delicious</a></li>
+        <li data-name="Khan Academy">– <a href="#examples-khan-academy">Khan Academy</a></li>
+        <li data-name="IRCCloud">– <a href="#examples-irccloud">IRCCloud</a></li>
+        <li data-name="Pitchfork">– <a href="#examples-pitchfork">Pitchfork</a></li>
+        <li data-name="Spin">– <a href="#examples-spin">Spin</a></li>
+        <li data-name="ZocDoc">– <a href="#examples-zocdoc">ZocDoc</a></li>
+        <li data-name="Walmart Mobile">– <a href="#examples-walmart">Walmart Mobile</a></li>
+        <li data-name="Groupon Now!">– <a href="#examples-groupon">Groupon Now!</a></li>
+        <li data-name="Basecamp">– <a href="#examples-basecamp">Basecamp</a></li>
+        <li data-name="Slavery Footprint">– <a href="#examples-slavery-footprint">Slavery Footprint</a></li>
+        <li data-name="Stripe">– <a href="#examples-stripe">Stripe</a></li>
+        <li data-name="Airbnb">– <a href="#examples-airbnb">Airbnb</a></li>
+        <li data-name="SoundCloud Mobile">– <a href="#examples-soundcloud">SoundCloud Mobile</a></li>
+        <li data-name="Art.sy">- <a href="#examples-artsy">Art.sy</a></li>
+        <li data-name="Pandora">– <a href="#examples-pandora">Pandora</a></li>
+        <li data-name="Inkling">– <a href="#examples-inkling">Inkling</a></li>
+        <li data-name="Code School">– <a href="#examples-code-school">Code School</a></li>
+        <li data-name="CloudApp">– <a href="#examples-cloudapp">CloudApp</a></li>
+        <li data-name="SeatGeek">– <a href="#examples-seatgeek">SeatGeek</a></li>
+        <li data-name="Easel">– <a href="#examples-easel">Easel</a></li>
+        <li data-name="Jolicloud">- <a href="#examples-jolicloud">Jolicloud</a></li>
+        <li data-name="Salon.io">– <a href="#examples-salon">Salon.io</a></li>
+        <li data-name="TileMill">– <a href="#examples-tilemill">TileMill</a></li>
+        <li data-name="Blossom">– <a href="#examples-blossom">Blossom</a></li>
+        <li data-name="Trello">– <a href="#examples-trello">Trello</a></li>
+        <li data-name="Tzigla">– <a href="#examples-tzigla">Tzigla</a></li>
+      </ul>
+    </div>
+
+    <div class="searchable_section">
+      <a class="toc_title" href="#changelog">
+        Change Log
+      </a>
+    </div>
 
   </div>
 
@@ -577,13 +608,13 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (1.2.0)</a></td>
-        <td class="text"><i>69kb, Full source, tons of comments</i></td>
+        <td><a class="punch" href="backbone.js">Development Version (1.3.3)</a></td>
+        <td class="text"><i>72kb, Full source, tons of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (1.2.0)</a></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (1.3.3)</a></td>
         <td class="text" style="line-height: 16px;">
-          <i>7.3kb, Packed and gzipped</i><br />
+          <i>7.6kb, Packed and gzipped</i><br />
           <small>(<a href="backbone-min.map">Source Map</a>)</small>
         </td>
       </tr>
@@ -600,14 +631,14 @@
 
     <p>
       Backbone's only hard dependency is
-      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.7.0)</small>.
+      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.8.3)</small>.
       For RESTful persistence and DOM manipulation with <a href="#View">Backbone.View</a>,
-      include <b><a href="http://jquery.com">jQuery</a></b> ( >= 1.11.0), and
+      include <b><a href="https://jquery.com/">jQuery</a></b> ( >= 1.11.0), and
       <b><a href="https://github.com/douglascrockford/JSON-js">json2.js</a></b> for older
       Internet Explorer support.
       <i>(Mimics of the Underscore and jQuery APIs, such as
-      <a href="http://lodash.com">Lo-Dash</a> and
-      <a href="http://zeptojs.com">Zepto</a>, will
+      <a href="https://lodash.com/">Lodash</a> and
+      <a href="http://zeptojs.com/">Zepto</a>, will
       also tend to work, with varying degrees of compatibility.)</i>
     </p>
     <h2 id="Getting-started">Getting Started</h2>
@@ -673,7 +704,7 @@
         <b>Model</b>
         <ul>
           <li>Orchestrates data and business logic.</li>
-          <li>Loads and saves from the server.</li>
+          <li>Loads and saves data from the server.</li>
           <li>Emits events when data changes.</li>
         </ul>
       </div>
@@ -869,11 +900,6 @@ book.on("change:title change:author", ...);
 </pre>
 
     <p>
-      To supply a <b>context</b> value for <tt>this</tt> when the callback is invoked,
-      pass the optional third argument: <tt>model.on('change', this.render, this)</tt>
-    </p>
-
-    <p>
       Callbacks bound to the special
       <tt>"all"</tt> event will be triggered when any event occurs, and are passed
       the name of the event as the first argument. For example, to proxy all events
@@ -893,11 +919,17 @@ proxy.on("all", function(eventName) {
 
 <pre>
 book.on({
-  "change:title": titleView.update,
   "change:author": authorPane.update,
+  "change:title change:subtitle": titleView.update,
   "destroy": bookView.remove
 });
 </pre>
+
+    <p>
+      To supply a <b>context</b> value for <tt>this</tt> when the callback is invoked,
+      pass the optional last argument: <tt>model.on('change', this.render, this)</tt> or
+      <tt>model.on({change: this.render}, this)</tt>.
+    </p>
 
     <p id="Events-off">
       <b class="header">off</b><code>object.off([event], [callback], [context])</code><span class="alias">Alias: unbind</span>
@@ -999,20 +1031,20 @@ view.stopListening(model);
     <ul class="small">
       <li><b>"add"</b> (model, collection, options) &mdash; when a model is added to a collection.</li>
       <li><b>"remove"</b> (model, collection, options) &mdash; when a model is removed from a collection.</li>
-      <li><b>"update"</b> (collection, options) &mdash; single event triggered after any number of models have been added or removed from a collection.</li>
-      <li><b>"reset"</b> (collection, options) &mdash; when the collection's entire contents have been replaced.</li>
+      <li><b>"update"</b> (collection, options) &mdash; single event triggered after any number of models have been added, removed or changed in a collection.</li>
+      <li><b>"reset"</b> (collection, options) &mdash; when the collection's entire contents have been <a href="#Collection-reset">reset</a>.</li>
       <li><b>"sort"</b> (collection, options) &mdash; when the collection has been re-sorted.</li>
       <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed.</li>
       <li><b>"change:[attribute]"</b> (model, value, options) &mdash; when a specific attribute has been updated.</li>
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>.</li>
       <li><b>"request"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a request to the server.</li>
-      <li><b>"sync"</b> (model_or_collection, resp, options) &mdash; when a model or collection has been successfully synced with the server.</li>
-      <li><b>"error"</b> (model_or_collection, resp, options) &mdash; when a model's or collection's request to the server has failed.</li>
+      <li><b>"sync"</b> (model_or_collection, response, options) &mdash; when a model or collection has been successfully synced with the server.</li>
+      <li><b>"error"</b> (model_or_collection, response, options) &mdash; when a model's or collection's request to the server has failed.</li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client.</li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
       <li><b>"route"</b> (router, route, params) &mdash; Fired by history when <i>any</i> route has been matched.</li>
-      <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument.</li>
+      <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument followed by all trigger arguments.</li>
     </ul>
 
     <p>
@@ -1240,6 +1272,8 @@ if (note.has("title")) {
       A special property of models, the <b>id</b> is an arbitrary string
       (integer id or UUID). If you set the <b>id</b> in the
       attributes hash, it will be copied onto the model as a direct property.
+      <code>model.id</code> should not be manipulated directly,
+      it should be modified only via <code>model.set('id', …)</code>.
       Models can be retrieved by id from collections, and the id is used to generate
       model URLs by default.
     </p>
@@ -1484,7 +1518,6 @@ book.destroy({success: function(model, response) {
       <li><a href="http://underscorejs.org/#invert">invert</a></li>
       <li><a href="http://underscorejs.org/#pick">pick</a></li>
       <li><a href="http://underscorejs.org/#omit">omit</a></li>
-      <li><a href="http://underscorejs.org/#matches">matches</a></li>
       <li><a href="http://underscorejs.org/#chain">chain</a></li>
       <li><a href="http://underscorejs.org/#isEmpty">isEmpty</a></li>
     </ul>
@@ -1738,7 +1771,7 @@ bill.set({name : "Bill Jones"});
     </p>
 
     <p id="Collection-model">
-      <b class="header">model</b><code>collection.model</code>
+      <b class="header">model</b><code>collection.model([attrs], [options])</code>
       <br />
       Override this property to specify the model class that the collection
       contains. If defined, you can pass raw attributes objects (and arrays) to
@@ -1772,6 +1805,41 @@ var Library = Backbone.Collection.extend({
 });
 </pre>
 
+    <p id="Collection-modelId">
+      <b class="header">modelId</b><code>collection.modelId(attrs)</code>
+      <br />
+      Override this method to return the value the collection will use to
+      identify a model given its attributes. Useful for combining models from
+      multiple tables with different <a href="#Model-idAttribute"><tt>idAttribute</tt></a>
+      values into a single collection.
+    </p>
+
+    <p>
+      By default returns the value of the attributes'
+      <a href="#Model-idAttribute"><tt>idAttribute</tt></a>
+      from the collection's model class or failing that, <tt>id</tt>. If
+      your collection uses a <a href="#Collection-model">model factory</a> and
+      those models have an <tt>idAttribute</tt> other than <tt>id</tt> you must
+      override this method.
+    </p>
+
+<pre class="runnable">
+var Library = Backbone.Collection.extend({
+  modelId: function(attrs) {
+    return attrs.type + attrs.id;
+  }
+});
+
+var library = new Library([
+  {type: 'dvd', id: 1},
+  {type: 'vhs', id: 1}
+]);
+
+var dvdId = library.get('dvd1').id;
+var vhsId = library.get('vhs1').id;
+alert('dvd: ' + dvdId + ', vhs: ' + vhsId);
+</pre>
+
     <p id="Collection-constructor">
       <b class="header">constructor / initialize</b><code>new Backbone.Collection([models], [options])</code>
       <br />
@@ -1787,7 +1855,7 @@ var Library = Backbone.Collection.extend({
 
 <pre>
 var tabs = new TabSet([tab1, tab2, tab3]);
-var spaces = new Backbone.Collection([], {
+var spaces = new Backbone.Collection(null, {
   model: Space
 });
 </pre>
@@ -1837,17 +1905,24 @@ alert(JSON.stringify(collection));
       you can take a look at the Underscore documentation for the full details&hellip;
     </p>
 
+    <p>
+      Most methods can take an object or string to support model-attribute-style
+      predicates or a function that receives the model instance as an argument.
+    </p>
+
     <ul class="small">
       <li><a href="http://underscorejs.org/#each">forEach (each)</a></li>
       <li><a href="http://underscorejs.org/#map">map (collect)</a></li>
       <li><a href="http://underscorejs.org/#reduce">reduce (foldl, inject)</a></li>
       <li><a href="http://underscorejs.org/#reduceRight">reduceRight (foldr)</a></li>
       <li><a href="http://underscorejs.org/#find">find (detect)</a></li>
+      <li><a href="http://underscorejs.org/#findIndex">findIndex</a></li>
+      <li><a href="http://underscorejs.org/#findLastIndex">findLastIndex</a></li>
       <li><a href="http://underscorejs.org/#filter">filter (select)</a></li>
       <li><a href="http://underscorejs.org/#reject">reject</a></li>
       <li><a href="http://underscorejs.org/#every">every (all)</a></li>
       <li><a href="http://underscorejs.org/#some">some (any)</a></li>
-      <li><a href="http://underscorejs.org/#contains">contains (include)</a></li>
+      <li><a href="http://underscorejs.org/#contains">contains (includes)</a></li>
       <li><a href="http://underscorejs.org/#invoke">invoke</a></li>
       <li><a href="http://underscorejs.org/#max">max</a></li>
       <li><a href="http://underscorejs.org/#min">min</a></li>
@@ -1877,17 +1952,15 @@ books.each(function(book) {
   book.publish();
 });
 
-var titles = books.map(function(book) {
-  return book.get("title");
-});
+var titles = books.map("title");
 
-var publishedBooks = books.filter(function(book) {
-  return book.get("published") === true;
-});
+var publishedBooks = books.filter({published: true});
 
 var alphabetical = books.sortBy(function(book) {
   return book.author.get("name").toLowerCase();
 });
+
+var randomThree = books.sample(3);
 </pre>
 
     <p id="Collection-add">
@@ -1930,7 +2003,7 @@ ships.add([
       object, any value acceptable as the <tt>id</tt> argument of
       <a href="#Collection-get"><tt>collection.get</tt></a>.
       Fires a <tt>"remove"</tt> event for each model, and a single
-      <tt>"update"</tt> event afterwards.
+      <tt>"update"</tt> event afterwards, unless <tt>{silent: true}</tt> is passed.
       The model's index before removal is available to listeners as
       <tt>options.index</tt>.
     </p>
@@ -1942,7 +2015,8 @@ ships.add([
       you have so many models to change that you'd rather just update the collection
       in bulk. Use <b>reset</b> to replace a collection with a new list
       of models (or attribute hashes), triggering a single <tt>"reset"</tt> event
-      at the end. Returns the newly-set models.
+      on completion, and <i>without</i> triggering any add or remove events on any models.
+      Returns the newly-set models.
       For convenience, within a <tt>"reset"</tt> event, the list of any
       previous models is available as <tt>options.previousModels</tt>.<br />
       Pass <tt>null</tt> for <tt>models</tt> to empty your Collection with <tt>options</tt>.
@@ -2005,7 +2079,8 @@ var book = library.get(110);
       <br />
       Get a model from a collection, specified by index. Useful if your collection
       is sorted, and if your collection isn't sorted, <b>at</b> will still
-      retrieve models in insertion order.
+      retrieve models in insertion order. When passed a negative index, it
+      will retrieve the model from the back of the collection.
     </p>
 
     <p id="Collection-push">
@@ -2041,7 +2116,7 @@ var book = library.get(110);
       <br />
       Return a shallow copy of this collection's models, using the same options as
       native
-      <a href="https://developer.mozilla.org/JavaScript/Reference/Global_Objects/Array/slice">Array#slice</a>.
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/slice">Array#slice</a>.
     </p>
 
     <p id="Collection-length">
@@ -2062,7 +2137,7 @@ var book = library.get(110);
       <a href="http://underscorejs.org/#sortBy">sortBy</a>
       (pass a function that takes a single argument),
       as a
-      <a href="https://developer.mozilla.org/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
       (pass a comparator function that expects two arguments),
       or as a string indicating the attribute to sort by.
     </p>
@@ -2156,6 +2231,7 @@ alert(musketeers.length);
       <br />
       Just like <a href="#Collection-where">where</a>, but directly returns only
       the first model in the collection that matches the passed <b>attributes</b>.
+      If no model matches returns <tt>undefined</tt>.
     </p>
 
     <p id="Collection-url">
@@ -2362,8 +2438,8 @@ var Workspace = Backbone.Router.extend({
 
     <p>
       A route of <tt>"file/*path"</tt> will match
-      <tt>#file/nested/folder/file.txt</tt>, passing
-      <tt>"nested/folder/file.txt"</tt> to the action.
+      <tt>#file/folder/file.txt</tt>, passing
+      <tt>"folder/file.txt"</tt> to the action.
     </p>
 
     <p>
@@ -2371,6 +2447,13 @@ var Workspace = Backbone.Router.extend({
       <tt>#docs/faq</tt> and <tt>#docs/faq/installing</tt>, passing
       <tt>"faq"</tt> to the action in the first case, and passing <tt>"faq"</tt>
       and <tt>"installing"</tt> to the action in the second.
+    </p>
+
+    <p>
+      A nested optional route of <tt>"docs(/:section)(/:subsection)"</tt> will match
+      <tt>#docs</tt>, <tt>#docs/faq</tt>, and <tt>#docs/faq/installing</tt>,
+      passing <tt>"faq"</tt> to the action in the second case, and passing <tt>"faq"</tt>
+      and <tt>"installing"</tt> to the action in the third.
     </p>
 
     <p>
@@ -2625,7 +2708,8 @@ $(function(){
 <pre>
 def update
   account = Account.find params[:id]
-  account.update_attributes params.require(:account).permit(:name, :otherparam)
+  permitted = params.require(:account).permit(:name, :otherparam)
+  account.update_attributes permitted
   render :json => account
 end
 </pre>
@@ -2893,10 +2977,43 @@ var Bookmark = Backbone.View.extend({
     <p id="View-remove">
       <b class="header">remove</b><code>view.remove()</code>
       <br />
-      Removes a view from the DOM, and calls
+      Removes a view and its <tt>el</tt> from the DOM, and calls
       <a href="#Events-stopListening">stopListening</a> to remove any bound
       events that the view has <a href="#Events-listenTo">listenTo</a>'d.
     </p>
+
+    <p id="View-events">
+      <b class="header">events</b><code>view.events or view.events()</code>
+      <br />
+      The <b>events</b> hash (or method) can be used to specify a set of DOM
+      events that will be bound to methods on your View
+      through <a href="#View-delegateEvents">delegateEvents</a>.
+    </p>
+
+    <p>
+      Backbone will automatically attach the event listeners at instantiation
+      time, right before invoking <a href="#View-constructor">initialize</a>.
+    </p>
+
+<pre>
+var ENTER_KEY = 13;
+var InputView = Backbone.View.extend({
+
+  tagName: 'input',
+
+  events: {
+    "keydown" : "keyAction",
+  },
+
+  render: function() { ... },
+
+  keyAction: function(e) {
+    if (e.which === ENTER_KEY) {
+      this.collection.add({text: this.$el.val()});
+    }
+  }
+});
+</pre>
 
     <p id="View-delegateEvents">
       <b class="header">delegateEvents</b><code>delegateEvents([events])</code>
@@ -2928,6 +3045,12 @@ var Bookmark = Backbone.View.extend({
       <b>delegateEvents</b> is run again, perhaps with a different <tt>events</tt>
       hash, all callbacks are removed and delegated afresh &mdash; useful for
       views which need to behave differently when in different modes.
+    </p>
+
+    <p>
+      A single-event version of <b>delegateEvents</b> is available as <tt>delegate</tt>.
+      In fact, <b>delegateEvents</b> is simply a multi-event wrapper around <tt>delegate</tt>.
+      A counterpart to <tt>undelegateEvents</tt> is available as <tt>undelegate</tt>.
     </p>
 
     <p>
@@ -3216,7 +3339,7 @@ inbox.messages.fetch({reset: true});
 </pre>
 
     <p>You have to <a href="http://mathiasbynens.be/notes/etago">escape</a>
-    <tt>&lt;/</tt> within the JSON string, to prevent javascript injection
+    <tt>&lt;/</tt> within the JSON string, to prevent JavaScript injection
     attacks.
 
     <p id="FAQ-extending">
@@ -3475,7 +3598,7 @@ ActiveRecord::Base.include_root_in_json = false
       <a href="http://earth.nullschool.net">Earth.nullschool.net</a> displays real-time weather
       conditions on an interactive animated globe, and Backbone provides the
       foundation upon which all of the site's components are built. Despite the
-      presence of several other javascript libraries, Backbone's non-opinionated
+      presence of several other JavaScript libraries, Backbone's non-opinionated
       design made it effortless to mix-in the <a href="#Events">Events</a> functionality used for
       distributing state changes throughout the page. When the decision was made
       to switch to Backbone, large blocks of custom logic simply disappeared.
@@ -3798,7 +3921,7 @@ ActiveRecord::Base.include_root_in_json = false
       large single-page application that
       benefits from Backbone's structure and modularity. ZocDoc's Backbone
       classes are tested with
-      <a href="http://pivotal.github.io/jasmine/">Jasmine</a>, and delivered
+      <a href="https://jasmine.github.io/">Jasmine</a>, and delivered
       to the end user with
       <a href="http://getcassette.net/">Cassette</a>.
     </p>
@@ -3936,7 +4059,7 @@ ActiveRecord::Base.include_root_in_json = false
       <a href="http://m.soundcloud.com">SoundCloud Mobile</a>. The project uses
       the public SoundCloud <a href="http://soundcloud.com/developers">API</a>
       as a data source (channeled through a nginx proxy),
-      <a href="http://api.jquery.com/category/plugins/templates/">jQuery templates</a>
+      <a href="https://github.com/BorisMoore/jquery-tmpl">jQuery templates</a>
       for the rendering, <a href="http://docs.jquery.com/Qunit">Qunit
       </a> and <a href="http://www.phantomjs.org/">PhantomJS</a> for
       the testing suite. The JS code, templates and CSS are built for the
@@ -4206,6 +4329,114 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header">1.3.3</b> &mdash; <small><i>Apr. 5, 2016</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.3...1.3.3">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.3.3/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Added <tt>findIndex</tt> and <tt>findLastIndex</tt> Underscore methods to
+        <tt>Collection</tt>.
+      </li>
+      <li>
+        Added <tt>options.changes</tt> to <tt>Collection</tt> "update" event which
+        includes added, merged, and removed models.
+      </li>
+      <li>
+        Ensured <tt>Collection#reduce</tt> and <tt>Collection#reduceRight</tt>
+        work without an initial <tt>accumulator</tt> value.
+      </li>
+      <li>
+        Ensured <tt>Collection#_removeModels</tt> always returns an array.
+      </li>
+      <li>
+        Fixed a bug where <tt>Events.once</tt> with object syntax failed to bind
+        context.
+      </li>
+      <li>
+        Fixed <tt>Collection#_onModelEvent</tt> regression where triggering a
+        <tt>change</tt> event without a <tt>model</tt> would error.
+      </li>
+      <li>
+        Fixed <tt>Collection#set</tt> regression when <tt>parse</tt> returns a
+        falsy value.
+      </li>
+      <li>
+        Fixed <tt>Model#id</tt> regression where <tt>id</tt> would be
+        unintentionally <tt>undefined</tt>.
+      </li>
+      <li>
+        Fixed <tt>_removeModels</tt> regression which could cause an infinite loop
+        under certain conditions.
+      </li>
+      <li>
+        Removed <tt>component</tt> package support.
+      </li>
+      <li>
+        Note that 1.3.3 fixes several bugs in versions 1.3.0 to 1.3.2. Please upgrade
+        immediately if you are on one of those versions.
+      </li>
+    </ul>
+
+    <b class="header">1.2.3</b> &mdash; <small><i>Sept. 3, 2015</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.2...1.2.3">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.3/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Fixed a minor regression in 1.2.2 that would cause an error when adding
+        a model to a collection <tt>at</tt> an out of bounds index.
+      </li>
+    </ul>
+
+    <b class="header">1.2.2</b> &mdash; <small><i>Aug. 19, 2015</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.1...1.2.2">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.2/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Collection methods <tt>find</tt>, <tt>filter</tt>, <tt>reject</tt>, <tt>every</tt>,
+        <tt>some</tt>, and <tt>partition</tt> can now take a model-attributes-style predicate:
+        <tt>this.collection.reject({user: 'guybrush'})</tt>.
+      </li>
+      <li>
+        Backbone Events once again supports multiple-event maps
+        (<tt>obj.on({'error change': action})</tt>). This was a previously
+        undocumented feature inadvertently removed in 1.2.0.
+      </li>
+      <li>
+        Added <tt>Collection#includes</tt> as an alias of <tt>Collection#contains</tt>
+        and as a replacement for <tt>Collection#include</tt> in Underscore.js >= 1.8.
+      </li>
+    </ul>
+
+    <b class="header">1.2.1</b> &mdash; <small><i>Jun. 4, 2015</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.0...1.2.1">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.1/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        <tt>Collection#add</tt> now avoids trying to parse a model instance when passed <tt>parse: false</tt>.
+      </li>
+      <li>
+        Bug fix in <tt>Collection#remove</tt>. The removed models are now actually returned.
+      </li>
+      <li>
+        <tt>Model#fetch</tt> no longer parses the response when passing <tt>parse: false</tt>.
+      </li>
+      <li>
+        Bug fix for iframe-based History when used with JSDOM.
+      </li>
+      <li>
+        Bug fix where <tt>Collection#invoke</tt> was not taking additional arguments.
+      </li>
+      <li>
+        When using <tt>on</tt> with an event map, you can now pass the context as the
+        second argument. This was a previously undocumented feature inadvertently
+        removed in 1.2.0.
+      </li>
+    </ul>
+
     <b class="header">1.2.0</b> &mdash; <small><i>May 13, 2015</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.1.2...1.2.0">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.2.0/index.html">Docs</a>
@@ -4226,9 +4457,17 @@ ActiveRecord::Base.include_root_in_json = false
         Backbone will automatically try to load jQuery for you.
       </li>
       <li>
+        Views now always delegate their events in <a href="#View-setElement">setElement</a>.
+        You can no longer modify the events hash or your view's <tt>el</tt> property in
+        <tt>initialize</tt>.
+      </li>
+      <li>
         Added an <tt>"update"</tt> event that triggers after any amount of
         models are added or removed from a collection. Handy to re-render lists
         of things without debouncing.
+      </li>
+      <li>
+        <tt>Collection#at</tt> can take a negative index.
       </li>
       <li>
         Added <tt>modelId</tt> to Collection for generating unique ids on
@@ -4540,7 +4779,7 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
       <li>
         To improve the performance of <tt>add</tt>, <tt>options.index</tt>
-        will no longer be set in the `add` event callback.
+        will no longer be set in the <tt>add</tt> event callback.
         <tt>collection.indexOf(model)</tt> can be used to retrieve the index
         of a model as necessary.
       </li>
@@ -4654,7 +4893,7 @@ ActiveRecord::Base.include_root_in_json = false
         A Backbone collection's <tt>comparator</tt> function may now behave
         either like a <a href="http://underscorejs.org/#sortBy">sortBy</a>
         (pass a function that takes a single argument),
-        or like a <a href="https://developer.mozilla.org/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
+        or like a <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
         (pass a comparator function that expects two arguments). The comparator
         function is also now bound by default to the collection &mdash; so you
         can refer to <tt>this</tt> within it.
@@ -4859,6 +5098,7 @@ ActiveRecord::Base.include_root_in_json = false
   <script src="docs/js/jquery.lazyload.js"></script>
   <script src="test/vendor/json2.js"></script>
   <script src="backbone.js"></script>
+  <script src="docs/search.js"></script>
 
   <script>
     // Set up the "play" buttons for each runnable code example.

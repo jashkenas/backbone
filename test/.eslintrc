@@ -1,0 +1,15 @@
+{
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "QUnit": false,
+    "Backbone": true,
+    "_": true,
+    "$": true
+  },
+  "rules": {
+    "no-throw-literal": 0,
+    "no-undefined": 0
+  }
+}

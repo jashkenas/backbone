@@ -59,7 +59,7 @@
  *
  * https://github.com/jeromegn/Backbone.localStorage
  */</span>
-(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(root, factory)</span> </span>{
+(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">root, factory</span>) </span>{
    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">"function"</span> &amp;&amp; define.amd) {</pre></div></div>
             
         </li>
@@ -75,7 +75,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      define([<span class="hljs-string">"underscore"</span>,<span class="hljs-string">"backbone"</span>], <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(_, Backbone)</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>      define([<span class="hljs-string">"underscore"</span>,<span class="hljs-string">"backbone"</span>], <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -109,7 +109,7 @@
             
             <div class="content"><div class='highlight'><pre>      factory(_, Backbone);
    }
-}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(_, Backbone)</span> </span>{</pre></div></div>
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -153,7 +153,7 @@ to make things work even if they are removed from the global namespace</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">S4</span><span class="hljs-params">()</span> </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">S4</span>(<span class="hljs-params"></span>) </span>{
    <span class="hljs-keyword">return</span> (((<span class="hljs-number">1</span>+<span class="hljs-built_in">Math</span>.random())*<span class="hljs-number">0x10000</span>)|<span class="hljs-number">0</span>).toString(<span class="hljs-number">16</span>).substring(<span class="hljs-number">1</span>);
 };</pre></div></div>
             
@@ -170,7 +170,7 @@ to make things work even if they are removed from the global namespace</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">guid</span><span class="hljs-params">()</span> </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">guid</span>(<span class="hljs-params"></span>) </span>{
    <span class="hljs-keyword">return</span> (S4()+S4()+<span class="hljs-string">"-"</span>+S4()+<span class="hljs-string">"-"</span>+S4()+<span class="hljs-string">"-"</span>+S4()+<span class="hljs-string">"-"</span>+S4()+S4()+S4());
 };</pre></div></div>
             
@@ -185,11 +185,11 @@ to make things work even if they are removed from the global namespace</p>
               </div>
               <p>Our Store is represented by a single JS object in <em>localStorage</em>. Create it
 with a meaningful name, like the name you’d give a table.
-window.Store is deprectated, use Backbone.LocalStorage instead</p>
+window.Store is deprecated, use Backbone.LocalStorage instead</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Backbone.LocalStorage = <span class="hljs-built_in">window</span>.Store = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(name)</span> </span>{
+            <div class="content"><div class='highlight'><pre>Backbone.LocalStorage = <span class="hljs-built_in">window</span>.Store = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">name</span>) </span>{
   <span class="hljs-keyword">this</span>.name = name;
   <span class="hljs-keyword">var</span> store = <span class="hljs-keyword">this</span>.localStorage().getItem(<span class="hljs-keyword">this</span>.name);
   <span class="hljs-keyword">this</span>.records = (store &amp;&amp; store.split(<span class="hljs-string">","</span>)) || [];
@@ -210,7 +210,7 @@ _.extend(Backbone.LocalStorage.prototype, {</pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  save: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            <div class="content"><div class='highlight'><pre>  save: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">this</span>.localStorage().setItem(<span class="hljs-keyword">this</span>.name, <span class="hljs-keyword">this</span>.records.join(<span class="hljs-string">","</span>));
   },</pre></div></div>
             
@@ -228,7 +228,7 @@ have an id of it’s own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  create: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(model)</span> </span>{
+            <div class="content"><div class='highlight'><pre>  create: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
     <span class="hljs-keyword">if</span> (!model.id) {
       model.id = guid();
       model.set(model.idAttribute, model.id);
@@ -252,7 +252,7 @@ have an id of it’s own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  update: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(model)</span> </span>{
+            <div class="content"><div class='highlight'><pre>  update: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
     <span class="hljs-keyword">this</span>.localStorage().setItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id, <span class="hljs-built_in">JSON</span>.stringify(model));
     <span class="hljs-keyword">if</span> (!_.include(<span class="hljs-keyword">this</span>.records, model.id.toString()))
       <span class="hljs-keyword">this</span>.records.push(model.id.toString()); <span class="hljs-keyword">this</span>.save();
@@ -272,7 +272,7 @@ have an id of it’s own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  find: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(model)</span> </span>{
+            <div class="content"><div class='highlight'><pre>  find: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.jsonData(<span class="hljs-keyword">this</span>.localStorage().getItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id));
   },</pre></div></div>
             
@@ -289,9 +289,9 @@ have an id of it’s own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  findAll: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+            <div class="content"><div class='highlight'><pre>  findAll: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">return</span> _(<span class="hljs-keyword">this</span>.records).chain()
-      .map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id)</span></span>{
+      .map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">id</span>)</span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.jsonData(<span class="hljs-keyword">this</span>.localStorage().getItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+id));
       }, <span class="hljs-keyword">this</span>)
       .compact()
@@ -311,18 +311,18 @@ have an id of it’s own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  destroy: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(model)</span> </span>{
+            <div class="content"><div class='highlight'><pre>  destroy: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
     <span class="hljs-keyword">if</span> (model.isNew())
       <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
     <span class="hljs-keyword">this</span>.localStorage().removeItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id);
-    <span class="hljs-keyword">this</span>.records = _.reject(<span class="hljs-keyword">this</span>.records, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(id)</span></span>{
+    <span class="hljs-keyword">this</span>.records = _.reject(<span class="hljs-keyword">this</span>.records, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">id</span>)</span>{
       <span class="hljs-keyword">return</span> id === model.id.toString();
     });
     <span class="hljs-keyword">this</span>.save();
     <span class="hljs-keyword">return</span> model;
   },
 
-  localStorage: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+  localStorage: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">return</span> localStorage;
   },</pre></div></div>
             
@@ -339,7 +339,7 @@ have an id of it’s own.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  jsonData: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(data)</span> </span>{
+            <div class="content"><div class='highlight'><pre>  jsonData: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>{
       <span class="hljs-keyword">return</span> data &amp;&amp; <span class="hljs-built_in">JSON</span>.parse(data);
   }
 
@@ -360,7 +360,7 @@ window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStora
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Backbone.LocalStorage.sync = <span class="hljs-built_in">window</span>.Store.sync = Backbone.localSync = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method, model, options)</span> </span>{
+            <div class="content"><div class='highlight'><pre>Backbone.LocalStorage.sync = <span class="hljs-built_in">window</span>.Store.sync = Backbone.localSync = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">method, model, options</span>) </span>{
   <span class="hljs-keyword">var</span> store = model.localStorage || model.collection.localStorage;
 
   <span class="hljs-keyword">var</span> resp, errorMessage, syncDfd = $.Deferred &amp;&amp; $.Deferred(); <span class="hljs-comment">//If $ is having Deferred - use it.</span>
@@ -427,7 +427,7 @@ always execute callback for success and error</p>
 
 Backbone.ajaxSync = Backbone.sync;
 
-Backbone.getSyncMethod = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(model)</span> </span>{
+Backbone.getSyncMethod = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
   <span class="hljs-keyword">if</span>(model.localStorage || (model.collection &amp;&amp; model.collection.localStorage)) {
     <span class="hljs-keyword">return</span> Backbone.localSync;
   }
@@ -449,7 +449,7 @@ the original ‘Backbone.sync’ is still available in ‘Backbone.ajaxSync’</
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Backbone.sync = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(method, model, options)</span> </span>{
+            <div class="content"><div class='highlight'><pre>Backbone.sync = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">method, model, options</span>) </span>{
   <span class="hljs-keyword">return</span> Backbone.getSyncMethod(model).apply(<span class="hljs-keyword">this</span>, [method, model, options]);
 };
 
