@@ -1155,8 +1155,8 @@ var Note = Backbone.Model.extend({
     <p id="Model-preinitialize">
       <b class="header">preinitialize</b><code>new Model([attributes], [options])</code>
       <br />
-      The main purpose of <b>preinitialize</b> method is to support ES6 classes. If you define an <b>preinitialize</b> function, it will be invoked when
-      the Model is first created and it also run before any instantiation is run in the Model.
+      For ES6 classes. If you define an <b>preinitialize</b> method, it will be invoked when
+      the Model is first created and before any instantiation logic is run for the Model.
     </p>
 
 <pre>
@@ -1864,8 +1864,8 @@ alert('dvd: ' + dvdId + ', vhs: ' + vhsId);
     <p id="Collection-preinitialize">
       <b class="header">preinitialize</b><code>new Backbone.Collection([models], [options])</code>
       <br />
-      The main purpose of <b>preinitialize</b> method is to support ES6 classes. If you define an <b>preinitialize</b> function, it will be invoked when
-      the Collection is first created and it also run before any instantiation is run in the Collection.
+      For ES6 classes. If you define an <b>preinitialize</b> method, it will be invoked when
+      the Collection is first created and before any instantiation logic is run for the Collection.
     </p>
 
 <pre>
@@ -2527,8 +2527,8 @@ router.on("route:help", function(page) {
     <p id="Router-preinitialize">
       <b class="header">preinitialize</b><code>new Backbone.Router([options])</code>
       <br />
-      The main purpose of <b>preinitialize</b> method is to support ES6 classes. If you define an <b>preinitialize</b> function, it will be invoked when
-      the Router is first created and it also run before any instantiation is run in the Router.
+      For ES6 classes. If you define an <b>preinitialize</b> method, it will be invoked when
+      the Router is first created and before any instantiation logic is run for the Router.
     </p>
 
 <pre>
@@ -2868,8 +2868,8 @@ var DocumentRow = Backbone.View.extend({
     <p id="View-preinitialize">
       <b class="header">preinitialize</b><code>new View([options])</code>
       <br />
-      The main purpose of <b>preinitialize</b> method is to support ES6 classes. If you define an <b>preinitialize</b> function, it will be invoked when
-      the View is first created and it also run before any instantiation is run in the View.
+      For ES6 classes. If you define an <b>preinitialize</b> method, it will be invoked when
+      the View is first created and before any instantiation logic is run for the View.
     </p>
 
 <pre>
@@ -4415,37 +4415,22 @@ ActiveRecord::Base.include_root_in_json = false
     <br />
     <ul style="margin-top: 5px;">
       <li>
-        Added support for <tt>ES6 classes</tt> with a <tt>preinitialize</tt> method
+        Added support for setting instance properties before the constructor in <tt>ES6 classes</tt> with a <tt>preinitialize</tt> method.
       </li>
       <li>
-        Added <tt>iterator</tt> support implementing JS Iterable protocol
+        Added <tt>iterator</tt> support implementing JS Iterable protocol.
       </li>
       <li>
-        Fixed a bug with the hash generation from Router.navigate
+        Fixed a bug with the hash generator.
       </li>
       <li>
-        Use the public <b>on</b> method when listening
+        `#listenTo` uses public `#on` method. This keeps interop between Backbone and any other event library (including Node.js).
       </li>
       <li>
-        Check if obj is Model in Collection.get.
+        <tt>Collection.get</tt> now checks if obj is a <tt>Model</tt> to allow retrieving models with `attributes` key.
       </li>
       <li>
-        Document filtering.
-      </li>
-      <li>
-        Update to <tt>Qunit2</tt>.
-      </li>
-      <li>
-        Upgrade <tt>ESLint</tt> to latest and replace removed rules.
-      </li>
-      <li>
-        Fixed broken link to MDN array sort.
-      </li>
-      <li>
-        Stop testing IE8 in sauce.
-      </li>
-      <li>
-        Clarification on the use of model.id.
+        We no longer test against IE8 in sauce.
       </li>
     </ul>
 
