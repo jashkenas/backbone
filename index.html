@@ -1162,7 +1162,7 @@ var Note = Backbone.Model.extend({
 <pre>
 class Library extends Backbone.Model {
     preinitialize: function() {
-        this.setValue: 1;
+        this.setValue = 1;
     }
 
     initialize: function() { ... }
@@ -1871,7 +1871,7 @@ alert('dvd: ' + dvdId + ', vhs: ' + vhsId);
 <pre>
 class Library extends Backbone.Collection {
     preinitialize: function() {
-        this.setValue: 1;
+        this.setValue = 1;
     }
 
     model: function() { ... }
