@@ -68,6 +68,9 @@
   // form param named `model`.
   Backbone.emulateJSON = false;
 
+  // A cached regex to detect if the Underscore function contains the `arguments`
+  // keyword.
+  var containsArguments = /\barguments\b/;
   // Proxy Backbone class methods to Underscore functions, wrapping the model's
   // `attributes` object or collection's `models` array behind the scenes.
   //
@@ -76,6 +79,10 @@
   //
   // `Function#apply` can be slow so we use the method's arg count, if we know it.
   var addMethod = function(length, method, attribute) {
+    // In case we don't catch it, deopt Underscore functions that contain
+    // the arguments keyword.
+    if (length > 0 && containsArguments.test(_[method])) length = 0;
+
     switch (length) {
       case 1: return function() {
         return _[method](this[attribute]);
