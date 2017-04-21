@@ -1160,9 +1160,13 @@ var Note = Backbone.Model.extend({
     </p>
 
 <pre>
-class Library extends Backbone.Model {
+class Country extends Backbone.Model {
     preinitialize: function() {
-        this.setValue = 1;
+        this.defaults: {
+          name: "United States",
+          country: "Alameda Country",
+          city: "San Leandro"
+        }
     }
 
     initialize: function() { ... }
@@ -1871,7 +1875,9 @@ alert('dvd: ' + dvdId + ', vhs: ' + vhsId);
 <pre>
 class Library extends Backbone.Collection {
     preinitialize: function() {
-        this.setValue = 1;
+        this.onModelAdded: function() {
+          console.log("Add model event got fired");
+        };
     }
 
     model: function() { ... }
@@ -2534,7 +2540,15 @@ router.on("route:help", function(page) {
 <pre>
 class Router extends Backbone.Router {
     preinitialize: function() {
-      this.route(/^(.*?)\/first$/, "first");
+      // Override execute method
+      this.execute: function(callback, args, name) {
+        if (!loggedIn) {
+          goToLogin();
+          return false;
+        }
+        args.push(parseQueryString(args.pop()));
+        if (callback) callback.apply(this, args);
+      }
     }
 
     first: function(id) { ... }
@@ -4421,16 +4435,16 @@ ActiveRecord::Base.include_root_in_json = false
         Added <tt>iterator</tt> support implementing JS Iterable protocol.
       </li>
       <li>
-        Fixed a bug with the hash generator.
+        Fixed a bug with the Router's hash generator.
       </li>
       <li>
-        `#listenTo` uses public `#on` method. This keeps interop between Backbone and any other event library (including Node.js).
+        `#listenTo` uses listened object's public `#on` method. This keeps interop between Backbone and any other event library (including Node.js).
       </li>
       <li>
         <tt>Collection.get</tt> now checks if obj is a <tt>Model</tt> to allow retrieving models with `attributes` key.
       </li>
       <li>
-        We no longer test against IE8 in sauce.
+        We no longer test against IE8. Now we are not testing for <= IE8, with the goal of eventually refactoring some of the older hacks out.
       </li>
     </ul>
 
