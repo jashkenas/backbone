@@ -1161,12 +1161,8 @@ var Note = Backbone.Model.extend({
 
 <pre>
 class Country extends Backbone.Model {
-    preinitialize: function() {
-        this.defaults: {
-          name: "United States",
-          country: "Alameda Country",
-          city: "San Leandro"
-        }
+    preinitialize: function(options) {
+      this.myVar = options.myVar;
     }
 
     initialize: function() { ... }
@@ -1875,8 +1871,8 @@ alert('dvd: ' + dvdId + ', vhs: ' + vhsId);
 <pre>
 class Library extends Backbone.Collection {
     preinitialize: function() {
-        this.onModelAdded: function() {
-          console.log("Add model event got fired");
+        this.on("add", function() {
+          console.log("Add model event got fired!");
         };
     }
 
@@ -2541,7 +2537,7 @@ router.on("route:help", function(page) {
 class Router extends Backbone.Router {
     preinitialize: function() {
       // Override execute method
-      this.execute: function(callback, args, name) {
+      this.execute = function(callback, args, name) {
         if (!loggedIn) {
           goToLogin();
           return false;
