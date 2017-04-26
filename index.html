@@ -1155,17 +1155,17 @@ var Note = Backbone.Model.extend({
     <p id="Model-preinitialize">
       <b class="header">preinitialize</b><code>new Model([attributes], [options])</code>
       <br />
-      For ES6 classes. If you define a <b>preinitialize</b> method, it will be invoked when
+      For ES2015 classes. If you define a <b>preinitialize</b> method, it will be invoked when
       the Model is first created and before any instantiation logic is run for the Model.
     </p>
 
 <pre>
 class Country extends Backbone.Model {
-    preinitialize: function(options) {
+    preinitialize(options) {
       this.myVar = options.myVar;
     }
 
-    initialize: function() { ... }
+    initialize() { ... }
 }
 </pre>
 
@@ -1864,19 +1864,19 @@ alert('dvd: ' + dvdId + ', vhs: ' + vhsId);
     <p id="Collection-preinitialize">
       <b class="header">preinitialize</b><code>new Backbone.Collection([models], [options])</code>
       <br />
-      For ES6 classes. If you define a <b>preinitialize</b> method, it will be invoked when
+      For ES2015 classes. If you define a <b>preinitialize</b> method, it will be invoked when
       the Collection is first created and before any instantiation logic is run for the Collection.
     </p>
 
 <pre>
 class Library extends Backbone.Collection {
-    preinitialize: function() {
+    preinitialize() {
         this.on("add", function() {
           console.log("Add model event got fired!");
         };
     }
 
-    model: function() { ... }
+    model() { ... }
 }
 </pre>
 
@@ -2529,13 +2529,13 @@ router.on("route:help", function(page) {
     <p id="Router-preinitialize">
       <b class="header">preinitialize</b><code>new Backbone.Router([options])</code>
       <br />
-      For ES6 classes. If you define a <b>preinitialize</b> method, it will be invoked when
+      For ES2015 classes. If you define a <b>preinitialize</b> method, it will be invoked when
       the Router is first created and before any instantiation logic is run for the Router.
     </p>
 
 <pre>
 class Router extends Backbone.Router {
-    preinitialize: function() {
+    preinitialize() {
       // Override execute method
       this.execute = function(callback, args, name) {
         if (!loggedIn) {
@@ -2546,8 +2546,6 @@ class Router extends Backbone.Router {
         if (callback) callback.apply(this, args);
       }
     }
-
-    first: function(id) { ... }
 }
 </pre>
 
@@ -2878,13 +2876,13 @@ var DocumentRow = Backbone.View.extend({
     <p id="View-preinitialize">
       <b class="header">preinitialize</b><code>new View([options])</code>
       <br />
-      For ES6 classes. If you define a <b>preinitialize</b> method, it will be invoked when
+      For ES2015 classes. If you define a <b>preinitialize</b> method, it will be invoked when
       the View is first created and before any instantiation logic is run for the View.
     </p>
 
 <pre>
 class Document extends Backbone.View {
-    preinitialize: function() {
+    preinitialize() {
       this.el: "body",
       this.tagName:  "li",
       this.events: {
@@ -2892,11 +2890,11 @@ class Document extends Backbone.View {
       }
     }
 
-    initialize: function() {
+    initialize() {
       this.listenTo(this.model, "change", this.render);
     }
 
-    render: function() { ... }
+    render() { ... }
 }
 </pre>
 
@@ -4425,7 +4423,7 @@ ActiveRecord::Base.include_root_in_json = false
     <br />
     <ul style="margin-top: 5px;">
       <li>
-        Added support for setting instance properties before the constructor in <tt>ES6 classes</tt> with a <tt>preinitialize</tt> method.
+        Added support for setting instance properties before the constructor in <tt>ES2015 classes</tt> with a <tt>preinitialize</tt> method.
       </li>
       <li>
         Added <tt>iterator</tt> support implementing JS Iterable protocol.
@@ -4636,7 +4634,7 @@ ActiveRecord::Base.include_root_in_json = false
         have actually been removed from the collection.
       </li>
       <li>
-        Fixed loading Backbone.js in strict ES6 module loaders.
+        Fixed loading Backbone.js in strict ES2015 module loaders.
       </li>
     </ul>
 
