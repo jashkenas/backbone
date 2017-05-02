@@ -1875,8 +1875,6 @@ class Library extends Backbone.Collection {
           console.log("Add model event got fired!");
         };
     }
-
-    model() { ... }
 }
 </pre>
 
@@ -2882,19 +2880,13 @@ var DocumentRow = Backbone.View.extend({
 
 <pre>
 class Document extends Backbone.View {
-    preinitialize() {
-      this.el: "body",
-      this.tagName:  "li",
-      this.events: {
-        "click .icon": "open"
-      }
+    preinitialize(options) {
+      this.myVar = options.myVar;
     }
 
     initialize() {
       this.listenTo(this.model, "change", this.render);
     }
-
-    render() { ... }
 }
 </pre>
 
@@ -4432,10 +4424,10 @@ ActiveRecord::Base.include_root_in_json = false
         Fixed a bug with the Router's hash generator.
       </li>
       <li>
-        `#listenTo` uses listened object's public `#on` method. This keeps interop between Backbone and any other event library (including Node.js).
+        `#listenTo` uses the listened object's public `#on` method. This keeps interop between Backbone and any other event library (including Node.js).
       </li>
       <li>
-        <tt>Collection.get</tt> now checks if obj is a <tt>Model</tt> to allow retrieving models with `attributes` key.
+        <tt>Collection.get</tt> now checks if obj is a <tt>Model</tt> to allow retrieving models with an `attributes` key.
       </li>
       <li>
         We no longer test against IE8. Now we are not testing for <= IE8, with the goal of eventually refactoring some of the older hacks out.
