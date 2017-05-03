@@ -1853,6 +1853,10 @@ alert('dvd: ' + dvdId + ', vhs: ' + vhsId);
       Pass <tt>null</tt> for <tt>models</tt> to create an empty Collection with <tt>options</tt>.
     </p>
 
+    <p class="warning">
+      Pass <tt>null</tt> for <tt>models</tt> to create an empty Collection with <tt>options</tt>.
+    </p>
+
 <pre>
 var tabs = new TabSet([tab1, tab2, tab3]);
 var spaces = new Backbone.Collection(null, {
@@ -2037,6 +2041,10 @@ ships.add([
     <p>
       Calling <tt>collection.reset()</tt> without passing any models as arguments
       will empty the entire collection.
+    </p>
+
+    <p class="warning">
+      Pass <tt>null</tt> for <tt>models</tt> to empty your Collection with <tt>options</tt>.
     </p>
 
     <p id="Collection-set">
