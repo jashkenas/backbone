@@ -446,9 +446,14 @@
       return Backbone.sync.apply(this, arguments);
     },
 
-    // Get the value of an attribute.
-    get: function(attr) {
-      return this.attributes[attr];
+    // Get the value of a (nested) attribute
+    get: function(attrs) {
+      attrs = attrs.split(".");
+      var cast = _.clone(this.attributes);
+      for (var i = 0; i < attrs.length; i++) {
+        cast = cast[attrs[i]];
+      }
+      return cast;
     },
 
     // Get the HTML-escaped value of an attribute.
