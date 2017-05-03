@@ -436,7 +436,7 @@
     initialize: function(){},
 
     // Return a copy of the model's `attributes` object.
-    toJSON: function(options) {
+    toJSON: function() {
       return _.clone(this.attributes);
     },
 
