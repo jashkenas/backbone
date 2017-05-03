@@ -1296,6 +1296,7 @@
     this.cid = _.uniqueId('view');
     this.preinitialize.apply(this, arguments);
     _.extend(this, _.pick(options, viewOptions));
+    this.options = options;
     this._ensureElement();
     this.initialize.apply(this, arguments);
   };
