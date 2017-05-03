@@ -2890,8 +2890,8 @@ listView.$el.append(itemView.el);
       <b class="header">attributes</b><code>view.attributes</code>
       <br />
       A hash of attributes that will be set as HTML DOM element attributes on the
-      view's <tt>el</tt> (id, class, data-properties, etc.), or a function that
-      returns such a hash.
+      view's <tt>el</tt> (<tt>id</tt>, <tt>class</tt>, data-properties, etc.), or a function that
+      returns such a hash. If <tt>view.id</tt> or <tt>view.className</tt> are set they will supersede <tt>id</tt> and <tt>class</tt> attributes, respectively.
     </p>
 
     <p id="View-dollar">
