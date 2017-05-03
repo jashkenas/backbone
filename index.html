@@ -1278,6 +1278,15 @@ if (note.has("title")) {
       model URLs by default.
     </p>
 
+    <p class="warning">
+      Be advised not to use ids consisting of the letter "c,"
+      followed by a number: <tt>c1</tt>, <tt>c2</tt>, etc.
+      The model's <a href="#Model-cid">cid</a> takes that format, and both
+      properties are used on the same internal hash of a collection as pointers
+      to the model instance. If the <b>id</b> and the <b>cid</b> are of the same format,
+      problems can occur. See <a href="https://github.com/jashkenas/backbone/issues/2920">#2920</a>.
+    </p>
+
     <p id="Model-idAttribute">
       <b class="header">idAttribute</b><code>model.idAttribute</code>
       <br />
