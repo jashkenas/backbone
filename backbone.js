@@ -867,6 +867,10 @@
       for (i = 0; i < models.length; i++) {
         model = models[i];
 
+        if (typeof this.filter === 'function') {
+            if (false === this.filter(model)) continue   
+        }
+
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
         var existing = this.get(model);
