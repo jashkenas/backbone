@@ -413,9 +413,6 @@
   // Attach all inheritable methods to the Model prototype.
   _.extend(Model.prototype, Events, {
 
-    // A hash of attributes whose current and previous value differ.
-    changed: null,
-
     // The value returned during the last failed validation.
     validationError: null,
 
