@@ -1190,7 +1190,7 @@
       if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
     },
-
+	
     // Internal method called every time a model in the set fires an event.
     // Sets need to update their indexes when models change ids. All other
     // events simply proxy through. "add" and "remove" events that originate
@@ -1209,6 +1209,12 @@
         }
       }
       this.trigger.apply(this, arguments);
+    },
+	
+	// Method to filter a collection and return a collection of the same instance.
+	// For example, filtering a collection then using the toJSON method on the result.
+    filterCollection : function() {
+  	  return new this.constructor(this.filter.apply(this, arguments));
     }
 
   });
