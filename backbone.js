@@ -1637,8 +1637,8 @@
     options || (options = {});
     this.preinitialize.apply(this, arguments);
     if (options.routes) this.routes = options.routes;
-    this._bindRoutes();
     this.initialize.apply(this, arguments);
+    this._bindRoutes();
   };
 
   // Cached regular expressions for matching named param parts and splatted
