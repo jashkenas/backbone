@@ -2326,6 +2326,10 @@ accounts.fetch();
     </p>
 
     <p>
+      <tt>collection.defaultData</tt> can be used to set default data fields that will be used when calling <b>fetch</b>. These fields will be used as default for fields that are not overwritten by the call to <b>fetch</b>.
+    </p>
+
+    <p>
       Note that <b>fetch</b> should not be used to populate collections on
       page load &mdash; all models needed at load time should already be
       <a href="#FAQ-bootstrap">bootstrapped</a> in to place. <b>fetch</b> is
