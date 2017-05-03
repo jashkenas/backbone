@@ -50,6 +50,13 @@
   // the `$` variable.
   Backbone.$ = $;
 
+  // Try to require jQuery in case this is Node.js, Browserify or Ender.
+  if(!$ && (typeof require !== 'undefined')) {
+    try {
+      var $ = require('jQuery');
+    } catch (e) {}
+  }
+
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
   Backbone.noConflict = function() {
