@@ -3386,7 +3386,7 @@ an element from the <code>id</code>, <code>className</code> and <code>tagName</c
       <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.el) {
         <span class="hljs-keyword">var</span> attrs = _.extend({}, _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'attributes'</span>));
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.id) attrs.id = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'id'</span>);
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.className) attrs[<span class="hljs-string">'class'</span>] = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'className'</span>);
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.className) attrs.class = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'className'</span>);
         <span class="hljs-keyword">this</span>.setElement(<span class="hljs-keyword">this</span>._createElement(_.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'tagName'</span>)));
         <span class="hljs-keyword">this</span>._setAttributes(attrs);
       } <span class="hljs-keyword">else</span> {
