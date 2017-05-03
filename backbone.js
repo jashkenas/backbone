@@ -2057,7 +2057,7 @@
     if (protoProps && _.has(protoProps, 'constructor')) {
       child = protoProps.constructor;
     } else {
-      child = function(){ return parent.apply(this, arguments); };
+      child = function(){ return parent.prototype.constructor.apply(this, arguments); };
     }
 
     // Add static properties to the constructor function, if supplied.
