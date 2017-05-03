@@ -459,7 +459,7 @@
     // Returns `true` if the attribute contains a value that is not null
     // or undefined.
     has: function(attr) {
-      return this.get(attr) != null;
+      return this.attributes[attr] != null;
     },
 
     // Special-cased proxy to underscore's `_.matches` method.
