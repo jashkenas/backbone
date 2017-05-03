@@ -1817,11 +1817,7 @@
     // Get the cross-browser normalized URL fragment from the path or hash.
     getFragment: function(fragment) {
       if (fragment == null) {
-        if (this._usePushState || !this._wantsHashChange) {
-          fragment = this.getPath();
-        } else {
-          fragment = this.getHash();
-        }
+        fragment = (this._usePushState || !this._wantsHashChange) ? this.getPath() : this.getHash();
       }
       return fragment.replace(routeStripper, '');
     },
