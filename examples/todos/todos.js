@@ -170,7 +170,7 @@ $(function(){
       this.listenTo(Todos, 'all', this.render);
 
       this.footer = this.$('footer');
-      this.main = $('#main');
+      this.main = this.$('#main');
 
       Todos.fetch();
     },
