@@ -32,3 +32,5 @@ https://github.com/jashkenas/backbone/graphs/contributors
 
 Special thanks to Robert Kieffer for the original philosophy behind Backbone.
 https://github.com/broofa
+
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/jashkenas/backbone?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
