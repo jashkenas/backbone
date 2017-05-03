@@ -1222,23 +1222,6 @@ note.set({title: "March 20", content: "In his eyes she eclipses..."});
 book.set("title", "A Scandal in Bohemia");
 </pre>
 
-    <p id="Model-escape">
-      <b class="header">escape</b><code>model.escape(attribute)</code>
-      <br />
-      Similar to <a href="#Model-get">get</a>, but returns the HTML-escaped version
-      of a model's attribute. If you're interpolating data from the model into
-      HTML, using <b>escape</b> to retrieve attributes will prevent
-      <a href="http://en.wikipedia.org/wiki/Cross-site_scripting">XSS</a> attacks.
-    </p>
-
-<pre class="runnable">
-var hacker = new Backbone.Model({
-  name: "&lt;script&gt;alert('xss')&lt;/script&gt;"
-});
-
-alert(hacker.escape('name'));
-</pre>
-
     <p id="Model-has">
       <b class="header">has</b><code>model.has(attribute)</code>
       <br />
