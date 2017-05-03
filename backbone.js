@@ -1553,6 +1553,13 @@
   // instead of `application/json` with the model in a param named `model`.
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
+
+  // Backbone.headers is a key-value dictionary of headers that are to be
+  // added to any HTTP request. For example, a CSRF Token. It is designed to
+  // be and is completely user modifiable.
+  
+  Backbone.headers = {};
+
   Backbone.sync = function(method, model, options) {
     var type = methodMap[method];
 
@@ -1580,6 +1587,15 @@
     if (options.emulateJSON) {
       params.contentType = 'application/x-www-form-urlencoded';
       params.data = params.data ? {model: params.data} : {};
+    }
+
+    // Add any optional headesr
+    var beforeSend = options.beforeSend;
+    options.beforeSend = function(xhr) {
+	for(var key in Backbone.headers) {
+	    xhr.setRequestHeader(key, Backbone.headers[key]);
+	    if(beforeSend) return beforeSend.apply(this, arguments);
+	}
     }
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
