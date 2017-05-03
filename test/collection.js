@@ -687,8 +687,22 @@
   });
 
   QUnit.test('toJSON', function(assert) {
-    assert.expect(1);
+    assert.expect(2);
     assert.equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
+    var Model = Backbone.Model.extend({
+      computed: {
+        joined: function() {
+          return this.get('id') + ' ' + this.get('label');
+        }
+      }
+    });
+    var model = new Model({
+      id: 5,
+      label: 'f'
+    });
+    col.add(model);
+    assert.equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"},{"joined":"5 f","id":5,"label":"f"}]');
+    col.remove(model);
   });
 
   QUnit.test('where and findWhere', function(assert) {
