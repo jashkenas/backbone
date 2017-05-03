@@ -1795,15 +1795,13 @@
     // In IE6, the hash fragment and search params are incorrect if the
     // fragment contains `?`.
     getSearch: function() {
-      var match = this.location.href.replace(/#.*/, '').match(/\?.+/);
-      return match ? match[0] : '';
+      return _.result(this.location.href.replace(/#.*/, '').match(/\?.+/), 0, '');
     },
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
     getHash: function(window) {
-      var match = (window || this).location.href.match(/#(.*)$/);
-      return match ? match[1] : '';
+      return _.result((window || this).location.href.match(/#(.*)$/), 1, '');
     },
 
     // Get the pathname and search params, without the root.
