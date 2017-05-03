@@ -1079,7 +1079,9 @@
         if (wait) collection.add(m, callbackOpts);
         if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
       };
-      model.save(null, options);
+      if(model.save(null, options) === false) {
+	return false; //"create" never returns false on failed validation.
+      }
       return model;
     },
 
