@@ -162,14 +162,14 @@ $(function(){
     // loading any preexisting todos that might be saved in *localStorage*.
     initialize: function() {
 
-      this.input = this.$("#new-todo");
-      this.allCheckbox = this.$("#toggle-all")[0];
+      this.input = $("#new-todo");
+      this.allCheckbox = $("#toggle-all")[0];
 
       this.listenTo(Todos, 'add', this.addOne);
       this.listenTo(Todos, 'reset', this.addAll);
       this.listenTo(Todos, 'all', this.render);
 
-      this.footer = this.$('footer');
+      this.footer = $('footer');
       this.main = $('#main');
 
       Todos.fetch();
@@ -197,7 +197,7 @@ $(function(){
     // appending its element to the `<ul>`.
     addOne: function(todo) {
       var view = new TodoView({model: todo});
-      this.$("#todo-list").append(view.render().el);
+      $("#todo-list").append(view.render().el);
     },
 
     // Add all items in the **Todos** collection at once.
