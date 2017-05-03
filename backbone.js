@@ -2024,6 +2024,13 @@
       if (options.trigger) return this.loadUrl(fragment);
     },
 
+    // Goes to the previous page in session history.
+    // The same action as when the user clicks the browser's Back button.
+    back: function() {
+        if (!History.started) return false;
+        window.history.back();
+    },
+
     // Update the hash location, either replacing the current entry, or adding
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
