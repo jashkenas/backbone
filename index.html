@@ -2617,7 +2617,9 @@ var Router = Backbone.Router.extend({
     <p>
       If your application is not being served from the root url <tt>/</tt> of your
       domain, be sure to tell History where the root really is, as an option:
-      <tt>Backbone.history.start({pushState: true, root: "/public/search/"})</tt>
+      <tt>Backbone.history.start({pushState: true, root: "public/search/"})</tt>.
+      Note that in order to match route names, the <tt>root</tt> also needs to
+      drop its leading "/".
     </p>
 
     <p>
