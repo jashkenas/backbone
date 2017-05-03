@@ -1,0 +1,10 @@
+{
+    "name": "documentcloud/backbone"
+  , "description": "Give your JS App some Backbone with Models, Views, Collections, and Events."
+  , "keywords": ["js", "model", "view", "controller", "router", "server", "client", "browser"]
+  , "homepage": "http://backbonejs.org"
+  , "author": "Jeremy Ashkenas <jeremy@documentcloud.org>"
+  , "license": "MIT"
+  , "target-dir": "documentcloud/backbone"
+
+}
