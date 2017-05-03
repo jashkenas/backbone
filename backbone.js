@@ -1728,7 +1728,7 @@
       return _.map(params, function(param, i) {
         // Don't decode the search params.
         if (i === params.length - 1) return param || null;
-        return param ? decodeURIComponent(param) : null;
+        return param ? decodeURIComponent(param.replace(/\+/g,'%20')) : null;
       });
     }
 
