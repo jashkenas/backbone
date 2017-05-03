@@ -1765,6 +1765,9 @@
   // Has the history handling already been started?
   History.started = false;
 
+  // Is this Android webkit
+  var isAndroidWebkit   = (/Android(?!.*Chrome).*/.exec(navigator.userAgent.toLowerCase()));
+
   // Set up all inheritable **Backbone.History** properties and methods.
   _.extend(History.prototype, Events, {
 
@@ -2027,7 +2030,7 @@
     // Update the hash location, either replacing the current entry, or adding
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
-      if (replace) {
+      if (replace && !isAndroidWebkit) {
         var href = location.href.replace(/(javascript:|#).*$/, '');
         location.replace(href + '#' + fragment);
       } else {
