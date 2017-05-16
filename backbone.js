@@ -2027,15 +2027,14 @@
     // Update the hash location, either replacing the current entry, or adding
     // a new one to the browser history.
     _updateHash: function(location, fragment, replace) {
-      if (replace) {
-        var href = location.href.replace(/(javascript:|#).*$/, '');
-        location.replace(href + '#' + fragment);
-      } else {
+      // if contains Korean not work on Safari browser
+      if (!replace) {
         // Some browsers require that `hash` contains a leading #.
         location.hash = '#' + fragment;
       }
+      var href = location.href.replace(/(javascript:|#).*$/, '');
+      location.replace(href + '#' + fragment);
     }
-
   });
 
   // Create the default Backbone.history.
