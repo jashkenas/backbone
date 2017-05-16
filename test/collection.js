@@ -402,10 +402,15 @@
   });
 
   QUnit.test('shift and pop', function(assert) {
-    assert.expect(2);
+    assert.expect(7);
     var collection = new Backbone.Collection([{a: 'a'}, {b: 'b'}, {c: 'c'}]);
     assert.equal(collection.shift().get('a'), 'a');
+    assert.equal(collection.at(0).get('b'), 'b');
+    assert.equal(collection.at(1).get('c'), 'c');
     assert.equal(collection.pop().get('c'), 'c');
+    assert.equal(collection.at(0).get('b'), 'b');
+    assert.equal(collection.shift().get('b'), 'b');
+    assert.ok(collection.length === 0);
   });
 
   QUnit.test('slice', function(assert) {
