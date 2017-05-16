@@ -547,6 +547,19 @@
       return this.set(attr, void 0, _.extend({}, options, {unset: true}));
     },
 
+    // accepts an attribute name (or array of attribute names) and a transformer
+    // function which maps the current attribute value(s) to new attribute value(s)
+    update: function(attrName, transformer, setOptions) {
+      var attrNames = _.isArray(attrName) ? attrName : [attrName];
+      var model = this;
+      var newValues = _.reduce(attrNames, function(valueCollector, attr) {
+        valueCollector[attr] = transformer.call(model, model.get(attr), model, attr);
+        return valueCollector;
+      }, {});
+      this.set(newValues, setOptions);
+      return this;
+    },
+
     // Clear all attributes on the model, firing `"change"`.
     clear: function(options) {
       var attrs = {};
