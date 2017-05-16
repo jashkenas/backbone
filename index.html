@@ -419,6 +419,7 @@
         <li data-name="clone">– <a href="#Collection-clone">clone</a></li>
         <li data-name="fetch">– <a href="#Collection-fetch">fetch</a></li>
         <li data-name="create">– <a href="#Collection-create">create</a></li>
+        <li data-name="sync">– <a href="#Collection-mixin">mixin</a></li>
       </ul>
     </div>
 
@@ -2405,6 +2406,32 @@ var othello = nypl.create({
   title: "Othello",
   author: "William Shakespeare"
 });
+</pre>
+
+    <p id="Collection-mixin">
+      <b class="header">mixin</b><code>Backbone.Collection.mixin(properties)</code>
+      <br />
+      <code>mixin</code> provides a way to enhance the base <b>Backbone.Collection</b>
+      and any collections which extend it. This can be used to add generic methods
+      (e.g. additional <a href="#Collection-Underscore-Methods"><b>Underscore Methods</b></a>).
+    </p>
+
+<pre>
+Backbone.Collection.mixin({
+  sum: function(models, iteratee) {
+    return _.reduce(models, function(s, m) {
+      return s + iteratee(m);
+    }, 0);
+  }
+});
+
+var cart = new Backbone.Collection([
+  {price: 16, name: 'monopoly'},
+  {price: 5, name: 'deck of cards'},
+  {price: 20, name: 'chess'}
+]);
+
+var cost = cart.sum('price');
 </pre>
 
     <h2 id="Router">Backbone.Router</h2>
@@ -4418,19 +4445,19 @@ ActiveRecord::Base.include_root_in_json = false
         Added support for setting instance properties before the constructor in <tt>ES2015 classes</tt> with a <tt>preinitialize</tt> method.
       </li>
       <li>
-        Added <tt>iterator</tt> support implementing JS Iterable protocol.
+        Collections now support the [Javascript Iterator Protocol](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Iteration_protocols)
       </li>
       <li>
-        Fixed a bug with the Router's hash generator.
-      </li>
-      <li>
-        `#listenTo` uses the listened object's public `#on` method. This keeps interop between Backbone and any other event library (including Node.js).
+        `#listenTo` uses the listened object's public `#on` method. This keeps interop between Backbone and other event libraries (including Node.js).
       </li>
       <li>
         <tt>Collection.get</tt> now checks if obj is a <tt>Model</tt> to allow retrieving models with an `attributes` key.
       </li>
       <li>
-        We no longer test against IE8. Now we are not testing for <= IE8, with the goal of eventually refactoring some of the older hacks out.
+        Fixed several issues with Router's URL hashing and parsing.
+      </li>
+      <li>
+        We are no longer testing for <= IE8, with the goal of eventually refactoring some of the older hacks out.
       </li>
     </ul>
 
@@ -4446,6 +4473,9 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Added <tt>options.changes</tt> to <tt>Collection</tt> "update" event which
         includes added, merged, and removed models.
+      </li>
+      <li>
+        Added support for <tt>Collection#mixin</tt> and <tt>Model#mixin</tt>.
       </li>
       <li>
         Ensured <tt>Collection#reduce</tt> and <tt>Collection#reduceRight</tt>
