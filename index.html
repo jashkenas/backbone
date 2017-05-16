@@ -348,6 +348,7 @@
       </a>
       <ul class="toc_section">
         <li data-name="extend">– <a href="#Model-extend">extend</a></li>
+        <li data-name="preinitialize">– <a href="#Model-preinitialize">preinitialize</a></li>
         <li data-name="constructor / initialize">– <a href="#Model-constructor">constructor / initialize</a></li>
         <li data-name="get">– <a href="#Model-get">get</a></li>
         <li data-name="set">– <a href="#Model-set">set</a></li>
@@ -390,6 +391,7 @@
         <li data-name="extend">– <a href="#Collection-extend">extend</a></li>
         <li data-name="model">– <a href="#Collection-model">model</a></li>
         <li data-name="modelId">– <a href="#Collection-modelId">modelId</a></li>
+        <li data-name="preinitialize" data-name="preinitialize">– <a href="#Collection-preinitialize">preinitialize</a></li>
         <li data-name="constructor / initialize" data-name="constructor / initialize">– <a href="#Collection-constructor">constructor / initialize</a></li>
         <li data-name="models">– <a href="#Collection-models">models</a></li>
         <li data-name="toJSON">– <a href="#Collection-toJSON">toJSON</a></li>
@@ -427,6 +429,7 @@
       <ul class="toc_section">
         <li data-name="extend">– <a href="#Router-extend">extend</a></li>
         <li data-name="routes">– <a href="#Router-routes">routes</a></li>
+        <li data-name="preinitialize">– <a href="#Router-preinitialize">preinitialize</a></li>
         <li data-name="constructor / initialize">– <a href="#Router-constructor">constructor / initialize</a></li>
         <li data-name="route">– <a href="#Router-route">route</a></li>
         <li data-name="navigate">– <a href="#Router-navigate">navigate</a></li>
@@ -461,6 +464,7 @@
       </a>
       <ul class="toc_section">
         <li data-name="extend">– <a href="#View-extend">extend</a></li>
+        <li data-name="preinitialize">– <a href="#View-preinitialize">preinitialize</a></li>
         <li data-name="constructor / initialize">– <a href="#View-constructor">constructor / initialize</a></li>
         <li data-name="el">– <a href="#View-el">el</a></li>
         <li data-name="$el">– <a href="#View-$el">$el</a></li>
@@ -1146,6 +1150,23 @@ var Note = Backbone.Model.extend({
     ...
   }
 });
+</pre>
+
+    <p id="Model-preinitialize">
+      <b class="header">preinitialize</b><code>new Model([attributes], [options])</code>
+      <br />
+      For ES2015 classes. If you define a <b>preinitialize</b> method, it will be invoked when
+      the Model is first created and before any instantiation logic is run for the Model.
+    </p>
+
+<pre>
+class Country extends Backbone.Model {
+    preinitialize(options) {
+      this.myVar = options.myVar;
+    }
+
+    initialize() { ... }
+}
 </pre>
 
     <p id="Model-constructor">
@@ -1840,6 +1861,23 @@ var vhsId = library.get('vhs1').id;
 alert('dvd: ' + dvdId + ', vhs: ' + vhsId);
 </pre>
 
+    <p id="Collection-preinitialize">
+      <b class="header">preinitialize</b><code>new Backbone.Collection([models], [options])</code>
+      <br />
+      For ES2015 classes. If you define a <b>preinitialize</b> method, it will be invoked when
+      the Collection is first created and before any instantiation logic is run for the Collection.
+    </p>
+
+<pre>
+class Library extends Backbone.Collection {
+    preinitialize() {
+        this.on("add", function() {
+          console.log("Add model event got fired!");
+        };
+    }
+}
+</pre>
+
     <p id="Collection-constructor">
       <b class="header">constructor / initialize</b><code>new Backbone.Collection([models], [options])</code>
       <br />
@@ -2486,6 +2524,29 @@ router.on("route:help", function(page) {
 });
 </pre>
 
+    <p id="Router-preinitialize">
+      <b class="header">preinitialize</b><code>new Backbone.Router([options])</code>
+      <br />
+      For ES2015 classes. If you define a <b>preinitialize</b> method, it will be invoked when
+      the Router is first created and before any instantiation logic is run for the Router.
+    </p>
+
+<pre>
+class Router extends Backbone.Router {
+    preinitialize() {
+      // Override execute method
+      this.execute = function(callback, args, name) {
+        if (!loggedIn) {
+          goToLogin();
+          return false;
+        }
+        args.push(parseQueryString(args.pop()));
+        if (callback) callback.apply(this, args);
+      }
+    }
+}
+</pre>
+
     <p id="Router-constructor">
       <b class="header">constructor / initialize</b><code>new Router([options])</code>
       <br />
@@ -2809,6 +2870,25 @@ var DocumentRow = Backbone.View.extend({
       <tt>el</tt>, and <tt>events</tt> may also be defined as a function, if
       you want to wait to define them until runtime.
     </p>
+
+    <p id="View-preinitialize">
+      <b class="header">preinitialize</b><code>new View([options])</code>
+      <br />
+      For ES2015 classes. If you define a <b>preinitialize</b> method, it will be invoked when
+      the View is first created and before any instantiation logic is run for the View.
+    </p>
+
+<pre>
+class Document extends Backbone.View {
+    preinitialize(options) {
+      this.myVar = options.myVar;
+    }
+
+    initialize() {
+      this.listenTo(this.model, "change", this.render);
+    }
+}
+</pre>
 
     <p id="View-constructor">
       <b class="header">constructor / initialize</b><code>new View([options])</code>
@@ -4329,6 +4409,31 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header">1.4.0</b> &mdash; <small><i>Apr. 8, 2017</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.3.3...1.4.0">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.4.0/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Added support for setting instance properties before the constructor in <tt>ES2015 classes</tt> with a <tt>preinitialize</tt> method.
+      </li>
+      <li>
+        Added <tt>iterator</tt> support implementing JS Iterable protocol.
+      </li>
+      <li>
+        Fixed a bug with the Router's hash generator.
+      </li>
+      <li>
+        `#listenTo` uses the listened object's public `#on` method. This keeps interop between Backbone and any other event library (including Node.js).
+      </li>
+      <li>
+        <tt>Collection.get</tt> now checks if obj is a <tt>Model</tt> to allow retrieving models with an `attributes` key.
+      </li>
+      <li>
+        We no longer test against IE8. Now we are not testing for <= IE8, with the goal of eventually refactoring some of the older hacks out.
+      </li>
+    </ul>
+
     <b class="header">1.3.3</b> &mdash; <small><i>Apr. 5, 2016</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.3...1.3.3">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.3.3/index.html">Docs</a>
@@ -4521,7 +4626,7 @@ ActiveRecord::Base.include_root_in_json = false
         have actually been removed from the collection.
       </li>
       <li>
-        Fixed loading Backbone.js in strict ES6 module loaders.
+        Fixed loading Backbone.js in strict ES2015 module loaders.
       </li>
     </ul>
 
