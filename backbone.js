@@ -1304,7 +1304,7 @@
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
   // List of view options to be set as properties.
-  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
+  var viewOptions = ['model', 'collection', 'el', 'target', 'id', 'attributes', 'className', 'tagName', 'events'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(View.prototype, Events, {
@@ -1357,14 +1357,16 @@
       return this;
     },
 
-    // Creates the `this.el` and `this.$el` references for this view using the
-    // given `el`. `el` can be a CSS selector or an HTML string, a jQuery
+    // Creates the bindings on `this` for an element and a wrapped context
+    // with `name`. `el` can be a CSS selector or an HTML string, a jQuery
     // context or an element. Subclasses can override this to utilize an
     // alternative DOM manipulation API and are only required to set the
-    // `this.el` property.
-    _setElement: function(el) {
-      this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
-      this.el = this.$el[0];
+    // native element property.
+    _setElement: function(el, name) {
+      if (name == null) name = 'el';
+      var jQueryName = '$' + name;
+      this[jQueryName] = el instanceof Backbone.$ ? el : Backbone.$(el);
+      this[name] = this[jQueryName][0];
     },
 
     // Set callbacks, where `this.events` is a hash of
@@ -1434,6 +1436,7 @@
         if (this.className) attrs['class'] = _.result(this, 'className');
         this.setElement(this._createElement(_.result(this, 'tagName')));
         this._setAttributes(attrs);
+        this._setElement(_.result(this, 'target'), 'target');
       } else {
         this.setElement(_.result(this, 'el'));
       }
