@@ -365,6 +365,23 @@
     model.unset('a');
     assert.equal(i, 2, 'Unset does not fire an event for missing attributes.');
   });
+  
+  test("array support on unset", 2, function() {
+    var i = 0;
+    var p = 0;
+    var counter = function(model, options) {
+      i++;
+
+      if (options.customProp) p++;
+    };
+    var model = new Backbone.Model({a: 1, b: 2, c: 3, d: 4, e: 5, f: 6});
+    model.on("change", counter);
+    model.unset('a');
+    model.unset(['b', 'c']);
+    model.unset(['d'], ['f'], { customProp: 1 });
+    equal(i, 3, 'Unset correctly handles any number of arrays or strings as attributes.');
+    equal(p, 1, 'Unset correctly handles attributes followed by an options hash.');
+  });
 
   QUnit.test('unset and changedAttributes', function(assert) {
     assert.expect(1);

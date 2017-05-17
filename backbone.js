@@ -543,8 +543,15 @@
 
     // Remove an attribute from the model, firing `"change"`. `unset` is a noop
     // if the attribute doesn't exist.
-    unset: function(attr, options) {
-      return this.set(attr, void 0, _.extend({}, options, {unset: true}));
+    unset: function(attrs, options) {
+      var attrs = _.flatten(arguments);
+      var options = {unset: true};
+
+      if (attrs.length > 1 && typeof _.last(attrs) == "object") {
+        options = _.extend({}, attrs.pop(), {unset: true})
+      };
+
+      return this.set(_.object(attrs, []), options);
     },
 
     // Clear all attributes on the model, firing `"change"`.
