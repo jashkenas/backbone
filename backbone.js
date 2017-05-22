@@ -305,11 +305,7 @@
   Events.trigger = function(name) {
     if (!this._events) return this;
 
-    var length = Math.max(0, arguments.length - 1);
-    var args = Array(length);
-    for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
-
-    eventsApi(triggerApi, this._events, name, void 0, args);
+    eventsApi(triggerApi, this._events, name, void 0, _.toArray(arguments).slice(1));
     return this;
   };
 
