@@ -494,8 +494,11 @@
       var changing   = this._changing;
       this._changing = true;
 
+      current = this.attributes, prev = this._previousAttributes;
+
       if (!changing) {
-        this._previousAttributes = _.clone(this.attributes);
+        prev = this._previousAttributes = {};
+        for( attr in current ){ prev[ attr ] = current[ attr ]; }
         this.changed = {};
       }
 
