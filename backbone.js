@@ -404,7 +404,22 @@
     if (options.collection) this.collection = options.collection;
     if (options.parse) attrs = this.parse(attrs, options) || {};
     var defaults = _.result(this, 'defaults');
-    attrs = _.defaults(_.extend({}, defaults, attrs), defaults);
+    // do deep copy (model defaults hava array or [] value will generating dirty data)
+    var new_default = {};
+    if (defaults) {
+        for (var key in defaults) {
+            var obj = defaults[key];
+            if (_.isArray(obj)) {
+                new_default[key] = _.clone(defaults[key]);
+            } else {
+                new_default[key] = obj;
+            }
+        }
+    } else {
+        new_default = defaults;
+    }
+    
+    attrs = _.defaults(_.extend({}, new_default, attrs), new_default);
     this.set(attrs, options);
     this.changed = {};
     this.initialize.apply(this, arguments);
