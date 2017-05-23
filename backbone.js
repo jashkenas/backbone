@@ -1429,11 +1429,8 @@
     // an element from the `id`, `className` and `tagName` properties.
     _ensureElement: function() {
       if (!this.el) {
-        var attrs = _.extend({}, _.result(this, 'attributes'));
-        if (this.id) attrs.id = _.result(this, 'id');
-        if (this.className) attrs['class'] = _.result(this, 'className');
         this.setElement(this._createElement(_.result(this, 'tagName')));
-        this._setAttributes(attrs);
+        this._setAttributes(this._attributes());
       } else {
         this.setElement(_.result(this, 'el'));
       }
@@ -1443,6 +1440,13 @@
     // subclasses using an alternative DOM manipulation API.
     _setAttributes: function(attributes) {
       this.$el.attr(attributes);
+    },
+
+    _attributes: function() {
+      var attrs = _.extend({}, _.result(this, 'attributes'));
+      if (this.id) attrs.id = _.result(this, 'id');
+      if (this.className) attrs['class'] = _.result(this, 'className');
+      return attrs;
     }
 
   });
