@@ -212,7 +212,6 @@
       listening.obj.off(name, callback, this);
       if (listening.interop) listening.off(name, callback);
     }
-    if (_.isEmpty(listeningTo)) this._listeningTo = void 0;
 
     return this;
   };
