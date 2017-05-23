@@ -2035,7 +2035,6 @@
         location.hash = '#' + fragment;
       }
     }
-
   });
 
   // Create the default Backbone.history.
