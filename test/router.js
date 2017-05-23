@@ -437,6 +437,20 @@
     assert.equal(router.charType, 'UTF');
   });
 
+  QUnit.test('#2667 - Hashes with unicode in them. Safari related issue', function(assert) {
+    assert.expect(2);
+    var route = '#北їñ';
+    var isSafari = navigator.appVersion.indexOf('Version/') != -1;
+    //PhantomJS changes location.hash to unicode as well
+    var isPhantomJs = navigator.appVersion.indexOf('PhantomJS/') != -1;
+    var result = isSafari || isPhantomJs ? '#%E5%8C%97%D1%97%C3%B1' : route;
+
+    location.replace('http://example.com' + route);
+    assert.equal(location.hash, result);
+    Backbone.history.navigate(route);
+    assert.equal(location.hash, result);
+  });
+
   QUnit.test('#1185 - Use pathname when hashChange is not wanted.', function(assert) {
     assert.expect(1);
     Backbone.history.stop();
