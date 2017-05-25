@@ -1810,19 +1810,23 @@ var Library = Backbone.Collection.extend({
 
     <p>
       A collection can also contain polymorphic models by overriding this property
-      with a constructor that returns a model.
+      with a constructor that returns a model. The constructor prototype must include 
+      an idAttribute.
     </p>
 
 <pre>
+var PublicDocumentFactory = function(attrs, options) {
+  if (condition) {
+    return new PublicDocument(attrs, options);
+  } else {
+    return new PrivateDocument(attrs, options);
+  }
+}
+PublicDocumentFactory.prototype.idAttribute = 'id';
+  
 var Library = Backbone.Collection.extend({
 
-  model: function(attrs, options) {
-    if (condition) {
-      return new PublicDocument(attrs, options);
-    } else {
-      return new PrivateDocument(attrs, options);
-    }
-  }
+  model: PublicDocumentFactory
 
 });
 </pre>
