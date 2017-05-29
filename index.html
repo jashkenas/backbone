@@ -994,7 +994,8 @@ object.off();
       callback, object)</tt>, is that <b>listenTo</b> allows the <b>object</b>
       to keep track of the events, and they can be removed all at once later
       on.  The <b>callback</b> will always be called with <b>object</b> as
-      context.
+      context.<br />
+      (<b>listenTo</b> does not allow supplying a <b>context</b> value for <tt>this</tt>, like you can with <b>on</b>.)
     </p>
 
 <pre>
@@ -1006,7 +1007,7 @@ view.listenTo(model, 'change', view.render);
       <br />
       Tell an <b>object</b> to stop listening to events. Either call
       <b>stopListening</b> with no arguments to have the <b>object</b> remove
-      all of its <a href="#Events-listenTo">registered</a> callbacks ... or be more
+      all of its <a href="#Events-listenTo">registered</a> callbacks … or be more
       precise by telling it to remove just the events it's listening to on a
       specific object, or a specific event, or just a specific callback.
     </p>
