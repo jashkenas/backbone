@@ -1648,6 +1648,18 @@
   var splatParam    = /\*\w+/g;
   var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
 
+  // Convert a route string into a regular expression, suitable for matching
+  // against the current location hash.
+  Router.routeToRegExp = function(route) {
+    route = route.replace(escapeRegExp, '\\$&')
+      .replace(optionalParam, '(?:$1)?')
+      .replace(namedParam, function(match, optional) {
+        return optional ? match : '([^/?]+)';
+      })
+      .replace(splatParam, '([^?]*?)');
+    return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
+  };
+
   // Set up all inheritable **Backbone.Router** properties and methods.
   _.extend(Router.prototype, Events, {
 
@@ -1666,7 +1678,7 @@
     //     });
     //
     route: function(route, name, callback) {
-      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      if (!_.isRegExp(route)) route = Router.routeToRegExp(route);
       if (_.isFunction(name)) {
         callback = name;
         name = '';
@@ -1706,18 +1718,6 @@
       while ((route = routes.pop()) != null) {
         this.route(route, this.routes[route]);
       }
-    },
-
-    // Convert a route string into a regular expression, suitable for matching
-    // against the current location hash.
-    _routeToRegExp: function(route) {
-      route = route.replace(escapeRegExp, '\\$&')
-                   .replace(optionalParam, '(?:$1)?')
-                   .replace(namedParam, function(match, optional) {
-                     return optional ? match : '([^/?]+)';
-                   })
-                   .replace(splatParam, '([^?]*?)');
-      return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
     },
 
     // Given a route, and a URL fragment that it matches, return the array of
