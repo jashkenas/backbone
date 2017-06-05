@@ -1085,9 +1085,7 @@
 
     // **parse** converts a response into a list of models to be added to the
     // collection. The default implementation is just to pass it through.
-    parse: function(resp, options) {
-      return resp;
-    },
+    parse: _.identity,
 
     // Create a new collection with an identical list of models as this one.
     clone: function() {
@@ -1324,7 +1322,7 @@
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
-    initialize: function(){},
+    initialize: _.noop,
 
     // **render** is the core function that your view should override, in order
     // to populate its element (`this.el`), with the appropriate HTML. The
@@ -1686,7 +1684,7 @@
 
     // Execute a route handler with the provided parameters.  This is an
     // excellent place to do pre-route setup or post-route cleanup.
-    execute: function(callback, args, name) {
+    execute: function(callback, args) {
       if (callback) callback.apply(this, args);
     },
 
