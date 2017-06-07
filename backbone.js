@@ -702,7 +702,7 @@
       var base =
         _.result(this, 'urlRoot') ||
         _.result(this.collection, 'url') ||
-        urlError();
+        urlNeededError();
       if (this.isNew()) return base;
       var id = this.get(this.idAttribute);
       return base.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
@@ -1567,7 +1567,7 @@
 
     // Ensure that we have a URL.
     if (!options.url) {
-      params.url = _.result(model, 'url') || urlError();
+      params.url = _.result(model, 'url') || urlNeededError();
     }
 
     // Ensure that we have the appropriate request data.
@@ -2079,8 +2079,8 @@
   Model.extend = Collection.extend = Router.extend = View.extend = History.extend = extend;
 
   // Throw an error when a URL is needed, and none is supplied.
-  var urlError = function() {
-    throw new Error('A "url" property or function must be specified');
+  var urlNeededError = function() {
+    throw new Error('No url specified. A "url" property or option is needed to complete this operation.');
   };
 
   // Wrap an optional error callback with a fallback error event.
