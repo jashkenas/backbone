@@ -2169,9 +2169,8 @@ var book = library.get(110);
       <b class="header">comparator</b><code>collection.comparator</code>
       <br />
       By default there is no <b>comparator</b> for a collection.
-      If you define a comparator, it will be used to maintain
-      the collection in sorted order. This means that as models are added,
-      they are inserted at the correct index in <tt>collection.models</tt>.
+      If you define a comparator, it will be used to sort the collection any
+      time a model is added.
       A comparator can be defined as a
       <a href="http://underscorejs.org/#sortBy">sortBy</a>
       (pass a function that takes a single argument),
@@ -2219,9 +2218,9 @@ alert(chapters.pluck('title'));
     <p id="Collection-sort">
       <b class="header">sort</b><code>collection.sort([options])</code>
       <br />
-      Force a collection to re-sort itself. You don't need to call this under
-      normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a>
-      will sort itself whenever a model is added. To disable sorting when adding
+      Force a collection to re-sort itself. Note that a collection with a
+      <a href="#Collection-comparator">comparator</a> will sort itself
+      automatically whenever a model is added. To disable sorting when adding
       a model, pass <tt>{sort: false}</tt> to <tt>add</tt>. Calling <b>sort</b>
       triggers a <tt>"sort"</tt> event on the collection.
     </p>
