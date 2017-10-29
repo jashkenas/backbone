@@ -297,8 +297,8 @@
     assert.expect(2);
     var View = Backbone.View.extend({
       attributes: {
-        'id': 'id',
-        'class': 'class'
+        id: 'id',
+        class: 'class'
       }
     });
 
@@ -310,7 +310,7 @@
     assert.expect(1);
     var View = Backbone.View.extend({
       attributes: function() {
-        return {'class': 'dynamic'};
+        return {class: 'dynamic'};
       }
     });
 
@@ -323,8 +323,8 @@
       className: 'backboneClass',
       id: 'backboneId',
       attributes: {
-        'class': 'attributeClass',
-        'id': 'attributeId'
+        class: 'attributeClass',
+        id: 'attributeId'
       }
     });
 

@@ -217,14 +217,14 @@
     assert.strictEqual(model.has('name'), false);
 
     model.set({
-      '0': 0,
-      '1': 1,
-      'true': true,
-      'false': false,
-      'empty': '',
-      'name': 'name',
-      'null': null,
-      'undefined': undefined
+      0: 0,
+      1: 1,
+      true: true,
+      false: false,
+      empty: '',
+      name: 'name',
+      null: null,
+      undefined: undefined
     });
 
     assert.strictEqual(model.has('0'), true);

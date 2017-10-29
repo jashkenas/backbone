@@ -794,8 +794,8 @@
     assert.deepEqual(coll.map('a'), [1, 2, 3, 4]);
     assert.deepEqual(coll.sortBy('a')[3], model);
     assert.deepEqual(coll.sortBy('e')[0], model);
-    assert.deepEqual(coll.countBy({a: 4}), {'false': 3, 'true': 1});
-    assert.deepEqual(coll.countBy('d'), {'undefined': 4});
+    assert.deepEqual(coll.countBy({a: 4}), {false: 3, true: 1});
+    assert.deepEqual(coll.countBy('d'), {undefined: 4});
     assert.equal(coll.findIndex({b: 1}), 0);
     assert.equal(coll.findIndex({b: 9}), -1);
     assert.equal(coll.findLastIndex({b: 1}), 3);
@@ -1478,7 +1478,7 @@
     assert.expect(3);
     var collection = new (Backbone.Collection.extend({
       comparator: function(m1, m2) {
-        return m1.get('a') > m2.get('a') ? 1 : (m1.get('a') < m2.get('a') ? -1 : 0);
+        return m1.get('a') > m2.get('a') ? 1 : m1.get('a') < m2.get('a') ? -1 : 0;
       }
     }))([{id: 1}, {id: 2}, {id: 3}]);
     collection.on('sort', function() { assert.ok(true); });
