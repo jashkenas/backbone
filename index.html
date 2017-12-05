@@ -1044,7 +1044,7 @@ view.stopListening(model);
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>.</li>
       <li><b>"request"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a request to the server.</li>
       <li><b>"sync"</b> (model_or_collection, response, options) &mdash; when a model or collection has been successfully synced with the server.</li>
-      <li><b>"error"</b> (model_or_collection, response, options) &mdash; when a model's or collection's request to the server has failed.</li>
+      <li><b>"error"</b> (model_or_collection, xhr, options) &mdash; when a model's or collection's request to the server has failed.</li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client.</li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
@@ -1562,7 +1562,7 @@ chapters.keys().join(', ');
     </p>
 
     <p>
-      By default <tt>save</tt> checks <b>validate</b> before 
+      By default <tt>save</tt> checks <b>validate</b> before
       setting any attributes but you may also tell <tt>set</tt> to validate
       the new attributes by passing <tt>{validate: true}</tt> as an option.
       The <b>validate</b> method receives the model attributes as well as any
@@ -1612,7 +1612,7 @@ one.save({
       <br />
       Run <a href="#Model-validate">validate</a> to check the model state.
     </p>
-    
+
     <p>
       The <tt>validate</tt> method receives the model attributes as well as any
       options passed to <b>isValid</b>, if <tt>validate</tt> returns an error
