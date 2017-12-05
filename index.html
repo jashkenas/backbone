@@ -1555,21 +1555,22 @@ chapters.keys().join(', ');
       <br />
       This method is left undefined and you're encouraged to override it with
       any custom validation logic you have that can be performed in JavaScript.
-      By default <tt>save</tt> checks <b>validate</b> before
+      If the attributes are valid, don't return anything from <b>validate</b>;
+      if they are invalid return an error of your choosing. It can be as
+      simple as a string error message to be displayed, or a complete error
+      object that describes the error programmatically.
+    </p>
+
+    <p>
+      By default <tt>save</tt> checks <b>validate</b> before 
       setting any attributes but you may also tell <tt>set</tt> to validate
       the new attributes by passing <tt>{validate: true}</tt> as an option.
-      <br />
       The <b>validate</b> method receives the model attributes as well as any
-      options passed to <tt>set</tt> or <tt>save</tt>.
-      If the attributes are valid, don't return anything from <b>validate</b>;
-      if they are invalid return an error of your choosing. It
-      can be as simple as a string error message to be displayed, or a complete
-      error object that describes the error programmatically. If <b>validate</b>
-      returns an error, <tt>save</tt> will not continue, and the
-      model attributes will not be modified on the server.
-      Failed validations trigger an <tt>"invalid"</tt> event, and set the
-      <tt>validationError</tt> property on the model with the value returned by
-      this method.
+      options passed to <tt>set</tt> or <tt>save</tt>, if <b>validate</b>
+      returns an error, <tt>save</tt> does not continue, the model attributes
+      are not modified on the server, an <tt>"invalid"</tt> event is triggered,
+      and the <tt>validationError</tt> property is set on the model with the
+      value returned by this method.
     </p>
 
 <pre class="runnable">
@@ -1607,9 +1608,16 @@ one.save({
     </p>
 
     <p id="Model-isValid">
-      <b class="header">isValid</b><code>model.isValid()</code>
+      <b class="header">isValid</b><code>model.isValid(options)</code>
       <br />
       Run <a href="#Model-validate">validate</a> to check the model state.
+    </p>
+    
+    <p>
+      The <tt>validate</tt> method receives the model attributes as well as any
+      options passed to <b>isValid</b>, if <tt>validate</tt> returns an error
+      an <tt>"invalid"</tt> event is triggered, and the error is set on the
+      model in the <tt>validationError</tt> property.
     </p>
 
 <pre class="runnable">
