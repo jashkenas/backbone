@@ -1763,7 +1763,7 @@
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl: function(e) {
-      var current = this.getFragment();
+      var current = this.decodeFragment(this.getFragment());
 
       // If the user pressed the back button, the iframe's hash will have
       // changed and we should use that for comparison.
@@ -1782,7 +1782,8 @@
     loadUrl: function(fragment) {
       // If the root doesn't match, no routes can match either.
       if (!this.matchRoot()) return false;
-      fragment = this.fragment = this.getFragment(fragment);
+      fragment = this.getFragment(fragment);
+      this.fragment = this.decodeFragment(fragment);
       return _.some(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
