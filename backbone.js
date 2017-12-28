@@ -437,8 +437,8 @@
 
     // Return a copy of the model's `attributes` object.
     toJSON: function(options) {
-        options || (options = {});
-        return options.attrs ? options.attrs : _.clone(this.attributes);
+      options || (options = {});
+      return options.attrs ? options.attrs : _.clone(this.attributes);
     },
 
     // Proxy `Backbone.sync` by default -- but override this if you need
