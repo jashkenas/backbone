@@ -1447,6 +1447,19 @@
     model.save({x: 1}, {wait: true});
   });
 
+  QUnit.test('toJSON is called during save(..., {patch: true})', function(assert) {
+    assert.expect(1);
+    var Model = Backbone.Model.extend({
+      url: '/test',
+      toJSON: function() {
+        assert.strictEqual(this.attributes.x, 1);
+        return _.clone(this.attributes);
+      }
+    });
+    var model = new Model({id: 1});
+    model.save({x: 1}, {patch: true});
+  });
+
   QUnit.test('#2034 - nested set with silent only triggers one change', function(assert) {
     assert.expect(1);
     var model = new Backbone.Model();
