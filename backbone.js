@@ -529,15 +529,18 @@
       // You might be wondering why there's a `while` loop here. Changes can
       // be recursively nested within `"change"` events.
       if (changing) return this;
-      if (!silent) {
-        while (this._pending) {
-          options = this._pending;
-          this._pending = false;
-          this.trigger('change', this, options);
+      try {
+        if (!silent) {
+          while (this._pending) {
+            options = this._pending;
+            this._pending = false;
+            this.trigger('change', this, options);
+          }
         }
+      } finally {
+        this._pending = false;
+        this._changing = false;
       }
-      this._pending = false;
-      this._changing = false;
       return this;
     },
 

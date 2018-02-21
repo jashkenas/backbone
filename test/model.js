@@ -1382,6 +1382,22 @@
     model.set('property', 'foo');
   });
 
+  QUnit.test('#4185 - restore model internal states on exception in `change` handler ', function(assert) {
+    assert.expect(3);
+    var model = new Backbone.Model();
+    model.on('change', function() {
+      assert.ok(true);
+      throw true;
+    });
+
+    try {
+      model.set('property', 'foo');
+    } catch (e) {
+      assert.equal(model._changing, false);
+      assert.equal(model._pending, false);
+    }
+  });
+
   QUnit.test('isValid', function(assert) {
     var model = new Backbone.Model({valid: true});
     model.validate = function(attrs) {
