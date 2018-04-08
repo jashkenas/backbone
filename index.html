@@ -1803,11 +1803,11 @@ bill.set({name : "Bill Jones"});
     <p id="Collection-model">
       <b class="header">model</b><code>collection.model([attrs], [options])</code>
       <br />
-      Override this property to specify the model class that the collection
-      contains. If defined, you can pass raw attributes objects (and arrays) to
+      Override this property to specify the model class that the collection contains.
+      If defined, you can pass raw attributes objects (and arrays) and options to
       <a href="#Collection-add">add</a>, <a href="#Collection-create">create</a>,
       and <a href="#Collection-reset">reset</a>, and the attributes will be
-      converted into a model of the proper type.
+      converted into a model of the proper type using the provided options, if any.
     </p>
 
 <pre>
@@ -2015,7 +2015,8 @@ var randomThree = books.sample(3);
       <br />
       Add a model (or an array of models) to the collection, firing an <tt>"add"</tt>
       event for each model, and an <tt>"update"</tt> event afterwards. If a <a href="#Collection-model">model</a> property is defined, you may also pass
-      raw attributes objects, and have them be vivified as instances of the model.
+      raw attributes objects and options, and have them be vivified as instances of the model using
+      the provided options.
       Returns the added (or preexisting, if duplicate) models.
       Pass <tt>{at: index}</tt> to splice the model into the collection at the
       specified <tt>index</tt>. If you're adding models to the collection that are
@@ -2390,8 +2391,8 @@ accounts.fetch();
       failed, the model will be unsaved, with validation errors.
       In order for this to work, you should set the
       <a href="#Collection-model">model</a> property of the collection.
-      The <b>create</b> method can accept either an attributes hash or an
-      existing, unsaved model object.
+      The <b>create</b> method can accept either an attributes hash and options to be
+      passed down during model instantiation or an existing, unsaved model object.
     </p>
 
     <p>
