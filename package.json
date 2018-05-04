@@ -13,27 +13,40 @@
   ],
   "author": "Jeremy Ashkenas",
   "dependencies": {
-    "underscore": ">=1.8.3"
+    "underscore": ">=1.9.0"
   },
   "devDependencies": {
-    "coffee-script": "1.7.1",
-    "docco": "0.7.0",
-    "eslint": "^2.11.0",
-    "karma": "^0.13.13",
-    "karma-phantomjs-launcher": "^1.0.0",
-    "karma-qunit": "^1.0.0",
-    "phantomjs-prebuilt": "^2.1.7",
-    "qunitjs": "^2.0.0",
-    "uglify-js": "^2.4.17"
+    "babel-cli": "^6.26.0",
+    "babel-minify": "^0.4.1",
+    "babel-preset-env": "^1.6.1",
+    "buildmail": "^4.0.1",
+    "coffeescript": "^2.3.0",
+    "docco": "0.8.0",
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "karma": "^2.0.2",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-qunit": "^2.0.2",
+    "mailcomposer": "^4.0.2",
+    "node-uuid": "^1.4.8",
+    "nodemailer": "^4.6.4",
+    "phantomjs-prebuilt": "^2.1.16",
+    "qunit": "^2.6.0",
+    "qunitjs": "^2.4.1",
+    "socks": "^2.2.0"
   },
   "scripts": {
     "test": "karma start && coffee test/model.coffee && npm run lint",
-    "build": "uglifyjs backbone.js --mangle --source-map backbone-min.map -o backbone-min.js",
+    "build": "babel backbone.js -o backbone-min.js -s true --source-map-target backbone-min.js.map",
     "doc": "docco backbone.js && docco examples/todos/todos.js examples/backbone.localStorage.js",
     "lint": "eslint backbone.js test/*.js"
   },
   "main": "backbone.js",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -303,7 +303,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(1.3.3)</span>
+      Backbone.js <span class="version">(1.3.4)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/jashkenas/backbone">GitHub Repository</a></li>
@@ -391,8 +391,8 @@
         <li data-name="extend">– <a href="#Collection-extend">extend</a></li>
         <li data-name="model">– <a href="#Collection-model">model</a></li>
         <li data-name="modelId">– <a href="#Collection-modelId">modelId</a></li>
-        <li data-name="preinitialize" data-name="preinitialize">– <a href="#Collection-preinitialize">preinitialize</a></li>
-        <li data-name="constructor / initialize" data-name="constructor / initialize">– <a href="#Collection-constructor">constructor / initialize</a></li>
+        <li data-name="preinitialize">– <a href="#Collection-preinitialize">preinitialize</a></li>
+        <li data-name="constructor / initialize">– <a href="#Collection-constructor">constructor / initialize</a></li>
         <li data-name="models">– <a href="#Collection-models">models</a></li>
         <li data-name="toJSON">– <a href="#Collection-toJSON">toJSON</a></li>
         <li data-name="sync">– <a href="#Collection-sync">sync</a></li>
@@ -613,11 +613,11 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (1.3.3)</a></td>
+        <td><a class="punch" href="backbone.js">Development Version (1.3.4)</a></td>
         <td class="text"><i>72kb, Full source, tons of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (1.3.3)</a></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (1.3.4)</a></td>
         <td class="text" style="line-height: 16px;">
           <i>7.6kb, Packed and gzipped</i><br />
           <small>(<a href="backbone-min.map">Source Map</a>)</small>
@@ -636,9 +636,9 @@
 
     <p>
       Backbone's only hard dependency is
-      <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.8.3)</small>.
+      <a href="http://underscorejs.org/">Underscore.js</a> <small>( &gt;= 1.8.3)</small>.
       For RESTful persistence and DOM manipulation with <a href="#View">Backbone.View</a>,
-      include <b><a href="https://jquery.com/">jQuery</a></b> ( >= 1.11.0), and
+      include <b><a href="https://jquery.com/">jQuery</a></b> ( &gt;= 1.11.0), and
       <b><a href="https://github.com/douglascrockford/JSON-js">json2.js</a></b> for older
       Internet Explorer support.
       <i>(Mimics of the Underscore and jQuery APIs, such as
@@ -2806,7 +2806,7 @@ def update
   account = Account.find params[:id]
   permitted = params.require(:account).permit(:name, :otherparam)
   account.update_attributes permitted
-  render :json => account
+  render :json =&gt; account
 end
 </pre>
 
@@ -3449,13 +3449,13 @@ inbox.messages.fetch({reset: true});
   var accounts = new Backbone.Collection;
   accounts.reset(&lt;%= @accounts.to_json %&gt;);
   var projects = new Backbone.Collection;
-  projects.reset(&lt;%= @projects.to_json(:collaborators => true) %&gt;);
+  projects.reset(&lt;%= @projects.to_json(:collaborators =&gt; true) %&gt;);
 &lt;/script&gt;
 </pre>
 
     <p>You have to <a href="http://mathiasbynens.be/notes/etago">escape</a>
     <tt>&lt;/</tt> within the JSON string, to prevent JavaScript injection
-    attacks.
+    attacks.</p>
 
     <p id="FAQ-extending">
       <b class="header">Extending Backbone</b>
@@ -4445,7 +4445,7 @@ ActiveRecord::Base.include_root_in_json = false
     <h2 id="changelog">Change Log</h2>
 
     <b class="header">1.4.0</b> &mdash; <small><i>Apr. 8, 2017</i></small>
-    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.3.3...1.4.0">Diff</a>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.3.4...1.4.0">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.4.0/index.html">Docs</a>
     <br />
     <ul style="margin-top: 5px;">
@@ -4465,13 +4465,13 @@ ActiveRecord::Base.include_root_in_json = false
         Fixed several issues with Router's URL hashing and parsing.
       </li>
       <li>
-        We are no longer testing for <= IE8, with the goal of eventually refactoring some of the older hacks out.
+        We are no longer testing for &lt;= IE8, with the goal of eventually refactoring some of the older hacks out.
       </li>
     </ul>
 
-    <b class="header">1.3.3</b> &mdash; <small><i>Apr. 5, 2016</i></small>
-    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.3...1.3.3">Diff</a>
-    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.3.3/index.html">Docs</a>
+    <b class="header">1.3.4</b> &mdash; <small><i>Apr. 5, 2016</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.3...1.3.4">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.3.4/index.html">Docs</a>
     <br />
     <ul style="margin-top: 5px;">
       <li>
@@ -4516,7 +4516,7 @@ ActiveRecord::Base.include_root_in_json = false
         Removed <tt>component</tt> package support.
       </li>
       <li>
-        Note that 1.3.3 fixes several bugs in versions 1.3.0 to 1.3.2. Please upgrade
+        Note that 1.3.4 fixes several bugs in versions 1.3.0 to 1.3.2. Please upgrade
         immediately if you are on one of those versions.
       </li>
     </ul>
@@ -4549,7 +4549,7 @@ ActiveRecord::Base.include_root_in_json = false
       </li>
       <li>
         Added <tt>Collection#includes</tt> as an alias of <tt>Collection#contains</tt>
-        and as a replacement for <tt>Collection#include</tt> in Underscore.js >= 1.8.
+        and as a replacement for <tt>Collection#include</tt> in Underscore.js &gt;= 1.8.
       </li>
     </ul>
 

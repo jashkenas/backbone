@@ -1,7 +1,11 @@
 language: node_js
 node_js:
+  - "10"
+  - "8"
   - "6"
 before_install:
+  - rm .\backbone-min.js
+  - rm .\backbone-min.js.map
   - npm install -g npm
   - npm install -g karma-cli
 before_script:
@@ -10,6 +14,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 script:
   - npm test
+  - npm run build
   - karma start karma.conf-sauce.js
 notifications:
   email: false
