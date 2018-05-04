@@ -1,8 +1,12 @@
-//     Backbone.js 1.3.4
-//     (c) 2010-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-//     Backbone may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://backbonejs.org
+/*
+Backbone.js 1.3.4
+(c) 2010-2018 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+Backbone may be freely distributed under the MIT license.
+For all details and documentation:
+http://backbonejs.org
+
+Formatting mostly in line with https://standardjs.com/ as of 1.3.4
+*/
 
 (function (factory) {
   // Establish the root object, `window` (`self`) in the browser, or `global` on the server.

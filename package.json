@@ -41,7 +41,7 @@
   },
   "scripts": {
     "test": "karma start && coffee test/model.coffee && npm run lint",
-    "build": "babel backbone.js -o backbone-min.js -s true --source-map-target backbone-min.js.map",
+    "build": "babel backbone.js -o backbone-min.js -s true --source-map-target backbone-min.map --compact auto --minified",
     "doc": "docco backbone.js && docco examples/todos/todos.js examples/backbone.localStorage.js",
     "lint": "eslint backbone.js test/*.js"
   },
