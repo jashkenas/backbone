@@ -4,8 +4,6 @@ node_js:
   - "8"
   - "6"
 before_install:
-  - rm .\backbone-min.js
-  - rm .\backbone-min.js.map
   - npm install -g npm
   - npm install -g karma-cli
 before_script:
