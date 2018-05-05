@@ -45,20 +45,20 @@ const sauceBrowsers = _.reduce([
   // internet explorer -> ie
   let label = platform[0].split(' ');
   if (label.length > 1) {
-    label = _.invoke(label, 'charAt', 0)
+    label = _.invoke(label, 'charAt', 0);
   }
-  label = (label.join("") + '_v' + platform[1]).replace(' ', '_').toUpperCase();
+  label = (label.join('') + '_v' + platform[1]).replace(' ', '_').toUpperCase();
   memo[label] = _.pick({
-    'base': 'SauceLabs',
-    'browserName': platform[0],
-    'version': platform[1],
-    'platform': platform[2]
+    base: 'SauceLabs',
+    browserName: platform[0],
+    version: platform[1],
+    platform: platform[2]
   }, Boolean);
   return memo;
 }, {});
 
 module.exports = (config) => {
-  if ( !process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY ) {
+  if (!process.env.SAUCE_USERNAME || !process.env.SAUCE_ACCESS_KEY) {
     console.log('Sauce environments not set --- Skipping');
     return process.exit(0);
   }
@@ -70,12 +70,12 @@ module.exports = (config) => {
 
     // list of files / patterns to load in the browser
     files: [
-        'test/vendor/jquery.js',
-        'test/vendor/json2.js',
-        'test/vendor/underscore.js',
-        'backbone.js',
-        'test/setup/*.js',
-        'test/*.js'
+      'test/vendor/jquery.js',
+      'test/vendor/json2.js',
+      'test/vendor/underscore.js',
+      'backbone.js',
+      'test/setup/*.js',
+      'test/*.js'
     ],
 
     // Number of sauce tests to start in parallel
