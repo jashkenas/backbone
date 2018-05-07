@@ -1,17 +1,16 @@
 (function(QUnit) {
-
   var a, b, c, d, e, col, otherCol;
 
   QUnit.module('Backbone.Collection', {
 
     beforeEach: function(assert) {
-      a         = new Backbone.Model({id: 3, label: 'a'});
-      b         = new Backbone.Model({id: 2, label: 'b'});
-      c         = new Backbone.Model({id: 1, label: 'c'});
-      d         = new Backbone.Model({id: 0, label: 'd'});
-      e         = null;
-      col       = new Backbone.Collection([a, b, c, d]);
-      otherCol  = new Backbone.Collection();
+      a = new Backbone.Model({id: 3, label: 'a'});
+      b = new Backbone.Model({id: 2, label: 'b'});
+      c = new Backbone.Model({id: 1, label: 'c'});
+      d = new Backbone.Model({id: 0, label: 'd'});
+      e = null;
+      col = new Backbone.Collection([a, b, c, d]);
+      otherCol = new Backbone.Collection();
     }
 
   });
@@ -19,7 +18,7 @@
   QUnit.test('new and sort', function(assert) {
     assert.expect(6);
     var counter = 0;
-    col.on('sort', function(){ counter++; });
+    col.on('sort', function() { counter++; });
     assert.deepEqual(col.pluck('label'), ['a', 'b', 'c', 'd']);
     col.comparator = function(m1, m2) {
       return m1.id > m2.id ? -1 : 1;
@@ -63,7 +62,7 @@
   QUnit.test('clone preserves model and comparator', function(assert) {
     assert.expect(3);
     var Model = Backbone.Model.extend();
-    var comparator = function(model){ return model.id; };
+    var comparator = function(model) { return model.id; };
 
     var collection = new Backbone.Collection([{id: 1}], {
       model: Model,
@@ -156,7 +155,7 @@
     otherCol.on('add', function() {
       secondAdded = true;
     });
-    col.on('add', function(model, collection, options){
+    col.on('add', function(model, collection, options) {
       added = model.get('label');
       opts = options;
     });
@@ -180,7 +179,7 @@
 
     var coll = new Backbone.Collection(new Array(2));
     var addCount = 0;
-    coll.on('add', function(){
+    coll.on('add', function() {
       addCount += 1;
     });
     coll.add([undefined, f, g]);
@@ -229,7 +228,7 @@
 
   QUnit.test("can't add different model with same id to collection twice", function(assert) {
     assert.expect(1);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.unshift({id: 101});
     collection.add({id: 101});
     assert.equal(collection.length, 1);
@@ -237,7 +236,7 @@
 
   QUnit.test('merge in duplicate models with {merge: true}', function(assert) {
     assert.expect(3);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.add([{id: 1, name: 'Moe'}, {id: 2, name: 'Curly'}, {id: 3, name: 'Larry'}]);
     collection.add({id: 1, name: 'Moses'});
     assert.equal(collection.first().get('name'), 'Moe');
@@ -286,7 +285,7 @@
     });
 
     var Col = Backbone.Collection.extend({model: Model});
-    var collection = new Col;
+    var collection = new Col();
     collection.add({value: 1}, {parse: true});
     assert.equal(collection.at(0).get('value'), 2);
   });
@@ -306,7 +305,7 @@
 
   QUnit.test('add model to collection with sort()-style comparator', function(assert) {
     assert.expect(3);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.comparator = function(m1, m2) {
       return m1.get('name') < m2.get('name') ? -1 : 1;
     };
@@ -323,7 +322,7 @@
 
   QUnit.test('comparator that depends on `this`', function(assert) {
     assert.expect(2);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.negative = function(num) {
       return -num;
     };
@@ -351,7 +350,7 @@
     result = col.remove(d);
     assert.equal(removed, 'd');
     assert.strictEqual(result, d);
-    //if we try to remove d again, it's not going to actually get removed
+    // if we try to remove d again, it's not going to actually get removed
     result = col.remove(d);
     assert.strictEqual(result, undefined);
     assert.equal(col.length, 3);
@@ -374,7 +373,7 @@
         if (attrs.id % 2 !== 0) return 'odd';
       }
     });
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.model = Even;
 
     var list = collection.add([{id: 2}, {id: 4}], {validate: true});
@@ -421,7 +420,7 @@
     var counter = 0;
     var dj = new Backbone.Model();
     var emcees = new Backbone.Collection([dj]);
-    emcees.on('change', function(){ counter++; });
+    emcees.on('change', function() { counter++; });
     dj.set({name: 'Kool'});
     assert.equal(counter, 1);
     emcees.reset([]);
@@ -516,7 +515,7 @@
 
   QUnit.test('fetch', function(assert) {
     assert.expect(4);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.url = '/test';
     collection.fetch();
     assert.equal(this.syncArgs.method, 'read');
@@ -555,7 +554,7 @@
 
   QUnit.test('ensure fetch only parses once', function(assert) {
     assert.expect(1);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     var counter = 0;
     collection.parse = function(models) {
       counter++;
@@ -569,7 +568,7 @@
 
   QUnit.test('create', function(assert) {
     assert.expect(4);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.url = '/test';
     var model = collection.create({label: 'f'}, {wait: true});
     assert.equal(this.syncArgs.method, 'create');
@@ -610,7 +609,7 @@
       url: '/test'
     });
 
-    var collection = new Collection;
+    var collection = new Collection();
 
     var success = function(model, response, options) {
       assert.ok(options.specialSync, 'Options were passed correctly to callback');
@@ -629,7 +628,7 @@
       }
     });
 
-    var collection = new Collection;
+    var collection = new Collection();
 
     collection.create({}, {wait: true});
     this.ajaxSettings.success();
@@ -657,7 +656,7 @@
         this.one = 1;
       }
     });
-    var coll = new Collection;
+    var coll = new Collection();
     assert.equal(coll.one, 1);
   });
 
@@ -668,7 +667,7 @@
         this.one = 1;
       }
     });
-    var coll = new Collection;
+    var coll = new Collection();
     assert.equal(coll.one, 1);
   });
 
@@ -734,11 +733,11 @@
 
   QUnit.test('Underscore methods', function(assert) {
     assert.expect(21);
-    assert.equal(col.map(function(model){ return model.get('label'); }).join(' '), 'a b c d');
-    assert.equal(col.some(function(model){ return model.id === 100; }), false);
-    assert.equal(col.some(function(model){ return model.id === 0; }), true);
-    assert.equal(col.reduce(function(m1, m2) {return m1.id > m2.id ? m1 : m2;}).id, 3);
-    assert.equal(col.reduceRight(function(m1, m2) {return m1.id > m2.id ? m1 : m2;}).id, 3);
+    assert.equal(col.map(function(model) { return model.get('label'); }).join(' '), 'a b c d');
+    assert.equal(col.some(function(model) { return model.id === 100; }), false);
+    assert.equal(col.some(function(model) { return model.id === 0; }), true);
+    assert.equal(col.reduce(function(m1, m2) { return m1.id > m2.id ? m1 : m2; }).id, 3);
+    assert.equal(col.reduceRight(function(m1, m2) { return m1.id > m2.id ? m1 : m2; }).id, 3);
     assert.equal(col.indexOf(b), 1);
     assert.equal(col.size(), 4);
     assert.equal(col.rest().length, 3);
@@ -751,17 +750,17 @@
     assert.equal(wrapped.map('id').max().value(), 3);
     assert.equal(wrapped.map('id').min().value(), 0);
     assert.deepEqual(wrapped
-      .filter(function(o){ return o.id % 2 === 0; })
-      .map(function(o){ return o.id * 2; })
+      .filter(function(o) { return o.id % 2 === 0; })
+      .map(function(o) { return o.id * 2; })
       .value(),
-      [4, 0]);
+    [4, 0]);
     assert.deepEqual(col.difference([c, d]), [a, b]);
     assert.ok(col.includes(col.sample()));
 
     var first = col.first();
-    assert.deepEqual(col.groupBy(function(model){ return model.id; })[first.id], [first]);
-    assert.deepEqual(col.countBy(function(model){ return model.id; }), {0: 1, 1: 1, 2: 1, 3: 1});
-    assert.deepEqual(col.sortBy(function(model){ return model.id; })[0], col.at(3));
+    assert.deepEqual(col.groupBy(function(model) { return model.id; })[first.id], [first]);
+    assert.deepEqual(col.countBy(function(model) { return model.id; }), {0: 1, 1: 1, 2: 1, 3: 1});
+    assert.deepEqual(col.sortBy(function(model) { return model.id; })[0], col.at(3));
     assert.ok(col.indexBy('id')[first.id] === first);
   });
 
@@ -794,8 +793,8 @@
     assert.deepEqual(coll.map('a'), [1, 2, 3, 4]);
     assert.deepEqual(coll.sortBy('a')[3], model);
     assert.deepEqual(coll.sortBy('e')[0], model);
-    assert.deepEqual(coll.countBy({a: 4}), {'false': 3, 'true': 1});
-    assert.deepEqual(coll.countBy('d'), {'undefined': 4});
+    assert.deepEqual(coll.countBy({a: 4}), {false: 3, true: 1});
+    assert.deepEqual(coll.countBy('d'), {undefined: 4});
     assert.equal(coll.findIndex({b: 1}), 0);
     assert.equal(coll.findIndex({b: 9}), -1);
     assert.equal(coll.findLastIndex({b: 1}), 3);
@@ -816,7 +815,7 @@
     assert.equal(resetCount, 2);
     assert.equal(col.length, 4);
     assert.equal(col.last(), d);
-    col.reset(_.map(models, function(m){ return m.attributes; }));
+    col.reset(_.map(models, function(m) { return m.attributes; }));
     assert.equal(resetCount, 3);
     assert.equal(col.length, 4);
     assert.ok(col.last() !== d);
@@ -867,7 +866,7 @@
     assert.expect(2);
     var collection = new Backbone.Collection([{id: 1}]);
     var origOpts = {};
-    collection.on('reset', function(coll, opts){
+    collection.on('reset', function(coll, opts) {
       assert.equal(origOpts.previousModels, undefined);
       assert.equal(opts.previousModels[0].id, 1);
     });
@@ -893,7 +892,7 @@
 
   QUnit.test('#714: access `model.collection` in a brand new model.', function(assert) {
     assert.expect(2);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.url = '/test';
     var Model = Backbone.Model.extend({
       set: function(attrs) {
@@ -928,7 +927,7 @@
       model: Model
     });
 
-    var collection = new Collection;
+    var collection = new Collection();
     collection.on('invalid', function() { assert.ok(true); });
 
     collection.add([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}], {validate: true});
@@ -937,10 +936,10 @@
 
   QUnit.test('Invalid models are discarded with validate:true.', function(assert) {
     assert.expect(5);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.on('test', function() { assert.ok(true); });
     collection.model = Backbone.Model.extend({
-      validate: function(attrs){ if (!attrs.valid) return 'invalid'; }
+      validate: function(attrs) { if (!attrs.valid) return 'invalid'; }
     });
     var model = new collection.model({id: 1, valid: true});
     collection.add([model, {id: 2}], {validate: true});
@@ -991,7 +990,7 @@
   QUnit.test('falsy comparator', function(assert) {
     assert.expect(4);
     var Col = Backbone.Collection.extend({
-      comparator: function(model){ return model.id; }
+      comparator: function(model) { return model.id; }
     });
     var collection = new Col();
     var colFalse = new Col(null, {comparator: false});
@@ -1013,7 +1012,7 @@
         assert.ok(options.opts);
       }
     };
-    collection.sync = m.sync = function( method, coll, options ){
+    collection.sync = m.sync = function(method, coll, options) {
       options.success({});
     };
     collection.fetch(opts);
@@ -1022,9 +1021,9 @@
 
   QUnit.test("#1412 - Trigger 'request' and 'sync' events.", function(assert) {
     assert.expect(4);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.url = '/test';
-    Backbone.ajax = function(settings){ settings.success(); };
+    Backbone.ajax = function(settings) { settings.success(); };
 
     collection.on('request', function(obj, xhr, options) {
       assert.ok(obj === collection, "collection has correct 'request' event after fetching");
@@ -1047,7 +1046,7 @@
 
   QUnit.test('#3283 - fetch, create calls success with context', function(assert) {
     assert.expect(2);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.url = '/test';
     Backbone.ajax = function(settings) {
       settings.success.call(settings.context);
@@ -1066,10 +1065,10 @@
 
   QUnit.test('#1447 - create with wait adds model.', function(assert) {
     assert.expect(1);
-    var collection = new Backbone.Collection;
-    var model = new Backbone.Model;
-    model.sync = function(method, m, options){ options.success(); };
-    collection.on('add', function(){ assert.ok(true); });
+    var collection = new Backbone.Collection();
+    var model = new Backbone.Model();
+    model.sync = function(method, m, options) { options.success(); };
+    collection.on('add', function() { assert.ok(true); });
     collection.create(model, {wait: true});
   });
 
@@ -1079,7 +1078,7 @@
       {id: 1, x: 1},
       {id: 2, x: 2}
     ]);
-    collection.comparator = function(model){ return model.get('x'); };
+    collection.comparator = function(model) { return model.get('x'); };
     collection.add({id: 1, x: 3}, {merge: true});
     assert.deepEqual(collection.pluck('id'), [2, 1]);
   });
@@ -1112,7 +1111,7 @@
   });
 
   QUnit.test('#1638 - `sort` during `add` triggers correctly.', function(assert) {
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.comparator = function(model) { return model.get('x'); };
     var added = [];
     collection.on('add', function(model) {
@@ -1144,7 +1143,7 @@
     var collection = new Backbone.Collection([{id: 1}, {id: 2}, {id: 3}], {
       comparator: 'id'
     });
-    collection.sort = function(){ assert.ok(true); };
+    collection.sort = function() { assert.ok(true); };
     collection.add([]);
     collection.add({id: 1});
     collection.add([{id: 2}, {id: 3}]);
@@ -1195,7 +1194,6 @@
     assert.equal(collection.length, 2);
     assert.equal(collection.at(0).get('name'), 'test');
   });
-
 
   QUnit.test('Reset includes previous models in triggered event.', function(assert) {
     assert.expect(1);
@@ -1262,9 +1260,9 @@
 
   QUnit.test('set with only cids', function(assert) {
     assert.expect(3);
-    var m1 = new Backbone.Model;
-    var m2 = new Backbone.Model;
-    var collection = new Backbone.Collection;
+    var m1 = new Backbone.Model();
+    var m2 = new Backbone.Model();
+    var collection = new Backbone.Collection();
     collection.set([m1, m2]);
     assert.equal(collection.length, 2);
     collection.set([m1]);
@@ -1282,7 +1280,7 @@
         idAttribute: '_id'
       })
     });
-    var collection = new Col;
+    var collection = new Col();
     collection.set([m1, m2]);
     assert.equal(collection.length, 2);
     collection.set([m1]);
@@ -1384,7 +1382,7 @@
 
   QUnit.test('#2428 - push duplicate models, return the correct one', function(assert) {
     assert.expect(1);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     var model1 = collection.push({id: 101});
     var model2 = collection.push({id: 101});
     assert.ok(model2.cid === model1.cid);
@@ -1414,7 +1412,7 @@
         assert.strictEqual(data.status, 'ok');
         return data.data;
       }
-    }));
+    }))();
     var res = {status: 'ok', data: [{id: 1}]};
     collection.set(res, {parse: true});
   });
@@ -1428,7 +1426,7 @@
         assert.strictEqual(options.xhr.someHeader, 'headerValue');
         return data;
       }
-    }));
+    }))();
     var ajax = Backbone.ajax;
     Backbone.ajax = function(params) {
       _.defer(params.success, []);
@@ -1493,7 +1491,7 @@
   QUnit.test('Attach options to collection.', function(assert) {
     assert.expect(2);
     var Model = Backbone.Model;
-    var comparator = function(){};
+    var comparator = function() {};
 
     var collection = new Backbone.Collection([], {
       model: Model,
@@ -1531,7 +1529,7 @@
 
   QUnit.test('#2606 - Collection#create, success arguments', function(assert) {
     assert.expect(1);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.url = 'test';
     collection.create({}, {
       success: function(model, resp, options) {
@@ -1542,7 +1540,6 @@
   });
 
   QUnit.test('#2612 - nested `parse` works with `Collection#set`', function(assert) {
-
     var Job = Backbone.Model.extend({
       constructor: function() {
         this.items = new Items();
@@ -1670,7 +1667,7 @@
 
   QUnit.test('#3020: #set with {add: false} should not throw.', function(assert) {
     assert.expect(2);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.set([{id: 1}], {add: false});
     assert.strictEqual(collection.length, 0);
     assert.strictEqual(collection.models.length, 0);
@@ -1680,7 +1677,7 @@
     assert.expect(1);
     var collection = new Backbone.Collection();
     var model = new Backbone.Model({id: 1});
-    model.sync = function(){
+    model.sync = function() {
       assert.equal(this.collection, collection);
     };
     collection.create(model, {wait: true});
@@ -1906,7 +1903,7 @@
 
   QUnit.test('adding multiple models triggers `update` event once', function(assert) {
     assert.expect(1);
-    var collection = new Backbone.Collection;
+    var collection = new Backbone.Collection();
     collection.on('update', function() { assert.ok(true); });
     collection.add([{id: 1}, {id: 2}, {id: 3}]);
   });
@@ -1971,7 +1968,7 @@
   QUnit.test('#3871 - falsy parse result creates empty collection', function(assert) {
     var collection = new (Backbone.Collection.extend({
       parse: function(data, options) {}
-    }));
+    }))();
     collection.set('', {parse: true});
     assert.equal(collection.length, 0);
   });

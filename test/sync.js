@@ -1,5 +1,4 @@
 (function(QUnit) {
-
   var Library = Backbone.Collection.extend({
     url: function() { return '/library'; }
   });
@@ -14,7 +13,7 @@
   QUnit.module('Backbone.sync', {
 
     beforeEach: function(assert) {
-      library = new Library;
+      library = new Library();
       library.create(attrs, {wait: false});
     },
 
@@ -168,7 +167,7 @@
 
   QUnit.test('Call provided error callback on error.', function(assert) {
     assert.expect(1);
-    var model = new Backbone.Model;
+    var model = new Backbone.Model();
     model.url = '/test';
     Backbone.sync('read', model, {
       error: function() { assert.ok(true); }
@@ -178,7 +177,7 @@
 
   QUnit.test('Use Backbone.emulateHTTP as default.', function(assert) {
     assert.expect(2);
-    var model = new Backbone.Model;
+    var model = new Backbone.Model();
     model.url = '/test';
 
     Backbone.emulateHTTP = true;
@@ -192,7 +191,7 @@
 
   QUnit.test('Use Backbone.emulateJSON as default.', function(assert) {
     assert.expect(2);
-    var model = new Backbone.Model;
+    var model = new Backbone.Model();
     model.url = '/test';
 
     Backbone.emulateJSON = true;
@@ -207,7 +206,7 @@
   QUnit.test('#1756 - Call user provided beforeSend function.', function(assert) {
     assert.expect(4);
     Backbone.emulateHTTP = true;
-    var model = new Backbone.Model;
+    var model = new Backbone.Model();
     model.url = '/test';
     var xhr = {
       setRequestHeader: function(header, value) {
@@ -226,7 +225,7 @@
 
   QUnit.test('#2928 - Pass along `textStatus` and `errorThrown`.', function(assert) {
     assert.expect(2);
-    var model = new Backbone.Model;
+    var model = new Backbone.Model();
     model.url = '/test';
     model.on('error', function(m, xhr, options) {
       assert.strictEqual(options.textStatus, 'textStatus');
@@ -235,5 +234,4 @@
     model.fetch();
     this.ajaxSettings.error({}, 'textStatus', 'errorThrown');
   });
-
 })(QUnit);

@@ -1,5 +1,4 @@
 (function(QUnit) {
-
   var sync = Backbone.sync;
   var ajax = Backbone.ajax;
   var emulateHTTP = Backbone.emulateHTTP;
@@ -30,7 +29,6 @@
       };
       sync.apply(this, arguments);
     };
-
   });
 
   QUnit.testDone(function() {
@@ -41,5 +39,4 @@
     history.pushState = pushState;
     history.replaceState = replaceState;
   });
-
 })(QUnit);
