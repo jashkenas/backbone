@@ -4,8 +4,7 @@
 // to persist Backbone models within your browser.
 
 // Load the application once the DOM is ready, using `jQuery.ready`:
-$(function(){
-
+$(function() {
   // Todo Model
   // ----------
 
@@ -15,7 +14,7 @@ $(function(){
     // Default attributes for the todo item.
     defaults: function() {
       return {
-        title: "empty todo...",
+        title: 'empty todo...',
         order: Todos.nextOrder(),
         done: false
       };
@@ -23,7 +22,7 @@ $(function(){
 
     // Toggle the `done` state of this todo item.
     toggle: function() {
-      this.save({done: !this.get("done")});
+      this.save({done: !this.get('done')});
     }
 
   });
@@ -39,7 +38,7 @@ $(function(){
     model: Todo,
 
     // Save all of the todo items under the `"todos-backbone"` namespace.
-    localStorage: new Backbone.LocalStorage("todos-backbone"),
+    localStorage: new Backbone.LocalStorage('todos-backbone'),
 
     // Filter down the list of all todo items that are finished.
     done: function() {
@@ -64,7 +63,7 @@ $(function(){
   });
 
   // Create our global collection of **Todos**.
-  var Todos = new TodoList;
+  var Todos = new TodoList();
 
   // Todo Item View
   // --------------
@@ -72,19 +71,19 @@ $(function(){
   // The DOM element for a todo item...
   var TodoView = Backbone.View.extend({
 
-    //... is a list tag.
-    tagName:  "li",
+    // ... is a list tag.
+    tagName: 'li',
 
     // Cache the template function for a single item.
     template: _.template($('#item-template').html()),
 
     // The DOM events specific to an item.
     events: {
-      "click .toggle"   : "toggleDone",
-      "dblclick .view"  : "edit",
-      "click a.destroy" : "clear",
-      "keypress .edit"  : "updateOnEnter",
-      "blur .edit"      : "close"
+      'click .toggle': 'toggleDone',
+      'dblclick .view': 'edit',
+      'click a.destroy': 'clear',
+      'keypress .edit': 'updateOnEnter',
+      'blur .edit': 'close'
     },
 
     // The TodoView listens for changes to its model, re-rendering. Since there's
@@ -110,7 +109,7 @@ $(function(){
 
     // Switch this view into `"editing"` mode, displaying the input field.
     edit: function() {
-      this.$el.addClass("editing");
+      this.$el.addClass('editing');
       this.input.focus();
     },
 
@@ -121,13 +120,13 @@ $(function(){
         this.clear();
       } else {
         this.model.save({title: value});
-        this.$el.removeClass("editing");
+        this.$el.removeClass('editing');
       }
     },
 
     // If you hit `enter`, we're through editing the item.
     updateOnEnter: function(e) {
-      if (e.keyCode == 13) this.close();
+      if (e.keyCode === 13) this.close();
     },
 
     // Remove the item, destroy the model.
@@ -145,25 +144,24 @@ $(function(){
 
     // Instead of generating a new element, bind to the existing skeleton of
     // the App already present in the HTML.
-    el: $("#todoapp"),
+    el: $('#todoapp'),
 
     // Our template for the line of statistics at the bottom of the app.
     statsTemplate: _.template($('#stats-template').html()),
 
     // Delegated events for creating new items, and clearing completed ones.
     events: {
-      "keypress #new-todo":  "createOnEnter",
-      "click #clear-completed": "clearCompleted",
-      "click #toggle-all": "toggleAllComplete"
+      'keypress #new-todo': 'createOnEnter',
+      'click #clear-completed': 'clearCompleted',
+      'click #toggle-all': 'toggleAllComplete'
     },
 
     // At initialization we bind to the relevant events on the `Todos`
     // collection, when items are added or changed. Kick things off by
     // loading any preexisting todos that might be saved in *localStorage*.
     initialize: function() {
-
-      this.input = this.$("#new-todo");
-      this.allCheckbox = this.$("#toggle-all")[0];
+      this.input = this.$('#new-todo');
+      this.allCheckbox = this.$('#toggle-all')[0];
 
       this.listenTo(Todos, 'add', this.addOne);
       this.listenTo(Todos, 'reset', this.addAll);
@@ -197,7 +195,7 @@ $(function(){
     // appending its element to the `<ul>`.
     addOne: function(todo) {
       var view = new TodoView({model: todo});
-      this.$("#todo-list").append(view.render().el);
+      this.$('#todo-list').append(view.render().el);
     },
 
     // Add all items in the **Todos** collection at once.
@@ -208,7 +206,7 @@ $(function(){
     // If you hit return in the main input field, create new **Todo** model,
     // persisting it to *localStorage*.
     createOnEnter: function(e) {
-      if (e.keyCode != 13) return;
+      if (e.keyCode !== 13) return;
       if (!this.input.val()) return;
 
       Todos.create({title: this.input.val()});
@@ -221,14 +219,13 @@ $(function(){
       return false;
     },
 
-    toggleAllComplete: function () {
+    toggleAllComplete: function() {
       var done = this.allCheckbox.checked;
-      Todos.each(function (todo) { todo.save({'done': done}); });
+      Todos.each(function(todo) { todo.save({done: done}); });
     }
 
   });
 
   // Finally, we kick things off by creating the **App**.
-  var App = new AppView;
-
+  var App = new AppView();
 });

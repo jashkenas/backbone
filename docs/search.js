@@ -34,7 +34,7 @@
 
   function gotoFirst() {
     var firstFunction = _.find(functions, doesMatch);
-    if(firstFunction) {
+    if (firstFunction) {
       window.location.hash = firstFunction.lastChild.getAttribute('href');
       searchInput.focus();
     }
@@ -51,8 +51,8 @@
 
   // Press "/" to search
   document.body.addEventListener('keyup', function(event) {
-    if (191 === event.which) {
+    if (event.which === 191) {
       searchInput.focus();
     }
   });
-}());
+})();

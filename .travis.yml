@@ -1,5 +1,7 @@
 language: node_js
 node_js:
+  - "10"
+  - "8"
   - "6"
 before_install:
   - npm install -g npm
@@ -10,6 +12,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 script:
   - npm test
+  - npm run build
   - karma start karma.conf-sauce.js
 notifications:
   email: false

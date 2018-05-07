@@ -2,30 +2,43 @@
   "env": {
     "browser": true,
     "node": true,
-    "amd": true
+    "amd": true,
+    "es6": true
   },
   "globals": {
     "attachEvent": false,
     "detachEvent": false
   },
+  "extends": ["eslint:recommended", "standard"],
   "rules": {
     "array-bracket-spacing": 2,
     "block-scoped-var": 2,
-    "brace-style": [1, "1tbs", {"allowSingleLine": true}],
+    "brace-style": [1, "1tbs", {
+      "allowSingleLine": true
+    }],
     "camelcase": 2,
     "comma-dangle": [2, "never"],
     "comma-spacing": 2,
     "computed-property-spacing": [2, "never"],
-    "dot-notation": [2, { "allowKeywords": false }],
+    "dot-notation": [2, {
+      "allowKeywords": false
+    }],
     "eol-last": 2,
     "eqeqeq": [2, "smart"],
-    "indent": [2, 2, {"SwitchCase": 1, "VariableDeclarator": 2}],
+    "indent": [2, 2, {
+      "SwitchCase": 1,
+      "VariableDeclarator": 2
+    }],
     "key-spacing": 1,
-    "keyword-spacing": [2, { "after": true }],
+    "keyword-spacing": [2, {
+      "after": true
+    }],
     "linebreak-style": 2,
     "max-depth": [1, 4],
     "max-params": [1, 5],
-    "new-cap": [2, {"newIsCapExceptions": ["model"]}],
+    "new-cap": [2, {
+      "newIsCapExceptions": ["model"]
+    }],
     "no-alert": 2,
     "no-caller": 2,
     "no-catch-shadow": 2,
@@ -73,16 +86,25 @@
     "no-undefined": 2,
     "no-unneeded-ternary": 2,
     "no-unreachable": 2,
-    "no-unused-expressions": [2, {"allowTernary": true, "allowShortCircuit": true}],
+    "no-unused-expressions": [2, {
+      "allowTernary": true,
+      "allowShortCircuit": true
+    }],
     "no-with": 2,
     "object-curly-spacing": [2, "never"],
     "quote-props": [1, "consistent-as-needed"],
     "quotes": [2, "single", "avoid-escape"],
     "radix": 2,
-    "semi": 2,
-    "space-before-function-paren": [2, {"anonymous": "never", "named": "never"}],
+    "semi": [2, "always"],
+    "space-before-function-paren": [2, {
+      "anonymous": "never",
+      "named": "never"
+    }],
     "space-infix-ops": 2,
-    "space-unary-ops": [2, { "words": true, "nonwords": false }],
+    "space-unary-ops": [2, {
+      "words": true,
+      "nonwords": false
+    }],
     "use-isnan": 2,
     "valid-typeof": 2,
     "wrap-iife": [2, "inside"]

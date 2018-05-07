@@ -1,463 +1,324 @@
 <!DOCTYPE html>
-
 <html>
 <head>
   <title>backbone.localStorage.js</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
-  <link rel="stylesheet" media="all" href="docco.css" />
+  <meta content="text/html; charset=utf-8"
+        http-equiv="content-type">
+  <meta content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"
+        name="viewport">
+  <link href="docco.css"
+        media="all"
+        rel="stylesheet">
 </head>
 <body>
   <div id="container">
     <div id="background"></div>
-    
-      <ul id="jump_to">
-        <li>
-          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
-          <a class="small" href="javascript:void(0);">+</a>
-          <div id="jump_wrapper">
+    <ul id="jump_to">
+      <li>
+        <a class="large"
+            href="javascript:void(0);">Jump To &hellip;</a> <a class="small"
+            href="javascript:void(0);">+</a>
+        <div id="jump_wrapper">
           <div id="jump_page_wrapper">
             <div id="jump_page">
-              
-                
-                <a class="source" href="backbone.localStorage.html">
-                  backbone.localStorage.js
-                </a>
-              
-                
-                <a class="source" href="todos.html">
-                  todos.js
-                </a>
-              
+              <a class="source"
+                   href="backbone.localStorage.html">backbone.localStorage.js</a> <a class="source"
+                   href="todos.html">todos.js</a>
             </div>
           </div>
-        </li>
-      </ul>
-    
+        </div>
+      </li>
+    </ul>
     <ul class="sections">
-        
-          <li id="title">
-              <div class="annotation">
-                  <h1>backbone.localStorage.js</h1>
-              </div>
-          </li>
-        
-        
-        
-        <li id="section-1">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-1">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
- * Backbone localStorage Adapter
- * Version 1.1.0
- *
- * https://github.com/jeromegn/Backbone.localStorage
- */</span>
-(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">root, factory</span>) </span>{
-   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">"function"</span> &amp;&amp; define.amd) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>AMD. Register as an anonymous module.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      define([<span class="hljs-string">"underscore"</span>,<span class="hljs-string">"backbone"</span>], <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone</span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>Use global variables if the locals are undefined.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> factory(_ || root._, Backbone || root.Backbone);
-      });
-   } <span class="hljs-keyword">else</span> {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>RequireJS isn’t being used. Assume underscore and backbone are loaded in script tags</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      factory(_, Backbone);
-   }
-}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone</span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>A simple module to replace <code>Backbone.sync</code> with <em>localStorage</em>-based
-persistence. Models are given GUIDS, and saved into a JSON object. Simple
-as that.</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>Hold reference to Underscore.js and Backbone.js in the closure in order
-to make things work even if they are removed from the global namespace</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>Generate four random hex digits.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">S4</span>(<span class="hljs-params"></span>) </span>{
-   <span class="hljs-keyword">return</span> (((<span class="hljs-number">1</span>+<span class="hljs-built_in">Math</span>.random())*<span class="hljs-number">0x10000</span>)|<span class="hljs-number">0</span>).toString(<span class="hljs-number">16</span>).substring(<span class="hljs-number">1</span>);
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>Generate a pseudo-GUID by concatenating random hexadecimal.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">guid</span>(<span class="hljs-params"></span>) </span>{
-   <span class="hljs-keyword">return</span> (S4()+S4()+<span class="hljs-string">"-"</span>+S4()+<span class="hljs-string">"-"</span>+S4()+<span class="hljs-string">"-"</span>+S4()+<span class="hljs-string">"-"</span>+S4()+S4()+S4());
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>Our Store is represented by a single JS object in <em>localStorage</em>. Create it
-with a meaningful name, like the name you’d give a table.
-window.Store is deprecated, use Backbone.LocalStorage instead</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>Backbone.LocalStorage = <span class="hljs-built_in">window</span>.Store = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">name</span>) </span>{
-  <span class="hljs-keyword">this</span>.name = name;
-  <span class="hljs-keyword">var</span> store = <span class="hljs-keyword">this</span>.localStorage().getItem(<span class="hljs-keyword">this</span>.name);
-  <span class="hljs-keyword">this</span>.records = (store &amp;&amp; store.split(<span class="hljs-string">","</span>)) || [];
-};
-
-_.extend(Backbone.LocalStorage.prototype, {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <p>Save the current state of the <strong>Store</strong> to <em>localStorage</em>.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  save: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">this</span>.localStorage().setItem(<span class="hljs-keyword">this</span>.name, <span class="hljs-keyword">this</span>.records.join(<span class="hljs-string">","</span>));
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>Add a model, giving it a (hopefully)-unique GUID, if it doesn’t already
-have an id of it’s own.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  create: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-    <span class="hljs-keyword">if</span> (!model.id) {
-      model.id = guid();
-      model.set(model.idAttribute, model.id);
-    }
-    <span class="hljs-keyword">this</span>.localStorage().setItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id, <span class="hljs-built_in">JSON</span>.stringify(model));
-    <span class="hljs-keyword">this</span>.records.push(model.id.toString());
-    <span class="hljs-keyword">this</span>.save();
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.find(model);
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <p>Update a model by replacing its copy in <code>this.data</code>.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  update: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-    <span class="hljs-keyword">this</span>.localStorage().setItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id, <span class="hljs-built_in">JSON</span>.stringify(model));
-    <span class="hljs-keyword">if</span> (!_.include(<span class="hljs-keyword">this</span>.records, model.id.toString()))
-      <span class="hljs-keyword">this</span>.records.push(model.id.toString()); <span class="hljs-keyword">this</span>.save();
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.find(model);
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>Retrieve a model from <code>this.data</code> by id.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  find: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.jsonData(<span class="hljs-keyword">this</span>.localStorage().getItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id));
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <p>Return the array of all models currently in storage.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  findAll: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">return</span> _(<span class="hljs-keyword">this</span>.records).chain()
-      .map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">id</span>)</span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.jsonData(<span class="hljs-keyword">this</span>.localStorage().getItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+id));
-      }, <span class="hljs-keyword">this</span>)
-      .compact()
-      .value();
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>Delete a model from <code>this.data</code>, returning it.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  destroy: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-    <span class="hljs-keyword">if</span> (model.isNew())
-      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
-    <span class="hljs-keyword">this</span>.localStorage().removeItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id);
-    <span class="hljs-keyword">this</span>.records = _.reject(<span class="hljs-keyword">this</span>.records, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">id</span>)</span>{
-      <span class="hljs-keyword">return</span> id === model.id.toString();
-    });
-    <span class="hljs-keyword">this</span>.save();
-    <span class="hljs-keyword">return</span> model;
-  },
-
-  localStorage: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">return</span> localStorage;
-  },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
-              </div>
-              <p>fix for “illegal access” error on Android when JSON.parse is passed null</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  jsonData: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>{
-      <span class="hljs-keyword">return</span> data &amp;&amp; <span class="hljs-built_in">JSON</span>.parse(data);
-  }
-
-});</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-17">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
-              <p>localSync delegate to the model or collection’s
-<em>localStorage</em> property, which should be an instance of <code>Store</code>.
-window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStorage.sync instead</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>Backbone.LocalStorage.sync = <span class="hljs-built_in">window</span>.Store.sync = Backbone.localSync = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">method, model, options</span>) </span>{
-  <span class="hljs-keyword">var</span> store = model.localStorage || model.collection.localStorage;
-
-  <span class="hljs-keyword">var</span> resp, errorMessage, syncDfd = $.Deferred &amp;&amp; $.Deferred(); <span class="hljs-comment">//If $ is having Deferred - use it.</span>
-
-  <span class="hljs-keyword">try</span> {
-
-    <span class="hljs-keyword">switch</span> (method) {
-      <span class="hljs-keyword">case</span> <span class="hljs-string">"read"</span>:
-        resp = model.id != <span class="hljs-literal">undefined</span> ? store.find(model) : store.findAll();
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> <span class="hljs-string">"create"</span>:
-        resp = store.create(model);
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> <span class="hljs-string">"update"</span>:
-        resp = store.update(model);
-        <span class="hljs-keyword">break</span>;
-      <span class="hljs-keyword">case</span> <span class="hljs-string">"delete"</span>:
-        resp = store.destroy(model);
-        <span class="hljs-keyword">break</span>;
-    }
-
-  } <span class="hljs-keyword">catch</span>(error) {
-    <span class="hljs-keyword">if</span> (error.code === DOMException.QUOTA_EXCEEDED_ERR &amp;&amp; <span class="hljs-built_in">window</span>.localStorage.length === <span class="hljs-number">0</span>)
-      errorMessage = <span class="hljs-string">"Private browsing is unsupported"</span>;
-    <span class="hljs-keyword">else</span>
-      errorMessage = error.message;
-  }
-
-  <span class="hljs-keyword">if</span> (resp) {
-    model.trigger(<span class="hljs-string">"sync"</span>, model, resp, options);
-    <span class="hljs-keyword">if</span> (options &amp;&amp; options.success)
-      options.success(resp);
-    <span class="hljs-keyword">if</span> (syncDfd)
-      syncDfd.resolve(resp);
-
-  } <span class="hljs-keyword">else</span> {
-    errorMessage = errorMessage ? errorMessage
-                                : <span class="hljs-string">"Record Not Found"</span>;
-
-    <span class="hljs-keyword">if</span> (options &amp;&amp; options.error)
-      options.error(errorMessage);
-    <span class="hljs-keyword">if</span> (syncDfd)
-      syncDfd.reject(errorMessage);
-  }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-18">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              <p>add compatibility with $.ajax
-always execute callback for success and error</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (options &amp;&amp; options.complete) options.complete(resp);
-
-  <span class="hljs-keyword">return</span> syncDfd &amp;&amp; syncDfd.promise();
-};
-
-Backbone.ajaxSync = Backbone.sync;
-
-Backbone.getSyncMethod = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-  <span class="hljs-keyword">if</span>(model.localStorage || (model.collection &amp;&amp; model.collection.localStorage)) {
-    <span class="hljs-keyword">return</span> Backbone.localSync;
-  }
-
-  <span class="hljs-keyword">return</span> Backbone.ajaxSync;
-};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>Override ‘Backbone.sync’ to default to localSync,
-the original ‘Backbone.sync’ is still available in ‘Backbone.ajaxSync’</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>Backbone.sync = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">method, model, options</span>) </span>{
-  <span class="hljs-keyword">return</span> Backbone.getSyncMethod(model).apply(<span class="hljs-keyword">this</span>, [method, model, options]);
-};
-
-<span class="hljs-keyword">return</span> Backbone.LocalStorage;
-}));</pre></div></div>
-            
-        </li>
-        
+      <li id="title">
+        <div class="annotation">
+          <h1>backbone.localStorage.js</h1>
+        </div>
+      </li>
+      <li id="section-1">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-1">&#182;</a>
+          </div>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt;&lt;span class=">
+            /** * Backbone localStorage Adapter * Version 1.1.0 * * https://github.com/jeromegn/Backbone.localStorage */ (<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">root, factory</span>)</span>
+            { <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">"function"</span> &amp;&amp; define.amd) {
+          </div>
+        </div>
+      </li>
+      <li id="section-2">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-2">&#182;</a>
+          </div>
+          <p>AMD. Register as an anonymous module.</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; define([&lt;span class=">
+            "underscore",<span class="hljs-string">"backbone"</span>], <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone</span>)</span> {
+          </div>
+        </div>
+      </li>
+      <li id="section-3">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-3">&#182;</a>
+          </div>
+          <p>Use global variables if the locals are undefined.</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; &lt;span class=">
+            return factory(_ || root._, Backbone || root.Backbone); }); } <span class="hljs-keyword">else</span> {
+          </div>
+        </div>
+      </li>
+      <li id="section-4">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-4">&#182;</a>
+          </div>
+          <p>RequireJS isn’t being used. Assume underscore and backbone are loaded in script tags</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; factory(_, Backbone); } }(&lt;span class=">
+            this, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone</span>)</span> {
+          </div>
+        </div>
+      </li>
+      <li id="section-5">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-5">&#182;</a>
+          </div>
+          <p>A simple module to replace <code>Backbone.sync</code> with <em>localStorage</em>-based persistence. Models are given GUIDS, and saved into a JSON object. Simple as that.</p>
+        </div>
+      </li>
+      <li id="section-6">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-6">&#182;</a>
+          </div>
+          <p>Hold reference to Underscore.js and Backbone.js in the closure in order to make things work even if they are removed from the global namespace</p>
+        </div>
+      </li>
+      <li id="section-7">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-7">&#182;</a>
+          </div>
+          <p>Generate four random hex digits.</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt;&lt;span class=">
+            <span class="hljs-keyword">function</span> <span class="hljs-title">S4</span>() { <span class="hljs-keyword">return</span> (((<span class="hljs-number">1</span>+<span class="hljs-built_in">Math</span>.random())*<span class=
+            "hljs-number">0x10000</span>)|<span class="hljs-number">0</span>).toString(<span class="hljs-number">16</span>).substring(<span class="hljs-number">1</span>); };
+          </div>
+        </div>
+      </li>
+      <li id="section-8">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-8">&#182;</a>
+          </div>
+          <p>Generate a pseudo-GUID by concatenating random hexadecimal.</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt;&lt;span class=">
+            <span class="hljs-keyword">function</span> <span class="hljs-title">guid</span>() { <span class="hljs-keyword">return</span> (S4()+S4()+<span class="hljs-string">"-"</span>+S4()+<span class="hljs-string">"-"</span>+S4()+<span class=
+            "hljs-string">"-"</span>+S4()+<span class="hljs-string">"-"</span>+S4()+S4()+S4()); };
+          </div>
+        </div>
+      </li>
+      <li id="section-9">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-9">&#182;</a>
+          </div>
+          <p>Our Store is represented by a single JS object in <em>localStorage</em>. Create it with a meaningful name, like the name you’d give a table. window.Store is deprecated, use Backbone.LocalStorage instead</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt;Backbone.LocalStorage = &lt;span class=">
+            window.Store = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">name</span>)</span> { <span class="hljs-keyword">this</span>.name = name; <span class="hljs-keyword">var</span> store =
+            <span class="hljs-keyword">this</span>.localStorage().getItem(<span class="hljs-keyword">this</span>.name); <span class="hljs-keyword">this</span>.records = (store &amp;&amp; store.split(<span class="hljs-string">","</span>)) || []; };
+            _.extend(Backbone.LocalStorage.prototype, {
+          </div>
+        </div>
+      </li>
+      <li id="section-10">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-10">&#182;</a>
+          </div>
+          <p>Save the current state of the <strong>Store</strong> to <em>localStorage</em>.</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; save: &lt;span class=">
+            <span class="hljs-keyword">function</span>() { <span class="hljs-keyword">this</span>.localStorage().setItem(<span class="hljs-keyword">this</span>.name, <span class="hljs-keyword">this</span>.records.join(<span class=
+            "hljs-string">","</span>)); },
+          </div>
+        </div>
+      </li>
+      <li id="section-11">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-11">&#182;</a>
+          </div>
+          <p>Add a model, giving it a (hopefully)-unique GUID, if it doesn’t already have an id of it’s own.</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; create: &lt;span class=">
+            <span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) { <span class="hljs-keyword">if</span> (!model.id) { model.id = guid(); model.set(model.idAttribute, model.id); } <span class=
+            "hljs-keyword">this</span>.localStorage().setItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id, <span class="hljs-built_in">JSON</span>.stringify(model)); <span class=
+            "hljs-keyword">this</span>.records.push(model.id.toString()); <span class="hljs-keyword">this</span>.save(); <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.find(model); },
+          </div>
+        </div>
+      </li>
+      <li id="section-12">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-12">&#182;</a>
+          </div>
+          <p>Update a model by replacing its copy in <code>this.data</code>.</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; update: &lt;span class=">
+            <span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) { <span class="hljs-keyword">this</span>.localStorage().setItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id,
+            <span class="hljs-built_in">JSON</span>.stringify(model)); <span class="hljs-keyword">if</span> (!_.include(<span class="hljs-keyword">this</span>.records, model.id.toString())) <span class=
+            "hljs-keyword">this</span>.records.push(model.id.toString()); <span class="hljs-keyword">this</span>.save(); <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.find(model); },
+          </div>
+        </div>
+      </li>
+      <li id="section-13">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-13">&#182;</a>
+          </div>
+          <p>Retrieve a model from <code>this.data</code> by id.</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; find: &lt;span class=">
+            <span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.jsonData(<span class=
+            "hljs-keyword">this</span>.localStorage().getItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id)); },
+          </div>
+        </div>
+      </li>
+      <li id="section-14">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-14">&#182;</a>
+          </div>
+          <p>Return the array of all models currently in storage.</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; findAll: &lt;span class=">
+            <span class="hljs-keyword">function</span>() { <span class="hljs-keyword">return</span> _(<span class="hljs-keyword">this</span>.records).chain() .map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class=
+            "hljs-params">id</span>)</span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.jsonData(<span class="hljs-keyword">this</span>.localStorage().getItem(<span class=
+            "hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+id)); }, <span class="hljs-keyword">this</span>) .compact() .value(); },
+          </div>
+        </div>
+      </li>
+      <li id="section-15">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-15">&#182;</a>
+          </div>
+          <p>Delete a model from <code>this.data</code>, returning it.</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; destroy: &lt;span class=">
+            <span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) { <span class="hljs-keyword">if</span> (model.isNew()) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span> <span class=
+            "hljs-keyword">this</span>.localStorage().removeItem(<span class="hljs-keyword">this</span>.name+<span class="hljs-string">"-"</span>+model.id); <span class="hljs-keyword">this</span>.records = _.reject(<span class=
+            "hljs-keyword">this</span>.records, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">id</span>)</span>{ <span class="hljs-keyword">return</span> id === model.id.toString(); }); <span class=
+            "hljs-keyword">this</span>.save(); <span class="hljs-keyword">return</span> model; }, localStorage: <span class="hljs-function"><span class="hljs-keyword">function</span>()</span> { <span class="hljs-keyword">return</span> localStorage;
+            },
+          </div>
+        </div>
+      </li>
+      <li id="section-16">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-16">&#182;</a>
+          </div>
+          <p>fix for “illegal access” error on Android when JSON.parse is passed null</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; jsonData: &lt;span class=">
+            <span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) { <span class="hljs-keyword">return</span> data &amp;&amp; <span class="hljs-built_in">JSON</span>.parse(data); } });
+          </div>
+        </div>
+      </li>
+      <li id="section-17">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-17">&#182;</a>
+          </div>
+          <p>localSync delegate to the model or collection’s <em>localStorage</em> property, which should be an instance of <code>Store</code>. window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStorage.sync instead</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt;Backbone.LocalStorage.sync = &lt;span class=">
+            window.Store.sync = Backbone.localSync = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">method, model, options</span>)</span> { <span class="hljs-keyword">var</span> store =
+            model.localStorage || model.collection.localStorage; <span class="hljs-keyword">var</span> resp, errorMessage, syncDfd = $.Deferred &amp;&amp; $.Deferred(); <span class="hljs-comment">//If $ is having Deferred - use it.</span>
+            <span class="hljs-keyword">try</span> { <span class="hljs-keyword">switch</span> (method) { <span class="hljs-keyword">case</span> <span class="hljs-string">"read"</span>: resp = model.id != <span class="hljs-literal">undefined</span> ?
+            store.find(model) : store.findAll(); <span class="hljs-keyword">break</span>; <span class="hljs-keyword">case</span> <span class="hljs-string">"create"</span>: resp = store.create(model); <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"update"</span>: resp = store.update(model); <span class="hljs-keyword">break</span>; <span class="hljs-keyword">case</span> <span class="hljs-string">"delete"</span>: resp
+            = store.destroy(model); <span class="hljs-keyword">break</span>; } } <span class="hljs-keyword">catch</span>(error) { <span class="hljs-keyword">if</span> (error.code === DOMException.QUOTA_EXCEEDED_ERR &amp;&amp; <span class=
+            "hljs-built_in">window</span>.localStorage.length === <span class="hljs-number">0</span>) errorMessage = <span class="hljs-string">"Private browsing is unsupported"</span>; <span class="hljs-keyword">else</span> errorMessage =
+            error.message; } <span class="hljs-keyword">if</span> (resp) { model.trigger(<span class="hljs-string">"sync"</span>, model, resp, options); <span class="hljs-keyword">if</span> (options &amp;&amp; options.success) options.success(resp);
+            <span class="hljs-keyword">if</span> (syncDfd) syncDfd.resolve(resp); } <span class="hljs-keyword">else</span> { errorMessage = errorMessage ? errorMessage : <span class="hljs-string">"Record Not Found"</span>; <span class=
+            "hljs-keyword">if</span> (options &amp;&amp; options.error) options.error(errorMessage); <span class="hljs-keyword">if</span> (syncDfd) syncDfd.reject(errorMessage); }
+          </div>
+        </div>
+      </li>
+      <li id="section-18">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-18">&#182;</a>
+          </div>
+          <p>add compatibility with $.ajax always execute callback for success and error</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt; &lt;span class=">
+            if (options &amp;&amp; options.complete) options.complete(resp); <span class="hljs-keyword">return</span> syncDfd &amp;&amp; syncDfd.promise(); }; Backbone.ajaxSync = Backbone.sync; Backbone.getSyncMethod = <span class=
+            "hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>)</span> { <span class="hljs-keyword">if</span>(model.localStorage || (model.collection &amp;&amp; model.collection.localStorage)) {
+            <span class="hljs-keyword">return</span> Backbone.localSync; } <span class="hljs-keyword">return</span> Backbone.ajaxSync; };
+          </div>
+        </div>
+      </li>
+      <li id="section-19">
+        <div class="annotation">
+          <div class="pilwrap">
+            <a class="pilcrow"
+                 href="#section-19">&#182;</a>
+          </div>
+          <p>Override ‘Backbone.sync’ to default to localSync, the original ‘Backbone.sync’ is still available in ‘Backbone.ajaxSync’</p>
+        </div>
+        <div class="content">
+          <div class="highlight'&gt; &lt;pre&gt;Backbone.sync = &lt;span class=">
+            <span class="hljs-keyword">function</span>(<span class="hljs-params">method, model, options</span>) { <span class="hljs-keyword">return</span> Backbone.getSyncMethod(model).apply(<span class="hljs-keyword">this</span>, [method, model,
+            options]); }; <span class="hljs-keyword">return</span> Backbone.LocalStorage; }));
+          </div>
+        </div>
+      </li>
     </ul>
   </div>
 </body>
