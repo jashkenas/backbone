@@ -12,9 +12,7 @@
     "browser"
   ],
   "author": "Jeremy Ashkenas",
-  "dependencies": {
-    "underscore": ">=1.8.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-minify": "^0.4.1",
@@ -23,11 +21,14 @@
     "coffeescript": "^2.3.0",
     "docco": "0.8.0",
     "eslint": "^4.19.1",
+    "eslint-config-problems": "^0.1.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.1.0",
+    "eslint-plugin-you-dont-need-lodash-underscore": "^6.3.1",
+    "jquery": "^3.3.1",
     "karma": "^2.0.2",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-qunit": "^2.0.2",
@@ -37,7 +38,9 @@
     "phantomjs-prebuilt": "^2.1.16",
     "qunit": "^2.6.0",
     "qunitjs": "^2.4.1",
-    "socks": "^2.2.0"
+    "socks": "^2.2.0",
+    "underscore": "^1.9.0",
+    "you-dont-need-lodash-underscore": "^3.0.1"
   },
   "scripts": {
     "test": "karma start && coffee test/model.coffee && npm run lint",

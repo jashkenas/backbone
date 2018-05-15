@@ -10,6 +10,7 @@
     (_'_______________________________________________________________________________'_)
     (_.———————————————————————————————————————————————————————————————————————————————._)
 
+ES 2015-2017 enablement, May 2018
 
 Backbone supplies structure to JavaScript-heavy applications by providing models with key-value binding and custom events, collections with a rich API of enumerable functions, views with declarative event handling, and connects it all to your existing application over a RESTful JSON interface.
 
