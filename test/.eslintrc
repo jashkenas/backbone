@@ -1,23 +1,35 @@
 {
-  "env": {
-    "browser": true,
-    "es6": true
-  },
-  "globals": {
-    "QUnit": false,
-    "Backbone": true,
-    "_": true,
-    "$": true
-  },
-  "extends": ["eslint:recommended", "standard", "eslint-config-problems", "plugin:promise/recommended", "plugin:import/errors", "plugin:import/warnings"],
-  "rules": {
-    "indent": [
-      "error",
-      2
+    "env": {
+        "es6": true,
+        "browser": true
+    },
+    "parserOptions": {
+        "sourceType": "module"
+    },
+    "plugins": [
+        "promise"
     ],
-    "semi": [
-      "error",
-      "always"
-    ]
-  }
+    "extends": [
+        "standard",
+        "eslint:recommended",
+        "eslint-config-problems",
+        "plugin:import/errors",
+        "plugin:import/warnings"
+    ],
+    "rules": {
+        "indent": [
+            "error",
+            2
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    },
+    "globals": {
+        "QUnit": false,
+        "Backbone": true,
+        "_": true,
+        "$": true
+    }
 }

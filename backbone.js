@@ -81,7 +81,13 @@ export class Backbone {
   // Proxy `Backbone.sync` by default -- but override this if you need
   // custom syncing semantics for *this* particular model.
   sync (...args) {
-    return new Sync(args);
+    return new Backbone.Sync(args);
+  }
+
+  // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
+  // Override this if you'd like to use a different library.
+  ajax (...args) {
+    return jQuery.ajax(args);
   }
 
   // Throw an error when a URL is needed, and none is supplied.
@@ -229,11 +235,11 @@ export class Events extends Backbone {
     if (callback) {
       const handlers = events[name] || (events[name] = []);
       const context = options.context;
-      const ctx = options.ctx;
+      const ctx = options.ctx || context; // DeepCode suggestion
       const listening = options.listening;
       if (listening) listening.count++;
 
-      handlers.push({callback, context, ctx: context || ctx, listening});
+      handlers.push({callback, context, ctx, listening});
     }
     return events;
   }
@@ -465,7 +471,7 @@ export class Model extends Backbone.Events {
   // Returns `true` if the attribute contains a value that is not null
   // or undefined.
   has (attr) {
-    return this.get(attr) != null;
+    return this.get(attr) !== null; // DeepCode suggestion
   }
 
   // Special-cased proxy to underscore's `underscore.matches` method.
@@ -510,15 +516,17 @@ export class Model extends Backbone.Events {
     const prev = this._previousAttributes;
 
     // For each `set` attribute, update or delete the current value.
-    for (const attr in attrs) {
-      val = attrs[attr];
-      if (!underscore.isEqual(current[attr], val)) changes.push(attr);
-      if (!underscore.isEqual(prev[attr], val)) {
-        changed[attr] = val;
-      } else {
-        delete changed[attr];
+    if(attrs !== (null || undefined)){  // DeepCode suggestion
+      for (const attr in attrs) {
+        val = attrs[attr];
+        if (!underscore.isEqual(current[attr], val)) changes.push(attr);
+        if (!underscore.isEqual(prev[attr], val)) {
+          changed[attr] = val;
+        } else {
+          delete changed[attr];
+        }
+        unset ? delete current[attr] : current[attr] = val;
       }
-      unset ? delete current[attr] : current[attr] = val;
     }
 
     // Update the `id`.
@@ -556,7 +564,9 @@ export class Model extends Backbone.Events {
   // Clear all attributes on the model, firing `"change"`.
   clear (options) {
     const attrs = {};
-    for (const key in this.attributes) attrs[key] = void 0;
+    if(this.attributes !== (null || undefined)){ // DeepCode suggestion
+      for (const key in this.attributes) attrs[key] = void 0;
+    }
     return this.set(attrs, underscore.extend({}, options, {unset: true}));
   }
 
@@ -858,9 +868,12 @@ export class Collection extends Backbone.Model {
 
     // Turn bare objects into model references, and prevent invalid models
     // from being added.
-    let model, i;
+    let model;
+    let i;
     for (i = 0; i < models.length; i++) {
       model = models[i];
+
+      // TODO: Deep Code was flagging some "top to bottom" situation here.
 
       // If a duplicate is found, prevent it from being added and
       // optionally merge it into the existing model.
@@ -1339,16 +1352,17 @@ export class View extends Backbone.Events {
   // Omitting the selector binds the event to `this.el`.
   delegateEvents (events) {
     events || (events = underscore.result(this, 'events'));
-    if (!events) return this;
-    this.undelegateEvents();
-    for (const key in events) {
-      let method = events[key];
-      if (!underscore.isFunction(method)) method = this[method];
-      if (!method) continue;
-      const match = key.match(this.delegateEventSplitter);
-      this.delegate(match[1], match[2], underscore.bind(method, this));
+    if(events !== (null || undefined)){
+      this.undelegateEvents();
+      for (const key in events) {
+        let method = events[key];
+        if (!underscore.isFunction(method)) method = this[method];
+        if (!method) continue;
+        const match = key.match(this.delegateEventSplitter);
+        this.delegate(match[1], match[2], underscore.bind(method, this));
+      }
     }
-    return this;
+    return this; // DeepCode suggested this if-for get checked out.
   }
 
   // Add a single event listener to the view's element (or a child element
@@ -1422,7 +1436,7 @@ export class View extends Backbone.Events {
 // Useful when interfacing with server-side languages like **PHP** that make
 // it difficult to read the body of `PUT` requests.
 export class Sync extends Backbone {
-  constructor (method, model, options) {
+  constructor (method, model, options, ...args) {
     super();
     const type = this.methodMap[method];
     // Default options, unless specified.
@@ -1457,11 +1471,10 @@ export class Sync extends Backbone {
     if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE' || type === 'PATCH')) {
       this.params.type = 'POST';
       if (options.emulateJSON) this.params.data._method = type;
-      // TODO: where are the arguments coming from on this?
       const beforeSend = options.beforeSend;
-      options.beforeSend = async (xhr) => {
+      options.beforeSend = (xhr) => {
         xhr.setRequestHeader('X-HTTP-Method-Override', type);
-        if (beforeSend) await beforeSend.apply(this, arguments);
+        if (beforeSend) beforeSend.apply();
       };
     }
 
@@ -1594,7 +1607,7 @@ export class Router extends Backbone.Events {
 // falls back to polling.
 export class History extends Backbone.Events {
   constructor (...args) {
-    super(...args);
+    super();
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
     this.interval = new Map(...args).get('interval') || 20;
@@ -1602,7 +1615,7 @@ export class History extends Backbone.Events {
     this.checkUrl = underscore.bind(this.checkUrl, this);
 
     // Ensure that `History` can be used outside of the browser.
-    if (typeof window !== 'undefined') {
+    if (typeof this.window !== 'undefined') {
       this.location = this.window.location;
       this.history = this.window.history;
     }
@@ -1709,8 +1722,7 @@ export class History extends Backbone.Events {
     // `hashChange` but not `pushState`.
     if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
       this.iframe = this.document.createElement('iframe');
-      // TODO: https://eslint.org/docs/3.0.0/rules/no-script-url#disallow-script-urls-no-script-url
-      this.iframe.src = 'javascript:0';
+      this.iframe.src = undefined;
       this.iframe.style.display = 'none';
       this.iframe.tabIndex = -1;
       const body = this.document.body;
@@ -1722,8 +1734,10 @@ export class History extends Backbone.Events {
     }
 
     // Add a cross-platform `addEventListener` shim for older browsers.
+    // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/attachEvent best available documentation
+    // https://github.com/m59peacemaker/browser-addeventlistener might be a suitable replacement?
     const addEventListener = this.window.addEventListener || function (eventName, listener) {
-      return this.attachEvent(`on${eventName}`, listener);
+      return this.window.attachEvent(`on${eventName}`, listener);
     };
 
       // Depending on whether we're using pushState or hashes, and whether

@@ -3,13 +3,19 @@
         "es6": true,
         "browser": true
     },
-    "globals": {
-        "QUnit": false,
-        "Backbone": true,
-        "_": true,
-        "$": true
+    "parserOptions": {
+        "sourceType": "module"
     },
-    "extends": ["eslint:recommended", "standard", "eslint-config-problems", "plugin:promise/recommended", "plugin:import/errors", "plugin:import/warnings"],
+    "plugins": [
+        "promise"
+    ],
+    "extends": [
+        "standard",
+        "eslint:recommended",
+        "eslint-config-problems",
+        "plugin:import/errors",
+        "plugin:import/warnings"
+    ],
     "rules": {
         "indent": [
             "error",
@@ -19,5 +25,11 @@
             "error",
             "always"
         ]
+    },
+    "globals": {
+        "QUnit": false,
+        "Backbone": true,
+        "_": true,
+        "$": true
     }
 }
