@@ -1,10 +1,10 @@
 (function(QUnit) {
-  var Library = Backbone.Collection.extend({
-    url: function() { return '/library'; }
+  const Library = Backbone.Collection.extend({
+    url() { return '/library'; }
   });
-  var library;
+  let library;
 
-  var attrs = {
+  const attrs = {
     title: 'The Tempest',
     author: 'Bill Shakespeare',
     length: 123
@@ -12,12 +12,12 @@
 
   QUnit.module('Backbone.sync', {
 
-    beforeEach: function(assert) {
+    beforeEach(assert) {
       library = new Library();
       library.create(attrs, {wait: false});
     },
 
-    afterEach: function(assert) {
+    afterEach(assert) {
       Backbone.emulateHTTP = false;
     }
 
@@ -45,7 +45,7 @@
     assert.equal(this.ajaxSettings.url, '/library');
     assert.equal(this.ajaxSettings.type, 'POST');
     assert.equal(this.ajaxSettings.dataType, 'json');
-    var data = JSON.parse(this.ajaxSettings.data);
+    const data = JSON.parse(this.ajaxSettings.data);
     assert.equal(data.title, 'The Tempest');
     assert.equal(data.author, 'Bill Shakespeare');
     assert.equal(data.length, 123);
@@ -57,7 +57,7 @@
     assert.equal(this.ajaxSettings.url, '/library/1-the-tempest');
     assert.equal(this.ajaxSettings.type, 'PUT');
     assert.equal(this.ajaxSettings.dataType, 'json');
-    var data = JSON.parse(this.ajaxSettings.data);
+    const data = JSON.parse(this.ajaxSettings.data);
     assert.equal(data.id, '1-the-tempest');
     assert.equal(data.title, 'The Tempest');
     assert.equal(data.author, 'William Shakespeare');
@@ -74,7 +74,7 @@
     assert.equal(this.ajaxSettings.type, 'POST');
     assert.equal(this.ajaxSettings.dataType, 'json');
     assert.equal(this.ajaxSettings.data._method, 'PUT');
-    var data = JSON.parse(this.ajaxSettings.data.model);
+    const data = JSON.parse(this.ajaxSettings.data.model);
     assert.equal(data.id, '2-the-tempest');
     assert.equal(data.author, 'Tim Shakespeare');
     assert.equal(data.length, 123);
@@ -88,7 +88,7 @@
     assert.equal(this.ajaxSettings.url, '/library/2-the-tempest');
     assert.equal(this.ajaxSettings.type, 'POST');
     assert.equal(this.ajaxSettings.contentType, 'application/json');
-    var data = JSON.parse(this.ajaxSettings.data);
+    const data = JSON.parse(this.ajaxSettings.data);
     assert.equal(data.id, '2-the-tempest');
     assert.equal(data.author, 'Tim Shakespeare');
     assert.equal(data.length, 123);
@@ -102,7 +102,7 @@
     assert.equal(this.ajaxSettings.url, '/library/2-the-tempest');
     assert.equal(this.ajaxSettings.type, 'PUT');
     assert.equal(this.ajaxSettings.contentType, 'application/x-www-form-urlencoded');
-    var data = JSON.parse(this.ajaxSettings.data.model);
+    const data = JSON.parse(this.ajaxSettings.data.model);
     assert.equal(data.id, '2-the-tempest');
     assert.equal(data.author, 'Tim Shakespeare');
     assert.equal(data.length, 123);
@@ -140,44 +140,44 @@
 
   QUnit.test('urlError', function(assert) {
     assert.expect(2);
-    var model = new Backbone.Model();
-    assert.raises(function() {
+    const model = new Backbone.Model();
+    assert.raises(() => {
       model.fetch();
     });
     model.fetch({url: '/one/two'});
     assert.equal(this.ajaxSettings.url, '/one/two');
   });
 
-  QUnit.test('#1052 - `options` is optional.', function(assert) {
+  QUnit.test('#1052 - `options` is optional.', (assert) => {
     assert.expect(0);
-    var model = new Backbone.Model();
+    const model = new Backbone.Model();
     model.url = '/test';
     Backbone.sync('create', model);
   });
 
-  QUnit.test('Backbone.ajax', function(assert) {
+  QUnit.test('Backbone.ajax', (assert) => {
     assert.expect(1);
     Backbone.ajax = function(settings) {
       assert.strictEqual(settings.url, '/test');
     };
-    var model = new Backbone.Model();
+    const model = new Backbone.Model();
     model.url = '/test';
     Backbone.sync('create', model);
   });
 
   QUnit.test('Call provided error callback on error.', function(assert) {
     assert.expect(1);
-    var model = new Backbone.Model();
+    const model = new Backbone.Model();
     model.url = '/test';
     Backbone.sync('read', model, {
-      error: function() { assert.ok(true); }
+      error() { assert.ok(true); }
     });
     this.ajaxSettings.error();
   });
 
   QUnit.test('Use Backbone.emulateHTTP as default.', function(assert) {
     assert.expect(2);
-    var model = new Backbone.Model();
+    const model = new Backbone.Model();
     model.url = '/test';
 
     Backbone.emulateHTTP = true;
@@ -191,7 +191,7 @@
 
   QUnit.test('Use Backbone.emulateJSON as default.', function(assert) {
     assert.expect(2);
-    var model = new Backbone.Model();
+    const model = new Backbone.Model();
     model.url = '/test';
 
     Backbone.emulateJSON = true;
@@ -206,16 +206,16 @@
   QUnit.test('#1756 - Call user provided beforeSend function.', function(assert) {
     assert.expect(4);
     Backbone.emulateHTTP = true;
-    var model = new Backbone.Model();
+    const model = new Backbone.Model();
     model.url = '/test';
-    var xhr = {
-      setRequestHeader: function(header, value) {
+    const xhr = {
+      setRequestHeader(header, value) {
         assert.strictEqual(header, 'X-HTTP-Method-Override');
         assert.strictEqual(value, 'DELETE');
       }
     };
     model.sync('delete', model, {
-      beforeSend: function(_xhr) {
+      beforeSend(_xhr) {
         assert.ok(_xhr === xhr);
         return false;
       }
@@ -225,9 +225,9 @@
 
   QUnit.test('#2928 - Pass along `textStatus` and `errorThrown`.', function(assert) {
     assert.expect(2);
-    var model = new Backbone.Model();
+    const model = new Backbone.Model();
     model.url = '/test';
-    model.on('error', function(m, xhr, options) {
+    model.on('error', (m, xhr, options) => {
       assert.strictEqual(options.textStatus, 'textStatus');
       assert.strictEqual(options.errorThrown, 'errorThrown');
     });

@@ -15,13 +15,14 @@ Uses modified https://standardjs.com/ rules.
 // Initial Setup
 // -------------
 export class Backbone {
-  constructor (...args) {
-    this.topargs = args;
-
+  // Top-level super shouldn't consume arguments itself
+  constructor () {
     // Current version of the library. Keep in sync with `package.json`.
     this.VERSION = '1.3.3';
 
-    // ensure imported jQuery and Underscore library contents are available.
+    // Ensure default contexts are available to Backbone objects, unless overridden.
+    this.window = window;
+    this.document = document;
     this.jQuery = jQuery;
     this.$ = jQuery;
     this.underscore = underscore;
@@ -38,18 +39,33 @@ export class Backbone {
     // form param named `model`.
     this.emulateJSON = false;
 
-    // Cached regex for stripping a leading hash/slash and trailing space.
-    this.routeStripper = /^[#/]|\s+$/g;
-
-    // Cached regex for stripping leading and trailing slashes.
-    this.rootStripper = /^\/+|\/+$/g;
+    // Regular expression used to split event strings.
+    this.eventSplitter = /\s+/;
 
     // Cached regex for stripping urls of hash.
     this.pathStripper = /#.*$/;
 
-    // Regular expression used to split event strings.
-    this.eventSplitter = /\s+/;
+    // Cached regex for stripping leading and trailing slashes.
+    this.rootStripper = /^\/+|\/+$/g;
+
+    // Cached regex for stripping a leading hash/slash and trailing space.
+    this.routeStripper = /^[#/]|\s+$/g;
+
+    // Cached regular expressions for matching named param parts and splatted
+    // parts of route strings.
+    this.escapeRegExp = /[-{}[\]+?.,\\^$|#\s]/g;
+    this.namedParam = /(\(\?)?:\w+/g;
+    this.optionalParam = /\((.*?)\)/g;
+    this.splatParam = /\*\w+/g;
   }
+
+  // preinitialize is an empty function by default. You can override it with a function
+  // or object.  preinitialize will run before any instantiation logic is run in the Model.
+  preinitialize () {}
+
+  // Initialize is an empty function by default. Override it with your own
+  // initialization logic.
+  initialize () {}
 
   // Splices `insert` into `array` at index `at`.
   splice (array, insert, at) {
@@ -62,18 +78,10 @@ export class Backbone {
     for (i = 0; i < tail.length; i++) array[i + length + at] = tail[i];
   }
 
-  // preinitialize is an empty function by default. You can override it with a function
-  // or object.  preinitialize will run before any instantiation logic is run in the Model.
-  preinitialize () {}
-
-  // Initialize is an empty function by default. Override it with your own
-  // initialization logic.
-  initialize () {}
-
   // Proxy `Backbone.sync` by default -- but override this if you need
   // custom syncing semantics for *this* particular model.
-  sync () {
-    return Backbone.Sync.apply(this, this.topargs);
+  sync (...args) {
+    return new Sync(args);
   }
 
   // Throw an error when a URL is needed, and none is supplied.
@@ -92,16 +100,14 @@ export class Backbone {
 
   modelMatcher (attrs) {
     const matcher = underscore.matches(attrs);
-    return function (model) {
-      return matcher(model.attributes);
-    };
+    return (model) => matcher(model.attributes);
   }
 
   // Support `collection.sortBy('attr')` and `collection.findWhere({id: 1})`.
   cb (iteratee, instance) {
     if (underscore.isFunction(iteratee)) return iteratee;
     if (underscore.isObject(iteratee) && !instance._isModel(iteratee)) return this.modelMatcher(iteratee);
-    if (underscore.isString(iteratee)) return function (model) { return model.get(iteratee); };
+    if (underscore.isString(iteratee)) return (model) => model.get(iteratee);
     return iteratee;
   }
 
@@ -114,21 +120,11 @@ export class Backbone {
   // `Function#apply` can be slow so we use the method's arg count, if we know it.
   addMethod (length, method, attribute) {
     switch (length) {
-    case 1: return function () {
-      return underscore[method](this[attribute]);
-    };
-    case 2: return function (value) {
-      return underscore[method](this[attribute], value);
-    };
-    case 3: return function (iteratee, context) {
-      return underscore[method](this[attribute], this.cb(iteratee, this), context);
-    };
-    case 4: return function (iteratee, defaultVal, context) {
-      return underscore[method](this[attribute], this.cb(iteratee, this), defaultVal, context);
-    };
-    default: return function () {
-      return underscore[method](this.topargs);
-    };
+    case 1: return () => underscore[method](this[attribute]);
+    case 2: return (value) => underscore[method](this[attribute], value);
+    case 3: return (iteratee, context) => underscore[method](this[attribute], this.cb(iteratee, this), context);
+    case 4: return (iteratee, defaultVal, context) => underscore[method](this[attribute], this.cb(iteratee, this), defaultVal, context);
+    default: return () => underscore[method](this.topArgs);
     }
   }
 
@@ -154,7 +150,7 @@ export class Backbone {
 //     object.trigger('expand');
 //
 export class Events extends Backbone {
-  constructor () {
+  constructor (...args) {
     super();
     // Aliases for backwards compatibility.
     this.bind = Events.on;
@@ -188,12 +184,12 @@ export class Events extends Backbone {
   // Bind an event to a `callback` function. Passing `"all"` will bind
   // the callback to all events fired.
   on (name, callback, context) {
-    return internalOn(this, name, callback, context);
+    return this.internalOn(this, name, callback, context);
   }
 
   // Guard the `listening` argument from the public API.
   internalOn (obj, name, callback, context, listening) {
-    obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
+    obj._events = this.eventsApi(this.onApi, obj._events || {}, name, callback, {
       context,
       ctx: obj,
       listening
@@ -224,7 +220,7 @@ export class Events extends Backbone {
     }
 
     // Bind callbacks on obj, and keep track of them on listening.
-    internalOn(obj, name, callback, this, listening);
+    this.internalOn(obj, name, callback, this, listening);
     return this;
   }
 
@@ -248,7 +244,7 @@ export class Events extends Backbone {
   // callbacks for all events.
   off (name, callback, context) {
     if (!this._events) return this;
-    this._events = eventsApi(offApi, this._events, name, callback, {
+    this._events = this.eventsApi(this.offApi, this._events, name, callback, {
       context,
       listeners: this._listeners
     });
@@ -341,7 +337,7 @@ export class Events extends Backbone {
   // once for each event, not once for a combination of all events.
   once (name, callback, context) {
     // Map the event into a `{event: once}` object.
-    const events = eventsApi(onceMap, {}, name, callback, underscore.bind(this.off, this));
+    const events = this.eventsApi(this.onceMap, {}, name, callback, underscore.bind(this.off, this));
     if (typeof name === 'string' && context == null) callback = void 0;
     return this.on(events, callback, context);
   }
@@ -357,7 +353,7 @@ export class Events extends Backbone {
   // `offer` unbinds the `onceWrapper` after it has been called.
   onceMap (map, name, callback, offer) {
     if (callback) {
-      const once = map[name] = underscore.once(function (...args) {
+      const once = map[name] = underscore.once((...args) => {
         offer(name, once);
         callback.apply(this, args);
       });
@@ -370,25 +366,20 @@ export class Events extends Backbone {
   // passed the same arguments as `trigger` is, apart from the event name
   // (unless you're listening on `"all"`, which will cause your callback to
   // receive the true name of the event as the first argument).
-  trigger (name) {
+  trigger (name, ...args) {
     if (!this._events) return this;
-
-    const length = Math.max(0, arguments.length - 1);
-    const args = Array(length);
-    for (let i = 0; i < length; i++) args[i] = arguments[i + 1];
-
-    eventsApi(triggerApi, this._events, name, void 0, args);
+    this.eventsApi(this.triggerApi, this._events, name, void 0, args);
     return this;
   }
 
   // Handles triggering the appropriate event callbacks.
-  triggerApi (objEvents, name, callback, args) {
+  triggerApi (objEvents, name, callback, ...args) {
     if (objEvents) {
       const events = objEvents[name];
       let allEvents = objEvents.all;
       if (events && allEvents) allEvents = allEvents.slice();
-      if (events) triggerEvents(events, args);
-      if (allEvents) triggerEvents(allEvents, [name].concat(args));
+      if (events) this.triggerEvents(events, args);
+      if (allEvents) this.triggerEvents(allEvents, [name].concat(args));
     }
     return objEvents;
   }
@@ -423,7 +414,7 @@ export class Events extends Backbone {
 export class Model extends Backbone.Events {
   // Create a new model with the specified attributes. A client id (`cid`)
   // is automatically generated and assigned for you.
-  constructor (attributes, options) {
+  constructor (attributes, options, ...args) {
     super(); // calls to Backbone.Events
     let attrs = attributes || {};
     options || (options = {});
@@ -450,10 +441,10 @@ export class Model extends Backbone.Events {
     this.cidPrefix = this.attributes.cidPrfix || 'c';
 
     // Mix in each Underscore method as a proxy to `Model#attributes`.
-    addUnderscoreMethods(Model, modelMethods, attributes);
+    this.addUnderscoreMethods(Model, this.modelMethods, attributes);
 
     // Initialize
-    this.initialize.apply(this, arguments);
+    this.initialize.apply(...args);
   }
 
   // Return a copy of the model's `attributes` object.
@@ -613,13 +604,13 @@ export class Model extends Backbone.Events {
     options = underscore.extend({parse: true}, options);
     const model = this;
     const success = options.success;
-    options.success = function (resp) {
+    options.success = (resp) => {
       const serverAttrs = options.parse ? model.parse(resp, options) : resp;
       if (!model.set(serverAttrs, options)) return false;
       if (success) success.call(options.context, model, resp, options);
       model.trigger('sync', model, resp, options);
     };
-    wrapError(this, options);
+    this.wrapError(this, options);
     return this.sync('read', this, options);
   }
 
@@ -653,7 +644,7 @@ export class Model extends Backbone.Events {
     const model = this;
     const success = options.success;
     const attributes = this.attributes;
-    options.success = function (resp) {
+    options.success = (resp) => {
       // Ensure attributes are restored during synchronous saves.
       model.attributes = attributes;
       let serverAttrs = options.parse ? model.parse(resp, options) : resp;
@@ -662,7 +653,7 @@ export class Model extends Backbone.Events {
       if (success) success.call(options.context, model, resp, options);
       model.trigger('sync', model, resp, options);
     };
-    wrapError(this, options);
+    this.wrapError(this, options);
 
     // Set temporary attributes if `{wait: true}` to properly find new ids.
     if (attrs && wait) this.attributes = underscore.extend({}, attributes, attrs);
@@ -686,12 +677,12 @@ export class Model extends Backbone.Events {
     const success = options.success;
     const wait = options.wait;
 
-    const destroy = function () {
+    const destroy = () => {
       model.stopListening();
       model.trigger('destroy', model, model.collection, options);
     };
 
-    options.success = function (resp) {
+    options.success = (resp) => {
       if (wait) destroy();
       if (success) success.call(options.context, model, resp, options);
       if (!model.isNew()) model.trigger('sync', model, resp, options);
@@ -701,7 +692,7 @@ export class Model extends Backbone.Events {
     if (this.isNew()) {
       underscore.defer(options.success);
     } else {
-      wrapError(this, options);
+      this.wrapError(this, options);
       xhr = this.sync('delete', this, options);
     }
     if (!wait) destroy();
@@ -715,7 +706,7 @@ export class Model extends Backbone.Events {
     const base =
     underscore.result(this, 'urlRoot') ||
     underscore.result(this.collection, 'url') ||
-    urlError();
+    this.urlError();
     if (this.isNew()) return base;
     const id = this.get(this.idAttribute);
     return base.replace(/[^/]$/, '$&/') + encodeURIComponent(id);
@@ -783,11 +774,10 @@ export class Model extends Backbone.Events {
 // If a `comparator` is specified, the Collection will maintain
 // its models in sort order, as they're added and removed.
 export class Collection extends Backbone.Model {
-  constructor (models, options) {
+  constructor (models, options, ...args) {
     super();
     options || (options = {});
-    // TODO: fix this!
-    this.preinitialize.apply(this, arguments);
+    this.preinitialize.apply(...args);
 
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
@@ -795,7 +785,7 @@ export class Collection extends Backbone.Model {
     if (options.comparator !== void 0) this.comparator = options.comparator;
     this._reset();
 
-    this.initialize.apply(this, arguments);
+    this.initialize.apply(...args);
     if (models) this.reset(models, underscore.extend({silent: true}, options));
 
     // Default options for `Collection#set`.
@@ -816,7 +806,7 @@ export class Collection extends Backbone.Model {
   // Models or raw JavaScript objects to be converted to Models, or any
   // combination of the two.
   add (models, options) {
-    return this.set(models, underscore.extend({merge: false}, options, addOptions));
+    return this.set(models, underscore.extend({merge: false}, options, this.addOptions));
   }
 
   // Remove a model, or a list of models from the set.
@@ -839,7 +829,7 @@ export class Collection extends Backbone.Model {
   set (models, options) {
     if (models == null) return;
 
-    options = underscore.extend({}, setOptions, options);
+    options = underscore.extend({}, this.setOptions, options);
     if (options.parse && !this._isModel(models)) {
       models = this.parse(models, options) || [];
     }
@@ -991,7 +981,7 @@ export class Collection extends Backbone.Model {
 
   // Slice out a sub-array of models from the collection.
   slice () {
-    return slice.apply(this.models, arguments);
+    return Array.prototype.slice(this.models, this.arguments);
   }
 
   // Get a model from the set by id, cid, model object with id or cid
@@ -1060,13 +1050,13 @@ export class Collection extends Backbone.Model {
     options = underscore.extend({parse: true}, options);
     const success = options.success;
     const collection = this;
-    options.success = function (resp) {
+    options.success = (resp) => {
       const method = options.reset ? 'reset' : 'set';
       collection[method](resp, options);
       if (success) success.call(options.context, collection, resp, options);
       collection.trigger('sync', collection, resp, options);
     };
-    wrapError(this, options);
+    this.wrapError(this, options);
     return this.sync('read', this, options);
   }
 
@@ -1081,7 +1071,7 @@ export class Collection extends Backbone.Model {
     if (!wait) this.add(model, options);
     const collection = this;
     const success = options.success;
-    options.success = function (m, resp, callbackOpts) {
+    options.success = (m, resp, callbackOpts) => {
       if (wait) collection.add(m, callbackOpts);
       if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
     };
@@ -1125,6 +1115,7 @@ export class Collection extends Backbone.Model {
     }
     options = options ? underscore.clone(options) : {};
     options.collection = this;
+    // TODO: verify this construction
     const model = new this.model(attrs, options);
     if (!model.validationError) return model;
     this.trigger('invalid', this, model.validationError, options);
@@ -1186,7 +1177,7 @@ export class Collection extends Backbone.Model {
   // Sets need to update their indexes when models change ids. All other
   // events simply proxy through. "add" and "remove" events that originate
   // in other collections are ignored.
-  _onModelEvent (event, model, collection, options) {
+  _onModelEvent (event, model, collection, options, ...args) {
     if (model) {
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
@@ -1199,7 +1190,7 @@ export class Collection extends Backbone.Model {
         }
       }
     }
-    this.trigger.apply(this, arguments);
+    this.trigger.apply(args);
   }
 
   // Underscore methods that we want to implement on the Collection.
@@ -1272,7 +1263,7 @@ export class Collection extends Backbone.Model {
 // Creating a Backbone.View creates its initial element outside of the DOM,
 // if an existing element is not provided...
 export class View extends Backbone.Events {
-  constructor (options) {
+  constructor (options, ...args) {
     super();
     this.cid = underscore.uniqueId('view');
     // Cached regex to split keys for `delegate`.
@@ -1283,7 +1274,7 @@ export class View extends Backbone.Events {
     this.viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
     underscore.extend(this, underscore.pick(options, this.viewOptions));
     this._ensureElement();
-    this.initialize.apply(this, arguments);
+    this.initialize.apply(args);
   }
 
   // jQuery delegate for element lookup, scoped to DOM elements within the
@@ -1354,7 +1345,7 @@ export class View extends Backbone.Events {
       let method = events[key];
       if (!underscore.isFunction(method)) method = this[method];
       if (!method) continue;
-      const match = key.match(delegateEventSplitter);
+      const match = key.match(this.delegateEventSplitter);
       this.delegate(match[1], match[2], underscore.bind(method, this));
     }
     return this;
@@ -1386,7 +1377,7 @@ export class View extends Backbone.Events {
   // Produces a DOM element to be assigned to your view. Exposed for
   // subclasses using an alternative DOM manipulation API.
   _createElement (tagName) {
-    return document.createElement(tagName);
+    return this.document.createElement(tagName);
   }
 
   // Ensure that the View has a DOM element to render into.
@@ -1433,62 +1424,63 @@ export class View extends Backbone.Events {
 export class Sync extends Backbone {
   constructor (method, model, options) {
     super();
-    this.type = methodMap[method];
+    const type = this.methodMap[method];
     // Default options, unless specified.
     underscore.defaults(options || (options = {}), {
       emulateHTTP: Backbone.emulateHTTP,
       emulateJSON: Backbone.emulateJSON
     });
 
+    // TODO: fix this!
     // Default JSON-request options.
-    this.params = {type, dataType: 'json'};
+    this.params = { type, dataType: 'json' };
 
     // Ensure that we have a URL.
     if (!options.url) {
-      params.url = underscore.result(model, 'url') || urlError();
+      this.params.url = underscore.result(model, 'url') || this.urlError();
     }
 
     // Ensure that we have the appropriate request data.
     if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
-      params.contentType = 'application/json';
-      params.data = JSON.stringify(options.attrs || model.toJSON(options));
+      this.params.contentType = 'application/json';
+      this.params.data = JSON.stringify(options.attrs || model.toJSON(options));
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
     if (options.emulateJSON) {
-      params.contentType = 'application/x-www-form-urlencoded';
-      params.data = params.data ? {model: params.data} : {};
+      this.params.contentType = 'application/x-www-form-urlencoded';
+      this.params.data = this.params.data ? {model: this.params.data} : {};
     }
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
     // And an `X-HTTP-Method-Override` header.
     if (options.emulateHTTP && (type === 'PUT' || type === 'DELETE' || type === 'PATCH')) {
-      params.type = 'POST';
-      if (options.emulateJSON) params.data._method = type;
-      // TODO: fix this up with a Promise
+      this.params.type = 'POST';
+      if (options.emulateJSON) this.params.data._method = type;
+      // TODO: where are the arguments coming from on this?
       const beforeSend = options.beforeSend;
-      options.beforeSend = function (xhr) {
+      options.beforeSend = async (xhr) => {
         xhr.setRequestHeader('X-HTTP-Method-Override', type);
-        if (beforeSend) return beforeSend.apply(this, arguments);
+        if (beforeSend) await beforeSend.apply(this, arguments);
       };
     }
 
     // Don't process data on a non-GET request.
-    if (params.type !== 'GET' && !options.emulateJSON) {
-      params.processData = false;
+    if (this.params.type !== 'GET' && !options.emulateJSON) {
+      this.params.processData = false;
     }
 
     // Pass along `textStatus` and `errorThrown` from jQuery.
     this.error = (xhr, textStatus, errorThrown) => {
       options.textStatus = textStatus;
       options.errorThrown = errorThrown;
-      if (error) error.call(options.context, xhr, textStatus, errorThrown);
+      if (this.error) this.error.call(options.context, xhr, textStatus, errorThrown);
     };
 
     // Make the request, allowing the user to override any Ajax options.
-    this.xhr = options.xhr = Backbone.ajax(underscore.extend(params, options));
-    model.trigger('request', model, xhr, options);
-    return xhr;
+    this.xhr = options.xhr = Backbone.ajax(underscore.extend(this.params, options));
+    model.trigger('request', model, this.xhr, options);
+    return this.xhr;
   }
 
   // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
@@ -1510,19 +1502,11 @@ export class Sync extends Backbone {
 // Routers map faux-URLs to actions, and fire events when routes are
 // matched. Creating a new one sets its `routes` hash, if not set statically.
 export class Router extends Backbone.Events {
-  constructor (options) {
+  constructor (options, ...args) {
     super();
     if (options.routes) this.routes = options.routes;
-
-    // Cached regular expressions for matching named param parts and splatted
-    // parts of route strings.
-    this.optionalParam = /\((.*?)\)/g;
-    this.namedParam = /(\(\?)?:\w+/g;
-    this.splatParam = /\*\w+/g;
-    this.escapeRegExp = /[-{}[\]+?.,\\^$|#\s]/g;
-
     this._bindRoutes();
-    this.initialize.apply(this, arguments);
+    this.initialize.apply(args);
   }
 
   // Manually bind a single named route to a callback. For example:
@@ -1578,12 +1562,12 @@ export class Router extends Backbone.Events {
   // Convert a route string into a regular expression, suitable for matching
   // against the current location hash.
   _routeToRegExp (route) {
-    route = route.replace(escapeRegExp, '\\$&')
-      .replace(optionalParam, '(?:$1)?')
-      .replace(namedParam, (match, optional) => {
+    route = route.replace(this.escapeRegExp, '\\$&')
+      .replace(this.optionalParam, '(?:$1)?')
+      .replace(this.namedParam, (match, optional) => {
         return optional ? match : '([^/?]+)';
       })
-      .replace(splatParam, '([^?]*?)');
+      .replace(this.splatParam, '([^?]*?)');
     return new RegExp(`^${route}(?:\\?([\\s\\S]*))?$`);
   }
 
@@ -1591,10 +1575,10 @@ export class Router extends Backbone.Events {
   // extracted decoded parameters. Empty or unmatched parameters will be
   // treated as `null` to normalize cross-browser behavior.
   _extractParameters (route, fragment) {
-    const params = route.exec(fragment).slice(1);
-    return params.map((param, i) => {
-      // Don't decode the search params.
-      if (i === params.length - 1) return param || null;
+    this.params = route.exec(fragment).slice(1);
+    return this.params.map((param, i) => {
+      // Don't decode the search this.params.
+      if (i === this.params.length - 1) return param || null;
       return param ? decodeURIComponent(param) : null;
     });
   }
@@ -1619,8 +1603,8 @@ export class History extends Backbone.Events {
 
     // Ensure that `History` can be used outside of the browser.
     if (typeof window !== 'undefined') {
-      this.location = window.location;
-      this.history = window.history;
+      this.location = this.window.location;
+      this.history = this.window.history;
     }
 
     // Has the history handling already been started?
@@ -1647,7 +1631,7 @@ export class History extends Backbone.Events {
     return decodeURI(fragment.replace(/%25/g, '%2525'));
   }
 
-  // In IE6, the hash fragment and search params are incorrect if the
+  // In IE6, the hash fragment and search this.params are incorrect if the
   // fragment contains `?`.
   getSearch () {
     const match = this.location.href.replace(/#.*/, '').match(/\?.+/);
@@ -1661,7 +1645,7 @@ export class History extends Backbone.Events {
     return match ? match[1] : '';
   }
 
-  // Get the pathname and search params, without the root.
+  // Get the pathname and search this.params, without the root.
   getPath () {
     const path = this.decodeFragment(
       this.location.pathname + this.getSearch()
@@ -1678,7 +1662,7 @@ export class History extends Backbone.Events {
         fragment = this.getHash();
       }
     }
-    return fragment.replace(routeStripper, '');
+    return fragment.replace(this.routeStripper, '');
   }
 
   // Start the hash change handling, returning `true` if the current URL matches
@@ -1692,7 +1676,7 @@ export class History extends Backbone.Events {
     this.options = underscore.extend({root: '/'}, this.options, options);
     this.root = this.options.root;
     this._wantsHashChange = this.options.hashChange !== false;
-    this._hasHashChange = 'onhashchange' in window && (document.documentMode === void 0 || document.documentMode > 7);
+    this._hasHashChange = 'onhashchange' in window && (document.documentMode === void 0 || this.document.documentMode > 7);
     this._useHashChange = this._wantsHashChange && this._hasHashChange;
     this._wantsPushState = !!this.options.pushState;
     this._hasPushState = !!(this.history && this.history.pushState);
@@ -1700,7 +1684,7 @@ export class History extends Backbone.Events {
     this.fragment = this.getFragment();
 
     // Normalize root to always include a leading and trailing slash.
-    this.root = (`/${this.root}/`).replace(rootStripper, '/');
+    this.root = (`/${this.root}/`).replace(this.rootStripper, '/');
 
     // Transition from hashChange to pushState or vice versa if both are
     // requested.
@@ -1724,11 +1708,12 @@ export class History extends Backbone.Events {
     // support the `hashchange` event, HTML5 history, or the user wants
     // `hashChange` but not `pushState`.
     if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
-      this.iframe = document.createElement('iframe');
+      this.iframe = this.document.createElement('iframe');
+      // TODO: https://eslint.org/docs/3.0.0/rules/no-script-url#disallow-script-urls-no-script-url
       this.iframe.src = 'javascript:0';
       this.iframe.style.display = 'none';
       this.iframe.tabIndex = -1;
-      const body = document.body;
+      const body = this.document.body;
       // Using `appendChild` will throw on IE < 9 if the document is not ready.
       const iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
       iWindow.document.open();
@@ -1737,8 +1722,8 @@ export class History extends Backbone.Events {
     }
 
     // Add a cross-platform `addEventListener` shim for older browsers.
-    const addEventListener = window.addEventListener || function (eventName, listener) {
-      return attachEvent(`on${eventName}`, listener);
+    const addEventListener = this.window.addEventListener || function (eventName, listener) {
+      return this.attachEvent(`on${eventName}`, listener);
     };
 
       // Depending on whether we're using pushState or hashes, and whether
@@ -1758,8 +1743,8 @@ export class History extends Backbone.Events {
   // but possibly useful for unit testing Routers.
   stop () {
     // Add a cross-platform `removeEventListener` shim for older browsers.
-    const removeEventListener = window.removeEventListener || function (eventName, listener) {
-      return detachEvent(`on${eventName}`, listener);
+    const removeEventListener = this.window.removeEventListener || function (eventName, listener) {
+      return this.detachEvent(`on${eventName}`, listener);
     };
 
       // Remove window listeners.
@@ -1771,7 +1756,7 @@ export class History extends Backbone.Events {
 
     // Clean up the iframe if necessary.
     if (this.iframe) {
-      document.body.removeChild(this.iframe);
+      this.document.body.removeChild(this.iframe);
       this.iframe = null;
     }
 
@@ -1846,7 +1831,7 @@ export class History extends Backbone.Events {
 
     // If pushState is available, we use it to set the fragment as a real URL.
     if (this._usePushState) {
-      this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
+      this.history[options.replace ? 'replaceState' : 'pushState']({}, this.document.title, url);
 
       // If hash changes haven't been explicitly disabled, update the hash
       // fragment to store history.

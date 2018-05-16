@@ -39,8 +39,7 @@
     "qunit": "^2.6.0",
     "qunitjs": "^2.4.1",
     "socks": "^2.2.0",
-    "underscore": "^1.9.0",
-    "you-dont-need-lodash-underscore": "^3.0.1"
+    "underscore": "^1.9.0"
   },
   "scripts": {
     "test": "karma start && coffee test/model.coffee && npm run lint",

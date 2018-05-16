@@ -3,7 +3,13 @@
         "es6": true,
         "browser": true
     },
-    "extends": ["plugin:you-dont-need-lodash-underscore/compatible", "eslint:recommended", "eslint-config-problems", "standard"],
+    "globals": {
+        "QUnit": false,
+        "Backbone": true,
+        "_": true,
+        "$": true
+    },
+    "extends": ["eslint:recommended", "standard", "eslint-config-problems", "plugin:promise/recommended", "plugin:import/errors", "plugin:import/warnings"],
     "rules": {
         "indent": [
             "error",

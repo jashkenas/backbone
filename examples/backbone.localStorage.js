@@ -1,21 +1,21 @@
 /**
  * Backbone localStorage Adapter
- * Version 1.1.0 (formatted)
+ * Version 1.1.0 (ES2015+ formatted)
  *
  * https://github.com/jeromegn/Backbone.localStorage
  */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
-    define(['underscore', 'backbone'], function(_, Backbone) {
-      // Use global variables if the locals are undefined.
+    define(['underscore', 'backbone'], (_, Backbone) => {
+      // Use global letiables if the locals are undefined.
       return factory(_ || root._, Backbone || root.Backbone);
     });
   } else {
     // RequireJS isn't being used. Assume underscore and backbone are loaded in script tags
     factory(_, Backbone);
   }
-})(this, function(_, Backbone) {
+})(this, (_, Backbone) => {
 // A simple module to replace `Backbone.sync` with *localStorage*-based
 // persistence. Models are given GUIDS, and saved into a JSON object. Simple
 // as that.
@@ -30,7 +30,7 @@
 
   // Generate a pseudo-GUID by concatenating random hexadecimal.
   function guid() {
-    return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
+    return (`${S4()+S4()}-${S4()}-${S4()}-${S4()}-${S4()}${S4()}${S4()}`);
   }
 
   // Our Store is represented by a single JS object in *localStorage*. Create it
@@ -38,69 +38,69 @@
   // window.Store is deprecated, use Backbone.LocalStorage instead
   Backbone.LocalStorage = window.Store = function(name) {
     this.name = name;
-    var store = this.localStorage().getItem(this.name);
+    const store = this.localStorage().getItem(this.name);
     this.records = (store && store.split(',')) || [];
   };
 
   _.extend(Backbone.LocalStorage.prototype, {
 
   // Save the current state of the **Store** to *localStorage*.
-    save: function() {
+    save() {
       this.localStorage().setItem(this.name, this.records.join(','));
     },
 
     // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
     // have an id of it's own.
-    create: function(model) {
+    create(model) {
       if (!model.id) {
         model.id = guid();
         model.set(model.idAttribute, model.id);
       }
-      this.localStorage().setItem(this.name + '-' + model.id, JSON.stringify(model));
+      this.localStorage().setItem(`${this.name}-${model.id}`, JSON.stringify(model));
       this.records.push(model.id.toString());
       this.save();
       return this.find(model);
     },
 
     // Update a model by replacing its copy in `this.data`.
-    update: function(model) {
-      this.localStorage().setItem(this.name + '-' + model.id, JSON.stringify(model));
+    update(model) {
+      this.localStorage().setItem(`${this.name}-${model.id}`, JSON.stringify(model));
       if (!_.include(this.records, model.id.toString())) { this.records.push(model.id.toString()); } this.save();
       return this.find(model);
     },
 
     // Retrieve a model from `this.data` by id.
-    find: function(model) {
-      return this.jsonData(this.localStorage().getItem(this.name + '-' + model.id));
+    find(model) {
+      return this.jsonData(this.localStorage().getItem(`${this.name}-${model.id}`));
     },
 
     // Return the array of all models currently in storage.
-    findAll: function() {
+    findAll() {
       return _(this.records).chain()
         .map(function(id) {
-          return this.jsonData(this.localStorage().getItem(this.name + '-' + id));
+          return this.jsonData(this.localStorage().getItem(`${this.name}-${id}`));
         }, this)
         .compact()
         .value();
     },
 
     // Delete a model from `this.data`, returning it.
-    destroy: function(model) {
+    destroy(model) {
       if (model.isNew()) { return false; }
-      this.localStorage().removeItem(this.name + '-' + model.id);
-      this.records = _.reject(this.records, function(id) {
+      this.localStorage().removeItem(`${this.name}-${model.id}`);
+      this.records = _.reject(this.records, (id) => {
         return id === model.id.toString();
       });
       this.save();
       return model;
     },
 
-    localStorage: function() {
+    localStorage() {
       return localStorage;
     },
 
     // fix for "illegal access" error on Android when JSON.parse is passed null
-    jsonData: function(data) {
+    jsonData(data) {
       return data && JSON.parse(data);
     }
 
@@ -110,26 +110,26 @@
   // *localStorage* property, which should be an instance of `Store`.
   // window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStorage.sync instead
   Backbone.LocalStorage.sync = window.Store.sync = Backbone.localSync = function(method, model, options) {
-    var store = model.localStorage || model.collection.localStorage;
+    const store = model.localStorage || model.collection.localStorage;
 
-    var resp;
-    var errorMessage;
-    var syncDfd = $.Deferred && $.Deferred(); // If $ is having Deferred - use it.
+    let resp;
+    let errorMessage;
+    const syncDfd = $.Deferred && $.Deferred(); // If $ is having Deferred - use it.
 
     try {
       switch (method) {
-        case 'read':
-          resp = model.id !== undefined ? store.find(model) : store.findAll();
-          break;
-        case 'create':
-          resp = store.create(model);
-          break;
-        case 'update':
-          resp = store.update(model);
-          break;
-        case 'delete':
-          resp = store.destroy(model);
-          break;
+      case 'read':
+        resp = model.id !== undefined ? store.find(model) : store.findAll();
+        break;
+      case 'create':
+        resp = store.create(model);
+        break;
+      case 'update':
+        resp = store.update(model);
+        break;
+      case 'delete':
+        resp = store.destroy(model);
+        break;
       }
     } catch (error) {
       if (error.code === DOMException.QUOTA_EXCEEDED_ERR && window.localStorage.length === 0) { errorMessage = 'Private browsing is unsupported'; } else { errorMessage = error.message; }
