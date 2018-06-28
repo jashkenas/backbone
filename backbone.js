@@ -1301,7 +1301,7 @@
   };
 
   // Cached regex to split keys for `delegate`.
-  var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+  var delegateEventSplitter = /^(\*?)\s*(\S+)\s*(.*)$/;
 
   // List of view options to be set as properties.
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
@@ -1369,17 +1369,21 @@
 
     // Set callbacks, where `this.events` is a hash of
     //
-    // *{"event selector": "callback"}*
+    // *{"[*] event selector": "callback"}*
     //
     //     {
     //       'mousedown .title':  'edit',
     //       'click .button':     'save',
-    //       'click .open':       function(e) { ... }
+    //       'click .open':       function(e) { ... },
+    //       '* scroll .list':    'loadMore' // Non delegated event
     //     }
     //
     // pairs. Callbacks will be bound to the view, with `this` set properly.
     // Uses event delegation for efficiency.
     // Omitting the selector binds the event to `this.el`.
+    // This also takes care of unbinding the events first and then setting
+    // them up again.
+
     delegateEvents: function(events) {
       events || (events = _.result(this, 'events'));
       if (!events) return this;
@@ -1389,7 +1393,9 @@
         if (!_.isFunction(method)) method = this[method];
         if (!method) continue;
         var match = key.match(delegateEventSplitter);
-        this.delegate(match[1], match[2], method.bind(this));
+        // First unbind or undelegate the event. then set it up again
+        if(match[1]) this.bindEvent(match[2], match[3], method.bind(this));
+        else this.delegate(match[2], match[3], method.bind(this));
       }
       return this;
     },
@@ -1402,11 +1408,30 @@
       return this;
     },
 
+    // A function to bind events on the specific element. Useful for non-delegatable
+    // events like scroll, focus...
+    bindEvent: function(eventName, selector, listener) {
+      this.$el.find(selector).on(eventName + '.exclusiveEvent' + this.cid, listener);
+    },
+
     // Clears all callbacks previously bound to the view by `delegateEvents`.
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
-      if (this.$el) this.$el.off('.delegateEvents' + this.cid);
+      if(!this.$el) return this;
+
+      // First remove all the delegated events
+      this.$el.off('.delegateEvents' + this.cid);
+
+      // Then remove all the exclusive events
+      var events = _.result(this, 'events')
+      if(events) {
+        for(var key in events){
+          var match = key.match(delegateEventSplitter);
+          if(match[1]) this.unbindEvent(match[2], match[3]);
+        }
+      }
+
       return this;
     },
 
@@ -1414,6 +1439,12 @@
     // `selector` and `listener` are both optional.
     undelegate: function(eventName, selector, listener) {
       this.$el.off(eventName + '.delegateEvents' + this.cid, selector, listener);
+      return this;
+    },
+
+    // A function to unbind an exclusive/non-delegated event inside the current elements DOM.
+    unbindEvent: function(eventName, selector) {
+      this.$el.find(selector).off(eventName + '.exclusiveEvent' + this.cid);
       return this;
     },
 
