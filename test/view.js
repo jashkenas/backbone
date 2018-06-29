@@ -128,6 +128,39 @@
     assert.equal(myView.delegate(), myView, '#delegate returns the view instance');
   });
 
+  QUnit.test('bindEvent', function(assert) {
+    assert.expect(1);
+    var myView = new Backbone.View();
+    var p = $('<p></p>'),
+        div = $('<div></div>').attr('id', 'my-div').css('overflow', 'scroll');
+
+    p.append(div);
+    myView.setElement(p);
+    myView.bindEvent('scroll', '#my-div', function() {
+      assert.ok(true);
+    });
+    myView.$el.find('#my-div').scroll();
+  });
+
+  QUnit.test('unbindEvent', function(assert) {
+    assert.expect(1);
+    var myView = new Backbone.View();
+    var p = $('<p></p>'),
+        div = $('<div></div>').attr('id', 'my-div').css('overflow', 'scroll');
+
+    p.append(div);
+    myView.setElement(p);
+    myView.bindEvent('scroll', '#my-div', function() {
+      assert.ok(true);
+    });
+
+    myView.unbindEvent('scroll', '#my-div');
+    myView.$el.find('#my-div').scroll();
+    // Just one assert should fire
+    assert.ok(true);
+  });
+
+
   QUnit.test('delegateEvents allows functions for callbacks', function(assert) {
     assert.expect(3);
     var myView = new Backbone.View({el: '<p></p>'});
