@@ -887,7 +887,8 @@
         // If this is a new, valid model, push it to the `toAdd` list.
         } else if (add) {
           model = models[i] = this._prepareModel(model, options);
-          if (model) {
+          var existing = this.get(model);
+          if (model && !!!existing) {
             toAdd.push(model);
             this._addReference(model, options);
             modelMap[model.cid] = true;
