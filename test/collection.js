@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   var a, b, c, d, e, col, otherCol;
 
@@ -593,7 +593,7 @@
       assert.equal(error, 'fail');
       assert.equal(options.validationError, 'fail');
     });
-    assert.equal(collection.create({'foo': 'bar'}, {validate: true}), false);
+    assert.equal(collection.create({foo: 'bar'}, {validate: true}), false);
   });
 
   QUnit.test('create will pass extra options to success callback', function(assert) {
@@ -661,6 +661,31 @@
     assert.equal(coll.one, 1);
   });
 
+  QUnit.test('preinitialize', function(assert) {
+    assert.expect(1);
+    var Collection = Backbone.Collection.extend({
+      preinitialize: function() {
+        this.one = 1;
+      }
+    });
+    var coll = new Collection;
+    assert.equal(coll.one, 1);
+  });
+
+  QUnit.test('preinitialize occurs before the collection is set up', function(assert) {
+    assert.expect(2);
+    var Collection = Backbone.Collection.extend({
+      preinitialize: function() {
+        assert.notEqual(this.model, FooModel);
+      }
+    });
+    var FooModel = Backbone.Model.extend({id: 'foo'});
+    var coll = new Collection({}, {
+      model: FooModel
+    });
+    assert.equal(coll.model, FooModel);
+  });
+
   QUnit.test('toJSON', function(assert) {
     assert.expect(1);
     assert.equal(JSON.stringify(col), '[{"id":3,"label":"a"},{"id":2,"label":"b"},{"id":1,"label":"c"},{"id":0,"label":"d"}]');
@@ -684,6 +709,27 @@
     assert.equal(coll.where({a: 1, b: 2}).length, 1);
     assert.equal(coll.findWhere({a: 1}), model);
     assert.equal(coll.findWhere({a: 4}), void 0);
+  });
+
+  QUnit.test('mixin', function(assert) {
+    Backbone.Collection.mixin({
+      sum: function(models, iteratee) {
+        return _.reduce(models, function(s, m) {
+          return s + iteratee(m);
+        }, 0);
+      }
+    });
+
+    var coll = new Backbone.Collection([
+      {a: 1},
+      {a: 1, b: 2},
+      {a: 2, b: 2},
+      {a: 3}
+    ]);
+
+    assert.equal(coll.sum(function(m) {
+      return m.get('a');
+    }), 7);
   });
 
   QUnit.test('Underscore methods', function(assert) {
@@ -1724,13 +1770,67 @@
         return new M(attrs);
       }
     });
-    var c2 = new C2({'_id': 1});
+    var c2 = new C2({_id: 1});
     assert.equal(c2.get(1), void 0);
     assert.equal(c2.modelId(c2.at(0).attributes), void 0);
-    var m = new M({'_id': 2});
+    var m = new M({_id: 2});
     c2.add(m);
     assert.equal(c2.get(2), void 0);
     assert.equal(c2.modelId(m.attributes), void 0);
+  });
+
+  QUnit.test('Collection implements Iterable, values is default iterator function', function(assert) {
+    /* global Symbol */
+    var $$iterator = typeof Symbol === 'function' && Symbol.iterator;
+    // This test only applies to environments which define Symbol.iterator.
+    if (!$$iterator) {
+      assert.expect(0);
+      return;
+    }
+    assert.expect(2);
+    var collection = new Backbone.Collection([]);
+    assert.strictEqual(collection[$$iterator], collection.values);
+    var iterator = collection[$$iterator]();
+    assert.deepEqual(iterator.next(), {value: void 0, done: true});
+  });
+
+  QUnit.test('Collection.values iterates models in sorted order', function(assert) {
+    assert.expect(4);
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    var iterator = collection.values();
+    assert.strictEqual(iterator.next().value, one);
+    assert.strictEqual(iterator.next().value, two);
+    assert.strictEqual(iterator.next().value, three);
+    assert.strictEqual(iterator.next().value, void 0);
+  });
+
+  QUnit.test('Collection.keys iterates ids in sorted order', function(assert) {
+    assert.expect(4);
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    var iterator = collection.keys();
+    assert.strictEqual(iterator.next().value, 1);
+    assert.strictEqual(iterator.next().value, 2);
+    assert.strictEqual(iterator.next().value, 3);
+    assert.strictEqual(iterator.next().value, void 0);
+  });
+
+  QUnit.test('Collection.entries iterates ids and models in sorted order', function(assert) {
+    assert.expect(4);
+    var one = new Backbone.Model({id: 1});
+    var two = new Backbone.Model({id: 2});
+    var three = new Backbone.Model({id: 3});
+    var collection = new Backbone.Collection([one, two, three]);
+    var iterator = collection.entries();
+    assert.deepEqual(iterator.next().value, [1, one]);
+    assert.deepEqual(iterator.next().value, [2, two]);
+    assert.deepEqual(iterator.next().value, [3, three]);
+    assert.strictEqual(iterator.next().value, void 0);
   });
 
   QUnit.test('#3039 #3951: adding at index fires with correct at', function(assert) {
@@ -1995,4 +2095,9 @@
     assert.equal(fired, false);
   });
 
-})();
+  QUnit.test('get models with `attributes` key', function(assert) {
+    var model = {id: 1, attributes: {}};
+    var collection = new Backbone.Collection([model]);
+    assert.ok(collection.get(model));
+  });
+})(QUnit);

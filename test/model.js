@@ -1,4 +1,4 @@
-(function() {
+(function(QUnit) {
 
   var ProxyModel = Backbone.Model.extend();
   var Klass = Backbone.Collection.extend({
@@ -61,6 +61,36 @@
     });
     var model = new Model({value: 1}, {parse: true});
     assert.equal(model.get('value'), 2);
+  });
+
+
+  QUnit.test('preinitialize', function(assert) {
+    assert.expect(2);
+    var Model = Backbone.Model.extend({
+
+      preinitialize: function() {
+        this.one = 1;
+      }
+    });
+    var model = new Model({}, {collection: collection});
+    assert.equal(model.one, 1);
+    assert.equal(model.collection, collection);
+  });
+
+  QUnit.test('preinitialize occurs before the model is set up', function(assert) {
+    assert.expect(6);
+    var Model = Backbone.Model.extend({
+
+      preinitialize: function() {
+        assert.equal(this.collection, undefined);
+        assert.equal(this.cid, undefined);
+        assert.equal(this.id, undefined);
+      }
+    });
+    var model = new Model({id: 'foo'}, {collection: collection});
+    assert.equal(model.collection, collection);
+    assert.equal(model.id, 'foo');
+    assert.notEqual(model.cid, undefined);
   });
 
   QUnit.test('parse can return null', function(assert) {
@@ -1365,6 +1395,28 @@
     assert.ok(!model.set('valid', false, {validate: true}));
   });
 
+  QUnit.test('mixin', function(assert) {
+    Backbone.Model.mixin({
+      isEqual: function(model1, model2) {
+        return _.isEqual(model1, model2.attributes);
+      }
+    });
+
+    var model1 = new Backbone.Model({
+      a: {b: 2}, c: 3
+    });
+    var model2 = new Backbone.Model({
+      a: {b: 2}, c: 3
+    });
+    var model3 = new Backbone.Model({
+      a: {b: 4}, c: 3
+    });
+
+    assert.equal(model1.isEqual(model2), true);
+    assert.equal(model1.isEqual(model3), false);
+  });
+
+
   QUnit.test('#1179 - isValid returns true in the absence of validate.', function(assert) {
     assert.expect(1);
     var model = new Backbone.Model();
@@ -1415,4 +1467,4 @@
     assert.equal(model.id, 3);
   });
 
-})();
+})(QUnit);

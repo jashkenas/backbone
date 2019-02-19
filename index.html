@@ -303,7 +303,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(1.3.3)</span>
+      Backbone.js <span class="version">(1.4.0)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/jashkenas/backbone">GitHub Repository</a></li>
@@ -348,6 +348,7 @@
       </a>
       <ul class="toc_section">
         <li data-name="extend">– <a href="#Model-extend">extend</a></li>
+        <li data-name="preinitialize">– <a href="#Model-preinitialize">preinitialize</a></li>
         <li data-name="constructor / initialize">– <a href="#Model-constructor">constructor / initialize</a></li>
         <li data-name="get">– <a href="#Model-get">get</a></li>
         <li data-name="set">– <a href="#Model-set">set</a></li>
@@ -390,6 +391,7 @@
         <li data-name="extend">– <a href="#Collection-extend">extend</a></li>
         <li data-name="model">– <a href="#Collection-model">model</a></li>
         <li data-name="modelId">– <a href="#Collection-modelId">modelId</a></li>
+        <li data-name="preinitialize" data-name="preinitialize">– <a href="#Collection-preinitialize">preinitialize</a></li>
         <li data-name="constructor / initialize" data-name="constructor / initialize">– <a href="#Collection-constructor">constructor / initialize</a></li>
         <li data-name="models">– <a href="#Collection-models">models</a></li>
         <li data-name="toJSON">– <a href="#Collection-toJSON">toJSON</a></li>
@@ -417,6 +419,7 @@
         <li data-name="clone">– <a href="#Collection-clone">clone</a></li>
         <li data-name="fetch">– <a href="#Collection-fetch">fetch</a></li>
         <li data-name="create">– <a href="#Collection-create">create</a></li>
+        <li data-name="sync">– <a href="#Collection-mixin">mixin</a></li>
       </ul>
     </div>
 
@@ -427,6 +430,7 @@
       <ul class="toc_section">
         <li data-name="extend">– <a href="#Router-extend">extend</a></li>
         <li data-name="routes">– <a href="#Router-routes">routes</a></li>
+        <li data-name="preinitialize">– <a href="#Router-preinitialize">preinitialize</a></li>
         <li data-name="constructor / initialize">– <a href="#Router-constructor">constructor / initialize</a></li>
         <li data-name="route">– <a href="#Router-route">route</a></li>
         <li data-name="navigate">– <a href="#Router-navigate">navigate</a></li>
@@ -461,6 +465,7 @@
       </a>
       <ul class="toc_section">
         <li data-name="extend">– <a href="#View-extend">extend</a></li>
+        <li data-name="preinitialize">– <a href="#View-preinitialize">preinitialize</a></li>
         <li data-name="constructor / initialize">– <a href="#View-constructor">constructor / initialize</a></li>
         <li data-name="el">– <a href="#View-el">el</a></li>
         <li data-name="$el">– <a href="#View-$el">$el</a></li>
@@ -588,10 +593,7 @@
     <p>
       You can report bugs and discuss features on the
       <a href="http://github.com/jashkenas/backbone/issues">GitHub issues page</a>,
-      on Freenode IRC in the <tt>#documentcloud</tt> channel, post questions to the
-      <a href="https://groups.google.com/forum/#!forum/backbonejs">Google Group</a>,
-      add pages to the <a href="https://github.com/jashkenas/backbone/wiki">wiki</a>
-      or send tweets to <a href="http://twitter.com/documentcloud">@documentcloud</a>.
+      or add pages to the <a href="https://github.com/jashkenas/backbone/wiki">wiki</a>.
     </p>
 
     <p>
@@ -614,7 +616,7 @@
       <tr>
         <td><a class="punch" href="backbone-min.js">Production Version (1.3.3)</a></td>
         <td class="text" style="line-height: 16px;">
-          <i>7.6kb, Packed and gzipped</i><br />
+          <i>7.9kb, Packed and gzipped</i><br />
           <small>(<a href="backbone-min.map">Source Map</a>)</small>
         </td>
       </tr>
@@ -622,9 +624,6 @@
         <td><a class="punch" href="https://raw.github.com/jashkenas/backbone/master/backbone.js">Edge Version (master)</a></td>
         <td>
           <i>Unreleased, use at your own risk</i>
-          <a class="travis-badge" href="https://travis-ci.org/jashkenas/backbone">
-            <img src="https://travis-ci.org/jashkenas/backbone.png" />
-          </a>
         </td>
       </tr>
     </table>
@@ -633,9 +632,7 @@
       Backbone's only hard dependency is
       <a href="http://underscorejs.org/">Underscore.js</a> <small>( >= 1.8.3)</small>.
       For RESTful persistence and DOM manipulation with <a href="#View">Backbone.View</a>,
-      include <b><a href="https://jquery.com/">jQuery</a></b> ( >= 1.11.0), and
-      <b><a href="https://github.com/douglascrockford/JSON-js">json2.js</a></b> for older
-      Internet Explorer support.
+      include <b><a href="https://jquery.com/">jQuery</a></b> ( >= 1.11.0).
       <i>(Mimics of the Underscore and jQuery APIs, such as
       <a href="https://lodash.com/">Lodash</a> and
       <a href="http://zeptojs.com/">Zepto</a>, will
@@ -704,7 +701,7 @@
         <b>Model</b>
         <ul>
           <li>Orchestrates data and business logic.</li>
-          <li>Loads and saves from the server.</li>
+          <li>Loads and saves data from the server.</li>
           <li>Emits events when data changes.</li>
         </ul>
       </div>
@@ -1031,7 +1028,7 @@ view.stopListening(model);
     <ul class="small">
       <li><b>"add"</b> (model, collection, options) &mdash; when a model is added to a collection.</li>
       <li><b>"remove"</b> (model, collection, options) &mdash; when a model is removed from a collection.</li>
-      <li><b>"update"</b> (collection, options) &mdash; single event triggered after any number of models have been added or removed from a collection.</li>
+      <li><b>"update"</b> (collection, options) &mdash; single event triggered after any number of models have been added, removed or changed in a collection.</li>
       <li><b>"reset"</b> (collection, options) &mdash; when the collection's entire contents have been <a href="#Collection-reset">reset</a>.</li>
       <li><b>"sort"</b> (collection, options) &mdash; when the collection has been re-sorted.</li>
       <li><b>"change"</b> (model, options) &mdash; when a model's attributes have changed.</li>
@@ -1039,7 +1036,7 @@ view.stopListening(model);
       <li><b>"destroy"</b> (model, collection, options) &mdash; when a model is <a href="#Model-destroy">destroyed</a>.</li>
       <li><b>"request"</b> (model_or_collection, xhr, options) &mdash; when a model or collection has started a request to the server.</li>
       <li><b>"sync"</b> (model_or_collection, response, options) &mdash; when a model or collection has been successfully synced with the server.</li>
-      <li><b>"error"</b> (model_or_collection, response, options) &mdash; when a model's or collection's request to the server has failed.</li>
+      <li><b>"error"</b> (model_or_collection, xhr, options) &mdash; when a model's or collection's request to the server has failed.</li>
       <li><b>"invalid"</b> (model, error, options) &mdash; when a model's <a href="#Model-validate">validation</a> fails on the client.</li>
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
@@ -1146,6 +1143,24 @@ var Note = Backbone.Model.extend({
     ...
   }
 });
+</pre>
+
+    <p id="Model-preinitialize">
+      <b class="header">preinitialize</b><code>new Model([attributes], [options])</code>
+      <br />
+      For use with models as ES classes. If you define a <b>preinitialize</b>
+      method, it will be invoked when the Model is first created, before any
+      instantiation logic is run for the Model.
+    </p>
+
+<pre>
+class Country extends Backbone.Model {
+    preinitialize({countryCode}) {
+      this.name = COUNTRY_NAMES[countryCode];
+    }
+
+    initialize() { ... }
+}
 </pre>
 
     <p id="Model-constructor">
@@ -1272,6 +1287,8 @@ if (note.has("title")) {
       A special property of models, the <b>id</b> is an arbitrary string
       (integer id or UUID). If you set the <b>id</b> in the
       attributes hash, it will be copied onto the model as a direct property.
+      <code>model.id</code> should not be manipulated directly,
+      it should be modified only via <code>model.set('id', …)</code>.
       Models can be retrieved by id from collections, and the id is used to generate
       model URLs by default.
     </p>
@@ -1531,21 +1548,22 @@ chapters.keys().join(', ');
       <br />
       This method is left undefined and you're encouraged to override it with
       any custom validation logic you have that can be performed in JavaScript.
+      If the attributes are valid, don't return anything from <b>validate</b>;
+      if they are invalid return an error of your choosing. It can be as
+      simple as a string error message to be displayed, or a complete error
+      object that describes the error programmatically.
+    </p>
+
+    <p>
       By default <tt>save</tt> checks <b>validate</b> before
       setting any attributes but you may also tell <tt>set</tt> to validate
       the new attributes by passing <tt>{validate: true}</tt> as an option.
-      <br />
       The <b>validate</b> method receives the model attributes as well as any
-      options passed to <tt>set</tt> or <tt>save</tt>.
-      If the attributes are valid, don't return anything from <b>validate</b>;
-      if they are invalid return an error of your choosing. It
-      can be as simple as a string error message to be displayed, or a complete
-      error object that describes the error programmatically. If <b>validate</b>
-      returns an error, <tt>save</tt> will not continue, and the
-      model attributes will not be modified on the server.
-      Failed validations trigger an <tt>"invalid"</tt> event, and set the
-      <tt>validationError</tt> property on the model with the value returned by
-      this method.
+      options passed to <tt>set</tt> or <tt>save</tt>, if <b>validate</b>
+      returns an error, <tt>save</tt> does not continue, the model attributes
+      are not modified on the server, an <tt>"invalid"</tt> event is triggered,
+      and the <tt>validationError</tt> property is set on the model with the
+      value returned by this method.
     </p>
 
 <pre class="runnable">
@@ -1583,9 +1601,16 @@ one.save({
     </p>
 
     <p id="Model-isValid">
-      <b class="header">isValid</b><code>model.isValid()</code>
+      <b class="header">isValid</b><code>model.isValid(options)</code>
       <br />
       Run <a href="#Model-validate">validate</a> to check the model state.
+    </p>
+
+    <p>
+      The <tt>validate</tt> method receives the model attributes as well as any
+      options passed to <b>isValid</b>, if <tt>validate</tt> returns an error
+      an <tt>"invalid"</tt> event is triggered, and the error is set on the
+      model in the <tt>validationError</tt> property.
     </p>
 
 <pre class="runnable">
@@ -1771,11 +1796,11 @@ bill.set({name : "Bill Jones"});
     <p id="Collection-model">
       <b class="header">model</b><code>collection.model([attrs], [options])</code>
       <br />
-      Override this property to specify the model class that the collection
-      contains. If defined, you can pass raw attributes objects (and arrays) to
+      Override this property to specify the model class that the collection contains.
+      If defined, you can pass raw attributes objects (and arrays) and options to
       <a href="#Collection-add">add</a>, <a href="#Collection-create">create</a>,
       and <a href="#Collection-reset">reset</a>, and the attributes will be
-      converted into a model of the proper type.
+      converted into a model of the proper type using the provided options, if any.
     </p>
 
 <pre>
@@ -1836,6 +1861,24 @@ var library = new Library([
 var dvdId = library.get('dvd1').id;
 var vhsId = library.get('vhs1').id;
 alert('dvd: ' + dvdId + ', vhs: ' + vhsId);
+</pre>
+
+    <p id="Collection-preinitialize">
+      <b class="header">preinitialize</b><code>new Backbone.Collection([models], [options])</code>
+      <br />
+      For use with collections as ES classes. If you define a <b>preinitialize</b>
+      method, it will be invoked when the Collection is first created and before
+      any instantiation logic is run for the Collection.
+    </p>
+
+<pre>
+class Library extends Backbone.Collection {
+  preinitialize() {
+    this.on("add", function() {
+      console.log("Add model event got fired!");
+    };
+  }
+}
 </pre>
 
     <p id="Collection-constructor">
@@ -1966,7 +2009,8 @@ var randomThree = books.sample(3);
       <br />
       Add a model (or an array of models) to the collection, firing an <tt>"add"</tt>
       event for each model, and an <tt>"update"</tt> event afterwards. If a <a href="#Collection-model">model</a> property is defined, you may also pass
-      raw attributes objects, and have them be vivified as instances of the model.
+      raw attributes objects and options, and have them be vivified as instances of the model using
+      the provided options.
       Returns the added (or preexisting, if duplicate) models.
       Pass <tt>{at: index}</tt> to splice the model into the collection at the
       specified <tt>index</tt>. If you're adding models to the collection that are
@@ -2128,14 +2172,13 @@ var book = library.get(110);
       <b class="header">comparator</b><code>collection.comparator</code>
       <br />
       By default there is no <b>comparator</b> for a collection.
-      If you define a comparator, it will be used to maintain
-      the collection in sorted order. This means that as models are added,
-      they are inserted at the correct index in <tt>collection.models</tt>.
+      If you define a comparator, it will be used to sort the collection any
+      time a model is added.
       A comparator can be defined as a
       <a href="http://underscorejs.org/#sortBy">sortBy</a>
       (pass a function that takes a single argument),
       as a
-      <a href="https://developer.mozilla.org/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">sort</a>
       (pass a comparator function that expects two arguments),
       or as a string indicating the attribute to sort by.
     </p>
@@ -2178,9 +2221,9 @@ alert(chapters.pluck('title'));
     <p id="Collection-sort">
       <b class="header">sort</b><code>collection.sort([options])</code>
       <br />
-      Force a collection to re-sort itself. You don't need to call this under
-      normal circumstances, as a collection with a <a href="#Collection-comparator">comparator</a>
-      will sort itself whenever a model is added. To disable sorting when adding
+      Force a collection to re-sort itself. Note that a collection with a
+      <a href="#Collection-comparator">comparator</a> will sort itself
+      automatically whenever a model is added. To disable sorting when adding
       a model, pass <tt>{sort: false}</tt> to <tt>add</tt>. Calling <b>sort</b>
       triggers a <tt>"sort"</tt> event on the collection.
     </p>
@@ -2229,6 +2272,7 @@ alert(musketeers.length);
       <br />
       Just like <a href="#Collection-where">where</a>, but directly returns only
       the first model in the collection that matches the passed <b>attributes</b>.
+      If no model matches returns <tt>undefined</tt>.
     </p>
 
     <p id="Collection-url">
@@ -2341,8 +2385,8 @@ accounts.fetch();
       failed, the model will be unsaved, with validation errors.
       In order for this to work, you should set the
       <a href="#Collection-model">model</a> property of the collection.
-      The <b>create</b> method can accept either an attributes hash or an
-      existing, unsaved model object.
+      The <b>create</b> method can accept either an attributes hash and options to be
+      passed down during model instantiation or an existing, unsaved model object.
     </p>
 
     <p>
@@ -2364,6 +2408,32 @@ var othello = nypl.create({
   title: "Othello",
   author: "William Shakespeare"
 });
+</pre>
+
+    <p id="Collection-mixin">
+      <b class="header">mixin</b><code>Backbone.Collection.mixin(properties)</code>
+      <br />
+      <code>mixin</code> provides a way to enhance the base <b>Backbone.Collection</b>
+      and any collections which extend it. This can be used to add generic methods
+      (e.g. additional <a href="#Collection-Underscore-Methods"><b>Underscore Methods</b></a>).
+    </p>
+
+<pre>
+Backbone.Collection.mixin({
+  sum: function(models, iteratee) {
+    return _.reduce(models, function(s, m) {
+      return s + iteratee(m);
+    }, 0);
+  }
+});
+
+var cart = new Backbone.Collection([
+  {price: 16, name: 'monopoly'},
+  {price: 5, name: 'deck of cards'},
+  {price: 20, name: 'chess'}
+]);
+
+var cost = cart.sum('price');
 </pre>
 
     <h2 id="Router">Backbone.Router</h2>
@@ -2481,6 +2551,30 @@ routes: {
 router.on("route:help", function(page) {
   ...
 });
+</pre>
+
+    <p id="Router-preinitialize">
+      <b class="header">preinitialize</b><code>new Backbone.Router([options])</code>
+      <br />
+      For use with routers as ES classes. If you define a <b>preinitialize</b>
+      method, it will be invoked when the Router is first created and before
+      any instantiation logic is run for the Router.
+    </p>
+
+<pre>
+class Router extends Backbone.Router {
+  preinitialize() {
+    // Override execute method
+    this.execute = function(callback, args, name) {
+      if (!loggedIn) {
+        goToLogin();
+        return false;
+      }
+      args.push(parseQueryString(args.pop()));
+      if (callback) callback.apply(this, args);
+    }
+  }
+}
 </pre>
 
     <p id="Router-constructor">
@@ -2806,6 +2900,28 @@ var DocumentRow = Backbone.View.extend({
       <tt>el</tt>, and <tt>events</tt> may also be defined as a function, if
       you want to wait to define them until runtime.
     </p>
+
+    <p id="View-preinitialize">
+      <b class="header">preinitialize</b><code>new View([options])</code>
+      <br />
+      For use with views as ES classes. If you define a <b>preinitialize</b>
+      method, it will be invoked when the view is first created, before any
+      instantiation logic is run.
+    </p>
+
+<pre>
+class Document extends Backbone.View {
+  preinitialize({autoRender}) {
+    this.autoRender = autoRender;
+  }
+
+  initialize() {
+    if (this.autoRender) {
+      this.listenTo(this.model, "change", this.render);
+    }
+  }
+}
+</pre>
 
     <p id="View-constructor">
       <b class="header">constructor / initialize</b><code>new View([options])</code>
@@ -3336,7 +3452,7 @@ inbox.messages.fetch({reset: true});
 </pre>
 
     <p>You have to <a href="http://mathiasbynens.be/notes/etago">escape</a>
-    <tt>&lt;/</tt> within the JSON string, to prevent javascript injection
+    <tt>&lt;/</tt> within the JSON string, to prevent JavaScript injection
     attacks.
 
     <p id="FAQ-extending">
@@ -3471,9 +3587,9 @@ ActiveRecord::Base.include_root_in_json = false
     <h2 id="examples">Examples</h2>
 
     <p>
-      The list of examples that follows, while long, is not exhaustive. If you've
-      worked on an app that uses Backbone, please add it to the
-      <a href="https://github.com/jashkenas/backbone/wiki/Projects-and-Companies-using-Backbone">wiki page of Backbone apps</a>.
+      The list of examples that follows, while long, is not exhaustive — nor in
+      any way current. If you've worked on an app that uses Backbone, please
+      add it to the <a href="https://github.com/jashkenas/backbone/wiki/Projects-and-Companies-using-Backbone">wiki page of Backbone apps</a>.
     </p>
 
     <p id="examples-todos">
@@ -3595,7 +3711,7 @@ ActiveRecord::Base.include_root_in_json = false
       <a href="http://earth.nullschool.net">Earth.nullschool.net</a> displays real-time weather
       conditions on an interactive animated globe, and Backbone provides the
       foundation upon which all of the site's components are built. Despite the
-      presence of several other javascript libraries, Backbone's non-opinionated
+      presence of several other JavaScript libraries, Backbone's non-opinionated
       design made it effortless to mix-in the <a href="#Events">Events</a> functionality used for
       distributing state changes throughout the page. When the decision was made
       to switch to Backbone, large blocks of custom logic simply disappeared.
@@ -3918,7 +4034,7 @@ ActiveRecord::Base.include_root_in_json = false
       large single-page application that
       benefits from Backbone's structure and modularity. ZocDoc's Backbone
       classes are tested with
-      <a href="http://pivotal.github.io/jasmine/">Jasmine</a>, and delivered
+      <a href="https://jasmine.github.io/">Jasmine</a>, and delivered
       to the end user with
       <a href="http://getcassette.net/">Cassette</a>.
     </p>
@@ -4056,7 +4172,7 @@ ActiveRecord::Base.include_root_in_json = false
       <a href="http://m.soundcloud.com">SoundCloud Mobile</a>. The project uses
       the public SoundCloud <a href="http://soundcloud.com/developers">API</a>
       as a data source (channeled through a nginx proxy),
-      <a href="http://api.jquery.com/category/plugins/templates/">jQuery templates</a>
+      <a href="https://github.com/BorisMoore/jquery-tmpl">jQuery templates</a>
       for the rendering, <a href="http://docs.jquery.com/Qunit">Qunit
       </a> and <a href="http://www.phantomjs.org/">PhantomJS</a> for
       the testing suite. The JS code, templates and CSS are built for the
@@ -4326,6 +4442,32 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header">1.4.0</b> &mdash; <small><i>Feb. 19, 2019</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.3.3...1.4.0">Diff</a>
+    &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.4.0/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Collections now support the <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Iteration_protocols">Javascript Iterator Protocol!</a>
+      </li>
+      <li>
+        <tt>listenTo</tt> uses the listened object's public <tt>on</tt> method.
+        This helps maintain interoperability between Backbone and other event
+        libraries (including Node.js).
+      </li>
+      <li>
+        Added support for setting instance properties before the constructor in
+        <tt>ES2015 classes</tt> with a <tt>preinitialize</tt> method.
+      </li>
+      <li>
+        <tt>Collection.get</tt> now checks if obj is a <tt>Model</tt> to allow
+        retrieving models with an `attributes` key.
+      </li>
+      <li>
+        Fixed several issues with Router's URL hashing and parsing.
+      </li>
+    </ul>
+
     <b class="header">1.3.3</b> &mdash; <small><i>Apr. 5, 2016</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.2.3...1.3.3">Diff</a>
     &mdash; <a href="https://cdn.rawgit.com/jashkenas/backbone/1.3.3/index.html">Docs</a>
@@ -4338,6 +4480,9 @@ ActiveRecord::Base.include_root_in_json = false
       <li>
         Added <tt>options.changes</tt> to <tt>Collection</tt> "update" event which
         includes added, merged, and removed models.
+      </li>
+      <li>
+        Added support for <tt>Collection#mixin</tt> and <tt>Model#mixin</tt>.
       </li>
       <li>
         Ensured <tt>Collection#reduce</tt> and <tt>Collection#reduceRight</tt>
@@ -4419,7 +4564,7 @@ ActiveRecord::Base.include_root_in_json = false
         Bug fix in <tt>Collection#remove</tt>. The removed models are now actually returned.
       </li>
       <li>
-        <tt>Model#fetch</tt> no longer parses the response when passing <tt>patch: false</tt>.
+        <tt>Model#fetch</tt> no longer parses the response when passing <tt>parse: false</tt>.
       </li>
       <li>
         Bug fix for iframe-based History when used with JSDOM.
@@ -4518,7 +4663,7 @@ ActiveRecord::Base.include_root_in_json = false
         have actually been removed from the collection.
       </li>
       <li>
-        Fixed loading Backbone.js in strict ES6 module loaders.
+        Fixed loading Backbone.js in strict ES2015 module loaders.
       </li>
     </ul>
 
