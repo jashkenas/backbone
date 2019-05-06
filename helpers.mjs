@@ -146,7 +146,8 @@ export function ajax() {
 }
 
 
-
+// Create a local reference to a common array method we'll want to use later.
+var slice = Array.prototype.slice;
 
 // Proxy Backbone class methods to Underscore functions, wrapping the model's
 // `attributes` object or collection's `models` array behind the scenes.

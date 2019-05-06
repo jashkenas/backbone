@@ -40,9 +40,6 @@
   // restored later on, if `noConflict` is used.
   var previousBackbone = root.Backbone;
 
-  // Create a local reference to a common array method we'll want to use later.
-  var slice = Array.prototype.slice;
-
   // Current version of the library. Keep in sync with `package.json`.
   Backbone.VERSION = '1.4.0';
 
@@ -67,9 +64,6 @@
   // `application/x-www-form-urlencoded` instead and will send the model in a
   // form param named `model`.
   Backbone.emulateJSON = false;
-
-
-
 
   return Backbone;
 });
