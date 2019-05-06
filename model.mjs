@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { Events } from './events.mjs';
-import { extend, wrapError, urlError, addMethodsToObject } from './helpers.mjs';
+import { extend, wrapError, urlError, addMethodsToObject, sync } from './helpers.mjs';
 
 // Backbone.Model
 // --------------
@@ -62,7 +62,7 @@ _.extend(Model.prototype, Events, {
     // Proxy `Backbone.sync` by default -- but override this if you need
     // custom syncing semantics for *this* particular model.
     sync: function() {
-        return Backbone.sync.apply(this, arguments);
+        return sync.apply(this, arguments);
     },
 
     // Get the value of an attribute.

@@ -1,4 +1,5 @@
 import * as Backbone from '../../backbone.mjs';
+import { sync, LocalStorage } from './backbone.localStorage.js';
 import _ from 'lodash';
 import $ from 'jquery';
 
@@ -24,6 +25,8 @@ var Todo = Backbone.Model.extend({
         };
     },
 
+    sync: sync,
+
     // Toggle the `done` state of this todo item.
     toggle: function() {
         this.save({ done: !this.get("done") });
@@ -43,12 +46,14 @@ var TodoList = Backbone.Collection.extend({
 
     // Save all of the todo items under the `"todos-backbone"` namespace.
     // localStorage: new Backbone.LocalStorage("todos-backbone"),
-    localStorage: localStorage,
+    localStorage: new LocalStorage("todos-backbone"),
 
     // Filter down the list of all todo items that are finished.
     done: function() {
         return this.where({ done: true });
     },
+
+    sync: sync,
 
     // Filter down the list to only todo items that are still not finished.
     remaining: function() {
