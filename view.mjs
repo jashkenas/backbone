@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { Events } from './events.mjs';
 import { extend } from './helpers.mjs';
+import * as config from './config.mjs';
 
 // Backbone.View
 // -------------
@@ -88,7 +89,7 @@ _.extend(View.prototype, Events, {
     // alternative DOM manipulation API and are only required to set the
     // `this.el` property.
     _setElement: function(el) {
-        this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
+        this.$el = el instanceof config.$ ? el : config.$(el);
         this.el = this.$el[0];
     },
 

@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import { Events } from './events.mjs';
-import { extend, wrapError, addUnderscoreMethods } from './helpers.mjs';
+import { Model } from './model.mjs';
+import { extend, wrapError, addMethodsToObject, sync } from './helpers.mjs';
+
 
 // Create a local reference to a common array method we'll want to use later.
 var slice = Array.prototype.slice;
@@ -69,7 +71,7 @@ _.extend(Collection.prototype, Events, {
 
     // Proxy `Backbone.sync` by default.
     sync: function() {
-        return Backbone.sync.apply(this, arguments);
+        return sync.apply(this, arguments);
     },
 
     // Add a model, or list of models to the set. `models` may be Backbone
@@ -556,21 +558,4 @@ var collectionMethods = {forEach: 3, each: 3, map: 3, collect: 3, reduce: 0,
     isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
     sortBy: 3, indexBy: 3, findIndex: 3, findLastIndex: 3};
 
-_.each([
-    [Collection, collectionMethods, 'models'],
-], function(config) {
-    var Base = config[0],
-        methods = config[1],
-        attribute = config[2];
-
-    Base.mixin = function(obj) {
-        var mappings = _.reduce(_.functions(obj), function(memo, name) {
-            memo[name] = 0;
-            return memo;
-        }, {});
-        addUnderscoreMethods(Base, obj, mappings, attribute);
-    };
-
-    addUnderscoreMethods(Base, _, methods, attribute);
-});
-
+addMethodsToObject([Collection, collectionMethods, 'models']);

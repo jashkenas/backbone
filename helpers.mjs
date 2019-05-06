@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { emulateHTTP, emulateJSON } from './config.mjs';
 
 // Helpers
 // -------
@@ -83,8 +84,8 @@ export function sync(method, model, options) {
 
     // Default options, unless specified.
     _.defaults(options || (options = {}), {
-        emulateHTTP: Backbone.emulateHTTP,
-        emulateJSON: Backbone.emulateJSON
+        emulateHTTP: emulateHTTP,
+        emulateJSON: emulateJSON
     });
 
     // Default JSON-request options.
@@ -178,7 +179,7 @@ var addMethod = function(base, length, method, attribute) {
     }
 };
 
-export var addUnderscoreMethods = function(Class, base, methods, attribute) {
+var addUnderscoreMethods = function(Class, base, methods, attribute) {
     _.each(methods, function(length, method) {
         if (base[method]) Class.prototype[method] = addMethod(base, length, method, attribute);
     });
@@ -198,3 +199,19 @@ var modelMatcher = function(attrs) {
         return matcher(model.attributes);
     };
 };
+
+export function addMethodsToObject(config) {
+    var Base = config[0],
+        methods = config[1],
+        attribute = config[2];
+
+    Base.mixin = function(obj) {
+        var mappings = _.reduce(_.functions(obj), function(memo, name) {
+            memo[name] = 0;
+            return memo;
+        }, {});
+        addUnderscoreMethods(Base, obj, mappings, attribute);
+    };
+
+    addUnderscoreMethods(Base, _, methods, attribute);
+}
