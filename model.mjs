@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { Events } from './events.mjs';
-import { extend } from './helpers.mjs';
+import { extend, wrapError, urlError, addUnderscoreMethods } from './helpers.mjs';
 
 // Backbone.Model
 // --------------
@@ -359,4 +359,30 @@ _.extend(Model.prototype, Events, {
         return false;
     }
 
+});
+
+
+// Underscore methods that we want to implement on the Model, mapped to the
+// number of arguments they take.
+var modelMethods = {keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
+    omit: 0, chain: 1, isEmpty: 1};
+
+// Mix in each Underscore method as a proxy to `Collection#models`.
+
+_.each([
+    [Model, modelMethods, 'attributes']
+], function(config) {
+    var Base = config[0],
+        methods = config[1],
+        attribute = config[2];
+
+    Base.mixin = function(obj) {
+        var mappings = _.reduce(_.functions(obj), function(memo, name) {
+            memo[name] = 0;
+            return memo;
+        }, {});
+        addUnderscoreMethods(Base, obj, mappings, attribute);
+    };
+
+    addUnderscoreMethods(Base, _, methods, attribute);
 });

@@ -1,6 +1,9 @@
 import _ from 'lodash';
 import { Events } from './events.mjs';
-import { extend } from './helpers.mjs';
+import { extend, wrapError, addUnderscoreMethods } from './helpers.mjs';
+
+// Create a local reference to a common array method we'll want to use later.
+var slice = Array.prototype.slice;
 
 // Backbone.Collection
 // -------------------
@@ -540,3 +543,34 @@ CollectionIterator.prototype.next = function() {
 
     return {value: void 0, done: true};
 };
+
+// Underscore methods that we want to implement on the Collection.
+// 90% of the core usefulness of Backbone Collections is actually implemented
+// right here:
+var collectionMethods = {forEach: 3, each: 3, map: 3, collect: 3, reduce: 0,
+    foldl: 0, inject: 0, reduceRight: 0, foldr: 0, find: 3, detect: 3, filter: 3,
+    select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
+    contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
+    head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
+    without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
+    isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
+    sortBy: 3, indexBy: 3, findIndex: 3, findLastIndex: 3};
+
+_.each([
+    [Collection, collectionMethods, 'models'],
+], function(config) {
+    var Base = config[0],
+        methods = config[1],
+        attribute = config[2];
+
+    Base.mixin = function(obj) {
+        var mappings = _.reduce(_.functions(obj), function(memo, name) {
+            memo[name] = 0;
+            return memo;
+        }, {});
+        addUnderscoreMethods(Base, obj, mappings, attribute);
+    };
+
+    addUnderscoreMethods(Base, _, methods, attribute);
+});
+

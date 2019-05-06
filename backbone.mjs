@@ -1,8 +1,9 @@
-// Allow the `Backbone` object to serve as a global event bus, for folks who
-// want global "pubsub" in a convenient place.
-// _.extend(Backbone, Events);
+import * as helpers from './helpers.mjs';
 
 export * from './events.mjs';
+export * from './model.mjs';
 export * from './view.mjs';
 export * from './collection.mjs';
 
+export const sync = helpers.sync;
+export const ajax = helpers.ajax;
