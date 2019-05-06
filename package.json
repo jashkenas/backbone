@@ -34,6 +34,7 @@
     "lint": "eslint backbone.js test/*.js"
   },
   "main": "backbone.js",
+  "module": "index.mjs",
   "version": "1.4.0",
   "license": "MIT",
   "repository": {
