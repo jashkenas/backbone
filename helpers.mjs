@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from 'underscore';
 import { emulateHTTP, emulateJSON } from './config.mjs';
 
 // Helpers

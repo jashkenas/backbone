@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from 'underscore';
 import { Events } from './events.mjs';
 import { Model } from './model.mjs';
 import { extend, wrapError, addMethodsToObject, sync } from './helpers.mjs';
