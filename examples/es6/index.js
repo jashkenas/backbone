@@ -1,17 +1,8 @@
-import * as Backbone from '../../backbone.mjs';
-import { sync, LocalStorage } from './backbone.localStorage.js';
-import _ from 'lodash';
+import Backbone from '../../backbone.mjs';
+import { LocalStorage} from 'backbone.localStorage';
+import { sync } from 'backbone.localStorage/src/sync';
+import { invoke, template } from 'underscore';
 import $ from 'jquery';
-
-// An example Backbone application contributed by
-// [Jérôme Gravel-Niquet](http://jgn.me/). This demo uses a simple
-// [LocalStorage adapter](backbone.localStorage.html)
-// to persist Backbone models within your browser.
-
-// Load the application once the DOM is ready, using `jQuery.ready`:
-
-// Todo Model
-// ----------
 
 // Our basic **Todo** model has `title`, `order`, and `done` attributes.
 var Todo = Backbone.Model.extend({
@@ -25,6 +16,7 @@ var Todo = Backbone.Model.extend({
         };
     },
 
+    localStorage: new LocalStorage("todos-backbone"),
     sync: sync,
 
     // Toggle the `done` state of this todo item.
@@ -48,12 +40,12 @@ var TodoList = Backbone.Collection.extend({
     // localStorage: new Backbone.LocalStorage("todos-backbone"),
     localStorage: new LocalStorage("todos-backbone"),
 
+    sync: sync,
+
     // Filter down the list of all todo items that are finished.
     done: function() {
         return this.where({ done: true });
     },
-
-    sync: sync,
 
     // Filter down the list to only todo items that are still not finished.
     remaining: function() {
@@ -85,7 +77,7 @@ var TodoView = Backbone.View.extend({
     tagName: "li",
 
     // Cache the template function for a single item.
-    template: _.template($('#item-template').html()),
+    template: template($('#item-template').html()),
 
     // The DOM events specific to an item.
     events: {
@@ -157,7 +149,7 @@ var AppView = Backbone.View.extend({
     el: $("#todoapp"),
 
     // Our template for the line of statistics at the bottom of the app.
-    statsTemplate: _.template($('#stats-template').html()),
+    statsTemplate: template($('#stats-template').html()),
 
     // Delegated events for creating new items, and clearing completed ones.
     events: {
@@ -226,7 +218,7 @@ var AppView = Backbone.View.extend({
 
     // Clear all done todo items, destroying their models.
     clearCompleted: function() {
-        _.invoke(Todos.done(), 'destroy');
+        invoke(Todos.done(), 'destroy');
         return false;
     },
 
