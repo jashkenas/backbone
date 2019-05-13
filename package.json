@@ -13,9 +13,7 @@
   ],
   "author": "Jeremy Ashkenas",
   "dependencies": {
-    "backbone.localstorage": "^2.0.2",
-    "lodash-es": "^4.17.11",
-    "underscore-es": "^1.9.8"
+    "underscore": ">=1.8.3"
   },
   "devDependencies": {
     "coffee-script": "1.7.1",
