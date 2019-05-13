@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from 'underscore';
 import { Events } from './events.mjs';
 import { extend } from './helpers.mjs';
 
