@@ -101,6 +101,26 @@
     assert.equal(collection2.get(model.clone()), collection2.first());
   });
 
+  QUnit.test('#4224 - internal map this._byId does not inherit from Object.prototype', function(assert) {
+    assert.expect(4);
+
+    var col1 = new Backbone.Collection();
+    assert.equal(col1._byId.constructor, undefined, 'this._byId has a constructor');
+    assert.equal(col1._byId.hasOwnProperty, undefined, 'object prototype methods are present on this._byId');
+
+    var model = new Backbone.Model({id: 'hasOwnProperty'});
+    // will throw if regression
+    col1.set([model]);
+    assert.deepEqual(col1.models, [model], 'models not correctly added');
+
+    var KeyedModel = Backbone.Model.extend({idAttribute: 'key'});
+    var KeyedCollection = Backbone.Collection.extend({model: KeyedModel});
+    var col2 = new KeyedCollection();
+    // will throw if regression
+    col2.add({key: 'hasOwnProperty'});
+    assert.deepEqual(col2.models[0].attributes, {key: 'hasOwnProperty'}, 'models not correctly added');
+  });
+
   QUnit.test('has', function(assert) {
     assert.expect(15);
     assert.ok(col.has(a));
