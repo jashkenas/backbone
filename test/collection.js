@@ -2100,4 +2100,21 @@
     var collection = new Backbone.Collection([model]);
     assert.ok(collection.get(model));
   });
+
+  QUnit.test('#4159 - model should not remain in collection after model ID is unset', function(assert) {
+    var model = new Backbone.Model({id: 'foo', foo: 'bar'});
+    var collection = new Backbone.Collection(model);
+
+    model.on('change:id', function(changedModel, id) {
+      if (id == null) {
+        collection.remove(changedModel);
+      }
+    });
+
+    model.unset('id');
+
+    assert.deepEqual(collection.models, []);
+    assert.deepEqual(collection._byId, {});
+    assert.equal(collection.get('foo'), undefined);
+  });
 })(QUnit);

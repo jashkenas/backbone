@@ -769,6 +769,9 @@
   var setOptions = {add: true, remove: true, merge: true};
   var addOptions = {add: true, remove: false};
 
+  // Regular expression for "change" event with attribute
+  var changeEventRegExp = /^change:\w*$/;
+
   // Splices `insert` into `array` at index `at`.
   var splice = function(array, insert, at) {
     at = Math.min(Math.max(at, 0), array.length);
@@ -1199,7 +1202,7 @@
       if (model) {
         if ((event === 'add' || event === 'remove') && collection !== this) return;
         if (event === 'destroy') this.remove(model, options);
-        if (event === 'change') {
+        if (event === 'change' || event && event.match(changeEventRegExp)) {
           var prevId = this.modelId(model.previousAttributes());
           var id = this.modelId(model.attributes);
           if (prevId !== id) {
