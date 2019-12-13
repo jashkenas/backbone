@@ -994,7 +994,7 @@
     get: function(obj) {
       if (obj == null) return void 0;
       return this._byId[obj] ||
-        this._byId[this.modelId(this._isModel(obj) ? obj.attributes : obj)] ||
+        this._byId[this.modelId(this._isModel(obj) ? obj.attributes : obj, obj.idAttribute)] ||
         obj.cid && this._byId[obj.cid];
     },
 
@@ -1098,8 +1098,8 @@
     },
 
     // Define how to uniquely identify models in the collection.
-    modelId: function(attrs) {
-      return attrs[this.model.prototype.idAttribute || 'id'];
+    modelId: function(attrs, idAttribute) {
+      return attrs[idAttribute || this.model.prototype.idAttribute || 'id'];
     },
 
     // Get an iterator of all models in this collection.
@@ -1154,7 +1154,7 @@
         // Remove references before triggering 'remove' event to prevent an
         // infinite loop. #3693
         delete this._byId[model.cid];
-        var id = this.modelId(model.attributes);
+        var id = this.modelId(model.attributes, model.idAttribute);
         if (id != null) delete this._byId[id];
 
         if (!options.silent) {
@@ -1177,7 +1177,7 @@
     // Internal method to create a model's ties to a collection.
     _addReference: function(model, options) {
       this._byId[model.cid] = model;
-      var id = this.modelId(model.attributes);
+      var id = this.modelId(model.attributes, model.idAttribute);
       if (id != null) this._byId[id] = model;
       model.on('all', this._onModelEvent, this);
     },
@@ -1185,7 +1185,7 @@
     // Internal method to sever a model's ties to a collection.
     _removeReference: function(model, options) {
       delete this._byId[model.cid];
-      var id = this.modelId(model.attributes);
+      var id = this.modelId(model.attributes, model.idAttribute);
       if (id != null) delete this._byId[id];
       if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
@@ -1200,8 +1200,8 @@
         if ((event === 'add' || event === 'remove') && collection !== this) return;
         if (event === 'destroy') this.remove(model, options);
         if (event === 'change') {
-          var prevId = this.modelId(model.previousAttributes());
-          var id = this.modelId(model.attributes);
+          var prevId = this.modelId(model.previousAttributes(), model.idAttribute);
+          var id = this.modelId(model.attributes, model.idAttribute);
           if (prevId !== id) {
             if (prevId != null) delete this._byId[prevId];
             if (id != null) this._byId[id] = model;
