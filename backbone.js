@@ -1134,7 +1134,15 @@
       }
       options = options ? _.clone(options) : {};
       options.collection = this;
-      var model = new this.model(attrs, options);
+
+      var model;
+      if (this.model.prototype) {
+        model = new this.model(attrs, options);
+      } else {
+        // ES class methods didn't have prototype
+        model = this.model(attrs, options);
+      }
+
       if (!model.validationError) return model;
       this.trigger('invalid', this, model.validationError, options);
       return false;
