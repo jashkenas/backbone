@@ -2055,7 +2055,7 @@
     // (the "constructor" property in your `extend` definition), or defaulted
     // by us to simply call the parent constructor.
     if (protoProps && _.has(protoProps, 'constructor')) {
-      child = function(){ return protoProps.constructor.apply(this, arguments); };
+      child = protoProps.constructor;
     } else {
       child = function(){ return parent.apply(this, arguments); };
     }
