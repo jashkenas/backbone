@@ -1,4 +1,4 @@
 $('body').append(
     '<div id="qunit"></div>' +
-    '<div id="qunit-fixture"></div>'
+    '<div id="qunit-fixture">nikhil</div>'
 );
