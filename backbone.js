@@ -1851,6 +1851,7 @@
       // Is pushState desired ... is it available?
       this.options          = _.extend({root: '/'}, this.options, options);
       this.root             = this.options.root;
+      this._trailingSlash   = this.options.trailingSlash;
       this._wantsHashChange = this.options.hashChange !== false;
       this._hasHashChange   = 'onhashchange' in window && (document.documentMode === void 0 || document.documentMode > 7);
       this._useHashChange   = this._wantsHashChange && this._hasHashChange;
@@ -1993,9 +1994,9 @@
       // Normalize the fragment.
       fragment = this.getFragment(fragment || '');
 
-      // Don't include a trailing slash on the root.
+      // Strip trailing slash on the root unless _trailingSlash is true
       var rootPath = this.root;
-      if (fragment === '' || fragment.charAt(0) === '?') {
+      if (!this._trailingSlash && (fragment === '' || fragment.charAt(0) === '?')) {
         rootPath = rootPath.slice(0, -1) || '/';
       }
       var url = rootPath + fragment;

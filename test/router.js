@@ -807,6 +807,38 @@
     Backbone.history.navigate('?x=1');
   });
 
+  QUnit.test('#3391 - Empty root normalizes to single slash.', function(assert) {
+    assert.expect(1);
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          assert.strictEqual(url, '/');
+        }
+      }
+    });
+    location.replace('http://example.com/root/path');
+    Backbone.history.start({pushState: true, hashChange: false, root: ''});
+    Backbone.history.navigate('');
+  });
+
+  QUnit.test('#3391 - Use trailing slash on root when trailingSlash is true.', function(assert) {
+    assert.expect(1);
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {
+      location: location,
+      history: {
+        pushState: function(state, title, url) {
+          assert.strictEqual(url, '/root/');
+        }
+      }
+    });
+    location.replace('http://example.com/root/path');
+    Backbone.history.start({pushState: true, hashChange: false, root: 'root', trailingSlash: true});
+    Backbone.history.navigate('');
+  });
+
   QUnit.test('#2765 - Fragment matching sans query/hash.', function(assert) {
     assert.expect(2);
     Backbone.history.stop();
