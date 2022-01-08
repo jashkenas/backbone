@@ -2109,4 +2109,43 @@
     var collection = new Backbone.Collection([model]);
     assert.ok(collection.get(model));
   });
+
+  QUnit.test('#4233 - can instantiate new model in ES class Collection', function(assert) {
+    var model;
+    try {
+      model = new Function('return ' + '({\n' +
+          '    model(attrs, options) {\n' +
+          '        var MyModel = Backbone.Model.extend({});\n' +
+          '        return new MyModel(attrs, options);\n' +
+          '    }).model;\n' +
+          '}');
+    } catch (error) {
+      model = error;
+    }
+
+    if (model instanceof SyntaxError) {
+      assert.expect(0);
+      return;
+    }
+
+    assert.expect(1);
+
+    var MyCollection = Backbone.Collection.extend({
+      modelId: function(attr) {
+        return attr.x;
+      },
+
+      model: model
+    });
+
+    var result, instance;
+    try {
+      instance = new MyCollection([{a: 2}]);
+      result = true;
+    } catch (error) {
+      result = false;
+    }
+
+    assert.ok(result && instance, 'Should instantiate collection with model');
+  });
 })(QUnit);
