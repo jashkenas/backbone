@@ -2118,7 +2118,7 @@
           '        var MyModel = Backbone.Model.extend({});\n' +
           '        return new MyModel(attrs, options);\n' +
           '    }\n' +
-          '}).model');
+          '}).model')();
     } catch (error) {
       model = error;
     }
