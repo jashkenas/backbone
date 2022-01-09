@@ -2113,12 +2113,12 @@
   QUnit.test('#4233 - can instantiate new model in ES class Collection', function(assert) {
     var model;
     try {
-      model = new Function('return ' + '({\n' +
+      model = new Function('return ({\n' +
           '    model(attrs, options) {\n' +
           '        var MyModel = Backbone.Model.extend({});\n' +
           '        return new MyModel(attrs, options);\n' +
-          '    }).model;\n' +
-          '}');
+          '    }\n' +
+          '}).model');
     } catch (error) {
       model = error;
     }
