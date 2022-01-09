@@ -2138,14 +2138,8 @@
       model: model
     });
 
-    var result, instance;
-    try {
-      instance = new MyCollection([{a: 2}]);
-      result = true;
-    } catch (error) {
-      result = false;
-    }
+    var instance = new MyCollection([{a: 2}]);
 
-    assert.ok(result && instance, 'Should instantiate collection with model');
+    assert.ok(instance, 'Should instantiate collection with model');
   });
 })(QUnit);
