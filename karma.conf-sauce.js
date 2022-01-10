@@ -79,9 +79,9 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     sauceLabs: {
-      build: 'TRAVIS #' + process.env.TRAVIS_BUILD_NUMBER + ' (' + process.env.TRAVIS_BUILD_ID + ')',
+      build: 'GH #' + process.env.BUILD_NUMBER + ' (' + process.env.BUILD_ID + ')',
       startConnect: true,
-      tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
+      tunnelIdentifier: process.env.JOB_NUMBER
     },
 
     captureTimeout: 120000,
