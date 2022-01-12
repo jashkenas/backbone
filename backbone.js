@@ -516,7 +516,11 @@
       }
 
       // Update the `id`.
-      if (this.idAttribute in attrs) this.id = this.get(this.idAttribute);
+      if (this.idAttribute in attrs) {
+        var prevId = this.id;
+        this.id = this.get(this.idAttribute);
+        this.trigger('changeId', this, prevId, options);
+      }
 
       // Trigger all relevant attribute changes.
       if (!silent) {
@@ -1207,13 +1211,11 @@
       if (model) {
         if ((event === 'add' || event === 'remove') && collection !== this) return;
         if (event === 'destroy') this.remove(model, options);
-        if (event === 'change') {
+        if (event === 'changeId') {
           var prevId = this.modelId(model.previousAttributes(), model.idAttribute);
           var id = this.modelId(model.attributes, model.idAttribute);
-          if (prevId !== id) {
-            if (prevId != null) delete this._byId[prevId];
-            if (id != null) this._byId[id] = model;
-          }
+          if (prevId != null) delete this._byId[prevId];
+          if (id != null) this._byId[id] = model;
         }
       }
       this.trigger.apply(this, arguments);

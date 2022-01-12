@@ -122,7 +122,7 @@
   });
 
   QUnit.test('update index when id changes', function(assert) {
-    assert.expect(4);
+    assert.expect(6);
     var collection = new Backbone.Collection();
     collection.add([
       {id: 0, name: 'one'},
@@ -130,7 +130,11 @@
     ]);
     var one = collection.get(0);
     assert.equal(one.get('name'), 'one');
-    collection.on('change:name', function(model) { assert.ok(this.get(model)); });
+    collection.on('change:name', function(model) {
+      assert.ok(this.get(model));
+      assert.equal(model, this.get(101));
+      assert.equal(this.get(0), null);
+    });
     one.set({name: 'dalmatians', id: 101});
     assert.equal(collection.get(0), null);
     assert.equal(collection.get(101).get('name'), 'dalmatians');
