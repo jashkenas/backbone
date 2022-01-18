@@ -24,7 +24,8 @@ jobs:
         with:
           node-version: 6
       - run: npm install karma-sauce-launcher
-      - run: sh -e /etc/init.d/xvfb start
+      - name: Setup Sauce Labs
+        run: sh -e /etc/init.d/xvfb start
         env:
           DISPLAY: ':99.0'
       - run: npm test
