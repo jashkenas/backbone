@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 6
-      - run: npm install karma-sauce-launcher
+      - run: npm install && npm install karma-cli karma-sauce-launcher
       - name: Setup Sauce Labs
         run: sh -e /etc/init.d/xvfb start
         env:
