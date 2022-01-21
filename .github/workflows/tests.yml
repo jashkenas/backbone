@@ -35,6 +35,6 @@ jobs:
         env:
           SAUCE_USERNAME: ${{ secrets.SauceUsername }}
           SAUCE_ACCESS_KEY: ${{ secrets.SauceAccessKey }}
-          BUILD_NUMBER: ${{ GITHUB_RUN_NUMBER }}
-          BUILD_ID: ${{ GITHUB_RUN_ID }}
-          JOB_NUMBER: ${{ GITHUB_JOB }}
+          BUILD_NUMBER: ${{ env.GITHUB_RUN_NUMBER }}
+          BUILD_ID: ${{ env.GITHUB_RUN_ID }}
+          JOB_NUMBER: ${{ env.GITHUB_JOB }}
