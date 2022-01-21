@@ -24,9 +24,12 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 6
-      - run: npm install --no-audit && npm install --no-audit karma-cli karma-sauce-launcher
-      - run: npm test
-      - run: ./node_modules/.bin/karma start karma.conf-sauce.js
+      - name: Install dependencies
+        run: npm install --no-audit && npm install --no-audit karma-cli karma-sauce-launcher
+      - name: Test
+        run: npm test
+      - name: Test in Sauce Labs
+        run: ./node_modules/.bin/karma start karma.conf-sauce.js
         env:
           SAUCE_USERNAME: ${{ secrets.SauceUsername }}
           SAUCE_ACCESS_KEY: ${{ secrets.SauceAccessKey }}
