@@ -8,6 +8,7 @@ on:
     branches:
       - master
     paths:
+      - '.github/workflows/**'
       - '*.js'
       - 'package.json'
 
