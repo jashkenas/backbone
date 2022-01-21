@@ -25,7 +25,9 @@ jobs:
         with:
           node-version: 6
       - name: Install dependencies
-        run: npm install --no-audit && npm install --no-audit karma-cli karma-sauce-launcher
+        run: |
+          npm install --no-audit
+          npm install --no-audit karma-cli karma-sauce-launcher
       - name: Test
         run: npm test
       - name: Test in Sauce Labs
