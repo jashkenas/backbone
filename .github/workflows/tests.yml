@@ -1,0 +1,39 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - ${{ github.event.repository.default_branch }}
+  pull_request:
+    branches:
+      - ${{ github.event.repository.default_branch }}
+    paths:
+      - '*.js'
+      - 'package.json'
+
+jobs:
+  tests:
+    env:
+      NPM_CONFIG_PROGRESS: "false"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 6
+          cache: 'npm'
+      - run: npm install --no-audit && npm install --no-audit karma-cli karma-sauce-launcher
+      - name: Setup Sauce Labs
+        run: sh -e /etc/init.d/xvfb start
+        env:
+          DISPLAY: ':99.0'
+      - run: npm test
+      - run: ./node_modules/.bin/karma start karma.conf-sauce.js
+        env:
+          SAUCE_USERNAME: ${{ secrets.SauceUsername }}
+          SAUCE_ACCESS_KEY: ${{ secrets.SauceAccessKey }}
+          BUILD_NUMBER: ${{ GITHUB_RUN_NUMBER }}
+          BUILD_ID: ${{ GITHUB_RUN_ID }}
+          JOB_NUMBER: ${{ GITHUB_JOB }}
