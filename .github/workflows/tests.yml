@@ -3,10 +3,10 @@ name: Test
 on:
   push:
     branches:
-      - ${{ github.event.repository.default_branch }}
+      - master
   pull_request:
     branches:
-      - ${{ github.event.repository.default_branch }}
+      - master
     paths:
       - '*.js'
       - 'package.json'
