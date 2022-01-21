@@ -25,10 +25,6 @@ jobs:
         with:
           node-version: 6
       - run: npm install --no-audit && npm install --no-audit karma-cli karma-sauce-launcher
-      - name: Setup Sauce Labs
-        run: sh -e /etc/init.d/xvfb start
-        env:
-          DISPLAY: ':99.0'
       - run: npm test
       - run: ./node_modules/.bin/karma start karma.conf-sauce.js
         env:
