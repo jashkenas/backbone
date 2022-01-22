@@ -54,6 +54,7 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['qunit'],
     singleRun: true,
+    browserDisconnectTimeout: 120000,
     browserDisconnectTolerance: 5,
     browserNoActivityTimeout: 240000,
 
