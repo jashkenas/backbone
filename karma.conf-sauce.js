@@ -2,37 +2,31 @@ var _ = require('underscore');
 
 // Browsers to run on Sauce Labs platforms
 var sauceBrowsers = _.reduce([
-  ['firefox', '35'],
-  ['firefox', '30'],
-  ['firefox', '21'],
+  ['firefox', 'latest'],
+  ['firefox', '60'],
+  ['firefox', '40'],
   ['firefox', '11'],
-  ['firefox', '4'],
 
+  ['chrome', 'latest'],
+  ['chrome', '60'],
   ['chrome', '40'],
-  ['chrome', '39'],
-  ['chrome', '31'],
   ['chrome', '26'],
 
-  ['microsoftedge', '20.10240', 'Windows 10'],
-  ['internet explorer', '11', 'Windows 10'],
+  // latest Edge as well as pre-Blink versions
+  ['microsoftedge', 'latest', 'Windows 10'],
+  ['microsoftedge', '18', 'Windows 10'],
+  ['microsoftedge', '13', 'Windows 10'],
+
+  ['internet explorer', 'latest', 'Windows 10'],
   ['internet explorer', '10', 'Windows 8'],
   ['internet explorer', '9', 'Windows 7'],
+  // Older versions of IE no longer supported by Sauce Labs
 
-  ['opera', '12'],
-  ['opera', '11'],
+  ['safari', 'latest', 'macOS 11'],
+  ['safari', '12', 'macOS 10.14'],
+  ['safari', '11', 'macOS 10.13'],
+  ['safari', '8', 'OS X 10.10'],
 
-  ['android', '5'],
-  ['android', '4.4'],
-
-  // 4.3 currently erros with some router tests
-  // ['android', '4.3'],
-
-  ['android', '4.0'],
-
-  ['safari', '8.0', 'OS X 10.10'],
-  ['safari', '7'],
-  ['safari', '6'],
-  ['safari', '5']
 ], function(memo, platform) {
   // internet explorer -> ie
   var label = platform[0].split(' ');
