@@ -33,7 +33,7 @@ jobs:
       - name: Test
         run: npm test
       - name: Test in Sauce Labs
-        run: ./node_modules/.bin/karma start karma.conf-sauce.js
+        run: BUILD_NUMBER="$GITHUB_RUN_NUMBER" BUILD_ID="$GITHUB_RUN_ID" JOB_NUMBER="$GITHUB_JOB" ./node_modules/.bin/karma start karma.conf-sauce.js
         env:
           SAUCE_USERNAME: ${{ secrets.SauceUsername }}
           SAUCE_ACCESS_KEY: ${{ secrets.SauceAccessKey }}

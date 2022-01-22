@@ -76,9 +76,9 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     sauceLabs: {
-      build: 'GH #' + process.env.GITHUB_RUN_NUMBER + ' (' + process.env.GITHUB_RUN_ID + ')',
+      build: 'GH #' + process.env.BUILD_NUMBER + ' (' + process.env.BUILD_ID + ')',
       startConnect: true,
-      tunnelIdentifier: process.env.GITHUB_JOB,
+      tunnelIdentifier: process.env.JOB_NUMBER,
       region: 'eu'
     },
 
