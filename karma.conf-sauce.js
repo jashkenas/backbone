@@ -5,7 +5,7 @@ var sauceBrowsers = _.reduce([
   ['firefox', 'latest'],
   ['firefox', '60'],
   ['firefox', '40'],
-  ['firefox', '11'],
+  ['firefox', '11', 'Windows 10'],
 
   ['chrome', 'latest'],
   ['chrome', '60'],
