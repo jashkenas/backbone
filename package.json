@@ -16,15 +16,15 @@
     "underscore": ">=1.8.3"
   },
   "devDependencies": {
-    "coffee-script": "1.7.1",
-    "docco": "0.7.0",
-    "eslint": "^2.11.0",
-    "karma": "^0.13.13",
+    "coffeescript": "^1.12.7",
+    "docco": "^0.9.1",
+    "eslint": "^8.7.0",
+    "karma": "^6.3.11",
     "karma-phantomjs-launcher": "^1.0.0",
-    "karma-qunit": "^1.0.0",
+    "karma-qunit": "^4.1.2",
     "phantomjs-prebuilt": "^2.1.7",
-    "qunitjs": "^2.0.0",
-    "uglify-js": "^2.4.17"
+    "qunit": "^2.17.2",
+    "uglify-js": "^3.14.5"
   },
   "scripts": {
     "test": "karma start && coffee test/model.coffee && npm run lint",
