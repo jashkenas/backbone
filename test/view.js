@@ -7,7 +7,7 @@
     beforeEach: function() {
       $('#qunit-fixture').append(
         '<div id="testElement"><h1>Test</h1></div>'
-     );
+      );
 
       view = new Backbone.View({
         id: 'test-view',

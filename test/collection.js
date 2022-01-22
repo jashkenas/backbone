@@ -754,11 +754,13 @@
     var wrapped = col.chain();
     assert.equal(wrapped.map('id').max().value(), 3);
     assert.equal(wrapped.map('id').min().value(), 0);
-    assert.deepEqual(wrapped
+    assert.deepEqual(
+      wrapped
       .filter(function(o){ return o.id % 2 === 0; })
       .map(function(o){ return o.id * 2; })
       .value(),
-    [4, 0]);
+      [4, 0]
+    );
     assert.deepEqual(col.difference([c, d]), [a, b]);
     assert.ok(col.includes(col.sample()));
 
@@ -798,7 +800,7 @@
     assert.deepEqual(coll.map('a'), [1, 2, 3, 4]);
     assert.deepEqual(coll.sortBy('a')[3], model);
     assert.deepEqual(coll.sortBy('e')[0], model);
-    assert.deepEqual(coll.countBy({a: 4}), {false: 3, true: 1});
+    assert.deepEqual(coll.countBy({a: 4}), {'false': 3, 'true': 1});
     assert.deepEqual(coll.countBy('d'), {undefined: 4});
     assert.equal(coll.findIndex({b: 1}), 0);
     assert.equal(coll.findIndex({b: 9}), -1);
