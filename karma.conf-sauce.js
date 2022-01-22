@@ -78,7 +78,8 @@ module.exports = function(config) {
     sauceLabs: {
       build: 'GH #' + process.env.GITHUB_RUN_NUMBER + ' (' + process.env.GITHUB_RUN_ID + ')',
       startConnect: true,
-      tunnelIdentifier: process.env.GITHUB_JOB
+      tunnelIdentifier: process.env.GITHUB_JOB,
+      region: 'eu'
     },
 
     captureTimeout: 120000,
