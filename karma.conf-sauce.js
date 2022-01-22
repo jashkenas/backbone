@@ -54,6 +54,8 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['qunit'],
     singleRun: true,
+    browserDisconnectTolerance: 5,
+    browserNoActivityTimeout: 240000,
 
     // list of files / patterns to load in the browser
     files: [
