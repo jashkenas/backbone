@@ -15,7 +15,7 @@ var sauceBrowsers = _.reduce([
   ['chrome', '26'],
 
   // latest Edge as well as pre-Blink versions
-  ['microsoftedge', 'latest', 'Windows 10'],
+  ['microsoftedge', 'latest', 'Windows 11'],
   ['microsoftedge', '18', 'Windows 10'],
   ['microsoftedge', '13', 'Windows 10'],
 
@@ -24,7 +24,7 @@ var sauceBrowsers = _.reduce([
   ['internet explorer', '9', 'Windows 7'],
   // Older versions of IE no longer supported by Sauce Labs
 
-  ['safari', 'latest', 'macOS 11'],
+  ['safari', 'latest', 'macOS 12'],
   ['safari', '12', 'macOS 10.14'],
   ['safari', '11', 'macOS 10.13'],
   ['safari', '8', 'OS X 10.10'],
