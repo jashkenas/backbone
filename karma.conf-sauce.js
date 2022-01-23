@@ -5,7 +5,9 @@ var sauceBrowsers = _.reduce([
   ['firefox', 'latest'],
   ['firefox', '60'],
   ['firefox', '40'],
-  ['firefox', '11', 'Windows 10'],
+  // TODO: find a way to get testing on old Firefox to work. See
+  // https://github.com/jashkenas/backbone/runs/4907194010?check_suite_focus=true
+  // ['firefox', '11'],
 
   ['chrome', 'latest'],
   ['chrome', '60'],
