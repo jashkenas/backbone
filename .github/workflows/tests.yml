@@ -28,7 +28,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm install --no-audit
+          npm ci
           npm install --no-audit karma-cli karma-sauce-launcher
       - name: Test
         run: npm test
