@@ -56,9 +56,9 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['qunit'],
     singleRun: true,
-    browserDisconnectTimeout: 120000,
-    browserDisconnectTolerance: 5,
-    browserNoActivityTimeout: 240000,
+    browserDisconnectTimeout: 60000,
+    browserDisconnectTolerance: 2,
+    browserNoActivityTimeout: 60000,
 
     // list of files / patterns to load in the browser
     files: [
@@ -71,7 +71,7 @@ module.exports = function(config) {
     ],
 
     // Number of sauce tests to start in parallel
-    concurrency: 2,
+    concurrency: 4,
 
     // test results reporter to use
     reporters: ['dots', 'saucelabs'],
@@ -85,7 +85,7 @@ module.exports = function(config) {
       region: 'eu'
     },
 
-    captureTimeout: 120000,
+    captureTimeout: 60000,
     customLaunchers: sauceBrowsers,
 
     // Browsers to launch, commented out to prevent karma from starting
