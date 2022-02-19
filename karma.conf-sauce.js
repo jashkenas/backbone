@@ -2,37 +2,36 @@ var _ = require('underscore');
 
 // Browsers to run on Sauce Labs platforms
 var sauceBrowsers = _.reduce([
-  ['firefox', '35'],
-  ['firefox', '30'],
-  ['firefox', '21'],
-  ['firefox', '11'],
-  ['firefox', '4'],
+  ['firefox', 'latest'],
+  ['firefox', '60'],
+  ['firefox', '40'],
+  // TODO: find a way to get testing on old Firefox to work. (#4253)
+  // ['firefox', '11'],
 
-  ['chrome', '40'],
-  ['chrome', '39'],
-  ['chrome', '31'],
-  ['chrome', '26'],
+  ['chrome', 'latest'],
+  ['chrome', '60'],
+  // TODO: these versions of Chrome fail with a mysterious
+  // "_T_ is not defined" (#4253)
+  // ['chrome', '40'],
+  // ['chrome', '26'],
 
-  ['microsoftedge', '20.10240', 'Windows 10'],
-  ['internet explorer', '11', 'Windows 10'],
-  ['internet explorer', '10', 'Windows 8'],
-  ['internet explorer', '9', 'Windows 7'],
+  // latest Edge as well as pre-Blink versions
+  ['microsoftedge', 'latest', 'Windows 11'],
+  ['microsoftedge', '18', 'Windows 10'],
+  ['microsoftedge', '13', 'Windows 10'],
 
-  ['opera', '12'],
-  ['opera', '11'],
+  ['internet explorer', 'latest', 'Windows 10'],
+  // TODO: these versions of IE run 50 out of 425 tests, then hang for unknown
+  // reasons. (#4253)
+  // ['internet explorer', '10', 'Windows 8'],
+  // ['internet explorer', '9', 'Windows 7'],
+  // Older versions of IE no longer supported by Sauce Labs
 
-  ['android', '5'],
-  ['android', '4.4'],
+  ['safari', 'latest', 'macOS 12'],
+  ['safari', '12', 'macOS 10.14'],
+  ['safari', '11', 'macOS 10.13'],
+  ['safari', '8', 'OS X 10.10'],
 
-  // 4.3 currently erros with some router tests
-  // ['android', '4.3'],
-
-  ['android', '4.0'],
-
-  ['safari', '8.0', 'OS X 10.10'],
-  ['safari', '7'],
-  ['safari', '6'],
-  ['safari', '5']
 ], function(memo, platform) {
   // internet explorer -> ie
   var label = platform[0].split(' ');
@@ -60,6 +59,9 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['qunit'],
     singleRun: true,
+    browserDisconnectTimeout: 60000,
+    browserDisconnectTolerance: 2,
+    browserNoActivityTimeout: 60000,
 
     // list of files / patterns to load in the browser
     files: [
@@ -72,7 +74,7 @@ module.exports = function(config) {
     ],
 
     // Number of sauce tests to start in parallel
-    concurrency: 9,
+    concurrency: 4,
 
     // test results reporter to use
     reporters: ['dots', 'saucelabs'],
@@ -82,10 +84,11 @@ module.exports = function(config) {
     sauceLabs: {
       build: 'GH #' + process.env.BUILD_NUMBER + ' (' + process.env.BUILD_ID + ')',
       startConnect: true,
-      tunnelIdentifier: process.env.JOB_NUMBER
+      tunnelIdentifier: process.env.JOB_NUMBER,
+      region: 'eu'
     },
 
-    captureTimeout: 120000,
+    captureTimeout: 60000,
     customLaunchers: sauceBrowsers,
 
     // Browsers to launch, commented out to prevent karma from starting

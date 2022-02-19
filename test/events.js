@@ -556,10 +556,10 @@
     var obj = _.extend({}, Backbone.Events);
 
     obj
-      .once('event', f)
-      .on('event', f)
-      .trigger('event')
-      .trigger('event');
+    .once('event', f)
+    .on('event', f)
+    .trigger('event')
+    .trigger('event');
   });
 
   QUnit.test('once with off', function(assert) {

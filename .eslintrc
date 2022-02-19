@@ -19,7 +19,11 @@
     "dot-notation": [2, { "allowKeywords": false }],
     "eol-last": 2,
     "eqeqeq": [2, "smart"],
-    "indent": [2, 2, {"SwitchCase": 1, "VariableDeclarator": 2}],
+    "indent": [2, 2, {
+      "MemberExpression": 0,
+      "SwitchCase": 1,
+      "VariableDeclarator": 2
+    }],
     "key-spacing": 1,
     "keyword-spacing": [2, { "after": true }],
     "linebreak-style": 2,
@@ -76,7 +80,7 @@
     "no-unused-expressions": [2, {"allowTernary": true, "allowShortCircuit": true}],
     "no-with": 2,
     "object-curly-spacing": [2, "never"],
-    "quote-props": [1, "consistent-as-needed"],
+    "quote-props": [1, "consistent-as-needed", {"keywords": true}],
     "quotes": [2, "single", "avoid-escape"],
     "radix": 2,
     "semi": 2,

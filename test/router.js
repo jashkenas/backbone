@@ -28,7 +28,7 @@
         'fragment',
         'pathname',
         'protocol'
-     ));
+      ));
 
       // In IE, anchor.pathname does not contain a leading slash though
       // window.location.pathname does.
