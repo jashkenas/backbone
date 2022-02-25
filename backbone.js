@@ -1271,7 +1271,7 @@
         if (this._kind === ITERATOR_VALUES) {
           value = model;
         } else {
-          var id = this._collection.modelId(model.attributes);
+          var id = this._collection.modelId(model.attributes, model.idAttribute);
           if (this._kind === ITERATOR_KEYS) {
             value = id;
           } else { // ITERATOR_KEYSVALUES
