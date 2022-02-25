@@ -44,6 +44,7 @@
   "files": [
     "backbone.js",
     "backbone-min.js",
+    "backbone-min.js.map",
     "backbone-min.map",
     "LICENSE"
   ]
