@@ -1827,7 +1827,7 @@ var Library = Backbone.Collection.extend({
 </pre>
 
     <p id="Collection-modelId">
-      <b class="header">modelId</b><code>collection.modelId(attrs)</code>
+      <b class="header">modelId</b><code>collection.modelId(attrs, idAttribute)</code>
       <br />
       Override this method to return the value the collection will use to
       identify a model given its attributes. Useful for combining models from
@@ -1836,11 +1836,11 @@ var Library = Backbone.Collection.extend({
     </p>
 
     <p>
-      By default returns the value of the attributes'
+      By default returns the value of the given
       <a href="#Model-idAttribute"><tt>idAttribute</tt></a>
-      from the collection's model class or failing that, <tt>id</tt>. If
+      within the <tt>attrs</tt>, or failing that, <tt>id</tt>. If
       your collection uses a <a href="#Collection-model">model factory</a> and
-      those models have an <tt>idAttribute</tt> other than <tt>id</tt> you must
+      the id ranges of those models might collide, you must
       override this method.
     </p>
 
