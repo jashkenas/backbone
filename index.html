@@ -4440,6 +4440,38 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header" id="1.4.1">1.4.1</b> &mdash; <small><i>Feb. 26, 2022</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.4.0...1.4.1">Diff</a>
+    &mdash; <a href="https://cdn.statically.io/gh/jashkenas/backbone/1.4.1/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Improved support for polymorphic collections in which two or more model
+        types might have different <tt>idAttribute</tt>s.
+        <tt>Collection.modelId()</tt> overrides can now exploit the fact that
+        internal methods pass the <tt>idAttribute</tt> as a second argument to
+        <tt>modelId</tt>.
+      </li>
+      <li>
+        Fixed a temporary inconsistency in a collection's internal
+        administration during model <tt>change</tt> events. Models (and by
+        extension, collections) now emit a specialized <tt>changeId</tt> event
+        when the id changes.
+      </li>
+      <li>
+        Fixed an issue where an ES6 class or object method could not be used as
+        the <tt>model</tt> for a collection due to the lack of a
+        <tt>prototype</tt>.
+      </li>
+      <li>
+        Restored continuous integration using GitHub Actions and cross-browser
+        testing using Sauce Labs.
+      </li>
+      <li>
+        Several improvements to the online documentation.
+      </li>
+    </ul>
+
     <b class="header" id="1.4.0">1.4.0</b> &mdash; <small><i>Feb. 19, 2019</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.3.3...1.4.0">Diff</a>
     &mdash; <a href="https://cdn.statically.io/gh/jashkenas/backbone/1.4.0/index.html">Docs</a>
