@@ -32,7 +32,8 @@
     "build": "uglifyjs backbone.js --mangle --source-map url=backbone-min.js.map -o backbone-min.js",
     "alias-sourcemap": "cpy --rename=backbone-min.map backbone-min.js.map .",
     "doc": "docco backbone.js && docco examples/todos/todos.js examples/backbone.localStorage.js",
-    "lint": "eslint backbone.js test/*.js"
+    "lint": "eslint backbone.js test/*.js",
+    "prepublishOnly": "npm run test && npm run build && npm run alias-sourcemap && npm run doc"
   },
   "main": "backbone.js",
   "version": "1.4.1",
