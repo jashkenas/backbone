@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>todos.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="../backbone.localStorage.html">
+                  examples/backbone.localStorage.js
+                </a>
+              
+                
+                <a class="source" href="todos.html">
+                  examples/todos/todos.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>todos.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-1">&#x00a7;</a>
+              </div>
+              <p>An example Backbone application contributed by
+<a href="http://jgn.me/">Jérôme Gravel-Niquet</a>. This demo uses a simple
+<a href="backbone.localStorage.html">LocalStorage adapter</a>
+to persist Backbone models within your browser.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-2">&#x00a7;</a>
+              </div>
+              <p>Load the application once the DOM is ready, using <code>jQuery.ready</code>:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>$(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-3">&#x00a7;</a>
+              </div>
+              <h2 id="todo-model">Todo Model</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-4">&#x00a7;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-5">&#x00a7;</a>
+              </div>
+              <p>Our basic <strong>Todo</strong> model has <code>title</code>, <code>order</code>, and <code>done</code> attributes.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> <span class="hljs-title class_">Todo</span> = <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">Model</span>.<span class="hljs-title function_">extend</span>({</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-6">&#x00a7;</a>
+              </div>
+              <p>Default attributes for the todo item.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">defaults</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">title</span>: <span class="hljs-string">&quot;empty todo...&quot;</span>,
+        <span class="hljs-attr">order</span>: <span class="hljs-title class_">Todos</span>.<span class="hljs-title function_">nextOrder</span>(),
+        <span class="hljs-attr">done</span>: <span class="hljs-literal">false</span>
+      };
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-7">&#x00a7;</a>
+              </div>
+              <p>Toggle the <code>done</code> state of this todo item.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">toggle</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">save</span>({<span class="hljs-attr">done</span>: !<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">get</span>(<span class="hljs-string">&quot;done&quot;</span>)});
+    }
+
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-8">&#x00a7;</a>
+              </div>
+              <h2 id="todo-collection">Todo Collection</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-9">&#x00a7;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-10">&#x00a7;</a>
+              </div>
+              <p>The collection of todos is backed by <em>localStorage</em> instead of a remote
+server.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> <span class="hljs-title class_">TodoList</span> = <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">Collection</span>.<span class="hljs-title function_">extend</span>({</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-11">&#x00a7;</a>
+              </div>
+              <p>Reference to this collection’s model.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">model</span>: <span class="hljs-title class_">Todo</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-12">&#x00a7;</a>
+              </div>
+              <p>Save all of the todo items under the <code>&quot;todos-backbone&quot;</code> namespace.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">localStorage</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Backbone</span>.<span class="hljs-title class_">LocalStorage</span>(<span class="hljs-string">&quot;todos-backbone&quot;</span>),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-13">&#x00a7;</a>
+              </div>
+              <p>Filter down the list of all todo items that are finished.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">done</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">where</span>({<span class="hljs-attr">done</span>: <span class="hljs-literal">true</span>});
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-14">&#x00a7;</a>
+              </div>
+              <p>Filter down the list to only todo items that are still not finished.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">remaining</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">where</span>({<span class="hljs-attr">done</span>: <span class="hljs-literal">false</span>});
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-15">&#x00a7;</a>
+              </div>
+              <p>We keep the Todos in sequential order, despite being saved by unordered
+GUID in the database. This generates the next order number for new items.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">nextOrder</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">length</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">last</span>().<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;order&#x27;</span>) + <span class="hljs-number">1</span>;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-16">&#x00a7;</a>
+              </div>
+              <p>Todos are sorted by their original insertion order.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">comparator</span>: <span class="hljs-string">&#x27;order&#x27;</span>
+
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-17">&#x00a7;</a>
+              </div>
+              <p>Create our global collection of <strong>Todos</strong>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> <span class="hljs-title class_">Todos</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TodoList</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-18">&#x00a7;</a>
+              </div>
+              <h2 id="todo-item-view">Todo Item View</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-19">&#x00a7;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-20">&#x00a7;</a>
+              </div>
+              <p>The DOM element for a todo item…</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> <span class="hljs-title class_">TodoView</span> = <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">View</span>.<span class="hljs-title function_">extend</span>({</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-21">&#x00a7;</a>
+              </div>
+              <p>… is a list tag.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">tagName</span>:  <span class="hljs-string">&quot;li&quot;</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-22">&#x00a7;</a>
+              </div>
+              <p>Cache the template function for a single item.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">template</span>: _.<span class="hljs-title function_">template</span>($(<span class="hljs-string">&#x27;#item-template&#x27;</span>).<span class="hljs-title function_">html</span>()),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-23">&#x00a7;</a>
+              </div>
+              <p>The DOM events specific to an item.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">events</span>: {
+      <span class="hljs-string">&quot;click .toggle&quot;</span>   : <span class="hljs-string">&quot;toggleDone&quot;</span>,
+      <span class="hljs-string">&quot;dblclick .view&quot;</span>  : <span class="hljs-string">&quot;edit&quot;</span>,
+      <span class="hljs-string">&quot;click a.destroy&quot;</span> : <span class="hljs-string">&quot;clear&quot;</span>,
+      <span class="hljs-string">&quot;keypress .edit&quot;</span>  : <span class="hljs-string">&quot;updateOnEnter&quot;</span>,
+      <span class="hljs-string">&quot;blur .edit&quot;</span>      : <span class="hljs-string">&quot;close&quot;</span>
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-24">&#x00a7;</a>
+              </div>
+              <p>The TodoView listens for changes to its model, re-rendering. Since there’s
+a one-to-one correspondence between a <strong>Todo</strong> and a <strong>TodoView</strong> in this
+app, we set a direct reference on the model for convenience.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">initialize</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">listenTo</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">model</span>, <span class="hljs-string">&#x27;change&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">render</span>);
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">listenTo</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">model</span>, <span class="hljs-string">&#x27;destroy&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">remove</span>);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-25">&#x00a7;</a>
+              </div>
+              <p>Re-render the titles of the todo item.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">render</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">$el</span>.<span class="hljs-title function_">html</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">template</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">model</span>.<span class="hljs-title function_">toJSON</span>()));
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">$el</span>.<span class="hljs-title function_">toggleClass</span>(<span class="hljs-string">&#x27;done&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">model</span>.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;done&#x27;</span>));
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">input</span> = <span class="hljs-variable language_">this</span>.$(<span class="hljs-string">&#x27;.edit&#x27;</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-26">&#x00a7;</a>
+              </div>
+              <p>Toggle the <code>&quot;done&quot;</code> state of the model.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">toggleDone</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">model</span>.<span class="hljs-title function_">toggle</span>();
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-27">&#x00a7;</a>
+              </div>
+              <p>Switch this view into <code>&quot;editing&quot;</code> mode, displaying the input field.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">edit</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">$el</span>.<span class="hljs-title function_">addClass</span>(<span class="hljs-string">&quot;editing&quot;</span>);
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">input</span>.<span class="hljs-title function_">focus</span>();
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-28">&#x00a7;</a>
+              </div>
+              <p>Close the <code>&quot;editing&quot;</code> mode, saving changes to the todo.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">close</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">var</span> value = <span class="hljs-variable language_">this</span>.<span class="hljs-property">input</span>.<span class="hljs-title function_">val</span>();
+      <span class="hljs-keyword">if</span> (!value) {
+        <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">clear</span>();
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">model</span>.<span class="hljs-title function_">save</span>({<span class="hljs-attr">title</span>: value});
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">$el</span>.<span class="hljs-title function_">removeClass</span>(<span class="hljs-string">&quot;editing&quot;</span>);
+      }
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-29">&#x00a7;</a>
+              </div>
+              <p>If you hit <code>enter</code>, we’re through editing the item.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">updateOnEnter</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) {
+      <span class="hljs-keyword">if</span> (e.<span class="hljs-property">keyCode</span> == <span class="hljs-number">13</span>) <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">close</span>();
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-30">&#x00a7;</a>
+              </div>
+              <p>Remove the item, destroy the model.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">clear</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">model</span>.<span class="hljs-title function_">destroy</span>();
+    }
+
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-31">&#x00a7;</a>
+              </div>
+              <h2 id="the-application">The Application</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-32">&#x00a7;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-33">&#x00a7;</a>
+              </div>
+              <p>Our overall <strong>AppView</strong> is the top-level piece of UI.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> <span class="hljs-title class_">AppView</span> = <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">View</span>.<span class="hljs-title function_">extend</span>({</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-34">&#x00a7;</a>
+              </div>
+              <p>Instead of generating a new element, bind to the existing skeleton of
+the App already present in the HTML.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">el</span>: $(<span class="hljs-string">&quot;#todoapp&quot;</span>),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-35">&#x00a7;</a>
+              </div>
+              <p>Our template for the line of statistics at the bottom of the app.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">statsTemplate</span>: _.<span class="hljs-title function_">template</span>($(<span class="hljs-string">&#x27;#stats-template&#x27;</span>).<span class="hljs-title function_">html</span>()),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-36">&#x00a7;</a>
+              </div>
+              <p>Delegated events for creating new items, and clearing completed ones.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">events</span>: {
+      <span class="hljs-string">&quot;keypress #new-todo&quot;</span>:  <span class="hljs-string">&quot;createOnEnter&quot;</span>,
+      <span class="hljs-string">&quot;click #clear-completed&quot;</span>: <span class="hljs-string">&quot;clearCompleted&quot;</span>,
+      <span class="hljs-string">&quot;click #toggle-all&quot;</span>: <span class="hljs-string">&quot;toggleAllComplete&quot;</span>
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-37">&#x00a7;</a>
+              </div>
+              <p>At initialization we bind to the relevant events on the <code>Todos</code>
+collection, when items are added or changed. Kick things off by
+loading any preexisting todos that might be saved in <em>localStorage</em>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">initialize</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">input</span> = <span class="hljs-variable language_">this</span>.$(<span class="hljs-string">&quot;#new-todo&quot;</span>);
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">allCheckbox</span> = <span class="hljs-variable language_">this</span>.$(<span class="hljs-string">&quot;#toggle-all&quot;</span>)[<span class="hljs-number">0</span>];
+
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">listenTo</span>(<span class="hljs-title class_">Todos</span>, <span class="hljs-string">&#x27;add&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">addOne</span>);
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">listenTo</span>(<span class="hljs-title class_">Todos</span>, <span class="hljs-string">&#x27;reset&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">addAll</span>);
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">listenTo</span>(<span class="hljs-title class_">Todos</span>, <span class="hljs-string">&#x27;all&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">render</span>);
+
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">footer</span> = <span class="hljs-variable language_">this</span>.$(<span class="hljs-string">&#x27;footer&#x27;</span>);
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">main</span> = $(<span class="hljs-string">&#x27;#main&#x27;</span>);
+
+      <span class="hljs-title class_">Todos</span>.<span class="hljs-title function_">fetch</span>();
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-38">&#x00a7;</a>
+              </div>
+              <p>Re-rendering the App just means refreshing the statistics – the rest
+of the app doesn’t change.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">render</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">var</span> done = <span class="hljs-title class_">Todos</span>.<span class="hljs-title function_">done</span>().<span class="hljs-property">length</span>;
+      <span class="hljs-keyword">var</span> remaining = <span class="hljs-title class_">Todos</span>.<span class="hljs-title function_">remaining</span>().<span class="hljs-property">length</span>;
+
+      <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Todos</span>.<span class="hljs-property">length</span>) {
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">main</span>.<span class="hljs-title function_">show</span>();
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">footer</span>.<span class="hljs-title function_">show</span>();
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">footer</span>.<span class="hljs-title function_">html</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">statsTemplate</span>({<span class="hljs-attr">done</span>: done, <span class="hljs-attr">remaining</span>: remaining}));
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">main</span>.<span class="hljs-title function_">hide</span>();
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">footer</span>.<span class="hljs-title function_">hide</span>();
+      }
+
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">allCheckbox</span>.<span class="hljs-property">checked</span> = !remaining;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-39">&#x00a7;</a>
+              </div>
+              <p>Add a single todo item to the list by creating a view for it, and
+appending its element to the <code>&lt;ul&gt;</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">addOne</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params">todo</span>) {
+      <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TodoView</span>({<span class="hljs-attr">model</span>: todo});
+      <span class="hljs-variable language_">this</span>.$(<span class="hljs-string">&quot;#todo-list&quot;</span>).<span class="hljs-title function_">append</span>(view.<span class="hljs-title function_">render</span>().<span class="hljs-property">el</span>);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-40">&#x00a7;</a>
+              </div>
+              <p>Add all items in the <strong>Todos</strong> collection at once.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">addAll</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-title class_">Todos</span>.<span class="hljs-title function_">each</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">addOne</span>, <span class="hljs-variable language_">this</span>);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-41">&#x00a7;</a>
+              </div>
+              <p>If you hit return in the main input field, create new <strong>Todo</strong> model,
+persisting it to <em>localStorage</em>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">createOnEnter</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) {
+      <span class="hljs-keyword">if</span> (e.<span class="hljs-property">keyCode</span> != <span class="hljs-number">13</span>) <span class="hljs-keyword">return</span>;
+      <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">input</span>.<span class="hljs-title function_">val</span>()) <span class="hljs-keyword">return</span>;
+
+      <span class="hljs-title class_">Todos</span>.<span class="hljs-title function_">create</span>({<span class="hljs-attr">title</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">input</span>.<span class="hljs-title function_">val</span>()});
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">input</span>.<span class="hljs-title function_">val</span>(<span class="hljs-string">&#x27;&#x27;</span>);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-42">&#x00a7;</a>
+              </div>
+              <p>Clear all done todo items, destroying their models.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">clearCompleted</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      _.<span class="hljs-title function_">invoke</span>(<span class="hljs-title class_">Todos</span>.<span class="hljs-title function_">done</span>(), <span class="hljs-string">&#x27;destroy&#x27;</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    },
+
+    <span class="hljs-attr">toggleAllComplete</span>: <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">var</span> done = <span class="hljs-variable language_">this</span>.<span class="hljs-property">allCheckbox</span>.<span class="hljs-property">checked</span>;
+      <span class="hljs-title class_">Todos</span>.<span class="hljs-title function_">each</span>(<span class="hljs-keyword">function</span> (<span class="hljs-params">todo</span>) { todo.<span class="hljs-title function_">save</span>({<span class="hljs-string">&#x27;done&#x27;</span>: done}); });
+    }
+
+  });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-43">&#x00a7;</a>
+              </div>
+              <p>Finally, we kick things off by creating the <strong>App</strong>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> <span class="hljs-title class_">App</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">AppView</span>;
+
+});</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
