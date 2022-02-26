@@ -27,6 +27,9 @@ https://gitter.im/jashkenas/backbone
 Backbone is an open-sourced component of DocumentCloud:
 https://github.com/documentcloud
 
+Testing powered by SauceLabs:
+https://saucelabs.com
+
 Many thanks to our contributors:
 https://github.com/jashkenas/backbone/graphs/contributors
 

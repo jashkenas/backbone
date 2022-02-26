@@ -1,0 +1,39 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/**'
+      - 'test/**'
+      - '*.js'
+      - 'package.json'
+
+jobs:
+  tests:
+    env:
+      NPM_CONFIG_PROGRESS: "false"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: 'npm'
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install --no-audit karma-cli karma-sauce-launcher
+      - name: Test
+        run: npm test
+      - name: Test in Sauce Labs
+        run: BUILD_NUMBER="$GITHUB_RUN_NUMBER" BUILD_ID="$GITHUB_RUN_ID" JOB_NUMBER="$GITHUB_JOB" ./node_modules/.bin/karma start karma.conf-sauce.js
+        env:
+          SAUCE_USERNAME: ${{ secrets.SauceUsername }}
+          SAUCE_ACCESS_KEY: ${{ secrets.SauceAccessKey }}
