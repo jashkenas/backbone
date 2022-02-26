@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "coffeescript": "^1.12.7",
+    "cpy-cli": "^3.1.1",
     "docco": "^0.9.1",
     "eslint": "^8.7.0",
     "karma": "^6.3.11",
@@ -28,12 +29,14 @@
   },
   "scripts": {
     "test": "karma start && coffee test/model.coffee && npm run lint",
-    "build": "uglifyjs backbone.js --mangle --source-map backbone-min.map -o backbone-min.js",
+    "build": "uglifyjs backbone.js --mangle --source-map url=backbone-min.js.map -o backbone-min.js",
+    "alias-sourcemap": "cpy --rename=backbone-min.map backbone-min.js.map .",
     "doc": "docco backbone.js && docco examples/todos/todos.js examples/backbone.localStorage.js",
-    "lint": "eslint backbone.js test/*.js"
+    "lint": "eslint backbone.js test/*.js",
+    "prepublishOnly": "npm run test && npm run build && npm run alias-sourcemap && npm run doc"
   },
   "main": "backbone.js",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -42,6 +45,7 @@
   "files": [
     "backbone.js",
     "backbone-min.js",
+    "backbone-min.js.map",
     "backbone-min.map",
     "LICENSE"
   ]

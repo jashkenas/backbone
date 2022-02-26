@@ -1,6 +1,6 @@
-//     Backbone.js 1.4.0
+//     Backbone.js 1.4.1
 
-//     (c) 2010-2019 Jeremy Ashkenas and DocumentCloud
+//     (c) 2010-2022 Jeremy Ashkenas and DocumentCloud
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://backbonejs.org
@@ -44,7 +44,7 @@
   var slice = Array.prototype.slice;
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '1.4.0';
+  Backbone.VERSION = '1.4.1';
 
   // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
   // the `$` variable.
@@ -1271,7 +1271,7 @@
         if (this._kind === ITERATOR_VALUES) {
           value = model;
         } else {
-          var id = this._collection.modelId(model.attributes);
+          var id = this._collection.modelId(model.attributes, model.idAttribute);
           if (this._kind === ITERATOR_KEYS) {
             value = id;
           } else { // ITERATOR_KEYSVALUES
