@@ -16,7 +16,7 @@
     "underscore": ">=1.8.3"
   },
   "devDependencies": {
-    "coffeescript": "^1.12.7",
+    "coffeescript": "^2.7.0",
     "cpy-cli": "^3.1.1",
     "docco": "^0.9.1",
     "eslint": "^8.7.0",
