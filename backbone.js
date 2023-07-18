@@ -1079,10 +1079,26 @@
       if (!wait) this.add(model, options);
       var collection = this;
       var success = options.success;
+      var forwardPristineError;
       options.success = function(m, resp, callbackOpts) {
-        if (wait) collection.add(m, callbackOpts);
+        if (wait) {
+          model.off('error', forwardPristineError);
+          collection.add(m, callbackOpts);
+        }
         if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
       };
+      // In case of wait:true, our collection is not listening to any
+      // of the model's events yet, so it will not forward the error
+      // event. In this special case, we need to listen for it
+      // separately and handle the event just once.
+      // (The reason we don't need to do this for the sync event is
+      // in the success handler above: we add the model first, which
+      // causes the collection to listen, and then invoke the callback
+      // that triggers the event.)
+      if (wait) {
+        forwardPristineError = _.bind(this._onModelEvent, this, 'error');
+        model.once('error', forwardPristineError);
+      }
       model.save(null, options);
       return model;
     },
