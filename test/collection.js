@@ -2116,6 +2116,20 @@
     assert.ok(collection.get(model));
   });
 
+  QUnit.test('#3961 - add events sends options.index that correspond to wrong index', function(assert) {
+    var numModels = 4;
+    var models = _.each(['a', 'b', 'c', 'd'], function(val) {
+      return new Backbone.Model({id: val});
+    });
+    var collection = new Backbone.Collection(models);
+    models.shift(); // remove first element;
+    models.push(new Backbone.Model({id: 'e'}));
+    collection.on('add', function(model, coll, options){
+      assert.equal(options.index, undefined);
+    });
+    collection.set(models);
+  });
+
   QUnit.test('#4233 - can instantiate new model in ES class Collection', function(assert) {
     var model;
     try {
