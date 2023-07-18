@@ -655,11 +655,12 @@
   });
 
   QUnit.test('failing create with wait:true triggers error event (#4262)', function(assert) {
-    assert.expect(1);
+    assert.expect(2);
     var collection = new Backbone.Collection;
     collection.url = '/test';
     collection.on('error', function() { assert.ok(true); });
-    collection.create({id: '1'}, {wait: true});
+    var model = collection.create({id: '1'}, {wait: true});
+    model.on('error', function() { assert.ok(true); });
     this.ajaxSettings.error();
   });
 
