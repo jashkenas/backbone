@@ -664,6 +664,16 @@
     this.ajaxSettings.error();
   });
 
+  QUnit.test('successful create with wait:true triggers success event (#4262)', function(assert) {
+    assert.expect(2);
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    collection.on('sync', function() { assert.ok(true); });
+    var model = collection.create({id: '1'}, {wait: true});
+    model.on('sync', function() { assert.ok(true); });
+    this.ajaxSettings.success();
+  });
+
   QUnit.test('initialize', function(assert) {
     assert.expect(1);
     var Collection = Backbone.Collection.extend({
