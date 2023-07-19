@@ -405,10 +405,8 @@
     if (options.parse) attrs = this.parse(attrs, options) || {};
     var defaults = _.result(this, 'defaults');
 
-    // Additional `_.defaults()` wrap after `_.extend()` makes sense
-    // when `attrs` has a property explicitly set to `undefined`.
-    // Also it helps to avoid conflicts with Object.prototype properties.
-    // Issue #3842
+    // Just _.defaults would work fine, but the additional _.extends
+    // is in there for historical reasons. See #3843.
     attrs = _.defaults(_.extend({}, defaults, attrs), defaults);
 
     this.set(attrs, options);
