@@ -1298,6 +1298,8 @@ if (note.has("title")) {
       If you're directly communicating with a backend (CouchDB, MongoDB) that uses
       a different unique key, you may set a Model's <tt>idAttribute</tt> to
       transparently map from that key to <tt>id</tt>.
+      If you set <tt>idAttribute</tt>, you may also want to
+      override <a href="#Model-cidPrefix"><tt>cidPrefix</tt></a>.
 
 <pre class="runnable">
 var Meal = Backbone.Model.extend({
@@ -1316,6 +1318,31 @@ alert("Cake id: " + cake.id);
       automatically assigned to all models when they're first created. Client ids
       are handy when the model has not yet been saved to the server, and does not
       yet have its eventual true <b>id</b>, but already needs to be visible in the UI.
+    </p>
+
+    <p id="Model-cidPrefix">
+      <b class="header">cidPrefix</b><code>model.cidPrefix</code>
+      <br>
+      If your model has an <tt>id</tt> that is anything other than an
+      integer or a UUID, there is the possibility that it might collide with
+      its <tt>cid</tt>. To prevent this, you can override the prefix
+      that <tt>cid</tt>s start with.
+
+<pre class="runnable">
+// If both lengths are 2, refresh the page before running this example.
+var clashy = new Backbone.Collection([
+  {id: 'c2'},
+  {id: 'c1'},
+]);
+alert('clashy length: ' + clashy.length);
+
+var ClashFree = Backbone.Model.extend({cidPrefix: 'm'});
+var clashless = new Backbone.Collection([
+  {id: 'c3'},
+  {id: 'c2'},
+], {model: ClashFree});
+alert('clashless length: ' + clashless.length);
+</pre>
     </p>
 
     <p id="Model-attributes">
