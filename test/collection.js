@@ -674,6 +674,27 @@
     this.ajaxSettings.success();
   });
 
+  QUnit.test('failing create pre-existing with wait:true triggers once (#4262)', function(assert) {
+    assert.expect(1);
+    var model = new Backbone.Model;
+    var collection = new Backbone.Collection([model]);
+    collection.url = '/test';
+    collection.on('error', function() { assert.ok(true); });
+    collection.create(model, {wait: true});
+    this.ajaxSettings.error();
+  });
+
+  QUnit.test('successful create pre-existing with wait:true preserves other error bindings (#4262)', function(assert) {
+    assert.expect(1);
+    var model = new Backbone.Model;
+    var collection = new Backbone.Collection([model]);
+    collection.url = '/test';
+    model.on('error', function() { assert.ok(true); });
+    collection.create(model, {wait: true});
+    this.ajaxSettings.success();
+    model.trigger('error');
+  });
+
   QUnit.test('initialize', function(assert) {
     assert.expect(1);
     var Collection = Backbone.Collection.extend({
