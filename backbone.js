@@ -1079,10 +1079,9 @@
       if (!wait) this.add(model, options);
       var collection = this;
       var success = options.success;
-      var forwardPristineError;
       options.success = function(m, resp, callbackOpts) {
         if (wait) {
-          m.off('error', forwardPristineError, this);
+          m.off('error', this._forwardPristineError, this);
           collection.add(m, callbackOpts);
         }
         if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
@@ -1096,11 +1095,7 @@
       // causes the collection to listen, and then invoke the callback
       // that triggers the event.)
       if (wait) {
-        forwardPristineError = function(mod, col, opt) {
-          if (this.has(mod)) return;
-          this._onModelEvent('error', mod, col, opt);
-        };
-        model.once('error', forwardPristineError, this);
+        model.once('error', this._forwardPristineError, this);
       }
       model.save(null, options);
       return model;
@@ -1239,8 +1234,19 @@
         }
       }
       this.trigger.apply(this, arguments);
-    }
+    },
 
+    // Internal callback method used in `create`. It serves as a
+    // stand-in for the `_onModelEvent` method, which is not yet bound
+    // during the `wait` period of the `create` call. We still want to
+    // forward any `'error'` event at the end of the `wait` period,
+    // hence a customized callback.
+    _forwardPristineError: function(model, collection, options) {
+      // Prevent double forward if the model was already in the
+      // collection before the call to `create`.
+      if (this.has(model)) return;
+      this._onModelEvent('error', model, collection, options);
+    }
   });
 
   // Defining an @@iterator method implements JavaScript's Iterable protocol.
