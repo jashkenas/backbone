@@ -404,7 +404,11 @@
     if (options.collection) this.collection = options.collection;
     if (options.parse) attrs = this.parse(attrs, options) || {};
     var defaults = _.result(this, 'defaults');
+
+    // Just _.defaults would work fine, but the additional _.extends
+    // is in there for historical reasons. See #3843.
     attrs = _.defaults(_.extend({}, defaults, attrs), defaults);
+
     this.set(attrs, options);
     this.changed = {};
     this.initialize.apply(this, arguments);
