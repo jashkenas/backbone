@@ -1082,7 +1082,7 @@
       var forwardPristineError;
       options.success = function(m, resp, callbackOpts) {
         if (wait) {
-          model.off('error', forwardPristineError);
+          m.off('error', forwardPristineError, this);
           collection.add(m, callbackOpts);
         }
         if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
@@ -1096,8 +1096,11 @@
       // causes the collection to listen, and then invoke the callback
       // that triggers the event.)
       if (wait) {
-        forwardPristineError = _.bind(this._onModelEvent, this, 'error');
-        model.once('error', forwardPristineError);
+        forwardPristineError = function(mod, col, opt) {
+          if (this.has(mod)) return;
+          this._onModelEvent('error', mod, col, opt);
+        };
+        model.once('error', forwardPristineError, this);
       }
       model.save(null, options);
       return model;
