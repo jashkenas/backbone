@@ -2706,7 +2706,17 @@ var Router = Backbone.Router.extend({
     <p>
       If your application is not being served from the root url <tt>/</tt> of your
       domain, be sure to tell History where the root really is, as an option:
-      <tt>Backbone.history.start({pushState: true, root: "/public/search/"})</tt>
+      <tt>Backbone.history.start({pushState: true, root: "/public/search/"})</tt>.
+    </p>
+
+    <p>
+      The value provided for <tt>root</tt> will be normalized to include a leading
+      and trailing slash. When navigating to a route the default behavior is to
+      exclude the trailing slash from the URL (e.g., <tt>/public/search?query=...</tt>).
+      If you prefer to include the trailing slash (e.g., <tt>/public/search/?query=...</tt>)
+      use <tt>Backbone.history.start({trailingSlash: true})</tt>.
+      URLs will always contain a leading slash. When root is <tt>/</tt> URLs will
+      look like <tt>/?query=...</tt> regardless of the value of <tt>trailingSlash</tt>.
     </p>
 
     <p>
