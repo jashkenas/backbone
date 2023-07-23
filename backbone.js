@@ -1084,9 +1084,23 @@
       var collection = this;
       var success = options.success;
       options.success = function(m, resp, callbackOpts) {
-        if (wait) collection.add(m, callbackOpts);
+        if (wait) {
+          m.off('error', this._forwardPristineError, this);
+          collection.add(m, callbackOpts);
+        }
         if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
       };
+      // In case of wait:true, our collection is not listening to any
+      // of the model's events yet, so it will not forward the error
+      // event. In this special case, we need to listen for it
+      // separately and handle the event just once.
+      // (The reason we don't need to do this for the sync event is
+      // in the success handler above: we add the model first, which
+      // causes the collection to listen, and then invoke the callback
+      // that triggers the event.)
+      if (wait) {
+        model.once('error', this._forwardPristineError, this);
+      }
       model.save(null, options);
       return model;
     },
@@ -1224,8 +1238,19 @@
         }
       }
       this.trigger.apply(this, arguments);
-    }
+    },
 
+    // Internal callback method used in `create`. It serves as a
+    // stand-in for the `_onModelEvent` method, which is not yet bound
+    // during the `wait` period of the `create` call. We still want to
+    // forward any `'error'` event at the end of the `wait` period,
+    // hence a customized callback.
+    _forwardPristineError: function(model, collection, options) {
+      // Prevent double forward if the model was already in the
+      // collection before the call to `create`.
+      if (this.has(model)) return;
+      this._onModelEvent('error', model, collection, options);
+    }
   });
 
   // Defining an @@iterator method implements JavaScript's Iterable protocol.

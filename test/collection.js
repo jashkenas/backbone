@@ -654,6 +654,47 @@
     assert.equal(collection.length, 1);
   });
 
+  QUnit.test('failing create with wait:true triggers error event (#4262)', function(assert) {
+    assert.expect(2);
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    collection.on('error', function() { assert.ok(true); });
+    var model = collection.create({id: '1'}, {wait: true});
+    model.on('error', function() { assert.ok(true); });
+    this.ajaxSettings.error();
+  });
+
+  QUnit.test('successful create with wait:true triggers success event (#4262)', function(assert) {
+    assert.expect(2);
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    collection.on('sync', function() { assert.ok(true); });
+    var model = collection.create({id: '1'}, {wait: true});
+    model.on('sync', function() { assert.ok(true); });
+    this.ajaxSettings.success();
+  });
+
+  QUnit.test('failing create pre-existing with wait:true triggers once (#4262)', function(assert) {
+    assert.expect(1);
+    var model = new Backbone.Model;
+    var collection = new Backbone.Collection([model]);
+    collection.url = '/test';
+    collection.on('error', function() { assert.ok(true); });
+    collection.create(model, {wait: true});
+    this.ajaxSettings.error();
+  });
+
+  QUnit.test('successful create pre-existing with wait:true preserves other error bindings (#4262)', function(assert) {
+    assert.expect(1);
+    var model = new Backbone.Model;
+    var collection = new Backbone.Collection([model]);
+    collection.url = '/test';
+    model.on('error', function() { assert.ok(true); });
+    collection.create(model, {wait: true});
+    this.ajaxSettings.success();
+    model.trigger('error');
+  });
+
   QUnit.test('initialize', function(assert) {
     assert.expect(1);
     var Collection = Backbone.Collection.extend({
