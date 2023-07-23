@@ -2005,16 +2005,16 @@ var randomThree = books.sample(3);
     <p id="Collection-add">
       <b class="header">add</b><code>collection.add(models, [options])</code>
       <br />
-      Add a model (or an array of models) to the collection, firing an <tt>"add"</tt>
-      event for each model, and an <tt>"update"</tt> event afterwards. If a <a href="#Collection-model">model</a> property is defined, you may also pass
-      raw attributes objects and options, and have them be vivified as instances of the model using
-      the provided options.
-      Returns the added (or preexisting, if duplicate) models.
-      Pass <tt>{at: index}</tt> to splice the model into the collection at the
-      specified <tt>index</tt>. If you're adding models to the collection that are
-      <i>already</i> in the collection, they'll be ignored, unless you pass
-      <tt>{merge: true}</tt>, in which case their attributes will be merged
-      into the corresponding models, firing any appropriate <tt>"change"</tt> events.
+      Add a model (or an array of models) to the collection, firing
+      an <tt>"add"</tt> event for each model, and an <tt>"update"</tt>
+      event afterwards. This is a variant
+      of <a href="#Collection-set">set</a> with the same options and
+      return value, but it always adds and never removes. If you're
+      adding models to the collection that are <i>already</i> in the
+      collection, they'll be ignored, unless you pass <tt>{merge:
+      true}</tt>, in which case their attributes will be merged into
+      the corresponding models, firing any
+      appropriate <tt>"change"</tt> events.
     </p>
 
 <pre class="runnable">
@@ -2082,15 +2082,32 @@ ships.add([
     <p id="Collection-set">
       <b class="header">set</b><code>collection.set(models, [options])</code>
       <br />
-      The <b>set</b> method performs a "smart" update of the collection
-      with the passed list of models. If a model in the list isn't yet in the
-      collection it will be added; if the model is already in the collection
-      its attributes will be merged; and if the collection contains any models that
-      <i>aren't</i> present in the list, they'll be removed. All of the appropriate
-      <tt>"add"</tt>, <tt>"remove"</tt>, and <tt>"change"</tt> events are fired
-      as this happens. Returns the touched models in the collection.
-      If you'd like to customize the behavior, you can disable
-      it with options: <tt>{add: false}</tt>, <tt>{remove: false}</tt>, or <tt>{merge: false}</tt>.
+      The <b>set</b> method performs a "smart" update of the
+      collection with the passed list of models. If a model in the
+      list isn't yet in the collection it will be added; if the model
+      is already in the collection its attributes will be merged; and
+      if the collection contains any models that
+      <i>aren't</i> present in the list, they'll be removed. All of
+      the appropriate
+      <tt>"add"</tt>, <tt>"remove"</tt>, and <tt>"change"</tt> events
+      are fired as this happens, with a single <tt>"update"</tt> event
+      at the end. Returns the touched models in the collection. If
+      you'd like to customize this behavior, you can change it with
+      options: <tt>{add: false}</tt>, <tt>{remove: false}</tt>,
+      or <tt>{merge: false}</tt>.
+    </p>
+
+    <p>
+      If a <a href="#Collection-model">model</a> property is defined,
+      you may also pass raw attributes objects and options, and have
+      them be vivified as instances of the model using the provided
+      options. If you set
+      a <a href="#Collection-comparator">comparator</a>, the
+      collection will automatically sort itself and trigger
+      a <tt>"sort"</tt> event, unless you pass <tt>{sort: false}</tt>
+      or use the <tt>{at: index}</tt> option. Pass <tt>{at: index}</tt>
+      to splice the model(s) into the collection at the
+      specified <tt>index</tt>.
     </p>
 
 <pre>
@@ -2126,8 +2143,8 @@ var book = library.get(110);
     <p id="Collection-push">
       <b class="header">push</b><code>collection.push(model, [options])</code>
       <br />
-      Add a model at the end of a collection. Takes the same options as
-      <a href="#Collection-add">add</a>.
+      Like <a href="#Collection-add">add</a>, but always adds a model
+      at the end of the collection and never sorts.
     </p>
 
     <p id="Collection-pop">
@@ -2140,8 +2157,8 @@ var book = library.get(110);
     <p id="Collection-unshift">
       <b class="header">unshift</b><code>collection.unshift(model, [options])</code>
       <br />
-      Add a model at the beginning of a collection. Takes the same options as
-      <a href="#Collection-add">add</a>.
+      Like <a href="#Collection-add">add</a>, but always adds a model
+      at the beginning of the collection and never sorts.
     </p>
 
     <p id="Collection-shift">
