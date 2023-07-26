@@ -20,6 +20,7 @@ To suggest a feature or report a bug:
 https://github.com/jashkenas/backbone/issues
 
 For questions on working with Backbone or general discussions:
+[security policy](SECURITY.md),
 https://groups.google.com/forum/#!forum/backbonejs,
 http://stackoverflow.com/questions/tagged/backbone.js, or
 https://gitter.im/jashkenas/backbone
