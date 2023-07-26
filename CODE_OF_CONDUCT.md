@@ -2,8 +2,9 @@
 
 ## Our Pledge
 
-We as members, contributors, and leaders pledge to make participation in our
-community a harassment-free experience for everyone, regardless of age, body
+In the interest of fostering an open and welcoming environment, we as
+contributors and maintainers pledge to making participation in our project and
+our community a harassment-free experience for everyone, regardless of age, body
 size, visible or invisible disability, ethnicity, sex characteristics, gender
 identity and expression, level of experience, education, socio-economic status,
 nationality, personal appearance, race, caste, color, religion, or sexual
@@ -27,7 +28,7 @@ community include:
 
 Examples of unacceptable behavior include:
 
-* The use of sexualized language or imagery, and sexual attention or advances of
+* The use of sexualized language or imagery and sexual attention or advances of
   any kind
 * Trolling, insulting or derogatory comments, and personal or political attacks
 * Public or private harassment
@@ -50,17 +51,18 @@ decisions when appropriate.
 
 ## Scope
 
-This Code of Conduct applies within all community spaces, and also applies when
-an individual is officially representing the community in public spaces.
-Examples of representing our community include using an official e-mail address,
-posting via an official social media account, or acting as an appointed
-representative at an online or offline event.
+This Code of Conduct applies within all community spaces, and also applies
+when an individual is representing the project or its community. Examples of
+representing a project or community include using an official project e-mail
+address, posting via an official social media account, or acting as an appointed
+representative at an online or offline event. Representation of a project may be
+further defined and clarified by project maintainers.
 
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at
-[INSERT CONTACT METHOD].
+jashkenas@gmail.com.
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the
@@ -111,6 +113,27 @@ individual, or aggression toward or disparagement of classes of individuals.
 
 **Consequence**: A permanent ban from any sort of public interaction within the
 community.
+
+## Moderation
+
+Edits of another user's comment must be clearly marked with "**edit**", the
+moderator's username, and a timestamp for each occurrence. The only acceptable
+reasons for editing another user's comment are:
+
+1. to edit out violations of Our Pledge. These edits must include a rationale.
+2. to direct future readers to a relevant point later in the conversation
+   (usually the resolution). These edits must be append-only.
+
+Deletion of another user's comment is only acceptable when the comment includes
+no original value, such as "+1", ":+1:", or "me too".
+
+## Self-Moderation
+
+Edits of your own comment after someone has responded must be append-only and
+clearly marked with "**edit**". Typographical and formatting fixes to your own
+comment which do not affect its meaning are exempt from this requirement.
+Deletion of your own comment is only acceptable before any later comments have
+been posted.
 
 ## Attribution
 
