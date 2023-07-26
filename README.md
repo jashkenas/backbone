@@ -35,3 +35,5 @@ https://github.com/jashkenas/backbone/graphs/contributors
 
 Special thanks to Robert Kieffer for the original philosophy behind Backbone.
 https://github.com/broofa
+
+This project adheres to a [code of conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
