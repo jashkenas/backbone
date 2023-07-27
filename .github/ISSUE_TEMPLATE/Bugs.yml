@@ -1,0 +1,231 @@
+name: Bug report
+description: |
+  Report something that is not working correctly.
+  Not intended for security issues!
+title: Foo.bar should bazoonite, but frobulates instead
+body:
+  - type: markdown
+    attributes:
+      value: "
+        Thank you for taking the effort to report a bug.\n\n
+
+        Is your bug a security issue? In that case, **please do not use this
+        form!** Instead, see the [security
+        policy](https://github.com/jashkenas/backbone/security/policy) on how to
+        report the issue.\n\n
+
+        ## Identification\n\n
+
+        To start, some quick questions to pinpoint the issue."
+  - type: input
+    id: component
+    attributes:
+      label: Affected component
+      description: >
+        Which part of Backbone is affected? Please be as specific as possible,
+        for example &ldquo;the silent option of Collection.reset&rdquo; or
+        &ldquo;importing Backbone with require.js&rdquo;.
+      placeholder: the sync event triggered after Model.fetch
+    validations:
+      required: true
+  - type: input
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: |
+        In one sentence, what *should* the affected component do?
+      placeholder: |
+        Forward all options passed to Model.fetch to the event handler
+    validations:
+      required: true
+  - type: input
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: |
+        In one sentence, what does the affected component *actually* do?
+      placeholder: |
+        Forward options to whichever method was called last: sync, fetch, save
+        or destroy.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "
+        After filling the above three fields, please review the issue title. It
+        should be short, including elements of all three fields and not much
+        else.\n\n
+
+        For example: **After Model.fetch, sync event may include
+        options of a later sync, save or destroy call**\n\n
+
+        ## Context"
+  - type: textarea
+    id: docs
+    attributes:
+      label: Relevant documentation
+      description: |
+        Which documentation, if any, did you base your above expectation on?
+        Provide one link per line.
+      placeholder: |
+        - https://backbonejs.org/#Model-fetch
+        - https://backbonejs.org/#Events-catalog
+  - type: input
+    id: version
+    attributes:
+      label: Affected version(s)
+      description: >
+        With which version(s) of Backbone did you experience this problem? List
+        the version numbers, separated by commas. If you were trying the
+        bleeding edge version from the `master` branch, list the commit hash(es)
+        if possible, or date and time otherwise.
+      placeholder: 1.4.1, fcf5df6, 2023-07-25 23:45 UTC
+    validations:
+      required: true
+  - type: textarea
+    id: engine
+    attributes:
+      label: Affected engine(s)
+      description: >
+        In which browser(s) or other JavaScript environment(s) did you encounter
+        the problem? Please list one per line, including name and version
+        number.
+      placeholder: |
+        - Firefox 100
+        - Node.js 14.6
+    validations:
+      required: true
+  - type: textarea
+    id: interactions
+    attributes:
+      label: Interacting software
+      description: >
+        Where you using Backbone in conjuction with other libraries or tools,
+        which might be playing a role in this issue? Please list one per line,
+        including name, version number and variant if applicable.
+      placeholder: |
+        - jQuery 3.6.3
+  - type: textarea
+    id: related
+    attributes:
+      label: Related tickets
+      description: >
+        Do you know of other issues, pull requests or comments that may be
+        relevant to this bug? For example an issue ticket that discusses a
+        similar problem, or a pull request that may have introduced the bug.
+      placeholder: "#4229, #3410"
+  - type: textarea
+    id: prior
+    attributes:
+      label: Prior discussion
+      description: >
+        Besides the tickets referenced above, did you discuss the problem
+        elsewhere on the internet before reporting it here? In that case, please
+        list the URL(s) below.
+      placeholder: |
+        e.g. a Stack Overflow or Matrix link
+  - type: input
+    id: mention
+    attributes:
+      label: Mentions
+      description: >
+        If you would like to attract the attention of other GitHub users, you
+        can list their `@handles` here.
+      placeholder: "@jgonggrijp"
+  - type: markdown
+    attributes:
+      value: "## Details"
+  - type: textarea
+    id: permalink
+    attributes:
+      label: Code permalinks
+      description: >
+        If possible, provide permalinks to the JavaScript code, configuration,
+        etcetera in your project that exposed the bug. You can make a permalink
+        by visiting the affected file in the GitHub/GitLab/* webinterface,
+        hovering your mouse pointer over the affected line(s) near the left
+        margin and clicking on the triple dot menu that appears.
+  - type: input
+    id: error
+    attributes:
+      label: Error
+      description: >
+        If possible, name the error that you observed and that anyone trying to
+        reproduce the bug should look for.
+      placeholder: TypeError (options.success is not an object)
+  - type: textarea
+    id: story
+    attributes:
+      label: Story
+      description: >
+        In a paragraph or two, tell us your story. What did you want to achieve,
+        what did you do, what did you observe, and why do you think this is a
+        bug?
+    validations:
+      required: true
+  - type: textarea
+    id: research
+    attributes:
+      label: Debugging and other research
+      description: >
+        Did you step with a debugger or do other research in order to better
+        understand the issue? If so, please describe what you did and what you
+        observed.
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: >
+        In human language, list the minimal steps needed to make the bug happen.
+        You can list code and logs in the next two fields.
+      placeholder: |
+        1. Define a `Backbone.Model` subclass with overridden `sync` method.
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Example code
+      render: txt
+      description: >-
+        Provide any example code, configuration, etcetera that could help to
+        reproduce the bug. This will be rendered as code, but without syntax
+        highlighting. You can include code for different file types if needed.
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Logs
+      render: txt
+      description: >-
+        If you got relevant text output, for example through `console.log`, you
+        can copy-paste it below. However, if it is more than 10 lines, please
+        attach it as a file in the next field.
+  - type: textarea
+    id: attachment
+    attributes:
+      label: Attachments
+      description: >
+        Attach any relevant files, such as logs or screenshots, by dragging them
+        over the box below.
+  - type: markdown
+    attributes:
+      value: "## Closing"
+  - type: textarea
+    id: solution
+    attributes:
+      label: Suggested solution(s)
+      description: >
+        If you have any idea on how the problem could (or should) be
+        solved, please feel welcome to describe it here. Of course, if
+        your idea is very concrete, you may as well submit a pull
+        request!
+  - type: textarea
+    id: remarks
+    attributes:
+      label: Other remarks
+      description: >-
+        If there is anything else you would like to say about the issue, you can
+        do so here.
