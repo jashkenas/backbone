@@ -1404,6 +1404,17 @@ alert("Dessert will be " + (new Meal).get('dessert'));
       Instead, define <b>defaults</b> as a function.
     </p>
 
+    <p class="warning">
+      In nearly all cases, the defaults should <b>not</b> set a value for the
+      model&rsquo;s <a href="#Model-idAttribute"><tt>idAttribute</tt></a>. Doing
+      so would likely prevent an instance of <tt>Backbone.Collection</tt> from
+      correctly identifying model hashes and is almost certainly a mistake. If
+      you know what you are doing and you really <u>must</u> set the model id in
+      the defaults, make sure that you either (a) never add instances of the
+      model class to a collection or (b) define the defaults as a function that
+      returns a different, <u>universally</u> unique id on every invocation.
+    </p>
+
     <p id="Model-toJSON">
       <b class="header">toJSON</b><code>model.toJSON([options])</code>
       <br />
