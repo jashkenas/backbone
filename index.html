@@ -4501,6 +4501,44 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header" id="1.5.0">1.5.0</b> &mdash; <small><i>Jul. 28, 2023</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.4.1...1.5.0">Diff</a>
+    &mdash; <a href="https://cdn.statically.io/gh/jashkenas/backbone/1.5.0/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Added a <tt>trailingSlash</tt> option to the
+        <tt>Backbone.history.start</tt> method. When this option is
+        <tt>true</tt>, the trailing slash of the <tt>root</tt> is always
+        retained in the route, even if the path segment of the current URL is
+        empty.
+      </li>
+      <li>
+        Fixed a bug that caused collection <tt>add</tt> events to include an
+        irrelevant <tt>options.index</tt> if other models were removed during
+        the same call to <tt>Collection.set</tt>.
+      </li>
+      <li>
+        Fixed a corner case where a collection would not forward
+        the <tt>error</tt> event if <tt>Collection.create</tt> was invoked
+        with <tt>{wait: true}</tt>.
+      </li>
+      <li>
+        Adapted CoffeeScript Model test to CoffeeScript version 2.
+      </li>
+      <li>
+        Added a security policy and a code of conduct.
+      </li>
+      <li>
+        Added a <tt>.editorconfig</tt> to the project root in order to promote
+        consistent whitespace handling across editors.
+      </li>
+      <li>
+        Many clarifications, corrections and refinements to the documentation,
+        as well as some code comments.
+      </li>
+    </ul>
+
     <b class="header" id="1.4.1">1.4.1</b> &mdash; <small><i>Feb. 26, 2022</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.4.0...1.4.1">Diff</a>
     &mdash; <a href="https://cdn.statically.io/gh/jashkenas/backbone/1.4.1/index.html">Docs</a>
