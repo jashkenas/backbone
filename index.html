@@ -300,7 +300,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(1.4.1)</span>
+      Backbone.js <span class="version">(1.5.0)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/jashkenas/backbone">GitHub Repository</a></li>
@@ -356,6 +356,7 @@
         <li data-name="id">– <a href="#Model-id">id</a></li>
         <li data-name="idAttribute">– <a href="#Model-idAttribute">idAttribute</a></li>
         <li data-name="cid">– <a href="#Model-cid">cid</a></li>
+        <li data-name="cidPrefix">– <a href="#Model-cidPrefix">cidPrefix</a></li>
         <li data-name="attributes">– <a href="#Model-attributes">attributes</a></li>
         <li data-name="changed">– <a href="#Model-changed">changed</a></li>
         <li data-name="defaults">– <a href="#Model-defaults">defaults</a></li>
@@ -607,11 +608,11 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (1.4.1)</a></td>
+        <td><a class="punch" href="backbone.js">Development Version (1.5.0)</a></td>
         <td class="text"><i>72kb, Full source, tons of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (1.4.1)</a></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (1.5.0)</a></td>
         <td class="text" style="line-height: 16px;">
           <i>7.9kb, Packed and gzipped</i><br />
           <small>(<a href="backbone-min.map">Source Map</a>)</small>
@@ -1298,6 +1299,8 @@ if (note.has("title")) {
       If you're directly communicating with a backend (CouchDB, MongoDB) that uses
       a different unique key, you may set a Model's <tt>idAttribute</tt> to
       transparently map from that key to <tt>id</tt>.
+      If you set <tt>idAttribute</tt>, you may also want to
+      override <a href="#Model-cidPrefix"><tt>cidPrefix</tt></a>.
 
 <pre class="runnable">
 var Meal = Backbone.Model.extend({
@@ -1316,6 +1319,31 @@ alert("Cake id: " + cake.id);
       automatically assigned to all models when they're first created. Client ids
       are handy when the model has not yet been saved to the server, and does not
       yet have its eventual true <b>id</b>, but already needs to be visible in the UI.
+    </p>
+
+    <p id="Model-cidPrefix">
+      <b class="header">cidPrefix</b><code>model.cidPrefix</code>
+      <br>
+      If your model has an <tt>id</tt> that is anything other than an
+      integer or a UUID, there is the possibility that it might collide with
+      its <tt>cid</tt>. To prevent this, you can override the prefix
+      that <tt>cid</tt>s start with.
+
+<pre class="runnable">
+// If both lengths are 2, refresh the page before running this example.
+var clashy = new Backbone.Collection([
+  {id: 'c2'},
+  {id: 'c1'},
+]);
+alert('clashy length: ' + clashy.length);
+
+var ClashFree = Backbone.Model.extend({cidPrefix: 'm'});
+var clashless = new Backbone.Collection([
+  {id: 'c3'},
+  {id: 'c2'},
+], {model: ClashFree});
+alert('clashless length: ' + clashless.length);
+</pre>
     </p>
 
     <p id="Model-attributes">
@@ -1899,6 +1927,12 @@ var spaces = new Backbone.Collection(null, {
 });
 </pre>
 
+    <p>
+      If <tt>{parse: true}</tt> is passed as an <b>option</b>, the <b>attributes</b>
+      will first be converted by <a href="#Collection-parse">parse</a> before being
+      <a href="#Collection-set">set</a> on the collection.
+    </p>
+
     <p id="Collection-models">
       <b class="header">models</b><code>collection.models</code>
       <br />
@@ -2005,16 +2039,16 @@ var randomThree = books.sample(3);
     <p id="Collection-add">
       <b class="header">add</b><code>collection.add(models, [options])</code>
       <br />
-      Add a model (or an array of models) to the collection, firing an <tt>"add"</tt>
-      event for each model, and an <tt>"update"</tt> event afterwards. If a <a href="#Collection-model">model</a> property is defined, you may also pass
-      raw attributes objects and options, and have them be vivified as instances of the model using
-      the provided options.
-      Returns the added (or preexisting, if duplicate) models.
-      Pass <tt>{at: index}</tt> to splice the model into the collection at the
-      specified <tt>index</tt>. If you're adding models to the collection that are
-      <i>already</i> in the collection, they'll be ignored, unless you pass
-      <tt>{merge: true}</tt>, in which case their attributes will be merged
-      into the corresponding models, firing any appropriate <tt>"change"</tt> events.
+      Add a model (or an array of models) to the collection, firing
+      an <tt>"add"</tt> event for each model, and an <tt>"update"</tt>
+      event afterwards. This is a variant
+      of <a href="#Collection-set">set</a> with the same options and
+      return value, but it always adds and never removes. If you're
+      adding models to the collection that are <i>already</i> in the
+      collection, they'll be ignored, unless you pass <tt>{merge:
+      true}</tt>, in which case their attributes will be merged into
+      the corresponding models, firing any
+      appropriate <tt>"change"</tt> events.
     </p>
 
 <pre class="runnable">
@@ -2082,15 +2116,32 @@ ships.add([
     <p id="Collection-set">
       <b class="header">set</b><code>collection.set(models, [options])</code>
       <br />
-      The <b>set</b> method performs a "smart" update of the collection
-      with the passed list of models. If a model in the list isn't yet in the
-      collection it will be added; if the model is already in the collection
-      its attributes will be merged; and if the collection contains any models that
-      <i>aren't</i> present in the list, they'll be removed. All of the appropriate
-      <tt>"add"</tt>, <tt>"remove"</tt>, and <tt>"change"</tt> events are fired
-      as this happens. Returns the touched models in the collection.
-      If you'd like to customize the behavior, you can disable
-      it with options: <tt>{add: false}</tt>, <tt>{remove: false}</tt>, or <tt>{merge: false}</tt>.
+      The <b>set</b> method performs a "smart" update of the
+      collection with the passed list of models. If a model in the
+      list isn't yet in the collection it will be added; if the model
+      is already in the collection its attributes will be merged; and
+      if the collection contains any models that
+      <i>aren't</i> present in the list, they'll be removed. All of
+      the appropriate
+      <tt>"add"</tt>, <tt>"remove"</tt>, and <tt>"change"</tt> events
+      are fired as this happens, with a single <tt>"update"</tt> event
+      at the end. Returns the touched models in the collection. If
+      you'd like to customize this behavior, you can change it with
+      options: <tt>{add: false}</tt>, <tt>{remove: false}</tt>,
+      or <tt>{merge: false}</tt>.
+    </p>
+
+    <p>
+      If a <a href="#Collection-model">model</a> property is defined,
+      you may also pass raw attributes objects and options, and have
+      them be vivified as instances of the model using the provided
+      options. If you set
+      a <a href="#Collection-comparator">comparator</a>, the
+      collection will automatically sort itself and trigger
+      a <tt>"sort"</tt> event, unless you pass <tt>{sort: false}</tt>
+      or use the <tt>{at: index}</tt> option. Pass <tt>{at: index}</tt>
+      to splice the model(s) into the collection at the
+      specified <tt>index</tt>.
     </p>
 
 <pre>
@@ -2126,8 +2177,8 @@ var book = library.get(110);
     <p id="Collection-push">
       <b class="header">push</b><code>collection.push(model, [options])</code>
       <br />
-      Add a model at the end of a collection. Takes the same options as
-      <a href="#Collection-add">add</a>.
+      Like <a href="#Collection-add">add</a>, but always adds a model
+      at the end of the collection and never sorts.
     </p>
 
     <p id="Collection-pop">
@@ -2140,8 +2191,8 @@ var book = library.get(110);
     <p id="Collection-unshift">
       <b class="header">unshift</b><code>collection.unshift(model, [options])</code>
       <br />
-      Add a model at the beginning of a collection. Takes the same options as
-      <a href="#Collection-add">add</a>.
+      Like <a href="#Collection-add">add</a>, but always adds a model
+      at the beginning of the collection and never sorts.
     </p>
 
     <p id="Collection-shift">
@@ -2706,7 +2757,17 @@ var Router = Backbone.Router.extend({
     <p>
       If your application is not being served from the root url <tt>/</tt> of your
       domain, be sure to tell History where the root really is, as an option:
-      <tt>Backbone.history.start({pushState: true, root: "/public/search/"})</tt>
+      <tt>Backbone.history.start({pushState: true, root: "/public/search/"})</tt>.
+    </p>
+
+    <p>
+      The value provided for <tt>root</tt> will be normalized to include a leading
+      and trailing slash. When navigating to a route the default behavior is to
+      exclude the trailing slash from the URL (e.g., <tt>/public/search?query=...</tt>).
+      If you prefer to include the trailing slash (e.g., <tt>/public/search/?query=...</tt>)
+      use <tt>Backbone.history.start({trailingSlash: true})</tt>.
+      URLs will always contain a leading slash. When root is <tt>/</tt> URLs will
+      look like <tt>/?query=...</tt> regardless of the value of <tt>trailingSlash</tt>.
     </p>
 
     <p>
@@ -4439,6 +4500,44 @@ ActiveRecord::Base.include_root_in_json = false
     </div>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header" id="1.5.0">1.5.0</b> &mdash; <small><i>Jul. 28, 2023</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.4.1...1.5.0">Diff</a>
+    &mdash; <a href="https://cdn.statically.io/gh/jashkenas/backbone/1.5.0/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Added a <tt>trailingSlash</tt> option to the
+        <tt>Backbone.history.start</tt> method. When this option is
+        <tt>true</tt>, the trailing slash of the <tt>root</tt> is always
+        retained in the route, even if the path segment of the current URL is
+        empty.
+      </li>
+      <li>
+        Fixed a bug that caused collection <tt>add</tt> events to include an
+        irrelevant <tt>options.index</tt> if other models were removed during
+        the same call to <tt>Collection.set</tt>.
+      </li>
+      <li>
+        Fixed a corner case where a collection would not forward
+        the <tt>error</tt> event if <tt>Collection.create</tt> was invoked
+        with <tt>{wait: true}</tt>.
+      </li>
+      <li>
+        Adapted CoffeeScript Model test to CoffeeScript version 2.
+      </li>
+      <li>
+        Added a security policy and a code of conduct.
+      </li>
+      <li>
+        Added a <tt>.editorconfig</tt> to the project root in order to promote
+        consistent whitespace handling across editors.
+      </li>
+      <li>
+        Many clarifications, corrections and refinements to the documentation,
+        as well as some code comments.
+      </li>
+    </ul>
 
     <b class="header" id="1.4.1">1.4.1</b> &mdash; <small><i>Feb. 26, 2022</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.4.0...1.4.1">Diff</a>

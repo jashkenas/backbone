@@ -110,7 +110,7 @@ _.extend(Backbone.LocalStorage.prototype, {
 
 // localSync delegate to the model or collection's
 // *localStorage* property, which should be an instance of `Store`.
-// window.Store.sync and Backbone.localSync is deprectated, use Backbone.LocalStorage.sync instead
+// window.Store.sync and Backbone.localSync is deprecated, use Backbone.LocalStorage.sync instead
 Backbone.LocalStorage.sync = window.Store.sync = Backbone.localSync = function(method, model, options) {
   var store = model.localStorage || model.collection.localStorage;
 

@@ -32,7 +32,7 @@ ok tempest.get('length') is 123
 class ProperDocument extends Document
 
   fullName: ->
-    "Mr. " + super
+    "Mr. " + super(arguments...)
 
 properTempest = new ProperDocument tempest.attributes
 

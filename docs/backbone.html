@@ -27,7 +27,7 @@
               <div class="sswrap ">
                 <a class="ss" href="#section-1">&#x00a7;</a>
               </div>
-              <pre><code><span class="hljs-title class_">Backbone</span>.<span class="hljs-property">js</span> <span class="hljs-number">1.4</span><span class="hljs-number">.1</span>
+              <pre><code><span class="hljs-title class_">Backbone</span>.<span class="hljs-property">js</span> <span class="hljs-number">1.5</span><span class="hljs-number">.0</span>
 </code></pre>
 
             </div>
@@ -208,7 +208,7 @@ restored later on, if <code>noConflict</code> is used.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">VERSION</span> = <span class="hljs-string">&#x27;1.4.1&#x27;</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">VERSION</span> = <span class="hljs-string">&#x27;1.5.0&#x27;</span>;</pre></div></div>
             
         </li>
         
@@ -1120,12 +1120,7 @@ is automatically generated and assigned for you.</p>
     <span class="hljs-variable language_">this</span>.<span class="hljs-property">attributes</span> = {};
     <span class="hljs-keyword">if</span> (options.<span class="hljs-property">collection</span>) <span class="hljs-variable language_">this</span>.<span class="hljs-property">collection</span> = options.<span class="hljs-property">collection</span>;
     <span class="hljs-keyword">if</span> (options.<span class="hljs-property">parse</span>) attrs = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">parse</span>(attrs, options) || {};
-    <span class="hljs-keyword">var</span> defaults = _.<span class="hljs-title function_">result</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-string">&#x27;defaults&#x27;</span>);
-    attrs = _.<span class="hljs-title function_">defaults</span>(_.<span class="hljs-title function_">extend</span>({}, defaults, attrs), defaults);
-    <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">set</span>(attrs, options);
-    <span class="hljs-variable language_">this</span>.<span class="hljs-property">changed</span> = {};
-    <span class="hljs-variable language_">this</span>.<span class="hljs-property">initialize</span>.<span class="hljs-title function_">apply</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-variable language_">arguments</span>);
-  };</pre></div></div>
+    <span class="hljs-keyword">var</span> defaults = _.<span class="hljs-title function_">result</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-string">&#x27;defaults&#x27;</span>);</pre></div></div>
             
         </li>
         
@@ -1136,11 +1131,17 @@ is automatically generated and assigned for you.</p>
               <div class="sswrap ">
                 <a class="ss" href="#section-59">&#x00a7;</a>
               </div>
-              <p>Attach all inheritable methods to the Model prototype.</p>
+              <p>Just _.defaults would work fine, but the additional _.extends
+is in there for historical reasons. See #3843.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _.<span class="hljs-title function_">extend</span>(<span class="hljs-title class_">Model</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>, <span class="hljs-title class_">Events</span>, {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    attrs = _.<span class="hljs-title function_">defaults</span>(_.<span class="hljs-title function_">extend</span>({}, defaults, attrs), defaults);
+
+    <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">set</span>(attrs, options);
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">changed</span> = {};
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">initialize</span>.<span class="hljs-title function_">apply</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-variable language_">arguments</span>);
+  };</pre></div></div>
             
         </li>
         
@@ -1151,11 +1152,11 @@ is automatically generated and assigned for you.</p>
               <div class="sswrap ">
                 <a class="ss" href="#section-60">&#x00a7;</a>
               </div>
-              <p>A hash of attributes whose current and previous value differ.</p>
+              <p>Attach all inheritable methods to the Model prototype.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">changed</span>: <span class="hljs-literal">null</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  _.<span class="hljs-title function_">extend</span>(<span class="hljs-title class_">Model</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>, <span class="hljs-title class_">Events</span>, {</pre></div></div>
             
         </li>
         
@@ -1166,11 +1167,11 @@ is automatically generated and assigned for you.</p>
               <div class="sswrap ">
                 <a class="ss" href="#section-61">&#x00a7;</a>
               </div>
-              <p>The value returned during the last failed validation.</p>
+              <p>A hash of attributes whose current and previous value differ.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">validationError</span>: <span class="hljs-literal">null</span>,</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">changed</span>: <span class="hljs-literal">null</span>,</pre></div></div>
             
         </li>
         
@@ -1180,6 +1181,21 @@ is automatically generated and assigned for you.</p>
               
               <div class="sswrap ">
                 <a class="ss" href="#section-62">&#x00a7;</a>
+              </div>
+              <p>The value returned during the last failed validation.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">validationError</span>: <span class="hljs-literal">null</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-63">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-63">&#x00a7;</a>
               </div>
               <p>The default name for the JSON <code>id</code> attribute is <code>&quot;id&quot;</code>. MongoDB and
 CouchDB users may want to set this to <code>&quot;_id&quot;</code>.</p>
@@ -1191,11 +1207,11 @@ CouchDB users may want to set this to <code>&quot;_id&quot;</code>.</p>
         </li>
         
         
-        <li id="section-63">
+        <li id="section-64">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-63">&#x00a7;</a>
+                <a class="ss" href="#section-64">&#x00a7;</a>
               </div>
               <p>The prefix is used to create the client id which is used to identify models locally.
 You may want to override this if you’re experiencing name clashes with model ids.</p>
@@ -1207,11 +1223,11 @@ You may want to override this if you’re experiencing name clashes with model i
         </li>
         
         
-        <li id="section-64">
+        <li id="section-65">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-64">&#x00a7;</a>
+                <a class="ss" href="#section-65">&#x00a7;</a>
               </div>
               <p>preinitialize is an empty function by default. You can override it with a function
 or object.  preinitialize will run before any instantiation logic is run in the Model.</p>
@@ -1223,11 +1239,11 @@ or object.  preinitialize will run before any instantiation logic is run in the 
         </li>
         
         
-        <li id="section-65">
+        <li id="section-66">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-65">&#x00a7;</a>
+                <a class="ss" href="#section-66">&#x00a7;</a>
               </div>
               <p>Initialize is an empty function by default. Override it with your own
 initialization logic.</p>
@@ -1239,11 +1255,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-66">
+        <li id="section-67">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-66">&#x00a7;</a>
+                <a class="ss" href="#section-67">&#x00a7;</a>
               </div>
               <p>Return a copy of the model’s <code>attributes</code> object.</p>
 
@@ -1256,11 +1272,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-67">
+        <li id="section-68">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-67">&#x00a7;</a>
+                <a class="ss" href="#section-68">&#x00a7;</a>
               </div>
               <p>Proxy <code>Backbone.sync</code> by default – but override this if you need
 custom syncing semantics for <em>this</em> particular model.</p>
@@ -1274,11 +1290,11 @@ custom syncing semantics for <em>this</em> particular model.</p>
         </li>
         
         
-        <li id="section-68">
+        <li id="section-69">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-68">&#x00a7;</a>
+                <a class="ss" href="#section-69">&#x00a7;</a>
               </div>
               <p>Get the value of an attribute.</p>
 
@@ -1291,11 +1307,11 @@ custom syncing semantics for <em>this</em> particular model.</p>
         </li>
         
         
-        <li id="section-69">
+        <li id="section-70">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-69">&#x00a7;</a>
+                <a class="ss" href="#section-70">&#x00a7;</a>
               </div>
               <p>Get the HTML-escaped value of an attribute.</p>
 
@@ -1308,11 +1324,11 @@ custom syncing semantics for <em>this</em> particular model.</p>
         </li>
         
         
-        <li id="section-70">
+        <li id="section-71">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-70">&#x00a7;</a>
+                <a class="ss" href="#section-71">&#x00a7;</a>
               </div>
               <p>Returns <code>true</code> if the attribute contains a value that is not null
 or undefined.</p>
@@ -1326,11 +1342,11 @@ or undefined.</p>
         </li>
         
         
-        <li id="section-71">
+        <li id="section-72">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-71">&#x00a7;</a>
+                <a class="ss" href="#section-72">&#x00a7;</a>
               </div>
               <p>Special-cased proxy to underscore’s <code>_.matches</code> method.</p>
 
@@ -1343,11 +1359,11 @@ or undefined.</p>
         </li>
         
         
-        <li id="section-72">
+        <li id="section-73">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-72">&#x00a7;</a>
+                <a class="ss" href="#section-73">&#x00a7;</a>
               </div>
               <p>Set a hash of model attributes on the object, firing <code>&quot;change&quot;</code>. This is
 the core primitive operation of a model, updating the data and notifying
@@ -1361,11 +1377,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-73">
+        <li id="section-74">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-73">&#x00a7;</a>
+                <a class="ss" href="#section-74">&#x00a7;</a>
               </div>
               <p>Handle both <code>&quot;key&quot;, value</code> and <code>{key: value}</code> -style arguments.</p>
 
@@ -1384,11 +1400,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-74">
+        <li id="section-75">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-74">&#x00a7;</a>
+                <a class="ss" href="#section-75">&#x00a7;</a>
               </div>
               <p>Run validation.</p>
 
@@ -1399,11 +1415,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-75">
+        <li id="section-76">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-75">&#x00a7;</a>
+                <a class="ss" href="#section-76">&#x00a7;</a>
               </div>
               <p>Extract attributes and options.</p>
 
@@ -1427,11 +1443,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-76">
+        <li id="section-77">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-76">&#x00a7;</a>
+                <a class="ss" href="#section-77">&#x00a7;</a>
               </div>
               <p>For each <code>set</code> attribute, update or delete the current value.</p>
 
@@ -1451,11 +1467,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-77">
+        <li id="section-78">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-77">&#x00a7;</a>
+                <a class="ss" href="#section-78">&#x00a7;</a>
               </div>
               <p>Update the <code>id</code>.</p>
 
@@ -1470,11 +1486,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-78">
+        <li id="section-79">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-78">&#x00a7;</a>
+                <a class="ss" href="#section-79">&#x00a7;</a>
               </div>
               <p>Trigger all relevant attribute changes.</p>
 
@@ -1490,11 +1506,11 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
         </li>
         
         
-        <li id="section-79">
+        <li id="section-80">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-79">&#x00a7;</a>
+                <a class="ss" href="#section-80">&#x00a7;</a>
               </div>
               <p>You might be wondering why there’s a <code>while</code> loop here. Changes can
 be recursively nested within <code>&quot;change&quot;</code> events.</p>
@@ -1517,11 +1533,11 @@ be recursively nested within <code>&quot;change&quot;</code> events.</p>
         </li>
         
         
-        <li id="section-80">
+        <li id="section-81">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-80">&#x00a7;</a>
+                <a class="ss" href="#section-81">&#x00a7;</a>
               </div>
               <p>Remove an attribute from the model, firing <code>&quot;change&quot;</code>. <code>unset</code> is a noop
 if the attribute doesn’t exist.</p>
@@ -1535,11 +1551,11 @@ if the attribute doesn’t exist.</p>
         </li>
         
         
-        <li id="section-81">
+        <li id="section-82">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-81">&#x00a7;</a>
+                <a class="ss" href="#section-82">&#x00a7;</a>
               </div>
               <p>Clear all attributes on the model, firing <code>&quot;change&quot;</code>.</p>
 
@@ -1554,11 +1570,11 @@ if the attribute doesn’t exist.</p>
         </li>
         
         
-        <li id="section-82">
+        <li id="section-83">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-82">&#x00a7;</a>
+                <a class="ss" href="#section-83">&#x00a7;</a>
               </div>
               <p>Determine if the model has changed since the last <code>&quot;change&quot;</code> event.
 If you specify an attribute name, determine if that attribute has changed.</p>
@@ -1573,11 +1589,11 @@ If you specify an attribute name, determine if that attribute has changed.</p>
         </li>
         
         
-        <li id="section-83">
+        <li id="section-84">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-83">&#x00a7;</a>
+                <a class="ss" href="#section-84">&#x00a7;</a>
               </div>
               <p>Return an object containing all the attributes that have changed, or
 false if there are no changed attributes. Useful for determining what
@@ -1605,11 +1621,11 @@ determining if there <em>would be</em> a change.</p>
         </li>
         
         
-        <li id="section-84">
+        <li id="section-85">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-84">&#x00a7;</a>
+                <a class="ss" href="#section-85">&#x00a7;</a>
               </div>
               <p>Get the previous value of an attribute, recorded at the time the last
 <code>&quot;change&quot;</code> event was fired.</p>
@@ -1624,11 +1640,11 @@ determining if there <em>would be</em> a change.</p>
         </li>
         
         
-        <li id="section-85">
+        <li id="section-86">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-85">&#x00a7;</a>
+                <a class="ss" href="#section-86">&#x00a7;</a>
               </div>
               <p>Get all of the attributes of the model at the time of the previous
 <code>&quot;change&quot;</code> event.</p>
@@ -1642,11 +1658,11 @@ determining if there <em>would be</em> a change.</p>
         </li>
         
         
-        <li id="section-86">
+        <li id="section-87">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-86">&#x00a7;</a>
+                <a class="ss" href="#section-87">&#x00a7;</a>
               </div>
               <p>Fetch the model from the server, merging the response with the model’s
 local attributes. Any changed attributes will trigger a “change” event.</p>
@@ -1670,11 +1686,11 @@ local attributes. Any changed attributes will trigger a “change” event.</p>
         </li>
         
         
-        <li id="section-87">
+        <li id="section-88">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-87">&#x00a7;</a>
+                <a class="ss" href="#section-88">&#x00a7;</a>
               </div>
               <p>Set a hash of model attributes, and sync the model to the server.
 If the server returns an attributes hash that differs, the model’s
@@ -1687,11 +1703,11 @@ state will be <code>set</code> again.</p>
         </li>
         
         
-        <li id="section-88">
+        <li id="section-89">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-88">&#x00a7;</a>
+                <a class="ss" href="#section-89">&#x00a7;</a>
               </div>
               <p>Handle both <code>&quot;key&quot;, value</code> and <code>{key: value}</code> -style arguments.</p>
 
@@ -1711,11 +1727,11 @@ state will be <code>set</code> again.</p>
         </li>
         
         
-        <li id="section-89">
+        <li id="section-90">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-89">&#x00a7;</a>
+                <a class="ss" href="#section-90">&#x00a7;</a>
               </div>
               <p>If we’re not waiting and attributes exist, save acts as
 <code>set(attr).save(null, opts)</code> with validation. Otherwise, check if
@@ -1732,11 +1748,11 @@ the model will be valid when the attributes, if any, are set.</p>
         </li>
         
         
-        <li id="section-90">
+        <li id="section-91">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-90">&#x00a7;</a>
+                <a class="ss" href="#section-91">&#x00a7;</a>
               </div>
               <p>After a successful server-side save, the client is (optionally)
 updated with the server-side state.</p>
@@ -1751,11 +1767,11 @@ updated with the server-side state.</p>
         </li>
         
         
-        <li id="section-91">
+        <li id="section-92">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-91">&#x00a7;</a>
+                <a class="ss" href="#section-92">&#x00a7;</a>
               </div>
               <p>Ensure attributes are restored during synchronous saves.</p>
 
@@ -1773,11 +1789,11 @@ updated with the server-side state.</p>
         </li>
         
         
-        <li id="section-92">
+        <li id="section-93">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-92">&#x00a7;</a>
+                <a class="ss" href="#section-93">&#x00a7;</a>
               </div>
               <p>Set temporary attributes if <code>{wait: true}</code> to properly find new ids.</p>
 
@@ -1792,11 +1808,11 @@ updated with the server-side state.</p>
         </li>
         
         
-        <li id="section-93">
+        <li id="section-94">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-93">&#x00a7;</a>
+                <a class="ss" href="#section-94">&#x00a7;</a>
               </div>
               <p>Restore attributes.</p>
 
@@ -1810,11 +1826,11 @@ updated with the server-side state.</p>
         </li>
         
         
-        <li id="section-94">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-94">&#x00a7;</a>
+                <a class="ss" href="#section-95">&#x00a7;</a>
               </div>
               <p>Destroy this model on the server if it was already persisted.
 Optimistically removes the model from its collection, if it has one.
@@ -1853,11 +1869,11 @@ If <code>wait: true</code> is passed, waits for the server to respond before rem
         </li>
         
         
-        <li id="section-95">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-95">&#x00a7;</a>
+                <a class="ss" href="#section-96">&#x00a7;</a>
               </div>
               <p>Default URL for the model’s representation on the server – if you’re
 using Backbone’s restful methods, override this to change the endpoint
@@ -1878,11 +1894,11 @@ that will be called.</p>
         </li>
         
         
-        <li id="section-96">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-96">&#x00a7;</a>
+                <a class="ss" href="#section-97">&#x00a7;</a>
               </div>
               <p><strong>parse</strong> converts a response into the hash of attributes to be <code>set</code> on
 the model. The default implementation is just to pass the response along.</p>
@@ -1896,11 +1912,11 @@ the model. The default implementation is just to pass the response along.</p>
         </li>
         
         
-        <li id="section-97">
+        <li id="section-98">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-97">&#x00a7;</a>
+                <a class="ss" href="#section-98">&#x00a7;</a>
               </div>
               <p>Create a new model with identical attributes to this one.</p>
 
@@ -1913,11 +1929,11 @@ the model. The default implementation is just to pass the response along.</p>
         </li>
         
         
-        <li id="section-98">
+        <li id="section-99">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-98">&#x00a7;</a>
+                <a class="ss" href="#section-99">&#x00a7;</a>
               </div>
               <p>A model is new if it has never been saved to the server, and lacks an id.</p>
 
@@ -1930,11 +1946,11 @@ the model. The default implementation is just to pass the response along.</p>
         </li>
         
         
-        <li id="section-99">
+        <li id="section-100">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-99">&#x00a7;</a>
+                <a class="ss" href="#section-100">&#x00a7;</a>
               </div>
               <p>Check if the model is currently in a valid state.</p>
 
@@ -1947,11 +1963,11 @@ the model. The default implementation is just to pass the response along.</p>
         </li>
         
         
-        <li id="section-100">
+        <li id="section-101">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-100">&#x00a7;</a>
+                <a class="ss" href="#section-101">&#x00a7;</a>
               </div>
               <p>Run validation against the next complete set of model attributes,
 returning <code>true</code> if all is well. Otherwise, fire an <code>&quot;invalid&quot;</code> event.</p>
@@ -1972,26 +1988,14 @@ returning <code>true</code> if all is well. Otherwise, fire an <code>&quot;inval
         </li>
         
         
-        <li id="section-101">
-            <div class="annotation">
-              
-              <div class="sswrap ">
-                <a class="ss" href="#section-101">&#x00a7;</a>
-              </div>
-              <h2 id="backbonecollection">Backbone.Collection</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-102">
             <div class="annotation">
               
               <div class="sswrap ">
                 <a class="ss" href="#section-102">&#x00a7;</a>
               </div>
-              
+              <h2 id="backbonecollection">Backbone.Collection</h2>
+
             </div>
             
         </li>
@@ -2002,6 +2006,18 @@ returning <code>true</code> if all is well. Otherwise, fire an <code>&quot;inval
               
               <div class="sswrap ">
                 <a class="ss" href="#section-103">&#x00a7;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-104">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-104">&#x00a7;</a>
               </div>
               <p>If models tend to represent a single row of data, a Backbone Collection is
 more analogous to a table full of data … or a small slice or page of that
@@ -2015,11 +2031,11 @@ indexes of their models, both in order, and for lookup by <code>id</code>.</p>
         </li>
         
         
-        <li id="section-104">
+        <li id="section-105">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-104">&#x00a7;</a>
+                <a class="ss" href="#section-105">&#x00a7;</a>
               </div>
               <p>Create a new <strong>Collection</strong>, perhaps to contain a specific type of <code>model</code>.
 If a <code>comparator</code> is specified, the Collection will maintain
@@ -2040,11 +2056,11 @@ its models in sort order, as they’re added and removed.</p>
         </li>
         
         
-        <li id="section-105">
+        <li id="section-106">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-105">&#x00a7;</a>
+                <a class="ss" href="#section-106">&#x00a7;</a>
               </div>
               <p>Default options for <code>Collection#set</code>.</p>
 
@@ -2056,11 +2072,11 @@ its models in sort order, as they’re added and removed.</p>
         </li>
         
         
-        <li id="section-106">
+        <li id="section-107">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-106">&#x00a7;</a>
+                <a class="ss" href="#section-107">&#x00a7;</a>
               </div>
               <p>Splices <code>insert</code> into <code>array</code> at index <code>at</code>.</p>
 
@@ -2079,11 +2095,11 @@ its models in sort order, as they’re added and removed.</p>
         </li>
         
         
-        <li id="section-107">
+        <li id="section-108">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-107">&#x00a7;</a>
+                <a class="ss" href="#section-108">&#x00a7;</a>
               </div>
               <p>Define the Collection’s inheritable methods.</p>
 
@@ -2094,11 +2110,11 @@ its models in sort order, as they’re added and removed.</p>
         </li>
         
         
-        <li id="section-108">
+        <li id="section-109">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-108">&#x00a7;</a>
+                <a class="ss" href="#section-109">&#x00a7;</a>
               </div>
               <p>The default model for a collection is just a <strong>Backbone.Model</strong>.
 This should be overridden in most cases.</p>
@@ -2110,11 +2126,11 @@ This should be overridden in most cases.</p>
         </li>
         
         
-        <li id="section-109">
+        <li id="section-110">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-109">&#x00a7;</a>
+                <a class="ss" href="#section-110">&#x00a7;</a>
               </div>
               <p>preinitialize is an empty function by default. You can override it with a function
 or object.  preinitialize will run before any instantiation logic is run in the Collection.</p>
@@ -2126,11 +2142,11 @@ or object.  preinitialize will run before any instantiation logic is run in the 
         </li>
         
         
-        <li id="section-110">
+        <li id="section-111">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-110">&#x00a7;</a>
+                <a class="ss" href="#section-111">&#x00a7;</a>
               </div>
               <p>Initialize is an empty function by default. Override it with your own
 initialization logic.</p>
@@ -2142,11 +2158,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-111">
+        <li id="section-112">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-111">&#x00a7;</a>
+                <a class="ss" href="#section-112">&#x00a7;</a>
               </div>
               <p>The JSON representation of a Collection is an array of the
 models’ attributes.</p>
@@ -2160,11 +2176,11 @@ models’ attributes.</p>
         </li>
         
         
-        <li id="section-112">
+        <li id="section-113">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-112">&#x00a7;</a>
+                <a class="ss" href="#section-113">&#x00a7;</a>
               </div>
               <p>Proxy <code>Backbone.sync</code> by default.</p>
 
@@ -2177,11 +2193,11 @@ models’ attributes.</p>
         </li>
         
         
-        <li id="section-113">
+        <li id="section-114">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-113">&#x00a7;</a>
+                <a class="ss" href="#section-114">&#x00a7;</a>
               </div>
               <p>Add a model, or list of models to the set. <code>models</code> may be Backbone
 Models or raw JavaScript objects to be converted to Models, or any
@@ -2196,11 +2212,11 @@ combination of the two.</p>
         </li>
         
         
-        <li id="section-114">
+        <li id="section-115">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-114">&#x00a7;</a>
+                <a class="ss" href="#section-115">&#x00a7;</a>
               </div>
               <p>Remove a model, or a list of models from the set.</p>
 
@@ -2221,11 +2237,11 @@ combination of the two.</p>
         </li>
         
         
-        <li id="section-115">
+        <li id="section-116">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-115">&#x00a7;</a>
+                <a class="ss" href="#section-116">&#x00a7;</a>
               </div>
               <p>Update a collection by <code>set</code>-ing a new list of models, adding new ones,
 removing models that are no longer present, and merging models that
@@ -2267,11 +2283,11 @@ the core operation for updating the data contained by the collection.</p>
         </li>
         
         
-        <li id="section-116">
+        <li id="section-117">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-116">&#x00a7;</a>
+                <a class="ss" href="#section-117">&#x00a7;</a>
               </div>
               <p>Turn bare objects into model references, and prevent invalid models
 from being added.</p>
@@ -2285,11 +2301,11 @@ from being added.</p>
         </li>
         
         
-        <li id="section-117">
+        <li id="section-118">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-117">&#x00a7;</a>
+                <a class="ss" href="#section-118">&#x00a7;</a>
               </div>
               <p>If a duplicate is found, prevent it from being added and
 optionally merge it into the existing model.</p>
@@ -2314,11 +2330,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-118">
+        <li id="section-119">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-118">&#x00a7;</a>
+                <a class="ss" href="#section-119">&#x00a7;</a>
               </div>
               <p>If this is a new, valid model, push it to the <code>toAdd</code> list.</p>
 
@@ -2338,11 +2354,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-119">
+        <li id="section-120">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-119">&#x00a7;</a>
+                <a class="ss" href="#section-120">&#x00a7;</a>
               </div>
               <p>Remove stale models.</p>
 
@@ -2359,11 +2375,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-120">
+        <li id="section-121">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-120">&#x00a7;</a>
+                <a class="ss" href="#section-121">&#x00a7;</a>
               </div>
               <p>See if sorting is needed, update <code>length</code> and splice in new models.</p>
 
@@ -2387,11 +2403,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-121">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-121">&#x00a7;</a>
+                <a class="ss" href="#section-122">&#x00a7;</a>
               </div>
               <p>Silently sort the collection if appropriate.</p>
 
@@ -2402,11 +2418,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-122">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-122">&#x00a7;</a>
+                <a class="ss" href="#section-123">&#x00a7;</a>
               </div>
               <p>Unless silenced, it’s time to fire all appropriate add/sort/update events.</p>
 
@@ -2432,11 +2448,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-123">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-123">&#x00a7;</a>
+                <a class="ss" href="#section-124">&#x00a7;</a>
               </div>
               <p>Return the added (or merged) model (or models).</p>
 
@@ -2448,11 +2464,11 @@ optionally merge it into the existing model.</p>
         </li>
         
         
-        <li id="section-124">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-124">&#x00a7;</a>
+                <a class="ss" href="#section-125">&#x00a7;</a>
               </div>
               <p>When you have more items than you want to add or remove individually,
 you can reset the entire set with a new list of models, without firing
@@ -2476,11 +2492,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-125">
+        <li id="section-126">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-125">&#x00a7;</a>
+                <a class="ss" href="#section-126">&#x00a7;</a>
               </div>
               <p>Add a model to the end of the collection.</p>
 
@@ -2493,11 +2509,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-126">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-126">&#x00a7;</a>
+                <a class="ss" href="#section-127">&#x00a7;</a>
               </div>
               <p>Remove a model from the end of the collection.</p>
 
@@ -2511,11 +2527,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-127">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-127">&#x00a7;</a>
+                <a class="ss" href="#section-128">&#x00a7;</a>
               </div>
               <p>Add a model to the beginning of the collection.</p>
 
@@ -2528,11 +2544,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-128">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-128">&#x00a7;</a>
+                <a class="ss" href="#section-129">&#x00a7;</a>
               </div>
               <p>Remove a model from the beginning of the collection.</p>
 
@@ -2546,11 +2562,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-129">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-129">&#x00a7;</a>
+                <a class="ss" href="#section-130">&#x00a7;</a>
               </div>
               <p>Slice out a sub-array of models from the collection.</p>
 
@@ -2563,11 +2579,11 @@ Useful for bulk operations and optimizations.</p>
         </li>
         
         
-        <li id="section-130">
+        <li id="section-131">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-130">&#x00a7;</a>
+                <a class="ss" href="#section-131">&#x00a7;</a>
               </div>
               <p>Get a model from the set by id, cid, model object with id or cid
 properties, or an attributes object that is transformed through modelId.</p>
@@ -2584,11 +2600,11 @@ properties, or an attributes object that is transformed through modelId.</p>
         </li>
         
         
-        <li id="section-131">
+        <li id="section-132">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-131">&#x00a7;</a>
+                <a class="ss" href="#section-132">&#x00a7;</a>
               </div>
               <p>Returns <code>true</code> if the model is in the collection.</p>
 
@@ -2601,11 +2617,11 @@ properties, or an attributes object that is transformed through modelId.</p>
         </li>
         
         
-        <li id="section-132">
+        <li id="section-133">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-132">&#x00a7;</a>
+                <a class="ss" href="#section-133">&#x00a7;</a>
               </div>
               <p>Get the model at the given index.</p>
 
@@ -2619,11 +2635,11 @@ properties, or an attributes object that is transformed through modelId.</p>
         </li>
         
         
-        <li id="section-133">
+        <li id="section-134">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-133">&#x00a7;</a>
+                <a class="ss" href="#section-134">&#x00a7;</a>
               </div>
               <p>Return models with matching attributes. Useful for simple cases of
 <code>filter</code>.</p>
@@ -2637,11 +2653,11 @@ properties, or an attributes object that is transformed through modelId.</p>
         </li>
         
         
-        <li id="section-134">
+        <li id="section-135">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-134">&#x00a7;</a>
+                <a class="ss" href="#section-135">&#x00a7;</a>
               </div>
               <p>Return the first model with matching attributes. Useful for simple cases
 of <code>find</code>.</p>
@@ -2655,11 +2671,11 @@ of <code>find</code>.</p>
         </li>
         
         
-        <li id="section-135">
+        <li id="section-136">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-135">&#x00a7;</a>
+                <a class="ss" href="#section-136">&#x00a7;</a>
               </div>
               <p>Force the collection to re-sort itself. You don’t need to call this under
 normal circumstances, as the set will maintain sort order as each item
@@ -2678,11 +2694,11 @@ is added.</p>
         </li>
         
         
-        <li id="section-136">
+        <li id="section-137">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-136">&#x00a7;</a>
+                <a class="ss" href="#section-137">&#x00a7;</a>
               </div>
               <p>Run sort based on type of <code>comparator</code>.</p>
 
@@ -2700,11 +2716,11 @@ is added.</p>
         </li>
         
         
-        <li id="section-137">
+        <li id="section-138">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-137">&#x00a7;</a>
+                <a class="ss" href="#section-138">&#x00a7;</a>
               </div>
               <p>Pluck an attribute from each model in the collection.</p>
 
@@ -2717,11 +2733,11 @@ is added.</p>
         </li>
         
         
-        <li id="section-138">
+        <li id="section-139">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-138">&#x00a7;</a>
+                <a class="ss" href="#section-139">&#x00a7;</a>
               </div>
               <p>Fetch the default set of models for this collection, resetting the
 collection when they arrive. If <code>reset: true</code> is passed, the response
@@ -2746,11 +2762,11 @@ data will be passed through the <code>reset</code> method instead of <code>set</
         </li>
         
         
-        <li id="section-139">
+        <li id="section-140">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-139">&#x00a7;</a>
+                <a class="ss" href="#section-140">&#x00a7;</a>
               </div>
               <p>Create a new instance of a model in this collection. Add the model to the
 collection immediately, unless <code>wait: true</code> is passed, in which case we
@@ -2767,9 +2783,36 @@ wait for the server to agree.</p>
       <span class="hljs-keyword">var</span> collection = <span class="hljs-variable language_">this</span>;
       <span class="hljs-keyword">var</span> success = options.<span class="hljs-property">success</span>;
       options.<span class="hljs-property">success</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">m, resp, callbackOpts</span>) {
-        <span class="hljs-keyword">if</span> (wait) collection.<span class="hljs-title function_">add</span>(m, callbackOpts);
+        <span class="hljs-keyword">if</span> (wait) {
+          m.<span class="hljs-title function_">off</span>(<span class="hljs-string">&#x27;error&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">_forwardPristineError</span>, <span class="hljs-variable language_">this</span>);
+          collection.<span class="hljs-title function_">add</span>(m, callbackOpts);
+        }
         <span class="hljs-keyword">if</span> (success) success.<span class="hljs-title function_">call</span>(callbackOpts.<span class="hljs-property">context</span>, m, resp, callbackOpts);
-      };
+      };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-141">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-141">&#x00a7;</a>
+              </div>
+              <p>In case of wait:true, our collection is not listening to any
+of the model’s events yet, so it will not forward the error
+event. In this special case, we need to listen for it
+separately and handle the event just once.
+(The reason we don’t need to do this for the sync event is
+in the success handler above: we add the model first, which
+causes the collection to listen, and then invoke the callback
+that triggers the event.)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (wait) {
+        model.<span class="hljs-title function_">once</span>(<span class="hljs-string">&#x27;error&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">_forwardPristineError</span>, <span class="hljs-variable language_">this</span>);
+      }
       model.<span class="hljs-title function_">save</span>(<span class="hljs-literal">null</span>, options);
       <span class="hljs-keyword">return</span> model;
     },</pre></div></div>
@@ -2777,11 +2820,11 @@ wait for the server to agree.</p>
         </li>
         
         
-        <li id="section-140">
+        <li id="section-142">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-140">&#x00a7;</a>
+                <a class="ss" href="#section-142">&#x00a7;</a>
               </div>
               <p><strong>parse</strong> converts a response into a list of models to be added to the
 collection. The default implementation is just to pass it through.</p>
@@ -2795,11 +2838,11 @@ collection. The default implementation is just to pass it through.</p>
         </li>
         
         
-        <li id="section-141">
+        <li id="section-143">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-141">&#x00a7;</a>
+                <a class="ss" href="#section-143">&#x00a7;</a>
               </div>
               <p>Create a new collection with an identical list of models as this one.</p>
 
@@ -2815,11 +2858,11 @@ collection. The default implementation is just to pass it through.</p>
         </li>
         
         
-        <li id="section-142">
+        <li id="section-144">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-142">&#x00a7;</a>
+                <a class="ss" href="#section-144">&#x00a7;</a>
               </div>
               <p>Define how to uniquely identify models in the collection.</p>
 
@@ -2832,11 +2875,11 @@ collection. The default implementation is just to pass it through.</p>
         </li>
         
         
-        <li id="section-143">
+        <li id="section-145">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-143">&#x00a7;</a>
+                <a class="ss" href="#section-145">&#x00a7;</a>
               </div>
               <p>Get an iterator of all models in this collection.</p>
 
@@ -2849,11 +2892,11 @@ collection. The default implementation is just to pass it through.</p>
         </li>
         
         
-        <li id="section-144">
+        <li id="section-146">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-144">&#x00a7;</a>
+                <a class="ss" href="#section-146">&#x00a7;</a>
               </div>
               <p>Get an iterator of all model IDs in this collection.</p>
 
@@ -2866,11 +2909,11 @@ collection. The default implementation is just to pass it through.</p>
         </li>
         
         
-        <li id="section-145">
+        <li id="section-147">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-145">&#x00a7;</a>
+                <a class="ss" href="#section-147">&#x00a7;</a>
               </div>
               <p>Get an iterator of all [ID, model] tuples in this collection.</p>
 
@@ -2883,11 +2926,11 @@ collection. The default implementation is just to pass it through.</p>
         </li>
         
         
-        <li id="section-146">
+        <li id="section-148">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-146">&#x00a7;</a>
+                <a class="ss" href="#section-148">&#x00a7;</a>
               </div>
               <p>Private method to reset all internal state. Called when the collection
 is first initialized or reset.</p>
@@ -2903,11 +2946,11 @@ is first initialized or reset.</p>
         </li>
         
         
-        <li id="section-147">
+        <li id="section-149">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-147">&#x00a7;</a>
+                <a class="ss" href="#section-149">&#x00a7;</a>
               </div>
               <p>Prepare a hash of attributes (or other model) to be added to this
 collection.</p>
@@ -2930,11 +2973,11 @@ collection.</p>
         </li>
         
         
-        <li id="section-148">
+        <li id="section-150">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-148">&#x00a7;</a>
+                <a class="ss" href="#section-150">&#x00a7;</a>
               </div>
               <p>ES class methods didn’t have prototype</p>
 
@@ -2951,11 +2994,11 @@ collection.</p>
         </li>
         
         
-        <li id="section-149">
+        <li id="section-151">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-149">&#x00a7;</a>
+                <a class="ss" href="#section-151">&#x00a7;</a>
               </div>
               <p>Internal method called by both remove and set.</p>
 
@@ -2974,11 +3017,11 @@ collection.</p>
         </li>
         
         
-        <li id="section-150">
+        <li id="section-152">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-150">&#x00a7;</a>
+                <a class="ss" href="#section-152">&#x00a7;</a>
               </div>
               <p>Remove references before triggering ‘remove’ event to prevent an
 infinite loop. #3693</p>
@@ -2997,17 +3040,18 @@ infinite loop. #3693</p>
         removed.<span class="hljs-title function_">push</span>(model);
         <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">_removeReference</span>(model, options);
       }
+      <span class="hljs-keyword">if</span> (models.<span class="hljs-property">length</span> &gt; <span class="hljs-number">0</span> &amp;&amp; !options.<span class="hljs-property">silent</span>) <span class="hljs-keyword">delete</span> options.<span class="hljs-property">index</span>;
       <span class="hljs-keyword">return</span> removed;
     },</pre></div></div>
             
         </li>
         
         
-        <li id="section-151">
+        <li id="section-153">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-151">&#x00a7;</a>
+                <a class="ss" href="#section-153">&#x00a7;</a>
               </div>
               <p>Method for checking whether an object should be considered a model for
 the purposes of adding to the collection.</p>
@@ -3021,11 +3065,11 @@ the purposes of adding to the collection.</p>
         </li>
         
         
-        <li id="section-152">
+        <li id="section-154">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-152">&#x00a7;</a>
+                <a class="ss" href="#section-154">&#x00a7;</a>
               </div>
               <p>Internal method to create a model’s ties to a collection.</p>
 
@@ -3041,11 +3085,11 @@ the purposes of adding to the collection.</p>
         </li>
         
         
-        <li id="section-153">
+        <li id="section-155">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-153">&#x00a7;</a>
+                <a class="ss" href="#section-155">&#x00a7;</a>
               </div>
               <p>Internal method to sever a model’s ties to a collection.</p>
 
@@ -3062,11 +3106,11 @@ the purposes of adding to the collection.</p>
         </li>
         
         
-        <li id="section-154">
+        <li id="section-156">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-154">&#x00a7;</a>
+                <a class="ss" href="#section-156">&#x00a7;</a>
               </div>
               <p>Internal method called every time a model in the set fires an event.
 Sets need to update their indexes when models change ids. All other
@@ -3087,18 +3131,54 @@ in other collections are ignored.</p>
         }
       }
       <span class="hljs-variable language_">this</span>.<span class="hljs-property">trigger</span>.<span class="hljs-title function_">apply</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-variable language_">arguments</span>);
-    }
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-157">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-157">&#x00a7;</a>
+              </div>
+              <p>Internal callback method used in <code>create</code>. It serves as a
+stand-in for the <code>_onModelEvent</code> method, which is not yet bound
+during the <code>wait</code> period of the <code>create</code> call. We still want to
+forward any <code>&#39;error&#39;</code> event at the end of the <code>wait</code> period,
+hence a customized callback.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">_forwardPristineError</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params">model, collection, options</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-158">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-158">&#x00a7;</a>
+              </div>
+              <p>Prevent double forward if the model was already in the
+collection before the call to <code>create</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">has</span>(model)) <span class="hljs-keyword">return</span>;
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">_onModelEvent</span>(<span class="hljs-string">&#x27;error&#x27;</span>, model, collection, options);
+    }
   });</pre></div></div>
             
         </li>
         
         
-        <li id="section-155">
+        <li id="section-159">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-155">&#x00a7;</a>
+                <a class="ss" href="#section-159">&#x00a7;</a>
               </div>
               <p>Defining an @@iterator method implements JavaScript’s Iterable protocol.
 In modern ES2015 browsers, this value is found at Symbol.iterator.</p>
@@ -3114,11 +3194,11 @@ In modern ES2015 browsers, this value is found at Symbol.iterator.</p>
         </li>
         
         
-        <li id="section-156">
+        <li id="section-160">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-156">&#x00a7;</a>
+                <a class="ss" href="#section-160">&#x00a7;</a>
               </div>
               <h2 id="collectioniterator">CollectionIterator</h2>
 
@@ -3127,11 +3207,11 @@ In modern ES2015 browsers, this value is found at Symbol.iterator.</p>
         </li>
         
         
-        <li id="section-157">
+        <li id="section-161">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-157">&#x00a7;</a>
+                <a class="ss" href="#section-161">&#x00a7;</a>
               </div>
               
             </div>
@@ -3139,11 +3219,11 @@ In modern ES2015 browsers, this value is found at Symbol.iterator.</p>
         </li>
         
         
-        <li id="section-158">
+        <li id="section-162">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-158">&#x00a7;</a>
+                <a class="ss" href="#section-162">&#x00a7;</a>
               </div>
               <p>A CollectionIterator implements JavaScript’s Iterator protocol, allowing the
 use of <code>for of</code> loops in modern browsers and interoperation between
@@ -3161,11 +3241,11 @@ which can operate on Iterables.</p>
         </li>
         
         
-        <li id="section-159">
+        <li id="section-163">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-159">&#x00a7;</a>
+                <a class="ss" href="#section-163">&#x00a7;</a>
               </div>
               <p>This “enum” defines the three possible kinds of values which can be emitted
 by a CollectionIterator that correspond to the values(), keys() and entries()
@@ -3180,11 +3260,11 @@ methods on Collection, respectively.</p>
         </li>
         
         
-        <li id="section-160">
+        <li id="section-164">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-160">&#x00a7;</a>
+                <a class="ss" href="#section-164">&#x00a7;</a>
               </div>
               <p>All Iterators should themselves be Iterable.</p>
 
@@ -3202,11 +3282,11 @@ methods on Collection, respectively.</p>
         </li>
         
         
-        <li id="section-161">
+        <li id="section-165">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-161">&#x00a7;</a>
+                <a class="ss" href="#section-165">&#x00a7;</a>
               </div>
               <p>Only continue iterating if the iterated collection is long enough.</p>
 
@@ -3219,11 +3299,11 @@ methods on Collection, respectively.</p>
         </li>
         
         
-        <li id="section-162">
+        <li id="section-166">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-162">&#x00a7;</a>
+                <a class="ss" href="#section-166">&#x00a7;</a>
               </div>
               <p>Construct a value depending on what kind of values should be iterated.</p>
 
@@ -3246,11 +3326,11 @@ methods on Collection, respectively.</p>
         </li>
         
         
-        <li id="section-163">
+        <li id="section-167">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-163">&#x00a7;</a>
+                <a class="ss" href="#section-167">&#x00a7;</a>
               </div>
               <p>Once exhausted, remove the reference to the collection so future
 calls to the next method always return done.</p>
@@ -3266,11 +3346,11 @@ calls to the next method always return done.</p>
         </li>
         
         
-        <li id="section-164">
+        <li id="section-168">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-164">&#x00a7;</a>
+                <a class="ss" href="#section-168">&#x00a7;</a>
               </div>
               <h2 id="backboneview">Backbone.View</h2>
 
@@ -3279,11 +3359,11 @@ calls to the next method always return done.</p>
         </li>
         
         
-        <li id="section-165">
+        <li id="section-169">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-165">&#x00a7;</a>
+                <a class="ss" href="#section-169">&#x00a7;</a>
               </div>
               
             </div>
@@ -3291,11 +3371,11 @@ calls to the next method always return done.</p>
         </li>
         
         
-        <li id="section-166">
+        <li id="section-170">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-166">&#x00a7;</a>
+                <a class="ss" href="#section-170">&#x00a7;</a>
               </div>
               <p>Backbone Views are almost more convention than they are actual code. A View
 is simply a JavaScript object that represents a logical chunk of UI in the
@@ -3310,11 +3390,11 @@ react to specific changes in the state of your models.</p>
         </li>
         
         
-        <li id="section-167">
+        <li id="section-171">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-167">&#x00a7;</a>
+                <a class="ss" href="#section-171">&#x00a7;</a>
               </div>
               <p>Creating a Backbone.View creates its initial element outside of the DOM,
 if an existing element is not provided…</p>
@@ -3332,11 +3412,11 @@ if an existing element is not provided…</p>
         </li>
         
         
-        <li id="section-168">
+        <li id="section-172">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-168">&#x00a7;</a>
+                <a class="ss" href="#section-172">&#x00a7;</a>
               </div>
               <p>Cached regex to split keys for <code>delegate</code>.</p>
 
@@ -3347,11 +3427,11 @@ if an existing element is not provided…</p>
         </li>
         
         
-        <li id="section-169">
+        <li id="section-173">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-169">&#x00a7;</a>
+                <a class="ss" href="#section-173">&#x00a7;</a>
               </div>
               <p>List of view options to be set as properties.</p>
 
@@ -3362,11 +3442,11 @@ if an existing element is not provided…</p>
         </li>
         
         
-        <li id="section-170">
+        <li id="section-174">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-170">&#x00a7;</a>
+                <a class="ss" href="#section-174">&#x00a7;</a>
               </div>
               <p>Set up all inheritable <strong>Backbone.View</strong> properties and methods.</p>
 
@@ -3377,11 +3457,11 @@ if an existing element is not provided…</p>
         </li>
         
         
-        <li id="section-171">
+        <li id="section-175">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-171">&#x00a7;</a>
+                <a class="ss" href="#section-175">&#x00a7;</a>
               </div>
               <p>The default <code>tagName</code> of a View’s element is <code>&quot;div&quot;</code>.</p>
 
@@ -3392,11 +3472,11 @@ if an existing element is not provided…</p>
         </li>
         
         
-        <li id="section-172">
+        <li id="section-176">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-172">&#x00a7;</a>
+                <a class="ss" href="#section-176">&#x00a7;</a>
               </div>
               <p>jQuery delegate for element lookup, scoped to DOM elements within the
 current view. This should be preferred to global lookups where possible.</p>
@@ -3410,11 +3490,11 @@ current view. This should be preferred to global lookups where possible.</p>
         </li>
         
         
-        <li id="section-173">
+        <li id="section-177">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-173">&#x00a7;</a>
+                <a class="ss" href="#section-177">&#x00a7;</a>
               </div>
               <p>preinitialize is an empty function by default. You can override it with a function
 or object.  preinitialize will run before any instantiation logic is run in the View</p>
@@ -3426,11 +3506,11 @@ or object.  preinitialize will run before any instantiation logic is run in the 
         </li>
         
         
-        <li id="section-174">
+        <li id="section-178">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-174">&#x00a7;</a>
+                <a class="ss" href="#section-178">&#x00a7;</a>
               </div>
               <p>Initialize is an empty function by default. Override it with your own
 initialization logic.</p>
@@ -3442,11 +3522,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-175">
+        <li id="section-179">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-175">&#x00a7;</a>
+                <a class="ss" href="#section-179">&#x00a7;</a>
               </div>
               <p><strong>render</strong> is the core function that your view should override, in order
 to populate its element (<code>this.el</code>), with the appropriate HTML. The
@@ -3461,11 +3541,11 @@ convention is for <strong>render</strong> to always return <code>this</code>.</p
         </li>
         
         
-        <li id="section-176">
+        <li id="section-180">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-176">&#x00a7;</a>
+                <a class="ss" href="#section-180">&#x00a7;</a>
               </div>
               <p>Remove this view by taking the element out of the DOM, and removing any
 applicable Backbone.Events listeners.</p>
@@ -3481,11 +3561,11 @@ applicable Backbone.Events listeners.</p>
         </li>
         
         
-        <li id="section-177">
+        <li id="section-181">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-177">&#x00a7;</a>
+                <a class="ss" href="#section-181">&#x00a7;</a>
               </div>
               <p>Remove this view’s element from the document and all event listeners
 attached to it. Exposed for subclasses using an alternative DOM
@@ -3500,11 +3580,11 @@ manipulation API.</p>
         </li>
         
         
-        <li id="section-178">
+        <li id="section-182">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-178">&#x00a7;</a>
+                <a class="ss" href="#section-182">&#x00a7;</a>
               </div>
               <p>Change the view’s element (<code>this.el</code> property) and re-delegate the
 view’s events on the new element.</p>
@@ -3521,11 +3601,11 @@ view’s events on the new element.</p>
         </li>
         
         
-        <li id="section-179">
+        <li id="section-183">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-179">&#x00a7;</a>
+                <a class="ss" href="#section-183">&#x00a7;</a>
               </div>
               <p>Creates the <code>this.el</code> and <code>this.$el</code> references for this view using the
 given <code>el</code>. <code>el</code> can be a CSS selector or an HTML string, a jQuery
@@ -3543,11 +3623,11 @@ alternative DOM manipulation API and are only required to set the
         </li>
         
         
-        <li id="section-180">
+        <li id="section-184">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-180">&#x00a7;</a>
+                <a class="ss" href="#section-184">&#x00a7;</a>
               </div>
               <p>Set callbacks, where <code>this.events</code> is a hash of</p>
 <p><em>{“event selector”: “callback”}</em></p>
@@ -3580,11 +3660,11 @@ Omitting the selector binds the event to <code>this.el</code>.</p>
         </li>
         
         
-        <li id="section-181">
+        <li id="section-185">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-181">&#x00a7;</a>
+                <a class="ss" href="#section-185">&#x00a7;</a>
               </div>
               <p>Add a single event listener to the view’s element (or a child element
 using <code>selector</code>). This only works for delegate-able events: not <code>focus</code>,
@@ -3600,11 +3680,11 @@ using <code>selector</code>). This only works for delegate-able events: not <cod
         </li>
         
         
-        <li id="section-182">
+        <li id="section-186">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-182">&#x00a7;</a>
+                <a class="ss" href="#section-186">&#x00a7;</a>
               </div>
               <p>Clears all callbacks previously bound to the view by <code>delegateEvents</code>.
 You usually don’t need to use this, but may wish to if you have multiple
@@ -3620,11 +3700,11 @@ Backbone views attached to the same DOM element.</p>
         </li>
         
         
-        <li id="section-183">
+        <li id="section-187">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-183">&#x00a7;</a>
+                <a class="ss" href="#section-187">&#x00a7;</a>
               </div>
               <p>A finer-grained <code>undelegateEvents</code> for removing a single delegated event.
 <code>selector</code> and <code>listener</code> are both optional.</p>
@@ -3639,11 +3719,11 @@ Backbone views attached to the same DOM element.</p>
         </li>
         
         
-        <li id="section-184">
+        <li id="section-188">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-184">&#x00a7;</a>
+                <a class="ss" href="#section-188">&#x00a7;</a>
               </div>
               <p>Produces a DOM element to be assigned to your view. Exposed for
 subclasses using an alternative DOM manipulation API.</p>
@@ -3657,11 +3737,11 @@ subclasses using an alternative DOM manipulation API.</p>
         </li>
         
         
-        <li id="section-185">
+        <li id="section-189">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-185">&#x00a7;</a>
+                <a class="ss" href="#section-189">&#x00a7;</a>
               </div>
               <p>Ensure that the View has a DOM element to render into.
 If <code>this.el</code> is a string, pass it through <code>$()</code>, take the first
@@ -3685,11 +3765,11 @@ an element from the <code>id</code>, <code>className</code> and <code>tagName</c
         </li>
         
         
-        <li id="section-186">
+        <li id="section-190">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-186">&#x00a7;</a>
+                <a class="ss" href="#section-190">&#x00a7;</a>
               </div>
               <p>Set attributes from a hash on this view’s element.  Exposed for
 subclasses using an alternative DOM manipulation API.</p>
@@ -3705,11 +3785,11 @@ subclasses using an alternative DOM manipulation API.</p>
         </li>
         
         
-        <li id="section-187">
+        <li id="section-191">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-187">&#x00a7;</a>
+                <a class="ss" href="#section-191">&#x00a7;</a>
               </div>
               <p>Proxy Backbone class methods to Underscore functions, wrapping the model’s
 <code>attributes</code> object or collection’s <code>models</code> array behind the scenes.</p>
@@ -3750,11 +3830,11 @@ collection.each(this.addView);</p>
         </li>
         
         
-        <li id="section-188">
+        <li id="section-192">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-188">&#x00a7;</a>
+                <a class="ss" href="#section-192">&#x00a7;</a>
               </div>
               <p>Support <code>collection.sortBy(&#39;attr&#39;)</code> and <code>collection.findWhere({id: 1})</code>.</p>
 
@@ -3776,11 +3856,11 @@ collection.each(this.addView);</p>
         </li>
         
         
-        <li id="section-189">
+        <li id="section-193">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-189">&#x00a7;</a>
+                <a class="ss" href="#section-193">&#x00a7;</a>
               </div>
               <p>Underscore methods that we want to implement on the Collection.
 90% of the core usefulness of Backbone Collections is actually implemented
@@ -3800,11 +3880,11 @@ right here:</p>
         </li>
         
         
-        <li id="section-190">
+        <li id="section-194">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-190">&#x00a7;</a>
+                <a class="ss" href="#section-194">&#x00a7;</a>
               </div>
               <p>Underscore methods that we want to implement on the Model, mapped to the
 number of arguments they take.</p>
@@ -3817,11 +3897,11 @@ number of arguments they take.</p>
         </li>
         
         
-        <li id="section-191">
+        <li id="section-195">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-191">&#x00a7;</a>
+                <a class="ss" href="#section-195">&#x00a7;</a>
               </div>
               <p>Mix in each Underscore method as a proxy to <code>Collection#models</code>.</p>
 
@@ -3850,11 +3930,11 @@ number of arguments they take.</p>
         </li>
         
         
-        <li id="section-192">
+        <li id="section-196">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-192">&#x00a7;</a>
+                <a class="ss" href="#section-196">&#x00a7;</a>
               </div>
               <h2 id="backbonesync">Backbone.sync</h2>
 
@@ -3863,11 +3943,11 @@ number of arguments they take.</p>
         </li>
         
         
-        <li id="section-193">
+        <li id="section-197">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-193">&#x00a7;</a>
+                <a class="ss" href="#section-197">&#x00a7;</a>
               </div>
               
             </div>
@@ -3875,11 +3955,11 @@ number of arguments they take.</p>
         </li>
         
         
-        <li id="section-194">
+        <li id="section-198">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-194">&#x00a7;</a>
+                <a class="ss" href="#section-198">&#x00a7;</a>
               </div>
               <p>Override this function to change the manner in which Backbone persists
 models to the server. You will be passed the type of request, and the
@@ -3905,11 +3985,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-195">
+        <li id="section-199">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-195">&#x00a7;</a>
+                <a class="ss" href="#section-199">&#x00a7;</a>
               </div>
               <p>Default options, unless specified.</p>
 
@@ -3923,11 +4003,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-196">
+        <li id="section-200">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-196">&#x00a7;</a>
+                <a class="ss" href="#section-200">&#x00a7;</a>
               </div>
               <p>Default JSON-request options.</p>
 
@@ -3938,11 +4018,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-197">
+        <li id="section-201">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-197">&#x00a7;</a>
+                <a class="ss" href="#section-201">&#x00a7;</a>
               </div>
               <p>Ensure that we have a URL.</p>
 
@@ -3955,11 +4035,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-198">
+        <li id="section-202">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-198">&#x00a7;</a>
+                <a class="ss" href="#section-202">&#x00a7;</a>
               </div>
               <p>Ensure that we have the appropriate request data.</p>
 
@@ -3973,11 +4053,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-199">
+        <li id="section-203">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-199">&#x00a7;</a>
+                <a class="ss" href="#section-203">&#x00a7;</a>
               </div>
               <p>For older servers, emulate JSON by encoding the request into an HTML-form.</p>
 
@@ -3991,11 +4071,11 @@ it difficult to read the body of <code>PUT</code> requests.</p>
         </li>
         
         
-        <li id="section-200">
+        <li id="section-204">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-200">&#x00a7;</a>
+                <a class="ss" href="#section-204">&#x00a7;</a>
               </div>
               <p>For older servers, emulate HTTP by mimicking the HTTP method with <code>_method</code>
 And an <code>X-HTTP-Method-Override</code> header.</p>
@@ -4015,11 +4095,11 @@ And an <code>X-HTTP-Method-Override</code> header.</p>
         </li>
         
         
-        <li id="section-201">
+        <li id="section-205">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-201">&#x00a7;</a>
+                <a class="ss" href="#section-205">&#x00a7;</a>
               </div>
               <p>Don’t process data on a non-GET request.</p>
 
@@ -4032,11 +4112,11 @@ And an <code>X-HTTP-Method-Override</code> header.</p>
         </li>
         
         
-        <li id="section-202">
+        <li id="section-206">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-202">&#x00a7;</a>
+                <a class="ss" href="#section-206">&#x00a7;</a>
               </div>
               <p>Pass along <code>textStatus</code> and <code>errorThrown</code> from jQuery.</p>
 
@@ -4052,11 +4132,11 @@ And an <code>X-HTTP-Method-Override</code> header.</p>
         </li>
         
         
-        <li id="section-203">
+        <li id="section-207">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-203">&#x00a7;</a>
+                <a class="ss" href="#section-207">&#x00a7;</a>
               </div>
               <p>Make the request, allowing the user to override any Ajax options.</p>
 
@@ -4070,11 +4150,11 @@ And an <code>X-HTTP-Method-Override</code> header.</p>
         </li>
         
         
-        <li id="section-204">
+        <li id="section-208">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-204">&#x00a7;</a>
+                <a class="ss" href="#section-208">&#x00a7;</a>
               </div>
               <p>Map from CRUD to HTTP for our default <code>Backbone.sync</code> implementation.</p>
 
@@ -4091,11 +4171,11 @@ And an <code>X-HTTP-Method-Override</code> header.</p>
         </li>
         
         
-        <li id="section-205">
+        <li id="section-209">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-205">&#x00a7;</a>
+                <a class="ss" href="#section-209">&#x00a7;</a>
               </div>
               <p>Set the default implementation of <code>Backbone.ajax</code> to proxy through to <code>$</code>.
 Override this if you’d like to use a different library.</p>
@@ -4109,11 +4189,11 @@ Override this if you’d like to use a different library.</p>
         </li>
         
         
-        <li id="section-206">
+        <li id="section-210">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-206">&#x00a7;</a>
+                <a class="ss" href="#section-210">&#x00a7;</a>
               </div>
               <h2 id="backbonerouter">Backbone.Router</h2>
 
@@ -4122,11 +4202,11 @@ Override this if you’d like to use a different library.</p>
         </li>
         
         
-        <li id="section-207">
+        <li id="section-211">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-207">&#x00a7;</a>
+                <a class="ss" href="#section-211">&#x00a7;</a>
               </div>
               
             </div>
@@ -4134,11 +4214,11 @@ Override this if you’d like to use a different library.</p>
         </li>
         
         
-        <li id="section-208">
+        <li id="section-212">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-208">&#x00a7;</a>
+                <a class="ss" href="#section-212">&#x00a7;</a>
               </div>
               <p>Routers map faux-URLs to actions, and fire events when routes are
 matched. Creating a new one sets its <code>routes</code> hash, if not set statically.</p>
@@ -4156,11 +4236,11 @@ matched. Creating a new one sets its <code>routes</code> hash, if not set static
         </li>
         
         
-        <li id="section-209">
+        <li id="section-213">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-209">&#x00a7;</a>
+                <a class="ss" href="#section-213">&#x00a7;</a>
               </div>
               <p>Cached regular expressions for matching named param parts and splatted
 parts of route strings.</p>
@@ -4175,11 +4255,11 @@ parts of route strings.</p>
         </li>
         
         
-        <li id="section-210">
+        <li id="section-214">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-210">&#x00a7;</a>
+                <a class="ss" href="#section-214">&#x00a7;</a>
               </div>
               <p>Set up all inheritable <strong>Backbone.Router</strong> properties and methods.</p>
 
@@ -4190,11 +4270,11 @@ parts of route strings.</p>
         </li>
         
         
-        <li id="section-211">
+        <li id="section-215">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-211">&#x00a7;</a>
+                <a class="ss" href="#section-215">&#x00a7;</a>
               </div>
               <p>preinitialize is an empty function by default. You can override it with a function
 or object.  preinitialize will run before any instantiation logic is run in the Router.</p>
@@ -4206,11 +4286,11 @@ or object.  preinitialize will run before any instantiation logic is run in the 
         </li>
         
         
-        <li id="section-212">
+        <li id="section-216">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-212">&#x00a7;</a>
+                <a class="ss" href="#section-216">&#x00a7;</a>
               </div>
               <p>Initialize is an empty function by default. Override it with your own
 initialization logic.</p>
@@ -4222,11 +4302,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-213">
+        <li id="section-217">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-213">&#x00a7;</a>
+                <a class="ss" href="#section-217">&#x00a7;</a>
               </div>
               <p>Manually bind a single named route to a callback. For example:</p>
 <pre><code><span class="hljs-variable language_">this</span>.<span class="hljs-title function_">route</span>(<span class="hljs-string">&#x27;search/:query/p:num&#x27;</span>, <span class="hljs-string">&#x27;search&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">query, num</span>) {
@@ -4258,11 +4338,11 @@ initialization logic.</p>
         </li>
         
         
-        <li id="section-214">
+        <li id="section-218">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-214">&#x00a7;</a>
+                <a class="ss" href="#section-218">&#x00a7;</a>
               </div>
               <p>Execute a route handler with the provided parameters.  This is an
 excellent place to do pre-route setup or post-route cleanup.</p>
@@ -4276,11 +4356,11 @@ excellent place to do pre-route setup or post-route cleanup.</p>
         </li>
         
         
-        <li id="section-215">
+        <li id="section-219">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-215">&#x00a7;</a>
+                <a class="ss" href="#section-219">&#x00a7;</a>
               </div>
               <p>Simple proxy to <code>Backbone.history</code> to save a fragment into the history.</p>
 
@@ -4294,11 +4374,11 @@ excellent place to do pre-route setup or post-route cleanup.</p>
         </li>
         
         
-        <li id="section-216">
+        <li id="section-220">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-216">&#x00a7;</a>
+                <a class="ss" href="#section-220">&#x00a7;</a>
               </div>
               <p>Bind all defined routes to <code>Backbone.history</code>. We have to reverse the
 order of the routes here to support behavior where the most general
@@ -4318,11 +4398,11 @@ routes can be defined at the bottom of the route map.</p>
         </li>
         
         
-        <li id="section-217">
+        <li id="section-221">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-217">&#x00a7;</a>
+                <a class="ss" href="#section-221">&#x00a7;</a>
               </div>
               <p>Convert a route string into a regular expression, suitable for matching
 against the current location hash.</p>
@@ -4342,11 +4422,11 @@ against the current location hash.</p>
         </li>
         
         
-        <li id="section-218">
+        <li id="section-222">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-218">&#x00a7;</a>
+                <a class="ss" href="#section-222">&#x00a7;</a>
               </div>
               <p>Given a route, and a URL fragment that it matches, return the array of
 extracted decoded parameters. Empty or unmatched parameters will be
@@ -4361,11 +4441,11 @@ treated as <code>null</code> to normalize cross-browser behavior.</p>
         </li>
         
         
-        <li id="section-219">
+        <li id="section-223">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-219">&#x00a7;</a>
+                <a class="ss" href="#section-223">&#x00a7;</a>
               </div>
               <p>Don’t decode the search params.</p>
 
@@ -4381,11 +4461,11 @@ treated as <code>null</code> to normalize cross-browser behavior.</p>
         </li>
         
         
-        <li id="section-220">
+        <li id="section-224">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-220">&#x00a7;</a>
+                <a class="ss" href="#section-224">&#x00a7;</a>
               </div>
               <h2 id="backbonehistory">Backbone.History</h2>
 
@@ -4394,11 +4474,11 @@ treated as <code>null</code> to normalize cross-browser behavior.</p>
         </li>
         
         
-        <li id="section-221">
+        <li id="section-225">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-221">&#x00a7;</a>
+                <a class="ss" href="#section-225">&#x00a7;</a>
               </div>
               
             </div>
@@ -4406,11 +4486,11 @@ treated as <code>null</code> to normalize cross-browser behavior.</p>
         </li>
         
         
-        <li id="section-222">
+        <li id="section-226">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-222">&#x00a7;</a>
+                <a class="ss" href="#section-226">&#x00a7;</a>
               </div>
               <p>Handles cross-browser history management, based on either
 <a href="http://diveintohtml5.info/history.html">pushState</a> and real URLs, or
@@ -4427,11 +4507,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-223">
+        <li id="section-227">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-223">&#x00a7;</a>
+                <a class="ss" href="#section-227">&#x00a7;</a>
               </div>
               <p>Ensure that <code>History</code> can be used outside of the browser.</p>
 
@@ -4446,11 +4526,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-224">
+        <li id="section-228">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-224">&#x00a7;</a>
+                <a class="ss" href="#section-228">&#x00a7;</a>
               </div>
               <p>Cached regex for stripping a leading hash/slash and trailing space.</p>
 
@@ -4461,11 +4541,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-225">
+        <li id="section-229">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-225">&#x00a7;</a>
+                <a class="ss" href="#section-229">&#x00a7;</a>
               </div>
               <p>Cached regex for stripping leading and trailing slashes.</p>
 
@@ -4476,11 +4556,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-226">
+        <li id="section-230">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-226">&#x00a7;</a>
+                <a class="ss" href="#section-230">&#x00a7;</a>
               </div>
               <p>Cached regex for stripping urls of hash.</p>
 
@@ -4491,11 +4571,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-227">
+        <li id="section-231">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-227">&#x00a7;</a>
+                <a class="ss" href="#section-231">&#x00a7;</a>
               </div>
               <p>Has the history handling already been started?</p>
 
@@ -4506,11 +4586,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-228">
+        <li id="section-232">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-228">&#x00a7;</a>
+                <a class="ss" href="#section-232">&#x00a7;</a>
               </div>
               <p>Set up all inheritable <strong>Backbone.History</strong> properties and methods.</p>
 
@@ -4521,11 +4601,11 @@ falls back to polling.</p>
         </li>
         
         
-        <li id="section-229">
+        <li id="section-233">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-229">&#x00a7;</a>
+                <a class="ss" href="#section-233">&#x00a7;</a>
               </div>
               <p>The default interval to poll for hash changes, if necessary, is
 twenty times a second.</p>
@@ -4537,11 +4617,11 @@ twenty times a second.</p>
         </li>
         
         
-        <li id="section-230">
+        <li id="section-234">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-230">&#x00a7;</a>
+                <a class="ss" href="#section-234">&#x00a7;</a>
               </div>
               <p>Are we at the app root?</p>
 
@@ -4555,11 +4635,11 @@ twenty times a second.</p>
         </li>
         
         
-        <li id="section-231">
+        <li id="section-235">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-231">&#x00a7;</a>
+                <a class="ss" href="#section-235">&#x00a7;</a>
               </div>
               <p>Does the pathname match the root?</p>
 
@@ -4574,11 +4654,11 @@ twenty times a second.</p>
         </li>
         
         
-        <li id="section-232">
+        <li id="section-236">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-232">&#x00a7;</a>
+                <a class="ss" href="#section-236">&#x00a7;</a>
               </div>
               <p>Unicode characters in <code>location.pathname</code> are percent encoded so they’re
 decoded for comparison. <code>%25</code> should not be decoded since it may be part
@@ -4593,11 +4673,11 @@ of an encoded parameter.</p>
         </li>
         
         
-        <li id="section-233">
+        <li id="section-237">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-233">&#x00a7;</a>
+                <a class="ss" href="#section-237">&#x00a7;</a>
               </div>
               <p>In IE6, the hash fragment and search params are incorrect if the
 fragment contains <code>?</code>.</p>
@@ -4612,11 +4692,11 @@ fragment contains <code>?</code>.</p>
         </li>
         
         
-        <li id="section-234">
+        <li id="section-238">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-234">&#x00a7;</a>
+                <a class="ss" href="#section-238">&#x00a7;</a>
               </div>
               <p>Gets the true hash value. Cannot use location.hash directly due to bug
 in Firefox where location.hash will always be decoded.</p>
@@ -4631,11 +4711,11 @@ in Firefox where location.hash will always be decoded.</p>
         </li>
         
         
-        <li id="section-235">
+        <li id="section-239">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-235">&#x00a7;</a>
+                <a class="ss" href="#section-239">&#x00a7;</a>
               </div>
               <p>Get the pathname and search params, without the root.</p>
 
@@ -4651,11 +4731,11 @@ in Firefox where location.hash will always be decoded.</p>
         </li>
         
         
-        <li id="section-236">
+        <li id="section-240">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-236">&#x00a7;</a>
+                <a class="ss" href="#section-240">&#x00a7;</a>
               </div>
               <p>Get the cross-browser normalized URL fragment from the path or hash.</p>
 
@@ -4675,11 +4755,11 @@ in Firefox where location.hash will always be decoded.</p>
         </li>
         
         
-        <li id="section-237">
+        <li id="section-241">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-237">&#x00a7;</a>
+                <a class="ss" href="#section-241">&#x00a7;</a>
               </div>
               <p>Start the hash change handling, returning <code>true</code> if the current URL matches
 an existing route, and <code>false</code> otherwise.</p>
@@ -4693,11 +4773,11 @@ an existing route, and <code>false</code> otherwise.</p>
         </li>
         
         
-        <li id="section-238">
+        <li id="section-242">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-238">&#x00a7;</a>
+                <a class="ss" href="#section-242">&#x00a7;</a>
               </div>
               <p>Figure out the initial configuration. Do we need an iframe?
 Is pushState desired … is it available?</p>
@@ -4706,6 +4786,7 @@ Is pushState desired … is it available?</p>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-variable language_">this</span>.<span class="hljs-property">options</span>          = _.<span class="hljs-title function_">extend</span>({<span class="hljs-attr">root</span>: <span class="hljs-string">&#x27;/&#x27;</span>}, <span class="hljs-variable language_">this</span>.<span class="hljs-property">options</span>, options);
       <span class="hljs-variable language_">this</span>.<span class="hljs-property">root</span>             = <span class="hljs-variable language_">this</span>.<span class="hljs-property">options</span>.<span class="hljs-property">root</span>;
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">_trailingSlash</span>   = <span class="hljs-variable language_">this</span>.<span class="hljs-property">options</span>.<span class="hljs-property">trailingSlash</span>;
       <span class="hljs-variable language_">this</span>.<span class="hljs-property">_wantsHashChange</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">options</span>.<span class="hljs-property">hashChange</span> !== <span class="hljs-literal">false</span>;
       <span class="hljs-variable language_">this</span>.<span class="hljs-property">_hasHashChange</span>   = <span class="hljs-string">&#x27;onhashchange&#x27;</span> <span class="hljs-keyword">in</span> <span class="hljs-variable language_">window</span> &amp;&amp; (<span class="hljs-variable language_">document</span>.<span class="hljs-property">documentMode</span> === <span class="hljs-keyword">void</span> <span class="hljs-number">0</span> || <span class="hljs-variable language_">document</span>.<span class="hljs-property">documentMode</span> &gt; <span class="hljs-number">7</span>);
       <span class="hljs-variable language_">this</span>.<span class="hljs-property">_useHashChange</span>   = <span class="hljs-variable language_">this</span>.<span class="hljs-property">_wantsHashChange</span> &amp;&amp; <span class="hljs-variable language_">this</span>.<span class="hljs-property">_hasHashChange</span>;
@@ -4717,11 +4798,11 @@ Is pushState desired … is it available?</p>
         </li>
         
         
-        <li id="section-239">
+        <li id="section-243">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-239">&#x00a7;</a>
+                <a class="ss" href="#section-243">&#x00a7;</a>
               </div>
               <p>Normalize root to always include a leading and trailing slash.</p>
 
@@ -4732,11 +4813,11 @@ Is pushState desired … is it available?</p>
         </li>
         
         
-        <li id="section-240">
+        <li id="section-244">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-240">&#x00a7;</a>
+                <a class="ss" href="#section-244">&#x00a7;</a>
               </div>
               <p>Transition from hashChange to pushState or vice versa if both are
 requested.</p>
@@ -4748,11 +4829,11 @@ requested.</p>
         </li>
         
         
-        <li id="section-241">
+        <li id="section-245">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-241">&#x00a7;</a>
+                <a class="ss" href="#section-245">&#x00a7;</a>
               </div>
               <p>If we’ve started off with a route from a <code>pushState</code>-enabled
 browser, but we’re currently in a browser that doesn’t support it…</p>
@@ -4766,11 +4847,11 @@ browser, but we’re currently in a browser that doesn’t support it…</p>
         </li>
         
         
-        <li id="section-242">
+        <li id="section-246">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-242">&#x00a7;</a>
+                <a class="ss" href="#section-246">&#x00a7;</a>
               </div>
               <p>Return immediately as browser will do redirect to new url</p>
 
@@ -4781,11 +4862,11 @@ browser, but we’re currently in a browser that doesn’t support it…</p>
         </li>
         
         
-        <li id="section-243">
+        <li id="section-247">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-243">&#x00a7;</a>
+                <a class="ss" href="#section-247">&#x00a7;</a>
               </div>
               <p>Or if we’ve started out with a hash-based route, but we’re currently
 in a browser where it could be <code>pushState</code>-based instead…</p>
@@ -4801,11 +4882,11 @@ in a browser where it could be <code>pushState</code>-based instead…</p>
         </li>
         
         
-        <li id="section-244">
+        <li id="section-248">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-244">&#x00a7;</a>
+                <a class="ss" href="#section-248">&#x00a7;</a>
               </div>
               <p>Proxy an iframe to handle location events if the browser doesn’t
 support the <code>hashchange</code> event, HTML5 history, or the user wants
@@ -4823,11 +4904,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-245">
+        <li id="section-249">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-245">&#x00a7;</a>
+                <a class="ss" href="#section-249">&#x00a7;</a>
               </div>
               <p>Using <code>appendChild</code> will throw on IE &lt; 9 if the document is not ready.</p>
 
@@ -4842,11 +4923,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-246">
+        <li id="section-250">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-246">&#x00a7;</a>
+                <a class="ss" href="#section-250">&#x00a7;</a>
               </div>
               <p>Add a cross-platform <code>addEventListener</code> shim for older browsers.</p>
 
@@ -4859,11 +4940,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-247">
+        <li id="section-251">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-247">&#x00a7;</a>
+                <a class="ss" href="#section-251">&#x00a7;</a>
               </div>
               <p>Depending on whether we’re using pushState or hashes, and whether
 ‘onhashchange’ is supported, determine how we check the URL state.</p>
@@ -4884,11 +4965,11 @@ support the <code>hashchange</code> event, HTML5 history, or the user wants
         </li>
         
         
-        <li id="section-248">
+        <li id="section-252">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-248">&#x00a7;</a>
+                <a class="ss" href="#section-252">&#x00a7;</a>
               </div>
               <p>Disable Backbone.history, perhaps temporarily. Not useful in a real app,
 but possibly useful for unit testing Routers.</p>
@@ -4900,11 +4981,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-249">
+        <li id="section-253">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-249">&#x00a7;</a>
+                <a class="ss" href="#section-253">&#x00a7;</a>
               </div>
               <p>Add a cross-platform <code>removeEventListener</code> shim for older browsers.</p>
 
@@ -4917,11 +4998,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-250">
+        <li id="section-254">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-250">&#x00a7;</a>
+                <a class="ss" href="#section-254">&#x00a7;</a>
               </div>
               <p>Remove window listeners.</p>
 
@@ -4936,11 +5017,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-251">
+        <li id="section-255">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-251">&#x00a7;</a>
+                <a class="ss" href="#section-255">&#x00a7;</a>
               </div>
               <p>Clean up the iframe if necessary.</p>
 
@@ -4954,11 +5035,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-252">
+        <li id="section-256">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-252">&#x00a7;</a>
+                <a class="ss" href="#section-256">&#x00a7;</a>
               </div>
               <p>Some environments will throw when clearing an undefined interval.</p>
 
@@ -4971,11 +5052,11 @@ but possibly useful for unit testing Routers.</p>
         </li>
         
         
-        <li id="section-253">
+        <li id="section-257">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-253">&#x00a7;</a>
+                <a class="ss" href="#section-257">&#x00a7;</a>
               </div>
               <p>Add a route to be tested when the fragment changes. Routes added later
 may override previous routes.</p>
@@ -4989,11 +5070,11 @@ may override previous routes.</p>
         </li>
         
         
-        <li id="section-254">
+        <li id="section-258">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-254">&#x00a7;</a>
+                <a class="ss" href="#section-258">&#x00a7;</a>
               </div>
               <p>Checks the current URL to see if it has changed, and if it has,
 calls <code>loadUrl</code>, normalizing across the hidden iframe.</p>
@@ -5006,11 +5087,11 @@ calls <code>loadUrl</code>, normalizing across the hidden iframe.</p>
         </li>
         
         
-        <li id="section-255">
+        <li id="section-259">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-255">&#x00a7;</a>
+                <a class="ss" href="#section-259">&#x00a7;</a>
               </div>
               <p>If the user pressed the back button, the iframe’s hash will have
 changed and we should use that for comparison.</p>
@@ -5029,11 +5110,11 @@ changed and we should use that for comparison.</p>
         </li>
         
         
-        <li id="section-256">
+        <li id="section-260">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-256">&#x00a7;</a>
+                <a class="ss" href="#section-260">&#x00a7;</a>
               </div>
               <p>Attempt to load the current URL fragment. If a route succeeds with a
 match, returns <code>true</code>. If no defined routes matches the fragment,
@@ -5046,11 +5127,11 @@ returns <code>false</code>.</p>
         </li>
         
         
-        <li id="section-257">
+        <li id="section-261">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-257">&#x00a7;</a>
+                <a class="ss" href="#section-261">&#x00a7;</a>
               </div>
               <p>If the root doesn’t match, no routes can match either.</p>
 
@@ -5069,11 +5150,11 @@ returns <code>false</code>.</p>
         </li>
         
         
-        <li id="section-258">
+        <li id="section-262">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-258">&#x00a7;</a>
+                <a class="ss" href="#section-262">&#x00a7;</a>
               </div>
               <p>Save a fragment into the hash history, or replace the URL state if the
 ‘replace’ option is passed. You are responsible for properly URL-encoding
@@ -5091,11 +5172,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-259">
+        <li id="section-263">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-259">&#x00a7;</a>
+                <a class="ss" href="#section-263">&#x00a7;</a>
               </div>
               <p>Normalize the fragment.</p>
 
@@ -5106,18 +5187,18 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-260">
+        <li id="section-264">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-260">&#x00a7;</a>
+                <a class="ss" href="#section-264">&#x00a7;</a>
               </div>
-              <p>Don’t include a trailing slash on the root.</p>
+              <p>Strip trailing slash on the root unless _trailingSlash is true</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> rootPath = <span class="hljs-variable language_">this</span>.<span class="hljs-property">root</span>;
-      <span class="hljs-keyword">if</span> (fragment === <span class="hljs-string">&#x27;&#x27;</span> || fragment.<span class="hljs-title function_">charAt</span>(<span class="hljs-number">0</span>) === <span class="hljs-string">&#x27;?&#x27;</span>) {
+      <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-property">_trailingSlash</span> &amp;&amp; (fragment === <span class="hljs-string">&#x27;&#x27;</span> || fragment.<span class="hljs-title function_">charAt</span>(<span class="hljs-number">0</span>) === <span class="hljs-string">&#x27;?&#x27;</span>)) {
         rootPath = rootPath.<span class="hljs-title function_">slice</span>(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>) || <span class="hljs-string">&#x27;/&#x27;</span>;
       }
       <span class="hljs-keyword">var</span> url = rootPath + fragment;</pre></div></div>
@@ -5125,11 +5206,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-261">
+        <li id="section-265">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-261">&#x00a7;</a>
+                <a class="ss" href="#section-265">&#x00a7;</a>
               </div>
               <p>Strip the fragment of the query and hash for matching.</p>
 
@@ -5140,11 +5221,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-262">
+        <li id="section-266">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-262">&#x00a7;</a>
+                <a class="ss" href="#section-266">&#x00a7;</a>
               </div>
               <p>Decode for matching.</p>
 
@@ -5158,11 +5239,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-263">
+        <li id="section-267">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-263">&#x00a7;</a>
+                <a class="ss" href="#section-267">&#x00a7;</a>
               </div>
               <p>If pushState is available, we use it to set the fragment as a real URL.</p>
 
@@ -5174,11 +5255,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-264">
+        <li id="section-268">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-264">&#x00a7;</a>
+                <a class="ss" href="#section-268">&#x00a7;</a>
               </div>
               <p>If hash changes haven’t been explicitly disabled, update the hash
 fragment to store history.</p>
@@ -5193,11 +5274,11 @@ fragment to store history.</p>
         </li>
         
         
-        <li id="section-265">
+        <li id="section-269">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-265">&#x00a7;</a>
+                <a class="ss" href="#section-269">&#x00a7;</a>
               </div>
               <p>Opening and closing the iframe tricks IE7 and earlier to push a
 history entry on hash-tag change.  When replace is true, we don’t
@@ -5216,11 +5297,11 @@ want this.</p>
         </li>
         
         
-        <li id="section-266">
+        <li id="section-270">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-266">&#x00a7;</a>
+                <a class="ss" href="#section-270">&#x00a7;</a>
               </div>
               <p>If you’ve told us that you explicitly don’t want fallback hashchange-
 based history, then <code>navigate</code> becomes a page refresh.</p>
@@ -5236,11 +5317,11 @@ based history, then <code>navigate</code> becomes a page refresh.</p>
         </li>
         
         
-        <li id="section-267">
+        <li id="section-271">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-267">&#x00a7;</a>
+                <a class="ss" href="#section-271">&#x00a7;</a>
               </div>
               <p>Update the hash location, either replacing the current entry, or adding
 a new one to the browser history.</p>
@@ -5256,11 +5337,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-268">
+        <li id="section-272">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-268">&#x00a7;</a>
+                <a class="ss" href="#section-272">&#x00a7;</a>
               </div>
               <p>Some browsers require that <code>hash</code> contains a leading #.</p>
 
@@ -5275,11 +5356,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-269">
+        <li id="section-273">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-269">&#x00a7;</a>
+                <a class="ss" href="#section-273">&#x00a7;</a>
               </div>
               <p>Create the default Backbone.history.</p>
 
@@ -5290,11 +5371,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-270">
+        <li id="section-274">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-270">&#x00a7;</a>
+                <a class="ss" href="#section-274">&#x00a7;</a>
               </div>
               <h2 id="helpers">Helpers</h2>
 
@@ -5303,11 +5384,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-271">
+        <li id="section-275">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-271">&#x00a7;</a>
+                <a class="ss" href="#section-275">&#x00a7;</a>
               </div>
               
             </div>
@@ -5315,11 +5396,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-272">
+        <li id="section-276">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-272">&#x00a7;</a>
+                <a class="ss" href="#section-276">&#x00a7;</a>
               </div>
               <p>Helper function to correctly set up the prototype chain for subclasses.
 Similar to <code>goog.inherits</code>, but uses a hash of prototype properties and
@@ -5334,11 +5415,11 @@ class properties to be extended.</p>
         </li>
         
         
-        <li id="section-273">
+        <li id="section-277">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-273">&#x00a7;</a>
+                <a class="ss" href="#section-277">&#x00a7;</a>
               </div>
               <p>The constructor function for the new subclass is either defined by you
 (the “constructor” property in your <code>extend</code> definition), or defaulted
@@ -5355,11 +5436,11 @@ by us to simply call the parent constructor.</p>
         </li>
         
         
-        <li id="section-274">
+        <li id="section-278">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-274">&#x00a7;</a>
+                <a class="ss" href="#section-278">&#x00a7;</a>
               </div>
               <p>Add static properties to the constructor function, if supplied.</p>
 
@@ -5370,11 +5451,11 @@ by us to simply call the parent constructor.</p>
         </li>
         
         
-        <li id="section-275">
+        <li id="section-279">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-275">&#x00a7;</a>
+                <a class="ss" href="#section-279">&#x00a7;</a>
               </div>
               <p>Set the prototype chain to inherit from <code>parent</code>, without calling
 <code>parent</code>‘s constructor function and add the prototype properties.</p>
@@ -5387,11 +5468,11 @@ by us to simply call the parent constructor.</p>
         </li>
         
         
-        <li id="section-276">
+        <li id="section-280">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-276">&#x00a7;</a>
+                <a class="ss" href="#section-280">&#x00a7;</a>
               </div>
               <p>Set a convenience property in case the parent’s prototype is needed
 later.</p>
@@ -5406,11 +5487,11 @@ later.</p>
         </li>
         
         
-        <li id="section-277">
+        <li id="section-281">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-277">&#x00a7;</a>
+                <a class="ss" href="#section-281">&#x00a7;</a>
               </div>
               <p>Set up inheritance for the model, collection, router, view and history.</p>
 
@@ -5421,11 +5502,11 @@ later.</p>
         </li>
         
         
-        <li id="section-278">
+        <li id="section-282">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-278">&#x00a7;</a>
+                <a class="ss" href="#section-282">&#x00a7;</a>
               </div>
               <p>Throw an error when a URL is needed, and none is supplied.</p>
 
@@ -5438,11 +5519,11 @@ later.</p>
         </li>
         
         
-        <li id="section-279">
+        <li id="section-283">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-279">&#x00a7;</a>
+                <a class="ss" href="#section-283">&#x00a7;</a>
               </div>
               <p>Wrap an optional error callback with a fallback error event.</p>
 

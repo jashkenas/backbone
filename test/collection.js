@@ -654,6 +654,47 @@
     assert.equal(collection.length, 1);
   });
 
+  QUnit.test('failing create with wait:true triggers error event (#4262)', function(assert) {
+    assert.expect(2);
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    collection.on('error', function() { assert.ok(true); });
+    var model = collection.create({id: '1'}, {wait: true});
+    model.on('error', function() { assert.ok(true); });
+    this.ajaxSettings.error();
+  });
+
+  QUnit.test('successful create with wait:true triggers success event (#4262)', function(assert) {
+    assert.expect(2);
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    collection.on('sync', function() { assert.ok(true); });
+    var model = collection.create({id: '1'}, {wait: true});
+    model.on('sync', function() { assert.ok(true); });
+    this.ajaxSettings.success();
+  });
+
+  QUnit.test('failing create pre-existing with wait:true triggers once (#4262)', function(assert) {
+    assert.expect(1);
+    var model = new Backbone.Model;
+    var collection = new Backbone.Collection([model]);
+    collection.url = '/test';
+    collection.on('error', function() { assert.ok(true); });
+    collection.create(model, {wait: true});
+    this.ajaxSettings.error();
+  });
+
+  QUnit.test('successful create pre-existing with wait:true preserves other error bindings (#4262)', function(assert) {
+    assert.expect(1);
+    var model = new Backbone.Model;
+    var collection = new Backbone.Collection([model]);
+    collection.url = '/test';
+    model.on('error', function() { assert.ok(true); });
+    collection.create(model, {wait: true});
+    this.ajaxSettings.success();
+    model.trigger('error');
+  });
+
   QUnit.test('initialize', function(assert) {
     assert.expect(1);
     var Collection = Backbone.Collection.extend({
@@ -2114,6 +2155,20 @@
     var model = {id: 1, attributes: {}};
     var collection = new Backbone.Collection([model]);
     assert.ok(collection.get(model));
+  });
+
+  QUnit.test('#3961 - add events sends options.index that correspond to wrong index', function(assert) {
+    var numModels = 4;
+    var models = _.each(['a', 'b', 'c', 'd'], function(val) {
+      return new Backbone.Model({id: val});
+    });
+    var collection = new Backbone.Collection(models);
+    models.shift(); // remove first element;
+    models.push(new Backbone.Model({id: 'e'}));
+    collection.on('add', function(model, coll, options){
+      assert.equal(options.index, undefined);
+    });
+    collection.set(models);
   });
 
   QUnit.test('#4233 - can instantiate new model in ES class Collection', function(assert) {

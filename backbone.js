@@ -1,4 +1,4 @@
-//     Backbone.js 1.4.1
+//     Backbone.js 1.5.0
 
 //     (c) 2010-2022 Jeremy Ashkenas and DocumentCloud
 //     Backbone may be freely distributed under the MIT license.
@@ -44,7 +44,7 @@
   var slice = Array.prototype.slice;
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '1.4.1';
+  Backbone.VERSION = '1.5.0';
 
   // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
   // the `$` variable.
@@ -404,7 +404,11 @@
     if (options.collection) this.collection = options.collection;
     if (options.parse) attrs = this.parse(attrs, options) || {};
     var defaults = _.result(this, 'defaults');
+
+    // Just _.defaults would work fine, but the additional _.extends
+    // is in there for historical reasons. See #3843.
     attrs = _.defaults(_.extend({}, defaults, attrs), defaults);
+
     this.set(attrs, options);
     this.changed = {};
     this.initialize.apply(this, arguments);
@@ -1080,9 +1084,23 @@
       var collection = this;
       var success = options.success;
       options.success = function(m, resp, callbackOpts) {
-        if (wait) collection.add(m, callbackOpts);
+        if (wait) {
+          m.off('error', this._forwardPristineError, this);
+          collection.add(m, callbackOpts);
+        }
         if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
       };
+      // In case of wait:true, our collection is not listening to any
+      // of the model's events yet, so it will not forward the error
+      // event. In this special case, we need to listen for it
+      // separately and handle the event just once.
+      // (The reason we don't need to do this for the sync event is
+      // in the success handler above: we add the model first, which
+      // causes the collection to listen, and then invoke the callback
+      // that triggers the event.)
+      if (wait) {
+        model.once('error', this._forwardPristineError, this);
+      }
       model.save(null, options);
       return model;
     },
@@ -1177,6 +1195,7 @@
         removed.push(model);
         this._removeReference(model, options);
       }
+      if (models.length > 0 && !options.silent) delete options.index;
       return removed;
     },
 
@@ -1219,8 +1238,19 @@
         }
       }
       this.trigger.apply(this, arguments);
-    }
+    },
 
+    // Internal callback method used in `create`. It serves as a
+    // stand-in for the `_onModelEvent` method, which is not yet bound
+    // during the `wait` period of the `create` call. We still want to
+    // forward any `'error'` event at the end of the `wait` period,
+    // hence a customized callback.
+    _forwardPristineError: function(model, collection, options) {
+      // Prevent double forward if the model was already in the
+      // collection before the call to `create`.
+      if (this.has(model)) return;
+      this._onModelEvent('error', model, collection, options);
+    }
   });
 
   // Defining an @@iterator method implements JavaScript's Iterable protocol.
@@ -1846,6 +1876,7 @@
       // Is pushState desired ... is it available?
       this.options          = _.extend({root: '/'}, this.options, options);
       this.root             = this.options.root;
+      this._trailingSlash   = this.options.trailingSlash;
       this._wantsHashChange = this.options.hashChange !== false;
       this._hasHashChange   = 'onhashchange' in window && (document.documentMode === void 0 || document.documentMode > 7);
       this._useHashChange   = this._wantsHashChange && this._hasHashChange;
@@ -1988,9 +2019,9 @@
       // Normalize the fragment.
       fragment = this.getFragment(fragment || '');
 
-      // Don't include a trailing slash on the root.
+      // Strip trailing slash on the root unless _trailingSlash is true
       var rootPath = this.root;
-      if (fragment === '' || fragment.charAt(0) === '?') {
+      if (!this._trailingSlash && (fragment === '' || fragment.charAt(0) === '?')) {
         rootPath = rootPath.slice(0, -1) || '/';
       }
       var url = rootPath + fragment;

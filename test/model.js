@@ -712,6 +712,15 @@
     this.ajaxSettings.success();
   });
 
+  QUnit.test('failing save with wait:true triggers error event (#4262)', function(assert) {
+    assert.expect(1);
+    var model = new Backbone.Model;
+    model.urlRoot = '/test';
+    model.on('error', function() { assert.ok(true); });
+    model.save({id: '1'}, {wait: true});
+    this.ajaxSettings.error();
+  });
+
   QUnit.test('fetch', function(assert) {
     assert.expect(2);
     doc.fetch();
