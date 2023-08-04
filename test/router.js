@@ -73,6 +73,8 @@
   var Router = Backbone.Router.extend({
 
     count: 0,
+    UTFCount: 0,
+    anythingCount: 0,
 
     routes: {
       'noCallback': 'noCallback',
@@ -119,6 +121,7 @@
     },
 
     charUTF: function() {
+      this.UTFCount++;
       this.charType = 'UTF';
     },
 
@@ -164,6 +167,7 @@
     },
 
     anything: function(whatever) {
+      this.anythingCount++;
       this.anything = whatever;
     },
 
@@ -435,6 +439,70 @@
     assert.equal(router.charType, 'UTF');
     Backbone.history.navigate('char%C3%B1', {trigger: true});
     assert.equal(router.charType, 'UTF');
+  });
+
+  QUnit.test('#4085 - Hashes with UTF8 in them.', function(assert) {
+    var done = assert.async();
+
+    assert.expect(4);
+    router.anythingCount = router.UTFCount = 0;
+    Backbone.history.navigate('charñ', {trigger: true});
+    assert.equal(router.UTFCount, 1);
+    assert.equal(router.anythingCount, 0);
+
+    setTimeout(function() {
+      assert.equal(router.UTFCount, 1);
+      assert.equal(router.anythingCount, 0);
+      done();
+    }, 1000);
+  });
+
+  QUnit.test('#4085 - Hashes with UTF8 in them, no trigger.', function(assert) {
+    var done = assert.async();
+
+    assert.expect(4);
+    router.anythingCount = router.UTFCount = 0;
+    Backbone.history.navigate('charñ', {trigger: false});
+    assert.equal(router.UTFCount, 0);
+    assert.equal(router.anythingCount, 0);
+
+    setTimeout(function() {
+      assert.equal(router.UTFCount, 0);
+      assert.equal(router.anythingCount, 0);
+      done();
+    }, 1000);
+  });
+
+  QUnit.test('#4085 - Hashes with UTF8 in them, replace.', function(assert) {
+    var done = assert.async();
+
+    assert.expect(4);
+    router.anythingCount = router.UTFCount = 0;
+    Backbone.history.navigate('charñ', {trigger: true, replace: true});
+    assert.equal(router.UTFCount, 1);
+    assert.equal(router.anythingCount, 0);
+
+    setTimeout(function() {
+      assert.equal(router.UTFCount, 1);
+      assert.equal(router.anythingCount, 0);
+      done();
+    }, 1000);
+  });
+
+  QUnit.test('#4085 - Hashes with UTF8 in them, replace, no trigger.', function(assert) {
+    var done = assert.async();
+
+    assert.expect(4);
+    router.anythingCount = router.UTFCount = 0;
+    Backbone.history.navigate('charñ', {trigger: false, replace: true});
+    assert.equal(router.UTFCount, 0);
+    assert.equal(router.anythingCount, 0);
+
+    setTimeout(function() {
+      assert.equal(router.UTFCount, 0);
+      assert.equal(router.anythingCount, 0);
+      done();
+    }, 1000);
   });
 
   QUnit.test('#1185 - Use pathname when hashChange is not wanted.', function(assert) {
