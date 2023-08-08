@@ -1985,7 +1985,10 @@
         current = this.getHash(this.iframe.contentWindow);
       }
 
-      if (current === this.fragment) return false;
+      if (current === this.fragment) {
+        if (!this.matchRoot()) return this.notfound();
+        return false;
+      }
       if (this.iframe) this.navigate(current);
       this.loadUrl();
     },
@@ -1995,14 +1998,22 @@
     // returns `false`.
     loadUrl: function(fragment) {
       // If the root doesn't match, no routes can match either.
-      if (!this.matchRoot()) return false;
+      if (!this.matchRoot()) return this.notfound();
       fragment = this.fragment = this.getFragment(fragment);
       return _.some(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
           return true;
         }
-      });
+      }) || this.notfound();
+    },
+
+    // When no route could be matched, this method is called internally to
+    // trigger the `'notfound'` event. It returns `false` so that it can be used
+    // in tail position.
+    notfound: function() {
+      this.trigger('notfound');
+      return false;
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
