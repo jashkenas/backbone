@@ -1040,6 +1040,7 @@ view.stopListening(model);
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
       <li><b>"route"</b> (router, route, params) &mdash; Fired by history when <i>any</i> route has been matched.</li>
+      <li><b>"notfound"</b> () &mdash; Fired by history when <i>no</i> route could be matched.</li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument followed by all trigger arguments.</li>
     </ul>
 
@@ -2726,6 +2727,9 @@ var Router = Backbone.Router.extend({
     <p>
       <b>History</b> serves as a global router (per frame) to handle <tt>hashchange</tt>
       events or <tt>pushState</tt>, match the appropriate route, and trigger callbacks.
+      It forwards the <tt>"route"</tt> and <tt>"route[name]"</tt> events of the
+      matching router, or <tt>"notfound"</tt> when no route in any router
+      matches the current URL.
       You shouldn't ever have to create one of these yourself since <tt>Backbone.history</tt>
       already contains one.
     </p>
@@ -2782,8 +2786,10 @@ var Router = Backbone.Router.extend({
 
     <p>
       When called, if a route succeeds with a match for the current URL,
-      <tt>Backbone.history.start()</tt> returns <tt>true</tt>. If no defined
-      route matches the current URL, it returns <tt>false</tt>.
+      <tt>Backbone.history.start()</tt> returns <tt>true</tt> and
+      the <tt>"route"</tt> and <tt>"route[name]"</tt> events are triggered. If
+      no defined route matches the current URL, it returns <tt>false</tt>
+      and <tt>"notfound"</tt> is triggered instead.
     </p>
 
     <p>
