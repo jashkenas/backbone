@@ -13,9 +13,8 @@ body:
     attributes:
       label: Ultimate goal
       description: >-
-        This first question is not about Backbone but about the
-        mission that you hope to accomplish with Backbone. What work
-        do you need to get done?
+        This first question is not about Backbone but about the mission that you
+        hope to accomplish with Backbone. What work do you need to get done?
       placeholder: |
         GOOD: I work on an application that needs to ...
         BAD (later question): I think Backbone.Collection should have a method that ...
@@ -26,12 +25,11 @@ body:
     attributes:
       label: Experienced limitation
       description: >-
-        Working towards your end goal, what task is currently
-        difficult to achieve with Backbone as it is?
+        Working towards your end goal, what task is currently difficult to
+        achieve with Backbone as it is?
       placeholder: >-
         In my application, I need to ..., but when I define a
-        Backbone.Collection subclass, there does not seem to be any
-        way to ...
+        Backbone.Collection subclass, there does not seem to be any way to ...
     validations:
       required: true
   - type: textarea
@@ -39,10 +37,9 @@ body:
     attributes:
       label: Insufficient options
       description: >-
-        Which features in Backbone or other libraries are currently
-        available to you, which do not quite do what you need? How are
-        they failing you? If there is really nothing out there, you
-        can leave this empty.
+        Which features in Backbone or other libraries are currently available to
+        you, which do not quite do what you need? How are they failing you? If
+        there is really nothing out there, you can leave this empty.
       placeholder: |
         - I could use `Collection.slice`, but ...
         - I could use <some other library>, but ...
@@ -51,9 +48,9 @@ body:
     attributes:
       label: Justification
       description: >-
-        Why do you believe that the missing functionality belongs in
-        Backbone proper? Why could or should it not be provided by
-        another library or tool?
+        Why do you believe that the missing functionality belongs in Backbone
+        proper? Why could or should it not be provided by another library or
+        tool?
     validations:
       required: true
   - type: textarea
@@ -61,8 +58,8 @@ body:
     attributes:
       label: Proposal
       description: >-
-        Go ahead, describe your ideal solution. Show what it should
-        look like and explain how it should behave.
+        Go ahead, describe your ideal solution. Show what it should look like
+        and explain how it should behave.
     validations:
       required: true
   - type: textarea
@@ -70,13 +67,12 @@ body:
     attributes:
       label: Possible alternatives
       description: >-
-        Can you think of other ways in which your desired
-        functionality could be provided? If they appeal less to you,
-        why is this the case?
+        Can you think of other ways in which your desired functionality could be
+        provided? If they appeal less to you, why is this the case?
   - type: textarea
     id: remarks
     attributes:
       label: Other remarks
       description: >-
-        If there is anything else you would like to say about your
-        feature request, you can do so here.
+        If there is anything else you would like to say about your feature
+        request, you can do so here.
