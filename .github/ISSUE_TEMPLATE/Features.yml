@@ -21,28 +21,22 @@ body:
     validations:
       required: true
   - type: textarea
-    id: limitation
+    id: shortcoming
     attributes:
-      label: Experienced limitation
+      label: Shortcomings
       description: >-
         Working towards your end goal, what task is currently difficult to
-        achieve with Backbone as it is?
-      placeholder: >-
+        achieve with Backbone as it is? Which features in Backbone or other
+        libraries are currently available to you, which do not quite do what you
+        need?
+      placeholder: |
         In my application, I need to ..., but when I define a
         Backbone.Collection subclass, there does not seem to be any way to ...
-    validations:
-      required: true
-  - type: textarea
-    id: options
-    attributes:
-      label: Insufficient options
-      description: >-
-        Which features in Backbone or other libraries are currently available to
-        you, which do not quite do what you need? How are they failing you? If
-        there is really nothing out there, you can leave this empty.
-      placeholder: |
+
         - I could use `Collection.slice`, but ...
         - I could use <some other library>, but ...
+    validations:
+      required: true
   - type: textarea
     id: justification
     attributes:
