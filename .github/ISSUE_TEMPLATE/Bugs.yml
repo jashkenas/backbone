@@ -74,18 +74,42 @@ body:
     id: stack
     attributes:
       label: Software stack
-      description: >
+      description: "
         With which version(s) of Backbone, Underscore/Lodash, jQuery/Zepto,
         other relevant libraries or tools, your browser, etcetera, did you
         experience this problem? Please list one per line, including name,
-        version number(s) and variant(s) if applicable.
-      placeholder: |
-        - Backbone 1.4.1 and latest `master` (commit fcf5df6)
-        - Underscore 1.13.6
-        - jQuery 3.6.3 (slim build)
-        - Marionette 4.1.2
-        - Firefox 100
-        - Node.js 14.6
+        version number(s) and variant(s) if applicable.\n\n
+
+        **Tip:** if you are using the bleeding-edge version of Backbone, much
+        of this information can be obtained by inserting `Backbone.debugInfo();`
+        somewhere in your code before the bug happens and copy-pasting its
+        console output below."
+      placeholder: "
+        - Backbone 1.4.1 and latest `master` (commit fcf5df6)\n
+        - Underscore 1.13.6\n
+        - jQuery 3.6.3 (slim build)\n
+        - Marionette 4.1.2\n
+        - Firefox 100\n
+        - Node.js 14.6\n
+
+        OR (stretch form field to see example content):\n
+
+        ```json\n
+        Backbone debug info:  {\n
+        \ \ \"backbone\": \"1.5.0\",\n
+        \ \ \"distribution\": \"MARK_DEVELOPMENT\",\n
+        \ \ \"_\": \"lodash 4.17.21\",\n
+        \ \ \"$\": \"3.6.0\",\n
+        \ \ \"navigator\": {\n
+        \ \ \ \ \"userAgent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/116.0\",\n
+        \ \ \ \ \"platform\": \"MacIntel\",\n
+        \ \ \ \ \"webdriver\": false\n
+        \ \ }\n
+        }\n
+        ```\n
+
+        - Backbone `master` checked out on August 10, 2023\n
+        - Marionette 4.1.2"
     validations:
       required: true
   - type: textarea
