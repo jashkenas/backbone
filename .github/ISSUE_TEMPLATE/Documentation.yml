@@ -39,9 +39,9 @@ body:
         of a view should be updated, or what calls need to be made to
         sync the changes to the server."
   - type: textarea
-    id: problem
+    id: effect
     attributes:
-      label: Problem statement
+      label: Effect of the problem
       description: >-
         What did you or someone else not know, misunderstand or
         falsely believe due to the current state of the documentation?
