@@ -70,81 +70,39 @@ body:
       placeholder: |
         - https://backbonejs.org/#Model-fetch
         - https://backbonejs.org/#Events-catalog
-  - type: input
-    id: version
-    attributes:
-      label: Affected version(s)
-      description: >
-        With which version(s) of Backbone did you experience this problem? List
-        the version numbers, separated by commas. If you were trying the
-        bleeding edge version from the `master` branch, list the commit hash(es)
-        if possible, or date and time otherwise.
-      placeholder: 1.4.1, fcf5df6, 2023-07-25 23:45 UTC
-    validations:
-      required: true
   - type: textarea
-    id: engine
+    id: stack
     attributes:
-      label: Affected engine(s)
+      label: Software stack
       description: >
-        In which browser(s) or other JavaScript environment(s) did you encounter
-        the problem? Please list one per line, including name and version
-        number.
+        With which version(s) of Backbone, Underscore/Lodash, jQuery/Zepto,
+        other relevant libraries or tools, your browser, etcetera, did you
+        experience this problem? Please list one per line, including name,
+        version number(s) and variant(s) if applicable.
       placeholder: |
+        - Backbone 1.4.1 and latest `master` (commit fcf5df6)
+        - Underscore 1.13.6
+        - jQuery 3.6.3 (slim build)
+        - Marionette 4.1.2
         - Firefox 100
         - Node.js 14.6
     validations:
       required: true
   - type: textarea
-    id: interactions
+    id: discourse
     attributes:
-      label: Interacting software
+      label: Related issues, prior discussion and CCs
       description: >
-        Where you using Backbone in conjuction with other libraries or tools,
-        which might be playing a role in this issue? Please list one per line,
-        including name, version number and variant if applicable.
-      placeholder: |
-        - jQuery 3.6.3
-  - type: textarea
-    id: related
-    attributes:
-      label: Related tickets
-      description: >
-        Do you know of other issues, pull requests or comments that may be
-        relevant to this bug? For example an issue ticket that discusses a
-        similar problem, or a pull request that may have introduced the bug.
-      placeholder: "#4229, #3410"
-  - type: textarea
-    id: prior
-    attributes:
-      label: Prior discussion
-      description: >
-        Besides the tickets referenced above, did you discuss the problem
-        elsewhere on the internet before reporting it here? In that case, please
-        list the URL(s) below.
-      placeholder: |
-        e.g. a Stack Overflow or Matrix link
-  - type: input
-    id: mention
-    attributes:
-      label: Mentions
-      description: >
-        If you would like to attract the attention of other GitHub users, you
-        can list their `@handles` here.
-      placeholder: "@jgonggrijp"
+        Please list any issue numbers, pull requests or links to discussions
+        elsewhere on the internet that may be relevant. You can also attract the
+        attention of other GitHub users by listing their `@handles` here.
+      placeholder: "
+        #4229, #3410\n
+        a Stack Overflow or Matrix link\n
+        @jgonggrijp"
   - type: markdown
     attributes:
-      value: "## Details"
-  - type: textarea
-    id: permalink
-    attributes:
-      label: Code permalinks
-      description: >
-        If possible, provide permalinks to the JavaScript code, configuration,
-        etcetera in your project that exposed the bug. You can make a permalink
-        by visiting the affected file in the GitHub/GitLab/* webinterface,
-        hovering your mouse pointer over the affected line(s) near the left
-        margin and clicking on the triple dot menu that appears.
+      value: "## Bug details"
   - type: input
     id: error
     attributes:
@@ -154,62 +112,24 @@ body:
         reproduce the bug should look for.
       placeholder: TypeError (options.success is not an object)
   - type: textarea
-    id: story
-    attributes:
-      label: Story
-      description: >
-        In a paragraph or two, tell us your story. What did you want to achieve,
-        what did you do, what did you observe, and why do you think this is a
-        bug?
-    validations:
-      required: true
-  - type: textarea
-    id: research
-    attributes:
-      label: Debugging and other research
-      description: >
-        Did you step with a debugger or do other research in order to better
-        understand the issue? If so, please describe what you did and what you
-        observed.
-  - type: textarea
     id: repro
     attributes:
       label: Steps to reproduce
       description: >
-        In human language, list the minimal steps needed to make the bug happen.
-        You can list code and logs in the next two fields.
-      placeholder: |
-        1. Define a `Backbone.Model` subclass with overridden `sync` method.
-        2. ...
+        List the minimal steps needed to make the bug happen. Include code
+        examples as needed.
     validations:
       required: true
   - type: textarea
-    id: code
+    id: details
     attributes:
-      label: Example code
-      render: txt
+      label: Additional information
       description: >-
-        Provide any example code, configuration, etcetera that could help to
-        reproduce the bug. This will be rendered as code, but without syntax
-        highlighting. You can include code for different file types if needed.
-    validations:
-      required: true
-  - type: textarea
-    id: log
-    attributes:
-      label: Logs
-      render: txt
-      description: >-
-        If you got relevant text output, for example through `console.log`, you
-        can copy-paste it below. However, if it is more than 10 lines, please
-        attach it as a file in the next field.
-  - type: textarea
-    id: attachment
-    attributes:
-      label: Attachments
-      description: >
-        Attach any relevant files, such as logs or screenshots, by dragging them
-        over the box below.
+        This is a free-form field where you can add any further details that may
+        help to understand the bug. For example, you might provide permalinks to
+        the affected lines of code in your actual project, attach logs or
+        screenshots, point out things you noticed while debugging, and explain
+        why the bug is especially problematic for your use case.
   - type: markdown
     attributes:
       value: "## Closing"
@@ -218,10 +138,9 @@ body:
     attributes:
       label: Suggested solution(s)
       description: >
-        If you have any idea on how the problem could (or should) be
-        solved, please feel welcome to describe it here. Of course, if
-        your idea is very concrete, you may as well submit a pull
-        request!
+        If you have any idea on how the problem could (or should) be solved,
+        please feel welcome to describe it here. Of course, if your idea is very
+        concrete, you may as well submit a pull request!
   - type: textarea
     id: remarks
     attributes:
