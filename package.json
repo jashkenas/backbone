@@ -26,16 +26,18 @@
     "phantomjs-prebuilt": "^2.1.7",
     "qunit": "^2.17.2",
     "replace-in-file": "^7.0.1",
+    "rollup": "^3.28.1",
     "uglify-js": "^3.14.5"
   },
   "scripts": {
     "test": "karma start && coffee test/model.coffee && npm run lint",
     "build": "uglifyjs backbone.js --mangle --source-map url=backbone-min.js.map -o backbone-min.js",
+    "build-debug": "npx rollup -e backbone -f umd -g backbone:Backbone -n Backbone.debugInfo -o debug-info.js --no-strict modules/debug-info.js",
     "alias-sourcemap": "cpy --rename=backbone-min.map backbone-min.js.map .",
     "doc": "docco backbone.js && docco examples/todos/todos.js examples/backbone.localStorage.js",
-    "lint": "eslint backbone.js test/*.js",
-    "mark-release": "replace-in-file MARK_DEVELOPMENT MARK_RELEASE backbone.js",
-    "mark-develop": "replace-in-file MARK_RELEASE MARK_DEVELOPMENT backbone.js",
+    "lint": "eslint backbone.js test/*.js modules/*.js",
+    "mark-release": "replace-in-file MARK_DEVELOPMENT MARK_RELEASE modules/debug-info.js && npm run build-debug",
+    "mark-develop": "replace-in-file MARK_RELEASE MARK_DEVELOPMENT modules/debug-info.js && npm run build-debug",
     "prepublishOnly": "npm run test && npm run mark-release && npm run build && npm run alias-sourcemap && npm run doc && git add -u && npm run mark-develop"
   },
   "main": "backbone.js",
@@ -50,6 +52,9 @@
     "backbone-min.js",
     "backbone-min.js.map",
     "backbone-min.map",
-    "LICENSE"
+    "debug-info.js",
+    "LICENSE",
+    "modules/debug-info.js",
+    "modules/package.json"
   ]
 }

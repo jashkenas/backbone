@@ -79,10 +79,10 @@ body:
         experience this problem? Please list one per line, including name,
         version number(s) and variant(s) if applicable.\n\n
 
-        **Tip:** if you are using the bleeding-edge version of Backbone, much
-        of this information can be obtained by inserting `Backbone.debugInfo();`
-        somewhere in your code before the bug happens and copy-pasting its
-        console output below."
+        **Tip:** if you are using the bleeding-edge version of
+        Backbone, much of this information can be obtained by using
+        [debugInfo](https://backbonejs.org/#Utility-Backbone-debugInfo)
+        and copy-pasting its console output below."
       placeholder: "
         - Backbone 1.4.1 and latest `master` (commit fcf5df6)\n
         - Underscore 1.13.6\n
