@@ -45,8 +45,7 @@ body:
       description: |
         In one sentence, what does the affected component *actually* do?
       placeholder: |
-        Forward options to whichever method was called last: sync, fetch, save
-        or destroy.
+        Forward options to the method called last, e.g. save.
     validations:
       required: true
   - type: markdown
