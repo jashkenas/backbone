@@ -28,4 +28,4 @@ export default function() {
   /* eslint-disable-next-line no-console */
   console.debug('Backbone debug info: ', JSON.stringify(info, null, 4));
   return info;
-};
+}
