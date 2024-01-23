@@ -1,6 +1,6 @@
 //     Backbone.js 1.6.0
 
-//     (c) 2010-2023 Jeremy Ashkenas and DocumentCloud
+//     (c) 2010-2024 Jeremy Ashkenas and DocumentCloud
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://backbonejs.org
