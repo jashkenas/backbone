@@ -2144,5 +2144,12 @@
     };
   };
 
+  // Provide useful information when things go wrong. This method is not meant
+  // to be used directly; it merely provides the necessary introspection for the
+  // external `debugInfo` function.
+  Backbone._debug = function() {
+    return {root: root, _: _};
+  };
+
   return Backbone;
 });

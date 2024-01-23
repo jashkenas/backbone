@@ -1,0 +1,72 @@
+name: Feature request
+description: >-
+  Tell us about functionality that you miss in Backbone.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for proposing a new feature.
+
+        Let us begin with the end in mind.
+  - type: textarea
+    id: goal
+    attributes:
+      label: Ultimate goal
+      description: >-
+        This first question is not about Backbone but about the mission that you
+        hope to accomplish with Backbone. What work do you need to get done?
+      placeholder: |
+        GOOD: I work on an application that needs to ...
+        BAD (later question): I think Backbone.Collection should have a method that ...
+    validations:
+      required: true
+  - type: textarea
+    id: shortcoming
+    attributes:
+      label: Shortcomings
+      description: >-
+        Working towards your end goal, what task is currently difficult to
+        achieve with Backbone as it is? Which features in Backbone or other
+        libraries are currently available to you, which do not quite do what you
+        need?
+      placeholder: |
+        In my application, I need to ..., but when I define a
+        Backbone.Collection subclass, there does not seem to be any way to ...
+
+        - I could use `Collection.slice`, but ...
+        - I could use <some other library>, but ...
+    validations:
+      required: true
+  - type: textarea
+    id: justification
+    attributes:
+      label: Justification
+      description: >-
+        Why do you believe that the missing functionality belongs in Backbone
+        proper? Why could or should it not be provided by another library or
+        tool?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: >-
+        Go ahead, describe your ideal solution. Show what it should look like
+        and explain how it should behave.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Possible alternatives
+      description: >-
+        Can you think of other ways in which your desired functionality could be
+        provided? If they appeal less to you, why is this the case?
+  - type: textarea
+    id: remarks
+    attributes:
+      label: Other remarks
+      description: >-
+        If there is anything else you would like to say about your feature
+        request, you can do so here.

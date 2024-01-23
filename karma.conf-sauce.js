@@ -69,6 +69,7 @@ module.exports = function(config) {
       'test/vendor/json2.js',
       'test/vendor/underscore.js',
       'backbone.js',
+      'debug-info.js',
       'test/setup/*.js',
       'test/*.js'
     ],

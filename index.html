@@ -486,6 +486,7 @@
       <ul class="toc_section">
         <li data-name="Backbone.noConflict">– <a href="#Utility-Backbone-noConflict">Backbone.noConflict</a></li>
         <li data-name="Backbone.$">– <a href="#Utility-Backbone-$">Backbone.$</a></li>
+        <li data-name="Backbone.debugInfo">– <a href="#Utility-Backbone-debugInfo">debugInfo</a></li>
       </ul>
     </div>
 
@@ -3309,6 +3310,42 @@ var model = localBackbone.Model.extend(...);
 
 <pre>
 Backbone.$ = require('jquery');
+</pre>
+
+    <p id="Utility-Backbone-debugInfo">
+      <b class="header">debugInfo</b><code>debugInfo();</code>
+      <br />
+      In the unfortunate event that you need to submit a
+      <a href="https://github.com/jashkenas/backbone/issues/new?template=Bugs.yml">bug
+      report</a>, this function makes it easier to provide detailed information
+      about your setup. It prints a JSON object with version information about
+      Backbone and its dependencies through <tt>console.debug</tt>. It also
+      returns this object in case you want to inspect it in code.
+    </p>
+
+    <p>
+      <tt>debugInfo</tt> comes in a separate module that ships with
+      the <a href="#downloads">edge version</a> and releases later than 1.5.0.
+      It is available in UMD format under the same prefix
+      as <tt>backbone.js</tt>, but with <tt>debug-info.js</tt> as the file name.
+      It is also experimentally available in ES module format
+      under <tt>backbone/modules/</tt>.
+    </p>
+
+<pre>
+  &lt;!-- browser embeds --&gt;
+  &lt;script src="some-path-or-url/backbone.js"&gt;&lt;/script&gt;
+  &lt;script src="some-path-or-url/debug-info.js"&gt;&lt;/script&gt;
+  &lt;script&gt;
+    Backbone.debugInfo();
+  &lt;/script&gt;
+
+  // CommonJS
+  require('backbone/debug-info.js')();
+
+  // ESM
+  import debugInfo from 'backbone/modules/debug-info.js';
+  debugInfo();
 </pre>
 
     <h2 id="faq">F.A.Q.</h2>

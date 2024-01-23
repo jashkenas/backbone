@@ -1,0 +1,76 @@
+name: Documentation issue
+description: >-
+  Report information that is missing, incomplete, vague, misleading or plain
+  wrong in online documentation such as the website, the README, the wiki,
+  etcetera.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Thank you for taking the time to help us improve the documentation.
+  - type: input
+    id: reference
+    attributes:
+      label: Reference to current documentation
+      description: >-
+        If you can identify an existing piece of documentation that is lacking,
+        please provide a URL (or multiple) below. If your report is about
+        missing information and there is no single obvious place where it should
+        be added, you can leave this empty.
+      placeholder: "https://backbonejs.org/#Model-changedAttributes"
+  - type: textarea
+    id: quote
+    attributes:
+      label: Quote of current documentation
+      description: >-
+        If you provided a URL in the previous field, please quote the
+        problematic documentation below. This ensures that future readers
+        understand what you were responding to, in case the referred page
+        disappears or changes content.
+      placeholder: "
+        > Retrieve a hash of only the model's attributes that have changed since
+        the last
+        [set](https://backbonejs.org/#Model-set), or `false` if there are none.
+        Optionally, an external **attributes** hash can be passed in, returning
+        the attributes in that hash which differ from the model. This can be
+        used to figure out which portions of a view should be updated, or what
+        calls need to be made to sync the changes to the server."
+  - type: textarea
+    id: effect
+    attributes:
+      label: Effect of the problem
+      description: >-
+        What did you or someone else not know, misunderstand or falsely believe
+        due to the current state of the documentation? How has this misguided
+        your or someone else's behavior?
+      placeholder: >-
+        I did not know that I could ..., so I needlessly ...
+    validations:
+      required: true
+  - type: textarea
+    id: cause
+    attributes:
+      label: Cause of the problem
+      description: >-
+        What is it about the current documentation that caused your problem?
+        What is missing, ambiguous or wrong? Pinpoint specific words or phrases
+        if possible.
+      placeholder: >-
+        It says "...", which seems to suggest that ..., while actually, ...
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggestion
+      description: >-
+        If you have any idea on how the documentation could be improved, please
+        share it here. Of course, if your idea is very concrete, you can also
+        submit a pull request!
+  - type: textarea
+    id: remarks
+    attributes:
+      label: Other remarks
+      description: >-
+        If there is anything else you would like to say about the issue, you can
+        do so here.
