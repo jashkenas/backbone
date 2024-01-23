@@ -1085,7 +1085,7 @@
       var success = options.success;
       options.success = function(m, resp, callbackOpts) {
         if (wait) {
-          m.off('error', this._forwardPristineError, this);
+          m.off('error', collection._forwardPristineError, collection);
           collection.add(m, callbackOpts);
         }
         if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
