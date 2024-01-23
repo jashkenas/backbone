@@ -674,6 +674,16 @@
     this.ajaxSettings.success();
   });
 
+  QUnit.test('successful create with wait:true drops special error listener (#4284)', function(assert) {
+    assert.expect(1);
+    var collection = new Backbone.Collection;
+    collection.url = '/test';
+    collection.on('error', function() { assert.ok(true); });
+    var model = collection.create({id: '1'}, {wait: true});
+    this.ajaxSettings.success();
+    model.trigger('error');
+  });
+
   QUnit.test('failing create pre-existing with wait:true triggers once (#4262)', function(assert) {
     assert.expect(1);
     var model = new Backbone.Model;
