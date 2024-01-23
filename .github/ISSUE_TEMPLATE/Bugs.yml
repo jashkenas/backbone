@@ -1,0 +1,173 @@
+name: Bug report
+description: |
+  Report something that is not working correctly.
+  Not intended for security issues!
+title: Foo.bar should bazoonite, but frobulates instead
+body:
+  - type: markdown
+    attributes:
+      value: "
+        Thank you for taking the effort to report a bug.\n\n
+
+        Is your bug a security issue? In that case, **please do not use this
+        form!** Instead, see the [security
+        policy](https://github.com/jashkenas/backbone/security/policy) on how to
+        report the issue.\n\n
+
+        ## Identification\n\n
+
+        To start, some quick questions to pinpoint the issue."
+  - type: input
+    id: component
+    attributes:
+      label: Affected component
+      description: >
+        Which part of Backbone is affected? Please be as specific as possible,
+        for example &ldquo;the silent option of Collection.reset&rdquo; or
+        &ldquo;importing Backbone with require.js&rdquo;.
+      placeholder: the sync event triggered after Model.fetch
+    validations:
+      required: true
+  - type: input
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: |
+        In one sentence, what *should* the affected component do?
+      placeholder: |
+        Forward all options passed to Model.fetch to the event handler
+    validations:
+      required: true
+  - type: input
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: |
+        In one sentence, what does the affected component *actually* do?
+      placeholder: |
+        Forward options to the method called last, e.g. save.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "
+        After filling the above three fields, please review the issue title. It
+        should be short, including elements of all three fields and not much
+        else.\n\n
+
+        For example: **After Model.fetch, sync event may include
+        options of a later sync, save or destroy call**\n\n
+
+        ## Context"
+  - type: textarea
+    id: docs
+    attributes:
+      label: Relevant documentation
+      description: |
+        Which documentation, if any, did you base your above expectation on?
+        Provide one link per line.
+      placeholder: |
+        - https://backbonejs.org/#Model-fetch
+        - https://backbonejs.org/#Events-catalog
+  - type: textarea
+    id: stack
+    attributes:
+      label: Software stack
+      description: "
+        With which version(s) of Backbone, Underscore/Lodash, jQuery/Zepto,
+        other relevant libraries or tools, your browser, etcetera, did you
+        experience this problem? Please list one per line, including name,
+        version number(s) and variant(s) if applicable.\n\n
+
+        **Tip:** if you are using the bleeding-edge version of
+        Backbone, much of this information can be obtained by using
+        [debugInfo](https://backbonejs.org/#Utility-Backbone-debugInfo)
+        and copy-pasting its console output below."
+      placeholder: "
+        - Backbone 1.4.1 and latest `master` (commit fcf5df6)\n
+        - Underscore 1.13.6\n
+        - jQuery 3.6.3 (slim build)\n
+        - Marionette 4.1.2\n
+        - Firefox 100\n
+        - Node.js 14.6\n
+
+        OR (stretch form field to see example content):\n
+
+        ```json\n
+        Backbone debug info:  {\n
+        \ \ \"backbone\": \"1.5.0\",\n
+        \ \ \"distribution\": \"MARK_DEVELOPMENT\",\n
+        \ \ \"_\": \"lodash 4.17.21\",\n
+        \ \ \"$\": \"3.6.0\",\n
+        \ \ \"navigator\": {\n
+        \ \ \ \ \"userAgent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/116.0\",\n
+        \ \ \ \ \"platform\": \"MacIntel\",\n
+        \ \ \ \ \"webdriver\": false\n
+        \ \ }\n
+        }\n
+        ```\n
+
+        - Backbone `master` checked out on August 10, 2023\n
+        - Marionette 4.1.2"
+    validations:
+      required: true
+  - type: textarea
+    id: discourse
+    attributes:
+      label: Related issues, prior discussion and CCs
+      description: >
+        Please list any issue numbers, pull requests or links to discussions
+        elsewhere on the internet that may be relevant. You can also attract the
+        attention of other GitHub users by listing their `@handles` here.
+      placeholder: "
+        #4229, #3410\n
+        a Stack Overflow or Matrix link\n
+        @jgonggrijp"
+  - type: markdown
+    attributes:
+      value: "## Bug details"
+  - type: input
+    id: error
+    attributes:
+      label: Error
+      description: >
+        If possible, name the error that you observed and that anyone trying to
+        reproduce the bug should look for.
+      placeholder: TypeError (options.success is not an object)
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: >
+        List the minimal steps needed to make the bug happen. Include code
+        examples as needed.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Additional information
+      description: >-
+        This is a free-form field where you can add any further details that may
+        help to understand the bug. For example, you might provide permalinks to
+        the affected lines of code in your actual project, attach logs or
+        screenshots, point out things you noticed while debugging, and explain
+        why the bug is especially problematic for your use case.
+  - type: markdown
+    attributes:
+      value: "## Closing"
+  - type: textarea
+    id: solution
+    attributes:
+      label: Suggested solution(s)
+      description: >
+        If you have any idea on how the problem could (or should) be solved,
+        please feel welcome to describe it here. Of course, if your idea is very
+        concrete, you may as well submit a pull request!
+  - type: textarea
+    id: remarks
+    attributes:
+      label: Other remarks
+      description: >-
+        If there is anything else you would like to say about the issue, you can
+        do so here.

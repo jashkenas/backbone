@@ -1,6 +1,6 @@
 //     Backbone.js 1.5.0
 
-//     (c) 2010-2022 Jeremy Ashkenas and DocumentCloud
+//     (c) 2010-2023 Jeremy Ashkenas and DocumentCloud
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://backbonejs.org
@@ -1085,7 +1085,7 @@
       var success = options.success;
       options.success = function(m, resp, callbackOpts) {
         if (wait) {
-          m.off('error', this._forwardPristineError, this);
+          m.off('error', collection._forwardPristineError, collection);
           collection.add(m, callbackOpts);
         }
         if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
@@ -1985,7 +1985,10 @@
         current = this.getHash(this.iframe.contentWindow);
       }
 
-      if (current === this.fragment) return false;
+      if (current === this.fragment) {
+        if (!this.matchRoot()) return this.notfound();
+        return false;
+      }
       if (this.iframe) this.navigate(current);
       this.loadUrl();
     },
@@ -1995,14 +1998,22 @@
     // returns `false`.
     loadUrl: function(fragment) {
       // If the root doesn't match, no routes can match either.
-      if (!this.matchRoot()) return false;
+      if (!this.matchRoot()) return this.notfound();
       fragment = this.fragment = this.getFragment(fragment);
       return _.some(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
           return true;
         }
-      });
+      }) || this.notfound();
+    },
+
+    // When no route could be matched, this method is called internally to
+    // trigger the `'notfound'` event. It returns `false` so that it can be used
+    // in tail position.
+    notfound: function() {
+      this.trigger('notfound');
+      return false;
     },
 
     // Save a fragment into the hash history, or replace the URL state if the
@@ -2131,6 +2142,13 @@
       if (error) error.call(options.context, model, resp, options);
       model.trigger('error', model, resp, options);
     };
+  };
+
+  // Provide useful information when things go wrong. This method is not meant
+  // to be used directly; it merely provides the necessary introspection for the
+  // external `debugInfo` function.
+  Backbone._debug = function() {
+    return {root: root, _: _};
   };
 
   return Backbone;

@@ -1,0 +1,10 @@
+contact_links:
+  - name: Security issue
+    url: https://github.com/jashkenas/backbone/security/policy
+    about: Go here if you would like to report a security issue.
+  - name: Stack Overflow
+    url: https://stackoverflow.com/questions/tagged/backbone.js
+    about: The best place to get help making your code work (be sure to include the `backbone.js` tag).
+  - name: Matrix/Gitter
+    url: https://matrix.to/#/#jashkenas_backbone:gitter.im
+    about: Discussions about, and general help with, Backbone.

@@ -486,6 +486,7 @@
       <ul class="toc_section">
         <li data-name="Backbone.noConflict">– <a href="#Utility-Backbone-noConflict">Backbone.noConflict</a></li>
         <li data-name="Backbone.$">– <a href="#Utility-Backbone-$">Backbone.$</a></li>
+        <li data-name="Backbone.debugInfo">– <a href="#Utility-Backbone-debugInfo">debugInfo</a></li>
       </ul>
     </div>
 
@@ -1040,6 +1041,7 @@ view.stopListening(model);
       <li><b>"route:[name]"</b> (params) &mdash; Fired by the router when a specific route is matched.</li>
       <li><b>"route"</b> (route, params) &mdash; Fired by the router when <i>any</i> route has been matched.</li>
       <li><b>"route"</b> (router, route, params) &mdash; Fired by history when <i>any</i> route has been matched.</li>
+      <li><b>"notfound"</b> () &mdash; Fired by history when <i>no</i> route could be matched.</li>
       <li><b>"all"</b> &mdash; this special event fires for <i>any</i> triggered event, passing the event name as the first argument followed by all trigger arguments.</li>
     </ul>
 
@@ -1402,6 +1404,16 @@ alert("Dessert will be " + (new Meal).get('dessert'));
       Remember that in JavaScript, objects are passed by reference, so if you
       include an object as a default value, it will be shared among all instances.
       Instead, define <b>defaults</b> as a function.
+    </p>
+
+    <p class="warning">
+      If you set a value for the model&rsquo;s
+      <a href="#Model-idAttribute"><tt>idAttribute</tt></a>, you should define
+      the defaults as a function that returns a different, <u>universally</u>
+      unique id on every invocation. Not doing so would likely prevent an
+      instance of <tt>Backbone.Collection</tt> from correctly identifying model
+      hashes and is almost certainly a mistake, unless you never add instances
+      of the model class to a collection.
     </p>
 
     <p id="Model-toJSON">
@@ -2716,6 +2728,9 @@ var Router = Backbone.Router.extend({
     <p>
       <b>History</b> serves as a global router (per frame) to handle <tt>hashchange</tt>
       events or <tt>pushState</tt>, match the appropriate route, and trigger callbacks.
+      It forwards the <tt>"route"</tt> and <tt>"route[name]"</tt> events of the
+      matching router, or <tt>"notfound"</tt> when no route in any router
+      matches the current URL.
       You shouldn't ever have to create one of these yourself since <tt>Backbone.history</tt>
       already contains one.
     </p>
@@ -2772,8 +2787,10 @@ var Router = Backbone.Router.extend({
 
     <p>
       When called, if a route succeeds with a match for the current URL,
-      <tt>Backbone.history.start()</tt> returns <tt>true</tt>. If no defined
-      route matches the current URL, it returns <tt>false</tt>.
+      <tt>Backbone.history.start()</tt> returns <tt>true</tt> and
+      the <tt>"route"</tt> and <tt>"route[name]"</tt> events are triggered. If
+      no defined route matches the current URL, it returns <tt>false</tt>
+      and <tt>"notfound"</tt> is triggered instead.
     </p>
 
     <p>
@@ -3293,6 +3310,42 @@ var model = localBackbone.Model.extend(...);
 
 <pre>
 Backbone.$ = require('jquery');
+</pre>
+
+    <p id="Utility-Backbone-debugInfo">
+      <b class="header">debugInfo</b><code>debugInfo();</code>
+      <br />
+      In the unfortunate event that you need to submit a
+      <a href="https://github.com/jashkenas/backbone/issues/new?template=Bugs.yml">bug
+      report</a>, this function makes it easier to provide detailed information
+      about your setup. It prints a JSON object with version information about
+      Backbone and its dependencies through <tt>console.debug</tt>. It also
+      returns this object in case you want to inspect it in code.
+    </p>
+
+    <p>
+      <tt>debugInfo</tt> comes in a separate module that ships with
+      the <a href="#downloads">edge version</a> and releases later than 1.5.0.
+      It is available in UMD format under the same prefix
+      as <tt>backbone.js</tt>, but with <tt>debug-info.js</tt> as the file name.
+      It is also experimentally available in ES module format
+      under <tt>backbone/modules/</tt>.
+    </p>
+
+<pre>
+  &lt;!-- browser embeds --&gt;
+  &lt;script src="some-path-or-url/backbone.js"&gt;&lt;/script&gt;
+  &lt;script src="some-path-or-url/debug-info.js"&gt;&lt;/script&gt;
+  &lt;script&gt;
+    Backbone.debugInfo();
+  &lt;/script&gt;
+
+  // CommonJS
+  require('backbone/debug-info.js')();
+
+  // ESM
+  import debugInfo from 'backbone/modules/debug-info.js';
+  debugInfo();
 </pre>
 
     <h2 id="faq">F.A.Q.</h2>

@@ -1110,4 +1110,89 @@
     assert.strictEqual(location.hash, '#' + route);
   });
 
+  QUnit.test('initial non-matching root triggers notfound event', function(assert) {
+    assert.expect(1);
+    location.replace('http://example.com/root#foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    Backbone.history.on('notfound', function() { assert.ok(true); });
+    var MyRouter = Backbone.Router.extend({
+      routes: {foo: function() { assert.ok(false); }}
+    });
+    var myRouter = new MyRouter;
+    Backbone.history.start({root: 'other'});
+  });
+
+  QUnit.test('later non-matching root triggers notfound event', function(assert) {
+    assert.expect(2);
+    location.replace('http://example.com/root#foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    Backbone.history.on('notfound', function() { assert.ok(true); });
+    var MyRouter = Backbone.Router.extend({
+      routes: {foo: function() { assert.ok(true); }}
+    });
+    var myRouter = new MyRouter;
+    Backbone.history.start({root: 'root'});
+    location.replace('http://example.com/other#foo');
+    Backbone.history.checkUrl();
+  });
+
+  QUnit.test('initial non-matching route triggers notfound event', function(assert) {
+    assert.expect(1);
+    location.replace('http://example.com/root#bar');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    Backbone.history.on('notfound', function() { assert.ok(true); });
+    var MyRouter = Backbone.Router.extend({
+      routes: {foo: function() { assert.ok(false); }}
+    });
+    var myRouter = new MyRouter;
+    Backbone.history.start({root: 'root'});
+  });
+
+  QUnit.test('later non-matching route triggers notfound event', function(assert) {
+    assert.expect(2);
+    location.replace('http://example.com/root#foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    Backbone.history.on('notfound', function() { assert.ok(true); });
+    var MyRouter = Backbone.Router.extend({
+      routes: {foo: function() { assert.ok(true); }}
+    });
+    var myRouter = new MyRouter;
+    Backbone.history.start({root: 'root'});
+    location.replace('http://example.com/other#bar');
+    Backbone.history.checkUrl();
+  });
+
+  QUnit.test('non-matching pushState route triggers notfound event', function(assert) {
+    assert.expect(2);
+    location.replace('http://example.com/root/foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    Backbone.history.on('notfound', function() { assert.ok(true); });
+    var MyRouter = Backbone.Router.extend({
+      routes: {foo: function() { assert.ok(true); }}
+    });
+    var myRouter = new MyRouter;
+    Backbone.history.start({root: 'root', pushState: true});
+    location.replace('http://example.com/other/bar');
+    Backbone.history.checkUrl();
+  });
+
+  QUnit.test('non-matching navigate triggers notfound event', function(assert) {
+    assert.expect(2);
+    location.replace('http://example.com/root#foo');
+    Backbone.history.stop();
+    Backbone.history = _.extend(new Backbone.History, {location: location});
+    Backbone.history.on('notfound', function() { assert.ok(true); });
+    var MyRouter = Backbone.Router.extend({
+      routes: {foo: function() { assert.ok(true); }}
+    });
+    var myRouter = new MyRouter;
+    Backbone.history.start({root: 'root'});
+    Backbone.history.navigate('http://example.com/other#bar', {trigger: true});
+  });
+
 })(QUnit);
