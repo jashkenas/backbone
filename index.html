@@ -4554,6 +4554,26 @@ ActiveRecord::Base.include_root_in_json = false
 
     <h2 id="changelog">Change Log</h2>
 
+    <b class="header" id="1.6.0">1.6.0</b> &mdash; <small><i>Date TBD</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.5.0...1.6.0">Diff</a>
+    &mdash; <a href="https://cdn.statically.io/gh/jashkenas/backbone/1.6.0/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Added a <tt>notfound</tt> event to <tt>Backbone.history</tt> for when no
+        router matches the current URL.
+      </li>
+      <li>
+        Added the <tt>debugInfo</tt> function to make bug reports easier.
+      </li>
+      <li>
+        Fixed a corner case where a collection would forward <tt>error</tt> events twice if the model was first added through the <tt>create</tt> method with <tt>wait: true</tt>.
+      </li>
+      <li>
+        Added issue templates and other documentation improvements.
+      </li>
+    </ul>
+
     <b class="header" id="1.5.0">1.5.0</b> &mdash; <small><i>Jul. 28, 2023</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.4.1...1.5.0">Diff</a>
     &mdash; <a href="https://cdn.statically.io/gh/jashkenas/backbone/1.5.0/index.html">Docs</a>
