@@ -27,7 +27,7 @@
               <div class="sswrap ">
                 <a class="ss" href="#section-1">&#x00a7;</a>
               </div>
-              <pre><code><span class="hljs-title class_">Backbone</span>.<span class="hljs-property">js</span> <span class="hljs-number">1.5</span><span class="hljs-number">.0</span>
+              <pre><code><span class="hljs-title class_">Backbone</span>.<span class="hljs-property">js</span> <span class="hljs-number">1.6</span><span class="hljs-number">.0</span>
 </code></pre>
 
             </div>
@@ -41,7 +41,7 @@
               <div class="sswrap ">
                 <a class="ss" href="#section-2">&#x00a7;</a>
               </div>
-              <pre><code>(c) <span class="hljs-number">2010</span>-<span class="hljs-number">2022</span> <span class="hljs-title class_">Jeremy</span> <span class="hljs-title class_">Ashkenas</span> and <span class="hljs-title class_">DocumentCloud</span>
+              <pre><code>(c) <span class="hljs-number">2010</span>-<span class="hljs-number">2024</span> <span class="hljs-title class_">Jeremy</span> <span class="hljs-title class_">Ashkenas</span> and <span class="hljs-title class_">DocumentCloud</span>
 <span class="hljs-title class_">Backbone</span> may be freely distributed under the <span class="hljs-variable constant_">MIT</span> license.
 <span class="hljs-title class_">For</span> all details and <span class="hljs-attr">documentation</span>:
 <span class="hljs-attr">http</span>:<span class="hljs-comment">//backbonejs.org</span>
@@ -208,7 +208,7 @@ restored later on, if <code>noConflict</code> is used.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">VERSION</span> = <span class="hljs-string">&#x27;1.5.0&#x27;</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">VERSION</span> = <span class="hljs-string">&#x27;1.6.0&#x27;</span>;</pre></div></div>
             
         </li>
         
@@ -2784,7 +2784,7 @@ wait for the server to agree.</p>
       <span class="hljs-keyword">var</span> success = options.<span class="hljs-property">success</span>;
       options.<span class="hljs-property">success</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">m, resp, callbackOpts</span>) {
         <span class="hljs-keyword">if</span> (wait) {
-          m.<span class="hljs-title function_">off</span>(<span class="hljs-string">&#x27;error&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">_forwardPristineError</span>, <span class="hljs-variable language_">this</span>);
+          m.<span class="hljs-title function_">off</span>(<span class="hljs-string">&#x27;error&#x27;</span>, collection.<span class="hljs-property">_forwardPristineError</span>, collection);
           collection.<span class="hljs-title function_">add</span>(m, callbackOpts);
         }
         <span class="hljs-keyword">if</span> (success) success.<span class="hljs-title function_">call</span>(callbackOpts.<span class="hljs-property">context</span>, m, resp, callbackOpts);
@@ -5102,7 +5102,10 @@ changed and we should use that for comparison.</p>
         current = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getHash</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">iframe</span>.<span class="hljs-property">contentWindow</span>);
       }
 
-      <span class="hljs-keyword">if</span> (current === <span class="hljs-variable language_">this</span>.<span class="hljs-property">fragment</span>) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      <span class="hljs-keyword">if</span> (current === <span class="hljs-variable language_">this</span>.<span class="hljs-property">fragment</span>) {
+        <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">matchRoot</span>()) <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">notfound</span>();
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      }
       <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">iframe</span>) <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">navigate</span>(current);
       <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">loadUrl</span>();
     },</pre></div></div>
@@ -5137,14 +5140,14 @@ returns <code>false</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">matchRoot</span>()) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.<span class="hljs-title function_">matchRoot</span>()) <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">notfound</span>();
       fragment = <span class="hljs-variable language_">this</span>.<span class="hljs-property">fragment</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getFragment</span>(fragment);
       <span class="hljs-keyword">return</span> _.<span class="hljs-title function_">some</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">handlers</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params">handler</span>) {
         <span class="hljs-keyword">if</span> (handler.<span class="hljs-property">route</span>.<span class="hljs-title function_">test</span>(fragment)) {
           handler.<span class="hljs-title function_">callback</span>(fragment);
           <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
         }
-      });
+      }) || <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">notfound</span>();
     },</pre></div></div>
             
         </li>
@@ -5155,6 +5158,26 @@ returns <code>false</code>.</p>
               
               <div class="sswrap ">
                 <a class="ss" href="#section-262">&#x00a7;</a>
+              </div>
+              <p>When no route could be matched, this method is called internally to
+trigger the <code>&#39;notfound&#39;</code> event. It returns <code>false</code> so that it can be used
+in tail position.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attr">notfound</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">trigger</span>(<span class="hljs-string">&#x27;notfound&#x27;</span>);
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-263">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-263">&#x00a7;</a>
               </div>
               <p>Save a fragment into the hash history, or replace the URL state if the
 ‘replace’ option is passed. You are responsible for properly URL-encoding
@@ -5172,11 +5195,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-263">
+        <li id="section-264">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-263">&#x00a7;</a>
+                <a class="ss" href="#section-264">&#x00a7;</a>
               </div>
               <p>Normalize the fragment.</p>
 
@@ -5187,11 +5210,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-264">
+        <li id="section-265">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-264">&#x00a7;</a>
+                <a class="ss" href="#section-265">&#x00a7;</a>
               </div>
               <p>Strip trailing slash on the root unless _trailingSlash is true</p>
 
@@ -5206,11 +5229,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-265">
+        <li id="section-266">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-265">&#x00a7;</a>
+                <a class="ss" href="#section-266">&#x00a7;</a>
               </div>
               <p>Strip the fragment of the query and hash for matching.</p>
 
@@ -5221,11 +5244,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-266">
+        <li id="section-267">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-266">&#x00a7;</a>
+                <a class="ss" href="#section-267">&#x00a7;</a>
               </div>
               <p>Decode for matching.</p>
 
@@ -5239,11 +5262,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-267">
+        <li id="section-268">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-267">&#x00a7;</a>
+                <a class="ss" href="#section-268">&#x00a7;</a>
               </div>
               <p>If pushState is available, we use it to set the fragment as a real URL.</p>
 
@@ -5255,11 +5278,11 @@ you wish to modify the current URL without adding an entry to the history.</p>
         </li>
         
         
-        <li id="section-268">
+        <li id="section-269">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-268">&#x00a7;</a>
+                <a class="ss" href="#section-269">&#x00a7;</a>
               </div>
               <p>If hash changes haven’t been explicitly disabled, update the hash
 fragment to store history.</p>
@@ -5274,11 +5297,11 @@ fragment to store history.</p>
         </li>
         
         
-        <li id="section-269">
+        <li id="section-270">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-269">&#x00a7;</a>
+                <a class="ss" href="#section-270">&#x00a7;</a>
               </div>
               <p>Opening and closing the iframe tricks IE7 and earlier to push a
 history entry on hash-tag change.  When replace is true, we don’t
@@ -5297,11 +5320,11 @@ want this.</p>
         </li>
         
         
-        <li id="section-270">
+        <li id="section-271">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-270">&#x00a7;</a>
+                <a class="ss" href="#section-271">&#x00a7;</a>
               </div>
               <p>If you’ve told us that you explicitly don’t want fallback hashchange-
 based history, then <code>navigate</code> becomes a page refresh.</p>
@@ -5317,11 +5340,11 @@ based history, then <code>navigate</code> becomes a page refresh.</p>
         </li>
         
         
-        <li id="section-271">
+        <li id="section-272">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-271">&#x00a7;</a>
+                <a class="ss" href="#section-272">&#x00a7;</a>
               </div>
               <p>Update the hash location, either replacing the current entry, or adding
 a new one to the browser history.</p>
@@ -5337,11 +5360,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-272">
+        <li id="section-273">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-272">&#x00a7;</a>
+                <a class="ss" href="#section-273">&#x00a7;</a>
               </div>
               <p>Some browsers require that <code>hash</code> contains a leading #.</p>
 
@@ -5356,11 +5379,11 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-273">
+        <li id="section-274">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-273">&#x00a7;</a>
+                <a class="ss" href="#section-274">&#x00a7;</a>
               </div>
               <p>Create the default Backbone.history.</p>
 
@@ -5371,26 +5394,14 @@ a new one to the browser history.</p>
         </li>
         
         
-        <li id="section-274">
-            <div class="annotation">
-              
-              <div class="sswrap ">
-                <a class="ss" href="#section-274">&#x00a7;</a>
-              </div>
-              <h2 id="helpers">Helpers</h2>
-
-            </div>
-            
-        </li>
-        
-        
         <li id="section-275">
             <div class="annotation">
               
               <div class="sswrap ">
                 <a class="ss" href="#section-275">&#x00a7;</a>
               </div>
-              
+              <h2 id="helpers">Helpers</h2>
+
             </div>
             
         </li>
@@ -5401,6 +5412,18 @@ a new one to the browser history.</p>
               
               <div class="sswrap ">
                 <a class="ss" href="#section-276">&#x00a7;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-277">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-277">&#x00a7;</a>
               </div>
               <p>Helper function to correctly set up the prototype chain for subclasses.
 Similar to <code>goog.inherits</code>, but uses a hash of prototype properties and
@@ -5415,11 +5438,11 @@ class properties to be extended.</p>
         </li>
         
         
-        <li id="section-277">
+        <li id="section-278">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-277">&#x00a7;</a>
+                <a class="ss" href="#section-278">&#x00a7;</a>
               </div>
               <p>The constructor function for the new subclass is either defined by you
 (the “constructor” property in your <code>extend</code> definition), or defaulted
@@ -5436,11 +5459,11 @@ by us to simply call the parent constructor.</p>
         </li>
         
         
-        <li id="section-278">
+        <li id="section-279">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-278">&#x00a7;</a>
+                <a class="ss" href="#section-279">&#x00a7;</a>
               </div>
               <p>Add static properties to the constructor function, if supplied.</p>
 
@@ -5451,11 +5474,11 @@ by us to simply call the parent constructor.</p>
         </li>
         
         
-        <li id="section-279">
+        <li id="section-280">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-279">&#x00a7;</a>
+                <a class="ss" href="#section-280">&#x00a7;</a>
               </div>
               <p>Set the prototype chain to inherit from <code>parent</code>, without calling
 <code>parent</code>‘s constructor function and add the prototype properties.</p>
@@ -5468,11 +5491,11 @@ by us to simply call the parent constructor.</p>
         </li>
         
         
-        <li id="section-280">
+        <li id="section-281">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-280">&#x00a7;</a>
+                <a class="ss" href="#section-281">&#x00a7;</a>
               </div>
               <p>Set a convenience property in case the parent’s prototype is needed
 later.</p>
@@ -5487,11 +5510,11 @@ later.</p>
         </li>
         
         
-        <li id="section-281">
+        <li id="section-282">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-281">&#x00a7;</a>
+                <a class="ss" href="#section-282">&#x00a7;</a>
               </div>
               <p>Set up inheritance for the model, collection, router, view and history.</p>
 
@@ -5502,11 +5525,11 @@ later.</p>
         </li>
         
         
-        <li id="section-282">
+        <li id="section-283">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-282">&#x00a7;</a>
+                <a class="ss" href="#section-283">&#x00a7;</a>
               </div>
               <p>Throw an error when a URL is needed, and none is supplied.</p>
 
@@ -5519,11 +5542,11 @@ later.</p>
         </li>
         
         
-        <li id="section-283">
+        <li id="section-284">
             <div class="annotation">
               
               <div class="sswrap ">
-                <a class="ss" href="#section-283">&#x00a7;</a>
+                <a class="ss" href="#section-284">&#x00a7;</a>
               </div>
               <p>Wrap an optional error callback with a fallback error event.</p>
 
@@ -5535,6 +5558,25 @@ later.</p>
       <span class="hljs-keyword">if</span> (error) error.<span class="hljs-title function_">call</span>(options.<span class="hljs-property">context</span>, model, resp, options);
       model.<span class="hljs-title function_">trigger</span>(<span class="hljs-string">&#x27;error&#x27;</span>, model, resp, options);
     };
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-285">
+            <div class="annotation">
+              
+              <div class="sswrap ">
+                <a class="ss" href="#section-285">&#x00a7;</a>
+              </div>
+              <p>Provide useful information when things go wrong. This method is not meant
+to be used directly; it merely provides the necessary introspection for the
+external <code>debugInfo</code> function.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">_debug</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> {<span class="hljs-attr">root</span>: root, <span class="hljs-attr">_</span>: _};
   };
 
   <span class="hljs-keyword">return</span> <span class="hljs-title class_">Backbone</span>;
