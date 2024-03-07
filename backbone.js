@@ -374,7 +374,7 @@
   // Cleans up memory bindings between the listener and the listenee.
   Listening.prototype.cleanup = function() {
     delete this.listener._listeningTo[this.obj._listenId];
-    if (!this.interop) delete this.obj._listeners[this.id];
+    if (!this.interop && typeof this.obj._listeners !== 'undefined' ) delete this.obj._listeners[this.id];
   };
 
   // Aliases for backwards compatibility.
