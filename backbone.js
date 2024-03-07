@@ -1144,7 +1144,7 @@
     _reset: function() {
       this.length = 0;
       this.models = [];
-      this._byId  = {};
+      this._byId  = Object.create(null);
     },
 
     // Prepare a hash of attributes (or other model) to be added to this
