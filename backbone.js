@@ -523,7 +523,9 @@
       if (this.idAttribute in attrs) {
         var prevId = this.id;
         this.id = this.get(this.idAttribute);
-        this.trigger('changeId', this, prevId, options);
+        if(this.id !== prevId) {
+          this.trigger('changeId', this, prevId, options);
+        }
       }
 
       // Trigger all relevant attribute changes.
