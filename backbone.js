@@ -523,7 +523,7 @@
       if (this.idAttribute in attrs) {
         var prevId = this.id;
         this.id = this.get(this.idAttribute);
-        if(this.id !== prevId) {
+        if (this.id !== prevId) {
           this.trigger('changeId', this, prevId, options);
         }
       }
