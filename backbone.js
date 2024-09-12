@@ -441,7 +441,8 @@
 
     // Return a copy of the model's `attributes` object.
     toJSON: function(options) {
-      return _.clone(this.attributes);
+      options || (options = {});
+      return options.attrs ? options.attrs : _.clone(this.attributes);
     },
 
     // Proxy `Backbone.sync` by default -- but override this if you need
@@ -1615,7 +1616,7 @@
     // Ensure that we have the appropriate request data.
     if (options.data == null && model && (method === 'create' || method === 'update' || method === 'patch')) {
       params.contentType = 'application/json';
-      params.data = JSON.stringify(options.attrs || model.toJSON(options));
+      params.data = JSON.stringify(model.toJSON(options));
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
