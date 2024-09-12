@@ -293,6 +293,31 @@
     assert.equal(a.id, undefined, 'Unsetting the id should remove the id property.');
   });
 
+  QUnit.test('set with reset option', function(assert) {
+    assert.expect(8);
+    var a = new Backbone.Model({id: 'id', foo: 1, bar: 2});
+    var changeFooCount = 0;
+    var changeBarCount = 0;
+    var changeBazCount = 0;
+    var changeIdCount = 0;
+    a.on('change:foo', function() { changeFooCount += 1; });
+    a.on('change:bar', function() { changeBarCount += 1; });
+    a.on('change:baz', function() { changeBazCount += 1; });
+    a.on('change:id', function() { changeIdCount += 1; });
+    a.set({foo: 2, bar: 2, baz: 3}, {reset: true});
+    assert.equal(a.get('foo'), 2, 'Foo should have changed.');
+    assert.equal(changeFooCount, 1, 'Change count should have incremented.');
+
+    assert.equal(a.get('id'), void 0, 'Id should have be unset');
+    assert.equal(changeIdCount, 1, 'Change count should have incremented.');
+
+    assert.equal(a.get('bar'), 2, 'Bar should NOT have changed');
+    assert.equal(changeBarCount, 0, 'Change count should NOT have incremented.');
+
+    assert.equal(a.get('baz'), 3, 'Baz should have be set');
+    assert.equal(changeBazCount, 1, 'Change count should have incremented.');
+  });
+
   QUnit.test('#2030 - set with failed validate, followed by another set triggers change', function(assert) {
     var attr = 0, main = 0, error = 0;
     var Model = Backbone.Model.extend({
