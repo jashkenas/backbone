@@ -1487,4 +1487,23 @@
     model.set({id: 2});
   });
 
+  QUnit.test('#4289 - Trigger "changeId" need to be generate only if the content id change (null and undefined are identical)', function(assert) {
+    assert.expect(2);
+    var model = new Backbone.Model({id: 1});
+    model.idAttribute = 'id';
+    var i = 0;
+    model.on('changeId', function(m) {
+      if (i === 0) {
+        assert.equal(m.get('id'), null);
+      }
+      if (i === 1) {
+        assert.equal(m.get('id'), 2);
+      }
+      i++;
+    });
+    model.set({id: null});
+    model.set({id: undefined});
+    model.set({id: 2});
+  });
+
 })(QUnit);
