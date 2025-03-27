@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "coffeescript": "^2.7.0",
-    "cpy-cli": "^3.1.1",
+    "cpy-cli": "^5.0.0",
     "docco": "^0.9.1",
     "eslint": "^8.7.0",
     "eslint-plugin-import": "^2.28.1",
