@@ -24,14 +24,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 16
           cache: 'npm'
       - name: Install dependencies
         run: |
           npm ci
           npm install --no-audit karma-cli karma-sauce-launcher
-      - name: Test
-        run: npm test
       - name: Test in Sauce Labs
         run: BUILD_NUMBER="$GITHUB_RUN_NUMBER" BUILD_ID="$GITHUB_RUN_ID" JOB_NUMBER="$GITHUB_JOB" ./node_modules/.bin/karma start karma.conf-sauce.js
         env:
