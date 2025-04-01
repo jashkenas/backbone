@@ -13,7 +13,7 @@ export default function() {
     // Is this the exact released version, or a later development version?
     /* This is automatically temporarily replaced when publishing a release,
        so please don't edit this. */
-    distribution: 'MARK_RELEASE',
+    distribution: 'MARK_DEVELOPMENT',
     _: (lodash ? 'lodash ' : '') + _.VERSION,
     $: !$ ? false : $.fn && $.fn.jquery ? $.fn.jquery :
       $.zepto ? 'zepto' : $.ender ? 'ender' : true
