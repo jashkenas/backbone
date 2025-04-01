@@ -1019,7 +1019,7 @@
     }
   };
 
-  // Return a copy of the object only containing the whitelisted properties.
+  // Return a copy of the object only containing the allowed properties.
   _.pick = function(object, oiteratee, context) {
     var result = {}, obj = object, iteratee, keys;
     if (obj == null) return result;
@@ -1039,7 +1039,7 @@
     return result;
   };
 
-   // Return a copy of the object without the blacklisted properties.
+   // Return a copy of the object without the disallowed properties.
   _.omit = function(obj, iteratee, context) {
     if (_.isFunction(iteratee)) {
       iteratee = _.negate(iteratee);

@@ -17,14 +17,12 @@
   },
   "devDependencies": {
     "coffeescript": "^2.7.0",
-    "cpy-cli": "^3.1.1",
+    "cpy-cli": "^5.0.0",
     "docco": "^0.9.1",
     "eslint": "^8.7.0",
     "eslint-plugin-import": "^2.28.1",
     "karma": "^6.3.11",
-    "karma-phantomjs-launcher": "^1.0.0",
     "karma-qunit": "^4.1.2",
-    "phantomjs-prebuilt": "^2.1.7",
     "qunit": "^2.17.2",
     "replace-in-file": "^7.0.1",
     "rollup": "^3.28.1",
@@ -42,7 +40,7 @@
     "prepublishOnly": "npm run test && npm run mark-release && npm run build && npm run alias-sourcemap && npm run doc && git add -u && npm run mark-develop"
   },
   "main": "backbone.js",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -27,7 +27,7 @@
               <div class="sswrap ">
                 <a class="ss" href="#section-1">&#x00a7;</a>
               </div>
-              <pre><code><span class="hljs-title class_">Backbone</span>.<span class="hljs-property">js</span> <span class="hljs-number">1.6</span><span class="hljs-number">.0</span>
+              <pre><code><span class="hljs-title class_">Backbone</span>.<span class="hljs-property">js</span> <span class="hljs-number">1.6</span><span class="hljs-number">.1</span>
 </code></pre>
 
             </div>
@@ -208,7 +208,7 @@ restored later on, if <code>noConflict</code> is used.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">VERSION</span> = <span class="hljs-string">&#x27;1.6.0&#x27;</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-title class_">Backbone</span>.<span class="hljs-property">VERSION</span> = <span class="hljs-string">&#x27;1.6.1&#x27;</span>;</pre></div></div>
             
         </li>
         
@@ -1480,7 +1480,9 @@ anyone who needs to know about the change in state. The heart of the beast.</p>
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">idAttribute</span> <span class="hljs-keyword">in</span> attrs) {
         <span class="hljs-keyword">var</span> prevId = <span class="hljs-variable language_">this</span>.<span class="hljs-property">id</span>;
         <span class="hljs-variable language_">this</span>.<span class="hljs-property">id</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">get</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">idAttribute</span>);
-        <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">trigger</span>(<span class="hljs-string">&#x27;changeId&#x27;</span>, <span class="hljs-variable language_">this</span>, prevId, options);
+        <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">id</span> !== prevId) {
+          <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">trigger</span>(<span class="hljs-string">&#x27;changeId&#x27;</span>, <span class="hljs-variable language_">this</span>, prevId, options);
+        }
       }</pre></div></div>
             
         </li>

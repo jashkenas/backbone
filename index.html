@@ -300,7 +300,7 @@
   <div id="sidebar" class="interface">
 
     <a class="toc_title" href="#">
-      Backbone.js <span class="version">(1.6.0)</span>
+      Backbone.js <span class="version">(1.6.1)</span>
     </a>
     <ul class="toc_section">
       <li>&raquo; <a href="http://github.com/jashkenas/backbone">GitHub Repository</a></li>
@@ -609,11 +609,11 @@
 
     <table>
       <tr>
-        <td><a class="punch" href="backbone.js">Development Version (1.6.0)</a></td>
+        <td><a class="punch" href="backbone.js">Development Version (1.6.1)</a></td>
         <td class="text"><i>72kb, Full source, tons of comments</i></td>
       </tr>
       <tr>
-        <td><a class="punch" href="backbone-min.js">Production Version (1.6.0)</a></td>
+        <td><a class="punch" href="backbone-min.js">Production Version (1.6.1)</a></td>
         <td class="text" style="line-height: 16px;">
           <i>7.9kb, Packed and gzipped</i><br />
           <small>(<a href="backbone-min.map">Source Map</a>)</small>
@@ -4553,6 +4553,20 @@ ActiveRecord::Base.include_root_in_json = false
     </div>
 
     <h2 id="changelog">Change Log</h2>
+
+    <b class="header" id="1.6.1">1.6.1</b> &mdash; <small><i>Apr. 1, 2025</i></small>
+    &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.6.0...1.6.1">Diff</a>
+    &mdash; <a href="https://cdn.statically.io/gh/jashkenas/backbone/1.6.1/index.html">Docs</a>
+    <br />
+    <ul style="margin-top: 5px;">
+      <li>
+        Fixed a bug where the <tt>changeId</tt> event would sometimes fire even
+        though the id of a model did not change.
+      </li>
+      <li>
+        Several small changes in the test infrastructure.
+      </li>
+    </ul>
 
     <b class="header" id="1.6.0">1.6.0</b> &mdash; <small><i>Feb. 5, 2024</i></small>
     &mdash; <a href="https://github.com/jashkenas/backbone/compare/1.5.0...1.6.0">Diff</a>
