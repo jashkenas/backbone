@@ -37,7 +37,8 @@
     "lint": "eslint backbone.js test/*.js modules/*.js",
     "mark-release": "replace-in-file MARK_DEVELOPMENT MARK_RELEASE modules/debug-info.js && npm run build-debug",
     "mark-develop": "replace-in-file MARK_RELEASE MARK_DEVELOPMENT modules/debug-info.js && npm run build-debug",
-    "prepublishOnly": "npm run test && npm run mark-release && npm run build && npm run alias-sourcemap && npm run doc && git add -u && npm run mark-develop"
+    "prepublishOnly": "npm run test && npm run mark-release && npm run build && npm run alias-sourcemap && npm run doc",
+    "postpublish": "git add -u && npm run mark-develop"
   },
   "main": "backbone.js",
   "version": "1.6.1",
