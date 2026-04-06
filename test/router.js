@@ -958,6 +958,27 @@
     Backbone.history.start({pushState: true});
   });
 
+  QUnit.test('#4132 - checkUrl does not double-fire on encoded non-ASCII hash.', function(assert) {
+    assert.expect(1);
+    var count = 0;
+    var history = new Backbone.History;
+    history._wantsHashChange = true;
+    history._hasPushState = false;
+    history._usePushState = false;
+    history.matchRoot = function() { return true; };
+    history.handlers = [{
+      route: /^search\/(.+)$/,
+      callback: function() { count++; }
+    }];
+    // Simulate Firefox returning the hash percent-encoded in
+    // location.href even though navigate() previously stored the
+    // decoded form on this.fragment.
+    history.location = {href: 'http://example.com/#search/%E5%A4%A7%E9%98%AA'};
+    history.fragment = 'search/大阪';
+    history.checkUrl();
+    assert.strictEqual(count, 0, 'route handler must not be re-fired');
+  });
+
   QUnit.test('Router#execute receives callback, args, name.', function(assert) {
     assert.expect(3);
     location.replace('http://example.com#foo/123/bar?x=y');

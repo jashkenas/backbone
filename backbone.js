@@ -1885,7 +1885,9 @@
       this._wantsPushState  = !!this.options.pushState;
       this._hasPushState    = !!(this.history && this.history.pushState);
       this._usePushState    = this._wantsPushState && this._hasPushState;
-      this.fragment         = this.getFragment();
+      // Store the initial fragment in decoded form for consistency
+      // with what navigate()/loadUrl() write (#4132).
+      this.fragment         = this.decodeFragment(this.getFragment());
 
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
@@ -1979,12 +1981,19 @@
     // Checks the current URL to see if it has changed, and if it has,
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl: function(e) {
-      var current = this.getFragment();
+      // Compare in decoded form. Firefox returns `location.href` with
+      // percent-encoded non-ASCII characters in the hash, while Chrome
+      // returns them decoded. Without normalising here, navigating to a
+      // URL like `#search/大阪` from inside the app stores the decoded
+      // form in `this.fragment` while the next `hashchange` event reads
+      // back the encoded form, so checkUrl thinks the URL changed and
+      // fires the route a second time. See #4132, #4085, #3941.
+      var current = this.decodeFragment(this.getFragment());
 
       // If the user pressed the back button, the iframe's hash will have
       // changed and we should use that for comparison.
       if (current === this.fragment && this.iframe) {
-        current = this.getHash(this.iframe.contentWindow);
+        current = this.decodeFragment(this.getHash(this.iframe.contentWindow));
       }
 
       if (current === this.fragment) {
@@ -2001,7 +2010,11 @@
     loadUrl: function(fragment) {
       // If the root doesn't match, no routes can match either.
       if (!this.matchRoot()) return this.notfound();
-      fragment = this.fragment = this.getFragment(fragment);
+      // Always store the fragment in its decoded form so that the
+      // value cached in `this.fragment` is consistent with what
+      // `navigate()` writes — see checkUrl for the cross-browser
+      // rationale (#4132).
+      fragment = this.fragment = this.decodeFragment(this.getFragment(fragment));
       return _.some(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
