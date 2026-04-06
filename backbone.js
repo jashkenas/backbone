@@ -1795,8 +1795,12 @@
     }
   };
 
-  // Cached regex for stripping a leading hash/slash and trailing space.
-  var routeStripper = /^[#\/]|\s+$/g;
+  // Cached regex for stripping a leading hash/slash from a fragment.
+  var routeStripper = /^[#\/]/;
+
+  // Cached regex for stripping trailing whitespace from a raw hash value.
+  // Only applied to the hash before decoding (see #1794, #4198).
+  var trailingSpaceStripper = /\s+$/;
 
   // Cached regex for stripping leading and trailing slashes.
   var rootStripper = /^\/+|\/+$/g;
@@ -1843,9 +1847,11 @@
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
     // in Firefox where location.hash will always be decoded.
+    // Trailing whitespace from the raw hash is stripped (see #1794), but
+    // percent-encoded whitespace inside the fragment is preserved (see #4198).
     getHash: function(window) {
       var match = (window || this).location.href.match(/#(.*)$/);
-      return match ? match[1] : '';
+      return match ? match[1].replace(trailingSpaceStripper, '') : '';
     },
 
     // Get the pathname and search params, without the root.

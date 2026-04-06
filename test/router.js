@@ -660,16 +660,35 @@
     new MyRouter;
   });
 
-  QUnit.test('#1794 - Trailing space in fragments.', function(assert) {
-    assert.expect(1);
+  QUnit.test('#1794 - Trailing space stripped from raw hash.', function(assert) {
+    assert.expect(2);
     var history = new Backbone.History;
-    assert.strictEqual(history.getFragment('fragment   '), 'fragment');
+    history.location = {href: 'http://example.com/#fragment   '};
+    assert.strictEqual(history.getHash(), 'fragment');
+    // An explicit fragment passed to getFragment must not lose its
+    // trailing whitespace (regression test for #4198).
+    assert.strictEqual(history.getFragment('fragment   '), 'fragment   ');
   });
 
-  QUnit.test('#1820 - Leading slash and trailing space.', function(assert) {
+  QUnit.test('#1820 - Leading slash stripped, trailing space preserved.', function(assert) {
     assert.expect(1);
     var history = new Backbone.History;
-    assert.strictEqual(history.getFragment('/fragment '), 'fragment');
+    assert.strictEqual(history.getFragment('/fragment '), 'fragment ');
+  });
+
+  QUnit.test('#4198 - Percent-encoded trailing space preserved in path.', function(assert) {
+    assert.expect(1);
+    var history = new Backbone.History;
+    history.root = '/';
+    history._wantsHashChange = false;
+    history.location = {
+      pathname: '/outbound/22130600/po/powithspacetest%20',
+      href: 'http://example.com/outbound/22130600/po/powithspacetest%20'
+    };
+    assert.strictEqual(
+      history.getFragment(),
+      'outbound/22130600/po/powithspacetest '
+    );
   });
 
   QUnit.test('#1980 - Optional parameters.', function(assert) {
