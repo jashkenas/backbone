@@ -93,6 +93,28 @@
     assert.notEqual(model.cid, undefined);
   });
 
+  QUnit.test('extend supports ES6 method-shorthand constructor (#4213)', function(assert) {
+    assert.expect(2);
+    // ES6 method shorthand (`constructor() {}`) produces a non-constructable
+    // function with no `prototype` property, which previously made
+    // `new Model()` throw "Model is not a constructor". We use `eval` here
+    // so this file still parses on engines without ES6 method shorthand.
+    var protoProps;
+    try {
+      /* eslint-disable no-eval */
+      protoProps = eval('({ constructor() { Backbone.Model.apply(this, arguments); } })');
+      /* eslint-enable no-eval */
+    } catch (e) {
+      assert.ok(true, 'ES6 method shorthand not supported in this environment, skipping');
+      assert.ok(true);
+      return;
+    }
+    var Model = Backbone.Model.extend(protoProps);
+    var model = new Model({foo: 'bar'});
+    assert.ok(model instanceof Model);
+    assert.equal(model.get('foo'), 'bar');
+  });
+
   QUnit.test('parse can return null', function(assert) {
     assert.expect(1);
     var Model = Backbone.Model.extend({

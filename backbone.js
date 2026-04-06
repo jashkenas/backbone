@@ -2107,9 +2107,16 @@
 
     // The constructor function for the new subclass is either defined by you
     // (the "constructor" property in your `extend` definition), or defaulted
-    // by us to simply call the parent constructor.
+    // by us to simply call the parent constructor. ES6 method shorthand
+    // (`constructor() {}`) produces a non-constructable function with no
+    // `prototype`; in that case we wrap it so `new` still works.
     if (protoProps && _.has(protoProps, 'constructor')) {
-      child = protoProps.constructor;
+      var supplied = protoProps.constructor;
+      if (supplied.prototype) {
+        child = supplied;
+      } else {
+        child = function(){ return supplied.apply(this, arguments); };
+      }
     } else {
       child = function(){ return parent.apply(this, arguments); };
     }
