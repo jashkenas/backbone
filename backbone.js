@@ -87,6 +87,63 @@
   //     object.on('expand', function(){ alert('expanded'); });
   //     object.trigger('expand');
   //
+
+  // ### Reading the Events implementation
+  //
+  // Event subscriptions come in two forms. `obj.on(name, callback, context)`
+  // stores a handler on the object that emits the event. In contrast,
+  // `listener.listenTo(obj, name, callback)` also keeps track of what the
+  // listener is listening to, so that `listener.stopListening()` can later
+  // remove all of those bindings without you having to remember them.
+  // Backbone calls the object that invokes `listenTo` the **listener** and the
+  // object it observes the **listenee**.
+  //
+  // <img src="images/events-listening.svg" alt="The listener and the listenee
+  // each reference a shared Listening record, which references both of them.
+  // The listenee's event handlers also point to that record."
+  // style="max-width: 100%; height: auto;">
+  //
+  // Three private maps hold this bookkeeping:
+  //
+  // * `_events` maps each event name to the handlers registered on that object.
+  // * `_listeningTo` belongs to the listener and maps each listenee's
+  //   `_listenId` to a `Listening` record.
+  // * `_listeners` belongs to a Backbone.Events listenee and maps each
+  //   listener's `_listenId` to the same `Listening` record.
+  //
+  // Each entry in `_events[name]` is a handler object holding `callback`,
+  // `context`, `ctx`, and `listening`. `context` is the receiver the caller
+  // passed and is what `off` matches on; `ctx` is the receiver the callback is
+  // actually invoked with, defaulting to the object that emits the event.
+  // `listenTo` passes the listener as `context`, which is how `stopListening`
+  // finds that listener's handlers.
+  //
+  // A `Listening` record represents one listener-listenee pair, not one event.
+  // It holds `listener` and `obj` references back to the two objects, and each
+  // handler created through `listenTo` points back to it through `listening`.
+  // The record counts those handlers and, when the last one is unbound,
+  // deletes its entries in the listener's `_listeningTo` and the listenee's
+  // `_listeners`. If the listenee implements another events API instead of
+  // Backbone.Events, the record's `interop` flag stays on and the record keeps
+  // its own copy of the callbacks instead of a count, so that `stopListening`
+  // retains the same public behavior.
+  //
+  // Most public methods below share `eventsApi`. It accepts a single event
+  // name, a space-separated list of names, or an event map, and calls a
+  // reducer once for each event name. The reducer receives `(events, name,
+  // callback, options)` and returns the next `events` accumulator: `onApi`
+  // adds handlers, `offApi` removes them, `onceMap` creates one-shot wrappers,
+  // and `triggerApi` fires them. Handling the different forms in one place
+  // lets each reducer deal with a single event at a time.
+  //
+  // Because each call's return value becomes the next call's accumulator,
+  // `eventsApi` returns the last one. `onApi`, `offApi`, and `triggerApi`
+  // thread the object's `_events` through, so `on` and `off` assign the
+  // result straight back to `this._events`; `onceMap` instead fills an empty
+  // object one `{name: wrapper}` entry at a time, which `once` then passes to
+  // `on` as an event map.
+  //
+  // ### Implementation
   var Events = Backbone.Events = {};
 
   // Regular expression used to split event strings.
