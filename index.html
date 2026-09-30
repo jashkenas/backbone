@@ -1169,8 +1169,10 @@ class Country extends Backbone.Model {
       <br />
       When creating an instance of a model, you can pass in the initial values
       of the <b>attributes</b>, which will be <a href="#Model-set">set</a> on the
-      model. If you define an <b>initialize</b> function, it will be invoked when
-      the model is created.
+      model. If you define an <b>initialize</b> function, it will be invoked as
+      <tt>initialize(attributes, options)</tt> at the end of construction.
+      Within <b>initialize</b>, you can access the model's attributes with
+      <a href="#Model-get">get</a>.
     </p>
 
 <pre>
