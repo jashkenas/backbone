@@ -1827,13 +1827,21 @@
 
     // Given a route, and a URL fragment that it matches, return the array of
     // extracted decoded parameters. Empty or unmatched parameters will be
-    // treated as `null` to normalize cross-browser behavior.
+    // treated as `null` to normalize cross-browser behavior. A malformed
+    // percent-encoding (e.g. `%foo`) would otherwise throw a `URIError` and
+    // crash the router (#3440); such parameters fall back to the raw value.
     _extractParameters: function(route, fragment) {
       var params = route.exec(fragment).slice(1);
       return _.map(params, function(param, i) {
         // Don't decode the search params.
         if (i === params.length - 1) return param || null;
-        return param ? decodeURIComponent(param) : null;
+        if (!param) return null;
+        try {
+          return decodeURIComponent(param);
+        } catch (e) {
+          if (e instanceof URIError) return param;
+          throw e;
+        }
       });
     }
 
