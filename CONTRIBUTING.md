@@ -1,4 +1,4 @@
-# Contributing to Underscore
+# Contributing to Backbone
 
 ## How to Open a Backbone.js Ticket
 
