@@ -1314,6 +1314,25 @@ alert("Cake id: " + cake.id);
 </pre>
     </p>
 
+    <p>
+      When defining a model as an ES class, use a getter for <tt>idAttribute</tt>
+      so it is also available on the model's prototype. Collections read this
+      prototype property when identifying raw attribute objects. Setting it only
+      in <tt>preinitialize</tt> or as an instance field will not make it available
+      there.
+    </p>
+
+<pre class="runnable">
+class Meal extends Backbone.Model {
+  get idAttribute() {
+    return "_id";
+  }
+}
+
+var meals = new Backbone.Collection([{_id: 1, name: "Cake"}], {model: Meal});
+alert(meals.get({_id: 1}).get("name"));
+</pre>
+
     <p id="Model-cid">
       <b class="header">cid</b><code>model.cid</code>
       <br />
