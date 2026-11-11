@@ -958,6 +958,19 @@
     Backbone.history.start({pushState: true});
   });
 
+  QUnit.test('#3440 - Malformed param does not throw URIError.', function(assert) {
+    assert.expect(2);
+    var myRouter = new Backbone.Router;
+    var route = /^search\/([^\/]+)$/;
+    var params;
+    // Should not throw on malformed percent-encoding.
+    params = myRouter._extractParameters(route, 'search/malformed%query');
+    assert.ok(params, 'extract did not throw');
+    // The malformed value falls back to the raw, undecoded string so the
+    // route can still match and the application can handle it.
+    assert.strictEqual(params[0], 'malformed%query');
+  });
+
   QUnit.test('Router#execute receives callback, args, name.', function(assert) {
     assert.expect(3);
     location.replace('http://example.com#foo/123/bar?x=y');
